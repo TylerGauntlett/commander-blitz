@@ -1,0 +1,74 @@
+{
+  "_comment": "Cards that exist only for tests/unit/costs/test_put_counters_cost.py. Never part of a deck list. t_pc_tome is Mazemind Tome's first line with a plainer effect: {T}, put a page counter on this artifact: gain 1 life. t_pc_battery puts two charge counters and taps nothing, so it can be activated repeatedly. t_pc_naive_tome is deliberately the WRONG card: the version the DSL could write before `put_counters` was a cost, with the counter moved into the effects, asserted against as the counterfactual. t_pc_watcher is a permanent that gains 1 life whenever counters are put on it.",
+  "cards": [
+    {
+      "id": "t_pc_tome",
+      "name": "Test Page Tome",
+      "oracle_text": "{T}, Put a page counter on this artifact: You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Put a page counter on this artifact: You gain 1 life.",
+          "cost": {"tap": true, "put_counters": {"counter": "page", "amount": 1}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_pc_battery",
+      "name": "Test Charge Battery",
+      "oracle_text": "{1}, Put two charge counters on this artifact: You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Put two charge counters on this artifact: You gain 1 life.",
+          "cost": {"mana": "{1}", "put_counters": {"counter": "charge", "amount": 2}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_pc_naive_tome",
+      "name": "Test Naive Page Tome",
+      "oracle_text": "{T}: Put a page counter on this artifact. You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Put a page counter on this artifact. You gain 1 life.",
+          "cost": {"tap": true},
+          "effects": [
+            {"op": "add_counters", "objects": {"self_only": true}, "counter": "page", "amount": {"const": 1}},
+            {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pc_watcher",
+      "name": "Test Page Watcher",
+      "oracle_text": "{T}, Put a page counter on this artifact: Draw a card.\nWhenever one or more counters are put on this artifact, you gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Put a page counter on this artifact: Draw a card.",
+          "cost": {"tap": true, "put_counters": {"counter": "page"}},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more counters are put on this artifact, you gain 1 life.",
+          "trigger": {"event": "counter_placed", "source": "self"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

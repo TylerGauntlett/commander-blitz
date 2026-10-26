@@ -523,6 +523,10 @@
     "artist": "Jason Rainville",
     "scryfall_id": "6d00ced6-7ba3-4d78-a680-9d3211704ca2"
   },
+  "arc_reactor": {
+    "artist": "Maxim Ruabtsev",
+    "scryfall_id": "339acb17-4b8e-4836-9cc5-8a0a946ebc73"
+  },
   "arcane_bombardment": {
     "artist": "Marta Nael",
     "scryfall_id": "ef7e6e2d-d984-483e-b117-b1c5d640dc23"
@@ -998,6 +1002,10 @@
   "bastion_enforcer": {
     "artist": "Matt Stewart",
     "scryfall_id": "7cbf17a0-2dbc-4e79-9cfa-ea49b1605105"
+  },
+  "bastion_inventor": {
+    "artist": "Tony Foti",
+    "scryfall_id": "7b6fa167-9f2f-4889-8715-11ed20c4cc94"
   },
   "bastion_of_remembrance": {
     "artist": "Yuu Fujiki",
@@ -3472,6 +3480,10 @@
     "artist": "Mark Tedin",
     "scryfall_id": "54069e65-eef4-4fb8-bb0d-932a4c9889b3"
   },
+  "enraged_giant": {
+    "artist": "Anthony Palumbo",
+    "scryfall_id": "40dc3b59-baae-4bf0-b5ce-fa9a915af066"
+  },
   "entish_restoration": {
     "artist": "Calder Moore",
     "scryfall_id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e"
@@ -4096,6 +4108,10 @@
     "artist": "Joe Slucher",
     "scryfall_id": "3bd39a06-c53a-42c2-b2df-028358f03406"
   },
+  "forsaken_monument": {
+    "artist": "Piotr Dura",
+    "scryfall_id": "5f9e232e-39d0-4890-b935-98a1c14ef344"
+  },
   "forsaken_sanctuary": {
     "artist": "Vincent Proce",
     "scryfall_id": "f3e0b983-62e7-43fb-b5d5-402ea60a64d7"
@@ -4119,6 +4135,10 @@
   "foul_orchard": {
     "artist": "Yeong-Hao Han",
     "scryfall_id": "1e1bad7b-e102-4dff-b79a-fd755c2b6d49"
+  },
+  "foundry_assembler": {
+    "artist": "Karl Kopinski",
+    "scryfall_id": "e83a2862-a2d7-4d87-a4b8-def9f441f5fa"
   },
   "foundry_inspector": {
     "artist": "Jason A. Engle",
@@ -5937,6 +5957,10 @@
     "artist": "Stephen Tappin",
     "scryfall_id": "0ab27f51-230c-469d-9b8a-a21b9d0fccf5"
   },
+  "kappa_cannoneer": {
+    "artist": "Jesper Ejsing",
+    "scryfall_id": "d644be98-83df-4546-a448-247f40299993"
+  },
   "karametra_s_acolyte": {
     "artist": "Chase Stone",
     "scryfall_id": "374a1b7c-ce11-4734-aff2-b0bd00857fad"
@@ -7010,6 +7034,10 @@
     "artist": "Daarken",
     "scryfall_id": "fdc3e998-760b-41ca-9f92-270aaa82f3fb"
   },
+  "mazemind_tome": {
+    "artist": "Randy Gallegos",
+    "scryfall_id": "fbae0603-fdc3-488a-8917-08edf0884e1d"
+  },
   "meandering_river": {
     "artist": "Cliff Childs",
     "scryfall_id": "01c4f4c9-4f3d-4b4a-86e3-1d4c49da2de8"
@@ -7205,6 +7233,10 @@
   "mishra_s_workshop": {
     "artist": "Kaja Foglio",
     "scryfall_id": "135de5c7-6ac9-4b68-8f1a-97f120a4b125"
+  },
+  "misleading_signpost": {
+    "artist": "Julian Kok Joon Wen",
+    "scryfall_id": "a85e2eb8-ccae-4761-92a0-6bb24ee4a40c"
   },
   "misshapen_fiend": {
     "artist": "Adam Rex",
@@ -7485,6 +7517,14 @@
   "mutilate": {
     "artist": "Zoltan Boros & Gabor Szikszai",
     "scryfall_id": "c2038b12-30b8-42ff-a15d-87cbbf72c939"
+  },
+  "myr_1_1_c": {
+    "artist": "Ryan Pancoast",
+    "scryfall_id": "345a3db8-90f4-4574-8040-e0fa4ea6b3e6"
+  },
+  "myr_battlesphere": {
+    "artist": "Franz Vohwinkel",
+    "scryfall_id": "7d2ca7dc-a999-4708-aeec-9f8e0f0db1e5"
   },
   "myr_retriever": {
     "artist": "Trevor Hairsine",
@@ -9046,6 +9086,10 @@
   "return_of_the_wildspeaker": {
     "artist": "Chris Rallis",
     "scryfall_id": "2fa1dac5-51ba-403e-b48b-d2c0d23a8146"
+  },
+  "reverse_engineer": {
+    "artist": "Chase Stone",
+    "scryfall_id": "07fff0a3-1315-42f7-9d36-4f5eaad0c62e"
   },
   "revitalize": {
     "artist": "Mathias Kollros",
@@ -11091,6 +11135,10 @@
     "artist": "Josu Hernaiz",
     "scryfall_id": "c08d3b3a-6923-4891-b545-51cfe65e4c7d"
   },
+  "sweatworks_brawler": {
+    "artist": "Zack Stella",
+    "scryfall_id": "cc603ab7-2789-4732-a72b-1f9294d07f80"
+  },
   "swift_spinner": {
     "artist": "Nils Hamm",
     "scryfall_id": "264f78d8-d554-45f3-867e-19dba38e4644"
@@ -13057,6 +13105,10 @@
   "wind_drake": {
     "artist": "Todd Lockwood",
     "scryfall_id": "4a83db8b-ada2-4796-a116-324462a014a8"
+  },
+  "wind_kin_raiders": {
+    "artist": "Shreya Shetty",
+    "scryfall_id": "8037f588-6b9f-472d-b26a-2c06db976ad0"
   },
   "wind_scarred_crag": {
     "artist": "Svetlin Velinov",

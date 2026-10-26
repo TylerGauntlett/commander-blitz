@@ -314,6 +314,8 @@ def _object_matches(
         return False
     if (want := filt.get("colors")) and not set(want) & set(colors):
         return False
+    if filt.get("colorless") and colors:
+        return False
     if (want := filt.get("keywords")) and not set(want).issubset(keywords):
         return False
     if (want := filt.get("not_keywords")) and set(want) & set(keywords):

@@ -273,6 +273,7 @@ This is the long tail, and where the build order comes from.
 | Hideaway | shipped | the `hideaway` op writes the `exiled_by` link and `revealed_to`; `play_exiled` is the permission, reading it back | `hideaway` |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
 | Imprint | free | `exile` with `until_leaves` writes the link; `{"zone": "exile", "controller": "any", "exiled_with": "self"}` reads it back | — |
+| Improvise | shipped | `pay_generic_with: "tap_artifacts"` — convoke's shape over artifacts, generic only as printed; which artifacts tap is asked as it is paid, before the mana | `pay_generic_with` |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
 | Infect † | shipped | `Keyword`, read by `damage_permanent` and `damage_player` -- wither's counters, plus poison to players | `infect` |
 | Inspired | free | `becomes_untapped` trigger — the event existed; the untap *step* now says which permanents it untapped | — |

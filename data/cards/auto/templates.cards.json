@@ -5818,6 +5818,40 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}{C}."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "arc_reactor",
+      "mana_cost": "{5}",
+      "name": "Arc Reactor",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nThis artifact enters tapped.\n{T}: Add {C}{C}{C}.",
+      "pay_generic_with": "tap_artifacts",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "link": "self",
@@ -10898,6 +10932,32 @@
         "Soldier"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "bastion_inventor",
+      "keywords": [
+        "hexproof"
+      ],
+      "mana_cost": "{5}{U}",
+      "name": "Bastion Inventor",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nHexproof (This creature can't be the target of spells or abilities your opponents control.)",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Artificer"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -38701,6 +38761,32 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "enraged_giant",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Enraged Giant",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nTrample, haste",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Giant"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -46112,6 +46198,71 @@
     {
       "abilities": [
         {
+          "affects": {
+            "colorless": true,
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Colorless creatures you control get +2/+2.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "add_mana": "{C}",
+          "affects_player": "you",
+          "effect": "add_mana_on_tap",
+          "kind": "static",
+          "tapped_permanent": {
+            "produced": "{C}"
+          },
+          "text": "Whenever you tap a permanent for {C}, add an additional {C}."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a colorless spell, you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colorless": true
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "forsaken_monument",
+      "mana_cost": "{5}",
+      "name": "Forsaken Monument",
+      "oracle_text": "Colorless creatures you control get +2/+2.\nWhenever you tap a permanent for {C}, add an additional {C}.\nWhenever you cast a colorless spell, you gain 2 life.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -46348,6 +46499,25 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [],
+      "colors": [],
+      "id": "foundry_assembler",
+      "mana_cost": "{5}",
+      "name": "Foundry Assembler",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)",
+      "pay_generic_with": "tap_artifacts",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Assembly-Worker"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -66527,6 +66697,103 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{4}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward {4}"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another artifact you control enters, put a +1/+1 counter on this creature. It can't be blocked this turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another artifact you control enters, put a +1/+1 counter on this creature. It can't be blocked this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kappa_cannoneer",
+      "mana_cost": "{5}{U}",
+      "name": "Kappa Cannoneer",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nWard {4}\nWhenever this creature or another artifact you control enters, put a +1/+1 counter on this creature. It can't be blocked this turn.",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Turtle",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -79046,6 +79313,117 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "put_counters": {
+              "amount": 1,
+              "counter": "page"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Put a page counter on this artifact: Scry 1."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "put_counters": {
+              "amount": 1,
+              "counter": "page"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Put a page counter on this artifact: Draw a card."
+        },
+        {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "self_only": true
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "count": {
+                    "binding": "exiled"
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",
+          "trigger": {
+            "event": "state",
+            "state": {
+              "cmp": ">=",
+              "left": {
+                "counters_on": {
+                  "counter": "page",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mazemind_tome",
+      "mana_cost": "{2}",
+      "name": "Mazemind Tome",
+      "oracle_text": "{T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{2}, {T}, Put a page counter on this artifact: Draw a card.\nWhen there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -81097,6 +81475,80 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "redirect_attack"
+                }
+              ],
+              "op": "may",
+              "prompt": "Reselect which player or permanent the creature is attacking?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking.",
+          "trigger": {
+            "condition": {
+              "step_is": "declare_attackers"
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{U}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U}."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "misleading_signpost",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Misleading Signpost",
+      "oracle_text": "Flash\nWhen this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)\n{T}: Add {U}.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -84087,6 +84539,101 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "create_token",
+              "token": "myr_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create four 1/1 colorless Myr artifact creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "tapped_myr",
+              "objects": {
+                "controller": "you",
+                "count": "any",
+                "subtypes": [
+                  "Myr"
+                ],
+                "tapped": false,
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Tap any number of untapped Myr you control"
+            },
+            {
+              "objects": {
+                "binding": "tapped_myr"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "binding": "tapped_myr"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "tapped_myr"
+                }
+              },
+              "defender_of": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "myr_battlesphere",
+      "mana_cost": "{7}",
+      "name": "Myr Battlesphere",
+      "oracle_text": "When this creature enters, create four 1/1 colorless Myr artifact creature tokens.\nWhenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Myr",
+        "Construct"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -102493,6 +103040,32 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "reverse_engineer",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Reverse Engineer",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nDraw three cards.",
+      "pay_generic_with": "tap_artifacts",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -124702,6 +125275,32 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sweatworks_brawler",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Sweatworks Brawler",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nMenace",
+      "pay_generic_with": "tap_artifacts",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -146970,6 +147569,32 @@
         "Knight"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wind_kin_raiders",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Wind-Kin Raiders",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nFlying",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

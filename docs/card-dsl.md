@@ -1171,6 +1171,22 @@ boolean because the number is what the rule says and reads the same on the rarer
 "three or more colors". Honoured by all three matchers: the selector language, the
 trigger filter, and `_matches_printed`.
 
+### "Colorless" — `colorless`
+
+```jsonc
+"affects": { "types": ["Creature"], "controller": "you", "colorless": true }   // Forsaken Monument's anthem
+"filter":  { "colorless": true }                                                 // …"whenever you cast a colorless spell"
+```
+
+No colours at all (105.2c). `true` only: colorless is not a colour, so
+`colors: ["C"]` names nothing, an empty `colors` is no filter, and the loader
+refuses `false` rather than read it as "any" — "colored" is `min_colors: 1`. One
+word in every filter language: the selector (derived colours, where `not_colors`
+over all five says the same the long way), static and counting filters and the
+trigger filter (the printed face, as `colors` is), and the cost-reduction count
+(derived on the battlefield). It is the reading protection's `from_colorless`
+already makes of a source.
+
 ### "Two cards that share a color" — `two_share_a_color`
 
 ```jsonc
@@ -2895,6 +2911,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
+  "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
                               "objects": { "self_only": true } } },  // …for each
@@ -2977,6 +2994,30 @@ for each age counter on it". It is read only by `may`'s `pay`, and that location
 is forced rather than convenient: an activated ability's cost is settled by
 legality *before* any effect has run, so a value expression there would have
 nothing to read.
+
+### `put_counters` — counters on the source, paid on activation
+
+"{T}, **Put a page counter on this artifact**: Scry 1." — Mazemind Tome.
+
+```jsonc
+"cost": { "tap": true, "put_counters": { "counter": "page", "amount": 1 } }
+```
+
+`counter` is the kind (required, checked by the same near-miss rule as every
+other counter kind) and `amount` a positive literal, defaulting to one. The
+counters go on the ability's own permanent as the ability is activated (602.2b),
+so they are there while it waits on the stack and stay whether it resolves or
+not. The loader refuses the key anywhere but an activated ability's cost: an
+additional cost to cast has a spell for a source.
+
+It is a placement like any other (122.6): it raises `counter_placed` with the
+activator as `put_by`, and counter replacements apply — except one marked
+`effects_only` (Doubling Season's "if **an effect** would put"), because a cost
+is not an effect. The near misses are the `add_counters` **op**, which moves the
+counter to resolution where a response can stop it arriving, and `loyalty`,
+which is a planeswalker's and carries 606.3's once per turn. Like every non-tap
+cost it disqualifies a mana ability from `Cost.is_tap_only()`, so the payment
+solver never pays it silently.
 
 ### `exile_from_hand` — the pitch cost, and why it is not a discard
 
@@ -3450,6 +3491,7 @@ The form list is
 { "cast_during": "your_main" }                // addendum — the phase the spell was *cast* in
 { "was_cast": true }                          // 603.6e — *this* arrival was a resolving spell
 { "is_active_player": { "binding": "event_player" } }   // "during their turn"
+{ "step_is": "declare_attackers" }            // the step the game is in *now*
 ```
 
 `is_monarch` takes a player spec, so "if an opponent is the monarch" is
@@ -3495,6 +3537,17 @@ the battlefield rather than about anything the card did earlier in the game —
 see ["If it was cast"](card-dsl-cookbook.md#if-it-was-cast--6036e) in the cookbook. The loader confines it to
 a `self_enters` trigger, which is the only place the clause is printed and the
 only place it asks about the right object.
+
+`step_is` is the step the game is in when the condition is asked, named the
+way `Step` names it lower-cased (`"declare_attackers"`, `"end_step"`), or a list
+of names for any of them; the loader refuses a name the turn does not have.
+"When this artifact enters **during the declare attackers step**" (Misleading
+Signpost) is a `self_enters` trigger with `{"step_is": "declare_attackers"}` as
+its `condition`. Asked again on resolution it gives the same answer, since a
+step does not end while the stack is non-empty. `cast_during` is the near miss:
+it reads the phase stamped on a spell as it was cast, is false for anything
+never cast, and names a phase, where "combat" spans the declare blockers step a
+reselection must not reach.
 
 `is_active_player` takes a player spec the way `is_monarch` does, and it is
 "during **their** turn" — the turn of the player a trigger's event was about.
@@ -3706,7 +3759,44 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library`
+`searches_library` · `state`
+
+### `state` — "When there are four or more page counters on this artifact"
+
+A **state trigger** (603.8) — Mazemind Tome's third line:
+
+```jsonc
+{ "kind": "triggered",
+  "text": "When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",
+  "trigger": { "event": "state",
+               "state": { "cmp": ">=",
+                          "left":  { "counters_on": { "counter": "page",
+                                                      "objects": { "self_only": true } } },
+                          "right": { "const": 4 } } },
+  "effects": [ { "op": "exile", "objects": { "self_only": true }, "as": "exiled" },
+               { "op": "if", "condition": { "cmp": ">", "left": { "count": { "binding": "exiled" } },
+                                            "right": { "const": 0 } },
+                 "then": [ { "op": "gain_life", "player": "you", "amount": { "const": 4 } } ] } ] }
+```
+
+`state` is any condition. No event fires it: `triggers.check_state_triggers`
+walks the battlefield whenever state-based actions are checked (after them, so
+a permanent they remove triggers nothing) and queues the ability when its
+`state` holds. It then goes on the stack like any trigger and can be responded
+to. It does not trigger again while it is waiting or on the stack; once it has
+left the stack, a state that still holds triggers it again at the next check —
+so the effect should normally make the state false. `state` is not re-asked on
+resolution: it is the trigger condition, not an intervening "if" (603.4).
+
+The loader requires `state` on `event: "state"` and refuses it on every other
+event; refuses `source`, `filter`, `condition`, `nth`, `max_per_turn` and
+`batched` beside it, since there is no event for them to read; refuses any
+`active_zones` but the battlefield; and refuses `state` as a `delayed_trigger`'s
+event. The near miss is `counter_placed` with a `counters_on` condition, which
+needs a placement to fire, fires again on a fifth counter while the first
+ability waits, and re-asks its condition on resolution. Ascend's city's blessing
+is checked in the same pass but is not a triggered ability at all — see
+[Ascend](card-dsl-cookbook.md#ascend).
 
 **"Whenever this creature or another creature dies"** (Blood Artist, Zulaport
 Cutthroat, Falkenrath Noble) is a filtered `dies` / `creature_dies` with **no**
@@ -3869,6 +3959,26 @@ naive "amount minus toughness" gets wrong.
 
 `trample` is the near miss and spills for the same reason, but only in combat.
 `prevent_damage` suppresses without redirecting.
+
+### `damage`'s `defender_of`
+
+"…deals X damage to **the player or planeswalker it's attacking**" — Myr
+Battlesphere. `defender_of` is a selector naming the attacking creature, and the
+recipient is read off the combat as the damage is dealt: the planeswalker it is
+attacking, or else the player (506.2).
+
+```jsonc
+{ "op": "damage", "amount": { "count": { "binding": "tapped_myr" } },
+  "defender_of": { "zone": "battlefield", "self_only": true } }
+```
+
+A creature no longer attacking deals nothing, and neither does one attacking a
+battle, which is neither a player nor a planeswalker. The loader takes only a
+selector. `"player": {"binding": "defender"}` off the `attacks` trigger is the
+near miss: it names the walker's **controller** when the attack is at a walker,
+and it is fixed as the trigger fires, so an attack moved by `redirect_attack`
+in between is not followed. The tapping half of the card is in the cookbook,
+under ["Tap X untapped Myr"](card-dsl-cookbook.md#tap-x-untapped-myr--an-optional-choice-of-any-number-at-resolution).
 
 ### A mana ability that splits colours
 

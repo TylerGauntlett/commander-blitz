@@ -38,7 +38,12 @@ from commanderblitz.engine.structs import (
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
-from commanderblitz.engine.triggers import OBJECT_SUBJECT_TRIGGERS, RECIPIENT_KEYS, TRIGGER_EVENTS
+from commanderblitz.engine.triggers import (
+    OBJECT_SUBJECT_TRIGGERS,
+    RECIPIENT_KEYS,
+    STATE_TRIGGER,
+    TRIGGER_EVENTS,
+)
 from commanderblitz.engine.turn import DELAY_STEPS
 
 from ..schema import CardModel, CostModel
@@ -495,6 +500,14 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
     if event not in TRIGGER_EVENTS:
         raise DslError(
             f"{where}: unknown trigger event {event!r} (implemented: {sorted(TRIGGER_EVENTS)})"
+        )
+    if event == STATE_TRIGGER:
+        # Nothing is ever emitted under this name: a state trigger is found by
+        # `triggers.check_state_triggers` walking the battlefield's printed
+        # abilities, so a delayed one would be installed and never fire.
+        raise DslError(
+            f"{where}: a delayed_trigger watches an event, and {STATE_TRIGGER!r} "
+            f"is a printed state trigger's, not one"
         )
     unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
     if unsupported:
@@ -1711,6 +1724,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "as" in effect and not isinstance(effect["as"], str):
             raise DslError(f"{where}: discard's 'as' is a binding name")
+    if op == "redirect_attack" and not effect.get("objects"):
+        # Without it the pool is empty and the op silently moves nothing -- a
+        # Misleading Signpost whose reselection never happens.
+        raise DslError(
+            f"{where}: 'redirect_attack' needs 'objects' naming the attacking "
+            f"creature to reselect for, normally {{'target': 't1'}}"
+        )
     if op == "choose_permanents" and "as" not in effect:
         # It changes nothing on the board, so a choice nobody reads back is a
         # question put to the player for no reason -- and a card written that
@@ -2543,6 +2563,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if effect.get("up_to"):
             raise DslError(f"{where}: a whole-hand discard is not optional")
 
+    if op == "damage" and "defender_of" in effect:
+        # "…the player or planeswalker **it's** attacking" -- one creature,
+        # named by a selector. Anything else would read as a pool and quietly
+        # aim at the first attacker found.
+        if not isinstance(effect["defender_of"], Mapping):
+            raise DslError(
+                f"{where}.defender_of: a selector naming the attacking creature, "
+                f"e.g. {{'zone': 'battlefield', 'self_only': true}}"
+            )
+        validate_selector(effect["defender_of"], f"{where}.defender_of")
     if op == "damage" and "excess_to" in effect:
         # "Excess damage is dealt to that creature's controller instead."
         # Only meaningful on the single-target form: `objects` is a pool and

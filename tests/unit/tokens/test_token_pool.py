@@ -472,3 +472,31 @@ class TestJosuVesssKnightsAreZombieKnightsWithMenace:
         assert other is not None
         assert "menace" not in other.keywords
         assert "Knight" not in other.subtypes
+
+
+class TestMyrBattlespheresMyrAreColorlessArtifactMyr:
+    """Myr Battlesphere: *"create four **1/1 colorless Myr artifact** creature
+    tokens"*, and then *"you may tap X untapped **Myr** you control"*.
+
+    The pool had 1/1 colorless artifact creatures -- Servo, Gnome, Soldier --
+    and no Myr. The subtype is the card: its own attack trigger counts untapped
+    Myr, so a Servo in its place would leave the Battlesphere's four tokens
+    unable to feed it.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("myr_1_1_c") is not None
+
+    def test_it_is_a_one_one_colorless_artifact_myr(self, pool):
+        myr = pool.get("myr_1_1_c")
+        assert (myr.power, myr.toughness) == (1, 1)
+        assert not myr.colors, "colorless -- the printed word"
+        assert "Artifact" in myr.types and "Creature" in myr.types
+        assert list(myr.subtypes) == ["Myr"]
+        assert not myr.keywords
+        assert myr.is_token
+
+    def test_the_servo_is_still_a_separate_token(self, pool):
+        servo = pool.get("servo_1_1_c")
+        assert servo is not None
+        assert list(servo.subtypes) == ["Servo"]

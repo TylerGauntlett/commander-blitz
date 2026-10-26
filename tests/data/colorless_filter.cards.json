@@ -1,0 +1,38 @@
+{
+  "_comment": "Cards that exist only for tests/unit/statics/test_colorless_filter.py. Never part of a deck list. t_cl_monument is Forsaken Monument's first and third lines; t_cl_purge destroys each colorless creature, the effect-side reader of the same key.",
+  "cards": [
+    {
+      "id": "t_cl_monument",
+      "name": "Test Colorless Monument",
+      "oracle_text": "Colorless creatures you control get +2/+2.\nWhenever you cast a colorless spell, you gain 2 life.",
+      "mana_cost": "{7}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Colorless creatures you control get +2/+2.",
+          "effect": "buff",
+          "affects": {"types": ["Creature"], "controller": "you", "colorless": true},
+          "power": {"const": 2},
+          "toughness": {"const": 2}
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a colorless spell, you gain 2 life.",
+          "trigger": {"event": "spell_cast", "controller": "you", "filter": {"colorless": true}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 2}}]
+        }
+      ]
+    },
+    {
+      "id": "t_cl_purge",
+      "name": "Test Colorless Purge",
+      "oracle_text": "Destroy each colorless creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Sorcery"],
+      "spell_effects": [
+        {"op": "destroy", "objects": {"zone": "battlefield", "types": ["Creature"], "colorless": true, "count": "all"}}
+      ]
+    }
+  ]
+}

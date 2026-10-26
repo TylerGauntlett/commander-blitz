@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **101** capabilities.
+**109 cards** blocked by **92** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
-| [add-mana-on-tap-produced-filter](#add-mana-on-tap-produced-filter) | 1 | 893 | static_effect |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-block-restriction-current-power](#attack-block-restriction-current-power) | 1 | 5123 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -38,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash-spell-filter](#cast-as-though-flash-spell-filter) | 1 | 1301 | static_effect |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [colorless-filter](#colorless-filter) | 1 | 893 | selector |
 | [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
@@ -46,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [damage-taken-this-turn-per-player](#damage-taken-this-turn-per-player) | 1 | 759 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
-| [declare-attackers-step-condition](#declare-attackers-step-condition) | 1 | 3213 | value |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [dethrone](#dethrone) | 1 | 1278 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -64,7 +61,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
 | [imprint-copy-characteristics](#imprint-copy-characteristics) | 1 | 2853 | static_effect |
-| [improvise](#improvise) | 1 | 942 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -79,7 +75,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
-| [myr-token](#myr-token) | 1 | 896 | token |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -91,10 +86,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [plot](#plot) | 1 | 7506 | op |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
-| [put-counters-cost](#put-counters-cost) | 1 | 6513 | cost |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
-| [redirect-attack](#redirect-attack) | 1 | 3213 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -103,10 +96,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-filter-power](#spell-filter-power) | 1 | 675 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [state-trigger](#state-trigger) | 1 | 6513 | trigger_event |
 | [static-filter-derived-subtypes](#static-filter-derived-subtypes) | 1 | 6994 | selector |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
-| [tap-x-permanents-on-resolution](#tap-x-permanents-on-resolution) | 1 | 896 | op |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
@@ -456,22 +447,6 @@ Blocks **1** card.
 
 </details>
 
-## add-mana-on-tap-produced-filter
-
-Blocks **1** card.
-
-- **(static_effect)** an add_mana_on_tap condition on the mana the tapped permanent PRODUCED rather than on what the permanent is: "whenever you tap a permanent for {C}" fires when any permanent's {T} mana ability makes {C} (Sol Ring, Wastes, Eldrazi Temple), for any permanent type, and adds {C}
-  <br>Why the existing vocabulary won't do: add_mana_on_tap's tapped_permanent takes only types, subtypes, supertypes and attached (player_statics.mana_added_on_tap), all describing the permanent; there is no key reading the mana produced, so tapped_permanent {} would add {C} for every Forest tapped for {G}. double_nonland_mana / double_land_mana double whatever was made and are split by land/nonland, not by mana type
-
-<details><summary>Cards waiting on this</summary>
-
-- **Forsaken Monument** (rank 893) — `forsaken_monument`
-  - Whenever you tap a permanent for {C}, add an additional {C}.
-  - Colorless creatures you control get +2/+2.
-  - Whenever you cast a colorless spell, you gain 2 life.
-
-</details>
-
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -615,22 +590,6 @@ Blocks **1** card.
 
 </details>
 
-## colorless-filter
-
-Blocks **1** card.
-
-- **(selector)** a 'colorless' filter key (zero colours, 105.2c) usable in a static's affects ("Colorless creatures you control get +2/+2") and in a spell_cast trigger filter ("Whenever you cast a colorless spell")
-  <br>Why the existing vocabulary won't do: static_filter_keys and trigger_filter_keys carry only colors (match any listed colour) and min_colors; colorless is not a colour letter, an empty colors list matches everything, and not_colors exists only in the effect selector language, not in static or trigger filters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Forsaken Monument** (rank 893) — `forsaken_monument`
-  - Whenever you tap a permanent for {C}, add an additional {C}.
-  - Colorless creatures you control get +2/+2.
-  - Whenever you cast a colorless spell, you gain 2 life.
-
-</details>
-
 ## combat-damage-batch-per-opponent
 
 Blocks **1** card.
@@ -730,20 +689,6 @@ Blocks **1** card.
 
 - **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
   - {T}: Destroy target creature that dealt damage to you this turn.
-
-</details>
-
-## declare-attackers-step-condition
-
-Blocks **1** card.
-
-- **(value)** a trigger condition that is true only when the current step is the declare attackers step ("When this artifact enters during the declare attackers step")
-  <br>Why the existing vocabulary won't do: condition_keys has is_your_turn, is_active_player and cast_during (which reads how the spell was cast, not the current step); nothing reads the game's current step, so the enters trigger cannot be gated to that step
-
-<details><summary>Cards waiting on this</summary>
-
-- **Misleading Signpost** (rank 3213) — `misleading_signpost`
-  - When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)
 
 </details>
 
@@ -998,20 +943,6 @@ Blocks **1** card.
 
 </details>
 
-## improvise
-
-Blocks **1** card.
-
-- **(cost)** a third value for the card-level pay_generic_with, "tap_artifacts": while casting, each untapped artifact you control tapped after mana abilities pays for {1} of the spell's generic cost (702.126), mirroring convoke's tap_creatures but over artifacts and paying generic only, never colored
-  <br>Why the existing vocabulary won't do: pay_generic_with is the right card-level key but the schema (cards/schema.py) admits only "tap_creatures" (convoke, which taps creatures and can pay colored mana) and "exile_from_graveyard" (delve); neither taps artifacts, and cost_reduction would lower the price without tapping anything
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kappa Cannoneer** (rank 942) — `kappa_cannoneer`
-  - Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)
-
-</details>
-
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -1213,21 +1144,6 @@ Blocks **1** card.
 
 </details>
 
-## myr-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 colorless Myr artifact creature token (e.g. id myr_1_1_c)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Myr; the nearest colorless 1/1 artifact creature tokens (servo_1_1_c, gnome_1_1_c, soldier_1_1_c) have the wrong creature type, which matters because the card's own attack trigger counts untapped Myr
-
-<details><summary>Cards waiting on this</summary>
-
-- **Myr Battlesphere** (rank 896) — `myr_battlesphere`
-  - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
-  - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
-
-</details>
-
 ## noted-mana-type
 
 Blocks **1** card.
@@ -1389,22 +1305,6 @@ Blocks **1** card.
 
 </details>
 
-## put-counters-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that puts N counters of a named kind (here one 'page' counter) on the source permanent, paid at activation alongside {T} and mana
-  <br>Why the existing vocabulary won't do: cost_keys has remove_counters and remove_counters_from_among but nothing that adds counters; the only cost that adds counters is loyalty, which is hard-wired to the 'loyalty' kind. Writing add_counters as an effect moves the payment to resolution, which the packet notes forbid
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mazemind Tome** (rank 6513) — `mazemind_tome`
-  - {T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-  - {2}, {T}, Put a page counter on this artifact: Draw a card.
-  - When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.
-
-</details>
-
 ## raccoon-3-3-g
 
 Blocks **1** card.
@@ -1431,20 +1331,6 @@ Blocks **1** card.
 - **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
   - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
   - III — Create a 4/4 red Dragon creature token with flying.
-
-</details>
-
-## redirect-attack
-
-Blocks **1** card.
-
-- **(op)** an op that changes which player, planeswalker or battle a target attacking creature is attacking, with the new defender chosen by the effect's controller from among the attacking creature's legal defenders, excluding the attacking creature's controller and permanents that player controls
-  <br>Why the existing vocabulary won't do: cant_attack_player and must_attack_planeswalker only constrain attack declarations that have not happened yet; put_onto_battlefield/create_token `attacking` only set the defender for an object entering the battlefield attacking. No op changes the defender of a creature that is already attacking
-
-<details><summary>Cards waiting on this</summary>
-
-- **Misleading Signpost** (rank 3213) — `misleading_signpost`
-  - When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)
 
 </details>
 
@@ -1563,22 +1449,6 @@ Blocks **1** card.
 
 </details>
 
-## state-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a state trigger (603.8) that fires when the source has at least N counters of a kind ('four or more page counters on this artifact') and does not retrigger while its ability is on the stack, with effects exile-self then 'if you do' gain 4 life
-  <br>Why the existing vocabulary won't do: trigger_events has counter_placed, which fires on placement rather than on the state holding; a counter_placed trigger with a counters_on >= 4 condition would also re-trigger on every later counter and depends on cost-placed counters raising the event, which no current cost does
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mazemind Tome** (rank 6513) — `mazemind_tome`
-  - {T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-  - {2}, {T}, Put a page counter on this artifact: Draw a card.
-  - When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.
-
-</details>
-
 ## static-filter-derived-subtypes
 
 Blocks **1** card.
@@ -1605,21 +1475,6 @@ Blocks **1** card.
 
 - **Pugnacious Hammerskull** (rank 5244) — `pugnacious_hammerskull`
   - Whenever this creature attacks while you don't control another Dinosaur, put a stun counter on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)
-
-</details>
-
-## tap-x-permanents-on-resolution
-
-Blocks **1** card.
-
-- **(op)** an optional resolution-time choice to tap any number X of untapped permanents matching a selector (untapped Myr you control), binding X so later effects can read it, then damage dealt by the source to the player or planeswalker it is attacking
-  <br>Why the existing vocabulary won't do: `may` carries `x` and `pay` but nothing documents paying by tapping a chosen number of permanents; `tap_permanents` exists only as an activated-ability cost with a fixed count, not on a triggered ability; and `damage` has no documented player/object spec for 'the player or planeswalker this creature is attacking' (`defending` is a trigger key, not a damage recipient)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Myr Battlesphere** (rank 896) — `myr_battlesphere`
-  - When this creature enters, create four 1/1 colorless Myr artifact creature tokens.
-  - Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.
 
 </details>
 

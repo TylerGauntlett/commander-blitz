@@ -149,6 +149,14 @@ class CostModel(BaseModel):
     #: "your life total can't change".
     pay_energy: int = 0
     remove_counters: dict[str, Any] | None = None
+    #: "{T}, **Put a page counter on this artifact**: Scry 1." -- Mazemind
+    #: Tome. ``{"counter": kind, "amount": N}`` (``amount`` defaults to one),
+    #: put on the source as the ability is activated. The mirror of
+    #: ``remove_counters``. Not the ``add_counters`` op, which moves the payment
+    #: to resolution, where it can be responded to and where a removed source
+    #: never gets the counter; and not ``loyalty``, which is a planeswalker's
+    #: and carries 606.3's once-per-turn. Activated abilities only.
+    put_counters: dict[str, Any] | None = None
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
     #: is a cost rather than an effect, so it is paid whether or not the ability
@@ -403,6 +411,12 @@ class TriggerModel(BaseModel):
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
     #: a tuck must not fire it. Refused on every other event.
     to_zones: list[str] | None = None
+    #: For ``state``: the condition a state trigger (603.8) watches -- "When
+    #: there are four or more page counters on this artifact" (Mazemind Tome).
+    #: Any condition; it fires when the condition holds and not again while
+    #: the ability is waiting or on the stack. Required on ``state`` and
+    #: refused on every other event.
+    state: dict[str, Any] | None = None
 
 
 class AbilityModel(BaseModel):
@@ -1334,17 +1348,21 @@ class CardModel(BaseModel):
     #: replaces the printed cost; unlike it, how much you pay depends on
     #: what you sacrifice, which is why it cannot be a fixed ManaCost alone.
     emerge: str | None = None
-    #: **Convoke** and **delve**: a way to pay part of the *generic* cost with
-    #: something other than mana. ``"tap_creatures"`` taps creatures you
-    #: control; ``"exile_from_graveyard"`` exiles cards from your graveyard.
-    #: One cast line, and which creatures tap (or which cards go) is asked as
-    #: the spell is paid for -- see ADR 0020.
+    #: **Convoke**, **improvise** and **delve**: a way to pay part of the
+    #: *generic* cost with something other than mana. ``"tap_creatures"`` taps
+    #: creatures you control; ``"tap_artifacts"`` taps artifacts you control
+    #: (improvise, 702.126a); ``"exile_from_graveyard"`` exiles cards from
+    #: your graveyard. One cast line, and which permanents tap (or which cards
+    #: go) is asked as the spell is paid for -- see ADR 0020.
     #:
-    #: Generic only, and clamped at what the spell actually costs. Convoke's
-    #: "or one mana of that creature's colour" is a documented simplification:
-    #: it is the same trade `cost_reduction` already makes, and it bites only
-    #: on a spell whose coloured pips a creature could have paid.
-    pay_generic_with: Literal["tap_creatures", "exile_from_graveyard"] | None = None
+    #: Generic only, and clamped at what the spell actually costs. That is
+    #: improvise's and delve's printed rule; convoke's "or one mana of that
+    #: creature's colour" is a documented simplification: it is the same trade
+    #: `cost_reduction` already makes, and it bites only on a spell whose
+    #: coloured pips a creature could have paid.
+    pay_generic_with: (
+        Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
+    ) = None
     #: **Offering**: the creature type the emerge sacrifice must be —
     #: "sacrifice a Goblin". Offering is emerge with the fodder narrowed and
     #: the timing widened, so it is a qualifier on that field rather than a

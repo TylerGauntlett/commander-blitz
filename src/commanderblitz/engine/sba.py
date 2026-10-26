@@ -40,6 +40,13 @@ def run(state: GameState) -> None:
         if not check(state):
             break
     check_game_over(state)
+    if not state.game_over:
+        # State triggers (603.8) are checked whenever state-based actions are,
+        # and after them: a permanent the SBAs just removed triggers nothing.
+        # Local: `triggers` reaches `sba` through `primitives`.
+        from .triggers import check_state_triggers
+
+        check_state_triggers(state)
 
 
 def check(state: GameState) -> bool:
@@ -71,9 +78,10 @@ def _ascend(state: GameState) -> bool:
     Not a triggered ability, and that is the whole reason this lives here.
     Ascend is not an *event*: a player at nine permanents who plays a land gets
     the blessing at the instant of the tenth, with nothing having fired, and
-    gets it during an opponent's turn just as readily. State triggers are
-    checked whenever state-based actions are, use no stack and cannot be
-    responded to -- so this is the pass they belong in, beside the legend rule.
+    gets it during an opponent's turn just as readily. It is checked whenever
+    state-based actions are, uses no stack and cannot be responded to -- so this
+    is the pass it belongs in, beside the legend rule. (A printed state trigger
+    does use the stack: see `triggers.check_state_triggers`.)
 
     One-way, for the rest of the game: it survives the permanents leaving, it
     survives the Ascend card itself leaving, and it is shared by every card that

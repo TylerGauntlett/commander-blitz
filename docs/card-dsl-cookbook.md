@@ -1030,9 +1030,17 @@ and never uses the stack (605.4a), so it is read at the mana choke point beside
 read in the same places too: `costs._sources_of` (so legality offers the spell
 the extra mana pays for), `costs.activate_mana_ability` (so the mana really
 arrives) and legality's chip label. `tapped_permanent` takes only `types`,
-`subtypes`, `supertypes` and `attached`. The first three are matched against the
-tapped permanent's **current** characteristics, so a land Urborg made a Swamp
-counts. `attached` is the odd one out and the only one that names *a* permanent
+`subtypes`, `supertypes`, `attached` and `produced`. The first three are matched
+against the tapped permanent's **current** characteristics, so a land Urborg made
+a Swamp counts. `produced` describes the tap rather than the permanent: Forsaken
+Monument's "whenever you tap a permanent **for {C}**" is `{"produced": "{C}"}`,
+one mana symbol the tap must have made at least one of. It is asked per mana
+option, so a Battlefield Forge tapped for {C} gets the extra and the same Forge
+tapped for {R} does not, and it fires once per tap however much of that mana
+there was — a Sol Ring makes {C}{C}{C}. It combines with the other keys:
+Ultima's "a land for {C}" is `{"types": ["Land"], "produced": "{C}"}`. An empty
+`tapped_permanent` is refused; written that way, the Monument would pay out for
+every Forest. `attached` is the odd one out and the only one that names *a* permanent
 rather than a class: it is Wild Growth's "enchanted land", checked against the
 static's own `source.attached_to`, because a fact about the Aura is not a
 description of the land. Spelled with a class key instead, Wild Growth would pay
@@ -2458,6 +2466,59 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 `self_only` out. Ninjutsu is the shape that makes that satisfier obviously
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
+
+## Reselecting an attack — `redirect_attack`
+
+```jsonc
+{ "kind": "triggered",
+  "text": "When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (…)",
+  "trigger": { "event": "self_enters", "source": "self",
+               "condition": { "step_is": "declare_attackers" } },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 1,
+                 "selector": { "zone": "battlefield", "types": ["Creature"], "attacking": true } } ],
+  "effects": [ { "op": "may",
+                 "effects": [ { "op": "redirect_attack", "objects": { "target": "t1" } } ] } ] }
+```
+
+Misleading Signpost. `redirect_attack` takes `objects` (required) and, for each
+one still attacking, asks the **effect's controller** what it attacks now: a
+player other than the creature's controller, or a planeswalker or battle one of
+those players controls. The current target is offered too, so the printed "you
+may" is a `may` around the op. The choice is written where a declared attack
+writes it, `combat.attackers` and `attacking_permanent`, so blocks and damage
+follow it: the new defending player is asked to block, and a player nobody
+attacks any more is not.
+
+Nothing is declared, so it reads like ninjutsu's `attacking` (508.4): no
+restriction, requirement or cost on declaring is consulted, no attack trigger
+fires, and the turn ledger keeps what was declared. After blockers are declared
+the op does nothing. The near misses are `cant_attack_player` and
+`must_attack_planeswalker`, which shape a declaration that has not happened yet.
+
+## "Tap X untapped Myr" — an optional choice of any number at resolution
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Whenever this creature attacks, you may tap X untapped Myr you control. If you do, …",
+  "trigger": { "event": "attacks", "source": "self" },
+  "effects": [
+    { "op": "choose_permanents", "as": "tapped_myr",
+      "objects": { "zone": "battlefield", "controller": "you", "subtypes": ["Myr"],
+                   "tapped": false, "count": "any" } },
+    { "op": "tap", "objects": { "binding": "tapped_myr" } },
+    { "op": "pump", "objects": { "zone": "battlefield", "self_only": true },
+      "power": { "count": { "binding": "tapped_myr" } }, "toughness": { "const": 0 } },
+    { "op": "damage", "amount": { "count": { "binding": "tapped_myr" } },
+      "defender_of": { "zone": "battlefield", "self_only": true } } ] }
+```
+
+Myr Battlesphere, composed: `choose_permanents` with `count: "any"` is the free
+choice of none to all, its binding is what `tap` taps, and
+`{"count": {"binding": …}}` is X. Choosing none is declining, and with X at zero
+the pump and the damage do nothing, so "if you do" needs no `may`. The near
+misses: `tap_permanents` is an activation cost with a fixed `count`; `may` with
+`pay` and `x` pays mana. The damage half is
+[`damage`'s `defender_of`](card-dsl.md#damages-defender_of).
 
 ## Banding
 
@@ -4139,7 +4200,7 @@ them where it is sitting:
 "alternative_cost": { "pay_life": 1, "exile_from_hand": {...} }  // Force of Will: not mana at all
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
-"pay_generic_with": "tap_creatures"         // convoke; "exile_from_graveyard" is delve
+"pay_generic_with": "tap_creatures"         // convoke; "tap_artifacts" is improvise, "exile_from_graveyard" delve
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards
@@ -4161,6 +4222,32 @@ them where it is sitting:
 "multikicker": "{1}{W}"                     // …the printed name for exactly those three
 "strive": "{1}{W}"                          // costs this much more per target beyond the first
 ```
+
+#### Convoke, improvise and delve
+
+One field, three currencies, each paying {1} of the spell's **generic** cost:
+`"tap_creatures"` taps untapped creatures you control (convoke, 702.51),
+`"tap_artifacts"` taps untapped artifacts you control (improvise, 702.126), and
+`"exile_from_graveyard"` exiles cards from your graveyard (delve, 702.66). The
+card is one cast line; which permanents tap or which cards go is a
+`CHOOSE_OBJECTS` asked as the spell is paid for, tagged `convoke`, `improvise`
+or `delve` ([ADR 0020](adr/0020-convoke-is-one-line.md)).
+
+```jsonc
+// Kappa Cannoneer -- "Improvise (Your artifacts can help cast this spell. Each
+//  artifact you tap after you're done activating mana abilities pays for {1}.)"
+"pay_generic_with": "tap_artifacts"
+```
+
+The tapping currencies tap **before** the mana is paid, so an artifact tapped
+to improvise cannot also be tapped for mana — the printed "after you're done
+activating mana abilities". A pick that taps the Sol Ring the rest of the cost
+needed is asked again. The type is read off derived characteristics, so an
+artifact creature counts for either keyword and an animated artifact land for
+both. None of them reaches a coloured pip: the saving goes through the same
+clamp as every cost reduction, and the ceiling is the spell's own generic cost.
+The near miss is `cost_reduction` with a count of artifacts (affinity), which
+lowers the price without tapping anything.
 
 #### Casting from the graveyard
 
@@ -4740,9 +4827,11 @@ because it decides what is castable before anything is turned over.
 The blessing is granted by a **state trigger** in the state-based-action pass
 (rule 702.131a), not by a triggered ability. Ascend is not an *event*: a player
 at nine permanents who plays a land gets it at the instant of the tenth, with
-nothing having fired, and gets it on an opponent's turn just as readily. State
-triggers use no stack and cannot be responded to, so the SBA pass — beside the
-legend rule — is where they belong.
+nothing having fired, and gets it on an opponent's turn just as readily. The
+blessing uses no stack and cannot be responded to, so the SBA pass — beside the
+legend rule — is where it belongs. A printed state trigger, which does use the
+stack, is the `state` trigger event — see
+[`state`](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact).
 
 **Player state, not object state.** `PlayerState.has_city_s_blessing` is one-way
 and lasts the rest of the game: it survives the permanents leaving, survives the
@@ -9361,7 +9450,7 @@ walk offers nothing extra: nothing carries it that was not granted it.
 
 "…and mana of any type can be spent to cast that spell" is the one clause in the
 engine that relaxes a **coloured** requirement, and nothing else could stand in
-for it. Every cost reduction there is — `spell_cost_reduction`, convoke, delve,
+for it. Every cost reduction there is — `spell_cost_reduction`, convoke, improvise, delve,
 emerge, the commander tax's negative twin — is clamped to the generic part
 precisely so that no pile of them can ever reach a pip; and `add_mana`'s "any
 type" is about what a permanent *produces*, not about what may be spent.

@@ -264,6 +264,9 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
         for pid in select_players(ctx, spec["player"]):
             damage_player(ctx.state, pid, amount, dealer)
 
+    if "defender_of" in spec:
+        _damage_what_it_attacks(ctx, spec["defender_of"], amount, dealer)
+
     if "target" in spec:
         # A single target that may be either a creature or a player ("any target").
         for ref in ctx.target_refs(str(spec["target"])):
@@ -327,6 +330,42 @@ def op_fight(ctx: EffectContext, spec: Mapping[str, Any]):
     power_b = chars(state, b).power or 0
     damage_permanent(state, b, power_a, a)
     damage_permanent(state, a, power_b, b)
+
+
+def _damage_what_it_attacks(
+    ctx: EffectContext, selector: Mapping[str, Any], amount: int, dealer: int | None
+) -> None:
+    """ "…deals X damage to **the player or planeswalker it's attacking**." --
+    Myr Battlesphere.
+
+    ``defender_of`` names the attacking creature (``{"zone": "battlefield",
+    "self_only": true}`` for "it"), and the recipient is read off the combat at
+    resolution: the planeswalker in `combat.attacking_permanent` when it is
+    attacking one, otherwise the player in `combat.attackers` (506.2). A
+    creature that is no longer attacking -- removed from combat, or gone --
+    attacks nothing, so nothing is dealt. Nor is a **battle**: the printed
+    sentence names a player or a planeswalker, and a battle is neither.
+
+    The near miss is ``"player": {"binding": "defender"}`` off the `attacks`
+    trigger, and it is wrong twice: the binding is the defending *player* even
+    when the attack is at a planeswalker, so the walker's controller would take
+    the damage the card deals to the walker; and it is fixed as the trigger
+    fires, so an attack reselected in between (`redirect_attack`) would not be
+    followed.
+    """
+
+    state = ctx.state
+    combat = state.combat
+    if combat is None:
+        return
+    for oid in resolve_pool(ctx, selector)[:1]:
+        if not combat.attacking(oid):
+            continue
+        permanent = combat.attacking_permanent.get(oid)
+        if permanent is None:
+            damage_player(state, combat.attackers[oid], amount, dealer)
+        elif "Planeswalker" in chars(state, permanent).types:
+            damage_permanent(state, permanent, amount, dealer)
 
 
 def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: str) -> None:

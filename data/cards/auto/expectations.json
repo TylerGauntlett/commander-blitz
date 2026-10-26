@@ -562,6 +562,9 @@
   "arboreal_grazer": {
     "zone": "battlefield"
   },
+  "arc_reactor": {
+    "zone": "battlefield"
+  },
   "arcane_bombardment": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -1044,6 +1047,9 @@
     "zone": "battlefield"
   },
   "bastion_enforcer": {
+    "zone": "battlefield"
+  },
+  "bastion_inventor": {
     "zone": "battlefield"
   },
   "bastion_protector": {
@@ -3517,6 +3523,9 @@
   "enormous_baloth": {
     "zone": "battlefield"
   },
+  "enraged_giant": {
+    "zone": "battlefield"
+  },
   "entish_restoration": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -4272,6 +4281,9 @@
   "forgotten_sentinel": {
     "zone": "battlefield"
   },
+  "forsaken_monument": {
+    "zone": "battlefield"
+  },
   "forsaken_sanctuary": {
     "zone": "battlefield"
   },
@@ -4293,6 +4305,9 @@
     "zone": "battlefield"
   },
   "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "foundry_assembler": {
     "zone": "battlefield"
   },
   "foundry_inspector": {
@@ -6028,6 +6043,13 @@
   "kami_of_old_stone": {
     "zone": "battlefield"
   },
+  "kappa_cannoneer": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "karametra_s_acolyte": {
     "zone": "battlefield"
   },
@@ -7134,6 +7156,12 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mazemind_tome": {
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "mek_leth_berserker": {
     "zone": "battlefield"
   },
@@ -7346,6 +7374,13 @@
     "zone": "battlefield"
   },
   "mishra_s_workshop": {
+    "zone": "battlefield"
+  },
+  "misleading_signpost": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "misshapen_fiend": {
@@ -7625,6 +7660,14 @@
   },
   "mutilate": {
     "zone": "graveyard"
+  },
+  "myr_battlesphere": {
+    "battlefield_count": 37,
+    "tokens": {
+      "count": 4,
+      "id": "myr_1_1_c"
+    },
+    "zone": "battlefield"
   },
   "myr_retriever": {
     "battlefield_count": 33,
@@ -9246,6 +9289,11 @@
   },
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
+  },
+  "reverse_engineer": {
+    "hand_size": {
+      "0": 4
+    }
   },
   "revitalize": {
     "hand_size": {
@@ -11233,6 +11281,9 @@
       "graveyard"
     ]
   },
+  "sweatworks_brawler": {
+    "zone": "battlefield"
+  },
   "swift_spinner": {
     "zone": "battlefield"
   },
@@ -13212,6 +13263,9 @@
     "zone": "battlefield"
   },
   "wilt_leaf_cavaliers": {
+    "zone": "battlefield"
+  },
+  "wind_kin_raiders": {
     "zone": "battlefield"
   },
   "wind_spirit": {

@@ -1715,6 +1715,11 @@ def _matches_printed(
     # clause rather than a spelling of that one.
     if (least := selector.get("min_colors")) is not None and len(card.colors) < int(least):
         return False
+    # "**Colorless** creatures you control get +2/+2" (Forsaken Monument):
+    # zero colours, 105.2c. Printed, like `colors` one clause up -- a static
+    # filter may not read a colour another static writes.
+    if selector.get("colorless") and card.colors:
+        return False
 
     keywords = selector.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):

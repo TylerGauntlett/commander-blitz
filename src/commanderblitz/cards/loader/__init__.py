@@ -34,7 +34,11 @@ from commanderblitz.engine.carddef import (
 )
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
-from commanderblitz.engine.effects.selectors import ZONE_NAMES, validate_selector
+from commanderblitz.engine.effects.selectors import (
+    ZONE_NAMES,
+    validate_colorless_key,
+    validate_selector,
+)
 from commanderblitz.engine.effects.values import (
     validate_value,
 )
@@ -56,6 +60,7 @@ from commanderblitz.engine.mana import (
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.triggers import (
     ORDINAL_FILTER_KEYS,
+    STATE_TRIGGER,
     TRIGGER_EVENTS,
     validate_trigger_filter,
 )
@@ -2298,6 +2303,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"{where}: 'to_zones' names zones a permanent can leave to, "
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
+        _validate_state_trigger(model, where)
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -2317,6 +2323,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             level=model.trigger.level,
             or_battle=model.trigger.or_battle,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
+            state=dict(model.trigger.state) if model.trigger.state else None,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(
@@ -2639,6 +2646,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
         _check_pt_keys(filt, path)
+        validate_colorless_key(filt, path)
     branches = filt.get("any_of")
     if branches is None:
         return
@@ -2689,6 +2697,56 @@ def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
         _check_warp_grant_filter(branch, f"{where}.any_of[{i}]")
 
 
+def _validate_state_trigger(model: AbilityModel, where: str) -> None:
+    """A state trigger (603.8) names its condition in ``state`` and nothing else.
+
+    Every refusal is a key that would load and never be read. A state trigger
+    has no event, so there is no subject for a ``filter``, no event to count
+    for ``nth``, ``max_per_turn`` or ``batched``, and its ``condition`` would
+    be an intervening "if" beside the trigger condition -- written as two
+    halves of one sentence, the second re-asked on resolution where the printed
+    card asks nothing. And it is checked over the battlefield only, where the
+    permanent the condition reads is.
+    """
+    trig = model.trigger
+    assert trig is not None
+    if trig.event != STATE_TRIGGER:
+        if trig.state is not None:
+            raise DslError(
+                f"{where}: 'state' is a state trigger's condition and means nothing "
+                f"on {trig.event!r}; write event {STATE_TRIGGER!r}"
+            )
+        return
+    if trig.state is None:
+        raise DslError(
+            f"{where}: a state trigger needs the 'state' condition it watches "
+            f"(\"when there are four or more page counters on this artifact\")"
+        )
+    validate_condition(trig.state, f"{where}.trigger.state")
+    stray = [
+        key
+        for key, present in (
+            ("source", trig.source is not None),
+            ("filter", trig.filter is not None),
+            ("condition", trig.condition is not None),
+            ("nth", trig.nth is not None),
+            ("max_per_turn", trig.max_per_turn is not None),
+            ("batched", trig.batched),
+        )
+        if present
+    ]
+    if stray:
+        raise DslError(
+            f"{where}: a state trigger has no event, so {stray} would never be "
+            f"read; put the whole condition in 'state'"
+        )
+    if list(model.active_zones) != ["battlefield"]:
+        raise DslError(
+            f"{where}: a state trigger is checked over the battlefield only, "
+            f"not {model.active_zones}"
+        )
+
+
 def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     """ "Whenever you tap a Swamp for mana, add an additional {B}." Crypt Ghast.
 
@@ -2732,6 +2790,17 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
             f"{where}.tapped_permanent.attached: must be true if present "
             f"(omit the key to match a class of permanent instead)"
         )
+    # "Whenever you tap a permanent for {C}" -- one symbol the tap must make.
+    # One, because "for {C}{C}" is not a printed condition and would read as
+    # "made two" to nobody; a number ("{2}") is refused because a mana ability
+    # makes {C}, never generic.
+    if "produced" in tapped:
+        tapped_for = tapped["produced"]
+        if tapped_for not in ("{W}", "{U}", "{B}", "{R}", "{G}", "{C}"):
+            raise DslError(
+                f"{where}.tapped_permanent.produced: one mana symbol the tap made, "
+                f"such as '{{C}}' or '{{G}}', got {tapped_for!r}"
+            )
     if isinstance(model.add_mana, dict):
         # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
         # about the source and cannot be parsed now, so the shape is checked here
@@ -2833,6 +2902,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # in the line above: a key its own set does not carry cannot appear, so
         # the check costs nothing and the loop stays one list.
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
+        validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")
     if model.effect == "block_restriction":

@@ -347,8 +347,11 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     # cannot drift apart between this offer and the payment below.
     doubled = player_doubles_mana_from(state, obj.controller, oid)
     # Crypt Ghast. Every ability reaching the solver is tap-only, so each one
-    # is "tapping it for mana" (106.12) and each option gets the extra.
-    extra = mana_added_total(state, obj.controller, oid)
+    # is "tapping it for mana" (106.12) and each option gets the extra -- asked
+    # per option, since what the tap made can decide it (Forsaken Monument).
+    def _with_extra(produced: tuple[int, ...]) -> tuple[int, ...]:
+        return plus_mana(produced, mana_added_total(state, obj.controller, oid, produced))
+
     out: list[ManaSource] = []
     for ability in abilities_of(state, oid):
         if not solver_taps(ability):
@@ -368,13 +371,12 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
                 ability_index=ability.index,
                 options=(
                     tuple(
-                        plus_mana(
+                        _with_extra(
                             mana_produced(
                                 option,
                                 doubled=doubled,
                                 times=mana_amount(state, oid, ability),
-                            ),
-                            extra,
+                            )
                         )
                         for option in mana_options_of(state, oid, ability)
                     )
@@ -739,15 +741,19 @@ def _identity_options(state: GameState, oid: int, ability: Ability) -> tuple[tup
     )
 
 
-def mana_added_total(state: GameState, pid: int, oid: int) -> tuple[int, ...] | None:
-    """Everything ``add_mana_on_tap`` statics add when ``pid`` taps ``oid``, summed.
+def mana_added_total(
+    state: GameState, pid: int, oid: int, produced: Sequence[int]
+) -> tuple[int, ...] | None:
+    """Everything ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for
+    ``produced``, summed.
 
     ``None`` when nothing applies. Read by the planner (`_sources_of`) and the
     chip label, while `activate_mana_ability` reads the same pairs pip by pip
     with their sources -- so the offer and the payment cannot disagree about how
-    much a Swamp makes.
+    much a Swamp makes. Per option, because Forsaken Monument's "tap a permanent
+    for {C}" adds to a painland's {C} and not to its {R}.
     """
-    added = mana_added_on_tap(state, pid, oid)
+    added = mana_added_on_tap(state, pid, oid, produced)
     if not added:
         return None
     total = [0] * len(added[0][1])
@@ -1288,6 +1294,12 @@ def can_pay(
         amount = int(cost.remove_counters.get("amount", 1))
         if obj is None or obj.counter(kind) < amount:
             return False
+    # Always payable while the source is on the battlefield to take them: a
+    # counter needs a permanent (122.1), and one whose source has left is not.
+    if cost.put_counters is not None and (
+        source_oid is None or source_oid not in state.battlefield
+    ):
+        return False
     if cost.loyalty is not None and cost.loyalty < 0:
         # 606.3: a minus ability may only be activated if there is enough
         # loyalty to pay it. A plus or a zero is always payable, which is why
@@ -1897,6 +1909,20 @@ def pay(
             int(cost.remove_counters.get("amount", 1)),
         )
 
+    if cost.put_counters is not None and source_oid is not None:
+        # `as_cost` for the reason the loyalty branch below gives: Doubling
+        # Season's "if an effect would put" leaves a cost alone, while Hardened
+        # Scales' "would be put" does not. Through `add_counters`, so the
+        # placement raises `counter_placed` like any other placement.
+        add_counters(
+            state,
+            source_oid,
+            str(cost.put_counters["counter"]),
+            int(cost.put_counters.get("amount", 1)),
+            as_cost=True,
+            by=pid,
+        )
+
     if cost.loyalty is not None and source_oid is not None:
         # A **cost**, so it is paid as the ability goes on the stack and is not
         # refunded if the ability is countered or does nothing -- which is what
@@ -2079,7 +2105,7 @@ def activate_mana_ability(
     # ability really taps: 106.12 makes "tap for mana" a mana ability with {T}
     # in its cost, and nothing else.
     tapping = ability.cost is not None and ability.cost.tap
-    added_on_tap = mana_added_on_tap(state, pid, oid) if tapping else []
+    added_on_tap = mana_added_on_tap(state, pid, oid, produced) if tapping else []
 
     if ability.cost is not None and ability.cost.tap:
         # The return value is deliberately not checked: `Game._activate_mana`

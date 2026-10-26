@@ -1,0 +1,26 @@
+{
+  "_comment": "Cards that exist only for tests/unit/triggers/test_step_is.py. Never part of a deck list. t_step_beacon is Misleading Signpost's enters clause with a charge counter in place of the reselection, so the test is about the step and nothing else.",
+  "cards": [
+    {
+      "id": "t_step_beacon",
+      "name": "Test Step Beacon",
+      "oracle_text": "Flash\nWhen this artifact enters during the declare attackers step, put a charge counter on it.",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "keywords": ["flash"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters during the declare attackers step, put a charge counter on it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {"step_is": "declare_attackers"}
+          },
+          "effects": [{"op": "add_counters", "counter": "charge", "amount": {"const": 1},
+                       "objects": {"zone": "battlefield", "self_only": true}}]
+        }
+      ]
+    }
+  ]
+}
