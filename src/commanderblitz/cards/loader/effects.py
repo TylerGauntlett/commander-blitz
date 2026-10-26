@@ -1838,7 +1838,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for t in effect.get("types") or ():
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {t!r}")
-    if op == "add_poison" and "amount" in effect:
+    if op in ("add_poison", "add_energy") and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
     if op == "proliferate" and "objects" in effect:
         # The retired simplification's narrowing key. 701.27a is a free choice

@@ -317,6 +317,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                "`damage`'s `excess_to`"),
     "fight": ("Life & damage", "Two creatures fight.", H_FIGHT),
     "add_poison": ("Life & damage", "A player gets N poison counters.", None),
+    "add_energy": ("Life & damage", "A player gets N energy counters ({E}).", "Energy"),
     "prevent_damage": ("Life & damage", "Prevent damage to a player this turn.",
                        "Preventing all damage to a player for the turn"),
     "prevent_damage_permanent": ("Life & damage", "Prevent damage dealt to or by a permanent for a duration.",

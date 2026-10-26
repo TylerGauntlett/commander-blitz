@@ -105,6 +105,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Keywords** | flying, reach, trample, deathtouch, lifelink, vigilance, haste, menace, first strike, double strike, defender, hexproof, shroud, indestructible, flash, the six landwalks, skulk, fear, intimidate, horsemanship, shadow, wither, infect, totem armor; `partner` and `choose_a_background` are `INERT_KEYWORDS` (deck-construction rules, 702.124); every keyword's status is censused in [keywords.md](keywords.md) |
 | **Protection** | From a type, subtype or colour across damage, enchant/equip, block and target; `from_colors_outside_commander_identity` (Commander's Plate, 903.4) and `from_colorless` (105.2c) |
 | **Ward, including granted ward** | A `ward` static with a full `pay` cost and `affects`, `carddef.ward_ability` interning one trigger per cost, fired as the spell goes on the stack (603.2d) with the warded permanent as source and a negative `ability_index` |
+| **Energy** | 107.14, 122.1: `PlayerState.energy`, given by `add_energy` through the `primitives.add_energy` funnel (counter replacements that reach players apply), proliferated like poison, never a loss condition |
 | **Wither, infect and poison** | 702.90b, 702.90c: keywords read by `damage_permanent` and `damage_player`, still damage for deathtouch, lifelink and the ledger; `add_poison` with its own `LossReason` at ten (704.5c) |
 | **Regeneration and totem armor** | 701.15, 702.88a: both at `zones.destroy`, regeneration a spent-once shield cleared at cleanup, totem armor a `Keyword` on the Aura; `no_regeneration` on `destroy` (701.15c); `KEYWORD_ALIASES` folds "Umbra armor" |
 | **Shield counters** | 122.1c: `spend_shield_counter` at `zones.destroy` and `primitives.damage_permanent`, one counter per event, not indestructible and not regeneration |
@@ -115,7 +116,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Epic** | 702.50a: a one-way cast lock and a rules-supplied upkeep copy through `put_copy_on_stack`, `epic_source` guarded by `not obj.is_token` |
 | **Cascade, ripple and `reveal_until`** | Library scans sharing `_bottom_in_random_order`: cascade exiles and free-casts, ripple compares the source's name, `reveal_until` takes the card's own `objects` as stop test and bottoms the rest |
 | **Hideaway, haunt and cipher** | Exile links read from either end: hideaway's `play_exiled` reads `exiled_by` back with `revealed_to` hiding the card; haunt's `haunting` is read by the `haunted_by` filter from `active_zones: ["exile"]`; cipher's `encoded_on` is a rider on the resolving spell with `cast_copy` (702.97b) |
-| **Explore, connive, clash, fateseal, proliferate** | `explore` (701.40a), `connive` counting the nonland cards it discarded (701.47a), `clash` binding `clash_won` (701.23a), `scry` with a `chooser` for fateseal, `proliferate` as one `ask_targets` over every countered permanent and poisoned player (701.27a) |
+| **Explore, connive, clash, fateseal, proliferate** | `explore` (701.40a), `connive` counting the nonland cards it discarded (701.47a), `clash` binding `clash_won` (701.23a), `scry` with a `chooser` for fateseal, `proliferate` as one `ask_targets` over every countered permanent and every player with poison or energy (701.27a) |
 | **Keywords built from bindings** | Devour and amplify read `as` on `sacrifice` and `reveal`; graft and modular are `move_counters`; persist and undying read `counters_had` snapshotted onto the dies event; evolve reads the event's bindings in its intervening-if; bolster is the `extreme` selector clause keeping ties (701.36a); kinship is a `snapshot` of the top card plus `shares_a_type_with` |
 | **Keywords built from flags and costs** | Renown is `set_flag` / `has_flag`; exert is `set_turn_flag` / `has_turn_flag` on `TurnLedger.object_flags` (701.40b) and the `exert` cost; monstrosity has its own field, event and trigger; echo is `set_flag` written by the ability that reads it (400.7 resets it); cumulative upkeep is `times` on `may`'s `pay`; level up is a counter plus `set_pt` and `grant_keyword` statics gated on an interval |
 | **Soulbond, aura swap and reconfigure** | A symmetric `paired_with` with `paired` and `paired_with_source` filters; aura swap as one atomic op attaching after the move; reconfigure as `attach` (Equip), `unattach`, and `set_types` under `is_attached` (702.151d); `attach`'s `attachment` sub-key moves something other than the source (701.3), and `attach` refuses self-attachment (301.5c) |
@@ -221,7 +222,7 @@ under [Simplified](#simplified); what is missing outright is under
 
 | Area | Detail |
 |---|---|
-| **Proliferate** | 701.27a: one `ask_targets` decision (purpose `proliferate`) over every permanent with a counter and every poisoned player, not targeting |
+| **Proliferate** | 701.27a: one `ask_targets` decision (purpose `proliferate`) over every permanent with a counter and every player with poison or energy, not targeting |
 | **Moving and doubling counters** | `move_counters` (graft, modular) clamped to the source; `double_counters` puts the extra on through `add_counters` so counter replacements apply (122.1) |
 | **Distributing counters** | `distribute_counters` on an activated ability, the division announced at activation (601.2d, 602.2b) and stored on the stack item, an illegal target's share lost (608.2b) |
 | **Counters on an arrival** | `counters` on `put_onto_battlefield` and `return_from_graveyard` (placed after the move), `counters` / `counters_if` on `look_at_top` (one placement with the arrival, 122.6); `replace_counters` applies before `counter_placed` fires or a Saga reads its lore (714.2c) |
@@ -335,7 +336,7 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - Voting — will of the council, council's dilemma (701, vote).
 - Sideboards and wishes (100.4); the import keeps a Moxfield sideboard only as a list.
 - Range of influence (801); every table is one limited-range-free game.
-- Energy and experience counters (122.1); poison is the only player counter.
+- Experience counters (122.1).
 - Manual combat damage division in the ordinary case (510.1c); banding is the one case that asks.
 - Damage redirection effects.
 - "Prevent the next N damage" over a player or any target (615.6); the `prevent_damage` op refuses an `amount`.

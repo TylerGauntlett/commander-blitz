@@ -58,6 +58,10 @@ class PlayerState:
     #: player*, not a second life total, which is why they are their own field
     #: and their own loss reason rather than life paid in a different currency.
     poison: int = 0
+    #: Energy counters (107.14, 122.1): "you get {E}{E}". A counter on the
+    #: player and a resource they spend -- `Cost.pay_energy` removes it -- so
+    #: it is its own field for poison's reason, and it never ends the game.
+    energy: int = 0
     #: the oids this player owns as commanders
     commanders: list[int] = field(default_factory=list)
 
@@ -162,6 +166,7 @@ class PlayerState:
             "commander_tax": dict(self.commander_tax),
             "commander_damage_taken": dict(self.commander_damage_taken),
             "poison": self.poison,
+            "energy": self.energy,
             "has_lost": self.has_lost,
             "has_city_s_blessing": self.has_city_s_blessing,
             "has_no_maximum_hand_size": self.has_no_maximum_hand_size,

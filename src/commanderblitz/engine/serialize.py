@@ -237,6 +237,10 @@ def _player(
         # went back for a new hand is public at a real table, and it is the
         # first thing a pod knows about each other.
         "mulligans_taken": player.mulligans_taken,
+        # Energy counters (107.14), public like life: a player at a real table
+        # counts them out in front of everybody, and the price of a `pay_energy`
+        # line is only readable against this number.
+        "energy": player.energy,
         # The rules the lamps are drawn against, sent rather than copied so the
         # screen cannot say "keep 6" for a mulligan the engine gives away free.
         "mulligans_free": FREE_MULLIGANS,

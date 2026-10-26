@@ -992,6 +992,39 @@ def add_poison(
     return amount
 
 
+def add_energy(
+    state: GameState,
+    pid: int,
+    amount: int,
+    *,
+    source: int | None = None,
+    by: int | None = None,
+) -> int:
+    """Give a player energy counters, after every counter replacement applies.
+
+    `add_poison`'s funnel for the other counter a player can have: the
+    `add_energy` op and proliferate both come through, so Innkeeper's
+    Talent's "…on a permanent **or player**" doubles energy exactly as it
+    doubles poison (122.1: energy is a counter).
+    """
+    if amount <= 0:
+        return 0
+    if by is None:
+        by = _putter(state, source, None)
+    amount = _apply_counter_statics(
+        player_counter_replacements(state, pid, "energy", by=by), amount
+    )
+    state.players[pid].energy += amount
+    state.emit(
+        EventType.ENERGY_ADDED,
+        player=pid,
+        source=source,
+        amount=amount,
+        total=state.players[pid].energy,
+    )
+    return amount
+
+
 def add_counters(
     state: GameState,
     oid: int,

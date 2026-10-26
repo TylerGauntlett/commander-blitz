@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 139 |
+| [Effect ops](#effect-ops) | 140 |
 | [Selectors](#selectors) | 65 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 14 |
-| [Engine events](#engine-events) | 73 |
+| [Engine events](#engine-events) | 74 |
 
 ## Effect ops
 
@@ -134,6 +134,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
 | `set_pt` | Modify |  | Set base power and toughness for a duration. | [Effect ops](card-dsl.md#effect-ops) |
 | `transform` | Modify |  | Transform a double-faced permanent. | [Transforming double-faced cards](card-dsl-cookbook.md#transforming-double-faced-cards) |
+| `add_energy` | Life & damage |  | A player gets N energy counters ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `add_poison` | Life & damage |  | A player gets N poison counters. | [Effect ops](card-dsl.md#effect-ops) |
 | `cant_lose_the_game` | Life & damage |  | A player can't lose and opponents can't win, for a duration. | [Effect ops](card-dsl.md#effect-ops) |
 | `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over. | [damage's excess_to](card-dsl.md#damages-excess_to) |
@@ -1005,6 +1006,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `draw_step` | `draw_step` |  | [Triggers](card-dsl.md#triggers) |
 | `emblem_created` |  |  | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` |  | [Triggers](card-dsl.md#triggers) |
+| `energy_added` |  |  | [Triggers](card-dsl.md#triggers) |
 | `enters_battlefield` | `self_enters` `permanent_enters` |  | [Triggers](card-dsl.md#triggers) |
 | `game_over` |  |  | [Triggers](card-dsl.md#triggers) |
 | `hand_kept` |  |  | [Triggers](card-dsl.md#triggers) |

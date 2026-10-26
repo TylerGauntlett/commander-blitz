@@ -238,6 +238,21 @@ describe("beatsFor", () => {
     expect(loss.float?.value).toBe("-5");
   });
 
+  it("floats energy onto the player who got it", () => {
+    const [beat] = beatsFor(
+      [event("energy_added", { amount: 2, total: 5 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat.float).toMatchObject({
+      anchor: { kind: "player", pid: 0 },
+      value: "+2 energy",
+      tone: "gain",
+    });
+    expect(beat.text).toBe("You get 2 energy (5 total)");
+  });
+
   it("drops bookkeeping events entirely", () => {
     // `mana_added` is not here even though payment is now narrated: it fires
     // once per source, and `tapped` already flashes the same permanent.
@@ -477,6 +492,7 @@ describe("beat text comes from describeEvent", () => {
     event("mana_spent", { mana: "{2}{G}" }),
     event("damage_dealt", { amount: 3, to: "player" }),
     event("life_gained", { amount: 2 }),
+    event("energy_added", { amount: 2, total: 2 }),
     event("draw"),
     event("zone_change", {
       card: "t_bear",

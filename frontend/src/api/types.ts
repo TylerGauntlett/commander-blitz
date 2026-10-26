@@ -133,6 +133,8 @@ export interface PlayerView {
    * have to parse.
    */
   mulligans_taken: number;
+  /** Energy counters (107.14). Public; `EnergyChip` draws it while above zero. */
+  energy: number;
   /** Mulligans that cost no card (`FREE_MULLIGANS` in `engine/game.py`). */
   mulligans_free: number;
   /** Most mulligans before the keep is forced (`MAX_MULLIGANS`). */

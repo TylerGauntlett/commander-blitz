@@ -7449,6 +7449,24 @@ near-miss shield counter is *visible on the board*. It is placed, it is shown,
 dies to the removal it is printed to survive. That card passes all six authoring
 gates, because placing the counter is genuine and only its meaning is missing.
 
+## Energy
+
+Energy (107.14) is a counter on a **player**, held in `PlayerState.energy`
+beside poison. Nissa, Worldsoul Speaker gets it on landfall:
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Landfall — Whenever a land you control enters, you get {E}{E} (two energy counters).",
+  "trigger": { "event": "permanent_enters", "controller": "you", "filter": { "types": ["Land"] } },
+  "effects": [ { "op": "add_energy", "amount": { "const": 2 } } ] }
+```
+
+`add_energy` takes `amount` (a value, default 1) and `player` (default `you`,
+which is who the printed "you get" names). It goes through
+`primitives.add_energy`, the one funnel, so a counter replacement that reaches
+players (Innkeeper's Talent) applies to it, and proliferate gives a chosen
+player one more energy if they already have some. Energy never ends the game.
+
 ## Aura swap — an exchange, not two moves
 
 ```jsonc

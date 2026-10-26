@@ -566,3 +566,17 @@ class TestChooseSeveral:
         state = client.get(f"/api/games/{game_id}/state", params={"seat": 0, "timeout": 0}).json()["state"]
         assert state["pending"]["kind"] == "choose_objects"
         assert state["pending"]["selected"] == []
+
+
+class TestEnergyOnTheWire:
+    """Energy (107.14) reaches the client for every seat, from the first view.
+
+    `EnergyChip` reads `players[n].energy`; a field missing from the payload
+    would render as no chip at all, which reads exactly like having none.
+    """
+
+    def test_every_seat_reports_its_energy(self, client):
+        body = new_game(client)
+        assert [p["energy"] for p in body["state"]["players"]] == [0] * len(
+            body["state"]["players"]
+        )

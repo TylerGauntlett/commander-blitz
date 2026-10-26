@@ -731,6 +731,28 @@
   white-space: nowrap;
 }
 
+/* Energy (107.14), on the head row of both the orb and an opponent's seat.
+   Fixed height and no wrap, so it lands without moving its neighbours. */
+.energy-chip {
+  display: inline-flex;
+  flex: 0 0 auto;
+  align-items: center;
+  gap: 3px;
+  padding: 0 6px;
+  border-radius: 9px;
+  background: rgb(0 0 0 / 0.55);
+  color: var(--gold);
+  font-size: 12px;
+  font-weight: 700;
+  line-height: 18px;
+  white-space: nowrap;
+}
+
+.energy-chip__mark {
+  font-size: 10px;
+  opacity: 0.8;
+}
+
 .orb__priority {
   width: 8px;
   height: 8px;
