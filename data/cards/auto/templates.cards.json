@@ -79305,6 +79305,111 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "put_counters": {
+              "amount": 1,
+              "counter": "page"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Put a page counter on this artifact: Scry 1"
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "put_counters": {
+              "amount": 1,
+              "counter": "page"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Put a page counter on this artifact: Draw a card"
+        },
+        {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "self_only": true
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life",
+          "trigger": {
+            "event": "state",
+            "state": {
+              "cmp": ">=",
+              "left": {
+                "counters_on": {
+                  "counter": "page",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mazemind_tome",
+      "mana_cost": "{2}",
+      "name": "Mazemind Tome",
+      "oracle_text": "{T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{2}, {T}, Put a page counter on this artifact: Draw a card.\nWhen there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",
+      "source": "auto",
+      "subtypes": [
+        "Book"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**108 cards** blocked by **93** capabilities.
+**107 cards** blocked by **91** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -84,7 +84,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [plot](#plot) | 1 | 7506 | op |
 | [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
-| [put-counters-cost](#put-counters-cost) | 1 | 6513 | cost |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [redirect-attack](#redirect-attack) | 1 | 3213 | op |
@@ -96,7 +95,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-filter-power](#spell-filter-power) | 1 | 675 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [state-trigger](#state-trigger) | 1 | 6513 | trigger_event |
 | [static-filter-derived-subtypes](#static-filter-derived-subtypes) | 1 | 6994 | selector |
 | [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -1278,22 +1276,6 @@ Blocks **1** card.
 
 </details>
 
-## put-counters-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost that puts N counters of a named kind (here one 'page' counter) on the source permanent, paid at activation alongside {T} and mana
-  <br>Why the existing vocabulary won't do: cost_keys has remove_counters and remove_counters_from_among but nothing that adds counters; the only cost that adds counters is loyalty, which is hard-wired to the 'loyalty' kind. Writing add_counters as an effect moves the payment to resolution, which the packet notes forbid
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mazemind Tome** (rank 6513) — `mazemind_tome`
-  - {T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-  - {2}, {T}, Put a page counter on this artifact: Draw a card.
-  - When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.
-
-</details>
-
 ## raccoon-3-3-g
 
 Blocks **1** card.
@@ -1449,22 +1431,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## state-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a state trigger (603.8) that fires when the source has at least N counters of a kind ('four or more page counters on this artifact') and does not retrigger while its ability is on the stack, with effects exile-self then 'if you do' gain 4 life
-  <br>Why the existing vocabulary won't do: trigger_events has counter_placed, which fires on placement rather than on the state holding; a counter_placed trigger with a counters_on >= 4 condition would also re-trigger on every later counter and depends on cost-placed counters raising the event, which no current cost does
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mazemind Tome** (rank 6513) — `mazemind_tome`
-  - {T}, Put a page counter on this artifact: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)
-  - {2}, {T}, Put a page counter on this artifact: Draw a card.
-  - When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.
 
 </details>
 

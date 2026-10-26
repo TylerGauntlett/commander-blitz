@@ -7166,6 +7166,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mazemind_tome": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mek_leth_berserker": {
     "zone": "battlefield"
   },
