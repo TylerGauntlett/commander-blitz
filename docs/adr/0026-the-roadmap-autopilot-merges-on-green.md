@@ -47,7 +47,7 @@ The merge starts the next run.**
   a branch, where `main` cannot see it.
 - **GitHub merges, not the agent.** The run turns on auto-merge with a squash.
   Branch protection on `main` requires `verify gate`, `pull request title` and
-  `secrets`, so the merge happens only when the same gate a person would wait on
+  `gitleaks` (from `secrets.yml`), so the merge happens only when the same gate a person would wait on
   is green. The run stays subscribed and fixes red checks and review asks until
   then, as `/extend-roadmap` §9 already requires.
 - **Only a maintainer's work merges itself.** The repository is public.

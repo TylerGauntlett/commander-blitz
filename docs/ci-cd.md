@@ -232,9 +232,11 @@ lock: a firing that finds one stops. The skill's §10 is the procedure.
 It needs, set once by a maintainer:
 
 - **Allow auto-merge**, as for the art backfill.
-- **Branch protection on `main`** requiring `verify gate`, `pull request title`
-  and `secrets`, and conversation resolution. This is what makes auto-merge wait
-  for the gate; without it the pull request merges as soon as it opens.
+- **Branch protection on `main`** requiring the status checks `verify gate`,
+  `pull request title` and `gitleaks` (the `secrets.yml` job, which has no name
+  of its own), and, as its own checkbox, conversation resolution. This is what
+  makes auto-merge wait for the gate; without it the pull request merges as
+  soon as it opens.
 - **The Claude GitHub App** on this repository with write access, so the
   session's pull requests start workflows (a `GITHUB_TOKEN` one would not, as
   above).
