@@ -313,7 +313,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Life & damage ---------------------------------------------------
     "gain_life": ("Life & damage", "A player gains N life.", None),
     "lose_life": ("Life & damage", "A player loses N life; `as` records how much.", None),
-    "damage": ("Life & damage", "A source deals N damage to objects or players; `excess_to` spills over.",
+    "damage": ("Life & damage", "A source deals N damage to objects or players; `excess_to` spills "
+               "over, `to_attacked` hits what an attacker attacks.",
                "`damage`'s `excess_to`"),
     "fight": ("Life & damage", "Two creatures fight.", H_FIGHT),
     "add_poison": ("Life & damage", "A player gets N poison counters.", None),

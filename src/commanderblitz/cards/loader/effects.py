@@ -2558,6 +2558,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"no one controller for the excess to reach"
             )
 
+    if "to_attacked" in effect:
+        # "…deals damage to the player or planeswalker it's attacking." Only
+        # `damage` reads it, and only `true` says anything: a `false` would
+        # load as a recipient that is never hit beside whatever else the op
+        # names. Which trigger may carry it is checked with the ability, in
+        # `_refuse_to_attacked_off_attacks`, since this pass cannot see it.
+        if op != "damage":
+            raise DslError(f"{where}: 'to_attacked' is a damage recipient, not a key of {op!r}")
+        if effect["to_attacked"] is not True:
+            raise DslError(
+                f"{where}.to_attacked: write true (the player or planeswalker the "
+                f"attacker is attacking) or leave it out, got {effect['to_attacked']!r}"
+            )
+
     if op == "cast_from_hand":
         # The selector is what may be picked, and it is the whole of the printed
         # restriction -- "an instant or sorcery spell with mana value X or less".

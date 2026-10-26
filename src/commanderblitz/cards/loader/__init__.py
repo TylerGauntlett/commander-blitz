@@ -165,6 +165,24 @@ from .walk import (
 )
 
 
+def _refuse_to_attacked_off_attacks(
+    effects: Any, trigger: TriggerSpec | None, where: str
+) -> None:
+    """``damage``'s ``to_attacked`` names "the player or planeswalker **it's**
+    attacking", and only the ``attacks`` event says who "it" attacked: combat
+    writes ``defender`` and ``attacked_permanent`` onto it per attacker. On any
+    other ability the two bindings are absent, so the damage would load, read
+    as printed and hit nobody -- refused here rather than played inert.
+    """
+    if trigger is not None and trigger.event == "attacks":
+        return
+    if any(e.get("to_attacked") for e in _walk_effect_specs(effects)):
+        raise DslError(
+            f"{where}: 'to_attacked' reads the creature an 'attacks' trigger fired "
+            f"for, and this is not an 'attacks' trigger"
+        )
+
+
 def _check_grant_targets(
     model: CardModel, abilities: tuple[Ability, ...], grantable: tuple[Ability, ...], where: str
 ) -> None:
@@ -661,6 +679,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
+    _refuse_to_attacked_off_attacks(model.spell_effects, None, f"{where}.spell_effects")
     _check_distribution_homes(model, where)
 
     for i, replacement in enumerate(model.replacements):
@@ -2329,6 +2348,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"an ability that may never trigger is not a card"
             )
         active_zones = tuple(Zone(z) for z in model.active_zones)
+    _refuse_to_attacked_off_attacks(model.effects, trigger, where)
 
     mana_options: tuple[tuple[int, ...], ...] = ()
     mana_amount: Mapping[str, Any] | None = None

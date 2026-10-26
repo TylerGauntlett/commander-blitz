@@ -3870,6 +3870,48 @@ naive "amount minus toughness" gets wrong.
 `trample` is the near miss and spills for the same reason, but only in combat.
 `prevent_damage` suppresses without redirecting.
 
+### `damage`'s `to_attacked`
+
+"…deals X damage to **the player or planeswalker it's attacking**" — Myr
+Battlesphere, Hellrider. `to_attacked: true` is a recipient beside `objects`,
+`player` and `target`, and "it" is the creature the `attacks` trigger fired
+for, so the loader refuses the key on any other ability.
+
+```jsonc
+// Myr Battlesphere: "…you may tap X untapped Myr you control. If you do, this
+// creature gets +X/+0 until end of turn and deals X damage to the player or
+// planeswalker it's attacking."
+"trigger": { "event": "attacks", "source": "self" },
+"effects": [
+  { "op": "choose_permanents", "as": "tapped_myr",
+    "objects": { "zone": "battlefield", "controller": "you", "subtypes": ["Myr"],
+                 "tapped": false, "count": "any" } },
+  { "op": "tap", "objects": { "binding": "tapped_myr" } },
+  { "op": "pump", "objects": { "self_only": true, "zone": "battlefield" },
+    "power": { "count": { "binding": "tapped_myr" } } },
+  { "op": "damage", "to_attacked": true,
+    "amount": { "count": { "binding": "tapped_myr" } } }
+]
+```
+
+It reads the `attacks` event, not the live combat: the `defender` binding is
+the defending player and `attacked_permanent` the planeswalker or battle the
+creature was declared against (absent or null for an attack on the player).
+That is last-known information, so the damage still lands when the attacker
+has left the battlefield or combat before the trigger resolves. A planeswalker
+that has left takes nothing, and the damage does not move to its controller;
+a battle is neither a player nor a planeswalker, so an attack on one hits
+nobody.
+
+`player: { "binding": "defender" }` is the near miss: on an attack at a
+planeswalker it names the walker's controller, who is not being attacked
+(506.2).
+
+The tap half is a composition, not a cost: `choose_permanents` with
+`count: "any"` is "tap X untapped Myr" chosen as the trigger resolves, and X
+is the size of the binding it records. A `may` around it adds nothing, since
+choosing none is the refusal.
+
 ### A mana ability that splits colours
 
 "{0}: Add X mana in **any combination of {U} and/or {R}**, where X is Vivi

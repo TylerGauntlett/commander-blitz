@@ -264,6 +264,9 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
         for pid in select_players(ctx, spec["player"]):
             damage_player(ctx.state, pid, amount, dealer)
 
+    if spec.get("to_attacked"):
+        _damage_attacked(ctx, amount, dealer)
+
     if "target" in spec:
         # A single target that may be either a creature or a player ("any target").
         for ref in ctx.target_refs(str(spec["target"])):
@@ -274,6 +277,46 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
                     damage_permanent(ctx.state, ref.id, amount, dealer)
             elif ref.kind == "player":
                 damage_player(ctx.state, ref.id, amount, dealer)
+
+
+def _damage_attacked(ctx: EffectContext, amount: int, dealer: int | None) -> None:
+    """"…deals X damage to **the player or planeswalker it's attacking**."
+
+    Hellrider and Myr Battlesphere. "It" is the creature the ``attacks``
+    trigger fired for, and the loader admits ``to_attacked`` on no other
+    trigger: that event is the only one carrying both halves of the answer.
+    ``defender`` is the defending player (506.2) and ``attacked_permanent`` the
+    planeswalker or battle the creature was declared against, ``None`` when it
+    was declared against the player.
+
+    Read off the event rather than off ``state.combat``, because the answer is
+    last-known information: Myr Battlesphere's ruling has it deal its damage to
+    "the appropriate player or planeswalker" even when it has left the
+    battlefield before the trigger resolves, and a creature that is no longer
+    in combat would find nobody in ``combat.attackers``.
+
+    ``{"binding": "defender"}`` on ``player`` is the near miss, and it is wrong
+    exactly when it matters: attacking somebody's planeswalker is not
+    attacking them (506.2), so it burns the controller and leaves the walker
+    on the board. A walker that has left the battlefield takes nothing and the
+    damage does not move to its controller -- there is no redirection here. A
+    battle is attacked through the same slot but is neither a player nor a
+    planeswalker, so a creature attacking one hits nobody.
+    """
+    attacked = ctx.bindings.get("attacked_permanent")
+    if attacked is not None:
+        obj = ctx.state.objects.get(int(attacked))
+        if (
+            obj is not None
+            and obj.on_battlefield
+            and "Planeswalker" in chars(ctx.state, obj.oid).types
+        ):
+            damage_permanent(ctx.state, obj.oid, amount, dealer)
+        return
+    if ctx.bindings.get("defender") is None:
+        return
+    for pid in select_players(ctx, {"binding": "defender"}):
+        damage_player(ctx.state, pid, amount, dealer)
 
 
 @register("fight")

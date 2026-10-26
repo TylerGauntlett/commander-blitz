@@ -1310,6 +1310,11 @@ EVENT_BINDING_KEYS = (
     "life",
     "sid",
     "defender",
+    # The planeswalker or battle an attacker was declared against, beside the
+    # `defender` that is its controller -- `None` when the attack was on the
+    # player. Read by `damage`'s `to_attacked` ("the player or planeswalker
+    # it's attacking"), which needs to tell the two apart.
+    "attacked_permanent",
     "was_attacking",
     "counter",
     "blockers",
