@@ -297,9 +297,13 @@ def _own_board(registry: CardRegistry, card: CardDef | None) -> list[str]:
     It takes the first slot rather than being appended, so the boards stay 32
     and 6; the second keeps the plain `creature` role, so a card wanting a
     creature that is *not* of the tribe still finds one.
+
+    The second slot has a swap of its own, on the same terms: an artifact
+    creature for a card whose toughness counts the artifacts you control
+    (:func:`swap_in_artifact_body`).
     """
     props = _props(registry, OWN_BOARD_ROLES)
-    return swap_in_tribal_body(registry, props, card)
+    return swap_in_artifact_body(registry, swap_in_tribal_body(registry, props, card), card)
 
 
 def quiet_tribal_body(registry: CardRegistry, subtype: str) -> str | None:
@@ -346,6 +350,103 @@ def swap_in_tribal_body(
     if pick is None:
         return board
     return [pick, *board[1:]]
+
+
+def _counts_own_artifacts(value: Any) -> bool:
+    """Does this value expression count artifacts its controller controls?"""
+    if isinstance(value, dict):
+        counted = value.get("count")
+        if (
+            isinstance(counted, dict)
+            and counted.get("controller") == "you"
+            and "Artifact" in (counted.get("types") or ())
+        ):
+            return True
+        return any(_counts_own_artifacts(v) for v in value.values())
+    if isinstance(value, (list, tuple)):
+        return any(_counts_own_artifacts(v) for v in value)
+    return False
+
+
+def toughness_counts_own_artifacts(card: CardDef | None) -> bool:
+    """Is this card's toughness the number of artifacts you control, and it none?
+
+    "Broodstar's power and toughness are each equal to the number of artifacts
+    you control" (604.3, a characteristic-defining ability). Read off the
+    compiled static rather than the oracle text, so the question asked is the
+    one the layer system will answer. A card that is itself an artifact counts
+    itself -- Master of Etherium enters as a 1/1 on any board -- so only a
+    *non*-artifact reading such a count can enter as a 0/0.
+    """
+    if card is None or "Artifact" in card.types:
+        return False
+    return any(
+        a.static
+        and a.static.get("effect") == "set_pt"
+        and (a.static.get("affects") or {}).get("self_only")
+        and _counts_own_artifacts(a.static.get("toughness"))
+        for a in card.abilities
+    )
+
+
+def quiet_artifact_body(registry: CardRegistry) -> str | None:
+    """The quietest artifact creature in this pool, or None if it has none.
+
+    "Quiet" is :func:`quiet_tribal_body`'s standard and for its reason: **no
+    abilities at all**, because the static that would hurt here is a lord's --
+    Master of Etherium's "other artifact creatures you control get +1/+1"
+    would land inside the measured P/T of the card under test. Then the fewest
+    keywords, then a card before a token, then the id, so the position is
+    identical run to run.
+
+    Tokens are eligible because the hand-written pool, which `--collect`
+    verifies against, has no artifact creature without abilities that is not a
+    token. A card is still preferred: a token prop would be counted by a
+    `tokens` assertion and would cease to exist on a bounce, two ways a prop
+    could fold itself into another card's verdict.
+    """
+    match = sorted(
+        (
+            c
+            for c in registry
+            if c.is_creature
+            and "Artifact" in c.types
+            and "Legendary" not in c.supertypes
+            and not c.abilities
+            and (c.toughness or 0) > 0
+        ),
+        key=lambda c: (len(c.keywords), c.is_token, c.id),
+    )
+    return match[0].id if match else None
+
+
+def swap_in_artifact_body(
+    registry: CardRegistry, board: list[str], card: CardDef | None
+) -> list[str]:
+    """``board`` with its last creature swapped for an artifact one, if ``card`` needs it.
+
+    Your board has no artifact, so a non-artifact creature whose toughness is
+    the number of artifacts you control enters as a 0/0 and state-based
+    actions bin it -- Broodstar failed gate 4 with "is a permanent but ended in
+    graveyard". The harness was naming a shape the position could not
+    represent, not a verdict about the card, so the prop is added and the gate
+    left alone: the call `legendary_creature`, `small_creature` and
+    :func:`swap_in_tribal_body` record.
+
+    The same terms as the tribal swap, for the same reasons: **only** for a card
+    :func:`toughness_counts_own_artifacts` says needs it, so every other card
+    sees the position it was measured in; a swap rather than an addition, so the
+    boards stay 32 and 6; and an artifact *creature*, so your board still holds
+    two creatures. It takes the **last** slot, so it composes with the tribal
+    swap, which takes the first. Returns the board untouched when the pool has
+    no quiet artifact creature, and the card then fails gate 4 honestly.
+    """
+    if not toughness_counts_own_artifacts(card) or not board:
+        return board
+    pick = quiet_artifact_body(registry)
+    if pick is None:
+        return board
+    return [*board[:-1], pick]
 
 
 def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True) -> Game:
