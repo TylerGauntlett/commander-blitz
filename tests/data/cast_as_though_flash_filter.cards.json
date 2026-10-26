@@ -40,14 +40,14 @@
     },
     {
       "id": "t_filter_trinket",
-      "name": "Test Plain Trinket",
+      "name": "Test Filter Trinket",
       "oracle_text": "",
       "mana_cost": "{1}",
       "types": ["Artifact"]
     },
     {
       "id": "t_filter_golem",
-      "name": "Test Plain Golem",
+      "name": "Test Filter Golem",
       "oracle_text": "",
       "mana_cost": "{1}",
       "types": ["Artifact", "Creature"],
@@ -57,7 +57,7 @@
     },
     {
       "id": "t_filter_bear",
-      "name": "Test Plain Bear",
+      "name": "Test Filter Bear",
       "oracle_text": "",
       "mana_cost": "{G}",
       "types": ["Creature"],
@@ -69,7 +69,7 @@
     },
     {
       "id": "t_filter_growth",
-      "name": "Test Plain Growth",
+      "name": "Test Filter Growth",
       "oracle_text": "You gain 1 life.",
       "mana_cost": "{G}",
       "types": ["Sorcery"],

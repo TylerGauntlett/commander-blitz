@@ -112321,6 +112321,40 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "You may cast artifact spells as though they had flash."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "shimmer_myr",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}",
+      "name": "Shimmer Myr",
+      "oracle_text": "Flash\nYou may cast artifact spells as though they had flash.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Myr"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],

@@ -10141,6 +10141,16 @@
     },
     "zone": "battlefield"
   },
+  "shimmer_myr": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flash"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "shimmering_barrier": {
     "zone": "battlefield"
   },

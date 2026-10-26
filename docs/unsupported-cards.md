@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **101** capabilities.
+**112 cards** blocked by **99** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -34,8 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [behold](#behold) | 1 | 7614 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cast-as-though-flash-filtered](#cast-as-though-flash-filtered) | 1 | 3426 | static_effect |
-| [cast-as-though-flash-spell-filter](#cast-as-though-flash-spell-filter) | 1 | 1301 | static_effect |
 | [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [colorless-filter](#colorless-filter) | 1 | 893 | selector |
@@ -554,34 +552,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cast-as-though-flash-filtered
-
-Blocks **1** card.
-
-- **(static_effect)** a spell filter (affects_spells: {types: ["Creature"], colors: ["G"]}) on the player-wide cast_as_though_flash static, so the timing permission covers only green creature spells the controller casts, including cards drawn after the source arrived
-  <br>Why the existing vocabulary won't do: cast_as_though_flash is unfiltered: the loader refuses 'affects'/'amount' on it and reads no 'affects_spells', so it would grant flash to every spell (a strictly better card). grant_flash_permission takes 'types' but not colors and needs a timed duration, so it cannot be a static that lasts while Yeva is on the battlefield; grant_keyword flash is not read by casting._timing_ok and cannot reach cards in hand
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yeva, Nature's Herald** (rank 3426) — `yeva_nature_s_herald`
-  - You may cast green creature spells as though they had flash.
-
-</details>
-
-## cast-as-though-flash-spell-filter
-
-Blocks **1** card.
-
-- **(static_effect)** a spell filter (affects_spells: {"types": ["Artifact"]}) on the player-wide cast_as_though_flash static, so the permission covers only artifact spells the controller casts while the source is on the battlefield, read by casting._timing_ok against the CardDef's types
-  <br>Why the existing vocabulary won't do: The cast_as_though_flash static takes only affects_player and an optional condition; the loader refuses 'affects' or 'amount' on it, so it can only grant flash timing to every spell (a strictly better card). The grant_flash_permission op does carry 'types', but it is a one-shot timed permission with a required duration (this_turn / until_your_next_turn), not a continuous static that lasts while Shimmer Myr is on the battlefield. Granting the flash keyword cannot stand in either, since _timing_ok reads printed keywords only.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Shimmer Myr** (rank 1301) — `shimmer_myr`
-  - You may cast artifact spells as though they had flash.
 
 </details>
 
