@@ -1,0 +1,63 @@
+name: autopilot lock
+
+# One autopilot pull request at a time (ADR 0026). The roadmap autopilot's
+# skill checks the lock itself, but a run started on older instructions, or one
+# that missed a claim made after it looked, does not; this holds whatever the
+# run's instructions say. When a pull request labelled `autopilot` opens, is
+# reopened or gets the label while an older one is open, this one is closed
+# with a comment naming the pull request that holds the lock. The oldest
+# claim wins, as the skill's own same-minutes rule says.
+#
+# Only claims from a branch of this repository count, as for the auto-merge
+# guard: a fork's pull request never holds the lock.
+#
+# `pull_request_target` so that its token can close the pull request. It never
+# checks out the pull request's code: everything it reads comes from the event
+# and the API.
+on:
+  pull_request_target:
+    types: [opened, reopened, labeled, ready_for_review]
+
+permissions:
+  contents: read
+  pull-requests: write
+
+concurrency:
+  group: autopilot-lock
+  cancel-in-progress: false
+
+jobs:
+  lock:
+    name: one autopilot pull request
+    if: contains(github.event.pull_request.labels.*.name, 'autopilot')
+    runs-on: ubuntu-latest
+    timeout-minutes: 5
+    steps:
+      # Through env, never `${{ }}` in the script: names come from the event.
+      - name: An older autopilot pull request holds the lock
+        env:
+          GH_TOKEN: ${{ github.token }}
+          REPO: ${{ github.repository }}
+          NUMBER: ${{ github.event.pull_request.number }}
+          HEAD_REPO: ${{ github.event.pull_request.head.repo.full_name }}
+        run: |
+          set -euo pipefail
+          if [ "$HEAD_REPO" != "$REPO" ]; then
+            echo "a fork's pull request; the lock is for this repository's branches"
+            exit 0
+          fi
+
+          holder=$(gh pr list --repo "$REPO" --state open --label autopilot --limit 100 \
+            --json number,isCrossRepository \
+            --jq "[.[] | select(.isCrossRepository | not) | .number | select(. < $NUMBER)] | min // empty")
+
+          if [ -z "$holder" ]; then
+            echo "#$NUMBER holds the lock"
+            exit 0
+          fi
+
+          echo "::error::#$holder holds the autopilot lock; closing #$NUMBER"
+          printf 'Closed: #%s is an older open `autopilot` pull request and holds the lock. One autopilot pull request is open at a time (ADR 0026). To run this one instead, close #%s or take its label off, then reopen this one.\n' "$holder" "$holder" \
+            | gh pr comment "$NUMBER" --repo "$REPO" --body-file -
+          gh pr close "$NUMBER" --repo "$REPO"
+          exit 1

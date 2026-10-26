@@ -355,7 +355,22 @@ runs no gate, so the claim costs nothing. Then look again: if another open
 `autopilot` pull request is older than this one, a second run started in the
 same minutes; close this draft with one line saying which pull request holds
 the lock, and stop. Otherwise build on the draft, pushing as the work goes,
-so its commits show it is alive.
+so its commits show it is alive. `autopilot-lock.yml` closes a newer claim
+whatever its run's instructions say; a run whose draft it closed stops.
+
+**Before every push.** Checking the lock once at the start is not enough: a
+build runs for hours, and another run can claim the item, or deliver it, after
+this one looked. So before each push, fetch `main` and look again. Push only
+when all three hold:
+
+- this run's pull request is still open (not merged, not closed);
+- no other open `autopilot` pull request is older than it;
+- no other pull request for the item has merged since this run began, and
+  `main` does not show it delivered.
+
+If any fails, push nothing more and stop, with one line on this run's pull
+request if it is still open naming what took the item. The work it holds is
+not pushed anywhere; the next run starts from `main` and builds what is left.
 
 **Maintainers only.** The repository is public. An `--auto` run turns on
 auto-merge only for a pull request it opened itself, and counts toward the
@@ -379,7 +394,11 @@ as written: subscribe, fix every red check and review ask, until it merges.
 
 **The chain.** When the merge event arrives, find the scheduled task named
 `roadmap autopilot` and fire it now, so the next run starts on the `main`
-this merge just made. Then stop. A run that cannot fire it leaves the
+this merge just made. Then stop. A merge releases the lock, so after it this
+run never pushes to its branch again, opens no further pull request from it,
+and does not go on to the item's remaining work: anything left is the next
+run's, built on a fresh branch from the new `main`. The same holds for a pull
+request that was closed. A run that cannot fire it leaves the
 four-hourly schedule to pick up.
 
 **Preparing questions.** When nothing is decided, take the top of

@@ -47,7 +47,12 @@ The merge starts the next run.**
   a branch, where `main` cannot see it. A run claims its item by opening that
   pull request as a draft before building, since a build can outlast the four
   hours between firings; a draft runs no gate, and a run that finds an older
-  claim from the same minutes closes its own draft.
+  claim from the same minutes closes its own draft. A run checks the lock again
+  before every push, not only at its start, and never pushes again once its
+  own pull request has merged or closed, since a merge releases the lock while
+  the run may still be working. `autopilot-lock.yml` enforces the lock in a
+  workflow, so it holds for a run on older instructions too: it closes any
+  `autopilot` pull request opened while an older one is open.
 - **GitHub merges, not the agent.** The run turns on auto-merge with a squash.
   Branch protection on `main` requires `verify gate`, `pull request title` and
   `gitleaks` (from `secrets.yml`), so the merge happens only when the same gate a person would wait on
