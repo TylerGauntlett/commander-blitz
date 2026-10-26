@@ -90,8 +90,14 @@ after each release is the list of mechanics the set introduced.
 5. **Art.** Every supported card wants its illustration, which is the art
    store.
 
-This item is continuous: `/extend-roadmap` takes one precon of it and
-leaves the item on the page.
+Each precon in the window is its own item, `precon-<id>`, which
+`python scripts/sync_precons.py --roadmap` writes from the manifest with this
+procedure and the decisions that let the autopilot build it unattended, and
+ranks so the queue closes out one set at a time, newest set first, the
+precon fewest cards short first inside a set. A manifest refresh is followed
+by that command, which plans the new set's precons at the top. This item
+holds the procedure and the plan after the window; it stays continuous, and
+the autopilot takes the precon items, never this one.
 
 ## Gate
 

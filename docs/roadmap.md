@@ -27,7 +27,9 @@ How to read it:
   only advanced one batch at a time. **Impact** is who it reaches and how
   often: **high** touches every game or every player of the site, **medium**
   touches a class of players or removes a weekly annoyance, **low** is polish
-  somebody would notice and nobody would miss. **Depends on** names the items
+  somebody would notice and nobody would miss. An item may also carry a
+  **rank**, which puts it ahead of the unranked items of its impact; the
+  precon items are ranked set by set, newest first. **Depends on** names the items
   that have to land first; "nothing" means it can start today.
 - An item may close with **Decisions**, the owner's answers to the questions
   its plan leaves open, and **Open questions**, the ones still waiting. An item
@@ -42,12 +44,107 @@ How to read it:
 
 ## The grid
 
-Every item, sorted by impact, then effort, then how many items finishing it
-frees up. The properties are the ones under each heading; this table is
-generated from them.
+Every item, sorted by impact, then rank where an item has one, then effort,
+then how many items finishing it frees up. The properties are the ones under
+each heading; this table is generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
+| [Keen Engineering (Foundations Commander)](#keen-engineering-foundations-commander) | S | high | nothing | 0 |
+| [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) | S | high | nothing | 0 |
+| [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) | S | high | nothing | 0 |
+| [Multiverse Reforged (Reality Fracture Commander)](#multiverse-reforged-reality-fracture-commander) | L | high | nothing | 0 |
+| [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) | L | high | nothing | 0 |
+| [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) | L | high | nothing | 0 |
+| [Doom Prevails (Marvel Super Heroes Commander)](#doom-prevails-marvel-super-heroes-commander) | L | high | nothing | 0 |
+| [The Fantastic Four (Marvel Super Heroes Commander)](#the-fantastic-four-marvel-super-heroes-commander) | L | high | nothing | 0 |
+| [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
+| [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
+| [Witherbloom Pestilence (Secrets of Strixhaven Commander)](#witherbloom-pestilence-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
+| [Silverquill Influence (Secrets of Strixhaven Commander)](#silverquill-influence-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
+| [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
+| [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
+| [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
+| [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) | L | high | nothing | 0 |
+| [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) | L | high | nothing | 0 |
+| [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) | S | high | nothing | 0 |
+| [Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)](#scions--spellcraft-final-fantasy-xiv-final-fantasy-commander) | L | high | nothing | 0 |
+| [Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)](#limit-break-final-fantasy-vii-final-fantasy-commander) | L | high | nothing | 0 |
+| [Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)](#counter-blitz-final-fantasy-x-final-fantasy-commander) | L | high | nothing | 0 |
+| [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) | M | high | nothing | 0 |
+| [Mardu Surge (Tarkir: Dragonstorm Commander)](#mardu-surge-tarkir-dragonstorm-commander) | M | high | nothing | 0 |
+| [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) | M | high | nothing | 0 |
+| [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) | L | high | nothing | 0 |
+| [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) | L | high | nothing | 0 |
+| [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) | L | high | nothing | 0 |
+| [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) | L | high | nothing | 0 |
+| [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
+| [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
+| [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
+| [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) | L | high | nothing | 0 |
+| [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) | M | high | nothing | 0 |
+| [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) | L | high | nothing | 0 |
+| [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) | L | high | nothing | 0 |
+| [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) | L | high | nothing | 0 |
+| [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) | L | high | nothing | 0 |
+| [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) | M | high | nothing | 0 |
+| [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
+| [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
+| [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) | L | high | nothing | 0 |
+| [Hail, Caesar (Fallout)](#hail-caesar-fallout) | L | high | nothing | 0 |
+| [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) | L | high | nothing | 0 |
+| [Science! (Fallout)](#science-fallout) | L | high | nothing | 0 |
+| [Mutant Menace (Fallout)](#mutant-menace-fallout) | L | high | nothing | 0 |
+| [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
+| [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
+| [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
+| [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) | L | high | nothing | 0 |
+| [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) | M | high | nothing | 0 |
+| [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) | L | high | nothing | 0 |
+| [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) | L | high | nothing | 0 |
+| [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) | L | high | nothing | 0 |
+| [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) | L | high | nothing | 0 |
+| [Paradox Power (Doctor Who)](#paradox-power-doctor-who) | L | high | nothing | 0 |
+| [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) | L | high | nothing | 0 |
+| [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) | L | high | nothing | 0 |
+| [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) | L | high | nothing | 0 |
+| [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) | L | high | nothing | 0 |
+| [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) | S | high | nothing | 0 |
+| [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) | L | high | nothing | 0 |
+| [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) | L | high | nothing | 0 |
+| [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) | L | high | nothing | 0 |
+| [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) | L | high | nothing | 0 |
+| [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) | L | high | nothing | 0 |
+| [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) | L | high | nothing | 0 |
+| [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) | L | high | nothing | 0 |
+| [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) | L | high | nothing | 0 |
+| [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) | M | high | nothing | 0 |
+| [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) | L | high | nothing | 0 |
+| [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) | M | high | nothing | 0 |
+| [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) | M | high | nothing | 0 |
+| [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) | M | high | nothing | 0 |
+| [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) | M | high | nothing | 0 |
+| [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) | L | high | nothing | 0 |
+| [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) | M | high | nothing | 0 |
+| [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) | L | high | nothing | 0 |
+| [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) | L | high | nothing | 0 |
+| [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) | L | high | nothing | 0 |
+| [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) | L | high | nothing | 0 |
+| [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) | L | high | nothing | 0 |
+| [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) | L | high | nothing | 0 |
+| [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) | L | high | nothing | 0 |
+| [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) | L | high | nothing | 0 |
+| [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) | L | high | nothing | 0 |
+| [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) | L | high | nothing | 0 |
+| [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) | L | high | nothing | 0 |
+| [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) | L | high | nothing | 0 |
+| [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) | L | high | nothing | 0 |
+| [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) | L | high | nothing | 0 |
+| [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) | M | high | nothing | 0 |
+| [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) | L | high | nothing | 0 |
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
@@ -70,26 +167,121 @@ generated from them.
 
 Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
-effort, then what they unlock. `python scripts/roadmap.py --next` prints the
+rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
 **Ready now, best first:**
 
-1. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-2. [Difficulty](#difficulty) — S, medium
-3. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-4. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-5. [Why a press is refused](#why-a-press-is-refused) — S, medium
-6. [Outcomes as data](#outcomes-as-data) — M, medium
-7. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-8. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-9. [Replays and sharing](#replays-and-sharing) — M, medium
-10. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-11. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-12. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-13. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-14. [Archidekt import](#archidekt-import) — S, low
-15. [Sound](#sound) — S, low
+1. [Keen Engineering (Foundations Commander)](#keen-engineering-foundations-commander) — S, high
+2. [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) — S, high
+3. [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) — S, high
+4. [Multiverse Reforged (Reality Fracture Commander)](#multiverse-reforged-reality-fracture-commander) — L, high
+5. [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) — L, high
+6. [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) — L, high
+7. [Doom Prevails (Marvel Super Heroes Commander)](#doom-prevails-marvel-super-heroes-commander) — L, high
+8. [The Fantastic Four (Marvel Super Heroes Commander)](#the-fantastic-four-marvel-super-heroes-commander) — L, high
+9. [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — L, high
+10. [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — L, high
+11. [Witherbloom Pestilence (Secrets of Strixhaven Commander)](#witherbloom-pestilence-secrets-of-strixhaven-commander) — L, high
+12. [Silverquill Influence (Secrets of Strixhaven Commander)](#silverquill-influence-secrets-of-strixhaven-commander) — L, high
+13. [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) — L, high
+14. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
+15. [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — L, high
+16. [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) — L, high
+17. [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) — L, high
+18. [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) — S, high
+19. [Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)](#scions--spellcraft-final-fantasy-xiv-final-fantasy-commander) — L, high
+20. [Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)](#limit-break-final-fantasy-vii-final-fantasy-commander) — L, high
+21. [Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)](#counter-blitz-final-fantasy-x-final-fantasy-commander) — L, high
+22. [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) — M, high
+23. [Mardu Surge (Tarkir: Dragonstorm Commander)](#mardu-surge-tarkir-dragonstorm-commander) — M, high
+24. [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) — M, high
+25. [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) — L, high
+26. [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — L, high
+27. [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — L, high
+28. [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) — L, high
+29. [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — L, high
+30. [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — L, high
+31. [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — L, high
+32. [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — L, high
+33. [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) — M, high
+34. [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — L, high
+35. [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) — L, high
+36. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
+37. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
+38. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
+39. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
+40. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
+41. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
+42. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
+43. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
+44. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
+45. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
+46. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
+47. [Science! (Fallout)](#science-fallout) — L, high
+48. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
+49. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+50. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+51. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+52. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+53. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+54. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+55. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+56. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+57. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+58. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+59. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+60. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+61. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+62. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+63. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+64. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+65. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+66. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+67. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+68. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+69. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+70. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+71. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+72. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+73. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+74. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+75. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+76. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+77. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+78. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+79. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+80. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+81. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+82. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+83. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+84. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+85. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+86. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+87. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+88. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+89. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+90. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+91. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+92. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+93. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+94. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+95. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+96. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+97. [Difficulty](#difficulty) — S, medium
+98. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+99. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+100. [Why a press is refused](#why-a-press-is-refused) — S, medium
+101. [Outcomes as data](#outcomes-as-data) — M, medium
+102. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+103. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+104. [Replays and sharing](#replays-and-sharing) — M, medium
+105. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+106. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+107. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+108. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+109. [Archidekt import](#archidekt-import) — S, low
+110. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -248,6 +440,4661 @@ and the mute setting's e2e assertion still passes.
 
 ## Decks
 
+### Keen Engineering (Foundations Commander)
+
+Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Keen Engineering, the Foundations Commander precon released 2026-10-02, is a
+coming-soon shell on the shelf: its row `fdc_keen_engineering` is in
+`data/decks/sources.json` and there is no `data/decks/fdc_keen_engineering.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing fdc_keen_engineering` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Keen Engineering ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck fdc_keen_engineering`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Reign of Dragons (Foundations Commander)
+
+Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Reign of Dragons, the Foundations Commander precon released 2026-10-02, is a
+coming-soon shell on the shelf: its row `fdc_reign_of_dragons` is in
+`data/decks/sources.json` and there is no `data/decks/fdc_reign_of_dragons.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing fdc_reign_of_dragons` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Reign of Dragons ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck fdc_reign_of_dragons`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Tramplesaurus Rex (Foundations Commander)
+
+Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Tramplesaurus Rex, the Foundations Commander precon released 2026-10-02, is a
+coming-soon shell on the shelf: its row `fdc_tramplesaurus_rex` is in
+`data/decks/sources.json` and there is no `data/decks/fdc_tramplesaurus_rex.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing fdc_tramplesaurus_rex` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Tramplesaurus Rex ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck fdc_tramplesaurus_rex`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Multiverse Reforged (Reality Fracture Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Multiverse Reforged, the Reality Fracture Commander precon released 2026-10-02, is a
+coming-soon shell on the shelf: its row `frc_multiverse_reforged` is in
+`data/decks/sources.json` and there is no `data/decks/frc_multiverse_reforged.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing frc_multiverse_reforged` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Multiverse Reforged ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck frc_multiverse_reforged`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Wakanda Forever (Marvel Super Heroes Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Wakanda Forever, the Marvel Super Heroes Commander precon released 2026-06-26, is a
+coming-soon shell on the shelf: its row `msc_wakanda_forever` is in
+`data/decks/sources.json` and there is no `data/decks/msc_wakanda_forever.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing msc_wakanda_forever` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Wakanda Forever ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck msc_wakanda_forever`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Avengers Assemble (Marvel Super Heroes Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Avengers Assemble, the Marvel Super Heroes Commander precon released 2026-06-26, is a
+coming-soon shell on the shelf: its row `msc_avengers_assemble` is in
+`data/decks/sources.json` and there is no `data/decks/msc_avengers_assemble.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing msc_avengers_assemble` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Avengers Assemble ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck msc_avengers_assemble`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Doom Prevails (Marvel Super Heroes Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Doom Prevails, the Marvel Super Heroes Commander precon released 2026-06-26, is a
+coming-soon shell on the shelf: its row `msc_doom_prevails` is in
+`data/decks/sources.json` and there is no `data/decks/msc_doom_prevails.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing msc_doom_prevails` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Doom Prevails ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck msc_doom_prevails`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### The Fantastic Four (Marvel Super Heroes Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+The Fantastic Four, the Marvel Super Heroes Commander precon released 2026-06-26, is a
+coming-soon shell on the shelf: its row `msc_the_fantastic_four` is in
+`data/decks/sources.json` and there is no `data/decks/msc_the_fantastic_four.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing msc_the_fantastic_four` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+The Fantastic Four ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck msc_the_fantastic_four`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Prismari Artistry (Secrets of Strixhaven Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Prismari Artistry, the Secrets of Strixhaven Commander precon released 2026-04-24, is a
+coming-soon shell on the shelf: its row `soc_prismari_artistry` is in
+`data/decks/sources.json` and there is no `data/decks/soc_prismari_artistry.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing soc_prismari_artistry` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Prismari Artistry ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck soc_prismari_artistry`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Lorehold Spirit (Secrets of Strixhaven Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Lorehold Spirit, the Secrets of Strixhaven Commander precon released 2026-04-24, is a
+coming-soon shell on the shelf: its row `soc_lorehold_spirit` is in
+`data/decks/sources.json` and there is no `data/decks/soc_lorehold_spirit.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing soc_lorehold_spirit` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Lorehold Spirit ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck soc_lorehold_spirit`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Witherbloom Pestilence (Secrets of Strixhaven Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Witherbloom Pestilence, the Secrets of Strixhaven Commander precon released 2026-04-24, is a
+coming-soon shell on the shelf: its row `soc_witherbloom_pestilence` is in
+`data/decks/sources.json` and there is no `data/decks/soc_witherbloom_pestilence.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing soc_witherbloom_pestilence` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Witherbloom Pestilence ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck soc_witherbloom_pestilence`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Silverquill Influence (Secrets of Strixhaven Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Silverquill Influence, the Secrets of Strixhaven Commander precon released 2026-04-24, is a
+coming-soon shell on the shelf: its row `soc_silverquill_influence` is in
+`data/decks/sources.json` and there is no `data/decks/soc_silverquill_influence.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing soc_silverquill_influence` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Silverquill Influence ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck soc_silverquill_influence`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Quandrix Unlimited (Secrets of Strixhaven Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Quandrix Unlimited, the Secrets of Strixhaven Commander precon released 2026-04-24, is a
+coming-soon shell on the shelf: its row `soc_quandrix_unlimited` is in
+`data/decks/sources.json` and there is no `data/decks/soc_quandrix_unlimited.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing soc_quandrix_unlimited` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Quandrix Unlimited ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck soc_quandrix_unlimited`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Blight Curse (Lorwyn Eclipsed Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Blight Curse, the Lorwyn Eclipsed Commander precon released 2026-01-23, is a
+coming-soon shell on the shelf: its row `ecc_blight_curse` is in
+`data/decks/sources.json` and there is no `data/decks/ecc_blight_curse.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ecc_blight_curse` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Blight Curse ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ecc_blight_curse`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Dance of the Elements (Lorwyn Eclipsed Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Dance of the Elements, the Lorwyn Eclipsed Commander precon released 2026-01-23, is a
+coming-soon shell on the shelf: its row `ecc_dance_of_the_elements` is in
+`data/decks/sources.json` and there is no `data/decks/ecc_dance_of_the_elements.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ecc_dance_of_the_elements` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Dance of the Elements ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ecc_dance_of_the_elements`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Counter Intelligence (Edge of Eternities Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Counter Intelligence, the Edge of Eternities Commander precon released 2025-08-01, is a
+coming-soon shell on the shelf: its row `eoc_counter_intelligence` is in
+`data/decks/sources.json` and there is no `data/decks/eoc_counter_intelligence.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing eoc_counter_intelligence` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Counter Intelligence ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck eoc_counter_intelligence`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### World Shaper (Edge of Eternities Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+World Shaper, the Edge of Eternities Commander precon released 2025-08-01, is a
+coming-soon shell on the shelf: its row `eoc_world_shaper` is in
+`data/decks/sources.json` and there is no `data/decks/eoc_world_shaper.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing eoc_world_shaper` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+World Shaper ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck eoc_world_shaper`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)
+
+Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Revival Trance (FINAL FANTASY VI), the Final Fantasy Commander precon released 2025-06-13, is a
+coming-soon shell on the shelf: its row `fic_revival_trance_final_fantasy_vi` is in
+`data/decks/sources.json` and there is no `data/decks/fic_revival_trance_final_fantasy_vi.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing fic_revival_trance_final_fantasy_vi` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Revival Trance (FINAL FANTASY VI) ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck fic_revival_trance_final_fantasy_vi`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Scions & Spellcraft (FINAL FANTASY XIV), the Final Fantasy Commander precon released 2025-06-13, is a
+coming-soon shell on the shelf: its row `fic_scions_spellcraft_final_fantasy_xiv` is in
+`data/decks/sources.json` and there is no `data/decks/fic_scions_spellcraft_final_fantasy_xiv.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing fic_scions_spellcraft_final_fantasy_xiv` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Scions & Spellcraft (FINAL FANTASY XIV) ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck fic_scions_spellcraft_final_fantasy_xiv`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Limit Break (FINAL FANTASY VII), the Final Fantasy Commander precon released 2025-06-13, is a
+coming-soon shell on the shelf: its row `fic_limit_break_final_fantasy_vii` is in
+`data/decks/sources.json` and there is no `data/decks/fic_limit_break_final_fantasy_vii.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing fic_limit_break_final_fantasy_vii` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Limit Break (FINAL FANTASY VII) ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck fic_limit_break_final_fantasy_vii`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Counter Blitz (FINAL FANTASY X), the Final Fantasy Commander precon released 2025-06-13, is a
+coming-soon shell on the shelf: its row `fic_counter_blitz_final_fantasy_x` is in
+`data/decks/sources.json` and there is no `data/decks/fic_counter_blitz_final_fantasy_x.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing fic_counter_blitz_final_fantasy_x` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Counter Blitz (FINAL FANTASY X) ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck fic_counter_blitz_final_fantasy_x`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Jeskai Striker (Tarkir: Dragonstorm Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Jeskai Striker, the Tarkir: Dragonstorm Commander precon released 2025-04-11, is a
+coming-soon shell on the shelf: its row `tdc_jeskai_striker` is in
+`data/decks/sources.json` and there is no `data/decks/tdc_jeskai_striker.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing tdc_jeskai_striker` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Jeskai Striker ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck tdc_jeskai_striker`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Mardu Surge (Tarkir: Dragonstorm Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Mardu Surge, the Tarkir: Dragonstorm Commander precon released 2025-04-11, is a
+coming-soon shell on the shelf: its row `tdc_mardu_surge` is in
+`data/decks/sources.json` and there is no `data/decks/tdc_mardu_surge.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing tdc_mardu_surge` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Mardu Surge ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck tdc_mardu_surge`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Temur Roar (Tarkir: Dragonstorm Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Temur Roar, the Tarkir: Dragonstorm Commander precon released 2025-04-11, is a
+coming-soon shell on the shelf: its row `tdc_temur_roar` is in
+`data/decks/sources.json` and there is no `data/decks/tdc_temur_roar.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing tdc_temur_roar` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Temur Roar ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck tdc_temur_roar`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Abzan Armor (Tarkir: Dragonstorm Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Abzan Armor, the Tarkir: Dragonstorm Commander precon released 2025-04-11, is a
+coming-soon shell on the shelf: its row `tdc_abzan_armor` is in
+`data/decks/sources.json` and there is no `data/decks/tdc_abzan_armor.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing tdc_abzan_armor` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Abzan Armor ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck tdc_abzan_armor`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Sultai Arisen (Tarkir: Dragonstorm Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Sultai Arisen, the Tarkir: Dragonstorm Commander precon released 2025-04-11, is a
+coming-soon shell on the shelf: its row `tdc_sultai_arisen` is in
+`data/decks/sources.json` and there is no `data/decks/tdc_sultai_arisen.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing tdc_sultai_arisen` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Sultai Arisen ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck tdc_sultai_arisen`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Eternal Might (Aetherdrift Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Eternal Might, the Aetherdrift Commander precon released 2025-02-14, is a
+coming-soon shell on the shelf: its row `drc_eternal_might` is in
+`data/decks/sources.json` and there is no `data/decks/drc_eternal_might.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing drc_eternal_might` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Eternal Might ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck drc_eternal_might`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Living Energy (Aetherdrift Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Living Energy, the Aetherdrift Commander precon released 2025-02-14, is a
+coming-soon shell on the shelf: its row `drc_living_energy` is in
+`data/decks/sources.json` and there is no `data/decks/drc_living_energy.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing drc_living_energy` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Living Energy ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck drc_living_energy`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Endless Punishment (Duskmourn: House of Horror Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Endless Punishment, the Duskmourn: House of Horror Commander precon released 2024-09-27, is a
+coming-soon shell on the shelf: its row `dsc_endless_punishment` is in
+`data/decks/sources.json` and there is no `data/decks/dsc_endless_punishment.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing dsc_endless_punishment` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Endless Punishment ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck dsc_endless_punishment`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Death Toll (Duskmourn: House of Horror Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Death Toll, the Duskmourn: House of Horror Commander precon released 2024-09-27, is a
+coming-soon shell on the shelf: its row `dsc_death_toll` is in
+`data/decks/sources.json` and there is no `data/decks/dsc_death_toll.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing dsc_death_toll` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Death Toll ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck dsc_death_toll`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Jump Scare! (Duskmourn: House of Horror Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Jump Scare!, the Duskmourn: House of Horror Commander precon released 2024-09-27, is a
+coming-soon shell on the shelf: its row `dsc_jump_scare` is in
+`data/decks/sources.json` and there is no `data/decks/dsc_jump_scare.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing dsc_jump_scare` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Jump Scare! ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck dsc_jump_scare`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Miracle Worker (Duskmourn: House of Horror Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Miracle Worker, the Duskmourn: House of Horror Commander precon released 2024-09-27, is a
+coming-soon shell on the shelf: its row `dsc_miracle_worker` is in
+`data/decks/sources.json` and there is no `data/decks/dsc_miracle_worker.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing dsc_miracle_worker` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Miracle Worker ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck dsc_miracle_worker`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Animated Army (Bloomburrow Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Animated Army, the Bloomburrow Commander precon released 2024-08-02, is a
+coming-soon shell on the shelf: its row `blc_animated_army` is in
+`data/decks/sources.json` and there is no `data/decks/blc_animated_army.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing blc_animated_army` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Animated Army ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck blc_animated_army`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Family Matters (Bloomburrow Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Family Matters, the Bloomburrow Commander precon released 2024-08-02, is a
+coming-soon shell on the shelf: its row `blc_family_matters` is in
+`data/decks/sources.json` and there is no `data/decks/blc_family_matters.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing blc_family_matters` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Family Matters ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck blc_family_matters`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Peace Offering (Bloomburrow Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Peace Offering, the Bloomburrow Commander precon released 2024-08-02, is a
+coming-soon shell on the shelf: its row `blc_peace_offering` is in
+`data/decks/sources.json` and there is no `data/decks/blc_peace_offering.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing blc_peace_offering` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Peace Offering ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck blc_peace_offering`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Squirreled Away (Bloomburrow Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Squirreled Away, the Bloomburrow Commander precon released 2024-08-02, is a
+coming-soon shell on the shelf: its row `blc_squirreled_away` is in
+`data/decks/sources.json` and there is no `data/decks/blc_squirreled_away.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing blc_squirreled_away` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Squirreled Away ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck blc_squirreled_away`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Creative Energy (Modern Horizons 3 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Creative Energy, the Modern Horizons 3 Commander precon released 2024-06-14, is a
+coming-soon shell on the shelf: its row `m3c_creative_energy` is in
+`data/decks/sources.json` and there is no `data/decks/m3c_creative_energy.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing m3c_creative_energy` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Creative Energy ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck m3c_creative_energy`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Graveyard Overdrive (Modern Horizons 3 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Graveyard Overdrive, the Modern Horizons 3 Commander precon released 2024-06-14, is a
+coming-soon shell on the shelf: its row `m3c_graveyard_overdrive` is in
+`data/decks/sources.json` and there is no `data/decks/m3c_graveyard_overdrive.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing m3c_graveyard_overdrive` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Graveyard Overdrive ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck m3c_graveyard_overdrive`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Tricky Terrain (Modern Horizons 3 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Tricky Terrain, the Modern Horizons 3 Commander precon released 2024-06-14, is a
+coming-soon shell on the shelf: its row `m3c_tricky_terrain` is in
+`data/decks/sources.json` and there is no `data/decks/m3c_tricky_terrain.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing m3c_tricky_terrain` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Tricky Terrain ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck m3c_tricky_terrain`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Eldrazi Incursion (Modern Horizons 3 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Eldrazi Incursion, the Modern Horizons 3 Commander precon released 2024-06-14, is a
+coming-soon shell on the shelf: its row `m3c_eldrazi_incursion` is in
+`data/decks/sources.json` and there is no `data/decks/m3c_eldrazi_incursion.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing m3c_eldrazi_incursion` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Eldrazi Incursion ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck m3c_eldrazi_incursion`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Quick Draw (Outlaws of Thunder Junction Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Quick Draw, the Outlaws of Thunder Junction Commander precon released 2024-04-19, is a
+coming-soon shell on the shelf: its row `otc_quick_draw` is in
+`data/decks/sources.json` and there is no `data/decks/otc_quick_draw.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing otc_quick_draw` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Quick Draw ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck otc_quick_draw`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Desert Bloom (Outlaws of Thunder Junction Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Desert Bloom, the Outlaws of Thunder Junction Commander precon released 2024-04-19, is a
+coming-soon shell on the shelf: its row `otc_desert_bloom` is in
+`data/decks/sources.json` and there is no `data/decks/otc_desert_bloom.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing otc_desert_bloom` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Desert Bloom ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck otc_desert_bloom`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Grand Larceny (Outlaws of Thunder Junction Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Grand Larceny, the Outlaws of Thunder Junction Commander precon released 2024-04-19, is a
+coming-soon shell on the shelf: its row `otc_grand_larceny` is in
+`data/decks/sources.json` and there is no `data/decks/otc_grand_larceny.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing otc_grand_larceny` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Grand Larceny ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck otc_grand_larceny`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Most Wanted (Outlaws of Thunder Junction Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Most Wanted, the Outlaws of Thunder Junction Commander precon released 2024-04-19, is a
+coming-soon shell on the shelf: its row `otc_most_wanted` is in
+`data/decks/sources.json` and there is no `data/decks/otc_most_wanted.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing otc_most_wanted` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Most Wanted ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck otc_most_wanted`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Hail, Caesar (Fallout)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Hail, Caesar, the Fallout precon released 2024-03-08, is a
+coming-soon shell on the shelf: its row `pip_hail_caesar` is in
+`data/decks/sources.json` and there is no `data/decks/pip_hail_caesar.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing pip_hail_caesar` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Hail, Caesar ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck pip_hail_caesar`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Scrappy Survivors (Fallout)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Scrappy Survivors, the Fallout precon released 2024-03-08, is a
+coming-soon shell on the shelf: its row `pip_scrappy_survivors` is in
+`data/decks/sources.json` and there is no `data/decks/pip_scrappy_survivors.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing pip_scrappy_survivors` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Scrappy Survivors ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck pip_scrappy_survivors`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Science! (Fallout)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Science!, the Fallout precon released 2024-03-08, is a
+coming-soon shell on the shelf: its row `pip_science` is in
+`data/decks/sources.json` and there is no `data/decks/pip_science.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing pip_science` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Science! ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck pip_science`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Mutant Menace (Fallout)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Mutant Menace, the Fallout precon released 2024-03-08, is a
+coming-soon shell on the shelf: its row `pip_mutant_menace` is in
+`data/decks/sources.json` and there is no `data/decks/pip_mutant_menace.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing pip_mutant_menace` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Mutant Menace ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck pip_mutant_menace`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Deep Clue Sea (Murders at Karlov Manor Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Deep Clue Sea, the Murders at Karlov Manor Commander precon released 2024-02-09, is a
+coming-soon shell on the shelf: its row `mkc_deep_clue_sea` is in
+`data/decks/sources.json` and there is no `data/decks/mkc_deep_clue_sea.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing mkc_deep_clue_sea` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Deep Clue Sea ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck mkc_deep_clue_sea`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Revenant Recon (Murders at Karlov Manor Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Revenant Recon, the Murders at Karlov Manor Commander precon released 2024-02-09, is a
+coming-soon shell on the shelf: its row `mkc_revenant_recon` is in
+`data/decks/sources.json` and there is no `data/decks/mkc_revenant_recon.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing mkc_revenant_recon` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Revenant Recon ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck mkc_revenant_recon`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Blame Game (Murders at Karlov Manor Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Blame Game, the Murders at Karlov Manor Commander precon released 2024-02-09, is a
+coming-soon shell on the shelf: its row `mkc_blame_game` is in
+`data/decks/sources.json` and there is no `data/decks/mkc_blame_game.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing mkc_blame_game` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Blame Game ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck mkc_blame_game`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Deadly Disguise (Murders at Karlov Manor Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Deadly Disguise, the Murders at Karlov Manor Commander precon released 2024-02-09, is a
+coming-soon shell on the shelf: its row `mkc_deadly_disguise` is in
+`data/decks/sources.json` and there is no `data/decks/mkc_deadly_disguise.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing mkc_deadly_disguise` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Deadly Disguise ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck mkc_deadly_disguise`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Blood Rites (The Lost Caverns of Ixalan Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Blood Rites, the The Lost Caverns of Ixalan Commander precon released 2023-11-17, is a
+coming-soon shell on the shelf: its row `lcc_blood_rites` is in
+`data/decks/sources.json` and there is no `data/decks/lcc_blood_rites.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing lcc_blood_rites` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Blood Rites ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck lcc_blood_rites`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Veloci-Ramp-Tor, the The Lost Caverns of Ixalan Commander precon released 2023-11-17, is a
+coming-soon shell on the shelf: its row `lcc_veloci_ramp_tor` is in
+`data/decks/sources.json` and there is no `data/decks/lcc_veloci_ramp_tor.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing lcc_veloci_ramp_tor` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Veloci-Ramp-Tor ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck lcc_veloci_ramp_tor`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Ahoy Mateys (The Lost Caverns of Ixalan Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Ahoy Mateys, the The Lost Caverns of Ixalan Commander precon released 2023-11-17, is a
+coming-soon shell on the shelf: its row `lcc_ahoy_mateys` is in
+`data/decks/sources.json` and there is no `data/decks/lcc_ahoy_mateys.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing lcc_ahoy_mateys` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Ahoy Mateys ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck lcc_ahoy_mateys`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Explorers of the Deep (The Lost Caverns of Ixalan Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Explorers of the Deep, the The Lost Caverns of Ixalan Commander precon released 2023-11-17, is a
+coming-soon shell on the shelf: its row `lcc_explorers_of_the_deep` is in
+`data/decks/sources.json` and there is no `data/decks/lcc_explorers_of_the_deep.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing lcc_explorers_of_the_deep` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Explorers of the Deep ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck lcc_explorers_of_the_deep`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Masters of Evil (Doctor Who)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Masters of Evil, the Doctor Who precon released 2023-10-13, is a
+coming-soon shell on the shelf: its row `who_masters_of_evil` is in
+`data/decks/sources.json` and there is no `data/decks/who_masters_of_evil.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing who_masters_of_evil` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Masters of Evil ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck who_masters_of_evil`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Paradox Power (Doctor Who)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Paradox Power, the Doctor Who precon released 2023-10-13, is a
+coming-soon shell on the shelf: its row `who_paradox_power` is in
+`data/decks/sources.json` and there is no `data/decks/who_paradox_power.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing who_paradox_power` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Paradox Power ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck who_paradox_power`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Blast from the Past (Doctor Who)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Blast from the Past, the Doctor Who precon released 2023-10-13, is a
+coming-soon shell on the shelf: its row `who_blast_from_the_past` is in
+`data/decks/sources.json` and there is no `data/decks/who_blast_from_the_past.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing who_blast_from_the_past` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Blast from the Past ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck who_blast_from_the_past`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Timey-Wimey (Doctor Who)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Timey-Wimey, the Doctor Who precon released 2023-10-13, is a
+coming-soon shell on the shelf: its row `who_timey_wimey` is in
+`data/decks/sources.json` and there is no `data/decks/who_timey_wimey.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing who_timey_wimey` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Timey-Wimey ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck who_timey_wimey`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Fae Dominion (Wilds of Eldraine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Fae Dominion, the Wilds of Eldraine Commander precon released 2023-09-08, is a
+coming-soon shell on the shelf: its row `woc_fae_dominion` is in
+`data/decks/sources.json` and there is no `data/decks/woc_fae_dominion.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing woc_fae_dominion` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Fae Dominion ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck woc_fae_dominion`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Virtue and Valor (Wilds of Eldraine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Virtue and Valor, the Wilds of Eldraine Commander precon released 2023-09-08, is a
+coming-soon shell on the shelf: its row `woc_virtue_and_valor` is in
+`data/decks/sources.json` and there is no `data/decks/woc_virtue_and_valor.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing woc_virtue_and_valor` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Virtue and Valor ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck woc_virtue_and_valor`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Riders of Rohan (Tales of Middle-earth Commander)
+
+Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Riders of Rohan, the Tales of Middle-earth Commander precon released 2023-06-23, is a
+coming-soon shell on the shelf: its row `ltc_riders_of_rohan` is in
+`data/decks/sources.json` and there is no `data/decks/ltc_riders_of_rohan.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ltc_riders_of_rohan` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Riders of Rohan ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ltc_riders_of_rohan`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Food and Fellowship (Tales of Middle-earth Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Food and Fellowship, the Tales of Middle-earth Commander precon released 2023-06-23, is a
+coming-soon shell on the shelf: its row `ltc_food_and_fellowship` is in
+`data/decks/sources.json` and there is no `data/decks/ltc_food_and_fellowship.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ltc_food_and_fellowship` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Food and Fellowship ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ltc_food_and_fellowship`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Elven Council (Tales of Middle-earth Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Elven Council, the Tales of Middle-earth Commander precon released 2023-06-23, is a
+coming-soon shell on the shelf: its row `ltc_elven_council` is in
+`data/decks/sources.json` and there is no `data/decks/ltc_elven_council.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ltc_elven_council` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Elven Council ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ltc_elven_council`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### The Hosts of Mordor (Tales of Middle-earth Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+The Hosts of Mordor, the Tales of Middle-earth Commander precon released 2023-06-23, is a
+coming-soon shell on the shelf: its row `ltc_the_hosts_of_mordor` is in
+`data/decks/sources.json` and there is no `data/decks/ltc_the_hosts_of_mordor.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ltc_the_hosts_of_mordor` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+The Hosts of Mordor ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ltc_the_hosts_of_mordor`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Cavalry Charge (March of the Machine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Cavalry Charge, the March of the Machine Commander precon released 2023-04-21, is a
+coming-soon shell on the shelf: its row `moc_cavalry_charge` is in
+`data/decks/sources.json` and there is no `data/decks/moc_cavalry_charge.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing moc_cavalry_charge` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Cavalry Charge ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck moc_cavalry_charge`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Divine Convocation (March of the Machine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Divine Convocation, the March of the Machine Commander precon released 2023-04-21, is a
+coming-soon shell on the shelf: its row `moc_divine_convocation` is in
+`data/decks/sources.json` and there is no `data/decks/moc_divine_convocation.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing moc_divine_convocation` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Divine Convocation ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck moc_divine_convocation`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Tinker Time (March of the Machine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Tinker Time, the March of the Machine Commander precon released 2023-04-21, is a
+coming-soon shell on the shelf: its row `moc_tinker_time` is in
+`data/decks/sources.json` and there is no `data/decks/moc_tinker_time.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing moc_tinker_time` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Tinker Time ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck moc_tinker_time`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Growing Threat (March of the Machine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Growing Threat, the March of the Machine Commander precon released 2023-04-21, is a
+coming-soon shell on the shelf: its row `moc_growing_threat` is in
+`data/decks/sources.json` and there is no `data/decks/moc_growing_threat.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing moc_growing_threat` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Growing Threat ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck moc_growing_threat`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Call for Backup (March of the Machine Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Call for Backup, the March of the Machine Commander precon released 2023-04-21, is a
+coming-soon shell on the shelf: its row `moc_call_for_backup` is in
+`data/decks/sources.json` and there is no `data/decks/moc_call_for_backup.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing moc_call_for_backup` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Call for Backup ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck moc_call_for_backup`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Rebellion Rising (Phyrexia: All Will Be One Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Rebellion Rising, the Phyrexia: All Will Be One Commander precon released 2023-02-10, is a
+coming-soon shell on the shelf: its row `onc_rebellion_rising` is in
+`data/decks/sources.json` and there is no `data/decks/onc_rebellion_rising.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing onc_rebellion_rising` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Rebellion Rising ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck onc_rebellion_rising`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Corrupting Influence (Phyrexia: All Will Be One Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Corrupting Influence, the Phyrexia: All Will Be One Commander precon released 2023-02-10, is a
+coming-soon shell on the shelf: its row `onc_corrupting_influence` is in
+`data/decks/sources.json` and there is no `data/decks/onc_corrupting_influence.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing onc_corrupting_influence` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Corrupting Influence ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck onc_corrupting_influence`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Draconic Destruction (Starter Commander Decks)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Draconic Destruction, the Starter Commander Decks precon released 2022-12-02, is a
+coming-soon shell on the shelf: its row `scd_draconic_destruction` is in
+`data/decks/sources.json` and there is no `data/decks/scd_draconic_destruction.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing scd_draconic_destruction` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Draconic Destruction ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck scd_draconic_destruction`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Grave Danger (Starter Commander Decks)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Grave Danger, the Starter Commander Decks precon released 2022-12-02, is a
+coming-soon shell on the shelf: its row `scd_grave_danger` is in
+`data/decks/sources.json` and there is no `data/decks/scd_grave_danger.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing scd_grave_danger` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Grave Danger ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck scd_grave_danger`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### First Flight (Starter Commander Decks)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+First Flight, the Starter Commander Decks precon released 2022-12-02, is a
+coming-soon shell on the shelf: its row `scd_first_flight` is in
+`data/decks/sources.json` and there is no `data/decks/scd_first_flight.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing scd_first_flight` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+First Flight ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck scd_first_flight`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Chaos Incarnate (Starter Commander Decks)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Chaos Incarnate, the Starter Commander Decks precon released 2022-12-02, is a
+coming-soon shell on the shelf: its row `scd_chaos_incarnate` is in
+`data/decks/sources.json` and there is no `data/decks/scd_chaos_incarnate.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing scd_chaos_incarnate` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Chaos Incarnate ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck scd_chaos_incarnate`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Token Triumph (Starter Commander Decks)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Token Triumph, the Starter Commander Decks precon released 2022-12-02, is a
+coming-soon shell on the shelf: its row `scd_token_triumph` is in
+`data/decks/sources.json` and there is no `data/decks/scd_token_triumph.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing scd_token_triumph` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Token Triumph ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck scd_token_triumph`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Urza's Iron Alliance (The Brothers' War Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Urza's Iron Alliance, the The Brothers' War Commander precon released 2022-11-18, is a
+coming-soon shell on the shelf: its row `brc_urzas_iron_alliance` is in
+`data/decks/sources.json` and there is no `data/decks/brc_urzas_iron_alliance.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing brc_urzas_iron_alliance` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Urza's Iron Alliance ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck brc_urzas_iron_alliance`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Mishra's Burnished Banner (The Brothers' War Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Mishra's Burnished Banner, the The Brothers' War Commander precon released 2022-11-18, is a
+coming-soon shell on the shelf: its row `brc_mishras_burnished_banner` is in
+`data/decks/sources.json` and there is no `data/decks/brc_mishras_burnished_banner.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing brc_mishras_burnished_banner` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Mishra's Burnished Banner ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck brc_mishras_burnished_banner`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Forces of the Imperium (Warhammer 40,000 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Forces of the Imperium, the Warhammer 40,000 Commander precon released 2022-10-07, is a
+coming-soon shell on the shelf: its row `40k_forces_of_the_imperium` is in
+`data/decks/sources.json` and there is no `data/decks/40k_forces_of_the_imperium.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing 40k_forces_of_the_imperium` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Forces of the Imperium ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck 40k_forces_of_the_imperium`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### The Ruinous Powers (Warhammer 40,000 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+The Ruinous Powers, the Warhammer 40,000 Commander precon released 2022-10-07, is a
+coming-soon shell on the shelf: its row `40k_the_ruinous_powers` is in
+`data/decks/sources.json` and there is no `data/decks/40k_the_ruinous_powers.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing 40k_the_ruinous_powers` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+The Ruinous Powers ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck 40k_the_ruinous_powers`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Necron Dynasties (Warhammer 40,000 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Necron Dynasties, the Warhammer 40,000 Commander precon released 2022-10-07, is a
+coming-soon shell on the shelf: its row `40k_necron_dynasties` is in
+`data/decks/sources.json` and there is no `data/decks/40k_necron_dynasties.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing 40k_necron_dynasties` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Necron Dynasties ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck 40k_necron_dynasties`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Tyranid Swarm (Warhammer 40,000 Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Tyranid Swarm, the Warhammer 40,000 Commander precon released 2022-10-07, is a
+coming-soon shell on the shelf: its row `40k_tyranid_swarm` is in
+`data/decks/sources.json` and there is no `data/decks/40k_tyranid_swarm.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing 40k_tyranid_swarm` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Tyranid Swarm ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck 40k_tyranid_swarm`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Legends' Legacy (Dominaria United Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Legends' Legacy, the Dominaria United Commander precon released 2022-09-09, is a
+coming-soon shell on the shelf: its row `dmc_legends_legacy` is in
+`data/decks/sources.json` and there is no `data/decks/dmc_legends_legacy.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing dmc_legends_legacy` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Legends' Legacy ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck dmc_legends_legacy`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Painbow (Dominaria United Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Painbow, the Dominaria United Commander precon released 2022-09-09, is a
+coming-soon shell on the shelf: its row `dmc_painbow` is in
+`data/decks/sources.json` and there is no `data/decks/dmc_painbow.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing dmc_painbow` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Painbow ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck dmc_painbow`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Cabaretti Cacophony (New Capenna Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Cabaretti Cacophony, the New Capenna Commander precon released 2022-04-29, is a
+coming-soon shell on the shelf: its row `ncc_cabaretti_cacophony` is in
+`data/decks/sources.json` and there is no `data/decks/ncc_cabaretti_cacophony.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ncc_cabaretti_cacophony` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Cabaretti Cacophony ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ncc_cabaretti_cacophony`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Maestros Massacre (New Capenna Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Maestros Massacre, the New Capenna Commander precon released 2022-04-29, is a
+coming-soon shell on the shelf: its row `ncc_maestros_massacre` is in
+`data/decks/sources.json` and there is no `data/decks/ncc_maestros_massacre.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ncc_maestros_massacre` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Maestros Massacre ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ncc_maestros_massacre`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Riveteers Rampage (New Capenna Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Riveteers Rampage, the New Capenna Commander precon released 2022-04-29, is a
+coming-soon shell on the shelf: its row `ncc_riveteers_rampage` is in
+`data/decks/sources.json` and there is no `data/decks/ncc_riveteers_rampage.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ncc_riveteers_rampage` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Riveteers Rampage ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ncc_riveteers_rampage`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Obscura Operation (New Capenna Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Obscura Operation, the New Capenna Commander precon released 2022-04-29, is a
+coming-soon shell on the shelf: its row `ncc_obscura_operation` is in
+`data/decks/sources.json` and there is no `data/decks/ncc_obscura_operation.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ncc_obscura_operation` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Obscura Operation ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ncc_obscura_operation`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Bedecked Brokers (New Capenna Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Bedecked Brokers, the New Capenna Commander precon released 2022-04-29, is a
+coming-soon shell on the shelf: its row `ncc_bedecked_brokers` is in
+`data/decks/sources.json` and there is no `data/decks/ncc_bedecked_brokers.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing ncc_bedecked_brokers` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Bedecked Brokers ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck ncc_bedecked_brokers`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Buckle Up (Neon Dynasty Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Buckle Up, the Neon Dynasty Commander precon released 2022-02-18, is a
+coming-soon shell on the shelf: its row `nec_buckle_up` is in
+`data/decks/sources.json` and there is no `data/decks/nec_buckle_up.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing nec_buckle_up` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Buckle Up ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck nec_buckle_up`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Upgrades Unleashed (Neon Dynasty Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Upgrades Unleashed, the Neon Dynasty Commander precon released 2022-02-18, is a
+coming-soon shell on the shelf: its row `nec_upgrades_unleashed` is in
+`data/decks/sources.json` and there is no `data/decks/nec_upgrades_unleashed.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing nec_upgrades_unleashed` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Upgrades Unleashed ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck nec_upgrades_unleashed`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Vampiric Bloodline (Crimson Vow Commander)
+
+Effort **M** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Vampiric Bloodline, the Crimson Vow Commander precon released 2021-11-19, is a
+coming-soon shell on the shelf: its row `voc_vampiric_bloodline` is in
+`data/decks/sources.json` and there is no `data/decks/voc_vampiric_bloodline.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing voc_vampiric_bloodline` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Vampiric Bloodline ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck voc_vampiric_bloodline`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
+### Spirit Squadron (Crimson Vow Commander)
+
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+
+#### Today
+
+Spirit Squadron, the Crimson Vow Commander precon released 2021-11-19, is a
+coming-soon shell on the shelf: its row `voc_spirit_squadron` is in
+`data/decks/sources.json` and there is no `data/decks/voc_spirit_squadron.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing voc_spirit_squadron` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+#### The change
+
+Spirit Squadron ships native, card for card, as one batch of
+[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck voc_spirit_squadron`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+#### Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+#### Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+
 ### Every precon native, one at a time, then every import
 
 Effort **L, continuous** · Impact **high**, each precon is a shelf row a player expects, and every list a player pastes is the same card work one deck at a time · Depends on nothing.
@@ -332,8 +5179,14 @@ after each release is the list of mechanics the set introduced.
 5. **Art.** Every supported card wants its illustration, which is the art
    store.
 
-This item is continuous: `/extend-roadmap` takes one precon of it and
-leaves the item on the page.
+Each precon in the window is its own item, `precon-<id>`, which
+`python scripts/sync_precons.py --roadmap` writes from the manifest with this
+procedure and the decisions that let the autopilot build it unattended, and
+ranks so the queue closes out one set at a time, newest set first, the
+precon fewest cards short first inside a set. A manifest refresh is followed
+by that command, which plans the new set's precons at the top. This item
+holds the procedure and the plan after the window; it stays continuous, and
+the autopilot takes the precon items, never this one.
 
 #### Gate
 

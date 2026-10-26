@@ -156,6 +156,13 @@ the first phase (keep its id, narrow its sections) or is retired with
 `--drop` once every phase has a file. Never leave two items that promise the
 same thing.
 
+**Rank** is the one property that is a preference rather than a fact:
+`rank: <n>` puts an item ahead of every unranked item of the same impact,
+lowest rank first. The precon items carry it, written by
+`python scripts/sync_precons.py --roadmap`, which re-ranks them on every run;
+give another item a rank only when the person who owns the backlog asks for
+that order.
+
 **Rerank** touches only the front matter. Change a property only with the
 reason in the commit message, and never change a dependency to make an item
 ready sooner: a dependency is a fact about the build, not a preference about

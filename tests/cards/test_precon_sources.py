@@ -133,3 +133,39 @@ class TestTheRules:
         assert sync.precon_id("FIC", "Counter Blitz (FINAL FANTASY X)") == (
             "fic_counter_blitz_final_fantasy_x"
         )
+
+
+class TestTheRoadmapFollowsTheManifest:
+    """Every precon not shipped is a roadmap item, ranked set by set, newest first."""
+
+    def test_every_pending_precon_is_an_item_and_every_item_a_pending_precon(self, sync, rows):
+        pending = {sync.roadmap_id(i) for i in rows if not (sync.DECKS / f"{i}.deck.json").exists()}
+        items = {p.stem for p in sync.ROADMAP.glob("precon-*.md")} - {"precon-sets"}
+        assert items == pending, "run `python scripts/sync_precons.py --roadmap`"
+
+    def test_the_ranks_close_out_one_set_at_a_time_newest_first(self, sync, rows):
+        by_item = {sync.roadmap_id(i): row for i, row in rows.items()}
+        ranked = []
+        for path in sync.ROADMAP.glob("precon-*.md"):
+            if path.stem == "precon-sets":
+                continue
+            rank = next(
+                int(line.split(":", 1)[1])
+                for line in path.read_text(encoding="utf-8").splitlines()
+                if line.startswith("rank:")
+            )
+            ranked.append((rank, by_item[path.stem]))
+        sets = [row["set_code"] for _, row in sorted(ranked, key=lambda pair: pair[0])]
+        runs = [code for n, code in enumerate(sets) if n == 0 or sets[n - 1] != code]
+        assert len(runs) == len(set(runs)), "a set's precons are not contiguous in rank"
+        dates = [max(r["date"] for _, r in ranked if r["set_code"] == code) for code in runs]
+        assert dates == sorted(dates, reverse=True)
+
+    def test_inside_a_set_the_closest_to_whole_goes_first(self, sync):
+        rows = [
+            {"id": "a_far", "set_code": "A", "date": "2026-01-01", "product": "Far"},
+            {"id": "b_only", "set_code": "B", "date": "2026-06-01", "product": "Only"},
+            {"id": "a_near", "set_code": "A", "date": "2026-01-01", "product": "Near"},
+        ]
+        order = sync.precon_order(rows, {"a_far": 40, "a_near": 3, "b_only": 50})
+        assert [r["id"] for r in order] == ["b_only", "a_near", "a_far"]

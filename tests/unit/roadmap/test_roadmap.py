@@ -85,6 +85,8 @@ class TestAnItemIsHeldToItsShape:
             (item("a", body=BASE + "\n## Open questions\n\nq\n\n## Decisions\n\nd\n"), "order"),
             (item("a", body=BASE + "\n## Notes\n\nn\n"), "may follow"),
             (item("a", body=BASE + "\n## Decisions\n\n"), "empty"),
+            (item("a", extra="rank: 0\n"), "rank"),
+            (item("a", extra="rank: first\n"), "rank"),
             (item("a").replace("area: play", "area: moon"), "area"),
             (item("a").replace("why: because\n", ""), "missing"),
             (item("a").replace("status: proposed", "status: proposed\nowner: me"), "unknown"),
@@ -147,6 +149,30 @@ class TestTheQueueRanks:
         ]
         assert [i.id for i in rm.blocked(items)] == ["waits", "waits-more"]
         assert rm.unlocks(items)["mid-high-key"] == 2
+
+    def test_a_rank_goes_first_within_its_impact_and_no_further(self, rm, tmp_path):
+        backlog(
+            tmp_path,
+            item("small-high", effort="S"),
+            item("ranked-second", effort="L", extra="rank: 2\n"),
+            item("ranked-first", effort="L", extra="rank: 1\n"),
+            item("ranked-low", effort="S", impact="low", extra="rank: 1\n"),
+            item("small-medium", effort="S", impact="medium"),
+        )
+        items = rm.load_items(tmp_path)
+        assert [i.id for i in rm.ready(items)] == [
+            "ranked-first",
+            "ranked-second",
+            "small-high",
+            "small-medium",
+            "ranked-low",
+        ]
+
+    def test_a_rank_survives_a_rewrite(self, rm, tmp_path):
+        backlog(tmp_path, item("a", extra="rank: 7\n"))
+        (parsed,) = rm.load_items(tmp_path)
+        rm.write_item(parsed, tmp_path)
+        assert rm.load_items(tmp_path)[0].rank == 7
 
     def test_an_item_in_progress_is_neither_ready_nor_blocked(self, rm, tmp_path):
         backlog(tmp_path, item("a", status="in_progress"), item("b"))
