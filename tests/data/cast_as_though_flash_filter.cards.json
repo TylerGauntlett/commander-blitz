@@ -57,7 +57,7 @@
     },
     {
       "id": "t_filter_bear",
-      "name": "Test Plain Bear",
+      "name": "Test Filter Bear",
       "oracle_text": "",
       "mana_cost": "{G}",
       "types": ["Creature"],
