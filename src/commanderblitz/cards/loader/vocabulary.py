@@ -98,7 +98,13 @@ def normalize_keyword(word: str) -> str:
 #: Growth and Utopia Sprawl print the Vernal Bloom sentence about one enchanted
 #: land, and every other key here is a description that would also match the
 #: thirty other lands on the table.
-TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached"})
+#:
+#: `produced` is the other key that is not a characteristic: it describes the
+#: *tap*, not the permanent. Forsaken Monument's "whenever you tap a permanent
+#: **for {C}**" is ``{"produced": "{C}"}`` -- one mana symbol the tap must have
+#: made at least one of, so a painland tapped for {R} does not count and one
+#: tapped for {C} does.
+TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached", "produced"})
 
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(

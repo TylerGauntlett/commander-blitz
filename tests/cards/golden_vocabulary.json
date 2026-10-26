@@ -567,6 +567,7 @@
   ],
   "TAPPED_PERMANENT_KEYS": [
    "attached",
+   "produced",
    "subtypes",
    "supertypes",
    "types"

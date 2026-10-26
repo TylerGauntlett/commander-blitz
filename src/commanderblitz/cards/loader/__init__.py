@@ -2790,6 +2790,17 @@ def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
             f"{where}.tapped_permanent.attached: must be true if present "
             f"(omit the key to match a class of permanent instead)"
         )
+    # "Whenever you tap a permanent for {C}" -- one symbol the tap must make.
+    # One, because "for {C}{C}" is not a printed condition and would read as
+    # "made two" to nobody; a number ("{2}") is refused because a mana ability
+    # makes {C}, never generic.
+    if "produced" in tapped:
+        tapped_for = tapped["produced"]
+        if tapped_for not in ("{W}", "{U}", "{B}", "{R}", "{G}", "{C}"):
+            raise DslError(
+                f"{where}.tapped_permanent.produced: one mana symbol the tap made, "
+                f"such as '{{C}}' or '{{G}}', got {tapped_for!r}"
+            )
     if isinstance(model.add_mana, dict):
         # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
         # about the source and cannot be parsed now, so the shape is checked here

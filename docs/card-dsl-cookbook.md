@@ -1030,9 +1030,17 @@ and never uses the stack (605.4a), so it is read at the mana choke point beside
 read in the same places too: `costs._sources_of` (so legality offers the spell
 the extra mana pays for), `costs.activate_mana_ability` (so the mana really
 arrives) and legality's chip label. `tapped_permanent` takes only `types`,
-`subtypes`, `supertypes` and `attached`. The first three are matched against the
-tapped permanent's **current** characteristics, so a land Urborg made a Swamp
-counts. `attached` is the odd one out and the only one that names *a* permanent
+`subtypes`, `supertypes`, `attached` and `produced`. The first three are matched
+against the tapped permanent's **current** characteristics, so a land Urborg made
+a Swamp counts. `produced` describes the tap rather than the permanent: Forsaken
+Monument's "whenever you tap a permanent **for {C}**" is `{"produced": "{C}"}`,
+one mana symbol the tap must have made at least one of. It is asked per mana
+option, so a Battlefield Forge tapped for {C} gets the extra and the same Forge
+tapped for {R} does not, and it fires once per tap however much of that mana
+there was — a Sol Ring makes {C}{C}{C}. It combines with the other keys:
+Ultima's "a land for {C}" is `{"types": ["Land"], "produced": "{C}"}`. An empty
+`tapped_permanent` is refused; written that way, the Monument would pay out for
+every Forest. `attached` is the odd one out and the only one that names *a* permanent
 rather than a class: it is Wild Growth's "enchanted land", checked against the
 static's own `source.attached_to`, because a fact about the Aura is not a
 description of the land. Spelled with a class key instead, Wild Growth would pay

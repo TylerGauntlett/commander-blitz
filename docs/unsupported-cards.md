@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**112 cards** blocked by **97** capabilities.
+**111 cards** blocked by **96** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
-| [add-mana-on-tap-produced-filter](#add-mana-on-tap-produced-filter) | 1 | 893 | static_effect |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-block-restriction-current-power](#attack-block-restriction-current-power) | 1 | 5123 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -449,20 +448,6 @@ Blocks **1** card.
 - **Delirium** (rank 12129) — `delirium`
   - Cast this spell only during an opponent's turn.
   - Tap target creature that player controls. That creature deals damage equal to its power to the player.
-
-</details>
-
-## add-mana-on-tap-produced-filter
-
-Blocks **1** card.
-
-- **(static_effect)** an add_mana_on_tap condition on the mana the tapped permanent PRODUCED rather than on what the permanent is: "whenever you tap a permanent for {C}" fires when any permanent's {T} mana ability makes {C} (Sol Ring, Wastes, Eldrazi Temple), for any permanent type, and adds {C}
-  <br>Why the existing vocabulary won't do: add_mana_on_tap's tapped_permanent takes only types, subtypes, supertypes and attached (player_statics.mana_added_on_tap), all describing the permanent; there is no key reading the mana produced, so tapped_permanent {} would add {C} for every Forest tapped for {G}. double_nonland_mana / double_land_mana double whatever was made and are split by land/nonland, not by mana type
-
-<details><summary>Cards waiting on this</summary>
-
-- **Forsaken Monument** (rank 893) — `forsaken_monument`
-  - Whenever you tap a permanent for {C}, add an additional {C}.
 
 </details>
 

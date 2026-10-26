@@ -486,7 +486,9 @@ def player_doubles_mana_from(state: GameState, pid: int, oid: int) -> bool:
     return False
 
 
-def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, tuple[int, ...]]]:
+def mana_added_on_tap(
+    state: GameState, pid: int, oid: int, produced: Sequence[int]
+) -> list[tuple[int, tuple[int, ...]]]:
     """What ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for mana.
 
     Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional {B}." A
@@ -512,6 +514,13 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
     taps, which is a different and far larger card. An Aura attached to nothing
     matches nothing, which is the same answer a state-based action is about to
     give by binning it.
+
+    ``produced`` is what the tap made -- the mana ability's option as the solver
+    or the payment will add it -- and is read by the one key that describes the
+    *tap* rather than the permanent: Forsaken Monument's "whenever you tap a
+    permanent **for {C}**" is ``{"produced": "{C}"}``, met when the tap made at
+    least one of that mana. Once per tap however much of it there was: a Sol
+    Ring's {C}{C} is one tap for {C}, so one more {C}.
     """
     out: list[tuple[int, tuple[int, ...]]] = []
     tapped: Any = None
@@ -529,6 +538,10 @@ def mana_added_on_tap(state: GameState, pid: int, oid: int) -> list[tuple[int, t
             continue
         subtypes = wanted.get("subtypes", [])
         if subtypes and not any(t in tapped.subtypes for t in subtypes):
+            continue
+        if (tapped_for := wanted.get("produced")) is not None and not all(
+            produced[i] >= 1 for i, n in enumerate(parse_mana_production(tapped_for)) if n
+        ):
             continue
         out.append((source.oid, _mana_added(source, static.get("add_mana", ""))))
     return out

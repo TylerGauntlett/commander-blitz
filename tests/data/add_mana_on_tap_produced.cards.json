@@ -1,0 +1,39 @@
+{
+  "_comment": "Shapes for tests/unit/mana/test_add_mana_on_tap_produced.py. t_tap_c_monument is Forsaken Monument's second line alone ('whenever you tap a permanent for {C}, add an additional {C}') -- tapped_permanent {'produced': '{C}'}, a condition on the mana the tap made rather than on the permanent. t_tap_c_land_only narrows it to lands, Ultima, Origin of Oblivion's spelling, so the two kinds of key are shown to combine.",
+  "cards": [
+    {
+      "id": "t_tap_c_monument",
+      "name": "Test Tap C Monument",
+      "oracle_text": "Whenever you tap a permanent for {C}, add an additional {C}.",
+      "mana_cost": "{7}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever you tap a permanent for {C}, add an additional {C}.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "you",
+          "tapped_permanent": {"produced": "{C}"},
+          "add_mana": "{C}"
+        }
+      ]
+    },
+    {
+      "id": "t_tap_c_land_only",
+      "name": "Test Tap C Land Only",
+      "oracle_text": "Whenever you tap a land for {C}, add an additional {C}.",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Whenever you tap a land for {C}, add an additional {C}.",
+          "effect": "add_mana_on_tap",
+          "affects_player": "you",
+          "tapped_permanent": {"types": ["Land"], "produced": "{C}"},
+          "add_mana": "{C}"
+        }
+      ]
+    }
+  ]
+}

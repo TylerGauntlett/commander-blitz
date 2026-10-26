@@ -51,6 +51,7 @@ from ..loader.vocabulary import (
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
     STATIC_VALUE_KEYS,
+    TAPPED_PERMANENT_KEYS,
 )
 from ..proxy import CardFacts, build_proxy, facts_from_index
 from ..registry import CardRegistry, authored_card_paths, data_dir
@@ -511,6 +512,11 @@ def reference() -> dict:
         # the counts -- do not take the word, and a worker shown it in the
         # shared list would write it where it does not load.
         "static_affects_filter_keys": sorted(STATIC_AFFECTS_FILTER_KEYS),
+        # `add_mana_on_tap`'s `tapped_permanent` -- "whenever you tap a Swamp
+        # for mana" -- is not a static filter and takes its own short list,
+        # including `produced`, the mana the tap made ("tap a permanent for
+        # {C}"). Without it a worker had only the examples to go on.
+        "tapped_permanent_keys": sorted(TAPPED_PERMANENT_KEYS),
         # "This spell costs {1} less to cast for each ..." -- the arithmetic
         # heads, and the filter language beside them. The filter is
         # `static_filter_keys` plus `zone` and minus the three relational keys a
