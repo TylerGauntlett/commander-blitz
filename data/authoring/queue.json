@@ -100802,12 +100802,12 @@
     },
     "Forsaken Monument": {
       "edhrec_rank": 893,
-      "gate": "template",
+      "gate": null,
       "name": "Forsaken Monument",
-      "reason": "no template for: Colorless creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "516d5db4-92c2-4bf1-b3aa-f10ac3490bba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forsaken Sanctuary": {
