@@ -136,3 +136,53 @@ class TestTheTapComesBeforeTheMana:
 class TestTheLoaderKnowsIt:
     def test_the_card_compiles(self, registry):
         assert registry.get(IMPROVISER).pay_generic_with == "tap_artifacts"
+
+
+class TestThePrintedLineIsClaimed:
+    """Gate 3's bookkeeping. `pay_generic_with` is card-level, so no ability
+    can carry the printed "Improvise" -- a spell's line was always claimed by
+    its `spell_effects`, but a permanent like Kappa Cannoneer has none. The
+    claimant is the field, and the field must be the currency the word names.
+    """
+
+    def _card(self, pay_generic_with):
+        from commanderblitz.cards.loader import compile_card
+        from commanderblitz.cards.schema import CardModel
+
+        return compile_card(
+            CardModel.model_validate(
+                {
+                    "id": "t_improvise_residual",
+                    "name": "Improvise Residual",
+                    "mana_cost": "{5}{U}",
+                    "oracle_text": (
+                        "Improvise (Your artifacts can help cast this spell. Each artifact"
+                        " you tap after you're done activating mana abilities pays for {1}.)"
+                        "\nFlying"
+                    ),
+                    "types": ["Artifact", "Creature"],
+                    "power": 4,
+                    "toughness": 4,
+                    "keywords": ["flying"],
+                    "pay_generic_with": pay_generic_with,
+                }
+            )
+        )
+
+    def test_the_line_is_claimed(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card("tap_artifacts")
+        assert residual_text(card, card.oracle_text) == ""
+
+    def test_no_field_no_claim(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card(None)
+        assert "Improvise" in residual_text(card, card.oracle_text)
+
+    def test_convoke_cannot_claim_improvise(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card("tap_creatures")
+        assert "Improvise" in residual_text(card, card.oracle_text)

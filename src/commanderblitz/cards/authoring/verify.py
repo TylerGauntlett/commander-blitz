@@ -1362,6 +1362,14 @@ def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     )
 
 
+#: The printed keyword each `pay_generic_with` currency is.
+_PAY_GENERIC_KEYWORDS = {
+    "tap_creatures": "convoke",
+    "tap_artifacts": "improvise",
+    "exile_from_graveyard": "delve",
+}
+
+
 def _covered(card: CardDef, line: str) -> bool:
     """Whether an ability on the card claims this printed line.
 
@@ -1483,6 +1491,19 @@ def _covered(card: CardDef, line: str) -> bool:
         return True
     if card.evoke is not None and stripped.lower().startswith("evoke "):
         return True
+
+    # "Convoke", "Improvise", "Delve" are `pay_generic_with`: a card-level way
+    # to pay the generic part of the cost, asked inside `game._cast`, so no
+    # ability can claim the line -- kicker's shape. No permanent with one had
+    # been authored, and a spell's line is already claimed by its
+    # `spell_effects`; Kappa Cannoneer is the first. Strict: the printed word
+    # must name the currency the field charges, so a card tapping creatures
+    # cannot claim a printed "Improvise". The reminder text is cut first, as
+    # `_declares_printed_cost` cuts it.
+    if card.pay_generic_with is not None:
+        word = _PAY_GENERIC_KEYWORDS.get(card.pay_generic_with)
+        if word is not None and stripped.split("(")[0].strip().lower() == word:
+            return True
 
     # "Bestow {1}{G}" is that same card-level alternative cost once more, and
     # the one this list had simply never reached -- Springheart Nantuko is the
