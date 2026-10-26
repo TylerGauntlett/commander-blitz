@@ -32,6 +32,10 @@ from commanderblitz.engine.carddef import (
     prune_cost,
     top_level_mode_spec,
 )
+from commanderblitz.engine.characteristics import (
+    AFFECTED_CONTROLLER,
+    static_condition_names_affected,
+)
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
 from commanderblitz.engine.effects.selectors import (
@@ -132,6 +136,7 @@ from .vocabulary import (  # noqa: F401
     SOURCE_MOVING_OPS,
     SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
+    STATIC_AFFECTED_CONDITION_EFFECTS,
     STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
@@ -4294,6 +4299,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     _validate_static_condition(model.condition, f"{where}.condition")
+    if (
+        static_condition_names_affected(model.condition)
+        and model.effect not in STATIC_AFFECTED_CONDITION_EFFECTS
+    ):
+        # Asked once per static everywhere else, with no permanent to name the
+        # controller of -- `_static_active` would defer it for ever, and the
+        # static would apply as if the clause were not printed.
+        raise DslError(
+            f"{where}.condition: {AFFECTED_CONTROLLER!r} names the controller of the "
+            f"permanent the static is applied to, which only "
+            f"{sorted(STATIC_AFFECTED_CONDITION_EFFECTS)} read one at a time; "
+            f"{model.effect!r} does not"
+        )
 
     static: dict[str, Any] = {"effect": model.effect}
     if model.condition is not None:

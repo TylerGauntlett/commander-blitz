@@ -5740,6 +5740,12 @@ Both are ops, so reaching either from a static means inventing a `self_enters`
 trigger for a line that is printed as a static — which the residual gate would
 see as a trigger claiming a static sentence.
 
+"Unless that player is the monarch" (Fall from Favor) is a `condition` on the
+hold, `{"not": {"is_monarch": "affected_controller"}}`, asked per held permanent —
+see [static conditions](card-dsl.md#unless-that-player-is-the-monarch). "That
+player" is the creature's controller, not the Aura's, which is why the spec is not
+`you`.
+
 `not_supertypes` is the negation of `supertypes`, in the static selector language
 as in the effect-side one. It is **not** interchangeable with a `not_types`
 complement — `not_types: ["Land"]` is every permanent that is not a land, the

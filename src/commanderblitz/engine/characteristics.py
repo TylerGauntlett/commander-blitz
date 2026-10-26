@@ -1143,15 +1143,65 @@ _COMPARISONS = {
 }
 
 
-def _static_active(state: GameState, source: GameObject, static: Mapping[str, Any]) -> bool:
-    """Is this static's "as long as..." clause currently true?"""
+#: The player spec in a static condition that names the controller of **the
+#: permanent the static is being applied to**, not the static's source.
+#:
+#: Fall from Favor: "Enchanted creature doesn't untap during its controller's
+#: untap step unless *that player* is the monarch." Every other spec is measured
+#: from the source's controller, and on an Aura that is whoever cast it -- the
+#: Aura's controller made themselves the monarch on arrival, so
+#: `{"is_monarch": "you"}` would read as "the hold lifts while the *caster* is the
+#: monarch", which is the opposite card: the creature stays frozen exactly while
+#: its own controller has stolen the crown back.
+#:
+#: Asked per affected permanent, so only a reader that walks them one at a time
+#: can answer it -- `player_statics.untap_held`. The loader admits it only on
+#: the effects in `STATIC_AFFECTED_CONDITION_EFFECTS`, and `_static_active`
+#: defers a condition naming it when no permanent is in hand.
+AFFECTED_CONTROLLER = "affected_controller"
+
+
+def static_condition_names_affected(cond: Any) -> bool:
+    """Does this static condition tree name `AFFECTED_CONTROLLER` anywhere?"""
+    if not isinstance(cond, Mapping):
+        return False
+    if cond.get("is_monarch") == AFFECTED_CONTROLLER:
+        return True
+    if "not" in cond:
+        return static_condition_names_affected(cond["not"])
+    for head in ("all", "any"):
+        if head in cond:
+            return any(static_condition_names_affected(c) for c in cond[head] or ())
+    return False
+
+
+def _static_active(
+    state: GameState,
+    source: GameObject,
+    static: Mapping[str, Any],
+    affected: GameObject | None = None,
+) -> bool:
+    """Is this static's "as long as..." clause currently true?
+
+    ``affected`` is the permanent the static is being applied to, for the one
+    spec that needs it (`AFFECTED_CONTROLLER`). Without one, a condition naming
+    that spec is **deferred** -- reported active -- because the static-wide walks
+    (`_battlefield_statics` and its twins) have no permanent to ask about, and
+    the per-permanent reader asks again with each. The whole tree is deferred,
+    not just the leaf, so a ``not`` or an ``all`` around it is evaluated once,
+    correctly, by that reader.
+    """
     condition = static.get("condition")
     if not condition:
         return True
-    return _condition_met(state, source, condition)
+    if affected is None and static_condition_names_affected(condition):
+        return True
+    return _condition_met(state, source, condition, affected)
 
 
-def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
+def _condition_met(
+    state: GameState, source: GameObject, cond: Any, affected: GameObject | None = None
+) -> bool:
     """Evaluate a static's condition tree.
 
     A deliberately smaller language than :func:`commanderblitz.engine.effects.conditions.evaluate`
@@ -1162,6 +1212,8 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
     ``exists``/``cmp`` over ``{"count": filter}``, matched on printed
                       characteristics and, off the battlefield, on zone contents
     ``is_your_turn``  whose turn it is
+    ``is_monarch``    who holds the crown -- the only leaf that may name the
+                      ``affected`` permanent's controller (`AFFECTED_CONTROLLER`)
     """
     if isinstance(cond, bool):
         return cond
@@ -1173,11 +1225,11 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         have = source.counter(str(spec.get("counter", PLUS_ONE)))
         return _compare(str(spec.get("op", ">=")), have, int(spec.get("amount", 1)))
     if "all" in cond:
-        return all(_condition_met(state, source, c) for c in cond["all"])
+        return all(_condition_met(state, source, c, affected) for c in cond["all"])
     if "any" in cond:
-        return any(_condition_met(state, source, c) for c in cond["any"])
+        return any(_condition_met(state, source, c, affected) for c in cond["any"])
     if "not" in cond:
-        return not _condition_met(state, source, cond["not"])
+        return not _condition_met(state, source, cond["not"], affected)
     if "exists" in cond:
         return _count_matching(state, cond["exists"], source) > 0
     if "is_your_turn" in cond:
@@ -1206,6 +1258,19 @@ def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
         # static's output through it.
         pids = _static_players(state, source, cond["has_city_s_blessing"])
         return any(state.players[p].has_city_s_blessing for p in pids)
+    if "is_monarch" in cond:
+        # Player state, a pipeline input on `has_city_s_blessing`'s terms, and
+        # the two routes that move the crown bump `char_version`. `any`, as on
+        # the effect side: the monarchy is never true of two players at once.
+        who = cond["is_monarch"]
+        if who == AFFECTED_CONTROLLER:
+            if affected is None:
+                raise DslError(
+                    f"static condition {{'is_monarch': {AFFECTED_CONTROLLER!r}}} asked "
+                    "with no affected permanent"
+                )
+            return state.monarch == affected.controller
+        return state.monarch is not None and state.monarch in _static_players(state, source, who)
     if "top_of_library" in cond:
         # "As long as the top card of your library is black." A pipeline input
         # exactly as a zone count is -- nothing in the fixed-order pipeline can

@@ -35,6 +35,7 @@ from .vocabulary import (
     STATIC_FILTER_KEYS,
     STATIC_LIFE_KEYS,
     STATIC_LIFE_PLAYERS,
+    STATIC_MONARCH_PLAYERS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
 )
@@ -331,6 +332,13 @@ def _validate_static_condition(condition: Any, where: str) -> None:
             raise DslError(
                 f"{where}.has_city_s_blessing: must name one of "
                 f"{sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
+            )
+    elif head == "is_monarch":
+        who = condition["is_monarch"]
+        if not isinstance(who, str) or who not in STATIC_MONARCH_PLAYERS:
+            raise DslError(
+                f"{where}.is_monarch: must name one of "
+                f"{sorted(STATIC_MONARCH_PLAYERS)}, got {who!r}"
             )
     elif head == "cmp":
         op = str(condition["cmp"])
