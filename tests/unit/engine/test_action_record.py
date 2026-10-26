@@ -20,6 +20,9 @@ def _non_default(spec):
         return (TargetRef.obj(7), TargetRef.player(1), TargetRef.stack(2))
     if isinstance(default, bool):
         return not default
+    if spec.name == "granted_cost":
+        # Pairs, not indices: the price a granted alternative cost charges.
+        return (("pay_energy", 8),)
     if isinstance(default, tuple):
         return (2, 0)
     if isinstance(default, int):

@@ -9,7 +9,7 @@ from typing import Any
 from ..errors import DslError
 from ..objects import PLUS_ONE
 from ..player_statics import proliferate_times
-from ..primitives import add_counters, add_poison, remove_counters
+from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
@@ -87,9 +87,9 @@ def op_proliferate(ctx: EffectContext, spec: Mapping[str, Any]):
     shroud do not stop it -- which is why the decision's purpose is
     ``"proliferate"`` and not ``"target"``.
 
-    A player's counters are `PlayerState.poison`: it is the only per-player
-    counter the engine has, so energy and experience would join here when a
-    card first needs them.
+    A player's counters are `PlayerState.poison` and `PlayerState.energy`, and
+    a chosen player gets one more of each kind they already have, the way a
+    permanent does. Experience would join here when a card first needs it.
 
     "If you would proliferate, proliferate twice instead" (Tekuthal, the
     `replace_proliferate` static) is read here, once, before the first: each
@@ -109,9 +109,10 @@ def _proliferate_once(ctx: EffectContext):
         if obj is not None and obj.on_battlefield and any(n > 0 for n in obj.counters.values()):
             refs.append((ctx.name_of(oid), TargetRef.obj(oid)))
     for player in state.players:
-        if not player.has_lost and player.poison > 0:
+        kinds = [k for k, n in (("poison", player.poison), ("energy", player.energy)) if n > 0]
+        if not player.has_lost and kinds:
             seat = player.name or f"Player {player.pid}"
-            refs.append((f"{seat} (poison)", TargetRef.player(player.pid)))
+            refs.append((f"{seat} ({', '.join(kinds)})", TargetRef.player(player.pid)))
     picked = yield from ask_targets(
         ctx,
         "Proliferate: choose any number of permanents and/or players",
@@ -124,16 +125,25 @@ def _proliferate_once(ctx: EffectContext):
     # Snapshotted before anything is added: the kinds are the ones "already
     # there" as proliferate resolves, and `add_counters` mutates the dict.
     plan = [
-        (ref, list(state.objects[ref.id].counters.items()) if ref.kind == "object" else [])
+        (
+            ref,
+            list(state.objects[ref.id].counters.items())
+            if ref.kind == "object"
+            else [("poison", state.players[ref.id].poison), ("energy", state.players[ref.id].energy)],
+        )
         for ref in picked
     ]
     for ref, kinds in plan:
         if ref.kind == "player":
-            # Through `add_poison`, the one funnel for poison, so a counter
-            # replacement that reaches players (Innkeeper's Talent's "...on a
-            # permanent or player") applies -- writing the field directly
-            # skipped it.
-            add_poison(state, ref.id, 1, source=ctx.source_oid, by=ctx.controller)
+            # Through `add_poison` and `add_energy`, the funnels for a player's
+            # counters, so a counter replacement that reaches players
+            # (Innkeeper's Talent's "...on a permanent or player") applies --
+            # writing the field directly skipped it.
+            for kind, amount in kinds:
+                if amount <= 0:
+                    continue
+                funnel = add_poison if kind == "poison" else add_energy
+                funnel(state, ref.id, 1, source=ctx.source_oid, by=ctx.controller)
             continue
         obj = state.objects.get(ref.id)
         if obj is None or not obj.on_battlefield:

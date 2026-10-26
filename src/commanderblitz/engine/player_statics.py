@@ -1960,6 +1960,45 @@ def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     return None
 
 
+def granted_alternative_cost(
+    state: GameState, pid: int, card: CardDef
+) -> Mapping[str, Any] | None:
+    """The price a static lets ``pid`` pay *instead of* this spell's mana cost.
+
+    "You may pay eight {E} rather than pay the mana cost for permanent spells
+    you cast" -- Nissa, Worldsoul Speaker. An alternative cost (118.9) handed to
+    a whole class of spell by a permanent, which `granted_warp_cost` is for a
+    mana price and this is for any other: the returned mapping is a cost spec,
+    ``{"pay_energy": 8}``, and the cast line prices the mana half free and
+    charges it.
+
+    No zone in the filter, because none is printed: a permanent spell cast from
+    the command zone or from a graveyard under another permission is a spell
+    you cast, and 118.9d still adds the commander tax on top.
+
+    **The first grant wins**, for `granted_warp_cost`'s reason: two Nissas are
+    one alternative cost, not two identical cast lines.
+    """
+    for source_obj, static in _active_player_statics(state, "granted_alternative_cost"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        price = static.get("cost")
+        if not filt or not price:
+            # The loader requires both. Defaulting either would re-price every
+            # spell, or hand it over free.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return price
+    return None
+
+
 def player_plays_lands_from_library_top(state: GameState, pid: int) -> bool:
     """Whether this player may play the top card of their library, if it is a land.
 

@@ -58,6 +58,7 @@ import { type PileKind, pileLeaves } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { type PeekTarget, useUiStore } from "../../state/uiStore";
 import { CommandZone } from "./CommandZone";
+import { EnergyChip } from "./EnergyChip";
 import { ManaSymbol } from "./ManaSymbol";
 import { SeatIcon, type SeatIconName } from "./SeatIcon";
 
@@ -427,6 +428,7 @@ export function PlayerOrb({
         */}
         <div className="orb__head">
           <span className="orb__name">{player.name}</span>
+          <EnergyChip pid={player.pid} energy={player.energy} />
           {hasPriority && <span className="orb__priority" data-hint="Has priority" />}
         </div>
 

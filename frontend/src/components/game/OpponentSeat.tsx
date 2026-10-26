@@ -62,6 +62,7 @@ import { commandersOf, commandZoneCommanderCount } from "../../logic/zoneGroupin
 import type { PileKind } from "../../logic/zones";
 import { bouncy } from "../../motion/springs";
 import { useUiStore } from "../../state/uiStore";
+import { EnergyChip } from "./EnergyChip";
 import { SeatIcon, type SeatIconName } from "./SeatIcon";
 
 /** Commander damage becomes lethal here. The gauge is a fraction of it. */
@@ -419,6 +420,7 @@ export function OpponentSeat({
       <span className="seat__head">
         <span className="seat__name">{player.name}</span>
         <span className="seat__cmdr">{commander?.name ?? ""}</span>
+        <EnergyChip pid={player.pid} energy={player.energy} />
       </span>
 
       <span

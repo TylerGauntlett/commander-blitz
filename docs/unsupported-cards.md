@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **102** capabilities.
+**114 cards** blocked by **101** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,7 +53,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discover](#discover) | 1 | 1845 | op, value |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [dragon-6-6-r-flying-token](#dragon-6-6-r-flying-token) | 1 | 1517 | token |
-| [energy](#energy) | 1 | 18326 | engine |
 | [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
@@ -837,21 +836,6 @@ Blocks **1** card.
 
 </details>
 
-## energy
-
-Blocks **1** card.
-
-- **(engine)** a per-player energy counter pool (122.1f): an op that gives a player N energy ({E}) and an activated-ability cost `pay_energy: N` that is payable only when the controller has at least N energy and removes it
-  <br>Why the existing vocabulary won't do: add_counters only puts counters on objects (amount, counter, objects); add_poison is the only player counter and is poison-specific; the cost keys remove_counters / remove_counters_from_among remove counters from permanents, not from a player, and no value key reads a player's counter total
-
-<details><summary>Cards waiting on this</summary>
-
-- **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
-  - When this creature enters, you get {E}{E}{E} (three energy counters).
-  - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
 ## enters-as-copy
 
 Blocks **1** card.
@@ -1052,7 +1036,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
-  - When this creature enters, you get {E}{E}{E} (three energy counters).
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
 
 </details>
