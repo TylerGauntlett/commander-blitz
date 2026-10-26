@@ -3024,6 +3024,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.affects_spells.mana_value: a number, or "
                     f"{{'op': '<=', 'value': 3}} with a literal number"
                 )
+    elif model.effect == "cast_as_though_flash" and model.affects_spells is not None:
+        # "You may cast **artifact** spells as though they had flash" -- Shimmer
+        # Myr. Optional, because Vedalken Orrery prints no filter: omitted it
+        # reaches every spell, written it reaches only a matching one, read by
+        # `casting._timing_ok` against the face being cast. `controller` is
+        # refused because `affects_player` already names the caster, and an
+        # empty filter would read as the unfiltered Orrery.
+        if not model.affects_spells:
+            raise DslError(f"{where}.affects_spells: an empty filter would reach every spell")
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"caster; unsupported keys {sorted(unknown)}"
+            )
     elif model.effect == "spend_mana_as_any_color" and model.affects_spells is not None:
         # "…to cast **planeswalker** spells" -- Oath of Nissa. Optional, because
         # Chromatic Orrery prints no filter: omitted it loosens every cost the
@@ -3773,16 +3789,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         if model.effect == "cast_as_though_flash" and (
             model.affects is not None or model.amount is not None
         ):
-            # The same guard as its prohibitive twin, for the same reason and
-            # pointing the other way. "You may cast **Spirit** spells as though
-            # they had flash" written with a filter here would load clean and
-            # hand the permission to *every* spell -- a strictly better card
-            # than the printed one, and one that reads correctly on screen.
-            # Refused until a spell filter is built.
+            # The same guard as its prohibitive twin. `affects` picks out
+            # permanents, and a spell in hand is not one: written there,
+            # "you may cast **artifact** spells as though they had flash"
+            # would load clean and read nothing -- a strictly better card
+            # than the printed one. The spell filter is `affects_spells`.
             raise DslError(
-                f"{where}: cast_as_though_flash lifts the timing window for every "
-                f"spell the named players cast; it takes 'affects_player' and an "
-                f"optional 'condition', and no 'affects' or 'amount'"
+                f"{where}: cast_as_though_flash takes 'affects_player', an "
+                f"optional 'affects_spells' naming which spells it reaches and "
+                f"an optional 'condition', and no 'affects' or 'amount'"
             )
     elif model.effect in (
         "spell_cost_reduction",

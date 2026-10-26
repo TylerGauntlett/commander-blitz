@@ -504,7 +504,7 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
         for perm in state.flash_permissions
     ):
         return True
-    return player_casts_as_though_flash(state, pid)
+    return player_casts_as_though_flash(state, pid, card)
 
 
 def warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:

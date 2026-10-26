@@ -1231,10 +1231,28 @@ permission and leaves printed timing untouched.
 
 It permits and never compels, so 101.2 is unaffected: a seat under
 `cant_cast_spells` still casts nothing, which is exactly the pairing Tidal
-Barracuda prints on one card. Like its twin it takes no spell filter yet, and
-`affects` or `amount` beside it is a load error rather than ignored — "you may
-cast **Spirit** spells as though they had flash" written with a filter would
-otherwise hand the permission to every spell.
+Barracuda prints on one card.
+
+The spell filter is `affects_spells`, optional — Shimmer Myr's "You may cast
+**artifact** spells as though they had flash":
+
+```jsonc
+{ "kind": "static",
+  "text": "You may cast artifact spells as though they had flash.",
+  "effect": "cast_as_though_flash",
+  "affects_player": "you",
+  "affects_spells": { "types": ["Artifact"] } }
+```
+
+`_timing_ok` hands the face being cast to `player_casts_as_though_flash`, which
+matches it with `_matches_printed`, so "green creature spells" is
+`{ "types": ["Creature"], "colors": ["G"] }`. The keys are `SPELL_FILTER_KEYS`
+without `controller` (`affects_player` names the caster); an empty filter, or
+`affects` or `amount` beside the static, is a load error rather than ignored —
+`affects` picks out permanents, and a filter written there would load clean and
+hand the permission to every spell. The one-shot, timed form ("until your next
+turn, you may cast sorcery spells as though they had flash") is the
+`grant_flash_permission` op, not this static.
 
 `cast_only_at_sorcery_speed` points the other way — Teferi, Time Raveler's "Each
 opponent can cast spells only any time they could cast a sorcery":

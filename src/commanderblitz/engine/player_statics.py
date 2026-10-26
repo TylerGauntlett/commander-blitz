@@ -1636,7 +1636,9 @@ def player_cant_activate(state: GameState, pid: int, oid: int) -> bool:
     )
 
 
-def player_casts_as_though_flash(state: GameState, pid: int) -> bool:
+def player_casts_as_though_flash(
+    state: GameState, pid: int, card: CardDef | None = None
+) -> bool:
     """"Any player may cast spells as though they had flash." Tidal Barracuda.
 
     Also Leyline of Anticipation and Vedalken Orrery, with
@@ -1661,8 +1663,26 @@ def player_casts_as_though_flash(state: GameState, pid: int) -> bool:
     It permits and never compels, so it cannot make a spell castable that some
     other rule forbids: 101.2 still gives a "can't" the last word, and
     `player_cant_cast_spells` is checked before any of this.
+
+    **A spell filter**, `affects_spells`, is Shimmer Myr: "You may cast
+    **artifact** spells as though they had flash" (and Yeva, Nature's Herald's
+    green creature spells). The same shape `player_spends_mana_as_any_color`
+    reads for Oath of Nissa: a filtered permission is a claim about a spell,
+    so it answers only when ``card`` -- the face being cast -- is passed and
+    matches the printed filter. `_timing_ok` always passes it; asked without
+    one, only an unfiltered permission answers.
     """
-    return _player_static(state, pid, "cast_as_though_flash")
+    for obj, static in _active_player_statics(state, "cast_as_though_flash"):
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if not filt:
+            return True
+        if card is not None:
+            resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
+            if _matches_printed(card, resolved):
+                return True
+    return False
 
 
 def player_reveals_library_top(state: GameState, pid: int) -> bool:
