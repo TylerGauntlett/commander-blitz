@@ -1145,8 +1145,37 @@ MORPH_COST = ManaCost.parse("{3}")
 #: cost reduced to zero -- on an X spell a discount still leaves X to pay.
 FREE_COST = ManaCost.parse("")
 
+#: The ``pay_generic_with`` currencies that tap a permanent, and the card type
+#: each one taps: convoke a creature (702.51a), improvise an artifact
+#: (702.126a). Each tapped permanent pays for {1} of generic.
+PAY_GENERIC_TAP_TYPES: dict[str, str] = {
+    "tap_creatures": "Creature",
+    "tap_artifacts": "Artifact",
+}
+
+
+def pay_generic_tappers(state: GameState, pid: int, card: CardDef) -> list[int]:
+    """The untapped permanents ``pid`` could tap to convoke or improvise ``card``.
+
+    Empty for a card whose ``pay_generic_with`` taps nothing. The type is read
+    off the derived characteristics, so an animated artifact land convokes and
+    a Mycosynth-Lattice'd creature improvises.
+    """
+    wanted = PAY_GENERIC_TAP_TYPES.get(card.pay_generic_with or "")
+    if wanted is None:
+        return []
+    return [
+        other
+        for other in state.battlefield
+        if (obj := state.objects.get(other)) is not None
+        and obj.controller == pid
+        and not obj.tapped
+        and wanted in chars(state, other).types
+    ]
+
+
 def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
-    """The most a convoke or delve line could usefully spend.
+    """The most a convoke, improvise or delve line could usefully spend.
 
     Never more than the spell's own generic cost -- "pays for {1}" and a spell
     with two generic in it cannot absorb a third creature -- and never more
@@ -1155,15 +1184,8 @@ def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) ->
     generic = card.mana_cost.generic
     if generic <= 0:
         return 0
-    if card.pay_generic_with == "tap_creatures":
-        available = sum(
-            1
-            for other in state.battlefield
-            if (obj := state.objects.get(other)) is not None
-            and obj.controller == pid
-            and not obj.tapped
-            and "Creature" in chars(state, other).types
-        )
+    if card.pay_generic_with in PAY_GENERIC_TAP_TYPES:
+        available = len(pay_generic_tappers(state, pid, card))
     else:
         # Delve exiles from the graveyard, and the spell being cast is not in
         # it -- it is on the stack by the time this is paid.

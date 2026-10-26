@@ -178,6 +178,12 @@ _ENCHANT = re.compile(
 #: there is nothing left to build.
 _DEVOID = re.compile(r"^devoid$", re.I)
 
+#: ``Improvise`` (702.126a) -- "each artifact you tap after you're done
+#: activating mana abilities pays for {1}". A card-level field, not an ability:
+#: the bare keyword only, because `_bare` strips the reminder and every printing
+#: is the same rule, so there is no parameter to read.
+_IMPROVISE = re.compile(r"^improvise$", re.I)
+
 #: ``Changeling`` -- "this card is every creature type".  `add_subtype` covers it.
 _CHANGELING = re.compile(r"^changeling$", re.I)
 
@@ -500,6 +506,16 @@ def _translate_line(line: str, *, is_spell: bool):
             {"additional_cost": {"discard": 1}},
             Translation(effects=[], expect={}),
             "additional-cost:discard",
+        )
+
+    if _IMPROVISE.match(bare):
+        # Nothing to assert: the sandbox casts the card off its own mana, and
+        # tapping artifacts instead only changes how it was paid for.
+        return (
+            "card",
+            {"pay_generic_with": "tap_artifacts"},
+            Translation(effects=[], expect={}),
+            "improvise",
         )
 
     if _CHANGELING.match(bare):

@@ -1,0 +1,31 @@
+{
+  "_comment": "Cards that exist only for tests/unit/mana/test_improvise.py. Never part of a deck list. t_improviser is a {3}{U} improvise sorcery that draws two; t_trinket is an artifact with no abilities, t_construct an artifact creature, so the pool can be told apart from convoke's.",
+  "cards": [
+    {
+      "id": "t_improviser",
+      "name": "Test Improviser",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nDraw two cards.",
+      "mana_cost": "{3}{U}",
+      "types": ["Sorcery"],
+      "pay_generic_with": "tap_artifacts",
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 2}}]
+    },
+    {
+      "id": "t_trinket",
+      "name": "Test Trinket",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"]
+    },
+    {
+      "id": "t_construct",
+      "name": "Test Construct",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Construct"],
+      "power": 1,
+      "toughness": 1
+    }
+  ]
+}

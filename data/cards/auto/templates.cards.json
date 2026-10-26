@@ -5818,6 +5818,40 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}{C}{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}{C}{C}."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "arc_reactor",
+      "mana_cost": "{5}",
+      "name": "Arc Reactor",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nThis artifact enters tapped.\n{T}: Add {C}{C}{C}.",
+      "pay_generic_with": "tap_artifacts",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "link": "self",
@@ -10898,6 +10932,32 @@
         "Soldier"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "bastion_inventor",
+      "keywords": [
+        "hexproof"
+      ],
+      "mana_cost": "{5}{U}",
+      "name": "Bastion Inventor",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nHexproof (This creature can't be the target of spells or abilities your opponents control.)",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vedalken",
+        "Artificer"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -38701,6 +38761,32 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "enraged_giant",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Enraged Giant",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nTrample, haste",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Giant"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -46348,6 +46434,25 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [],
+      "colors": [],
+      "id": "foundry_assembler",
+      "mana_cost": "{5}",
+      "name": "Foundry Assembler",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)",
+      "pay_generic_with": "tap_artifacts",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Assembly-Worker"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {
@@ -66521,6 +66626,103 @@
       ],
       "toughness": 7,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{4}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward {4}"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another artifact you control enters, put a +1/+1 counter on this creature. It can't be blocked this turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature or another artifact you control enters, put a +1/+1 counter on this creature. It can't be blocked this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kappa_cannoneer",
+      "mana_cost": "{5}{U}",
+      "name": "Kappa Cannoneer",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nWard {4}\nWhenever this creature or another artifact you control enters, put a +1/+1 counter on this creature. It can't be blocked this turn.",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Turtle",
+        "Warrior"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -102608,6 +102810,32 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "reverse_engineer",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Reverse Engineer",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nDraw three cards.",
+      "pay_generic_with": "tap_artifacts",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -124813,6 +125041,32 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sweatworks_brawler",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Sweatworks Brawler",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nMenace",
+      "pay_generic_with": "tap_artifacts",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -147081,6 +147335,32 @@
         "Knight"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "wind_kin_raiders",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Wind-Kin Raiders",
+      "oracle_text": "Improvise (Your artifacts can help cast this spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)\nFlying",
+      "pay_generic_with": "tap_artifacts",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

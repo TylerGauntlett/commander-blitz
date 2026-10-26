@@ -703,6 +703,12 @@
     "file": "arboreal_grazer.jpg",
     "scryfall_id": "6d00ced6-7ba3-4d78-a680-9d3211704ca2"
   },
+  "arc_reactor": {
+    "artist": "Maxim Ruabtsev",
+    "bytes": 46344,
+    "file": "arc_reactor.jpg",
+    "scryfall_id": "339acb17-4b8e-4836-9cc5-8a0a946ebc73"
+  },
   "arcane_bombardment": {
     "artist": "Marta Nael",
     "file": "arcane_bombardment.jpg",
@@ -1367,6 +1373,12 @@
     "bytes": 85430,
     "file": "bastion_enforcer.jpg",
     "scryfall_id": "7cbf17a0-2dbc-4e79-9cfa-ea49b1605105"
+  },
+  "bastion_inventor": {
+    "artist": "Tony Foti",
+    "bytes": 87170,
+    "file": "bastion_inventor.jpg",
+    "scryfall_id": "7b6fa167-9f2f-4889-8715-11ed20c4cc94"
   },
   "bastion_of_remembrance": {
     "artist": "Yuu Fujiki",
@@ -4758,6 +4770,12 @@
     "file": "enormous_baloth.jpg",
     "scryfall_id": "54069e65-eef4-4fb8-bb0d-932a4c9889b3"
   },
+  "enraged_giant": {
+    "artist": "Anthony Palumbo",
+    "bytes": 81168,
+    "file": "enraged_giant.jpg",
+    "scryfall_id": "40dc3b59-baae-4bf0-b5ce-fa9a915af066"
+  },
   "entish_restoration": {
     "artist": "Calder Moore",
     "bytes": 69548,
@@ -5677,6 +5695,12 @@
     "bytes": 84042,
     "file": "foul_orchard.jpg",
     "scryfall_id": "1e1bad7b-e102-4dff-b79a-fd755c2b6d49"
+  },
+  "foundry_assembler": {
+    "artist": "Karl Kopinski",
+    "bytes": 82135,
+    "file": "foundry_assembler.jpg",
+    "scryfall_id": "e83a2862-a2d7-4d87-a4b8-def9f441f5fa"
   },
   "fractal_0_0_gu": {
     "artist": "Rudy Siswanto",
@@ -8240,6 +8264,12 @@
     "bytes": 78131,
     "file": "kami_of_old_stone.jpg",
     "scryfall_id": "0ab27f51-230c-469d-9b8a-a21b9d0fccf5"
+  },
+  "kappa_cannoneer": {
+    "artist": "Jesper Ejsing",
+    "bytes": 64163,
+    "file": "kappa_cannoneer.jpg",
+    "scryfall_id": "d644be98-83df-4546-a448-247f40299993"
   },
   "karametra_s_acolyte": {
     "artist": "Chase Stone",
@@ -12601,6 +12631,12 @@
     "file": "return_of_the_wildspeaker.jpg",
     "scryfall_id": "2fa1dac5-51ba-403e-b48b-d2c0d23a8146"
   },
+  "reverse_engineer": {
+    "artist": "Chase Stone",
+    "bytes": 40092,
+    "file": "reverse_engineer.jpg",
+    "scryfall_id": "07fff0a3-1315-42f7-9d36-4f5eaad0c62e"
+  },
   "revitalize": {
     "artist": "Mathias Kollros",
     "bytes": 64786,
@@ -15482,6 +15518,12 @@
     "file": "swashbuckling.jpg",
     "scryfall_id": "c08d3b3a-6923-4891-b545-51cfe65e4c7d"
   },
+  "sweatworks_brawler": {
+    "artist": "Zack Stella",
+    "bytes": 92893,
+    "file": "sweatworks_brawler.jpg",
+    "scryfall_id": "cc603ab7-2789-4732-a72b-1f9294d07f80"
+  },
   "swift_spinner": {
     "artist": "Nils Hamm",
     "bytes": 51484,
@@ -18282,6 +18324,12 @@
     "bytes": 79380,
     "file": "wind_drake.jpg",
     "scryfall_id": "4a83db8b-ada2-4796-a116-324462a014a8"
+  },
+  "wind_kin_raiders": {
+    "artist": "Shreya Shetty",
+    "bytes": 97219,
+    "file": "wind_kin_raiders.jpg",
+    "scryfall_id": "8037f588-6b9f-472d-b26a-2c06db976ad0"
   },
   "wind_scarred_crag": {
     "artist": "Svetlin Velinov",

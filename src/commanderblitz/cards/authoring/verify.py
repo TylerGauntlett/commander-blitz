@@ -1197,6 +1197,14 @@ def fold_self_reference(text: str, name: str) -> str:
     return _SELF_REFERENCE.sub("~", text)
 
 
+#: The printed keyword each `pay_generic_with` currency is, for its claimant.
+_PAY_GENERIC_KEYWORDS = {
+    "tap_creatures": "convoke",
+    "tap_artifacts": "improvise",
+    "exile_from_graveyard": "delve",
+}
+
+
 #: The price on a strive line -- "costs {1}{W} more to cast for each target
 #: beyond the first". Only the symbols are captured; the rest of the sentence
 #: has to be there word for word, because a cost that grows with something other
@@ -1465,6 +1473,21 @@ def _covered(card: CardDef, line: str) -> bool:
     # be attached to. Same shape as `kicker` above.
     if card.ascend and stripped.lower().startswith("ascend"):
         return True
+
+    # "Improvise (Your artifacts can help cast this spell…)", and convoke and
+    # delve beside it: `pay_generic_with`, a card-level way to pay the generic
+    # cost read by `casting` and `game._cast`, with no ability that could
+    # honestly carry the line. Spells never reached this -- `spell_effects`
+    # claims their every line -- and Kappa Cannoneer is the first permanent.
+    #
+    # Strict on the word: the printed keyword must be the declared currency's,
+    # so a card tapping creatures cannot claim a printed "Improvise", and the
+    # line must be the bare keyword plus its reminder text.
+    if card.pay_generic_with is not None:
+        keyword = _PAY_GENERIC_KEYWORDS.get(card.pay_generic_with)
+        bare = re.sub(r"\([^()]*\)", "", stripped).strip().rstrip(".").strip().lower()
+        if keyword is not None and bare == keyword:
+            return True
 
     # "This spell costs {X} less to cast" is a property of the card read while
     # deciding what is castable -- there is no ability, because a spell on the

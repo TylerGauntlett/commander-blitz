@@ -4139,7 +4139,7 @@ them where it is sitting:
 "alternative_cost": { "pay_life": 1, "exile_from_hand": {...} }  // Force of Will: not mana at all
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
-"pay_generic_with": "tap_creatures"         // convoke; "exile_from_graveyard" is delve
+"pay_generic_with": "tap_creatures"         // convoke; "tap_artifacts" is improvise, "exile_from_graveyard" delve
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards
@@ -4161,6 +4161,32 @@ them where it is sitting:
 "multikicker": "{1}{W}"                     // …the printed name for exactly those three
 "strive": "{1}{W}"                          // costs this much more per target beyond the first
 ```
+
+#### Convoke, improvise and delve
+
+One field, three currencies, each paying {1} of the spell's **generic** cost:
+`"tap_creatures"` taps untapped creatures you control (convoke, 702.51),
+`"tap_artifacts"` taps untapped artifacts you control (improvise, 702.126), and
+`"exile_from_graveyard"` exiles cards from your graveyard (delve, 702.66). The
+card is one cast line; which permanents tap or which cards go is a
+`CHOOSE_OBJECTS` asked as the spell is paid for, tagged `convoke`, `improvise`
+or `delve` ([ADR 0020](adr/0020-convoke-is-one-line.md)).
+
+```jsonc
+// Kappa Cannoneer -- "Improvise (Your artifacts can help cast this spell. Each
+//  artifact you tap after you're done activating mana abilities pays for {1}.)"
+"pay_generic_with": "tap_artifacts"
+```
+
+The tapping currencies tap **before** the mana is paid, so an artifact tapped
+to improvise cannot also be tapped for mana — the printed "after you're done
+activating mana abilities". A pick that taps the Sol Ring the rest of the cost
+needed is asked again. The type is read off derived characteristics, so an
+artifact creature counts for either keyword and an animated artifact land for
+both. None of them reaches a coloured pip: the saving goes through the same
+clamp as every cost reduction, and the ceiling is the spell's own generic cost.
+The near miss is `cost_reduction` with a count of artifacts (affinity), which
+lowers the price without tapping anything.
 
 #### Casting from the graveyard
 
@@ -9363,7 +9389,7 @@ walk offers nothing extra: nothing carries it that was not granted it.
 
 "…and mana of any type can be spent to cast that spell" is the one clause in the
 engine that relaxes a **coloured** requirement, and nothing else could stand in
-for it. Every cost reduction there is — `spell_cost_reduction`, convoke, delve,
+for it. Every cost reduction there is — `spell_cost_reduction`, convoke, improvise, delve,
 emerge, the commander tax's negative twin — is clamped to the generic part
 precisely so that no pile of them can ever reach a pip; and `add_mana`'s "any
 type" is about what a permanent *produces*, not about what may be spent.

@@ -562,6 +562,9 @@
   "arboreal_grazer": {
     "zone": "battlefield"
   },
+  "arc_reactor": {
+    "zone": "battlefield"
+  },
   "arcane_bombardment": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -1044,6 +1047,9 @@
     "zone": "battlefield"
   },
   "bastion_enforcer": {
+    "zone": "battlefield"
+  },
+  "bastion_inventor": {
     "zone": "battlefield"
   },
   "bastion_protector": {
@@ -3517,6 +3523,9 @@
   "enormous_baloth": {
     "zone": "battlefield"
   },
+  "enraged_giant": {
+    "zone": "battlefield"
+  },
   "entish_restoration": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -4293,6 +4302,9 @@
     "zone": "battlefield"
   },
   "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "foundry_assembler": {
     "zone": "battlefield"
   },
   "foundry_inspector": {
@@ -6026,6 +6038,13 @@
     "zone": "battlefield"
   },
   "kami_of_old_stone": {
+    "zone": "battlefield"
+  },
+  "kappa_cannoneer": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "karametra_s_acolyte": {
@@ -9253,6 +9272,11 @@
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
   },
+  "reverse_engineer": {
+    "hand_size": {
+      "0": 4
+    }
+  },
   "revitalize": {
     "hand_size": {
       "0": 2
@@ -11239,6 +11263,9 @@
       "graveyard"
     ]
   },
+  "sweatworks_brawler": {
+    "zone": "battlefield"
+  },
   "swift_spinner": {
     "zone": "battlefield"
   },
@@ -13218,6 +13245,9 @@
     "zone": "battlefield"
   },
   "wilt_leaf_cavaliers": {
+    "zone": "battlefield"
+  },
+  "wind_kin_raiders": {
     "zone": "battlefield"
   },
   "wind_spirit": {

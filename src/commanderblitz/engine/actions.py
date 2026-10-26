@@ -158,10 +158,11 @@ class Action:
     #: card quietly claiming to have been evoked.
     alternative: bool = False
     #: How much of the generic cost is paid with something other than mana --
-    #: convoke (creatures tapped) and delve (cards exiled from the graveyard).
-    #: The *fewest* the cast must spend, which is all legality decides: the one
-    #: convoke or delve line carries it, and `Game._cast` asks which creatures
-    #: or cards -- at least this many -- as the spell is paid for. Zero when
+    #: convoke (creatures tapped), improvise (artifacts tapped) and delve
+    #: (cards exiled from the graveyard). The *fewest* the cast must spend,
+    #: which is all legality decides: the one convoke, improvise or delve line
+    #: carries it, and `Game._cast` asks which permanents or cards -- at least
+    #: this many -- as the spell is paid for. Zero when
     #: the mana alone pays.
     pay_generic: int = 0
     #: How many of the spell's **Phyrexian** pips are being paid with 2 life each

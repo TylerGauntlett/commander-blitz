@@ -712,7 +712,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `multikicker` | Multikicker cost. | [Multikicker](card-dsl-cookbook.md#multikicker) |
 | `mutate` | Mutate cost. | [Mutate — two cards, one permanent, and one synthesised CardDef](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef) |
 | `overload` | Overload cost. | [Overload](card-dsl-cookbook.md#overload) |
-| `pay_generic_with` | Convoke and its relatives: what may pay generic mana. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `pay_generic_with` | Convoke, improvise or delve: what may pay generic mana. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |
 | `retrace` | Retrace. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `splice` | Splice cost. | [Splice](card-dsl-cookbook.md#splice) |
 | `strive` | Strive: more per target beyond the first. | [Strive](card-dsl-cookbook.md#strive) |

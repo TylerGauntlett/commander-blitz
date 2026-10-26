@@ -11162,12 +11162,12 @@
     },
     "Arc Reactor": {
       "edhrec_rank": 7980,
-      "gate": "template",
+      "gate": null,
       "name": "Arc Reactor",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "339acb17-4b8e-4836-9cc5-8a0a946ebc73",
-      "source": "",
-      "status": "pending",
+      "source": "template:improvise",
+      "status": "done",
       "wanted": false
     },
     "Arc Runner": {
@@ -21148,7 +21148,7 @@
       "scryfall_id": "690ccdc7-6c43-4902-9d11-2f07b7a36b11",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Bartz and Boko": {
       "edhrec_rank": 7263,
@@ -21532,12 +21532,12 @@
     },
     "Bastion Inventor": {
       "edhrec_rank": 28445,
-      "gate": "template",
+      "gate": null,
       "name": "Bastion Inventor",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "7b6fa167-9f2f-4889-8715-11ed20c4cc94",
-      "source": "",
-      "status": "pending",
+      "source": "template:improvise",
+      "status": "done",
       "wanted": false
     },
     "Bastion Mastodon": {
@@ -35402,12 +35402,12 @@
     },
     "Broodstar": {
       "edhrec_rank": 9814,
-      "gate": "playable",
+      "gate": "template",
       "name": "Broodstar",
-      "reason": "broodstar is a permanent but ended in graveyard",
+      "reason": "no template for: Affinity for artifacts",
       "scryfall_id": "38d22fa8-e9cf-43a6-9170-38e00b1bed70",
       "source": "",
-      "status": "failed",
+      "status": "pending",
       "wanted": false
     },
     "Broodwarden": {
@@ -84452,12 +84452,12 @@
     },
     "Enraged Giant": {
       "edhrec_rank": 28640,
-      "gate": "template",
+      "gate": null,
       "name": "Enraged Giant",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "40dc3b59-baae-4bf0-b5ce-fa9a915af066",
-      "source": "",
-      "status": "pending",
+      "source": "template:improvise",
+      "status": "done",
       "wanted": false
     },
     "Enraged Huorn": {
@@ -101252,12 +101252,12 @@
     },
     "Foundry Assembler": {
       "edhrec_rank": 23090,
-      "gate": "template",
+      "gate": null,
       "name": "Foundry Assembler",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "e83a2862-a2d7-4d87-a4b8-def9f441f5fa",
-      "source": "",
-      "status": "pending",
+      "source": "template:improvise",
+      "status": "done",
       "wanted": false
     },
     "Foundry Champion": {
@@ -145822,12 +145822,12 @@
     },
     "Kappa Cannoneer": {
       "edhrec_rank": 942,
-      "gate": "template",
+      "gate": null,
       "name": "Kappa Cannoneer",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "99cd996f-be74-4dbb-9460-6d650cedfca6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kappa Tech-Wrecker": {
@@ -149088,7 +149088,7 @@
       "scryfall_id": "6f9f814b-8249-4e48-a05e-4c84060fe6fb",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Kindred Summons": {
       "edhrec_rank": 2379,
@@ -187868,7 +187868,7 @@
       "scryfall_id": "9aeb44e0-2257-444a-b805-7e939ca5f6fe",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Nissa, Worldwaker": {
       "edhrec_rank": 9360,
@@ -222652,12 +222652,12 @@
     },
     "Reverse Engineer": {
       "edhrec_rank": 7925,
-      "gate": "template",
+      "gate": null,
       "name": "Reverse Engineer",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "07fff0a3-1315-42f7-9d36-4f5eaad0c62e",
-      "source": "",
-      "status": "pending",
+      "source": "template:improvise,spell:^draw (?P<n>\\d+|a|an|one|two|three|four|",
+      "status": "done",
       "wanted": false
     },
     "Reverse Polarity": {
@@ -230128,7 +230128,7 @@
       "scryfall_id": "927b5498-23f1-47c0-b441-7daaeb54f9b8",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Ruthless Negotiation": {
       "edhrec_rank": 17932,
@@ -271782,12 +271782,12 @@
     },
     "Sweatworks Brawler": {
       "edhrec_rank": 29225,
-      "gate": "template",
+      "gate": null,
       "name": "Sweatworks Brawler",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "cc603ab7-2789-4732-a72b-1f9294d07f80",
-      "source": "",
-      "status": "pending",
+      "source": "template:improvise",
+      "status": "done",
       "wanted": false
     },
     "Sweep Away": {
@@ -315898,7 +315898,7 @@
       "scryfall_id": "38218d0f-4b70-45eb-a753-cdb44f94271c",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Wilson, Refined Grizzly": {
       "edhrec_rank": 4241,
@@ -316032,12 +316032,12 @@
     },
     "Wind-Kin Raiders": {
       "edhrec_rank": 30939,
-      "gate": "template",
+      "gate": null,
       "name": "Wind-Kin Raiders",
-      "reason": "no template for: Improvise",
+      "reason": "",
       "scryfall_id": "8037f588-6b9f-472d-b26a-2c06db976ad0",
-      "source": "",
-      "status": "pending",
+      "source": "template:improvise",
+      "status": "done",
       "wanted": false
     },
     "Windborn Muse": {
