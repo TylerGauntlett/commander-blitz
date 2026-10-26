@@ -23,7 +23,9 @@ How to read it:
   only advanced one batch at a time. **Impact** is who it reaches and how
   often: **high** touches every game or every player of the site, **medium**
   touches a class of players or removes a weekly annoyance, **low** is polish
-  somebody would notice and nobody would miss. **Depends on** names the items
+  somebody would notice and nobody would miss. An item may also carry a
+  **rank**, which puts it ahead of the unranked items of its impact; the
+  precon items are ranked set by set, newest first. **Depends on** names the items
   that have to land first; "nothing" means it can start today.
 - An item may close with **Decisions**, the owner's answers to the questions
   its plan leaves open, and **Open questions**, the ones still waiting. An item

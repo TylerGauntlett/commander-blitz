@@ -4,6 +4,7 @@
     python scripts/sync_precons.py --missing <id>     the cards of one precon the engine lacks
     python scripts/sync_precons.py --write-deck <id>  write data/decks/<id>.deck.json
     python scripts/sync_precons.py --as-of 2026-10-24 the window's end, instead of today
+    python scripts/sync_precons.py --roadmap          one roadmap item per precon not shipped, ranked
 
 "Precon" means a list Wizards sold (ADR 0024). Those lists are published data:
 MTGJSON's ``DeckList.json`` names every preconstructed deck with its set and
@@ -26,6 +27,14 @@ precon that is not playable yet as a "coming soon" tile.
 
 A run reports every shipped ``precon`` deck whose row is gone: a set that aged
 out of the window, to retire from the shelf in the same change.
+
+``--roadmap`` keeps the backlog in step with the manifest: every row without a
+deck file has an item ``docs/roadmap/precon-<id>.md``, and the items are ranked
+so the queue closes out one set at a time, newest set first, and inside a set
+the precon fewest cards short first. A new item gets the batch procedure of the
+``precon-sets`` item and the decisions that let ``/extend-roadmap --auto`` build
+it; an existing item keeps its text and only its rank moves. Run it after a
+manifest refresh, then ``roadmap.py --write``.
 
 Downloads are cached in ``data/catalog/bulk/mtgjson/``, which is gitignored;
 ``--refresh`` re-pulls them. Stdlib plus the card layer, which ``--missing`` and
@@ -53,6 +62,10 @@ HEADERS = {"User-Agent": "CommanderBlitz/0.1 (+https://commanderblitz.com)"}
 CACHE = ROOT / "data" / "catalog" / "bulk" / "mtgjson"
 MANIFEST = ROOT / "data" / "decks" / "sources.json"
 DECKS = ROOT / "data" / "decks"
+ROADMAP = ROOT / "docs" / "roadmap"
+
+#: The batch procedure every precon item points at (its heading on the page).
+PRECON_SETS_ANCHOR = "#every-precon-native-one-at-a-time-then-every-import"
 
 #: The deck and set types a precon has. See the module docstring.
 DECK_TYPE = "Commander Deck"
@@ -234,13 +247,125 @@ def _shipped_precons() -> dict[str, Path]:
     return out
 
 
+def roadmap_id(row_id: str) -> str:
+    return "precon-" + row_id.replace("_", "-")
+
+
+def effort_for(short: int) -> str:
+    """Sized by how many cards the precon lacks: the work is mostly per card."""
+    return "S" if short < 15 else "M" if short < 40 else "L"
+
+
+def item_body(row: dict) -> str:
+    rid, product = row["id"], row["product"]
+    return f"""
+## Today
+
+{product}, the {row["set_name"]} precon released {row["date"]}, is a
+coming-soon shell on the shelf: its row `{rid}` is in
+`data/decks/sources.json` and there is no `data/decks/{rid}.deck.json`, so
+`GET /api/precons/upcoming` serves it.
+`python scripts/sync_precons.py --missing {rid}` lists the cards the engine
+lacks, and the gap records in `data/authoring/gaps/` name the capability each
+attempted card waits on.
+
+## The change
+
+{product} ships native, card for card, as one batch of
+[every precon native]({PRECON_SETS_ANCHOR}), which holds the procedure:
+
+1. `/author-cards` by name over the `--missing` list.
+2. One `/extend-dsl` run per capability the gap records name, in the order
+   the most cards elsewhere in the catalog wait on it.
+3. Re-author until `--missing` is empty, then `--write-deck {rid}`, the
+   dossier and the archetype, and the deck joins `PRECONS` in
+   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
+4. One `/author-cards` wave over the pending cards the new capabilities reach.
+
+It does not touch another precon's deck.
+
+## Gate
+
+`tests/cards/test_precon_imports.py` over the new deck; one unit test under
+`tests/unit/` per capability; the manifest test and
+`tests/server/test_upcoming_precons.py` still green; and the sampled
+whole-game test able to draw the deck.
+
+## Decisions
+
+- **Scope:** this precon only, taken to 100% in one pull request titled
+  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
+- **The editorial fields:** the run writes the dossier and picks the closest
+  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
+  archetype that visibly misplays the deck is a new item.
+- **A capability that needs a rules subsystem the engine does not have**
+  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
+  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
+  this item back to `proposed`, and opens the pull request with the cards and
+  capabilities done so far. This item stays until the deck is whole.
+"""
+
+
+def precon_order(pending: list[dict], short: dict[str, int]) -> list[dict]:
+    """Set by set, newest set first; inside a set, the precon fewest cards short first."""
+    newest: dict[str, str] = {}
+    for r in pending:
+        newest[r["set_code"]] = max(newest.get(r["set_code"], ""), r["date"])
+    # Two stable sorts: the second keeps the first's order inside each set.
+    order = sorted(pending, key=lambda r: (r["set_code"], short[r["id"]], r["product"].lower()))
+    order.sort(key=lambda r: newest[r["set_code"]], reverse=True)
+    return order
+
+
+def sync_roadmap(rows: list[dict], registry) -> list[str]:
+    """Write or re-rank one roadmap item per precon not shipped; returns notes."""
+    import roadmap  # scripts/roadmap.py, beside this file
+
+    pending = [r for r in rows if not (DECKS / f"{r['id']}.deck.json").exists()]
+    short = {r["id"]: len(missing(r, registry)) for r in pending}
+    notes = []
+    for rank, row in enumerate(precon_order(pending, short), 1):
+        path = ROADMAP / f"{roadmap_id(row['id'])}.md"
+        if path.exists():
+            item = roadmap.parse_item(path.read_text(encoding="utf-8"), path)
+            item.rank = rank
+        else:
+            item = roadmap.Item(
+                id=roadmap_id(row["id"]),
+                title=f"{row['product']} ({row['set_name']})",
+                area="decks",
+                effort=effort_for(short[row["id"]]),
+                impact="high",
+                why="a coming-soon tile on the shelf becomes a deck a player can pick",
+                body=item_body(row).lstrip("\n"),
+                rank=rank,
+            )
+            notes.append(f"planned {item.id}")
+        roadmap.write_item(item, ROADMAP)
+    wanted = {roadmap_id(r["id"]) for r in pending}
+    for path in sorted(ROADMAP.glob("precon-*.md")):
+        if path.stem != "precon-sets" and path.stem not in wanted:
+            notes.append(f"{path.stem} has no pending row: --done it with its deck, or --drop it")
+    return notes
+
+
 def main() -> int:
     parser = argparse.ArgumentParser(description=__doc__.split("\n")[0])
     parser.add_argument("--as-of", type=datetime.date.fromisoformat, default=datetime.date.today())
     parser.add_argument("--refresh", action="store_true", help="re-pull MTGJSON")
     parser.add_argument("--missing", metavar="ID", help="list the cards a precon lacks")
     parser.add_argument("--write-deck", metavar="ID", help="write a precon's deck file")
+    parser.add_argument("--roadmap", action="store_true", help="one ranked roadmap item per precon")
     args = parser.parse_args()
+
+    if args.roadmap:
+        from commanderblitz.cards.registry import default_registry
+
+        rows = json.loads(MANIFEST.read_text(encoding="utf-8"))["rows"]
+        for note in sync_roadmap(rows, default_registry().registry):
+            print(note)
+        print("run `python scripts/roadmap.py --write`")
+        return 0
 
     if args.missing or args.write_deck:
         from commanderblitz.cards.registry import default_registry

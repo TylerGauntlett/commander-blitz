@@ -85,7 +85,7 @@ OPTIONAL_SECTIONS = ("Decisions", "Open questions")
 PLACEHOLDER = "<!-- fill me in -->"
 
 REQUIRED_KEYS = ("id", "title", "area", "effort", "impact", "why")
-OPTIONAL_KEYS = ("depends_on", "status", "continuous", "adr")
+OPTIONAL_KEYS = ("depends_on", "status", "continuous", "adr", "rank")
 ID_RE = re.compile(r"^[a-z0-9]+(-[a-z0-9]+)*$")
 LINK_RE = re.compile(r"\]\(([^)\s]+)\)")
 
@@ -107,6 +107,10 @@ class Item:
     status: str = "proposed"
     continuous: bool = False
     adr: bool = False
+    #: An explicit place in the queue: ranked items go first within their
+    #: impact, lowest rank first. ``sync_precons.py --roadmap`` sets it on the
+    #: precon items so they close out set by set, newest first.
+    rank: int | None = None
     path: Path | None = None
 
     @property
@@ -177,6 +181,8 @@ def render_front_matter(item: Item) -> str:
         lines.append("continuous: true")
     if item.adr:
         lines.append("adr: true")
+    if item.rank is not None:
+        lines.append(f"rank: {item.rank}")
     lines.append("---")
     return "\n".join(lines) + "\n"
 
@@ -197,6 +203,9 @@ def parse_item(text: str, path: Path | None = None) -> Item:
     unknown = sorted(set(meta) - set(REQUIRED_KEYS) - set(OPTIONAL_KEYS))
     if unknown:
         raise RoadmapError(f"unknown front matter keys: {unknown}")
+    rank = meta.get("rank")
+    if rank is not None and not (isinstance(rank, str) and rank.isdigit() and int(rank) > 0):
+        raise RoadmapError(f"rank {rank!r} is not a positive integer")
     item = Item(
         id=str(meta["id"]),
         title=str(meta["title"]),
@@ -209,6 +218,7 @@ def parse_item(text: str, path: Path | None = None) -> Item:
         status=str(meta.get("status", "proposed")),
         continuous=bool(meta.get("continuous", False)),
         adr=bool(meta.get("adr", False)),
+        rank=int(rank) if rank is not None else None,
         path=path,
     )
     validate_item(item)
@@ -343,8 +353,15 @@ def unlocks(items: list[Item]) -> dict[str, int]:
 
 
 def rank_key(item: Item, unlock: dict[str, int]) -> tuple:
-    """Impact first, then effort, then what finishing it frees up."""
-    return (IMPACTS[item.impact], EFFORTS[item.effort], -unlock[item.id], item.title.lower())
+    """Impact first, then an explicit rank, then effort, then what finishing it frees up."""
+    return (
+        IMPACTS[item.impact],
+        item.rank is None,
+        item.rank or 0,
+        EFFORTS[item.effort],
+        -unlock[item.id],
+        item.title.lower(),
+    )
 
 
 def ready(items: list[Item]) -> list[Item]:
@@ -440,9 +457,9 @@ def generate(items_dir: Path = ITEMS_DIR) -> str:
     # The grid: every item on one screen, best first.
     out.append("\n## The grid\n\n")
     out.append(
-        "Every item, sorted by impact, then effort, then how many items finishing it\n"
-        "frees up. The properties are the ones under each heading; this table is\n"
-        "generated from them.\n\n"
+        "Every item, sorted by impact, then rank where an item has one, then effort,\n"
+        "then how many items finishing it frees up. The properties are the ones under\n"
+        "each heading; this table is generated from them.\n\n"
     )
     out.append("| Item | Effort | Impact | Depends on | Unlocks |\n|---|---|---|---|---:|\n")
     for item in sorted(items, key=lambda i: rank_key(i, unlock)):
@@ -456,7 +473,7 @@ def generate(items_dir: Path = ITEMS_DIR) -> str:
     out.append(
         "Derived from the properties: an item is **ready** when nothing it depends\n"
         "on is still on this page, and the ready items are ranked by impact, then\n"
-        "effort, then what they unlock. `python scripts/roadmap.py --next` prints the\n"
+        "rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the\n"
         "same list, and `/extend-roadmap` starts at the top of it.\n\n"
     )
     going = in_progress(items)
