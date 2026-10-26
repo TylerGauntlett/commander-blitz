@@ -864,7 +864,7 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "multikicker": ("Multikicker cost.", "Multikicker"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),
     "overload": ("Overload cost.", "Overload"),
-    "pay_generic_with": ("Convoke and its relatives: what may pay generic mana.", None),
+    "pay_generic_with": ("Convoke, improvise and delve: what may pay generic mana.", None),
     "retrace": ("Retrace.", None),
     "splice": ("Splice cost.", "Splice"),
     "spree": ("Spree: priced modes, a non-empty subset bought on cast.", H_SPREE),

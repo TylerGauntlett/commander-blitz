@@ -4157,7 +4157,7 @@ them where it is sitting:
 "alternative_cost": { "pay_life": 1, "exile_from_hand": {...} }  // Force of Will: not mana at all
 "emerge": "{5}{U}{U}"                       // pay less by eating a creature
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
-"pay_generic_with": "tap_creatures"         // convoke; "exile_from_graveyard" is delve
+"pay_generic_with": "tap_creatures"         // convoke; "tap_artifacts" is improvise, "exile_from_graveyard" delve
 "retrace": true                             // cast from the graveyard, discarding a land
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards

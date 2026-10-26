@@ -1145,8 +1145,35 @@ MORPH_COST = ManaCost.parse("{3}")
 #: cost reduced to zero -- on an X spell a discount still leaves X to pay.
 FREE_COST = ManaCost.parse("")
 
+#: The permanent type each tapping `pay_generic_with` taps: convoke (702.51)
+#: taps creatures, improvise (702.126) artifacts. Delve exiles cards from the
+#: graveyard instead, so it is not here.
+PAY_GENERIC_TAP_TYPES = {"tap_creatures": "Creature", "tap_artifacts": "Artifact"}
+
+
+def pay_generic_pool(state: GameState, pid: int, oid: int, card: CardDef) -> list[int]:
+    """What a convoke, improvise or delve cast could spend: one object per {1}.
+
+    Untapped permanents of the right type for the tapping kinds -- an artifact
+    creature is in both convoke's pool and improvise's -- and for delve every
+    card in the graveyard but the spell's own, which is on the stack by the
+    time this is paid.
+    """
+    tap_type = PAY_GENERIC_TAP_TYPES.get(card.pay_generic_with or "")
+    if tap_type is None:
+        return [other for other in state.players[pid].graveyard if other != oid]
+    return [
+        other
+        for other in state.battlefield
+        if (obj := state.objects.get(other)) is not None
+        and obj.controller == pid
+        and not obj.tapped
+        and tap_type in chars(state, other).types
+    ]
+
+
 def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
-    """The most a convoke or delve line could usefully spend.
+    """The most a convoke, improvise or delve line could usefully spend.
 
     Never more than the spell's own generic cost -- "pays for {1}" and a spell
     with two generic in it cannot absorb a third creature -- and never more
@@ -1155,20 +1182,7 @@ def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) ->
     generic = card.mana_cost.generic
     if generic <= 0:
         return 0
-    if card.pay_generic_with == "tap_creatures":
-        available = sum(
-            1
-            for other in state.battlefield
-            if (obj := state.objects.get(other)) is not None
-            and obj.controller == pid
-            and not obj.tapped
-            and "Creature" in chars(state, other).types
-        )
-    else:
-        # Delve exiles from the graveyard, and the spell being cast is not in
-        # it -- it is on the stack by the time this is paid.
-        available = sum(1 for other in state.players[pid].graveyard if other != oid)
-    return min(generic, available)
+    return min(generic, len(pay_generic_pool(state, pid, oid, card)))
 
 
 def _emerge_fodder(state: GameState, pid: int, oid: int) -> list[int]:

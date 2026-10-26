@@ -25,10 +25,12 @@ from .carddef import Cost
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
+    PAY_GENERIC_TAP_TYPES,
     _graveyard_cast_permission,
     _spell_as_cast,
     chosen_additional,
     deferred_target_spec,
+    pay_generic_pool,
     strive_surcharge,
 )
 from .characteristics import abilities_of, chars, mana_source_traits
@@ -97,7 +99,7 @@ MAX_MULLIGANS = 6
 FREE_MULLIGANS = 1
 #: Safety valve on the internal advance loop.
 MAX_ADVANCE_STEPS = 20_000
-#: How many times a convoke pick that leaves the rest of the mana unpayable is
+#: How many times a convoke or improvise pick that leaves the rest of the mana unpayable is
 #: asked again before `Game._ask_pay_generic` picks for the player.
 MAX_PAY_GENERIC_ASKS = 3
 #: Default turn cap, per player in the game.
@@ -1153,31 +1155,22 @@ class Game:
     def _ask_pay_generic(
         self, pid: int, card, oid: int, cost: ManaCost, extra: int, fewest: int
     ) -> Generator[Any, list[int], int]:
-        """Convoke and delve: ask which creatures tap, or which cards go, and spend them.
+        """Convoke, improvise, delve: ask which permanents tap or which cards go, and spend them.
 
         Between ``fewest`` -- what legality found the mana could not cover, the
         floor the line was offered at -- and the most the generic part can
         absorb. Returns how many were spent.
 
-        Convoked creatures are tapped *here*, before any mana is paid, so the
-        payment below cannot also tap one of them for mana (a creature taps
-        once). That makes a pick that convokes the very Elf the rest of the
-        cost needed unpayable, so a pick is checked against the mana before it
-        is spent and asked again if the rest could not then be paid.
+        Convoked creatures and improvised artifacts are tapped *here*, before
+        any mana is paid, so the payment below cannot also tap one of them for
+        mana (a permanent taps once). That makes a pick that taps the very Elf
+        or Sol Ring the rest of the cost needed unpayable, so a pick is checked
+        against the mana before it is spent and asked again if the rest could
+        not then be paid.
         """
         state = self.state
-        convoke = card.pay_generic_with == "tap_creatures"
-        if convoke:
-            pool = [
-                other
-                for other in state.battlefield
-                if (o := state.objects.get(other)) is not None
-                and o.controller == pid
-                and not o.tapped
-                and "Creature" in chars(state, other).types
-            ]
-        else:
-            pool = [other for other in state.players[pid].graveyard if other != oid]
+        taps = card.pay_generic_with in PAY_GENERIC_TAP_TYPES
+        pool = pay_generic_pool(state, pid, oid, card)
         most = min(max(0, cost.generic + extra), len(pool))
         fewest = min(fewest, most)
         if most <= 0:
@@ -1185,7 +1178,7 @@ class Game:
         purpose = spell_purpose(card)
 
         def payable(picked: list[int]) -> bool:
-            if not convoke:
+            if not taps:
                 return True
             # Tapped for the question only, with no event: nothing has happened yet.
             for other in picked:
@@ -1201,13 +1194,16 @@ class Game:
                 state.bump_chars()
 
         ctx = EffectContext(state=state, controller=pid, source_oid=oid)
-        verb = "Tap creatures to convoke" if convoke else "Exile cards to delve"
+        verb, purpose_name = {
+            "tap_creatures": ("Tap creatures to convoke", "convoke"),
+            "tap_artifacts": ("Tap artifacts to improvise", "improvise"),
+        }.get(card.pay_generic_with, ("Exile cards to delve", "delve"))
         floor = f"at least {fewest}, " if fewest else ""
         prompt = f"{verb} for {card.name} ({floor}up to {most})"
         picked: list[int] = []
         for _attempt in range(MAX_PAY_GENERIC_ASKS):
             picked = yield from ask_objects(
-                ctx, prompt, pool, fewest, most, pid, "convoke" if convoke else "delve"
+                ctx, prompt, pool, fewest, most, pid, purpose_name
             )
             if payable(picked):
                 break
@@ -1220,7 +1216,7 @@ class Game:
             picked = sorted(pool, key=lambda other: other in sources)[:most]
 
         for other in picked:
-            if convoke:
+            if taps:
                 tap_permanent(state, other)
             else:
                 exile_object(state, other, cause="cost")
