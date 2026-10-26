@@ -7,7 +7,7 @@ accepts) and pinned by ``tests/cards/test_golden_pool.py``.
 
 from __future__ import annotations
 
-from commanderblitz.engine.characteristics import ABILITY_STATICS
+from commanderblitz.engine.characteristics import ABILITY_STATICS, AFFECTED_CONTROLLER
 from commanderblitz.engine.cost_reduction import REDUCTION_ZONES
 from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
@@ -1192,6 +1192,22 @@ STATIC_CONDITION_HEADS = (
     # sharper question than `exists` over the library, which asks whether any
     # black card is anywhere in ninety-nine and is nearly always true.
     "top_of_library",
+    # "Unless that player is the monarch" (Fall from Favor). `GameState.monarch`
+    # is player state, a pipeline input exactly as the city's blessing is, and
+    # the designation moving bumps `char_version`. Takes a player spec, and
+    # `AFFECTED_CONTROLLER` among them -- see `characteristics`.
+    "is_monarch",
+)
+
+#: The static effects whose reader evaluates the condition once per affected
+#: permanent, and so may carry the `AFFECTED_CONTROLLER` player spec. Anywhere
+#: else the condition is asked once per static with no permanent in hand, so the
+#: loader refuses it rather than let it load and mean nothing.
+STATIC_AFFECTED_CONDITION_EFFECTS = frozenset({"skip_untap_step"})
+
+#: Player specs a static's `is_monarch` leaf may name.
+STATIC_MONARCH_PLAYERS = frozenset(
+    {"you", "opponent", "each_opponent", "each_player", "all", AFFECTED_CONTROLLER}
 )
 
 #: Zones a static's *counting* filter may name.  The stack is absent: a static

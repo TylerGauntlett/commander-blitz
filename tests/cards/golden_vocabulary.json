@@ -323,6 +323,9 @@
    "supertypes",
    "types"
   ],
+  "STATIC_AFFECTED_CONDITION_EFFECTS": [
+   "skip_untap_step"
+  ],
   "STATIC_AFFECTS_FILTER_KEYS": [
    "any_of",
    "any_types",
@@ -363,7 +366,8 @@
    "has_city_s_blessing",
    "cmp",
    "is_attached",
-   "top_of_library"
+   "top_of_library",
+   "is_monarch"
   ],
   "STATIC_CONDITION_OPS": [
    "!=",

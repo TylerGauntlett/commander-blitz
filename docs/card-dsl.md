@@ -4634,6 +4634,7 @@ Each node names **exactly one** form:
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
+| `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
 
 A condition works on a [player-wide static](card-dsl-cookbook.md#player-wide-statics) too — the
 `affects_player` effects go through the same `_static_active`, from
@@ -4669,6 +4670,29 @@ of the shapes a printed static takes. See
 languages validate the leaf separately, and the filter inside it obeys whichever
 rules its own language has, so a graveyard count here is a printed face and an
 owner and nothing else.
+
+#### "Unless that player is the monarch"
+
+```jsonc
+// Fall from Favor
+{ "kind": "static", "effect": "skip_untap_step", "affects": { "attached": true },
+  "condition": { "not": { "is_monarch": "affected_controller" } } }
+```
+
+`is_monarch` reads `GameState.monarch`, player state and so a pipeline input; both
+routes that move the crown invalidate the characteristic cache. Every player spec
+in this language is measured from the static's **source**, except one:
+`affected_controller` names the controller of the permanent the static is being
+applied to. On an Aura that is the difference between the card and its opposite —
+Fall from Favor makes its caster the monarch, so `{"is_monarch": "you"}` would free
+the creature while the caster holds the crown and freeze it while its own
+controller does.
+
+`affected_controller` is answered per affected permanent, so only a reader that
+walks them one at a time may carry it: `skip_untap_step`, through `untap_held`.
+`_static_active` defers a condition naming it when no permanent is in hand, and the
+loader refuses it on every other effect, where the deferral would read as "always
+on".
 
 #### "The top card of your library is black"
 

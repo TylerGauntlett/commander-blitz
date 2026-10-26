@@ -1416,6 +1416,14 @@ def untap_held(state: GameState, active_pid: int) -> set[int]:
     Explicit `untap` effects are untouched -- this is read only by the untap
     step, so Mana Vault's own upkeep payment still untaps it (302.6 / the
     printed card), exactly as `frozen_by` leaves targeted untaps alone.
+
+    **The condition is asked per held permanent.** "Enchanted creature doesn't
+    untap during its controller's untap step unless that player is the monarch"
+    (Fall from Favor) names the *held creature's* controller, not the Aura's,
+    so its `{"is_monarch": "affected_controller"}` cannot be answered once per
+    static. `_battlefield_statics` defers such a condition and this walk asks
+    it with each permanent the filter matched; a condition naming only the
+    source was already settled there and asking it again changes nothing.
     """
     held: set[int] = set()
     for source_obj, static in _battlefield_statics(state):
@@ -1430,7 +1438,12 @@ def untap_held(state: GameState, active_pid: int) -> set[int]:
             # narrowing here keeps the set to what this step would have touched.
             if obj.controller != active_pid:
                 continue
-            if _matches(state, obj, source_obj, static.get("affects")):
+            if not _matches(state, obj, source_obj, static.get("affects")):
+                continue
+            # Asked again with the permanent in hand: `_battlefield_statics`
+            # deferred a condition naming the affected permanent's controller,
+            # and this is where it has one.
+            if _static_active(state, source_obj, static, affected=obj):
                 held.add(oid)
     return held
 

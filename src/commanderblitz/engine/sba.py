@@ -297,6 +297,10 @@ def _monarch_left(state: GameState, pid: int) -> None:
     if state.monarch != pid:
         return
     state.monarch = None
+    # A static may ask who the monarch is (`is_monarch`), so the cache goes
+    # with the crown -- here as well as in `become_monarch`, for the pod where
+    # nobody is left to take it.
+    state.bump_chars()
     successor = (
         state.active_player
         if state.is_alive(state.active_player)
