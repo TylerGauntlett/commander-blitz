@@ -35835,6 +35835,75 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "link": true,
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile target nontoken creature?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "is_token": false,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Imprint — When this creature enters, you may exile target nontoken creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "imprint_characteristics",
+          "kind": "static",
+          "subtypes": [
+            "Shapeshifter"
+          ],
+          "text": "As long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "duplicant",
+      "mana_cost": "{6}",
+      "name": "Duplicant",
+      "oracle_text": "Imprint — When this creature enters, you may exile target nontoken creature.\nAs long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

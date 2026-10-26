@@ -76932,12 +76932,12 @@
     },
     "Duplicant": {
       "edhrec_rank": 2853,
-      "gate": "template",
+      "gate": null,
       "name": "Duplicant",
-      "reason": "no template for: Imprint — When this creature enters, you may exile target nontoken creature",
+      "reason": "",
       "scryfall_id": "de6a3b58-ddb6-4524-9685-3a34a1fd9e8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duplicity": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**104 cards** blocked by **87** capabilities.
+**103 cards** blocked by **86** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -58,7 +58,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fog](#fog) | 1 | 1232 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
-| [imprint-copy-characteristics](#imprint-copy-characteristics) | 1 | 2853 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -891,22 +890,6 @@ Blocks **1** card.
 
 - **Tangleweave Armor** (rank 11958) — `tangleweave_armor`
   - Equipped creature gets +X/+X, where X is the greatest mana value among your commanders.
-
-</details>
-
-## imprint-copy-characteristics
-
-Blocks **1** card.
-
-- **(static_effect)** a static on the source whose base power and toughness are the printed power/toughness of the last creature card exiled with it (an `exiled_with: self` card, most recent first), active only while such a card exists in exile
-  <br>Why the existing vocabulary won't do: The `set_pt` static takes its power/toughness from `static_value_keys`, which has no `power_of`/`toughness_of` or other reader of a card in exile; `static_condition_keys` `exists` cannot be confirmed to accept `exiled_with`, and nothing selects the LAST card exiled with the source
-- **(static_effect)** a static that sets the source's creature types to the creature types of the last creature card exiled with it, keeping Shapeshifter
-  <br>Why the existing vocabulary won't do: `add_subtype` (static and op) adds a fixed printed list of subtypes; there is no way to copy subtypes from another object, and `become_copy` copies every characteristic, not just P/T and creature types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Duplicant** (rank 2853) — `duplicant`
-  - As long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it. It's still a Shapeshifter.
 
 </details>
 

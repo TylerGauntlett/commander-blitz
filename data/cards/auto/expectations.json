@@ -3250,6 +3250,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "duplicant": {
+    "battlefield_count": 32,
+    "zone": "battlefield"
+  },
   "durkwood_boars": {
     "zone": "battlefield"
   },
