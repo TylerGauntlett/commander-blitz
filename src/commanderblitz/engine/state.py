@@ -775,6 +775,12 @@ class GameState:
             # anything else can move it. Same moment and same argument as
             # `combat_damage_types` below.
             obj = self.objects.get(data.get("oid"))
+            # 400.7: whatever just arrived is a new object, and a new object
+            # has dealt nobody combat damage this turn. Cleared on the way in
+            # rather than on the way out -- see
+            # `TurnLedger.players_dealt_combat_damage_by` for the
+            # last-known-information case that ordering keeps.
+            ledger.players_dealt_combat_damage_by.pop(data.get("oid"), None)
             if obj is not None:
                 c = chars(self, obj.oid)
                 ledger.permanents_entered.append(
@@ -821,6 +827,11 @@ class GameState:
             attacker = data.get("source") or event.source
             if attacker is not None and attacker in self.objects:
                 ledger.combat_damage_types.update(chars(self, attacker).subtypes)
+            # Steel Hellkite's "whose controller was dealt combat damage by this
+            # creature this turn": which seat, by which object. `player` is the
+            # seat that was dealt it.
+            if attacker is not None and pid is not None:
+                ledger.players_dealt_combat_damage_by.setdefault(int(attacker), set()).add(pid)
         elif event.type == EventType.LIFE_LOST:
             if pid is not None:
                 amount = int(data.get("amount") or 0)

@@ -3367,7 +3367,8 @@ The list with a line each is
 `"enchanted_player"` · `"gift_recipient"` · `{ "target": "t1" }` ·
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
-`{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }`
+`{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
+`{ "dealt_combat_damage_by": "self" }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -3412,6 +3413,35 @@ attacked that permanent, not its controller (506.2), so it records no player.
 And the record goes when the creature **leaves the battlefield**: the oid
 survives the zone change but the object does not (400.7), and a flickered Angel
 attacked nobody. `"self"` is the only subject; anything else is a load error.
+
+### `dealt_combat_damage_by` — the players *this creature* dealt combat damage to this turn
+
+```jsonc
+// Steel Hellkite: "{X}: Destroy each nonland permanent with mana value X whose
+// controller was dealt combat damage by this creature this turn. Activate only
+// once each turn."
+"cost": { "mana": "{X}" }, "once_each_turn": true,
+"effects": [ { "op": "destroy",
+               "objects": { "zone": "battlefield", "not_types": ["Land"],
+                            "mana_value": { "op": "=", "value": { "x": true } },
+                            "controller": { "dealt_combat_damage_by": "self" } } } ]
+```
+
+Read off `TurnLedger.players_dealt_combat_damage_by` (source oid → seats),
+folded off each `combat_damage_to_player` event, which fires only for damage
+actually dealt: a prevented hit records nothing, and an infect hit records the
+seat. Usable wherever a player spec is — an effect's `player`, a
+`for_each_player`'s `players`, or a selector's `controller` as above.
+
+`attacked_by` is the near miss: a blocked creature attacked a player and dealt
+them nothing. `damaged_by` is the other: it is a *selector* key over objects
+damaged by the source, and records no players.
+
+The record is dropped when the oid **enters** the battlefield, because the
+permanent that comes back is a new object that has dealt nobody anything
+(400.7). It is kept when the creature leaves, so an ability it already put on
+the stack still resolves off what it did — a Hellkite killed in response still
+destroys. `"self"` is the only subject; anything else is a load error.
 
 ### `not` — the player a card *excludes*
 
