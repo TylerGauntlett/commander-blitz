@@ -1,0 +1,39 @@
+{
+  "_comment": "Cards that exist only for tests/unit/combat/test_redirect_attack.py. Never part of a deck list. t_redirect_signpost is Misleading Signpost's enters trigger at {0} and without its mana ability.",
+  "cards": [
+    {
+      "id": "t_redirect_signpost",
+      "name": "Test Redirect Signpost",
+      "oracle_text": "Flash\nWhen this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)",
+      "mana_cost": "{0}",
+      "types": ["Artifact"],
+      "keywords": ["flash"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (It can't attack its controller or their permanents.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {"step_is": "declare_attackers"}
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {"zone": "battlefield", "types": ["Creature"], "attacking": true}
+            }
+          ],
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Reselect what the creature is attacking?",
+              "effects": [{"op": "redirect_attack", "objects": {"target": "t1"}}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1,22 +1,28 @@
 {
-  "_comment": "Shapes for tests/unit/triggers/test_state_trigger.py. t_st_tome is Mazemind Tome's state trigger on an ability that needs no tap, so page counters can be put on at instant speed while the trigger waits: the first ability's cost is the counter and its effect a 1-life marker, the state trigger exiles the tome and, if it did, gains 10.",
+  "_comment": "Cards that exist only for tests/unit/triggers/test_state_trigger.py. Never part of a deck list. t_st_tome is Mazemind Tome's state trigger with plainer activations: {1} and a page counter gains 1 life (no tap, so it can be fed in response), removing a page counter gains 1 life (so the count can be lowered in response), and at four or more page counters it exiles itself and, if it did, gains 4 life. t_st_fuse removes the counters its own trigger watches, two at a time, so a state that still holds after resolution shows the trigger firing again.",
   "cards": [
     {
       "id": "t_st_tome",
       "name": "Test State Tome",
-      "oracle_text": "Put a page counter on this artifact: You gain 1 life.\nWhen there are four or more page counters on this artifact, exile it. If you do, you gain 10 life.",
+      "oracle_text": "{1}, Put a page counter on this artifact: You gain 1 life.\nRemove a page counter from this artifact: You gain 1 life.\nWhen there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",
       "mana_cost": "{2}",
       "types": ["Artifact"],
       "abilities": [
         {
           "kind": "activated",
-          "text": "Put a page counter on this artifact: You gain 1 life.",
-          "cost": {"put_counters": {"counter": "page", "amount": 1}},
+          "text": "{1}, Put a page counter on this artifact: You gain 1 life.",
+          "cost": {"mana": "{1}", "put_counters": {"counter": "page"}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "activated",
+          "text": "Remove a page counter from this artifact: You gain 1 life.",
+          "cost": {"remove_counters": {"counter": "page", "amount": 1}},
           "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
         },
         {
           "kind": "triggered",
-          "text": "When there are four or more page counters on this artifact, exile it. If you do, you gain 10 life.",
+          "text": "When there are four or more page counters on this artifact, exile it. If you do, you gain 4 life.",
           "trigger": {
             "event": "state",
             "state": {
@@ -29,9 +35,40 @@
             {"op": "exile", "objects": {"self_only": true}, "as": "exiled"},
             {
               "op": "if",
-              "condition": {"exists": {"binding": "exiled"}},
-              "then": [{"op": "gain_life", "player": "you", "amount": {"const": 10}}]
+              "condition": {"cmp": ">", "left": {"count": {"binding": "exiled"}}, "right": {"const": 0}},
+              "then": [{"op": "gain_life", "player": "you", "amount": {"const": 4}}]
             }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_st_fuse",
+      "name": "Test State Fuse",
+      "oracle_text": "{1}, Put a fuse counter on this artifact: Draw a card.\nWhen there are two or more fuse counters on this artifact, remove two fuse counters from it and you gain 3 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Put a fuse counter on this artifact: Draw a card.",
+          "cost": {"mana": "{1}", "put_counters": {"counter": "fuse"}},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "triggered",
+          "text": "When there are two or more fuse counters on this artifact, remove two fuse counters from it and you gain 3 life.",
+          "trigger": {
+            "event": "state",
+            "state": {
+              "cmp": ">=",
+              "left": {"counters_on": {"counter": "fuse", "objects": {"self_only": true}}},
+              "right": {"const": 2}
+            }
+          },
+          "effects": [
+            {"op": "remove_counters", "objects": {"self_only": true}, "counter": "fuse", "amount": {"const": 2}},
+            {"op": "gain_life", "player": "you", "amount": {"const": 3}}
           ]
         }
       ]

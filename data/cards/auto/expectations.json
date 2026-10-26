@@ -562,6 +562,9 @@
   "arboreal_grazer": {
     "zone": "battlefield"
   },
+  "arc_reactor": {
+    "zone": "battlefield"
+  },
   "arcane_bombardment": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -1044,6 +1047,9 @@
     "zone": "battlefield"
   },
   "bastion_enforcer": {
+    "zone": "battlefield"
+  },
+  "bastion_inventor": {
     "zone": "battlefield"
   },
   "bastion_protector": {
@@ -1582,16 +1588,6 @@
     "zone": "battlefield"
   },
   "broodhunter_wurm": {
-    "zone": "battlefield"
-  },
-  "broodstar": {
-    "battlefield_count": 33,
-    "granted": {
-      "count": 1,
-      "keywords": [
-        "flying"
-      ]
-    },
     "zone": "battlefield"
   },
   "bruna_the_fading_light": {
@@ -3527,6 +3523,9 @@
   "enormous_baloth": {
     "zone": "battlefield"
   },
+  "enraged_giant": {
+    "zone": "battlefield"
+  },
   "entish_restoration": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -3798,13 +3797,6 @@
     "zone": "battlefield"
   },
   "falkenrath_reaver": {
-    "zone": "battlefield"
-  },
-  "fall_from_favor": {
-    "battlefield_count": 33,
-    "hand_size": {
-      "0": 1
-    },
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {
@@ -4290,10 +4282,6 @@
     "zone": "battlefield"
   },
   "forsaken_monument": {
-    "battlefield_count": 33,
-    "life": {
-      "0": 40
-    },
     "zone": "battlefield"
   },
   "forsaken_sanctuary": {
@@ -4317,6 +4305,9 @@
     "zone": "battlefield"
   },
   "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "foundry_assembler": {
     "zone": "battlefield"
   },
   "foundry_inspector": {
@@ -4942,10 +4933,6 @@
     "zone": "battlefield"
   },
   "gorn_captain": {
-    "zone": "battlefield"
-  },
-  "graaz_unstoppable_juggernaut": {
-    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "grand_coliseum": {
@@ -6057,7 +6044,6 @@
     "zone": "battlefield"
   },
   "kappa_cannoneer": {
-    "battlefield_count": 33,
     "counters": {
       "amount": 1,
       "kind": "+1/+1"
@@ -7171,7 +7157,9 @@
     "zone": "battlefield"
   },
   "mazemind_tome": {
-    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "mek_leth_berserker": {
@@ -7386,6 +7374,13 @@
     "zone": "battlefield"
   },
   "mishra_s_workshop": {
+    "zone": "battlefield"
+  },
+  "misleading_signpost": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "misshapen_fiend": {
@@ -9295,6 +9290,11 @@
   "return_of_the_wildspeaker": {
     "zone": "graveyard"
   },
+  "reverse_engineer": {
+    "hand_size": {
+      "0": 4
+    }
+  },
   "revitalize": {
     "hand_size": {
       "0": 2
@@ -10189,16 +10189,6 @@
     },
     "zone": "battlefield"
   },
-  "shimmer_myr": {
-    "battlefield_count": 33,
-    "granted": {
-      "count": 1,
-      "keywords": [
-        "flash"
-      ]
-    },
-    "zone": "battlefield"
-  },
   "shimmering_barrier": {
     "zone": "battlefield"
   },
@@ -10977,11 +10967,6 @@
   "steam_vents": {
     "zone": "battlefield"
   },
-  "steel_hellkite": {
-    "battlefield_count": 33,
-    "opponent_battlefield_count": 6,
-    "zone": "battlefield"
-  },
   "steel_overseer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11295,6 +11280,9 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "sweatworks_brawler": {
+    "zone": "battlefield"
   },
   "swift_spinner": {
     "zone": "battlefield"
@@ -13275,6 +13263,9 @@
     "zone": "battlefield"
   },
   "wilt_leaf_cavaliers": {
+    "zone": "battlefield"
+  },
+  "wind_kin_raiders": {
     "zone": "battlefield"
   },
   "wind_spirit": {

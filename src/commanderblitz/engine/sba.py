@@ -23,7 +23,6 @@ from .temp_effects import (
     clear_permanent_shields,
     drop_attack_requirements,
 )
-from .triggers import check_state_triggers
 from .zones import destroy, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -41,6 +40,13 @@ def run(state: GameState) -> None:
         if not check(state):
             break
     check_game_over(state)
+    if not state.game_over:
+        # State triggers (603.8) are checked whenever state-based actions are,
+        # and after them: a permanent the SBAs just removed triggers nothing.
+        # Local: `triggers` reaches `sba` through `primitives`.
+        from .triggers import check_state_triggers
+
+        check_state_triggers(state)
 
 
 def check(state: GameState) -> bool:
@@ -59,10 +65,6 @@ def check(state: GameState) -> bool:
     changed |= _legend_rule(state)
     changed |= _role_rule(state)
     changed |= _ascend(state)
-    # State triggers (603.8) are checked whenever state-based actions are. A
-    # queued trigger changes nothing the actions above read, so it does not
-    # count as a change; the next pass sees it waiting and leaves it.
-    check_state_triggers(state)
     return changed
 
 
@@ -76,9 +78,10 @@ def _ascend(state: GameState) -> bool:
     Not a triggered ability, and that is the whole reason this lives here.
     Ascend is not an *event*: a player at nine permanents who plays a land gets
     the blessing at the instant of the tenth, with nothing having fired, and
-    gets it during an opponent's turn just as readily. State triggers are
-    checked whenever state-based actions are, use no stack and cannot be
-    responded to -- so this is the pass they belong in, beside the legend rule.
+    gets it during an opponent's turn just as readily. It is checked whenever
+    state-based actions are, uses no stack and cannot be responded to -- so this
+    is the pass it belongs in, beside the legend rule. (A printed state trigger
+    does use the stack: see `triggers.check_state_triggers`.)
 
     One-way, for the rest of the game: it survives the permanents leaving, it
     survives the Ascend card itself leaving, and it is shared by every card that
@@ -302,10 +305,6 @@ def _monarch_left(state: GameState, pid: int) -> None:
     if state.monarch != pid:
         return
     state.monarch = None
-    # A static may ask who the monarch is (`is_monarch`), so the cache goes
-    # with the crown -- here as well as in `become_monarch`, for the pod where
-    # nobody is left to take it.
-    state.bump_chars()
     successor = (
         state.active_player
         if state.is_alive(state.active_player)

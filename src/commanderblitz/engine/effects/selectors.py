@@ -137,14 +137,13 @@ SELECTOR_KEYS = frozenset(
         #: "Two or more colors", which `colors` cannot say: that is a membership
         #: test, so `["U", "R"]` matches a mono-blue permanent.
         "min_colors",
-        #: "Colorless creatures you control get +2/+2"; "whenever you cast a
-        #: **colorless** spell" -- Forsaken Monument. 105.2c: an object with no
-        #: colour is colorless, and colorless is not a colour, so `colors` has
-        #: no letter for it (an empty list there is no test at all). `true`
-        #: matches an object with zero colours and `false` one with at least
-        #: one. `not_colors` over all five letters says the same thing here,
-        #: but only here: the static and trigger filter languages carry this
-        #: key and not that one.
+        #: "**Colorless** creatures you control get +2/+2" -- Forsaken
+        #: Monument. Zero colours (105.2c), so `true` only: colorless is not a
+        #: colour, `colors: ["C"]` is not a spelling of it, and an empty
+        #: `colors` matches everything. `not_colors` over all five says the
+        #: same thing the long way. The same word in every filter language --
+        #: static, trigger and cost reduction -- and the same answer
+        #: protection's `from_colorless` gives.
         "colorless",
         "keywords",
         "not_keywords",
@@ -913,7 +912,7 @@ def matches(
         return False
     if (want := selector.get("not_colors")) and set(want) & colors:
         return False
-    if "colorless" in selector and (not colors) != bool(selector["colorless"]):
+    if selector.get("colorless") and colors:
         return False
     if (want := selector.get("keywords")) and not set(want).issubset(keywords):
         return False
@@ -1312,8 +1311,7 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
-#: ``controller_of``, ``owner_of``, ``not``, ``attacked_by``,
-#: ``dealt_combat_damage_by``) and a bare seat number are not
+#: ``controller_of``, ``owner_of``, ``not``, ``attacked_by``) and a bare seat number are not
 #: here: they name something the card declares elsewhere and are checked where
 #: that is checked -- `loader.effects._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
@@ -1435,15 +1433,6 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             # "self" is the only subject (the loader refuses anything else).
             seats = state.turn_ledger.players_attacked_by.get(ctx.source_oid, set())
             return [pid for pid in state.alive() if pid in seats]
-        if "dealt_combat_damage_by" in spec:
-            # "…whose controller was dealt combat damage by this creature this
-            # turn" -- Steel Hellkite. Off the turn ledger for the reason
-            # `attacked_by` is, and keyed by the ability's source, so the
-            # record of an object that has since left still answers for an
-            # ability it already put on the stack (last-known information).
-            # Seat order, the living only; nobody when it dealt none.
-            seats = state.turn_ledger.players_dealt_combat_damage_by.get(ctx.source_oid, set())
-            return [pid for pid in state.alive() if pid in seats]
         if "target" in spec:
             # Only refs that *are* players. A `kind: "spell"` or `kind:
             # "permanent"` target never produces one, and this quietly returning
@@ -1511,6 +1500,20 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
                 return [pid for pid in state.alive() if pid in seats]
             return []
     raise DslError(f"unparsable player spec {spec!r}")
+
+
+def validate_colorless_key(filt: Any, where: str) -> None:
+    """``colorless`` is ``true`` or absent, in every filter language.
+
+    ``false`` is refused rather than read as "no filter" or as "colored": the
+    reader ignores a falsy value, so it would load and match every object, and
+    "a **colored** spell" is ``min_colors: 1``, which says it exactly.
+    """
+    if isinstance(filt, Mapping) and "colorless" in filt and filt["colorless"] is not True:
+        raise DslError(
+            f"{where}.colorless: must be true if present (zero colours, 105.2c); "
+            f"'colored' is min_colors: 1, got {filt['colorless']!r}"
+        )
 
 
 def validate_selector(selector: Any, where: str) -> None:
@@ -1594,13 +1597,7 @@ def validate_selector(selector: Any, where: str) -> None:
     # accident, and `0`/`""` would quietly become `false`. A card that asks for
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
-    # The same refusal for the same reason: `"C"` or `["C"]` would read as
-    # `true` by accident, and `0` as `false`.
-    if "colorless" in selector and not isinstance(selector["colorless"], bool):
-        raise DslError(
-            f"{where}: 'colorless' is true (no colours, 105.2c) or false (one or "
-            f"more); use 'colors' to name a colour"
-        )
+    validate_colorless_key(selector, where)
     if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "

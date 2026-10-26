@@ -19,6 +19,7 @@ from commanderblitz.engine.carddef import (
 )
 from commanderblitz.engine.effects.selectors import validate_selector
 from commanderblitz.engine.effects.values import (
+    validate_counter_kind,
     validate_value,
 )
 from commanderblitz.engine.errors import DslError
@@ -144,6 +145,8 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"{where}.cost: 'loyalty_x' announces this ability's X, so the "
                 f"cost may not carry a second X in 'mana' or 'pay_life_x'"
             )
+    if model.put_counters is not None:
+        _validate_put_counters(model.put_counters, where, defines_x=defines_x)
     if model.mill < 0:
         raise DslError(
             f"{where}.cost: 'mill' is how many cards go from the top of your "
@@ -237,39 +240,38 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"kind; a named 'counter' kind is not read"
             )
         validate_selector(among, f"{where}.cost.remove_counters_from_among")
-    if model.put_counters is not None:
-        put = dict(model.put_counters)
-        kind = put.pop("counter", None)
-        amount = put.pop("amount", None)
-        if not isinstance(kind, str) or not kind:
-            # Every printed line names its kind ("a page counter"), and a
-            # default would put +1/+1 counters on a Mazemind Tome.
-            raise DslError(
-                f"{where}.cost.put_counters: needs a 'counter' kind, got {kind!r}"
-            )
-        if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
-            raise DslError(
-                f"{where}.cost.put_counters: needs a positive integer 'amount', "
-                f"got {amount!r}"
-            )
-        if put:
-            # The cost always puts them on the source; "on target creature" is
-            # an effect, and a key nothing reads would print as honoured.
-            raise DslError(
-                f"{where}.cost.put_counters: takes 'counter' and 'amount' only, "
-                f"got {sorted(put)}"
-            )
-        if kind == "loyalty":
-            # 606.2: a loyalty cost is a loyalty ability, with 606.3's once per
-            # turn and sorcery timing; this cost carries neither.
-            raise DslError(
-                f"{where}.cost.put_counters: a loyalty counter is a 'loyalty' cost"
-            )
     # One constructor for both spellings of a cost -- the model here, and the
     # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.
     cost = Cost.from_spec(model.model_dump())
     assert cost is not None  # model_dump() is never None
     return cost
+
+
+def _validate_put_counters(spec: Mapping[str, Any], where: str, *, defines_x: bool) -> None:
+    """``put_counters``: a named kind and a positive literal, on an activated ability.
+
+    Every refusal is a card that would load clean and be wrong. A missing
+    ``counter`` is a tally of nothing; a zero or negative ``amount`` is a cost
+    that charges nothing (or removes, which is ``remove_counters``' sentence);
+    and anywhere but an activated ability's cost there is no permanent of the
+    ability's own to put the counter on -- an additional cost to cast has a
+    spell for a source.
+    """
+    at = f"{where}.cost.put_counters"
+    if not defines_x:
+        raise DslError(
+            f"{at}: puts counters on the ability's own permanent, so it is a cost "
+            f"of an activated ability only"
+        )
+    unknown = set(spec) - {"counter", "amount"}
+    if unknown:
+        raise DslError(f"{at}: unknown keys {sorted(unknown)}; give 'counter' and 'amount'")
+    if "counter" not in spec:
+        raise DslError(f"{at}: needs the 'counter' kind it puts on the source")
+    validate_counter_kind(spec["counter"], f"{at}.counter")
+    amount = spec.get("amount", 1)
+    if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
+        raise DslError(f"{at}.amount: a positive integer, got {amount!r}")
 
 
 #: The five colours, as single-symbol production tuples. The static superset a

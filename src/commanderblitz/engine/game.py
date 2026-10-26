@@ -30,7 +30,7 @@ from .casting import (
     _spell_as_cast,
     chosen_additional,
     deferred_target_spec,
-    pay_generic_pool,
+    pay_generic_tappers,
     strive_surcharge,
 )
 from .characteristics import abilities_of, chars, mana_source_traits
@@ -99,7 +99,7 @@ MAX_MULLIGANS = 6
 FREE_MULLIGANS = 1
 #: Safety valve on the internal advance loop.
 MAX_ADVANCE_STEPS = 20_000
-#: How many times a convoke or improvise pick that leaves the rest of the mana unpayable is
+#: How many times a convoke pick that leaves the rest of the mana unpayable is
 #: asked again before `Game._ask_pay_generic` picks for the player.
 MAX_PAY_GENERIC_ASKS = 3
 #: Default turn cap, per player in the game.
@@ -1155,7 +1155,7 @@ class Game:
     def _ask_pay_generic(
         self, pid: int, card, oid: int, cost: ManaCost, extra: int, fewest: int
     ) -> Generator[Any, list[int], int]:
-        """Convoke, improvise, delve: ask which permanents tap or which cards go, and spend them.
+        """Convoke, improvise and delve: ask what taps, or which cards go, and spend them.
 
         Between ``fewest`` -- what legality found the mana could not cover, the
         floor the line was offered at -- and the most the generic part can
@@ -1163,14 +1163,18 @@ class Game:
 
         Convoked creatures and improvised artifacts are tapped *here*, before
         any mana is paid, so the payment below cannot also tap one of them for
-        mana (a permanent taps once). That makes a pick that taps the very Elf
-        or Sol Ring the rest of the cost needed unpayable, so a pick is checked
-        against the mana before it is spent and asked again if the rest could
-        not then be paid.
+        mana (a permanent taps once; 702.126a's "after you're done activating
+        mana abilities"). That makes a pick that taps the very Elf or Sol Ring
+        the rest of the cost needed unpayable, so a pick is checked against the
+        mana before it is spent and asked again if the rest could not then be
+        paid.
         """
         state = self.state
         taps = card.pay_generic_with in PAY_GENERIC_TAP_TYPES
-        pool = pay_generic_pool(state, pid, oid, card)
+        if taps:
+            pool = pay_generic_tappers(state, pid, card)
+        else:
+            pool = [other for other in state.players[pid].graveyard if other != oid]
         most = min(max(0, cost.generic + extra), len(pool))
         fewest = min(fewest, most)
         if most <= 0:
@@ -1194,22 +1198,22 @@ class Game:
                 state.bump_chars()
 
         ctx = EffectContext(state=state, controller=pid, source_oid=oid)
-        verb, purpose_name = {
-            "tap_creatures": ("Tap creatures to convoke", "convoke"),
-            "tap_artifacts": ("Tap artifacts to improvise", "improvise"),
-        }.get(card.pay_generic_with, ("Exile cards to delve", "delve"))
+        purpose_tag, verb = {
+            "tap_creatures": ("convoke", "Tap creatures to convoke"),
+            "tap_artifacts": ("improvise", "Tap artifacts to improvise"),
+        }.get(card.pay_generic_with, ("delve", "Exile cards to delve"))
         floor = f"at least {fewest}, " if fewest else ""
         prompt = f"{verb} for {card.name} ({floor}up to {most})"
         picked: list[int] = []
         for _attempt in range(MAX_PAY_GENERIC_ASKS):
             picked = yield from ask_objects(
-                ctx, prompt, pool, fewest, most, pid, purpose_name
+                ctx, prompt, pool, fewest, most, pid, purpose_tag
             )
             if payable(picked):
                 break
             prompt = f"Not enough mana left for the rest. {verb} for {card.name} ({floor}up to {most})"
         else:
-            # Nobody is asked forever. The creatures the mana does not need
+            # Nobody is asked forever. The permanents the mana does not need
             # first, as many as may go -- the pick most likely to leave the rest
             # payable.
             sources = {source.oid for source in mana_sources(state, pid, purpose=purpose)}

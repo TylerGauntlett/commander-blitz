@@ -1030,9 +1030,17 @@ and never uses the stack (605.4a), so it is read at the mana choke point beside
 read in the same places too: `costs._sources_of` (so legality offers the spell
 the extra mana pays for), `costs.activate_mana_ability` (so the mana really
 arrives) and legality's chip label. `tapped_permanent` takes only `types`,
-`subtypes`, `supertypes` and `attached`. The first three are matched against the
-tapped permanent's **current** characteristics, so a land Urborg made a Swamp
-counts. `attached` is the odd one out and the only one that names *a* permanent
+`subtypes`, `supertypes`, `attached` and `produced`. The first three are matched
+against the tapped permanent's **current** characteristics, so a land Urborg made
+a Swamp counts. `produced` describes the tap rather than the permanent: Forsaken
+Monument's "whenever you tap a permanent **for {C}**" is `{"produced": "{C}"}`,
+one mana symbol the tap must have made at least one of. It is asked per mana
+option, so a Battlefield Forge tapped for {C} gets the extra and the same Forge
+tapped for {R} does not, and it fires once per tap however much of that mana
+there was — a Sol Ring makes {C}{C}{C}. It combines with the other keys:
+Ultima's "a land for {C}" is `{"types": ["Land"], "produced": "{C}"}`. An empty
+`tapped_permanent` is refused; written that way, the Monument would pay out for
+every Forest. `attached` is the odd one out and the only one that names *a* permanent
 rather than a class: it is Wild Growth's "enchanted land", checked against the
 static's own `source.attached_to`, because a fact about the Aura is not a
 description of the land. Spelled with a class key instead, Wild Growth would pay
@@ -1048,26 +1056,6 @@ in their cost count (106.12). The loader requires both keys and refuses
 Utopia Sprawl's "one mana of the chosen color" — the same spelling the `add_mana`
 op uses, read off the static's own source, and adding nothing while no colour has
 been chosen, since this runs inside cost payment where nothing may stop to ask.
-
-`tapped_for` is the other half of the sentence: what the permanent was tapped
-**for**, where `tapped_permanent` is what it is. Forsaken Monument's "whenever
-you tap a permanent for {C}, add an additional {C}":
-
-```jsonc
-{ "kind": "static", "effect": "add_mana_on_tap", "affects_player": "you",
-  "tapped_for": "{C}", "add_mana": "{C}" }
-```
-
-One mana symbol — `{W}` `{U}` `{B}` `{R}` `{G}` or `{C}`. It reads the yield of the
-ability that was activated, for the option chosen, before any other triggered
-mana ability adds to it: a land that taps for {C} or {G} triggers it only when
-tapped for {C}, and a Kinnan's extra {C} on a Sol Ring is Kinnan's mana and does
-not count. It fires once when the yield holds at least one mana of that type, so
-a Sol Ring's {C}{C} adds one {C} — a trigger, not Mana Reflection's "twice as
-much", which is a replacement this static does not say. With no
-`tapped_permanent` any permanent counts, of any type; the two keys compose, and
-the loader requires at least one of them. The planner prices it per option
-(`costs._tapped_yield`), so the offer and the payment agree.
 
 ### `fight`
 
@@ -2497,6 +2485,59 @@ guard through unearth's satisfier — an unconditional top-level effect moving
 right: nothing in the *cost* removes the card, and it leaves hand because the
 effect puts it onto the battlefield.
 
+## Reselecting an attack — `redirect_attack`
+
+```jsonc
+{ "kind": "triggered",
+  "text": "When this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking. (…)",
+  "trigger": { "event": "self_enters", "source": "self",
+               "condition": { "step_is": "declare_attackers" } },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 1,
+                 "selector": { "zone": "battlefield", "types": ["Creature"], "attacking": true } } ],
+  "effects": [ { "op": "may",
+                 "effects": [ { "op": "redirect_attack", "objects": { "target": "t1" } } ] } ] }
+```
+
+Misleading Signpost. `redirect_attack` takes `objects` (required) and, for each
+one still attacking, asks the **effect's controller** what it attacks now: a
+player other than the creature's controller, or a planeswalker or battle one of
+those players controls. The current target is offered too, so the printed "you
+may" is a `may` around the op. The choice is written where a declared attack
+writes it, `combat.attackers` and `attacking_permanent`, so blocks and damage
+follow it: the new defending player is asked to block, and a player nobody
+attacks any more is not.
+
+Nothing is declared, so it reads like ninjutsu's `attacking` (508.4): no
+restriction, requirement or cost on declaring is consulted, no attack trigger
+fires, and the turn ledger keeps what was declared. After blockers are declared
+the op does nothing. The near misses are `cant_attack_player` and
+`must_attack_planeswalker`, which shape a declaration that has not happened yet.
+
+## "Tap X untapped Myr" — an optional choice of any number at resolution
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Whenever this creature attacks, you may tap X untapped Myr you control. If you do, …",
+  "trigger": { "event": "attacks", "source": "self" },
+  "effects": [
+    { "op": "choose_permanents", "as": "tapped_myr",
+      "objects": { "zone": "battlefield", "controller": "you", "subtypes": ["Myr"],
+                   "tapped": false, "count": "any" } },
+    { "op": "tap", "objects": { "binding": "tapped_myr" } },
+    { "op": "pump", "objects": { "zone": "battlefield", "self_only": true },
+      "power": { "count": { "binding": "tapped_myr" } }, "toughness": { "const": 0 } },
+    { "op": "damage", "amount": { "count": { "binding": "tapped_myr" } },
+      "defender_of": { "zone": "battlefield", "self_only": true } } ] }
+```
+
+Myr Battlesphere, composed: `choose_permanents` with `count: "any"` is the free
+choice of none to all, its binding is what `tap` taps, and
+`{"count": {"binding": …}}` is X. Choosing none is declining, and with X at zero
+the pump and the damage do nothing, so "if you do" needs no `may`. The near
+misses: `tap_permanents` is an activation cost with a fixed `count`; `may` with
+`pay` and `x` pays mana. The damage half is
+[`damage`'s `defender_of`](card-dsl.md#damages-defender_of).
+
 ## Banding
 
 ```jsonc
@@ -3316,7 +3357,7 @@ that are worth keeping straight, because each one alone would have been fixable:
 |---|---|
 | it needs a permanent | a static is an ability on something standing on the battlefield; Rogue's Passage may be destroyed in response to its own ability and the creature stays unblockable |
 | it has no clock | a static is on exactly as long as its source is, so it cannot end "this turn" |
-| its filters describe what a creature is | there is no `static_filter_keys` entry meaning "the creature this ability targeted", and Rogue's Passage may target *any* creature, including an opponent's |
+| its filters read printed characteristics | there is no `static_filter_keys` entry meaning "the creature this ability targeted", and Rogue's Passage may target *any* creature, including an opponent's |
 
 `grant_ability` cannot smuggle *this* static across either, for the reasons in
 the first two rows. A granted `block_restriction` does
@@ -3470,18 +3511,6 @@ One effect covers every printed variant, because they differ only in `affects`:
 mirror image — that filter routinely names creatures the source's controller
 does not control.
 
-The `affects` filter reads the creature's **derived** characteristics, after
-every layer, where a layered static's filter reads printed ones: an attack
-requirement is no layer (613), so it applies to whatever the layers produced.
-"Juggernauts you control attack each combat if able" (Graaz, Unstoppable
-Juggernaut) therefore compels every creature Graaz's own third line, an
-`add_subtype` static, makes a Juggernaut:
-
-```jsonc
-{ "kind": "static", "effect": "attacks_if_able",
-  "affects": { "controller": "you", "subtypes": ["Juggernaut"] } }
-```
-
 Both forms meet at one enforcement point, `combat.attack_required`, so there is
 still only one place that decides whether "Done attacking" is offered. A goad
 is owed only on the compelled creature's **own** turn: a creature cannot attack
@@ -3612,7 +3641,7 @@ Neither half is expressible with the near relatives:
 | | |
 |---|---|
 | `must_attack` | one-shot. `combat.discharge_attack_requirements` spends the flag when attackers lock in, so `this_turn` and `next_combat` each compel exactly **one** combat where goad compels every combat until its goader untaps. It also records no goader, which is the datum the other half is about |
-| the `attacks_if_able` static | the live, unspent form — but a continuous ability on a permanent. A sorcery leaves no source on the battlefield, and a static's `affects` filter describes what a creature is, so it can say neither "those creatures" (the set chosen at resolution) nor "until your next turn" |
+| the `attacks_if_able` static | the live, unspent form — but a continuous ability on a permanent. A sorcery leaves no source on the battlefield, and a static's `affects` filter reads only printed characteristics, so it can say neither "those creatures" (the set chosen at resolution) nor "until your next turn" |
 | nothing at all | restricted **which** defender an attacker may pick. `cant_attack`/`attack_forbidden` is all-or-nothing, `block_restriction` restricts blockers. Without the second half a goaded creature swings straight back at the player who goaded it, which is the whole political point of the card |
 
 The datum written down is the **player**, in `GameObject.goaded_by` — detain's
@@ -3686,15 +3715,9 @@ block? — and is asked in `combat.can_block`, beside flying and protection.
 legal depends on what every other creature is doing, so it is asked in
 `combat.blocks_valid`, which is the shape menace already needed.
 
-`blockers` is a static filter, and with `affects` it reads the creature's
-**derived** characteristics, after every layer, rather than the printed ones a
-layered static's filter reads: a restriction is no layer (613), so it applies to
-whatever the layers produced, and reading their output cannot loop. "Juggernauts
-you control can't be blocked by Walls" (Graaz, Unstoppable Juggernaut) covers
-the creatures Graaz's own `add_subtype` static makes Juggernauts, and a creature
-some static makes a Wall is a Wall to it. `blockers` has one more difference
-from every other static filter: `controller` defaults to **any** rather than
-`you`. A blocker belongs to the defending player by definition, so
+`blockers` is a static filter and may read printed characteristics only, with
+one difference from every other static filter: `controller` defaults to **any**
+rather than `you`. A blocker belongs to the defending player by definition, so
 the usual default would match nothing and the restriction would silently never
 fire.
 
@@ -4217,6 +4240,32 @@ them where it is sitting:
 "multikicker": "{1}{W}"                     // …the printed name for exactly those three
 "strive": "{1}{W}"                          // costs this much more per target beyond the first
 ```
+
+#### Convoke, improvise and delve
+
+One field, three currencies, each paying {1} of the spell's **generic** cost:
+`"tap_creatures"` taps untapped creatures you control (convoke, 702.51),
+`"tap_artifacts"` taps untapped artifacts you control (improvise, 702.126), and
+`"exile_from_graveyard"` exiles cards from your graveyard (delve, 702.66). The
+card is one cast line; which permanents tap or which cards go is a
+`CHOOSE_OBJECTS` asked as the spell is paid for, tagged `convoke`, `improvise`
+or `delve` ([ADR 0020](adr/0020-convoke-is-one-line.md)).
+
+```jsonc
+// Kappa Cannoneer -- "Improvise (Your artifacts can help cast this spell. Each
+//  artifact you tap after you're done activating mana abilities pays for {1}.)"
+"pay_generic_with": "tap_artifacts"
+```
+
+The tapping currencies tap **before** the mana is paid, so an artifact tapped
+to improvise cannot also be tapped for mana — the printed "after you're done
+activating mana abilities". A pick that taps the Sol Ring the rest of the cost
+needed is asked again. The type is read off derived characteristics, so an
+artifact creature counts for either keyword and an animated artifact land for
+both. None of them reaches a coloured pip: the saving goes through the same
+clamp as every cost reduction, and the ceiling is the spell's own generic cost.
+The near miss is `cost_reduction` with a count of artifacts (affinity), which
+lowers the price without tapping anything.
 
 #### Casting from the graveyard
 
@@ -4796,9 +4845,11 @@ because it decides what is castable before anything is turned over.
 The blessing is granted by a **state trigger** in the state-based-action pass
 (rule 702.131a), not by a triggered ability. Ascend is not an *event*: a player
 at nine permanents who plays a land gets it at the instant of the tenth, with
-nothing having fired, and gets it on an opponent's turn just as readily. State
-triggers use no stack and cannot be responded to, so the SBA pass — beside the
-legend rule — is where they belong.
+nothing having fired, and gets it on an opponent's turn just as readily. The
+blessing uses no stack and cannot be responded to, so the SBA pass — beside the
+legend rule — is where it belongs. A printed state trigger, which does use the
+stack, is the `state` trigger event — see
+[`state`](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact).
 
 **Player state, not object state.** `PlayerState.has_city_s_blessing` is one-way
 and lasts the rest of the game: it survives the permanents leaving, survives the
@@ -5688,12 +5739,6 @@ releases Mana Vault a turn later; `frozen_by` is written by the `freeze` op.
 Both are ops, so reaching either from a static means inventing a `self_enters`
 trigger for a line that is printed as a static — which the residual gate would
 see as a trigger claiming a static sentence.
-
-"Unless that player is the monarch" (Fall from Favor) is a `condition` on the
-hold, `{"not": {"is_monarch": "affected_controller"}}`, asked per held permanent —
-see [static conditions](card-dsl.md#unless-that-player-is-the-monarch). "That
-player" is the creature's controller, not the Aura's, which is why the spec is not
-`you`.
 
 `not_supertypes` is the negation of `supertypes`, in the static selector language
 as in the effect-side one. It is **not** interchangeable with a `not_types`
@@ -9423,7 +9468,7 @@ walk offers nothing extra: nothing carries it that was not granted it.
 
 "…and mana of any type can be spent to cast that spell" is the one clause in the
 engine that relaxes a **coloured** requirement, and nothing else could stand in
-for it. Every cost reduction there is — `spell_cost_reduction`, convoke, delve,
+for it. Every cost reduction there is — `spell_cost_reduction`, convoke, improvise, delve,
 emerge, the commander tax's negative twin — is clamped to the generic part
 precisely so that no pile of them can ever reach a pip; and `add_mana`'s "any
 type" is about what a permanent *produces*, not about what may be spent.

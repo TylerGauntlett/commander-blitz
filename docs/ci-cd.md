@@ -227,7 +227,10 @@ autopilot`, starts a fresh session every four hours with `/extend-roadmap
 session builds the top decided item (`scripts/roadmap.py --next --auto`), opens
 its pull request labelled `autopilot` with auto-merge on, drives it to green,
 and fires the task again when it merges. An open `autopilot` pull request is the
-lock: a firing that finds one stops. The skill's §10 is the procedure.
+lock: a firing that finds one stops. A run claims its item by opening that
+pull request as a draft before it builds anything, so a build that outlasts
+the four hours still holds the lock; drafts run no gate, and the run marks
+it ready when the work is done. The skill's §10 is the procedure.
 
 It needs, set once by a maintainer:
 

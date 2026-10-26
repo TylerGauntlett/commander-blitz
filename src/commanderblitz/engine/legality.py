@@ -991,13 +991,16 @@ def _mana_option_label(state: GameState, oid: int, ability, mana_option: int | N
     if mana_option is None or len(options) <= 1:
         return ""
 
-    controller = state.objects[oid].controller
-    doubled = player_doubles_mana_from(state, controller, oid)
-    times = mana_amount(state, oid, ability)
-    produced = mana_produced(options[mana_option], doubled=doubled, times=times)
+    doubled = player_doubles_mana_from(state, state.objects[oid].controller, oid)
+    produced = mana_produced(
+        options[mana_option],
+        doubled=doubled,
+        times=mana_amount(state, oid, ability),
+    )
     if ability.cost is not None and ability.cost.tap:
-        own = mana_produced(options[mana_option], doubled=False, times=times)
-        produced = plus_mana(produced, mana_added_total(state, controller, oid, own))
+        produced = plus_mana(
+            produced, mana_added_total(state, state.objects[oid].controller, oid, produced)
+        )
     return format_symbols(produced)
 
 

@@ -241,11 +241,6 @@ pass does:
 10. Ascend: a player controlling `ASCEND_THRESHOLD` permanents while they control an
     Ascend card gets the city's blessing, a state trigger rather than an event.
 
-Each pass also checks state triggers (603.8, `triggers.check_state_triggers`):
-a permanent's `state` trigger whose state holds is queued unless it is already
-queued or on the stack. Queuing one is not a change, so it does not extend the
-fixpoint.
-
 When a player loses, their permanents are exiled, their stack objects and pending
 triggers dropped, and their commander goes to the command zone. The game ends when
 one player is left (or none — a draw).

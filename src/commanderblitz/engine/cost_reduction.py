@@ -314,9 +314,7 @@ def _object_matches(
         return False
     if (want := filt.get("colors")) and not set(want) & set(colors):
         return False
-    # Honoured for `power`'s reason below: a reduction filter is validated
-    # against `STATIC_FILTER_KEYS`, which carries it.
-    if "colorless" in filt and (not colors) != bool(filt["colorless"]):
+    if filt.get("colorless") and colors:
         return False
     if (want := filt.get("keywords")) and not set(want).issubset(keywords):
         return False

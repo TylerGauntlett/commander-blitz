@@ -346,6 +346,12 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
     # rather than recomputed from `is_land` here, so the two doubling statics
     # cannot drift apart between this offer and the payment below.
     doubled = player_doubles_mana_from(state, obj.controller, oid)
+    # Crypt Ghast. Every ability reaching the solver is tap-only, so each one
+    # is "tapping it for mana" (106.12) and each option gets the extra -- asked
+    # per option, since what the tap made can decide it (Forsaken Monument).
+    def _with_extra(produced: tuple[int, ...]) -> tuple[int, ...]:
+        return plus_mana(produced, mana_added_total(state, obj.controller, oid, produced))
+
     out: list[ManaSource] = []
     for ability in abilities_of(state, oid):
         if not solver_taps(ability):
@@ -359,14 +365,21 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
             state, obj.controller, oid, ability
         ):
             continue
-        times = mana_amount(state, oid, ability)
         out.append(
             ManaSource(
                 oid=oid,
                 ability_index=ability.index,
-                options=tuple(
-                    _tapped_yield(state, obj.controller, oid, option, doubled, times)
-                    for option in mana_options_of(state, oid, ability)
+                options=(
+                    tuple(
+                        _with_extra(
+                            mana_produced(
+                                option,
+                                doubled=doubled,
+                                times=mana_amount(state, oid, ability),
+                            )
+                        )
+                        for option in mana_options_of(state, oid, ability)
+                    )
                 ),
                 is_land=is_land,
                 sort_key=(0 if is_land else 1, card.id, oid),
@@ -374,21 +387,6 @@ def _sources_of(state: GameState, oid: int, obj: Any) -> list[ManaSource]:
             )
         )
     return out
-
-
-def _tapped_yield(
-    state: GameState, pid: int, oid: int, option: Sequence[int], doubled: bool, times: int
-) -> tuple[int, ...]:
-    """What tapping ``oid`` for ``option`` puts in the pool, every trigger included.
-
-    Crypt Ghast. Every ability reaching the solver is tap-only, so each one is
-    "tapping it for mana" (106.12) and each option gets the extra -- asked per
-    option, because Forsaken Monument's ``tapped_for`` adds to a {C} yield and
-    not to a {G} one, and one permanent may offer both.
-    """
-    own = mana_produced(option, doubled=False, times=times)
-    produced = mana_produced(option, doubled=doubled, times=times)
-    return plus_mana(produced, mana_added_total(state, pid, oid, own))
 
 
 def _mana_condition_met(state: GameState, pid: int, oid: int, ability: Ability) -> bool:
@@ -746,16 +744,14 @@ def _identity_options(state: GameState, oid: int, ability: Ability) -> tuple[tup
 def mana_added_total(
     state: GameState, pid: int, oid: int, produced: Sequence[int]
 ) -> tuple[int, ...] | None:
-    """Everything ``add_mana_on_tap`` statics add when ``pid`` taps ``oid``, summed.
-
-    ``produced`` is what the tapped ability itself yields for the option being
-    priced, which a ``tapped_for`` static (Forsaken Monument) reads -- so the
-    sum is per option, not per permanent.
+    """Everything ``add_mana_on_tap`` statics add when ``pid`` taps ``oid`` for
+    ``produced``, summed.
 
     ``None`` when nothing applies. Read by the planner (`_sources_of`) and the
     chip label, while `activate_mana_ability` reads the same pairs pip by pip
     with their sources -- so the offer and the payment cannot disagree about how
-    much a Swamp makes.
+    much a Swamp makes. Per option, because Forsaken Monument's "tap a permanent
+    for {C}" adds to a painland's {C} and not to its {R}.
     """
     added = mana_added_on_tap(state, pid, oid, produced)
     if not added:
@@ -1260,14 +1256,6 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or not obj.on_battlefield:
             return False
-    if cost.put_counters is not None:
-        # "Put a page counter on this artifact": counters go on a permanent, so
-        # the source must still be one. Nothing else limits it -- there is no
-        # supply of counters to run out of, and Devoted Druid's -1/-1 is payable
-        # at any toughness (the creature dies to the state-based action after).
-        obj = state.objects.get(source_oid) if source_oid is not None else None
-        if obj is None or not obj.on_battlefield:
-            return False
     if cost.discard_self:
         # The card must be the payer's to throw away and still be in the zone it
         # is activated from. Checked rather than assumed because legality offers
@@ -1306,6 +1294,12 @@ def can_pay(
         amount = int(cost.remove_counters.get("amount", 1))
         if obj is None or obj.counter(kind) < amount:
             return False
+    # Always payable while the source is on the battlefield to take them: a
+    # counter needs a permanent (122.1), and one whose source has left is not.
+    if cost.put_counters is not None and (
+        source_oid is None or source_oid not in state.battlefield
+    ):
+        return False
     if cost.loyalty is not None and cost.loyalty < 0:
         # 606.3: a minus ability may only be activated if there is enough
         # loyalty to pay it. A plus or a zero is always payable, which is why
@@ -1916,17 +1910,15 @@ def pay(
         )
 
     if cost.put_counters is not None and source_oid is not None:
-        # 601.2h: on as the ability is activated, so a response sees the
-        # counter already there. Through `add_counters` like any placement, so
-        # `counter_placed` fires (122.6) and the putter is the payer; `as_cost`
-        # because a cost is not an effect -- Doubling Season's "if an effect
-        # would put" leaves it at one, as it leaves a planeswalker's +1.
+        # `as_cost` for the reason the loyalty branch below gives: Doubling
+        # Season's "if an effect would put" leaves a cost alone, while Hardened
+        # Scales' "would be put" does not. Through `add_counters`, so the
+        # placement raises `counter_placed` like any other placement.
         add_counters(
             state,
             source_oid,
             str(cost.put_counters["counter"]),
             int(cost.put_counters.get("amount", 1)),
-            source=source_oid,
             as_cost=True,
             by=pid,
         )
@@ -2112,13 +2104,8 @@ def activate_mana_ability(
     # the tap for the reason the variable amount above is, and only when the
     # ability really taps: 106.12 makes "tap for mana" a mana ability with {T}
     # in its cost, and nothing else.
-    # `tapped_for` asks what the ability itself made, before the doubling,
-    # which is another triggered mana ability's mana and not this one's.
     tapping = ability.cost is not None and ability.cost.tap
-    own = mana_produced(
-        options[option_index], doubled=False, times=mana_amount(state, oid, ability)
-    )
-    added_on_tap = mana_added_on_tap(state, pid, oid, own) if tapping else []
+    added_on_tap = mana_added_on_tap(state, pid, oid, produced) if tapping else []
 
     if ability.cost is not None and ability.cost.tap:
         # The return value is deliberately not checked: `Game._activate_mana`

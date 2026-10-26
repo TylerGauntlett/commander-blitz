@@ -335,22 +335,21 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: proliferated Saga advances by the wrong pattern.
     "chapter": EventType.CHAPTER_REACHED,
     #: A **state trigger** (603.8): "When there are four or more page counters
-    #: on this artifact, …" -- Mazemind Tome. It triggers when the game state
-    #: matches `TriggerSpec.state`, not when anything happens, so it maps to
-    #: `STATE_TRIGGER`, which is never emitted and so matches no event in
-    #: `collect`; `check_state_triggers` queues it from the state-based-action
-    #: pass instead.
+    #: on this artifact…" (Mazemind Tome). It listens to no event -- the name
+    #: maps to itself and nothing is ever emitted under it, so `collect` never
+    #: matches one. `check_state_triggers` finds it instead, walking the
+    #: battlefield whenever state-based actions are checked, and the
+    #: condition is the trigger's `state`.
     #:
     #: `counter_placed` with a `counters_on` condition is the near miss: it
-    #: fires on every later counter while the count stays at four or more, and
-    #: never for a count that got there without a placement event.
-    "state": "state_trigger",
+    #: fires on a placement rather than on the state holding, misses a count
+    #: reached any other way, and fires again on every later counter while the
+    #: first ability is still waiting.
+    "state": "state",
 }
 
-#: The engine-side name `"state"` maps to. A plain string rather than an
-#: `EventType`, because nothing happens: no event of this type is ever emitted
-#: or logged, so no client narrates one and no ordinary trigger can match it.
-STATE_TRIGGER = TRIGGER_EVENTS["state"]
+#: The DSL name of a state trigger -- see the `TRIGGER_EVENTS` row.
+STATE_TRIGGER = "state"
 
 #: Triggers whose subject is an object rather than a player.
 OBJECT_SUBJECT_TRIGGERS = frozenset(
@@ -1197,6 +1196,7 @@ ORDINAL_FILTER_KEYS = frozenset(
         "supertypes",
         "colors",
         "min_colors",
+        "colorless",
         "keywords",
         "not_keywords",
         "name",
@@ -1326,11 +1326,6 @@ EVENT_BINDING_KEYS = (
     "life",
     "sid",
     "defender",
-    # The planeswalker or battle an attacker was declared against, beside the
-    # `defender` that is its controller -- `None` when the attack was on the
-    # player. Read by `damage`'s `to_attacked` ("the player or planeswalker
-    # it's attacking"), which needs to tell the two apart.
-    "attacked_permanent",
     "was_attacking",
     "counter",
     "blockers",
@@ -1523,9 +1518,6 @@ def _actor(
 #: were each found that way, one card at a time; this closes the class. A key
 #: belongs here only once the function below answers it, and
 #: `tests/unit/triggers/test_trigger_filter_owner.py` holds the two in step.
-#: Where a trigger filter's `colorless` reads `chars` rather than the face.
-_DERIVED_COLOR_ZONES = frozenset({Zone.BATTLEFIELD, Zone.STACK})
-
 TRIGGER_FILTER_KEYS = frozenset(
     {
         "exclude_self",
@@ -1802,17 +1794,10 @@ def matches_card_filter(
     # clause rather than a spelling of that one.
     if (least := filt.get("min_colors")) is not None and len(card.colors) < int(least):
         return False
-    # "Whenever you cast a **colorless** spell" -- Forsaken Monument (105.2c,
-    # zero colours). The one colour clause here read off *derived* colours
-    # where the subject still has them: this reader runs outside the layer
-    # pipeline, so a permanent a `set_colors` static repainted is asked about
-    # what it is now, and a spell about its colours on the stack. A subject
-    # that has left both (a creature that died) has only its face, and is
-    # asked about that.
-    if "colorless" in filt:
-        have = chars(state, oid).colors if obj.zone in _DERIVED_COLOR_ZONES else card.colors
-        if (not have) != bool(filt["colorless"]):
-            return False
+    # "Whenever you cast a **colorless** spell" (Forsaken Monument): zero
+    # colours, 105.2c, off the printed face like `colors` above.
+    if filt.get("colorless") and card.colors:
+        return False
     keywords = filt.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):
         return False
@@ -2065,71 +2050,54 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
 
 
 def check_state_triggers(state: GameState) -> None:
-    """Queue every state trigger whose state holds (603.8).
+    """Queue every state trigger whose condition holds (603.8).
 
-    "A state-triggered ability triggers as soon as the game state matches the
-    condition", and "doesn't trigger again until the ability has resolved, has
-    been countered, or has otherwise left the stack". Checked from the
-    state-based-action pass, which runs whenever a player would receive
-    priority and after anything resolves -- the moment 603.8's "next available
-    opportunity" to put it on the stack arrives.
+    Called with the state-based actions, which is when 603.8 says the game
+    checks: whenever a player would receive priority. The ability then goes
+    on the stack like any other trigger and can be responded to -- unlike
+    Ascend's blessing, which is not a triggered ability at all.
 
-    **Not re-checked on resolution.** The state is the trigger, not an
-    intervening "if" (603.4): a Mazemind Tome whose page counters are removed
-    in response is still exiled. That is why the state lives in
-    `TriggerSpec.state` and not in `condition`, which `stack` re-evaluates.
-
-    "Waiting" is the ability in `pending_triggers` or on the stack, both halves
-    for the reason `sagas.chapter_on_stack` gives: this pass runs while the
-    trigger is still queued, and a check of the stack alone would queue it a
-    second time.
+    "A state-triggered ability doesn't trigger again until the ability has
+    resolved, has been countered, or has otherwise left the stack." So an
+    ability already waiting in `pending_triggers` or on the stack is skipped
+    -- the `sagas.chapter_on_stack` test, keyed by the ability rather than by
+    kind. Once it leaves the stack, a condition that still holds fires it
+    again at the next check, which is what the rule says and what makes a
+    countered Mazemind Tome ability try again.
     """
     for oid in list(state.battlefield):
         obj = state.objects.get(oid)
         if obj is None or obj.face_down:
-            # A face-down permanent has no abilities (707.2).
             continue
-        candidates = [*abilities_of(state, oid)]
-        candidates += [a for _granter, a in granted_abilities(state, oid)]
-        for ability in candidates:
+        for ability in abilities_of(state, oid):
             spec = ability.trigger
-            if not ability.is_triggered or spec is None or spec.event != "state":
+            if not ability.is_triggered or spec is None or spec.event != STATE_TRIGGER:
                 continue
-            if Zone.BATTLEFIELD not in ability.active_zones or spec.state is None:
+            if _state_trigger_waiting(state, obj, ability):
                 continue
-            granted_by, index = _granter_of(state, obj, ability)
-            if _state_trigger_waiting(state, oid, index, granted_by):
+            if not evaluate_condition(state, spec.state, controller=obj.controller, source=oid):
                 continue
-            if not evaluate_condition(
-                state, spec.state, controller=obj.controller, source=oid, bindings={"self": oid}
-            ):
-                continue
-            # A synthetic event for `_queue`'s bindings, never appended to the
-            # log: nothing happened, and `ABILITY_TRIGGERED` is what narrates it.
+            # Never emitted: no event happened. `_queue` reads its bindings
+            # (`self`, `event_player`) off it, and that is all.
             event = GameEvent(
                 type=STATE_TRIGGER,
                 turn=state.turn,
                 step=int(state.step),
                 player=obj.controller,
                 source=oid,
-                data={"oid": oid},
             )
             _queue(state, obj, ability, event)
 
 
-def _state_trigger_waiting(
-    state: GameState, oid: int, index: int, granted_by: int | None
-) -> bool:
+def _state_trigger_waiting(state: GameState, obj: GameObject, ability: Ability) -> bool:
     """Whether this state trigger has triggered and not yet left the stack."""
-    for item in (*state.pending_triggers, *state.stack):
-        if (
-            item.source_oid == oid
-            and item.ability_index == index
-            and getattr(item, "granted_by", None) == granted_by
-            and getattr(item, "kind", "ability") == "ability"
-        ):
-            return True
-    return False
+    granted_by, index = _granter_of(state, obj, ability)
+    return any(
+        item.source_oid == obj.oid
+        and item.ability_index == index
+        and item.granted_by == granted_by
+        for item in (*state.stack, *state.pending_triggers)
+    )
 
 
 def drain_to_stack(state: GameState):

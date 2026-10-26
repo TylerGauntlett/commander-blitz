@@ -24,7 +24,7 @@ from .characteristics import (
     resolve_chosen_subtypes,
 )
 from .enums import Step, Zone
-from .mana import SYMBOL_INDEX, ManaCost, parse_mana_production
+from .mana import ManaCost, parse_mana_production
 from .objects import GameObject
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -515,16 +515,12 @@ def mana_added_on_tap(
     matches nothing, which is the same answer a state-based action is about to
     give by binning it.
 
-    ``tapped_for`` asks about the other half of "tap a permanent for {C}"
-    (Forsaken Monument): the mana the tapped permanent's ability **produced**,
-    ``produced``, which is the ability's own yield before any other triggered
-    mana ability adds to it -- a Kinnan's extra {C} or a Ghast's {B} is that
-    ability's mana, not the tapped permanent's. The static fires when the yield
-    holds at least one mana of that type and adds its mana once, however many
-    of that type were made: a Sol Ring tapped for {C}{C} triggers it once, as a
-    Swamp tapped for {B} triggers Crypt Ghast once. A permanent tapped for {G}
-    does not trigger it whatever it is. Without ``tapped_permanent`` beside it,
-    any permanent counts.
+    ``produced`` is what the tap made -- the mana ability's option as the solver
+    or the payment will add it -- and is read by the one key that describes the
+    *tap* rather than the permanent: Forsaken Monument's "whenever you tap a
+    permanent **for {C}**" is ``{"produced": "{C}"}``, met when the tap made at
+    least one of that mana. Once per tap however much of it there was: a Sol
+    Ring's {C}{C} is one tap for {C}, so one more {C}.
     """
     out: list[tuple[int, tuple[int, ...]]] = []
     tapped: Any = None
@@ -534,10 +530,6 @@ def mana_added_on_tap(
         wanted = static.get("tapped_permanent") or {}
         if wanted.get("attached") and source.attached_to != oid:
             continue
-        if (symbol := static.get("tapped_for")) is not None and not produced[
-            SYMBOL_INDEX[symbol.strip("{}")]
-        ]:
-            continue
         if tapped is None:
             tapped = chars(state, oid)
         if not all(t in tapped.types for t in wanted.get("types", [])):
@@ -546,6 +538,10 @@ def mana_added_on_tap(
             continue
         subtypes = wanted.get("subtypes", [])
         if subtypes and not any(t in tapped.subtypes for t in subtypes):
+            continue
+        if (tapped_for := wanted.get("produced")) is not None and not all(
+            produced[i] >= 1 for i, n in enumerate(parse_mana_production(tapped_for)) if n
+        ):
             continue
         out.append((source.oid, _mana_added(source, static.get("add_mana", ""))))
     return out
@@ -1323,10 +1319,7 @@ def attack_compelled(state: GameState, oid: int) -> bool:
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "attacks_if_able":
             continue
-        # An attack requirement is no layer (613), so its filter reads the
-        # creature as it now is: Graaz's Juggernauts include the creatures its
-        # own third line made Juggernauts.
-        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
+        if _matches(state, obj, source_obj, static.get("affects")):
             return True
     return False
 
@@ -1436,14 +1429,6 @@ def untap_held(state: GameState, active_pid: int) -> set[int]:
     Explicit `untap` effects are untouched -- this is read only by the untap
     step, so Mana Vault's own upkeep payment still untaps it (302.6 / the
     printed card), exactly as `frozen_by` leaves targeted untaps alone.
-
-    **The condition is asked per held permanent.** "Enchanted creature doesn't
-    untap during its controller's untap step unless that player is the monarch"
-    (Fall from Favor) names the *held creature's* controller, not the Aura's,
-    so its `{"is_monarch": "affected_controller"}` cannot be answered once per
-    static. `_battlefield_statics` defers such a condition and this walk asks
-    it with each permanent the filter matched; a condition naming only the
-    source was already settled there and asking it again changes nothing.
     """
     held: set[int] = set()
     for source_obj, static in _battlefield_statics(state):
@@ -1458,12 +1443,7 @@ def untap_held(state: GameState, active_pid: int) -> set[int]:
             # narrowing here keeps the set to what this step would have touched.
             if obj.controller != active_pid:
                 continue
-            if not _matches(state, obj, source_obj, static.get("affects")):
-                continue
-            # Asked again with the permanent in hand: `_battlefield_statics`
-            # deferred a condition naming the affected permanent's controller,
-            # and this is where it has one.
-            if _static_active(state, source_obj, static, affected=obj):
+            if _matches(state, obj, source_obj, static.get("affects")):
                 held.add(oid)
     return held
 

@@ -49,20 +49,6 @@ def _check_mana_cost_key(filt: Any, where: str) -> None:
         validate_printed_cost_list(filt["mana_cost"], where)
 
 
-def _check_colorless_key(filt: Any, where: str) -> None:
-    """``colorless`` in a static filter is a bool -- `validate_selector`'s check.
-
-    Static filters are validated by key set alone, so ``"colorless": "C"``
-    would load and be read through `bool()` as true, and ``0`` as false.
-    """
-    if isinstance(filt, Mapping) and "colorless" in filt and not isinstance(
-        filt["colorless"], bool
-    ):
-        raise DslError(
-            f"{where}: 'colorless' is true (no colours, 105.2c) or false (one or more)"
-        )
-
-
 def _check_pt_keys(filt: Any, where: str) -> None:
     """``power``/``toughness`` in a static filter is a comparison, not a size.
 

@@ -11,6 +11,7 @@ clauses on triggers, and static ability conditions.
     {"cast_during": "your_main"}
     {"was_cast": true}
     {"is_active_player": {"binding": "event_player"}}
+    {"step_is": "declare_attackers"}
 """
 
 from __future__ import annotations
@@ -19,7 +20,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from ..characteristics import chars
-from ..enums import STEP_PHASE, Phase
+from ..enums import STEP_PHASE, Phase, Step
 from ..errors import DslError
 from .context import EffectContext
 from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
@@ -122,8 +123,18 @@ CONDITION_KEYS = frozenset(
         # player the *event* was about rather than about its own controller,
         # which is the only thing `is_your_turn` can ask.
         "is_active_player",
+        # "When this artifact enters **during the declare attackers step**" --
+        # Misleading Signpost, Portal Mage. The step the game is in *now*, read
+        # off `state.step`: the sibling of `cast_during`, which reads the step
+        # stamped on a spell as it was cast and is false for anything never
+        # cast. A step name or a list of them.
+        "step_is",
     }
 )
+
+#: What `step_is` may name: every step of the turn, spelled as the `Step` enum's
+#: lower-cased member names -- the same spelling `cast_before_step` takes.
+STEP_NAMES = frozenset(s.name.lower() for s in Step)
 
 #: What `cast_during` may name. A phase, plus `main` for "either main phase",
 #: each optionally prefixed `your_` to *also* require that the caster was the
@@ -313,6 +324,15 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         # that cannot tell whose turn it is must not fire.
         pids = select_players(ctx, cond["is_active_player"])
         return any(ctx.state.active_player == p for p in pids)
+    if "step_is" in cond:
+        # The step the game is in at the moment of asking. On an enters
+        # trigger's intervening-if that is asked twice (603.4), as it triggers
+        # and as it resolves, and both answers agree: a step does not end while
+        # the stack is non-empty (500.2), so a trigger that went on the stack
+        # during the declare attackers step resolves in it.
+        want = cond["step_is"]
+        names = [want] if isinstance(want, str) else list(want)
+        return ctx.state.step.name.lower() in names
     if "entered_from" in cond:
         # "…if one or more of them **entered from a graveyard**." Celes.
         # Read off the trigger's own binding rather than the object, because by
@@ -509,6 +529,20 @@ def validate_condition(cond: Any, where: str) -> None:
             f"{where}.cast_during: must name one of {sorted(CAST_DURING_NAMES)}, "
             f"got {cond['cast_during']!r}"
         )
+    if "step_is" in cond:
+        # A misspelled step matches nothing, so "when this enters during the
+        # declare attackers step" would never trigger on a card that prints it.
+        # `"declare_attackers_step"`, `"combat"` (a phase) and `"attackers"` are
+        # the tempting misses.
+        want = cond["step_is"]
+        steps = [want] if isinstance(want, str) else want
+        if not isinstance(steps, (list, tuple)) or not steps:
+            raise DslError(f"{where}.step_is: needs a step name, or a list of them")
+        for name in steps:
+            if name not in STEP_NAMES:
+                raise DslError(
+                    f"{where}.step_is: must name one of {sorted(STEP_NAMES)}, got {name!r}"
+                )
     if "combat_damage_by" in cond:
         wanted = cond["combat_damage_by"]
         names = [wanted] if isinstance(wanted, str) else wanted

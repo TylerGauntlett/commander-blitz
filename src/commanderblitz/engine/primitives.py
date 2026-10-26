@@ -211,9 +211,6 @@ def become_monarch(state: GameState, pid: int, source: int | None = None) -> boo
         return False
     previous = state.monarch
     state.monarch = pid
-    # A static's "as long as you're the monarch" is a pipeline input, so the
-    # characteristic cache goes with the crown, as it goes with a life total.
-    state.bump_chars()
     fire(
         state,
         EventType.BECAME_MONARCH,

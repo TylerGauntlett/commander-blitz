@@ -1,154 +1,72 @@
 {
-  "_comment": "Shapes for tests/unit/costs/test_put_counters_cost.py. t_pcc_tome is Mazemind Tome's first line with a draw, so the counter and the effect can be told apart; t_pcc_ledger listens for page counters on itself, so a cost placement is shown to raise counter_placed; t_pcc_druid is Devoted Druid's -1/-1 for an untap, payable at any toughness; t_pcc_roots is Wall of Roots' shape on a charge counter, a mana ability whose only price is a counter,, which the payment solver must never pay on its own.",
+  "_comment": "Cards that exist only for tests/unit/costs/test_put_counters_cost.py. Never part of a deck list. t_pc_tome is Mazemind Tome's first line with a plainer effect: {T}, put a page counter on this artifact: gain 1 life. t_pc_battery puts two charge counters and taps nothing, so it can be activated repeatedly. t_pc_naive_tome is deliberately the WRONG card: the version the DSL could write before `put_counters` was a cost, with the counter moved into the effects, asserted against as the counterfactual. t_pc_watcher is a permanent that gains 1 life whenever counters are put on it.",
   "cards": [
     {
-      "id": "t_pcc_tome",
+      "id": "t_pc_tome",
       "name": "Test Page Tome",
-      "oracle_text": "{T}, Put a page counter on this artifact: Draw a card.",
+      "oracle_text": "{T}, Put a page counter on this artifact: You gain 1 life.",
       "mana_cost": "{2}",
-      "types": [
-        "Artifact"
-      ],
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Put a page counter on this artifact: You gain 1 life.",
+          "cost": {"tap": true, "put_counters": {"counter": "page", "amount": 1}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_pc_battery",
+      "name": "Test Charge Battery",
+      "oracle_text": "{1}, Put two charge counters on this artifact: You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Put two charge counters on this artifact: You gain 1 life.",
+          "cost": {"mana": "{1}", "put_counters": {"counter": "charge", "amount": 2}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_pc_naive_tome",
+      "name": "Test Naive Page Tome",
+      "oracle_text": "{T}: Put a page counter on this artifact. You gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Put a page counter on this artifact. You gain 1 life.",
+          "cost": {"tap": true},
+          "effects": [
+            {"op": "add_counters", "objects": {"self_only": true}, "counter": "page", "amount": {"const": 1}},
+            {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_pc_watcher",
+      "name": "Test Page Watcher",
+      "oracle_text": "{T}, Put a page counter on this artifact: Draw a card.\nWhenever one or more counters are put on this artifact, you gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
       "abilities": [
         {
           "kind": "activated",
           "text": "{T}, Put a page counter on this artifact: Draw a card.",
-          "cost": {
-            "tap": true,
-            "put_counters": {
-              "counter": "page",
-              "amount": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_pcc_ledger",
-      "name": "Test Page Ledger",
-      "oracle_text": "{1}, Put two page counters on this artifact: Draw a card.\nWhenever one or more page counters are put on this artifact, you gain 1 life.",
-      "mana_cost": "{2}",
-      "types": [
-        "Artifact"
-      ],
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "{1}, Put two page counters on this artifact: Draw a card.",
-          "cost": {
-            "mana": "{1}",
-            "put_counters": {
-              "counter": "page",
-              "amount": 2
-            }
-          },
-          "effects": [
-            {
-              "op": "draw",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
+          "cost": {"tap": true, "put_counters": {"counter": "page"}},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
         },
         {
           "kind": "triggered",
-          "text": "Whenever one or more page counters are put on this artifact, you gain 1 life.",
-          "trigger": {
-            "event": "counter_placed",
-            "source": "self",
-            "counter": "page",
-            "put_by": "you"
-          },
-          "effects": [
-            {
-              "op": "gain_life",
-              "player": "you",
-              "amount": {
-                "const": 1
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_pcc_druid",
-      "name": "Test Devoted Druid",
-      "oracle_text": "Put a -1/-1 counter on this creature: Untap this creature.",
-      "mana_cost": "{1}{G}",
-      "types": [
-        "Creature"
-      ],
-      "subtypes": [
-        "Elf",
-        "Druid"
-      ],
-      "power": 0,
-      "toughness": 2,
-      "colors": [
-        "G"
-      ],
-      "color_identity": [
-        "G"
-      ],
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "Put a -1/-1 counter on this creature: Untap this creature.",
-          "cost": {
-            "put_counters": {
-              "counter": "-1/-1",
-              "amount": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "untap",
-              "objects": {
-                "self_only": true
-              }
-            }
-          ]
-        }
-      ]
-    },
-    {
-      "id": "t_pcc_roots",
-      "name": "Test Root Battery",
-      "oracle_text": "Put a charge counter on this artifact: Add {G}.",
-      "mana_cost": "{2}",
-      "types": [
-        "Artifact"
-      ],
-      "color_identity": [
-        "G"
-      ],
-      "abilities": [
-        {
-          "kind": "activated",
-          "text": "Put a charge counter on this artifact: Add {G}.",
-          "is_mana_ability": true,
-          "cost": {
-            "put_counters": {
-              "counter": "charge",
-              "amount": 1
-            }
-          },
-          "effects": [
-            {
-              "op": "add_mana",
-              "mana": "{G}"
-            }
-          ]
+          "text": "Whenever one or more counters are put on this artifact, you gain 1 life.",
+          "trigger": {"event": "counter_placed", "source": "self"},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
         }
       ]
     }

@@ -1,27 +1,26 @@
-"""`colorless`: a filter clause for objects with no colour (105.2c).
+"""``colorless: true`` -- a filter for objects with no colour at all.
 
-    Forsaken Monument -- "Colorless creatures you control get +2/+2." and
-    "Whenever you cast a colorless spell, you gain 2 life."
+    "Colorless creatures you control get +2/+2.
+     Whenever you cast a colorless spell, you gain 2 life."  -- Forsaken Monument
 
-105.2c: an object with no colour is colorless, and colorless is not a colour.
-So `colors` has no letter to name it, and an empty `colors` list is no test at
-all -- the anthem written that way pumps every creature you control. The effect
-selector could say it as `not_colors` over all five letters, but the static and
-trigger filter languages carry neither that key nor any other way to ask, so
-both of Forsaken Monument's filtered lines were unsayable.
+Rule 105.2c: a colorless object has no colour, and colorless is not a colour.
+So none of the colour keys could say it. `colors` is a membership test, and an
+empty list is no filter at all -- written that way, the Monument would pump and
+pay off every creature and spell. `colors: ["C"]` names no colour. The
+effect-side selector could already say it the long way, `not_colors` over all
+five. Static, trigger and cost-reduction filters had no way to say it.
 
-`colorless: true` matches zero colours and `false` one or more, in all four
-readers of the filter languages that carry it:
+One key, `true` only, read the way protection's `from_colorless` reads it, by
+what the object lacks:
 
-* a static's filter (`characteristics._matches`), which may not read another
-  static's output -- so it reads `_base_colors`: the printed colours, a copy
-  exception's repaint and a face-down shell's none, never a `set_colors`
-  static's result;
-* a trigger filter (`triggers.matches_card_filter`), which runs outside the
-  layer pipeline and so reads *derived* colours for a subject on the
-  battlefield or the stack;
-* the effect selector (`selectors.matches`), whose colours were derived already;
-* a cost reduction's filter (`cost_reduction._object_matches`).
+- **Static filters** read the printed face, like `colors`, because a static may
+  not read a colour another static writes.
+- **Trigger filters** read the printed face of the spell, as `colors` and
+  `min_colors` do.
+- **The effect-side selector** reads the derived colours, as `not_colors` does.
+
+`false` is refused at load time rather than read as "no filter". "Colored" is
+`min_colors: 1`.
 """
 
 from __future__ import annotations
@@ -30,179 +29,161 @@ import pytest
 
 from commanderblitz.cards.loader import compile_card
 from commanderblitz.cards.schema import CardModel
-from commanderblitz.engine.effects.context import EffectContext
-from commanderblitz.engine.effects.selectors import matches
+from commanderblitz.engine.cost_reduction import cost_reduction
 from commanderblitz.engine.enums import ActionKind
 from commanderblitz.engine.errors import DslError
-from commanderblitz.engine.triggers import matches_card_filter
-from tests.conftest import action_for_card, oids_of, only_oid, pt, settle
+from commanderblitz.engine.zones import destroy
+from tests.conftest import (
+    action_for_card,
+    cost_reduction_probe,
+    oids_of,
+    pt,
+    settle,
+    static_probe,
+)
 
-ANTHEM = "t_colorless_anthem"
-WATCHER = "t_colorless_cast_watcher"
-GOLEM = "t_colorless_golem"  # {2} colorless 2/2 artifact creature
-TRINKET = "t_colorless_trinket"  # {1} colorless instant: draw a card
-BLEACHER = "t_bleacher"  # set_colors []: every creature is colorless
-BEAR = "t_bear"  # {1}{G} green 2/2
-RITE = "t_plain_instant"  # {W} white instant: gain 1 life
+MONUMENT = "t_cl_monument"
+PURGE = "t_cl_purge"
+CONSTRUCT = "t_construct"  # a colorless 1/1 artifact creature
+BEAR = "t_bear"  # a green 2/2
 
 
-def position(builder, mine=(), *, hand=()):
+def board(builder, *, hand=(), lands=("island",) * 4, mine=(CONSTRUCT, BEAR)):
     return (
         builder(players=2)
-        .battlefield(0, [*mine, *(["plains"] * 3 + ["forest"] * 3)])
         .hand(0, list(hand))
-        .library(0, ["forest"] * 10)
-        .active(0)
+        .battlefield(0, [MONUMENT, *mine])
+        .battlefield(0, list(lands))
         .build()
     )
 
 
-class TestTheAnthem:
-    def test_a_colorless_creature_gets_it(self, builder):
-        game = position(builder, [ANTHEM, GOLEM])
-        assert pt(game, only_oid(game, GOLEM, 0)) == (4, 4)
+def life(game, pid: int = 0) -> int:
+    return game.state.players[pid].life
+
+
+def cast(game, card_id: str) -> None:
+    game.apply(action_for_card(game, ActionKind.CAST, card_id))
+    settle(game)
+
+
+class TestTheStatic:
+    def test_a_colorless_creature_gets_the_bonus(self, builder):
+        game = board(builder)
+        assert pt(game, oids_of(game, CONSTRUCT)[0]) == (3, 3)
 
     def test_a_coloured_creature_does_not(self, builder):
-        game = position(builder, [ANTHEM, BEAR])
-        assert pt(game, only_oid(game, BEAR, 0)) == (2, 2)
+        game = board(builder)
+        assert pt(game, oids_of(game, BEAR)[0]) == (2, 2)
 
     def test_an_opponents_colorless_creature_does_not(self, builder):
         game = (
             builder(players=2)
-            .battlefield(0, [ANTHEM])
-            .battlefield(1, [GOLEM])
+            .battlefield(0, [MONUMENT])
+            .battlefield(1, [CONSTRUCT])
             .build()
         )
-        assert pt(game, only_oid(game, GOLEM, 1)) == (2, 2)
+        assert pt(game, oids_of(game, CONSTRUCT, 1)[0]) == (1, 1)
 
-    def test_a_copy_exception_repaint_is_seen(self, builder):
-        """707.9b: "…except it's a black Zombie" changes what the object *is*,
-        so the filter sees it -- `_base_colors`, not the printed face alone."""
-        game = position(builder, [ANTHEM, GOLEM])
-        golem = only_oid(game, GOLEM, 0)
-        game.state.objects[golem].copy_overrides = {"colors": ["B"]}
-        game.state.bump_chars()
-        assert pt(game, golem) == (2, 2)
-
-    def test_gone_with_its_source(self, builder):
-        game = position(builder, [ANTHEM, GOLEM])
-        game.state.battlefield.remove(only_oid(game, ANTHEM, 0))
-        game.state.bump_chars()
-        assert pt(game, only_oid(game, GOLEM, 0)) == (2, 2)
+    def test_it_wears_off_with_the_source(self, builder):
+        game = board(builder)
+        destroy(game.state, oids_of(game, MONUMENT)[0])
+        assert pt(game, oids_of(game, CONSTRUCT)[0]) == (1, 1)
 
 
-class TestTheCastTrigger:
-    @staticmethod
-    def cast(builder, card_id: str) -> int:
-        game = position(builder, [WATCHER], hand=[card_id])
-        game.apply(action_for_card(game, ActionKind.CAST, card_id))
-        settle(game)
-        return game.state.players[0].life
-
+class TestTheTrigger:
     def test_a_colorless_spell_gains_two(self, builder):
-        assert self.cast(builder, TRINKET) == 42
+        game = board(builder, hand=["sol_ring"])
+        before = life(game)
+        cast(game, "sol_ring")
+        assert life(game) == before + 2
 
-    def test_a_colorless_creature_spell_gains_two(self, builder):
-        assert self.cast(builder, GOLEM) == 42
+    def test_a_colorless_creature_spell_gains_two_and_arrives_pumped(self, builder):
+        game = board(builder, hand=[CONSTRUCT], mine=())
+        before = life(game)
+        cast(game, CONSTRUCT)
+        assert life(game) == before + 2
+        assert pt(game, oids_of(game, CONSTRUCT)[0]) == (3, 3)
 
     def test_a_coloured_spell_does_not(self, builder):
-        assert self.cast(builder, RITE) == 41  # the Rite's own 1, nothing more
-        assert self.cast(builder, BEAR) == 40
-
-
-class TestDerivedColours:
-    def test_the_trigger_filter_sees_a_set_colors_repaint(self, builder):
-        """Outside the pipeline, so a `set_colors` static's output is seen: a
-        green creature made colorless is a colorless permanent."""
-        game = position(builder, [WATCHER, BEAR, BLEACHER])
-        state = game.state
-        source = state.objects[only_oid(game, WATCHER, 0)]
-        bear = only_oid(game, BEAR, 0)
-        assert matches_card_filter(state, bear, {"colorless": True}, source)
-        assert not matches_card_filter(state, bear, {"colorless": False}, source)
-
-    def test_without_the_repaint_it_is_green(self, builder):
-        game = position(builder, [WATCHER, BEAR])
-        state = game.state
-        source = state.objects[only_oid(game, WATCHER, 0)]
-        assert not matches_card_filter(state, only_oid(game, BEAR, 0), {"colorless": True}, source)
-
-    def test_the_static_filter_does_not(self, builder):
-        """Inside the pipeline a filter may not read another static's output
-        (`characteristics` module docstring), so the anthem reads the bear's
-        base colours. Recorded in docs/rules-coverage.md."""
-        game = position(builder, [ANTHEM, BEAR, BLEACHER])
-        assert pt(game, only_oid(game, BEAR, 0)) == (2, 2)
+        game = board(builder, hand=[BEAR], lands=("forest",) * 4)
+        before = life(game)
+        cast(game, BEAR)
+        assert life(game) == before
 
 
 class TestTheSelector:
-    def test_it_picks_the_colorless_permanents(self, builder):
-        game = position(builder, [GOLEM, BEAR])
-        ctx = EffectContext(state=game.state, controller=0, source_oid=None)
-        golem, bear = only_oid(game, GOLEM, 0), only_oid(game, BEAR, 0)
-        assert matches(ctx, golem, {"types": ["Creature"], "colorless": True})
-        assert not matches(ctx, bear, {"types": ["Creature"], "colorless": True})
-        assert matches(ctx, bear, {"types": ["Creature"], "colorless": False})
-        # Lands are colorless too (105.2c); the filter does not care what it is.
-        assert all(
-            matches(ctx, oid, {"colorless": True}) for oid in oids_of(game, "plains", 0)
+    def test_it_destroys_only_the_colorless_creatures(self, builder):
+        game = (
+            builder(players=2)
+            .hand(0, [PURGE])
+            .battlefield(0, [CONSTRUCT, BEAR, "sol_ring"])
+            .battlefield(0, ["swamp"] * 2)
+            .build()
         )
+        cast(game, PURGE)
+        assert oids_of(game, CONSTRUCT) == []
+        assert len(oids_of(game, BEAR)) == 1
+        assert len(oids_of(game, "sol_ring")) == 1, "colorless, but not a creature"
 
 
-def _card(ability: dict) -> CardModel:
-    return CardModel.model_validate(
-        {
-            "id": "t_bad_monument",
-            "name": "Bad Monument",
-            "oracle_text": ability["text"],
-            "mana_cost": "{5}",
-            "types": ["Artifact"],
-            "abilities": [ability],
-        }
-    )
-
-
-def _anthem(filt: dict) -> CardModel:
-    return _card(
-        {
-            "kind": "static",
-            "text": "Colorless creatures you control get +2/+2.",
-            "effect": "buff",
-            "affects": filt,
-            "power": {"const": 2},
-            "toughness": {"const": 2},
-        }
-    )
-
-
-def _watcher(filt: dict) -> CardModel:
-    return _card(
-        {
-            "kind": "triggered",
-            "text": "Whenever you cast a colorless spell, you gain 2 life.",
-            "trigger": {"event": "spell_cast", "controller": "you", "filter": filt},
-            "effects": [{"op": "gain_life", "amount": {"const": 2}, "player": "you"}],
-        }
-    )
+def _load(card: dict) -> None:
+    compile_card(CardModel.model_validate(card))
 
 
 class TestTheLoader:
-    def test_the_shapes_load(self):
-        compile_card(_anthem({"types": ["Creature"], "colorless": True}))
-        compile_card(_watcher({"colorless": True}))
+    def test_the_fixture_loads(self, registry):
+        assert registry.get(MONUMENT).abilities
 
-    @pytest.mark.parametrize("value", ["C", ["C"], 1, 0, None])
-    def test_a_non_bool_is_refused_on_a_static(self, value):
+    @pytest.mark.parametrize("value", [False, "yes", 1])
+    def test_a_static_refuses_anything_but_true(self, value):
         with pytest.raises(DslError, match="colorless"):
-            compile_card(_anthem({"types": ["Creature"], "colorless": value}))
-
-    @pytest.mark.parametrize("value", ["C", ["C"], 1])
-    def test_a_non_bool_is_refused_on_a_trigger(self, value):
-        with pytest.raises(DslError, match="colorless"):
-            compile_card(_watcher({"colorless": value}))
-
-    def test_a_non_bool_is_refused_inside_an_any_of_branch(self):
-        with pytest.raises(DslError, match="colorless"):
-            compile_card(
-                _anthem({"any_of": [{"colorless": "yes"}, {"subtypes": ["Golem"]}]})
+            _load(
+                static_probe(
+                    {
+                        "effect": "buff",
+                        "affects": {"types": ["Creature"], "colorless": value},
+                        "power": {"const": 1},
+                        "toughness": {"const": 1},
+                    }
+                )
             )
+
+    def test_a_trigger_filter_refuses_false(self):
+        with pytest.raises(DslError, match="colorless"):
+            _load(
+                {
+                    "id": "probe",
+                    "name": "Probe",
+                    "oracle_text": "Probe.",
+                    "mana_cost": "{W}",
+                    "types": ["Enchantment"],
+                    "abilities": [
+                        {
+                            "kind": "triggered",
+                            "text": "Probe.",
+                            "trigger": {
+                                "event": "spell_cast",
+                                "controller": "you",
+                                "filter": {"colorless": False},
+                            },
+                            "effects": [
+                                {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+                            ],
+                        }
+                    ],
+                }
+            )
+
+    def test_a_cost_reduction_count_reads_it(self, builder):
+        """The fourth reader: a reduction counted over colorless creatures --
+        the Construct, not the Bear."""
+        card = compile_card(
+            cost_reduction_probe({"count": {"types": ["Creature"], "colorless": True}})
+        )
+        game = (
+            builder(players=2)
+            .battlefield(0, [CONSTRUCT, CONSTRUCT, BEAR])
+            .build()
+        )
+        assert cost_reduction(game.state, 0, card) == 2

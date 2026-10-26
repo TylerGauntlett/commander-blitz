@@ -241,6 +241,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "cant_attack_player": ("Board", "Creatures can't attack a player until a duration ends.",
                            '"That player can\'t attack you"'),
     "goad": ("Board", "Goad creatures until your next turn.", "Goad"),
+    "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",
+                        "Reselecting an attack — `redirect_attack`"),
     "cant_block": ("Board", "Creatures can't block this turn.",
                    "The `cant_block` **op** — the same sentence with a clock"),
     "unblockable": ("Board", "Creatures can't be blocked this turn.",
@@ -313,8 +315,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Life & damage ---------------------------------------------------
     "gain_life": ("Life & damage", "A player gains N life.", None),
     "lose_life": ("Life & damage", "A player loses N life; `as` records how much.", None),
-    "damage": ("Life & damage", "A source deals N damage to objects or players; `excess_to` spills "
-               "over, `to_attacked` hits what an attacker attacks.",
+    "damage": ("Life & damage", "A source deals N damage to objects or players; `excess_to` spills over; "
+               "`defender_of` hits what a creature is attacking.",
                "`damage`'s `excess_to`"),
     "fight": ("Life & damage", "Two creatures fight.", H_FIGHT),
     "add_poison": ("Life & damage", "A player gets N poison counters.", None),
@@ -439,8 +441,8 @@ SELECTORS: dict[str, Entry] = {
     "keywords": ("Has all of these keywords.", None),
     "mana_cost": ("Printed mana cost is one of these.", None),
     "mana_value": ("A comparison on mana value.", None),
-    "colorless": ("Has no colors (105.2c), or with `false` at least one.", '"Colorless" — `colorless`'),
     "min_colors": ("Has at least N colors (\"multicolored\").", '"Multicolored" — `min_colors`'),
+    "colorless": ("Has no colors (105.2c); true only.", '"Colorless" — `colorless`'),
     "modified": ("Is modified (equipped, enchanted by you, or has counters).", None),
     "name": ("Named exactly this, or the name under a binding.", None),
     "not_colors": ("Has none of these colors.", None),
@@ -601,6 +603,7 @@ CONDITIONS: dict[str, Entry] = {
     "overloaded": ("This spell was cast for its overload cost.", "Overload"),
     "right": ("`cmp`'s right operand.", None),
     "spree_mode": ("The given spree mode was bought.", H_SPREE),
+    "step_is": ("The step the game is in now (\"during the declare attackers step\").", None),
     "two_share_a_color": ("Two cards in a pool share a color.",
                           '"Two cards that share a color" — `two_share_a_color`'),
     "was_cast": ("This arrival was a resolving spell (603.6e).", '"If it was cast" — 603.6e'),
@@ -660,8 +663,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "searches_library": ("A player searches a library.", None),
     "self_enters": ("This permanent enters the battlefield.", None),
     "spell_cast": ("A spell is cast.", None),
-    "state": ("A state trigger: the game state in `state` holds (603.8).",
-              "State triggers — a state, not an event"),
+    "state": ("A state holds (603.8): the trigger's `state` condition; no event.",
+              "`state` — \"When there are four or more page counters on this artifact\""),
     "spell_copied": ("A spell is copied (magecraft's other half).",
                      "`spell_copied`, and why magecraft is two abilities"),
     "token_created": ("A token is created.", None),
@@ -675,7 +678,7 @@ STATICS: dict[str, Entry] = {
                                "A static that discounts another permanent's activated ability"),
     "activate_loyalty_as_though_instant": ("The player may activate loyalty abilities any time they could cast an instant.",
                                            None),
-    "add_mana_on_tap": ("Whenever a matching permanent is tapped for mana (or for a named type of mana), add extra mana.", None),
+    "add_mana_on_tap": ("Whenever a matching permanent is tapped for mana, add extra mana.", None),
     "add_subtype": ("Matching permanents have an extra subtype.",
                     '"…is the chosen type in addition to its other types"'),
     "attack_tax": ("Matching creatures can't attack unless their controller pays.",
@@ -830,7 +833,7 @@ ABILITY_COSTS: dict[str, Entry] = {
     "pay_life": ("Pay N life.", None),
     "pay_life_x": ("Pay X life, X announced.", None),
     "put_counters": ("Put N counters of a kind on the source.",
-                     "`put_counters` — counters put on the source as a cost"),
+                     "`put_counters` — counters on the source, paid on activation"),
     "remove_counters": ("Remove N counters of a kind from the source.", None),
     "remove_counters_from_among": ("Remove N counters of any kinds from among other permanents.",
                                    "`remove_counters_from_among` — counters of any kind, off other permanents"),
@@ -870,7 +873,8 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "multikicker": ("Multikicker cost.", "Multikicker"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),
     "overload": ("Overload cost.", "Overload"),
-    "pay_generic_with": ("Convoke, improvise and delve: what may pay generic mana.", None),
+    "pay_generic_with": ("Convoke, improvise or delve: what may pay generic mana.",
+                         "Convoke, improvise and delve"),
     "retrace": ("Retrace.", None),
     "splice": ("Splice cost.", "Splice"),
     "spree": ("Spree: priced modes, a non-empty subset bought on cast.", H_SPREE),
@@ -1068,8 +1072,7 @@ def families() -> list[Family]:
             "Player specs", H_PLAYER_SPECS, tuple(sorted(PLAYER_SPEC_NAMES)), PLAYER_SPECS.get,
             "The named player specs. The structured forms -- `{\"target\": …}`, "
             "`{\"controller_of_target\": …}`, `{\"controller_of\": …}`, `{\"owner_of\": …}`, "
-            "`{\"binding\": …}`, `{\"not\": …}`, `{\"attacked_by\": …}`, "
-            "`{\"dealt_combat_damage_by\": …}` -- are described "
+            "`{\"binding\": …}`, `{\"not\": …}`, `{\"attacked_by\": …}` -- are described "
             "under the same heading.",
             own=PLAYER_SPECS,
         ),

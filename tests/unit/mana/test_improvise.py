@@ -1,27 +1,39 @@
-"""Improvise: artifacts you tap while casting pay for generic mana (702.126).
+"""Improvise: untapped artifacts you control pay for the generic cost.
 
-702.126a: "Each artifact you tap after you're done activating mana abilities
-pays for {1}" -- convoke's shape (702.51) over artifacts, so it is the third
-value of `pay_generic_with`, ``"tap_artifacts"``, and rides the same one cast
-line and mid-payment pick ADR 0020 gives convoke and delve. Without it Kappa
-Cannoneer, a {5}{U} creature its own deck casts off a board of artifacts,
-could only be paid for in mana.
+Rule 702.126a: "Improvise is a static ability that functions while the spell
+with improvise is on the stack. 'Improvise' means 'For each generic mana in
+this spell's total cost, you may tap an untapped artifact you control rather
+than pay that mana.'" And 702.126b: improvise is not an additional or
+alternative cost and applies only after the total cost is determined.
 
-Two differences from convoke are the rule, not a simplification:
+It is convoke's shape (`pay_generic_with`) with a different currency, so it
+inherits ADR 0020: one cast line, carrying the fewest artifacts the mana cannot
+cover, and a `CHOOSE_OBJECTS` tagged ``improvise`` asked as the spell is paid
+for. Without it Kappa Cannoneer is a {5}{U} creature that a board of
+Treasures and Thopters cannot help cast -- or, written as convoke, one that
+taps creatures and ignores the Mind Stone.
 
-- **Generic only.** Convoke may also pay a coloured pip of the tapped
-  creature's colour; improvise never pays anything but {1}, so tapping every
-  artifact on the board still leaves {U} to find.
-- **Artifacts, not creatures.** A creature that is not an artifact cannot
-  improvise, and an artifact creature can (it is an artifact).
+What would be wrong without each claim below:
 
-The tap comes before the mana, as convoke's does, so a pick that improvises
-the Sol Ring the rest of the cost needed is refused and asked again.
+- **Artifacts, not creatures.** A non-artifact creature cannot improvise and a
+  non-creature artifact can.
+- **Generic only.** Improvise never pays a coloured pip -- unlike convoke, that
+  is the printed rule, not a simplification.
+- **Tapped before the mana** ("after you're done activating mana abilities"):
+  a Sol Ring tapped to improvise cannot also make {C}{C}, so a pick that taps
+  the Sol Ring the rest of the cost needed is asked again.
+- **The template reads the bare keyword** into the card-level field, and a line
+  that adds anything to it is not claimed.
 """
 
 from __future__ import annotations
 
-from commanderblitz.engine.enums import DecisionKind
+import pytest
+
+from commanderblitz.cards.authoring.templates import _translate_line
+from commanderblitz.cards.loader import compile_card
+from commanderblitz.cards.schema import CardModel
+from commanderblitz.engine.enums import ActionKind, DecisionKind
 from tests.unit.mana.test_pay_generic_with import (
     cast_lines,
     oids_of,
@@ -32,157 +44,153 @@ from tests.unit.mana.test_pay_generic_with import (
 )
 
 IMPROVISER = "t_improviser"  # {3}{U} sorcery, improvise, draw two
-RELIC = "t_glory_relic"  # a vanilla {2} artifact
-BEAR = "t_bear"
-ARTIFACT_CREATURE = "t_artifact_blocker"
+TRINKET = "t_trinket"  # a vanilla artifact
+CONSTRUCT = "t_construct"  # a 1/1 artifact creature
+BEAR = "t_bear"  # a creature that is not an artifact
+
+REMINDER = (
+    "Improvise (Your artifacts can help cast this spell. Each artifact you tap "
+    "after you're done activating mana abilities pays for {1}.)"
+)
 
 
-def position(builder, *, lands=2, relics=2, others=()):
+def position(builder, *, islands=2, trinkets=2, constructs=0, bears=0, sol_rings=0):
     return (
         builder(players=2)
         .hand(0, [IMPROVISER])
-        .battlefield(0, ["island"] * lands)
-        .battlefield(0, [RELIC] * relics)
-        .battlefield(0, list(others))
+        .battlefield(0, ["island"] * islands)
+        .battlefield(0, [TRINKET] * trinkets)
+        .battlefield(0, [CONSTRUCT] * constructs)
+        .battlefield(0, [BEAR] * bears)
+        .battlefield(0, ["sol_ring"] * sol_rings)
         .build()
     )
 
 
-class TestTheCast:
-    def test_one_line_and_the_printed_one_when_mana_pays(self, builder):
-        game = position(builder, lands=4, relics=3)
-        assert len(cast_lines(game)) == 1
-        assert spends(game) == {0}
-
+class TestTheCurrencyIsArtifacts:
     def test_the_cast_asks_which_artifacts_tap(self, builder):
-        game = position(builder, lands=4, relics=2)
+        game = position(builder, islands=4, trinkets=2)
+        assert spends(game) == {0}, "the mana alone pays, so the printed line is the line"
         game.apply(cast_lines(game)[0])
         decision = game.pending()
         assert decision.kind is DecisionKind.CHOOSE_OBJECTS
         assert decision.context["purpose"] == "improvise"
-        assert (decision.min_count, decision.max_count) == (0, 2)
         assert "improvise" in decision.prompt
-
-    def test_improvising_saves_the_mana(self, builder):
-        game = position(builder, lands=4, relics=2)
-        game.apply(cast_lines(game)[0])
-        pick(game, "improvise", oids_of(game, RELIC)[:1])
-        settle(game)
-        assert tapped_count(game, RELIC) == 1
-        assert tapped_count(game, "island") == 3
+        assert (decision.min_count, decision.max_count) == (0, 2)
 
     def test_it_makes_an_unaffordable_spell_castable(self, builder):
-        """The whole keyword: two Islands cannot pay {3}{U} alone."""
-        game = position(builder, lands=2, relics=2)
+        """Two Islands cannot pay {3}{U}; two artifacts make up the difference."""
+        game = position(builder, islands=2, trinkets=2)
         assert spends(game) == {2}
         before = len(game.state.players[0].hand)
         game.apply(cast_lines(game)[0])
         settle(game)
-        assert tapped_count(game, RELIC) == 2
+        assert tapped_count(game, TRINKET) == 2
+        assert tapped_count(game, "island") == 2
         assert len(game.state.players[0].hand) == before - 1 + 2, "cast one, drew two"
 
+    def test_improvising_saves_the_mana(self, builder):
+        game = position(builder, islands=4, trinkets=2)
+        game.apply(cast_lines(game)[0])
+        pick(game, "improvise", oids_of(game, TRINKET)[:1])
+        settle(game)
+        assert tapped_count(game, TRINKET) == 1
+        assert tapped_count(game, "island") == 3
 
-class TestWhatMayBeTapped:
-    def test_a_creature_cannot_improvise(self, builder):
-        game = position(builder, lands=2, relics=0, others=[BEAR, BEAR])
-        assert cast_lines(game) == []
-
-    def test_an_artifact_creature_can(self, builder):
-        game = position(builder, lands=2, relics=1, others=[ARTIFACT_CREATURE])
-        assert spends(game) == {2}
+    def test_an_artifact_creature_improvises(self, builder):
+        game = position(builder, islands=3, trinkets=0, constructs=1)
+        assert spends(game) == {1}
         game.apply(cast_lines(game)[0])
         settle(game)
-        assert tapped_count(game, ARTIFACT_CREATURE) == 1
-        assert tapped_count(game, RELIC) == 1
+        assert tapped_count(game, CONSTRUCT) == 1
+
+    def test_a_creature_that_is_not_an_artifact_cannot(self, builder):
+        """The near miss: this is improvise, not convoke."""
+        game = position(builder, islands=2, trinkets=0, bears=2)
+        assert cast_lines(game) == []
 
     def test_a_tapped_artifact_cannot(self, builder):
-        game = position(builder, lands=2, relics=2)
+        game = position(builder, islands=2, trinkets=2)
         for obj in game.state.battlefield_objects(0):
-            if obj.def_id == RELIC:
+            if obj.def_id == TRINKET:
                 obj.tapped = True
         assert cast_lines(game) == []
 
-    def test_it_never_pays_the_coloured_pip(self, builder):
-        """Improvise pays {1} and nothing else: four artifacts and no Island
-        leave the {U} unpaid at every count."""
-        game = position(builder, lands=0, relics=4)
+    def test_an_opponents_artifact_cannot(self, builder):
+        game = (
+            builder(players=2)
+            .hand(0, [IMPROVISER])
+            .battlefield(0, ["island"] * 2)
+            .battlefield(1, [TRINKET] * 2)
+            .build()
+        )
         assert cast_lines(game) == []
 
+
+class TestGenericOnly:
+    def test_it_never_pays_the_coloured_pip(self, builder):
+        game = position(builder, islands=0, trinkets=4)
+        assert cast_lines(game) == [], "no blue source, so no line at any count"
+
     def test_the_ceiling_is_the_generic_cost(self, builder):
-        game = position(builder, lands=4, relics=6)
+        game = position(builder, islands=4, trinkets=6)
         game.apply(cast_lines(game)[0])
         assert game.pending().max_count == 3
 
 
-class TestTheTapComesBeforeTheMana:
+class TestTappedBeforeTheMana:
     def test_a_pick_that_strands_the_mana_is_asked_again(self, builder):
-        """Island + Sol Ring make three of the four; improvising the Sol Ring
-        with the relic would leave {1}{U} to pay off one Island."""
-        game = position(builder, lands=1, relics=1, others=["sol_ring"])
+        """Island plus Sol Ring is three mana; {3}{U} needs one artifact more.
+        Improvising with the Sol Ring leaves {2}{U} for one Island -- so the
+        pick is refused, and the Trinket goes instead."""
+        game = position(builder, islands=1, trinkets=1, sol_rings=1)
         assert spends(game) == {1}
         game.apply(cast_lines(game)[0])
         first = game.pending()
-        pick(game, "improvise", [oids_of(game, "sol_ring")[0], oids_of(game, RELIC)[0]])
+        pick(game, "improvise", oids_of(game, "sol_ring"))
         again = game.pending()
         assert again is not first and again.context["purpose"] == "improvise"
         assert "Not enough mana" in again.prompt
-        assert tapped_count(game, RELIC) == 0 and tapped_count(game, "sol_ring") == 0
-        pick(game, "improvise", oids_of(game, RELIC))
+        assert tapped_count(game, "sol_ring") == 0
+        pick(game, "improvise", oids_of(game, TRINKET))
         settle(game)
-        assert tapped_count(game, RELIC) == 1
+        assert tapped_count(game, TRINKET) == 1
         assert tapped_count(game, "sol_ring") == 1, "the Sol Ring tapped for mana instead"
+        assert not game.state.stack
 
 
-class TestTheLoaderKnowsIt:
+class TestTheLoaderAndTheTemplate:
     def test_the_card_compiles(self, registry):
         assert registry.get(IMPROVISER).pay_generic_with == "tap_artifacts"
 
+    def test_the_keyword_line_is_the_card_level_field(self):
+        produced = _translate_line(REMINDER, is_spell=True)
+        assert produced is not None
+        kind, payload, _translation, name = produced
+        assert (kind, payload, name) == ("card", {"pay_generic_with": "tap_artifacts"}, "improvise")
 
-class TestThePrintedLineIsClaimed:
-    """Gate 3's bookkeeping. `pay_generic_with` is card-level, so no ability
-    can carry the printed "Improvise" -- a spell's line was always claimed by
-    its `spell_effects`, but a permanent like Kappa Cannoneer has none. The
-    claimant is the field, and the field must be the currency the word names.
-    """
+    @pytest.mark.parametrize("line", ["Improvise 2", "Improvise, then draw a card."])
+    def test_a_line_that_says_more_is_not_claimed(self, line):
+        produced = _translate_line(line, is_spell=True)
+        assert produced is None or produced[3] != "improvise"
 
-    def _card(self, pay_generic_with):
-        from commanderblitz.cards.loader import compile_card
-        from commanderblitz.cards.schema import CardModel
-
-        return compile_card(
+    def test_the_templated_card_loads(self):
+        compile_card(
             CardModel.model_validate(
                 {
-                    "id": "t_improvise_residual",
-                    "name": "Improvise Residual",
-                    "mana_cost": "{5}{U}",
-                    "oracle_text": (
-                        "Improvise (Your artifacts can help cast this spell. Each artifact"
-                        " you tap after you're done activating mana abilities pays for {1}.)"
-                        "\nFlying"
-                    ),
-                    "types": ["Artifact", "Creature"],
-                    "power": 4,
-                    "toughness": 4,
-                    "keywords": ["flying"],
-                    "pay_generic_with": pay_generic_with,
+                    "id": "probe",
+                    "name": "Probe",
+                    "oracle_text": REMINDER,
+                    "mana_cost": "{3}{U}",
+                    "types": ["Sorcery"],
+                    "pay_generic_with": "tap_artifacts",
+                    "spell_effects": [{"op": "noop"}],
                 }
             )
         )
 
-    def test_the_line_is_claimed(self):
-        from commanderblitz.cards.authoring.verify import residual_text
-
-        card = self._card("tap_artifacts")
-        assert residual_text(card, card.oracle_text) == ""
-
-    def test_no_field_no_claim(self):
-        from commanderblitz.cards.authoring.verify import residual_text
-
-        card = self._card(None)
-        assert "Improvise" in residual_text(card, card.oracle_text)
-
-    def test_convoke_cannot_claim_improvise(self):
-        from commanderblitz.cards.authoring.verify import residual_text
-
-        card = self._card("tap_creatures")
-        assert "Improvise" in residual_text(card, card.oracle_text)
+    def test_the_cast_line_is_one_row(self, builder):
+        game = position(builder, islands=4, trinkets=3)
+        lines = cast_lines(game)
+        assert len(lines) == 1
+        assert lines[0].kind is ActionKind.CAST

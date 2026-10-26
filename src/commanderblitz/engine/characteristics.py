@@ -50,10 +50,7 @@ read the real, fully derived power: :func:`commanderblitz.engine.triggers.matche
 the anthem, and has since it was written) and
 :func:`commanderblitz.engine.cost_reduction._object_matches` (which already reads derived types
 and keywords, for the same reason).  Only the reader inside the pipeline is
-restricted, because only it can be asked the question halfway through.  The
-same goes for the rule-modifying statics the static filter language describes
-but no layer applies -- an attack requirement and a block restriction -- which
-match with ``derived=True`` (see :func:`_matches`).
+restricted, because only it can be asked the question halfway through.
 
 A static's "as long as…" `condition` obeys the same constraint from the other
 side.  It is evaluated in :func:`_static_active`, which runs in
@@ -262,25 +259,6 @@ def _base_pt(state: GameState, obj: GameObject) -> tuple[int, int]:
         # cannot part company.
         power = toughness = 0
     return power, toughness
-
-
-def _base_colors(state: GameState, obj: GameObject) -> frozenset[str]:
-    """The colours an object *starts* the pipeline with -- `_base_pt`'s twin.
-
-    The printed colours, a copy exception's repaint ("…except it's a black
-    Zombie", 707.9b) and a face-down permanent's none (707.2): what the object
-    **is**, before any layer. A `set_colors` static and an `animate`'s colours
-    are layer outputs and are not seen, for the module docstring's reason --
-    a static filter that read them could read another static's output.
-
-    Read by the static filter's `colorless` (Forsaken Monument). `_compute`
-    builds its own colours from the same three inputs.
-    """
-    if obj.face_down and obj.on_battlefield:
-        return FACE_DOWN_CHARS.colors
-    if obj.copy_overrides and (repaint := obj.copy_overrides.get("colors")) is not None:
-        return frozenset(repaint)
-    return frozenset(state.card_of(obj).colors)
 
 
 def _compute(state: GameState, oid: int) -> Characteristics:
@@ -1165,65 +1143,15 @@ _COMPARISONS = {
 }
 
 
-#: The player spec in a static condition that names the controller of **the
-#: permanent the static is being applied to**, not the static's source.
-#:
-#: Fall from Favor: "Enchanted creature doesn't untap during its controller's
-#: untap step unless *that player* is the monarch." Every other spec is measured
-#: from the source's controller, and on an Aura that is whoever cast it -- the
-#: Aura's controller made themselves the monarch on arrival, so
-#: `{"is_monarch": "you"}` would read as "the hold lifts while the *caster* is the
-#: monarch", which is the opposite card: the creature stays frozen exactly while
-#: its own controller has stolen the crown back.
-#:
-#: Asked per affected permanent, so only a reader that walks them one at a time
-#: can answer it -- `player_statics.untap_held`. The loader admits it only on
-#: the effects in `STATIC_AFFECTED_CONDITION_EFFECTS`, and `_static_active`
-#: defers a condition naming it when no permanent is in hand.
-AFFECTED_CONTROLLER = "affected_controller"
-
-
-def static_condition_names_affected(cond: Any) -> bool:
-    """Does this static condition tree name `AFFECTED_CONTROLLER` anywhere?"""
-    if not isinstance(cond, Mapping):
-        return False
-    if cond.get("is_monarch") == AFFECTED_CONTROLLER:
-        return True
-    if "not" in cond:
-        return static_condition_names_affected(cond["not"])
-    for head in ("all", "any"):
-        if head in cond:
-            return any(static_condition_names_affected(c) for c in cond[head] or ())
-    return False
-
-
-def _static_active(
-    state: GameState,
-    source: GameObject,
-    static: Mapping[str, Any],
-    affected: GameObject | None = None,
-) -> bool:
-    """Is this static's "as long as..." clause currently true?
-
-    ``affected`` is the permanent the static is being applied to, for the one
-    spec that needs it (`AFFECTED_CONTROLLER`). Without one, a condition naming
-    that spec is **deferred** -- reported active -- because the static-wide walks
-    (`_battlefield_statics` and its twins) have no permanent to ask about, and
-    the per-permanent reader asks again with each. The whole tree is deferred,
-    not just the leaf, so a ``not`` or an ``all`` around it is evaluated once,
-    correctly, by that reader.
-    """
+def _static_active(state: GameState, source: GameObject, static: Mapping[str, Any]) -> bool:
+    """Is this static's "as long as..." clause currently true?"""
     condition = static.get("condition")
     if not condition:
         return True
-    if affected is None and static_condition_names_affected(condition):
-        return True
-    return _condition_met(state, source, condition, affected)
+    return _condition_met(state, source, condition)
 
 
-def _condition_met(
-    state: GameState, source: GameObject, cond: Any, affected: GameObject | None = None
-) -> bool:
+def _condition_met(state: GameState, source: GameObject, cond: Any) -> bool:
     """Evaluate a static's condition tree.
 
     A deliberately smaller language than :func:`commanderblitz.engine.effects.conditions.evaluate`
@@ -1234,8 +1162,6 @@ def _condition_met(
     ``exists``/``cmp`` over ``{"count": filter}``, matched on printed
                       characteristics and, off the battlefield, on zone contents
     ``is_your_turn``  whose turn it is
-    ``is_monarch``    who holds the crown -- the only leaf that may name the
-                      ``affected`` permanent's controller (`AFFECTED_CONTROLLER`)
     """
     if isinstance(cond, bool):
         return cond
@@ -1247,11 +1173,11 @@ def _condition_met(
         have = source.counter(str(spec.get("counter", PLUS_ONE)))
         return _compare(str(spec.get("op", ">=")), have, int(spec.get("amount", 1)))
     if "all" in cond:
-        return all(_condition_met(state, source, c, affected) for c in cond["all"])
+        return all(_condition_met(state, source, c) for c in cond["all"])
     if "any" in cond:
-        return any(_condition_met(state, source, c, affected) for c in cond["any"])
+        return any(_condition_met(state, source, c) for c in cond["any"])
     if "not" in cond:
-        return not _condition_met(state, source, cond["not"], affected)
+        return not _condition_met(state, source, cond["not"])
     if "exists" in cond:
         return _count_matching(state, cond["exists"], source) > 0
     if "is_your_turn" in cond:
@@ -1280,19 +1206,6 @@ def _condition_met(
         # static's output through it.
         pids = _static_players(state, source, cond["has_city_s_blessing"])
         return any(state.players[p].has_city_s_blessing for p in pids)
-    if "is_monarch" in cond:
-        # Player state, a pipeline input on `has_city_s_blessing`'s terms, and
-        # the two routes that move the crown bump `char_version`. `any`, as on
-        # the effect side: the monarchy is never true of two players at once.
-        who = cond["is_monarch"]
-        if who == AFFECTED_CONTROLLER:
-            if affected is None:
-                raise DslError(
-                    f"static condition {{'is_monarch': {AFFECTED_CONTROLLER!r}}} asked "
-                    "with no affected permanent"
-                )
-            return state.monarch == affected.controller
-        return state.monarch is not None and state.monarch in _static_players(state, source, who)
     if "top_of_library" in cond:
         # "As long as the top card of your library is black." A pipeline input
         # exactly as a zone count is -- nothing in the fixed-order pipeline can
@@ -1717,7 +1630,6 @@ def _matches_printed(
     added_subtypes: tuple[str, ...] = (),
     text_changes: tuple[tuple[str, str], ...] = (),
     x: int = 0,
-    base_colors: frozenset[str] | None = None,
 ) -> bool:
     """The half of a static filter that reads the printed card face.
 
@@ -1803,16 +1715,11 @@ def _matches_printed(
     # clause rather than a spelling of that one.
     if (least := selector.get("min_colors")) is not None and len(card.colors) < int(least):
         return False
-    # "**Colorless** creatures you control get +2/+2" (Forsaken Monument).
-    # 105.2c: zero colours. `colors` cannot say it -- colorless is not a colour,
-    # and an empty `colors` list is no test at all. ``base_colors`` is the set to
-    # read when the caller knows better than the face: `_matches_wherever`
-    # passes `_base_colors`, so a copy exception's repaint and a face-down
-    # shell are seen; every other caller holds a bare card and reads its face.
-    if "colorless" in selector:
-        have = card.colors if base_colors is None else base_colors
-        if (not have) != bool(selector["colorless"]):
-            return False
+    # "**Colorless** creatures you control get +2/+2" (Forsaken Monument):
+    # zero colours, 105.2c. Printed, like `colors` one clause up -- a static
+    # filter may not read a colour another static writes.
+    if selector.get("colorless") and card.colors:
+        return False
 
     keywords = selector.get("keywords")
     if keywords and not set(keywords).issubset(card.keywords):
@@ -1878,30 +1785,17 @@ def _matches(
     obj: GameObject,
     source: GameObject,
     selector: Mapping[str, Any] | None,
-    *,
-    derived: bool = False,
 ) -> bool:
     """Match ``obj`` against a static ability's filter, using printed characteristics.
 
     A deliberately smaller language than the full selector DSL in
     :mod:`commanderblitz.engine.effects.selectors` -- see the module docstring for why.
-
-    ``derived`` reads the object's characteristics off :func:`chars` instead --
-    its types, subtypes, supertypes, keywords, colours and power/toughness after
-    every layer. Only a reader **outside** the layer pipeline may ask for it,
-    because :func:`chars` is what the pipeline computes; the readers that do are
-    the rule-modifying statics, which no layer applies: an attack requirement
-    (`attacks_if_able`) and a block restriction (`block_restriction`, both its
-    `affects` and its `blockers`). "Juggernauts you control attack each combat if
-    able" (Graaz, Unstoppable Juggernaut) has to see the creatures Graaz's own
-    third line makes Juggernauts, and rule 613 has nothing to order there --
-    neither effect is a layer, so reading layer 4's output is no loop.
     """
     if selector is None:
         return False
     if not obj.on_battlefield:
         return False
-    return _matches_wherever(state, obj, source, selector, derived=derived)
+    return _matches_wherever(state, obj, source, selector)
 
 
 def _matches_wherever(
@@ -1909,8 +1803,6 @@ def _matches_wherever(
     obj: GameObject,
     source: GameObject,
     selector: Mapping[str, Any],
-    *,
-    derived: bool = False,
 ) -> bool:
     """`_matches` without the battlefield gate -- for an object that is *arriving*.
 
@@ -1940,8 +1832,7 @@ def _matches_wherever(
     if (branches := selector.get("any_of")) is not None:
         outer = {k: v for k, v in selector.items() if k != "any_of"}
         return any(
-            _matches_wherever(state, obj, source, {**outer, **branch}, derived=derived)
-            for branch in branches
+            _matches_wherever(state, obj, source, {**outer, **branch}) for branch in branches
         )
 
     selector = resolve_chosen_colors(resolve_chosen_subtypes(selector, source), source)
@@ -2026,32 +1917,8 @@ def _matches_wherever(
     if owner == "opponent" and obj.owner == source.controller:
         return False
 
-    if derived:
-        # The face the filter reads becomes the derived one: `chars` has
-        # already applied the text changes and every subtype grant, so neither
-        # is passed again.
-        c = chars(state, obj.oid)
-        face = dataclasses.replace(
-            card,
-            types=c.types,
-            subtypes=c.subtypes,
-            supertypes=c.supertypes,
-            keywords=c.keywords,
-            colors=c.colors,
-        )
-        if not _matches_printed(face, selector, base_colors=c.colors):
-            return False
-        size = (c.power, c.toughness)
-    else:
-        if not _matches_printed(
-            card,
-            selector,
-            obj.added_subtypes,
-            obj.text_changes,
-            base_colors=_base_colors(state, obj) if "colorless" in selector else None,
-        ):
-            return False
-        size = None
+    if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
+        return False
 
     # "…each creature you control **with power 4 or greater**" (Temur
     # Battlecrier), and the rest of the ferocious family. The one derived
@@ -2059,13 +1926,12 @@ def _matches_wherever(
     # size before any layer -- and never through `chars`, which this function is
     # called from and would recurse into. The module docstring argues the
     # restriction; `_base_pt` is the whole of it.
-    # A `derived` reader is outside the pipeline and reads the real size.
     if (spec := selector.get("power")) is not None and not compare_pt(
-        (size or _base_pt(state, obj))[0], spec
+        _base_pt(state, obj)[0], spec
     ):
         return False
     if (spec := selector.get("toughness")) is not None and not compare_pt(
-        (size or _base_pt(state, obj))[1], spec
+        _base_pt(state, obj)[1], spec
     ):
         return False
 
@@ -2411,19 +2277,10 @@ def ward_abilities(state: GameState, oid: int) -> tuple[Ability, ...]:
 
 
 def matches_static(
-    state: GameState,
-    obj: GameObject,
-    source: GameObject,
-    selector: Mapping[str, Any] | None,
-    *,
-    derived: bool = False,
+    state: GameState, obj: GameObject, source: GameObject, selector: Mapping[str, Any] | None
 ) -> bool:
-    """Public name for the static-filter matcher, for rules outside this module.
-
-    ``derived`` is `_matches`' own: a rule-modifying static, read outside the
-    layer pipeline, matches the object's characteristics after every layer.
-    """
-    return _matches(state, obj, source, selector, derived=derived)
+    """Public name for the static-filter matcher, for rules outside this module."""
+    return _matches(state, obj, source, selector)
 
 
 def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Mapping[str, Any]]]:
@@ -2443,8 +2300,7 @@ def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Map
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "block_restriction":
             continue
-        # Not a layer (613): a restriction reads the attacker as it now is.
-        if not _matches(state, obj, source_obj, static.get("affects"), derived=True):
+        if not _matches(state, obj, source_obj, static.get("affects")):
             continue
         out.append((source_obj, static))
     return out

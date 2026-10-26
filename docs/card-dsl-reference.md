@@ -10,11 +10,11 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 140 |
+| [Effect ops](#effect-ops) | 141 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
-| [Conditions](#conditions) | 29 |
+| [Conditions](#conditions) | 30 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 33 |
 | [Static effects](#static-effects) | 79 |
@@ -28,7 +28,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
-| [Static conditions](#static-conditions) | 11 |
+| [Static conditions](#static-conditions) | 10 |
 | [Static values](#static-values) | 12 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -110,6 +110,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
 | `proliferate` | Board |  | Proliferate: choose permanents and players, add one of each counter. | [Proliferate — a choice over permanents and players](card-dsl.md#proliferate--a-choice-over-permanents-and-players) |
 | `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped or with counters. | [Effect ops](card-dsl.md#effect-ops) |
+| `redirect_attack` | Board |  | Reselect what an attacking creature attacks; nothing is declared. | [Reselecting an attack — redirect_attack](card-dsl-cookbook.md#reselecting-an-attack--redirect_attack) |
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board |  | Remove N counters of a kind. | [Effect ops](card-dsl.md#effect-ops) |
 | `replace_deaths` | Board |  | If it would die this turn, exile (or another zone) instead. | ["If it would die this turn, exile it instead"](card-dsl-cookbook.md#if-it-would-die-this-turn-exile-it-instead) |
@@ -137,7 +138,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_energy` | Life & damage |  | A player gets N energy counters ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `add_poison` | Life & damage |  | A player gets N poison counters. | [Effect ops](card-dsl.md#effect-ops) |
 | `cant_lose_the_game` | Life & damage |  | A player can't lose and opponents can't win, for a duration. | [Effect ops](card-dsl.md#effect-ops) |
-| `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over, `to_attacked` hits what an attacker attacks. | [damage's excess_to](card-dsl.md#damages-excess_to) |
+| `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `damage_life_floor` | Life & damage |  | Damage can't reduce a player's life below N this turn. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `fight` | Life & damage |  | Two creatures fight. | [fight](card-dsl-cookbook.md#fight) |
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
@@ -203,7 +204,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `blocked` | Is (or is not) blocked by anything. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `blocking` | Is blocking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `chooser` | Who picks: `controller`, `owner` or `none`. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
-| `colorless` | Has no colors (105.2c), or with `false` at least one. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
+| `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `count` | How many: an int or value, `all`, or `any`. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -260,7 +261,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 
 ## Player specs
 
-The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}`, `{"dealt_combat_damage_by": …}` -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
+The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}` -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
 
 | Name | Description | Defined in |
 |---|---|---|
@@ -365,6 +366,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `overloaded` | This spell was cast for its overload cost. | [Overload](card-dsl-cookbook.md#overload) |
 | `right` | `cmp`'s right operand. | [Conditions](card-dsl.md#conditions) |
 | `spree_mode` | The given spree mode was bought. | [Spree — "choose one or more additional costs"](card-dsl.md#spree--choose-one-or-more-additional-costs) |
+| `step_is` | The step the game is in now ("during the declare attackers step"). | [Conditions](card-dsl.md#conditions) |
 | `two_share_a_color` | Two cards in a pool share a color. | ["Two cards that share a color" — two_share_a_color](card-dsl.md#two-cards-that-share-a-color--two_share_a_color) |
 | `was_cast` | This arrival was a resolving spell (603.6e). | ["If it was cast" — 603.6e](card-dsl-cookbook.md#if-it-was-cast--6036e) |
 | `zone_is` | The source is in the named zone. | [Conditions](card-dsl.md#conditions) |
@@ -417,7 +419,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `self_enters` | `enters_battlefield` | This permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `spell_cast` | `spell_cast` | A spell is cast. | [Triggers](card-dsl.md#triggers) |
 | `spell_copied` | `spell_copied` | A spell is copied (magecraft's other half). | [spell_copied, and why magecraft is two abilities](card-dsl.md#spell_copied-and-why-magecraft-is-two-abilities) |
-| `state` | `state_trigger` | A state trigger: the game state in `state` holds (603.8). | [State triggers — a state, not an event](card-dsl.md#state-triggers--a-state-not-an-event) |
+| `state` | `state` | A state holds (603.8): the trigger's `state` condition; no event. | [state — "When there are four or more page counters on this artifact"](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact) |
 | `token_created` | `token_created` | A token is created. | [Triggers](card-dsl.md#triggers) |
 | `upkeep` | `upkeep` | At the beginning of the upkeep. | [Triggers](card-dsl.md#triggers) |
 | `you_attack` | `attackers_declared` | You attack with one or more creatures. | ["Whenever you attack"](card-dsl-cookbook.md#whenever-you-attack) |
@@ -432,7 +434,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `any_types` | Any one of these card types is enough. | [Triggers](card-dsl.md#triggers) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Triggers](card-dsl.md#triggers) |
 | `attacking_player` | Attacking this player (`you`/`opponent`/`any`), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
-| `colorless` | Has no colors (105.2c), or with `false` at least one. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
+| `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Triggers](card-dsl.md#triggers) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Triggers](card-dsl.md#triggers) |
 | `created_with` | Tokens created with the named permanent. | [Tokens "created with this creature" — created_with](card-dsl.md#tokens-created-with-this-creature--created_with) |
@@ -471,7 +473,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 |---|---|---|---|---|
 | `ability_cost_reduction` |  | yes | Activated abilities of matching permanents cost less. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` |  | yes | The player may activate loyalty abilities any time they could cast an instant. | [Static abilities](card-dsl.md#static-abilities) |
-| `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana (or for a named type of mana), add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
+| `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays. | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
 | `attacks_if_able` |  | yes | Matching creatures attack each combat if able. | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
@@ -555,7 +557,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 
 | Name | Description | Defined in |
 |---|---|---|
-| `add_mana_on_tap` | Whenever a matching permanent is tapped for mana (or for a named type of mana), add extra mana. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `add_mana_on_tap` | Whenever a matching permanent is tapped for mana, add extra mana. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `black_mana_as_phyrexian` | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
 | `cant_activate_abilities` | The player can't activate matching abilities. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cant_cast_spells` | The player can't cast matching spells. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
@@ -674,7 +676,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `pay_energy` | Pay N energy ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `pay_life` | Pay N life. | [Costs](card-dsl.md#costs) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
-| `put_counters` | Put N counters of a kind on the source. | [put_counters — counters put on the source as a cost](card-dsl.md#put_counters--counters-put-on-the-source-as-a-cost) |
+| `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |
 | `return_to_hand` | Return a matching permanent to hand. | [Costs](card-dsl.md#costs) |
@@ -714,7 +716,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `multikicker` | Multikicker cost. | [Multikicker](card-dsl-cookbook.md#multikicker) |
 | `mutate` | Mutate cost. | [Mutate — two cards, one permanent, and one synthesised CardDef](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef) |
 | `overload` | Overload cost. | [Overload](card-dsl-cookbook.md#overload) |
-| `pay_generic_with` | Convoke, improvise and delve: what may pay generic mana. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `pay_generic_with` | Convoke, improvise or delve: what may pay generic mana. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |
 | `retrace` | Retrace. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `splice` | Splice cost. | [Splice](card-dsl-cookbook.md#splice) |
 | `strive` | Strive: more per target beyond the first. | [Strive](card-dsl-cookbook.md#strive) |
@@ -826,7 +828,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `attached_to_host` | Attached to the static's own source ("equipped creature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `attacking` | Is attacking. | [Static abilities](card-dsl.md#static-abilities) |
 | `blocking` | Is blocking. | [Static abilities](card-dsl.md#static-abilities) |
-| `colorless` | Has no colors (105.2c), or with `false` at least one. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
+| `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
@@ -863,7 +865,6 @@ What a static's "as long as …" `condition` may ask. Defined under ["As long as
 | `exists` | A selector finds at least one object. | ["As long as…"](card-dsl.md#as-long-as) |
 | `has_city_s_blessing` | The player has the city's blessing (ascend). | [Ascend](card-dsl-cookbook.md#ascend) |
 | `is_attached` | The source is attached to something. | ["As long as…"](card-dsl.md#as-long-as) |
-| `is_monarch` | The given player is the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `is_your_turn` | It is the controller's turn. | ["As long as…"](card-dsl.md#as-long-as) |
 | `not` | The condition does not hold. | ["As long as…"](card-dsl.md#as-long-as) |
 | `top_of_library` | The top card of a library matches a filter. | ["The top card of your library is black"](card-dsl.md#the-top-card-of-your-library-is-black) |
@@ -923,7 +924,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 |---|---|---|
 | `add_counters` | Put N counters of a kind on permanents or players. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `add_poison` | A player gets N poison counters. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
-| `damage` | A source deals N damage to objects or players; `excess_to` spills over, `to_attacked` hits what an attacker attacks. | [damage's excess_to](card-dsl.md#damages-excess_to) |
+| `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `gain_life` | A player gains N life. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `lose_life` | A player loses N life; `as` records how much. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `remove_counters` | Remove N counters of a kind. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |

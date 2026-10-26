@@ -7,7 +7,7 @@ accepts) and pinned by ``tests/cards/test_golden_pool.py``.
 
 from __future__ import annotations
 
-from commanderblitz.engine.characteristics import ABILITY_STATICS, AFFECTED_CONTROLLER
+from commanderblitz.engine.characteristics import ABILITY_STATICS
 from commanderblitz.engine.cost_reduction import REDUCTION_ZONES
 from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
@@ -51,7 +51,6 @@ NOT_A_CAST_TIME_COST = frozenset(
         "loyalty",
         "loyalty_x",
         "remove_counters",
-        "put_counters",
         "exile_self",
         "exile_self_from_hand",
         "discard_self",
@@ -99,12 +98,13 @@ def normalize_keyword(word: str) -> str:
 #: Growth and Utopia Sprawl print the Vernal Bloom sentence about one enchanted
 #: land, and every other key here is a description that would also match the
 #: thirty other lands on the table.
-TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached"})
-
-#: What `add_mana_on_tap`'s `tapped_for` may name: one type of mana (106.1b),
-#: written as its symbol. Forsaken Monument's "whenever you tap a permanent
-#: for {C}" is ``"{C}"``.
-TAPPED_FOR_SYMBOLS = frozenset({"{W}", "{U}", "{B}", "{R}", "{G}", "{C}"})
+#:
+#: `produced` is the other key that is not a characteristic: it describes the
+#: *tap*, not the permanent. Forsaken Monument's "whenever you tap a permanent
+#: **for {C}**" is ``{"produced": "{C}"}`` -- one mana symbol the tap must have
+#: made at least one of, so a painland tapped for {R} does not count and one
+#: tapped for {C} does.
+TAPPED_PERMANENT_KEYS = frozenset({"types", "subtypes", "supertypes", "attached", "produced"})
 
 #: Static ability effects the characteristics pipeline understands.
 STATIC_EFFECTS = frozenset(
@@ -904,10 +904,8 @@ STATIC_FILTER_KEYS = frozenset(
         "supertypes",
         "colors",
         # "**Colorless** creatures you control get +2/+2" (Forsaken Monument).
-        # 105.2c, zero colours, which `colors` cannot say. Read off
-        # `characteristics._base_colors` -- printed colours, a copy exception's
-        # repaint, a face-down shell's none -- and never off a `set_colors`
-        # static's output, for `power`'s reason below.
+        # Zero printed colours, 105.2c; `true` only. Printed for `colors`'
+        # reason, so it is as safe here as `colors` is.
         "colorless",
         "keywords",
         # "Creatures **without** flying or islandwalk can't attack."  The
@@ -1204,22 +1202,6 @@ STATIC_CONDITION_HEADS = (
     # sharper question than `exists` over the library, which asks whether any
     # black card is anywhere in ninety-nine and is nearly always true.
     "top_of_library",
-    # "Unless that player is the monarch" (Fall from Favor). `GameState.monarch`
-    # is player state, a pipeline input exactly as the city's blessing is, and
-    # the designation moving bumps `char_version`. Takes a player spec, and
-    # `AFFECTED_CONTROLLER` among them -- see `characteristics`.
-    "is_monarch",
-)
-
-#: The static effects whose reader evaluates the condition once per affected
-#: permanent, and so may carry the `AFFECTED_CONTROLLER` player spec. Anywhere
-#: else the condition is asked once per static with no permanent in hand, so the
-#: loader refuses it rather than let it load and mean nothing.
-STATIC_AFFECTED_CONDITION_EFFECTS = frozenset({"skip_untap_step"})
-
-#: Player specs a static's `is_monarch` leaf may name.
-STATIC_MONARCH_PLAYERS = frozenset(
-    {"you", "opponent", "each_opponent", "each_player", "all", AFFECTED_CONTROLLER}
 )
 
 #: Zones a static's *counting* filter may name.  The stack is absent: a static

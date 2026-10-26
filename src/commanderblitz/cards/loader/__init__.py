@@ -32,13 +32,13 @@ from commanderblitz.engine.carddef import (
     prune_cost,
     top_level_mode_spec,
 )
-from commanderblitz.engine.characteristics import (
-    AFFECTED_CONTROLLER,
-    static_condition_names_affected,
-)
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
-from commanderblitz.engine.effects.selectors import ZONE_NAMES, validate_selector
+from commanderblitz.engine.effects.selectors import (
+    ZONE_NAMES,
+    validate_colorless_key,
+    validate_selector,
+)
 from commanderblitz.engine.effects.values import (
     validate_value,
 )
@@ -60,6 +60,7 @@ from commanderblitz.engine.mana import (
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.triggers import (
     ORDINAL_FILTER_KEYS,
+    STATE_TRIGGER,
     TRIGGER_EVENTS,
     validate_trigger_filter,
 )
@@ -131,7 +132,6 @@ from .vocabulary import (  # noqa: F401
     SOURCE_MOVING_OPS,
     SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
-    STATIC_AFFECTED_CONDITION_EFFECTS,
     STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
@@ -143,7 +143,6 @@ from .vocabulary import (  # noqa: F401
     STATIC_LIFE_PLAYERS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
-    TAPPED_FOR_SYMBOLS,
     TAPPED_PERMANENT_KEYS,
     TOKEN_FILTER_KEYS,
     UNGRANTABLE_STATIC_EFFECTS,
@@ -151,7 +150,6 @@ from .vocabulary import (  # noqa: F401
     WAS_CAST_TRIGGERS,
 )
 from .walk import (
-    _check_colorless_key,
     _check_counter_kind,
     _check_mana_cost_key,
     _check_owner_key,
@@ -165,24 +163,6 @@ from .walk import (
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
 )
-
-
-def _refuse_to_attacked_off_attacks(
-    effects: Any, trigger: TriggerSpec | None, where: str
-) -> None:
-    """``damage``'s ``to_attacked`` names "the player or planeswalker **it's**
-    attacking", and only the ``attacks`` event says who "it" attacked: combat
-    writes ``defender`` and ``attacked_permanent`` onto it per attacker. On any
-    other ability the two bindings are absent, so the damage would load, read
-    as printed and hit nobody -- refused here rather than played inert.
-    """
-    if trigger is not None and trigger.event == "attacks":
-        return
-    if any(e.get("to_attacked") for e in _walk_effect_specs(effects)):
-        raise DslError(
-            f"{where}: 'to_attacked' reads the creature an 'attacks' trigger fired "
-            f"for, and this is not an 'attacks' trigger"
-        )
 
 
 def _check_grant_targets(
@@ -681,7 +661,6 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
-    _refuse_to_attacked_off_attacks(model.spell_effects, None, f"{where}.spell_effects")
     _check_distribution_homes(model, where)
 
     for i, replacement in enumerate(model.replacements):
@@ -2215,39 +2194,6 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"not on {model.trigger.event!r}"
             )
 
-        if model.trigger.state is not None and model.trigger.event != "state":
-            # Only a state trigger is checked against a state; anywhere else the
-            # key would look like a condition and never be read.
-            raise DslError(
-                f"{where}: 'state' is a state trigger's condition and means nothing "
-                f"on {model.trigger.event!r}; an intervening 'if' is 'condition'"
-            )
-        if model.trigger.event == "state":
-            # 603.8. The state *is* the trigger, so it is required, and every
-            # key that narrows an event has no event to narrow.
-            if not model.trigger.state:
-                raise DslError(
-                    f"{where}: a state trigger needs the 'state' it waits for"
-                )
-            validate_condition(model.trigger.state, f"{where}.trigger.state")
-            narrowing = sorted(
-                key
-                for key in ("filter", "source", "condition", "batched", "max_per_turn")
-                if getattr(model.trigger, key)
-            )
-            if narrowing:
-                raise DslError(
-                    f"{where}: a state trigger has no event for {narrowing} to narrow; "
-                    f"put the whole state in 'state'"
-                )
-            if list(model.active_zones) != ["battlefield"]:
-                # `triggers.check_state_triggers` walks the battlefield, which is
-                # where every printed state trigger's "this permanent" lives.
-                raise DslError(
-                    f"{where}: a state trigger is checked on the battlefield only, "
-                    f"not in {model.active_zones}"
-                )
-
         if model.trigger.counter is not None and model.trigger.event != "counter_placed":
             # Same reasoning as `not_cause` above: only `counter_placed` carries
             # a counter kind, so accepting it elsewhere would look like a filter
@@ -2357,6 +2303,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"{where}: 'to_zones' names zones a permanent can leave to, "
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
+        _validate_state_trigger(model, where)
         trigger = TriggerSpec(
             event=model.trigger.event,
             controller=model.trigger.controller,
@@ -2367,7 +2314,6 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             not_cause=model.trigger.not_cause,
             cause_controller=model.trigger.cause_controller,
             counter=model.trigger.counter,
-            state=dict(model.trigger.state) if model.trigger.state else None,
             put_by=model.trigger.put_by,
             mana_ability=model.trigger.mana_ability,
             targeted_by=model.trigger.targeted_by,
@@ -2377,6 +2323,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             level=model.trigger.level,
             or_battle=model.trigger.or_battle,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
+            state=dict(model.trigger.state) if model.trigger.state else None,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
             raise DslError(
@@ -2384,7 +2331,6 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"an ability that may never trigger is not a card"
             )
         active_zones = tuple(Zone(z) for z in model.active_zones)
-    _refuse_to_attacked_off_attacks(model.effects, trigger, where)
 
     mana_options: tuple[tuple[int, ...], ...] = ()
     mana_amount: Mapping[str, Any] | None = None
@@ -2700,7 +2646,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
         _check_pt_keys(filt, path)
-        _check_colorless_key(filt, path)
+        validate_colorless_key(filt, path)
     branches = filt.get("any_of")
     if branches is None:
         return
@@ -2751,47 +2697,77 @@ def _check_warp_grant_filter(filt: Mapping[str, Any], where: str) -> None:
         _check_warp_grant_filter(branch, f"{where}.any_of[{i}]")
 
 
+def _validate_state_trigger(model: AbilityModel, where: str) -> None:
+    """A state trigger (603.8) names its condition in ``state`` and nothing else.
+
+    Every refusal is a key that would load and never be read. A state trigger
+    has no event, so there is no subject for a ``filter``, no event to count
+    for ``nth``, ``max_per_turn`` or ``batched``, and its ``condition`` would
+    be an intervening "if" beside the trigger condition -- written as two
+    halves of one sentence, the second re-asked on resolution where the printed
+    card asks nothing. And it is checked over the battlefield only, where the
+    permanent the condition reads is.
+    """
+    trig = model.trigger
+    assert trig is not None
+    if trig.event != STATE_TRIGGER:
+        if trig.state is not None:
+            raise DslError(
+                f"{where}: 'state' is a state trigger's condition and means nothing "
+                f"on {trig.event!r}; write event {STATE_TRIGGER!r}"
+            )
+        return
+    if trig.state is None:
+        raise DslError(
+            f"{where}: a state trigger needs the 'state' condition it watches "
+            f"(\"when there are four or more page counters on this artifact\")"
+        )
+    validate_condition(trig.state, f"{where}.trigger.state")
+    stray = [
+        key
+        for key, present in (
+            ("source", trig.source is not None),
+            ("filter", trig.filter is not None),
+            ("condition", trig.condition is not None),
+            ("nth", trig.nth is not None),
+            ("max_per_turn", trig.max_per_turn is not None),
+            ("batched", trig.batched),
+        )
+        if present
+    ]
+    if stray:
+        raise DslError(
+            f"{where}: a state trigger has no event, so {stray} would never be "
+            f"read; put the whole condition in 'state'"
+        )
+    if list(model.active_zones) != ["battlefield"]:
+        raise DslError(
+            f"{where}: a state trigger is checked over the battlefield only, "
+            f"not {model.active_zones}"
+        )
+
+
 def _validate_add_mana_on_tap(model: AbilityModel, where: str) -> None:
     """ "Whenever you tap a Swamp for mana, add an additional {B}." Crypt Ghast.
 
-    Both halves are required. Without `tapped_permanent` or `tapped_for` the
-    static would fire off every permanent tapped for mana -- Mana Reflection's
-    reach with Crypt Ghast's payload, a much bigger card. `tapped_for` alone is
-    Forsaken Monument's "a permanent for {C}": any permanent, narrowed by the
-    mana it made. Without `add_mana` it adds nothing. And
+    Both halves are required. Without `tapped_permanent` the static would fire
+    off every permanent tapped for mana -- Mana Reflection's reach with Crypt
+    Ghast's payload, a much bigger card. Without `add_mana` it adds nothing. And
     `affects`/`amount` are refused rather than ignored: the permanent is named
     by `tapped_permanent` and the amount is printed in `add_mana`.
     """
 
-    if (model.tapped_permanent is None and model.tapped_for is None) or not model.add_mana:
+    if model.tapped_permanent is None or not model.add_mana:
         raise DslError(
             f"{where}: add_mana_on_tap needs 'tapped_permanent' (what was tapped, "
-            f"e.g. {{'subtypes': ['Swamp']}}) or 'tapped_for' (the mana it was "
-            f"tapped for, e.g. '{{C}}'), and 'add_mana' (the mana added, e.g. '{{B}}')"
+            f"e.g. {{'subtypes': ['Swamp']}}) and 'add_mana' (the mana added, e.g. '{{B}}')"
         )
     if model.affects is not None or model.amount is not None:
         raise DslError(
             f"{where}: add_mana_on_tap takes 'affects_player', 'tapped_permanent', "
-            f"'tapped_for', 'add_mana' and an optional 'condition', and no "
-            f"'affects' or 'amount'"
+            f"'add_mana' and an optional 'condition', and no 'affects' or 'amount'"
         )
-    # "Whenever you tap a permanent **for {C}**" (Forsaken Monument). One mana
-    # symbol, because the printed sentence names one; `parse_mana_production`
-    # would accept "{C}{C}" and the static would then ask about a pair the
-    # card never mentions. A hybrid or generic symbol is no type of mana a
-    # permanent can be tapped for (106.1).
-    if model.tapped_for is not None and model.tapped_for not in TAPPED_FOR_SYMBOLS:
-        raise DslError(
-            f"{where}.tapped_for: one mana symbol, one of {sorted(TAPPED_FOR_SYMBOLS)}, "
-            f"got {model.tapped_for!r}"
-        )
-    if model.tapped_permanent is not None:
-        _validate_tapped_permanent(model.tapped_permanent, where)
-    _validate_added_mana(model, where)
-
-
-def _validate_tapped_permanent(tapped: Mapping[str, Any], where: str) -> None:
-    """`add_mana_on_tap`'s description of the tapped permanent."""
+    tapped = model.tapped_permanent
     unknown = set(tapped) - TAPPED_PERMANENT_KEYS
     if unknown or not tapped:
         raise DslError(
@@ -2814,10 +2790,17 @@ def _validate_tapped_permanent(tapped: Mapping[str, Any], where: str) -> None:
             f"{where}.tapped_permanent.attached: must be true if present "
             f"(omit the key to match a class of permanent instead)"
         )
-
-
-def _validate_added_mana(model: AbilityModel, where: str) -> None:
-    """`add_mana_on_tap`'s `add_mana`: a production string or the chosen colour."""
+    # "Whenever you tap a permanent for {C}" -- one symbol the tap must make.
+    # One, because "for {C}{C}" is not a printed condition and would read as
+    # "made two" to nobody; a number ("{2}") is refused because a mana ability
+    # makes {C}, never generic.
+    if "produced" in tapped:
+        tapped_for = tapped["produced"]
+        if tapped_for not in ("{W}", "{U}", "{B}", "{R}", "{G}", "{C}"):
+            raise DslError(
+                f"{where}.tapped_permanent.produced: one mana symbol the tap made, "
+                f"such as '{{C}}' or '{{G}}', got {tapped_for!r}"
+            )
     if isinstance(model.add_mana, dict):
         # "one mana of the chosen color" (Utopia Sprawl). The symbol is a question
         # about the source and cannot be parsed now, so the shape is checked here
@@ -2914,12 +2897,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
 
     for key in ("affects", "blockers", "cause_filter", "affects_spells"):
         _check_mana_cost_key(getattr(model, key, None), f"{where}.{key}")
-        _check_colorless_key(getattr(model, key, None), f"{where}.{key}")
         # `power`/`toughness` is a comparison wherever a static filter names
         # one, and `affects_spells` is in this list for the same reason it is
         # in the line above: a key its own set does not carry cannot appear, so
         # the check costs nothing and the loop stays one list.
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
+        validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")
     if model.effect == "block_restriction":
@@ -2953,10 +2936,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.cause_events: unknown trigger event {name!r} "
                     f"(implemented: {sorted(TRIGGER_EVENTS)})"
                 )
-            if name == "state":
-                # No event causes a state trigger, so the clause would never
-                # match one.
-                raise DslError(f"{where}.cause_events: a state trigger has no causing event")
         if model.cause_filter is not None:
             unknown = set(model.cause_filter) - STATIC_FILTER_KEYS
             if unknown:
@@ -3593,13 +3572,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
     if model.effect == "add_mana_on_tap":
         _validate_add_mana_on_tap(model, where)
-    elif (
-        model.tapped_permanent is not None
-        or model.tapped_for is not None
-        or model.add_mana is not None
-    ):
+    elif model.tapped_permanent is not None or model.add_mana is not None:
         raise DslError(
-            f"{where}: 'tapped_permanent'/'tapped_for'/'add_mana' only mean anything on an "
+            f"{where}: 'tapped_permanent'/'add_mana' only mean anything on an "
             f"add_mana_on_tap static, not on {model.effect!r}"
         )
     if model.effect == "replace_life_gain":
@@ -4319,19 +4294,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     _validate_static_condition(model.condition, f"{where}.condition")
-    if (
-        static_condition_names_affected(model.condition)
-        and model.effect not in STATIC_AFFECTED_CONDITION_EFFECTS
-    ):
-        # Asked once per static everywhere else, with no permanent to name the
-        # controller of -- `_static_active` would defer it for ever, and the
-        # static would apply as if the clause were not printed.
-        raise DslError(
-            f"{where}.condition: {AFFECTED_CONTROLLER!r} names the controller of the "
-            f"permanent the static is applied to, which only "
-            f"{sorted(STATIC_AFFECTED_CONDITION_EFFECTS)} read one at a time; "
-            f"{model.effect!r} does not"
-        )
 
     static: dict[str, Any] = {"effect": model.effect}
     if model.condition is not None:
@@ -4395,8 +4357,6 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["affects_player"] = model.affects_player
     if model.tapped_permanent is not None:
         static["tapped_permanent"] = dict(model.tapped_permanent)
-    if model.tapped_for is not None:
-        static["tapped_for"] = model.tapped_for
     if model.add_mana is not None:
         static["add_mana"] = model.add_mana
     # `grant_warp`'s price. Copied explicitly like every other field here --

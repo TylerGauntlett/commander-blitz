@@ -16,11 +16,7 @@ from pathlib import Path
 
 import pytest
 
-from commanderblitz.cards.authoring.verify import (
-    check_expectation,
-    swap_in_artifact_body,
-    swap_in_tribal_body,
-)
+from commanderblitz.cards.authoring.verify import check_expectation, swap_in_tribal_body
 from commanderblitz.cards.registry import CardRegistry
 from commanderblitz.engine.actions import PendingDecision
 from commanderblitz.engine.carddef import CardDef
@@ -101,14 +97,8 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     # disagree about what such a cost can be paid with, and it happens **only**
     # for a card that names a tribe -- every other card sees the board it was
     # measured on.
-    #
-    # Broodstar is the same shape one slot over: its toughness is the number of
-    # artifacts you control, and this board has none, so it entered as a 0/0
-    # and died. `swap_in_artifact_body` trades the second creature for a quiet
-    # artifact creature, again only for a card that needs it.
     under_test = registry.get(card_id) if card_id in registry else None
-    board = swap_in_tribal_body(registry, list(OWN_BOARD), under_test)
-    builder.battlefield(0, swap_in_artifact_body(registry, board, under_test))
+    builder.battlefield(0, swap_in_tribal_body(registry, list(OWN_BOARD), under_test))
     builder.battlefield(1, OPPONENT_BOARD)
     builder.graveyard(0, OWN_GRAVEYARD)
     # The second card is deliberately not a land -- see `verify.build_sandbox`.

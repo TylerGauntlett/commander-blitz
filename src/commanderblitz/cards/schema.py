@@ -149,17 +149,13 @@ class CostModel(BaseModel):
     #: "your life total can't change".
     pay_energy: int = 0
     remove_counters: dict[str, Any] | None = None
-    #: "**Put a page counter on this artifact**: Scry 1" -- Mazemind Tome,
-    #: Devoted Druid's -1/-1, Bloodletter Quill's blood counter. ``{"counter":
-    #: kind, "amount": N}``, both required: N counters of that kind go on the
-    #: source as the ability is activated (601.2h), through `add_counters` with
-    #: ``as_cost``, so they raise ``counter_placed`` exactly as an effect's do
-    #: and "if an effect would put" replacements leave them alone.
-    #:
-    #: Not an `add_counters` effect, which puts them on at resolution -- a
-    #: response would see the Tome at three counters with its scry already
-    #: bought. Not `loyalty`, which is this cost hard-wired to one kind and
-    #: carries 606.3's once-per-turn and sorcery timing with it.
+    #: "{T}, **Put a page counter on this artifact**: Scry 1." -- Mazemind
+    #: Tome. ``{"counter": kind, "amount": N}`` (``amount`` defaults to one),
+    #: put on the source as the ability is activated. The mirror of
+    #: ``remove_counters``. Not the ``add_counters`` op, which moves the payment
+    #: to resolution, where it can be responded to and where a removed source
+    #: never gets the counter; and not ``loyalty``, which is a planeswalker's
+    #: and carries 606.3's once-per-turn. Activated abilities only.
     put_counters: dict[str, Any] | None = None
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
@@ -354,12 +350,6 @@ class TriggerModel(BaseModel):
     #: only, and it is not `controller`: on a discard trigger that names the
     #: player who *discarded*, so it would read "an opponent discarded a card".
     cause_controller: str | None = None
-    #: For ``state`` and required there: the game state the trigger waits for
-    #: (603.8), in the condition language -- Mazemind Tome's "when there are four
-    #: or more page counters on this artifact" is a ``cmp`` over
-    #: ``counters_on``. Checked when state-based actions are and never on
-    #: resolution, which is the difference from ``condition``.
-    state: dict[str, Any] | None = None
     #: For ``counter_placed``: which kind of counter this cares about.  Without
     #: it "whenever a +1/+1 counter is put on this creature" also fires on
     #: charge, slumber and -1/-1 counters, all of which the shipped pool places.
@@ -421,6 +411,12 @@ class TriggerModel(BaseModel):
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
     #: a tuck must not fire it. Refused on every other event.
     to_zones: list[str] | None = None
+    #: For ``state``: the condition a state trigger (603.8) watches -- "When
+    #: there are four or more page counters on this artifact" (Mazemind Tome).
+    #: Any condition; it fires when the condition holds and not again while
+    #: the ability is waiting or on the stack. Required on ``state`` and
+    #: refused on every other event.
+    state: dict[str, Any] | None = None
 
 
 class AbilityModel(BaseModel):
@@ -900,10 +896,6 @@ class AbilityModel(BaseModel):
     #: add mana -- Crypt Ghast's ``{"subtypes": ["Swamp"]}``. Only
     #: `loader.TAPPED_PERMANENT_KEYS`.
     tapped_permanent: dict[str, Any] | None = None
-    #: ``add_mana_on_tap``: the mana the tapped permanent's ability must have
-    #: **produced** -- Forsaken Monument's "whenever you tap a permanent for
-    #: ``"{C}"``". One symbol; with no `tapped_permanent`, any permanent counts.
-    tapped_for: str | None = None
     #: ``add_mana_on_tap``: the mana added -- Crypt Ghast's ``"{B}"``, or
     #: ``{"chosen_color_of": "self"}`` for Utopia Sprawl's "one mana of the
     #: chosen color", the same spelling the ``add_mana`` op uses.
@@ -1358,13 +1350,13 @@ class CardModel(BaseModel):
     emerge: str | None = None
     #: **Convoke**, **improvise** and **delve**: a way to pay part of the
     #: *generic* cost with something other than mana. ``"tap_creatures"`` taps
-    #: untapped creatures you control; ``"tap_artifacts"`` taps untapped
-    #: artifacts you control; ``"exile_from_graveyard"`` exiles cards from your
-    #: graveyard. Each pays for {1}. One cast line, and which permanents tap
-    #: (or which cards go) is asked as the spell is paid for -- see ADR 0020.
+    #: creatures you control; ``"tap_artifacts"`` taps artifacts you control
+    #: (improvise, 702.126a); ``"exile_from_graveyard"`` exiles cards from
+    #: your graveyard. One cast line, and which permanents tap (or which cards
+    #: go) is asked as the spell is paid for -- see ADR 0020.
     #:
-    #: Generic only, and clamped at what the spell actually costs. That is the
-    #: whole rule for improvise and delve; convoke's "or one mana of that
+    #: Generic only, and clamped at what the spell actually costs. That is
+    #: improvise's and delve's printed rule; convoke's "or one mana of that
     #: creature's colour" is a documented simplification: it is the same trade
     #: `cost_reduction` already makes, and it bites only on a spell whose
     #: coloured pips a creature could have paid.

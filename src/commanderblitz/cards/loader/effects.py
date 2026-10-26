@@ -38,7 +38,12 @@ from commanderblitz.engine.structs import (
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
-from commanderblitz.engine.triggers import OBJECT_SUBJECT_TRIGGERS, RECIPIENT_KEYS, TRIGGER_EVENTS
+from commanderblitz.engine.triggers import (
+    OBJECT_SUBJECT_TRIGGERS,
+    RECIPIENT_KEYS,
+    STATE_TRIGGER,
+    TRIGGER_EVENTS,
+)
 from commanderblitz.engine.turn import DELAY_STEPS
 
 from ..schema import CardModel, CostModel
@@ -388,17 +393,6 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
                 f'({{"attacked_by": "self"}}), got {dict(who)!r}'
             )
         return
-    if "dealt_combat_damage_by" in who:
-        # "…whose controller was dealt combat damage by this creature this
-        # turn" -- Steel Hellkite. The same shape as `attacked_by` and refused
-        # for the same reason: any subject but "self" would load and resolve to
-        # nobody, and a card that destroys nothing looks like a quiet board.
-        if who["dealt_combat_damage_by"] != "self" or len(who) > 1:
-            raise DslError(
-                f"{where}: 'dealt_combat_damage_by' takes 'self' and stands alone "
-                f'({{"dealt_combat_damage_by": "self"}}), got {dict(who)!r}'
-            )
-        return
     if "not" in who:
         # "target player **other than** its controller." The complement of a
         # spec, so whatever it wraps has to be a legal spec in its own right --
@@ -507,13 +501,13 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
         raise DslError(
             f"{where}: unknown trigger event {event!r} (implemented: {sorted(TRIGGER_EVENTS)})"
         )
-    if event == "state":
-        # 603.8's state triggers are hosted on a permanent and checked by the
-        # state-based-action pass; a delayed subscription waits on an event,
-        # and this one is never emitted.
+    if event == STATE_TRIGGER:
+        # Nothing is ever emitted under this name: a state trigger is found by
+        # `triggers.check_state_triggers` walking the battlefield's printed
+        # abilities, so a delayed one would be installed and never fire.
         raise DslError(
-            f"{where}: a state trigger cannot be delayed -- it waits on a state, "
-            f"not an event"
+            f"{where}: a delayed_trigger watches an event, and {STATE_TRIGGER!r} "
+            f"is a printed state trigger's, not one"
         )
     unsupported = sorted(set(trigger) - DELAYED_TRIGGER_KEYS)
     if unsupported:
@@ -1730,6 +1724,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
         if "as" in effect and not isinstance(effect["as"], str):
             raise DslError(f"{where}: discard's 'as' is a binding name")
+    if op == "redirect_attack" and not effect.get("objects"):
+        # Without it the pool is empty and the op silently moves nothing -- a
+        # Misleading Signpost whose reselection never happens.
+        raise DslError(
+            f"{where}: 'redirect_attack' needs 'objects' naming the attacking "
+            f"creature to reselect for, normally {{'target': 't1'}}"
+        )
     if op == "choose_permanents" and "as" not in effect:
         # It changes nothing on the board, so a choice nobody reads back is a
         # question put to the player for no reason -- and a card written that
@@ -2562,6 +2563,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if effect.get("up_to"):
             raise DslError(f"{where}: a whole-hand discard is not optional")
 
+    if op == "damage" and "defender_of" in effect:
+        # "…the player or planeswalker **it's** attacking" -- one creature,
+        # named by a selector. Anything else would read as a pool and quietly
+        # aim at the first attacker found.
+        if not isinstance(effect["defender_of"], Mapping):
+            raise DslError(
+                f"{where}.defender_of: a selector naming the attacking creature, "
+                f"e.g. {{'zone': 'battlefield', 'self_only': true}}"
+            )
+        validate_selector(effect["defender_of"], f"{where}.defender_of")
     if op == "damage" and "excess_to" in effect:
         # "Excess damage is dealt to that creature's controller instead."
         # Only meaningful on the single-target form: `objects` is a pool and
@@ -2575,20 +2586,6 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'excess_to' needs a single 'target' -- a pool of objects has "
                 f"no one controller for the excess to reach"
-            )
-
-    if "to_attacked" in effect:
-        # "…deals damage to the player or planeswalker it's attacking." Only
-        # `damage` reads it, and only `true` says anything: a `false` would
-        # load as a recipient that is never hit beside whatever else the op
-        # names. Which trigger may carry it is checked with the ability, in
-        # `_refuse_to_attacked_off_attacks`, since this pass cannot see it.
-        if op != "damage":
-            raise DslError(f"{where}: 'to_attacked' is a damage recipient, not a key of {op!r}")
-        if effect["to_attacked"] is not True:
-            raise DslError(
-                f"{where}.to_attacked: write true (the player or planeswalker the "
-                f"attacker is attacking) or leave it out, got {effect['to_attacked']!r}"
             )
 
     if op == "cast_from_hand":

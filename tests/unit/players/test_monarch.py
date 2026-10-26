@@ -580,31 +580,16 @@ class TestTheLoadTimeGuards:
                 )
             )
 
-    def test_the_monarch_is_a_static_condition(self):
-        """In `STATIC_CONDITION_HEADS` since a card asks it from a static.
+    def test_the_monarch_is_not_a_static_condition(self):
+        """Deliberately absent from `STATIC_CONDITION_HEADS`.
 
-        Fall from Favor's "unless that player is the monarch" gates a
-        `skip_untap_step` hold; `tests/unit/turn/test_untap_hold_unless_monarch.py`
-        owns that card. Here the leaf is pinned in the language every static
-        shares: it loads, and an unknown player is refused by name.
+        It would be *safe* there -- the designation is a pipeline input, like a
+        counter or a life total -- but no card in the pool asks it from a static,
+        and `has_city_s_blessing` is in both languages only because a card needed
+        both. Vocabulary with no card behind it is what this repo's load-time
+        checks exist to keep out.
         """
-        compile_card(
-            CardModel.model_validate(
-                probe(
-                    abilities=[
-                        {
-                            "kind": "static",
-                            "text": "Probe has flying as long as you're the monarch.",
-                            "effect": "grant_keyword",
-                            "affects": {"self_only": True},
-                            "keywords": ["flying"],
-                            "condition": {"is_monarch": "you"},
-                        }
-                    ]
-                )
-            )
-        )
-        with pytest.raises(DslError, match="is_monarch"):
+        with pytest.raises(DslError, match="static condition"):
             compile_card(
                 CardModel.model_validate(
                     probe(
@@ -615,7 +600,7 @@ class TestTheLoadTimeGuards:
                                 "effect": "grant_keyword",
                                 "affects": {"self_only": True},
                                 "keywords": ["flying"],
-                                "condition": {"is_monarch": "the_king"},
+                                "condition": {"is_monarch": "you"},
                             }
                         ]
                     )
