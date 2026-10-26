@@ -16,7 +16,9 @@
 - `/extend-roadmap` takes the next ready item off that backlog, or a named
   one, and delivers it end to end: the ADR first where asked, the change, the
   gate, `verify.py`, the item retired, and the pull request, which it then
-  watches and fixes until CI is green.
+  watches and fixes until CI is green. With `--auto` it runs unattended from
+  a schedule, builds only items whose **Decisions** the owner wrote, and turns
+  on auto-merge ([ADR 0026](../docs/adr/0026-the-roadmap-autopilot-merges-on-green.md)).
 
 Cursor reads `.agents/skills/` directly. Claude Code reads `.claude/skills/`, so
 each entry there is a symlink to its twin here. On Windows that needs

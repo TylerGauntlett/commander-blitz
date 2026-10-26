@@ -29,6 +29,11 @@ How to read it:
   touches a class of players or removes a weekly annoyance, **low** is polish
   somebody would notice and nobody would miss. **Depends on** names the items
   that have to land first; "nothing" means it can start today.
+- An item may close with **Decisions**, the owner's answers to the questions
+  its plan leaves open, and **Open questions**, the ones still waiting. An item
+  with the first and not the second is decided, and only a decided item is
+  built unattended ([ADR 0026](adr/0026-the-roadmap-autopilot-merges-on-green.md));
+  the rest say **Awaiting decisions**.
 - An item leaves this page the way a debt item leaves
   [TECH_DEBT.md](../TECH_DEBT.md): when the work lands, retire the item in the
   same pull request (`scripts/roadmap.py --done <id>`), which also unblocks
@@ -95,7 +100,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 ### Gate the debug endpoint
 
-Effort **S** · Impact **medium**, a hidden-information leak that is harmless until strangers share a table · Depends on nothing.
+Effort **S** · Impact **medium**, a hidden-information leak that is harmless until strangers share a table · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -119,7 +124,7 @@ still reveals what `player_view` hides.
 
 ### Outcomes as data
 
-Effort **M** · Impact **medium**, nothing a player sees, and everything brackets, matchmaking and the CPU need to be tuned from real play · Depends on nothing.
+Effort **M** · Impact **medium**, nothing a player sees, and everything brackets, matchmaking and the CPU need to be tuned from real play · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -149,7 +154,7 @@ documented fields and nothing identifying; the scripts table in
 
 ### A mark, a wordmark, and the surfaces that carry them
 
-Effort **M** · Impact **medium**, the first impression for a stranger; nothing for the games already being played · Depends on nothing.
+Effort **M** · Impact **medium**, the first impression for a stranger; nothing for the games already being played · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -185,7 +190,7 @@ wherever it sits over art.
 
 ### Sound
 
-Effort **S** · Impact **low**, a nicer beat, in a game that already narrates every one · Depends on nothing.
+Effort **S** · Impact **low**, a nicer beat, in a game that already narrates every one · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -306,7 +311,7 @@ whole-game test able to draw the new deck. Across batches,
 
 ### Viewing a deck's list
 
-Effort **M** · Impact **medium**, every deck pick, and the only honest per-card view of an import · Depends on nothing.
+Effort **M** · Impact **medium**, every deck pick, and the only honest per-card view of an import · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -355,7 +360,7 @@ with a pad by group and reads one card.
 
 ### Difficulty
 
-Effort **S** · Impact **medium**, visible in every pod, and the place the CPU work lands where a player can see it · Depends on nothing.
+Effort **S** · Impact **medium**, visible in every pod, and the place the CPU work lands where a player can see it · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -379,7 +384,7 @@ e2e spec reach the segment with a pad under the floors.
 
 ### The stack reads in order from the panel
 
-Effort **S** · Impact **medium**, every response to a response, which is the skill the format is about · Depends on nothing.
+Effort **S** · Impact **medium**, every response to a response, which is the skill the format is about · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -431,7 +436,7 @@ than responding to a spell, under the priority row's ceiling in
 
 ### Why a press is refused
 
-Effort **S** · Impact **medium**, every player who presses a permanent that does nothing and has to guess why · Depends on nothing.
+Effort **S** · Impact **medium**, every player who presses a permanent that does nothing and has to guess why · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -484,7 +489,7 @@ draws the refusal at the handheld floors.
 
 ### CPU takeover and reconnection
 
-Effort **M** · Impact **medium**, every multi-human game somebody drops from; required before strangers share a table · Depends on nothing.
+Effort **M** · Impact **medium**, every multi-human game somebody drops from; required before strangers share a table · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -514,7 +519,7 @@ two browsers through the same.
 
 ### Replays and sharing
 
-Effort **M** · Impact **medium**, every bug report becomes a tape and every CPU misplay becomes a training position · Depends on nothing.
+Effort **M** · Impact **medium**, every bug report becomes a tape and every CPU misplay becomes a training position · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -542,7 +547,7 @@ sends no action; and the arena accepting a tape as a position under test.
 
 ### Archidekt import
 
-Effort **S** · Impact **low**, the second link players paste; the maintainer pastes the first · Depends on nothing.
+Effort **S** · Impact **low**, the second link players paste; the maintainer pastes the first · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -568,7 +573,7 @@ resolve the same way as the equivalent Moxfield list.
 
 ### Compressed art, shipped for offline precon play
 
-Effort **M** · Impact **medium**, every Deck update gets smaller and every precon plays offline from the first launch · Depends on nothing.
+Effort **M** · Impact **medium**, every Deck update gets smaller and every precon plays offline from the first launch · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -623,7 +628,7 @@ art version that moved and one that did not.
 
 ### Site imports follow their owner to the Deck
 
-Effort **M** · Impact **medium**, a deck imported on the site with friends is on the Deck the next time its owner plays alone · Depends on nothing.
+Effort **M** · Impact **medium**, a deck imported on the site with friends is on the Deck the next time its owner plays alone · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -672,7 +677,7 @@ adopts the Deck's library id and an ordinary browser keeps its own.
 
 ### Learned judgements behind the strategy hooks
 
-Effort **L** · Impact **high**, every game the maintainer plays is against the CPU, and so is most of every stranger's first · Depends on [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty).
+Effort **L** · Impact **high**, every game the maintainer plays is against the CPU, and so is most of every stranger's first · Depends on [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty) · Awaiting decisions.
 
 #### Today
 
@@ -748,7 +753,7 @@ to be trusted.
 
 ### Brackets, derived from the list
 
-Effort **M** · Impact **medium**, a filter and a signal on every tile; the precondition for the queue · Depends on nothing.
+Effort **M** · Impact **medium**, a filter and a signal on every tile; the precondition for the queue · Depends on nothing · Awaiting decisions.
 
 #### Today
 
@@ -787,7 +792,7 @@ and the shelf's filter in a story and the e2e catalogue spec.
 
 ### A queue
 
-Effort **L** · Impact **medium**, strangers only, and the site is mostly one player today · Depends on [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data).
+Effort **L** · Impact **medium**, strangers only, and the site is mostly one player today · Depends on [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data) · Awaiting decisions.
 
 #### Today
 
