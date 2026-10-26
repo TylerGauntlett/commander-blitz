@@ -1312,7 +1312,8 @@ def _validate_player_spec_shape(who: Any, where: str) -> None:
 #: The **string** forms :func:`select_players` accepts, named so a load-time
 #: validator can refuse a typo instead of leaving it to raise mid-resolution.
 #: The mapping forms (``target``, ``controller_of_target``, ``binding``,
-#: ``controller_of``, ``owner_of``, ``not``, ``attacked_by``) and a bare seat number are not
+#: ``controller_of``, ``owner_of``, ``not``, ``attacked_by``,
+#: ``dealt_combat_damage_by``) and a bare seat number are not
 #: here: they name something the card declares elsewhere and are checked where
 #: that is checked -- `loader.effects._validate_player_spec`.
 PLAYER_SPEC_NAMES = frozenset(
@@ -1433,6 +1434,15 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             # did not attack -- the safe direction for a card that ends games.
             # "self" is the only subject (the loader refuses anything else).
             seats = state.turn_ledger.players_attacked_by.get(ctx.source_oid, set())
+            return [pid for pid in state.alive() if pid in seats]
+        if "dealt_combat_damage_by" in spec:
+            # "…whose controller was dealt combat damage by this creature this
+            # turn" -- Steel Hellkite. Off the turn ledger for the reason
+            # `attacked_by` is, and keyed by the ability's source, so the
+            # record of an object that has since left still answers for an
+            # ability it already put on the stack (last-known information).
+            # Seat order, the living only; nobody when it dealt none.
+            seats = state.turn_ledger.players_dealt_combat_damage_by.get(ctx.source_oid, set())
             return [pid for pid in state.alive() if pid in seats]
         if "target" in spec:
             # Only refs that *are* players. A `kind: "spell"` or `kind:

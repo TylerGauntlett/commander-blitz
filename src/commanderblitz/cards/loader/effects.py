@@ -388,6 +388,17 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
                 f'({{"attacked_by": "self"}}), got {dict(who)!r}'
             )
         return
+    if "dealt_combat_damage_by" in who:
+        # "…whose controller was dealt combat damage by this creature this
+        # turn" -- Steel Hellkite. The same shape as `attacked_by` and refused
+        # for the same reason: any subject but "self" would load and resolve to
+        # nobody, and a card that destroys nothing looks like a quiet board.
+        if who["dealt_combat_damage_by"] != "self" or len(who) > 1:
+            raise DslError(
+                f"{where}: 'dealt_combat_damage_by' takes 'self' and stands alone "
+                f'({{"dealt_combat_damage_by": "self"}}), got {dict(who)!r}'
+            )
+        return
     if "not" in who:
         # "target player **other than** its controller." The complement of a
         # spec, so whatever it wraps has to be a legal spec in its own right --

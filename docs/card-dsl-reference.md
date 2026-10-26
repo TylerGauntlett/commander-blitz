@@ -260,7 +260,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 
 ## Player specs
 
-The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}` -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
+The named player specs. The structured forms -- `{"target": …}`, `{"controller_of_target": …}`, `{"controller_of": …}`, `{"owner_of": …}`, `{"binding": …}`, `{"not": …}`, `{"attacked_by": …}`, `{"dealt_combat_damage_by": …}` -- are described under the same heading. Defined under [Player specs](card-dsl.md#player-specs).
 
 | Name | Description | Defined in |
 |---|---|---|
