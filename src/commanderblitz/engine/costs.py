@@ -1260,6 +1260,14 @@ def can_pay(
         obj = state.objects.get(source_oid) if source_oid is not None else None
         if obj is None or not obj.on_battlefield:
             return False
+    if cost.put_counters is not None:
+        # "Put a page counter on this artifact": counters go on a permanent, so
+        # the source must still be one. Nothing else limits it -- there is no
+        # supply of counters to run out of, and Devoted Druid's -1/-1 is payable
+        # at any toughness (the creature dies to the state-based action after).
+        obj = state.objects.get(source_oid) if source_oid is not None else None
+        if obj is None or not obj.on_battlefield:
+            return False
     if cost.discard_self:
         # The card must be the payer's to throw away and still be in the zone it
         # is activated from. Checked rather than assumed because legality offers
@@ -1905,6 +1913,22 @@ def pay(
             source_oid,
             str(cost.remove_counters.get("counter", "+1/+1")),
             int(cost.remove_counters.get("amount", 1)),
+        )
+
+    if cost.put_counters is not None and source_oid is not None:
+        # 601.2h: on as the ability is activated, so a response sees the
+        # counter already there. Through `add_counters` like any placement, so
+        # `counter_placed` fires (122.6) and the putter is the payer; `as_cost`
+        # because a cost is not an effect -- Doubling Season's "if an effect
+        # would put" leaves it at one, as it leaves a planeswalker's +1.
+        add_counters(
+            state,
+            source_oid,
+            str(cost.put_counters["counter"]),
+            int(cost.put_counters.get("amount", 1)),
+            source=source_oid,
+            as_cost=True,
+            by=pid,
         )
 
     if cost.loyalty is not None and source_oid is not None:

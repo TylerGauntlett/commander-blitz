@@ -295,6 +295,9 @@ class Cost:
     #: "Pay {E}{E}": energy counters off the payer (107.14).
     pay_energy: int = 0
     remove_counters: Mapping[str, Any] | None = None
+    #: "Put a page counter on this artifact" -- N counters of a named kind put
+    #: on the source as the cost is paid. See `CostModel.put_counters`.
+    put_counters: Mapping[str, Any] | None = None
     #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
     #: cost", because `0:` is a real and different thing -- a printed zero
     #: ability still counts as the one loyalty ability that turn.
@@ -377,6 +380,9 @@ class Cost:
             ),
             remove_counters=(
                 dict(spec["remove_counters"]) if spec.get("remove_counters") else None
+            ),
+            put_counters=(
+                dict(spec["put_counters"]) if spec.get("put_counters") else None
             ),
             # `is not None`, not truthiness: `0:` is a printed loyalty cost and
             # a falsy one, and reading it as "no loyalty cost" would make a zero
@@ -461,6 +467,10 @@ class Cost:
             and not self.pay_life
             and not self.pay_energy
             and self.remove_counters is None
+            # Wall of Roots' "Put a -0/-1 counter on this creature: Add {G}" is
+            # a mana ability that costs a counter; the solver must not pay it
+            # unasked.
+            and self.put_counters is None
             and self.loyalty is None
             and self.exile_from_graveyard is None
         )
@@ -505,6 +515,9 @@ class Cost:
             parts.append("Pay " + "{E}" * self.pay_energy)
         if self.remove_counters:
             parts.append("Remove counters")
+        if self.put_counters:
+            amount = self.put_counters.get("amount", 1)
+            parts.append(f"Put {amount} {self.put_counters.get('counter')} counter(s) on it")
         if self.remove_counters_from_among:
             count = self.remove_counters_from_among.get("count", 1)
             parts.append(f"Remove {count} counters from among permanents")

@@ -51,6 +51,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "loyalty",
         "loyalty_x",
         "remove_counters",
+        "put_counters",
         "exile_self",
         "exile_self_from_hand",
         "discard_self",

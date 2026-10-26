@@ -231,6 +231,7 @@
    "loyalty",
    "loyalty_x",
    "pay_life_x",
+   "put_counters",
    "remove_counters",
    "tap",
    "untap",

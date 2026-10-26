@@ -149,6 +149,18 @@ class CostModel(BaseModel):
     #: "your life total can't change".
     pay_energy: int = 0
     remove_counters: dict[str, Any] | None = None
+    #: "**Put a page counter on this artifact**: Scry 1" -- Mazemind Tome,
+    #: Devoted Druid's -1/-1, Bloodletter Quill's blood counter. ``{"counter":
+    #: kind, "amount": N}``, both required: N counters of that kind go on the
+    #: source as the ability is activated (601.2h), through `add_counters` with
+    #: ``as_cost``, so they raise ``counter_placed`` exactly as an effect's do
+    #: and "if an effect would put" replacements leave them alone.
+    #:
+    #: Not an `add_counters` effect, which puts them on at resolution -- a
+    #: response would see the Tome at three counters with its scry already
+    #: bought. Not `loyalty`, which is this cost hard-wired to one kind and
+    #: carries 606.3's once-per-turn and sorcery timing with it.
+    put_counters: dict[str, Any] | None = None
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
     #: is a cost rather than an effect, so it is paid whether or not the ability

@@ -3340,6 +3340,27 @@ more than one (`ask_mode`, harmful kinds such as -1/-1 and stun offered first) �
 so every split is expressible. Not `remove_counters`, which takes one **named**
 kind off the **source**; the loader refuses a `counter` key here.
 
+### `put_counters` — counters put on the source as a cost
+
+    Mazemind Tome — "{T}, Put a page counter on this artifact: Scry 1."
+
+```jsonc
+"cost": { "tap": true, "put_counters": { "counter": "page", "amount": 1 } }
+```
+
+`counter` and `amount` are both required and nothing else is accepted: the
+counters always go on the source. Payable while the source is on the
+battlefield, whatever is already on it — Devoted Druid's -1/-1 is payable at any
+toughness, and the creature dies to the state-based action afterwards. Paid as
+the ability is activated (601.2h) through `add_counters` with `as_cost`, so
+`counter_placed` fires with the payer as `put_by`, a "counters would be put"
+replacement applies, and Doubling Season's "if an effect would put" does not.
+Not an `add_counters` effect, which would put the counter on at resolution, after
+a response could have seen the source without it; not `loyalty`, which the
+loader requires for a loyalty counter, since a loyalty cost makes a loyalty
+ability (606.3). A cost with this key is never a tap-only mana source, so Wall of
+Roots' counter is offered to the player rather than paid by the solver.
+
 ## Player specs
 
 The list with a line each is

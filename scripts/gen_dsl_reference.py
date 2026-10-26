@@ -827,6 +827,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "pay_energy": ("Pay N energy ({E}).", "Energy"),
     "pay_life": ("Pay N life.", None),
     "pay_life_x": ("Pay X life, X announced.", None),
+    "put_counters": ("Put N counters of a kind on the source.",
+                     "`put_counters` — counters put on the source as a cost"),
     "remove_counters": ("Remove N counters of a kind from the source.", None),
     "remove_counters_from_among": ("Remove N counters of any kinds from among other permanents.",
                                    "`remove_counters_from_among` — counters of any kind, off other permanents"),

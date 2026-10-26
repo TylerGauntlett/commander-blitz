@@ -237,6 +237,34 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"kind; a named 'counter' kind is not read"
             )
         validate_selector(among, f"{where}.cost.remove_counters_from_among")
+    if model.put_counters is not None:
+        put = dict(model.put_counters)
+        kind = put.pop("counter", None)
+        amount = put.pop("amount", None)
+        if not isinstance(kind, str) or not kind:
+            # Every printed line names its kind ("a page counter"), and a
+            # default would put +1/+1 counters on a Mazemind Tome.
+            raise DslError(
+                f"{where}.cost.put_counters: needs a 'counter' kind, got {kind!r}"
+            )
+        if not isinstance(amount, int) or isinstance(amount, bool) or amount < 1:
+            raise DslError(
+                f"{where}.cost.put_counters: needs a positive integer 'amount', "
+                f"got {amount!r}"
+            )
+        if put:
+            # The cost always puts them on the source; "on target creature" is
+            # an effect, and a key nothing reads would print as honoured.
+            raise DslError(
+                f"{where}.cost.put_counters: takes 'counter' and 'amount' only, "
+                f"got {sorted(put)}"
+            )
+        if kind == "loyalty":
+            # 606.2: a loyalty cost is a loyalty ability, with 606.3's once per
+            # turn and sorcery timing; this cost carries neither.
+            raise DslError(
+                f"{where}.cost.put_counters: a loyalty counter is a 'loyalty' cost"
+            )
     # One constructor for both spellings of a cost -- the model here, and the
     # raw mapping an optional effect's `pay` arrives as.  See `Cost.from_spec`.
     cost = Cost.from_spec(model.model_dump())
