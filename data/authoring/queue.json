@@ -320982,12 +320982,12 @@
     },
     "Yeva, Nature's Herald": {
       "edhrec_rank": 3426,
-      "gate": "template",
+      "gate": null,
       "name": "Yeva, Nature's Herald",
-      "reason": "no template for: You may cast green creature spells as though they had flash",
+      "reason": "",
       "scryfall_id": "67ff9ba3-cd2b-4970-b4da-22104b10a4a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yew Spirit": {

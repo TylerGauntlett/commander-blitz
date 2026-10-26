@@ -1,0 +1,24 @@
+{
+  "card_id": "hope_of_ghirapur",
+  "name": "Hope of Ghirapur",
+  "oracle_text": "Flying\nSacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.",
+  "blocked_sentences": [
+    "Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells."
+  ],
+  "needs": [
+    {
+      "capability": "timed_cast_lock_spell_filter",
+      "kind": "op",
+      "what": "a one-shot op (or an `affects_spells` option on the timed CastLock) that stops the named player(s) from casting spells matching a spell filter -- here `{\"not_types\": [\"Creature\"]}` -- until the controller's next turn, so an activated ability on a sacrificed permanent can leave the lock behind",
+      "why_existing_wont_do": "`cant_cast_spells` with `affects_spells` is a static_effect, so it lives only while its permanent does and dies with the sacrificed source; the timed op `cant_cast_spells_from_zones` has the right clock (`duration: until_your_next_turn`) and `player`, but filters only by zone (`zones`/`except_zones`), not by spell type, so it would forbid creature spells too or nothing at all"
+    },
+    {
+      "capability": "target_player_dealt_combat_damage_by",
+      "kind": "selector",
+      "what": "a player target spec restricted to players this source dealt combat damage to this turn (the `{\"dealt_combat_damage_by\": \"self\"}` set), legal to choose as a target and checked again on resolution; it must read the ledger of the source as it was before it was sacrificed as the cost",
+      "why_existing_wont_do": "`{\"dealt_combat_damage_by\": \"self\"}` is a player spec usable as an effect's `player` or a selector's `controller`, not a restriction on which player may be TARGETED; and its record is keyed by the source oid, which the sacrifice cost removes from the battlefield before targets are legal-checked"
+    }
+  ],
+  "closest_existing": ["cant_cast_spells_from_zones", "cant_cast_spells"],
+  "confidence": "high"
+}

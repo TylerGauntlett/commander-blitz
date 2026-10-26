@@ -1,0 +1,18 @@
+{
+  "card_id": "estinien_varlineau",
+  "name": "Estinien Varlineau",
+  "oracle_text": "Whenever you cast a noncreature spell, put a +1/+1 counter on Estinien Varlineau. It gains flying until end of turn.\nAt the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.",
+  "blocked_sentences": [
+    "At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn."
+  ],
+  "needs": [
+    {
+      "capability": "players_dealt_combat_damage_by_subtype",
+      "kind": "selector",
+      "what": "a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any source with a given subtype (Dragon), so X can be counted as the number of distinct such opponents -- e.g. {\"dealt_combat_damage_by\": {\"any_of\": [\"self\", {\"subtypes\": [\"Dragon\"]}]}} countable as a number of players",
+      "why_existing_wont_do": "The `dealt_combat_damage_by` player spec takes only \"self\" and stands alone (the loader refuses any other subject), so it cannot include Dragons; the `combat_damage_by` condition (prowl) is a yes/no over subtypes and neither counts players nor includes the source itself; no value key counts the players a player spec resolves to"
+    }
+  ],
+  "closest_existing": ["dealt_combat_damage_by", "combat_damage_by"],
+  "confidence": "high"
+}
