@@ -1520,6 +1520,23 @@
       "is_token": true
     },
     {
+      "id": "myr_1_1_c",
+      "name": "Myr Token",
+      "oracle_text": "1/1 colorless Myr artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Myr"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "octopus_8_8_u",
       "name": "Octopus Token",
       "oracle_text": "8/8 blue Octopus creature token.",

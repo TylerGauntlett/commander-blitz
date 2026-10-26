@@ -330,6 +330,32 @@ class TestAngelOfInventionsServosAreColorlessArtifacts:
         assert servo.is_token
 
 
+class TestMyrBattlespheresMyrAreColorlessArtifacts:
+    """Myr Battlesphere: *"When this creature enters, create four **1/1
+    colorless Myr artifact** creature tokens."*
+
+    The pool's 1/1 colorless artifact creatures were a Gnome, a Servo, a
+    Soldier and a flying Thopter. The subtype is load-bearing on the card
+    itself: its attack trigger taps untapped Myr, so a Servo would leave the
+    four tokens it makes unable to feed it.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("myr_1_1_c") is not None
+
+    def test_it_is_a_one_one_colorless_artifact_myr(self, pool):
+        myr = pool.get("myr_1_1_c")
+        assert (myr.power, myr.toughness) == (1, 1)
+        assert not myr.colors, "colorless -- the printed word"
+        assert "Artifact" in myr.types and "Creature" in myr.types
+        assert list(myr.subtypes) == ["Myr"]
+        assert not myr.keywords
+        assert myr.is_token
+
+    def test_the_servo_is_still_a_separate_token(self, pool):
+        assert list(pool.get("servo_1_1_c").subtypes) == ["Servo"]
+
+
 class TestDawnOfHopesSoldiersHaveLifelink:
     """Dawn of Hope: *"{3}{W}: Create a 1/1 white Soldier creature token with
     **lifelink**."*
