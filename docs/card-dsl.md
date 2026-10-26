@@ -3960,6 +3960,26 @@ naive "amount minus toughness" gets wrong.
 `trample` is the near miss and spills for the same reason, but only in combat.
 `prevent_damage` suppresses without redirecting.
 
+### `damage`'s `defender_of`
+
+"…deals X damage to **the player or planeswalker it's attacking**" — Myr
+Battlesphere. `defender_of` is a selector naming the attacking creature, and the
+recipient is read off the combat as the damage is dealt: the planeswalker it is
+attacking, or else the player (506.2).
+
+```jsonc
+{ "op": "damage", "amount": { "count": { "binding": "tapped_myr" } },
+  "defender_of": { "zone": "battlefield", "self_only": true } }
+```
+
+A creature no longer attacking deals nothing, and neither does one attacking a
+battle, which is neither a player nor a planeswalker. The loader takes only a
+selector. `"player": {"binding": "defender"}` off the `attacks` trigger is the
+near miss: it names the walker's **controller** when the attack is at a walker,
+and it is fixed as the trigger fires, so an attack moved by `redirect_attack`
+in between is not followed. The tapping half of the card is in the cookbook,
+under ["Tap X untapped Myr"](card-dsl-cookbook.md#tap-x-untapped-myr--an-optional-choice-of-any-number-at-resolution).
+
 ### A mana ability that splits colours
 
 "{0}: Add X mana in **any combination of {U} and/or {R}**, where X is Vivi

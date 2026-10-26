@@ -1,0 +1,36 @@
+{
+  "_comment": "Cards that exist only for tests/unit/damage/test_defender_of.py. Never part of a deck list. t_myr_sphere is Myr Battlesphere's attack trigger on a vanilla 4/7 Myr: choose_permanents + tap + pump + damage's defender_of.",
+  "cards": [
+    {
+      "id": "t_myr_sphere",
+      "name": "Test Myr Sphere",
+      "oracle_text": "Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.",
+      "mana_cost": "{7}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Myr", "Construct"],
+      "power": 4,
+      "toughness": 7,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking.",
+          "trigger": {"event": "attacks", "source": "self"},
+          "effects": [
+            {
+              "op": "choose_permanents",
+              "prompt": "Tap any number of untapped Myr you control",
+              "objects": {"zone": "battlefield", "controller": "you", "subtypes": ["Myr"],
+                          "tapped": false, "count": "any"},
+              "as": "tapped_myr"
+            },
+            {"op": "tap", "objects": {"binding": "tapped_myr"}},
+            {"op": "pump", "objects": {"zone": "battlefield", "self_only": true},
+             "power": {"count": {"binding": "tapped_myr"}}, "toughness": {"const": 0}},
+            {"op": "damage", "amount": {"count": {"binding": "tapped_myr"}},
+             "defender_of": {"zone": "battlefield", "self_only": true}}
+          ]
+        }
+      ]
+    }
+  ]
+}

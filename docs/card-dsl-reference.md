@@ -138,7 +138,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_energy` | Life & damage |  | A player gets N energy counters ({E}). | [Energy](card-dsl-cookbook.md#energy) |
 | `add_poison` | Life & damage |  | A player gets N poison counters. | [Effect ops](card-dsl.md#effect-ops) |
 | `cant_lose_the_game` | Life & damage |  | A player can't lose and opponents can't win, for a duration. | [Effect ops](card-dsl.md#effect-ops) |
-| `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over. | [damage's excess_to](card-dsl.md#damages-excess_to) |
+| `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `damage_life_floor` | Life & damage |  | Damage can't reduce a player's life below N this turn. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `fight` | Life & damage |  | Two creatures fight. | [fight](card-dsl-cookbook.md#fight) |
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
@@ -924,7 +924,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 |---|---|---|
 | `add_counters` | Put N counters of a kind on permanents or players. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `add_poison` | A player gets N poison counters. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
-| `damage` | A source deals N damage to objects or players; `excess_to` spills over. | [damage's excess_to](card-dsl.md#damages-excess_to) |
+| `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `gain_life` | A player gains N life. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `lose_life` | A player loses N life; `as` records how much. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `remove_counters` | Remove N counters of a kind. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |

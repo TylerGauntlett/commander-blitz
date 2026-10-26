@@ -2495,6 +2495,31 @@ fires, and the turn ledger keeps what was declared. After blockers are declared
 the op does nothing. The near misses are `cant_attack_player` and
 `must_attack_planeswalker`, which shape a declaration that has not happened yet.
 
+## "Tap X untapped Myr" — an optional choice of any number at resolution
+
+```jsonc
+{ "kind": "triggered",
+  "text": "Whenever this creature attacks, you may tap X untapped Myr you control. If you do, …",
+  "trigger": { "event": "attacks", "source": "self" },
+  "effects": [
+    { "op": "choose_permanents", "as": "tapped_myr",
+      "objects": { "zone": "battlefield", "controller": "you", "subtypes": ["Myr"],
+                   "tapped": false, "count": "any" } },
+    { "op": "tap", "objects": { "binding": "tapped_myr" } },
+    { "op": "pump", "objects": { "zone": "battlefield", "self_only": true },
+      "power": { "count": { "binding": "tapped_myr" } }, "toughness": { "const": 0 } },
+    { "op": "damage", "amount": { "count": { "binding": "tapped_myr" } },
+      "defender_of": { "zone": "battlefield", "self_only": true } } ] }
+```
+
+Myr Battlesphere, composed: `choose_permanents` with `count: "any"` is the free
+choice of none to all, its binding is what `tap` taps, and
+`{"count": {"binding": …}}` is X. Choosing none is declining, and with X at zero
+the pump and the damage do nothing, so "if you do" needs no `may`. The near
+misses: `tap_permanents` is an activation cost with a fixed `count`; `may` with
+`pay` and `x` pays mana. The damage half is
+[`damage`'s `defender_of`](card-dsl.md#damages-defender_of).
+
 ## Banding
 
 ```jsonc

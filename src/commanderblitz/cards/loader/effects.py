@@ -2563,6 +2563,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if effect.get("up_to"):
             raise DslError(f"{where}: a whole-hand discard is not optional")
 
+    if op == "damage" and "defender_of" in effect:
+        # "…the player or planeswalker **it's** attacking" -- one creature,
+        # named by a selector. Anything else would read as a pool and quietly
+        # aim at the first attacker found.
+        if not isinstance(effect["defender_of"], Mapping):
+            raise DslError(
+                f"{where}.defender_of: a selector naming the attacking creature, "
+                f"e.g. {{'zone': 'battlefield', 'self_only': true}}"
+            )
+        validate_selector(effect["defender_of"], f"{where}.defender_of")
     if op == "damage" and "excess_to" in effect:
         # "Excess damage is dealt to that creature's controller instead."
         # Only meaningful on the single-target form: `objects` is a pool and
