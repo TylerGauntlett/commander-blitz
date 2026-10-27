@@ -389,7 +389,9 @@ class TriggerModel(BaseModel):
     #: ordinal that draw must have had for its player this turn.  For
     #: ``spell_cast``: "whenever an opponent casts their second spell each
     #: turn", counted over the spells matching ``filter`` when there is one
-    #: ("their first **noncreature** spell").  Matched where
+    #: ("their first **noncreature** spell").  For ``attacks``: "whenever this
+    #: creature attacks **for the first time each turn**", the creature's own
+    #: count of attacks this turn.  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
     #: tally, which rule 603.4 re-evaluates after the tally has moved on.
     nth: int | None = None

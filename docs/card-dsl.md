@@ -434,7 +434,7 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
   "not_supertypes": ["Basic"],    // "target NONBASIC land" -- see below
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
-  "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"
+  "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
@@ -3762,7 +3762,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast` or a `you_gain_life` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life` or an `attacks` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -3817,6 +3817,26 @@ is four gains of 1 to it.
 ```jsonc
 // Vanguard Seraph
 { "event": "you_gain_life", "nth": 1 }
+```
+
+On `attacks` it is "whenever this creature attacks **for the first time each
+turn**" (Scourge of the Throne): the ledger fold counts each creature's ATTACKS
+events in `TurnLedger.attacks_by_creature` and writes the count onto the event,
+so the ordinal moves on every attack whether or not anything triggered. That is
+what `max_per_turn: 1` cannot say: it counts the ability's queued firings, so a
+first attack whose intervening-if failed leaves the cap unspent and the second
+attack, in an extra combat, fires the ability. An attack on a planeswalker or a
+battle is an attack and counts; a creature put onto the battlefield attacking
+never attacked and does not; a creature that leaves the battlefield starts again.
+"If it's attacking the player with the most life" beside it is an ordinary
+intervening-if over the source with the `attacking_player: "most_life"`
+selector key, re-asked on resolution as the printed "if" requires.
+
+```jsonc
+// Scourge of the Throne
+{ "event": "attacks", "source": "self", "nth": 1,
+  "condition": { "exists": { "zone": "battlefield", "self_only": true,
+                             "attacking_player": "most_life" } } }
 ```
 
 Three near misses. `max_per_turn: 1` is a cap **per permanent**, so in a pod the

@@ -783,6 +783,14 @@ class GameState:
             attacker, defender = data.get("attacker"), data.get("defender")
             if attacker is not None and defender is not None and not data.get("attacked_permanent"):
                 ledger.players_attacked_by.setdefault(int(attacker), set()).add(int(defender))
+            # "Whenever this creature attacks for the first time each turn."
+            # The ordinal goes on the event, as a cast's and a draw's do, so an
+            # `attacks` trigger with `nth` reads it at queue time -- and every
+            # attack is counted whether or not anything triggered on it.
+            if attacker is not None:
+                counts = ledger.attacks_by_creature
+                counts[int(attacker)] = counts.get(int(attacker), 0) + 1
+                data["nth"] = counts[int(attacker)]
         elif event.type == EventType.ENTERS_BATTLEFIELD:
             # "…if another Human entered the battlefield under your control this
             # turn." Snapshotted here rather than counted, because the question
@@ -901,6 +909,7 @@ class GameState:
             # this turn, so the record of whom it attacked goes with it.
             if data.get("from") == Zone.BATTLEFIELD.value:
                 ledger.players_attacked_by.pop(data.get("oid"), None)
+                ledger.attacks_by_creature.pop(data.get("oid"), None)
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # The departure half. Keyed by the graveyard's **owner** rather than

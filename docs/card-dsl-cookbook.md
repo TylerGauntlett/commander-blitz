@@ -8964,7 +8964,11 @@ attack is recorded in `combat.attacking_planeswalker`. It narrows the binding
 inside `count`, and works on any pool (`{"attacking_player": "opponent"}` over the
 battlefield) and in a trigger filter. Out of combat it matches nothing. It is a
 word, not a boolean — `true` is refused, because read as a word it would name
-nobody. `attacking` stays the whom-less boolean. Battles are not attackable in
+nobody. `attacking` stays the whom-less boolean. `"most_life"` is "attacking
+the player with the most life or tied for most life" (Scourge of the Throne's
+intervening-if): the defender passes `GameState.has_most_life`, read live, so
+in a `condition` it is asked again on resolution. Dethrone, which has no "if",
+is the trigger's `defending: "most_life"` instead. Battles are not attackable in
 this engine; when they are, a creature attacking one belongs outside this key too.
 
 ## An additional combat phase

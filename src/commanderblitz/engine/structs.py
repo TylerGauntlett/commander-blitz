@@ -1391,6 +1391,21 @@ class TurnLedger:
     #: battlefield: an oid survives the zone change but the object does not
     #: (400.7), and a flickered Angel back from exile attacked nobody.
     players_attacked_by: dict[int, set[int]] = field(default_factory=dict)
+    #: How many times each creature has **attacked** this turn: attacker oid ->
+    #: the number of ATTACKS events it has been the subject of. "Whenever this
+    #: creature attacks **for the first time each turn**" (Scourge of the
+    #: Throne) is an `attacks` trigger with `nth: 1`, and the ordinal is written
+    #: onto the ATTACKS event from this count, as a draw's or a cast's is.
+    #:
+    #: Counted whether or not anything triggered, which is why `max_per_turn: 1`
+    #: is the near miss: that cap counts the ability's *queued* firings, so a
+    #: first attack whose intervening-if failed leaves it unspent and the
+    #: second attack in an extra combat fires the ability the card forbids.
+    #: Every attack counts, a planeswalker or battle attack included, since the
+    #: printed word is "attacks". A creature put onto the battlefield attacking
+    #: never attacked (508.4) and adds nothing; one that leaves the battlefield
+    #: is a new object (400.7) and starts again from nought.
+    attacks_by_creature: dict[int, int] = field(default_factory=dict)
     #: Which **players** each creature dealt **combat damage** to this turn:
     #: source oid -> the seats. "Destroy each nonland permanent with mana value X
     #: whose controller was dealt combat damage by this creature this turn" --
@@ -1628,6 +1643,7 @@ class TurnLedger:
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
         self.players_attacked_by.clear()
+        self.attacks_by_creature.clear()
         self.players_dealt_combat_damage_by.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
