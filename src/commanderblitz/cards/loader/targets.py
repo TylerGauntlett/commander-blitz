@@ -289,6 +289,46 @@ def _check_mode_targets(
         )
 
 
+def _reads_context(node: Any) -> bool:
+    """Does this selector name a sibling target or the announced ``{X}``?"""
+    if isinstance(node, Mapping):
+        return any(k in ("target", "x") or _reads_context(v) for k, v in node.items())
+    if isinstance(node, (list, tuple)):
+        return any(_reads_context(v) for v in node)
+    return node == "x"
+
+
+def _check_permanent_selector(model: TargetModel, label: str) -> None:
+    """"Target spell or **creature**": the permanent half's own selector.
+
+    Each refusal is a clause that would load and be read nowhere, or read
+    somewhere the rest of the targeting layer does not look.
+    """
+    sub = model.permanent_selector or {}
+    if model.kind != "spell_or_permanent":
+        # Every other kind has one pool and one selector; a second would be
+        # accepted and ignored.
+        raise DslError(
+            f"{label}: 'permanent_selector' narrows the permanent half of a "
+            f"'spell_or_permanent' target, and this one is {model.kind!r}"
+        )
+    validate_selector(sub, f"{label}.permanent_selector")
+    if sub.get("zone") not in (None, "battlefield"):
+        raise DslError(
+            f"{label}.permanent_selector: a permanent is on the battlefield, "
+            f"not in {sub['zone']!r}"
+        )
+    if _reads_context(sub):
+        # The linked-target walk (`targeting._names_a_sibling`) and the X walk
+        # (`legality._mentions_x`) read `selector` only; a clause hidden here
+        # would be enumerated without the answer it depends on. No printing
+        # asks for one.
+        raise DslError(
+            f"{label}.permanent_selector: names a sibling target or {{X}}, "
+            f"which only 'selector' may do"
+        )
+
+
 def _compile_target(
     model: TargetModel, where: str, siblings: Mapping[str, str] | None = None
 ) -> TargetSpec:
@@ -360,6 +400,9 @@ def _compile_target(
                 f"chosen, which a {model.kind!r} target does not have"
             )
 
+    if model.permanent_selector is not None:
+        _check_permanent_selector(model, label)
+
     zone = model.selector.get("zone")
     if model.kind == "permanent" and zone not in (None, "battlefield"):
         # A card in a graveyard, a hand or exile is not a permanent (110.1), and
@@ -402,6 +445,9 @@ def _compile_target(
         id=model.id,
         kind=model.kind,
         selector=dict(model.selector),
+        permanent_selector=(
+            dict(model.permanent_selector) if model.permanent_selector is not None else None
+        ),
         count=dict(model.count) if isinstance(model.count, dict) else model.count,
         count_if_kicked=(
             dict(model.count_if_kicked)

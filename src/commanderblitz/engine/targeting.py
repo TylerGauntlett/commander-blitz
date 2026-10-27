@@ -127,6 +127,10 @@ def candidates(
         # legality of its own, so every ref this offers is one `still_legal`
         # will accept when it re-checks it -- and it re-checks by `ref.kind`,
         # which is why that function needed no change at all.
+        #
+        # The permanent half reads `spec.permanent_half`: "target spell or
+        # **creature**" (Fatehold Charm) narrows only the permanent, and one
+        # selector over both would make it "target creature spell or creature".
         pool: list[TargetRef] = [
             TargetRef.stack(item.sid)
             for item in state.stack
@@ -134,7 +138,7 @@ def candidates(
         ]
         pool.extend(
             TargetRef.obj(oid)
-            for oid in resolve_pool(ctx, {**dict(spec.selector), "zone": "battlefield"})
+            for oid in resolve_pool(ctx, {**dict(spec.permanent_half), "zone": "battlefield"})
             if can_be_targeted(state, controller, oid, source_oid=source_oid)
         )
         return pool
@@ -773,6 +777,10 @@ def still_legal(
         return obj.zone is Zone.EXILE and ref.id in resolve_pool(
             ctx, {**dict(spec.selector), "zone": "exile"}
         )
+    if spec.kind == "spell_or_permanent":
+        # An object ref is the permanent half, re-checked against the selector
+        # that half was offered from -- `candidates` reads the same accessor.
+        return matches(ctx, ref.id, {**dict(spec.permanent_half), "zone": "battlefield"})
     selector = dict(spec.selector)
     if spec.kind == "any" and "zone" not in selector:
         selector["zone"] = "battlefield"

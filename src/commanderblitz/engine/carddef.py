@@ -68,8 +68,13 @@ class TargetSpec:
 
     id: str
     kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard"
-    #        | "card_in_exile" | "any"
+    #        | "card_in_exile" | "any" | "spell_or_permanent" | "ability_on_stack"
     selector: Mapping[str, Any] = field(default_factory=dict)
+    #: A ``"spell_or_permanent"`` spec's selector for its **permanent** half,
+    #: when the printed word narrows only that half -- "target spell or
+    #: **creature**" (Fatehold Charm). ``None`` means both halves read
+    #: `selector`. See :attr:`permanent_half`.
+    permanent_selector: Mapping[str, Any] | None = None
     #: A number, or ``"any"`` for "any number of target …" -- a size the caster
     #: chooses. At most one spec per card may be ``"any"``, and it must be the
     #: last, because `filter_legal` slices the stored refs spec by spec and a
@@ -136,6 +141,18 @@ class TargetSpec:
     #: as the ability is put on the stack.  See :attr:`Ability.mode_targets` and
     #: `stack.push_triggered_ability`.
     mode: int | None = None
+
+    @property
+    def permanent_half(self) -> Mapping[str, Any]:
+        """The selector a ``"spell_or_permanent"`` spec's battlefield half reads.
+
+        `permanent_selector` when the card wrote one, else `selector`. The one
+        accessor `candidates` and `still_legal` share, so the pool a target is
+        offered from and the one it is re-checked against cannot disagree.
+        """
+        if self.permanent_selector is not None:
+            return self.permanent_selector
+        return self.selector
 
     @property
     def variable_size(self) -> bool:

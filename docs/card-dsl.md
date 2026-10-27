@@ -1045,6 +1045,22 @@ permanent on the board and with only a spell on the stack.
 so every ref this pool offers is one it will accept. The `selector` narrows both
 halves, since "nonland" and "an opponent controls" are meant to.
 
+When the printed word narrows only the permanent, `permanent_selector` gives
+that half its own selector and `selector` is left to the spell half:
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_permanent", "count": 1,
+  "permanent_selector": { "types": ["Creature"] } }
+```
+
+"Return target spell or creature to its owner's hand" (Fatehold Charm): any
+spell, or a creature permanent. Writing `"selector": {"types": ["Creature"]}`
+instead is the near miss — it would narrow the spell half too, making the card
+"target creature spell or creature". `permanent_selector` is refused on every
+other kind, with a `zone` other than the battlefield, and with a clause naming a
+sibling target or `{X}`; `candidates` and `still_legal` both read it through
+`TargetSpec.permanent_half`.
+
 `return_spell_to_hand` reads both `target_sids` and `target_oids` for the same
 reason: a union target that landed on a permanent would otherwise return nothing
 and leave it on the battlefield with the card looking like it worked — the silent

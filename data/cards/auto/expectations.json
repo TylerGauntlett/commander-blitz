@@ -4027,6 +4027,16 @@
     },
     "zone": "graveyard"
   },
+  "fatehold_charm": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "fathom_mage": {
     "battlefield_count": 33,
     "zone": "battlefield"

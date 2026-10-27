@@ -247,7 +247,8 @@ class TargetModel(BaseModel):
     #: (Sink into Stupor). It is one instance of the word "target", so it is one
     #: spec: writing two, one of each kind, is a card that targets twice and
     #: needs both to be legal. The `selector` narrows both halves, since the
-    #: printed clause ("nonland", "an opponent controls") is meant to.
+    #: printed clause ("nonland", "an opponent controls") is meant to -- unless
+    #: `permanent_selector` gives the permanent half its own.
     kind: Literal[
         "permanent",
         "player",
@@ -275,6 +276,15 @@ class TargetModel(BaseModel):
     #: pass it and are six mana of creatures.
     total_mana_value: int | None = None
     selector: dict[str, Any] = Field(default_factory=dict)
+    #: The selector the **permanent half** of a ``"spell_or_permanent"`` target
+    #: takes instead of `selector` -- "return target **spell or creature**"
+    #: (Fatehold Charm), where "creature" narrows only the permanent: any spell
+    #: is legal, and of the permanents only creatures. `selector` then narrows
+    #: the spell half alone. Absent, both halves read `selector`, which is
+    #: Sink into Stupor's "spell or nonland permanent an opponent controls".
+    #: Refused on every other kind, with a ``zone`` other than the battlefield,
+    #: and with a clause naming a sibling target or ``{X}``.
+    permanent_selector: dict[str, Any] | None = None
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
     #: chooses, including zero, rather than a number written into the card.
     #: `count: N, optional: true` is not the same thing and cannot stand in: it

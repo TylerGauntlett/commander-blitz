@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**111 cards** blocked by **100** capabilities.
+**110 cards** blocked by **99** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -97,7 +97,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-or-creature-target](#spell-or-creature-target) | 1 | 26189 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-condition-has-flag](#static-condition-has-flag) | 1 | 1368 | static_effect |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -1485,20 +1484,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## spell-or-creature-target
-
-Blocks **1** card.
-
-- **(selector)** a single 'target spell or creature' spec: one target whose legal choices are any spell on the stack or a creature permanent, so the Creature restriction narrows only the permanent half (return_spell_to_hand already handles either half of a spell_or_permanent target)
-  <br>Why the existing vocabulary won't do: kind 'spell_or_permanent' applies its one selector to both halves, so types: [Creature] would restrict the spell half to creature spells; any_of branches cannot name a zone to tell a spell from a permanent, and two target specs would be a card that targets twice
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fatehold Charm** (rank 26189) — `fatehold_charm`
-  - • Return target spell or creature to its owner's hand.
 
 </details>
 

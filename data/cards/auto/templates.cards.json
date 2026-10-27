@@ -43700,6 +43700,95 @@
       ]
     },
     {
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "fatehold_charm",
+      "mana_cost": "{W}{U}",
+      "name": "Fatehold Charm",
+      "oracle_text": "Choose one —\n• Draw a card. Empower Jace 2.\n• Return target spell or creature to its owner's hand.\n• Creatures you control get +1/+2 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "empower"
+                }
+              ],
+              "label": "Draw a card. Empower Jace 2."
+            },
+            {
+              "effects": [
+                {
+                  "op": "return_spell_to_hand",
+                  "target": "bounced"
+                }
+              ],
+              "label": "Return target spell or creature to its owner's hand."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 1
+                  },
+                  "toughness": {
+                    "const": 2
+                  }
+                }
+              ],
+              "label": "Creatures you control get +1/+2 until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "bounced",
+          "kind": "spell_or_permanent",
+          "mode": 1,
+          "permanent_selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
