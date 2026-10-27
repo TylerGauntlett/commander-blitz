@@ -10890,6 +10890,12 @@
   "spined_wurm": {
     "zone": "battlefield"
   },
+  "spinerock_knoll": {
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "spire_golem": {
     "battlefield_count": 33,
     "zone": "battlefield"

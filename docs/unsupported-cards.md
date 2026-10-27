@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**100 cards** blocked by **85** capabilities.
+**99 cards** blocked by **84** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
-| [damage-taken-this-turn-per-player](#damage-taken-this-turn-per-player) | 1 | 759 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [dethrone](#dethrone) | 1 | 1278 | trigger_event |
@@ -608,20 +607,6 @@ Blocks **1** card.
 - **Inkshield** (rank 806) — `inkshield`
   - Prevent all combat damage that would be dealt to you this turn.
   - For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.
-
-</details>
-
-## damage-taken-this-turn-per-player
-
-Blocks **1** card.
-
-- **(value)** a value reading the GREATEST damage any single opponent was dealt this turn (e.g. {"max_damage_taken_this_turn": "each_opponent"}, or a per-player mode on damage_taken_this_turn), so "if an opponent was dealt 7 or more damage this turn" compares one opponent's total against 7
-  <br>Why the existing vocabulary won't do: damage_taken_this_turn over each_opponent returns the SUM across all opponents (values.py: sum(ledger.damage_taken.get(p) for p in pids)), so 4 damage to each of two opponents wrongly satisfies the 7 threshold in multiplayer; `max` only takes a fixed list of expressions and cannot map over opponents, and wrapping the effect in for_each_player with a per-seat binding would re-offer the free play once per qualifying opponent rather than test a single condition
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spinerock Knoll** (rank 759) — `spinerock_knoll`
-  - {R}, {T}: You may play the exiled card without paying its mana cost if an opponent was dealt 7 or more damage this turn.
 
 </details>
 

@@ -120612,6 +120612,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "hideaway"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Hideaway 4",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}."
+        },
+        {
+          "cost": {
+            "mana": "{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "max_damage_taken_this_turn": "each_opponent"
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "op": "play_exiled"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Play the exiled card without paying its mana cost?"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{R}, {T}: You may play the exiled card without paying its mana cost if an opponent was dealt 7 or more damage this turn."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "spinerock_knoll",
+      "name": "Spinerock Knoll",
+      "oracle_text": "Hideaway 4 (When this land enters, look at the top four cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nThis land enters tapped.\n{T}: Add {R}.\n{R}, {T}: You may play the exiled card without paying its mana cost if an opponent was dealt 7 or more damage this turn.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "cost_reduction": {

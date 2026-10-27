@@ -259532,12 +259532,12 @@
     },
     "Spinerock Knoll": {
       "edhrec_rank": 759,
-      "gate": "template",
+      "gate": null,
       "name": "Spinerock Knoll",
-      "reason": "no template for: Hideaway 4",
+      "reason": "",
       "scryfall_id": "007d53d3-3fb7-4ca5-8195-203fb96fafa7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spinerock Tyrant": {
