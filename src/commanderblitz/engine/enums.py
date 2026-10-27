@@ -285,6 +285,13 @@ class Keyword(str, Enum):
     #: trigger itself is `carddef.EXALTED_TRIGGER`, supplied by the rules for
     #: every permanent with the keyword, one per permanent (702.83b).
     EXALTED = "exalted"
+    #: Dethrone (702.105a).  "Whenever this creature attacks the player with
+    #: the most life or tied for most life, put a +1/+1 counter on it."
+    #: Exalted's shape and for exalted's reason: Marchesa, the Black Rose grants
+    #: it ("Other creatures you control have dethrone"), so it has to be a
+    #: `Keyword` that triggers.  The trigger is `carddef.DETHRONE_TRIGGER`,
+    #: supplied by the rules for every permanent with the keyword.
+    DETHRONE = "dethrone"
     #: Compleated (702.150a): "If this permanent would enter with one or more
     #: loyalty counters on it, it enters with two fewer loyalty counters on it
     #: for each Phyrexian mana symbol life was paid for as it was cast."  A

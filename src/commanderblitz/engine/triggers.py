@@ -13,7 +13,7 @@ from collections.abc import Generator, Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CLOAK_WARD, EXALTED_TRIGGER, Ability, TriggerSpec
+from .carddef import CLOAK_WARD, DETHRONE_TRIGGER, EXALTED_TRIGGER, Ability, TriggerSpec
 from .characteristics import (
     _battlefield_statics,
     _matches_printed,
@@ -878,6 +878,10 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # of Truth's Clues) listens and a removed one does not.
         if not obj.face_down and has_keyword(state, oid, Keyword.EXALTED.value):
             yield obj, EXALTED_TRIGGER
+        # Dethrone (702.105): exalted's shape, a rules trigger per permanent
+        # with the keyword, so Marchesa's granted dethrone listens too.
+        if not obj.face_down and has_keyword(state, oid, Keyword.DETHRONE.value):
+            yield obj, DETHRONE_TRIGGER
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.
@@ -1134,7 +1138,7 @@ def _matches(
         if spec.controller == "opponent" and actor == obj.controller:
             return False
 
-    if spec.defending is not None and not _defender_matches(spec.defending, obj, event):
+    if spec.defending is not None and not _defender_matches(state, spec.defending, obj, event):
         return False
 
     # "Whenever one or more **Dragons you control** deal combat damage to a
@@ -1387,7 +1391,9 @@ EVENT_BINDING_KEYS = (
 )
 
 
-def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
+def _defender_matches(
+    state: GameState, clause: str, obj: GameObject, event: GameEvent
+) -> bool:
     """Whether the player being attacked is the one the trigger asks about.
 
     ``defender`` is already on the ``attacks`` event -- combat records which
@@ -1400,10 +1406,22 @@ def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
     declaration coarser.  The absent-defender guard below is why that event had
     to exist at all: on a bare ``ATTACKERS_DECLARED`` there is nothing to
     compare, so a ``defending`` clause matches nothing, forever and silently.
+
+    ``most_life`` is dethrone's "attacks **the player** with the most life or
+    tied for most life" (702.105a). Two things are asked, both as the event
+    happens and neither again on resolution, because dethrone has no "if":
+    the creature attacked a *player* -- an attack on a planeswalker or a battle
+    names its controller as ``defender`` but carries ``attacked_permanent``,
+    and attacked the permanent (506.2) -- and that player's life is at least
+    every other living player's (`GameState.has_most_life`).
     """
     defender = event.data.get("defender")
     if defender is None:
         return False
+    if clause == "most_life":
+        if event.data.get("attacked_permanent") is not None:
+            return False
+        return state.has_most_life(int(defender))
     if clause == "you":
         return int(defender) == obj.controller
     if clause == "opponent":

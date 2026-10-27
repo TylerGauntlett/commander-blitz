@@ -3721,6 +3721,21 @@ is not about combat — Curiosity's "whenever enchanted creature deals damage to
 **an opponent**" asks who took the damage, and `controller` there is a question
 about whose *creature* dealt it.
 
+`defending: "most_life"` is dethrone's "whenever this creature attacks **the
+player with the most life or tied for most life**" (702.105a), legal on
+`attacks` only. It matches when the creature attacked a player, not a
+planeswalker or battle that player controls (the event's `attacked_permanent`),
+whose life is at least every other living player's, the attacker's controller
+included (`GameState.has_most_life`). It is part of the trigger event, so it is
+asked once as the creature attacks and never on resolution. The near miss is a
+`condition` comparing `{"life_of": {"binding": "defender"}}` with
+`{"max_life_of": "each_player"}`: an intervening-if is re-checked on
+resolution, which dethrone is not, and `defender` names a planeswalker's
+controller, so it fires on an attack at the walker. Printed dethrone is the
+`dethrone` keyword ([cookbook](card-dsl-cookbook.md#dethrone)); this clause is
+for the cards that print the sentence with another effect (Preacher of the
+Schism, Undercover Butler).
+
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"

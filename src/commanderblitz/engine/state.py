@@ -602,6 +602,19 @@ class GameState:
     def is_alive(self, pid: int) -> bool:
         return not self.players[pid].has_lost
 
+    def has_most_life(self, pid: int) -> bool:
+        """Whether this player has the most life or is tied for it (702.105a).
+
+        Dethrone's "the player with the most life or tied for most life":
+        compared with every other player still in the game, since a player who
+        has left is no longer anybody's comparison. A player who has left has
+        no life total to have the most of, so that seat answers ``False``.
+        """
+        if not self.is_alive(pid):
+            return False
+        life = self.players[pid].life
+        return all(life >= self.players[p].life for p in self.alive())
+
     def opponents(self, pid: int) -> list[int]:
         return [p for p in self.alive() if p != pid]
 

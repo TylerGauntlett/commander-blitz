@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 28 |
-| [Keywords](#keywords) | 38 |
+| [Keywords](#keywords) | 39 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -748,6 +748,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `daybound` | Daybound. | [Daybound and nightbound — one field for the whole table](card-dsl-cookbook.md#daybound-and-nightbound--one-field-for-the-whole-table) |
 | `deathtouch` | Deathtouch. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `defender` | Defender. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `dethrone` | Dethrone. | [Dethrone](card-dsl-cookbook.md#dethrone) |
 | `double_strike` | Double strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `exalted` | Exalted. | [Exalted](card-dsl-cookbook.md#exalted) |
 | `fear` | Fear. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |

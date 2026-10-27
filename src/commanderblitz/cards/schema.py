@@ -346,8 +346,9 @@ class TriggerModel(BaseModel):
     level: int | None = None
     #: For ``attacks``: whom the creature is attacking.  ``controller`` says
     #: whose creature is swinging, which is a different question -- "attacks you"
-    #: needs this one.
-    defending: Literal["you", "opponent", "any"] | None = None
+    #: needs this one. ``most_life`` is dethrone's "attacks the player with the
+    #: most life or tied for most life", and is legal on ``attacks`` only.
+    defending: Literal["you", "opponent", "any", "most_life"] | None = None
     #: "…if it wasn't put onto the battlefield with this ability."  Names the
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
     #: puts permanents onto the battlefield avoids triggering on its own output.

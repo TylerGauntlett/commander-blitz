@@ -3977,6 +3977,32 @@ of exalted: a grant cannot hand it to a Clue. Write the keyword.
 A keyword is a characteristic, not a count, so one permanent holding exalted
 twice (printed and granted) triggers once rather than twice.
 
+### Dethrone
+
+    Enraged Revolutionary — "Dethrone."
+    Marchesa, the Black Rose — "Other creatures you control have dethrone."
+
+```jsonc
+"keywords": ["dethrone"]                               // printed on the permanent
+
+{ "kind": "static", "text": "Other creatures you control have dethrone.",
+  "effect": "grant_keyword", "keywords": ["dethrone"],
+  "affects": { "controller": "you", "types": ["Creature"], "exclude_self": true } }
+```
+
+Exalted's shape: a `Keyword` whose content is a rules-supplied trigger,
+`carddef.DETHRONE_TRIGGER`, yielded once for every battlefield permanent whose
+derived keywords include dethrone. The trigger is "whenever this creature
+attacks the player with the most life or tied for most life, put a +1/+1
+counter on it" (702.105a): `attacks` from `source: "self"` with
+`defending: "most_life"`, so the comparison is part of the event, made as the
+creature attacks and never re-checked, and an attack on that player's
+planeswalker or battle does not count.
+
+**The near miss** is the same trigger printed on the card. It plays the same on
+the card that prints it, and a grant cannot hand it to another creature. Write
+the keyword. A permanent holding dethrone twice triggers once, as exalted does.
+
 ## Protection
 
 Parameterised, so it is a static rather than a `Keyword`:

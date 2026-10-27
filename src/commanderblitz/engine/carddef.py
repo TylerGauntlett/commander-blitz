@@ -557,7 +557,10 @@ class TriggerSpec:
     #: Who is being attacked, for ``attacks``.  ``controller`` answers *whose
     #: creature* is attacking, which is a different question and not a
     #: substitute: in a pod, "whenever a creature attacks you" must not fire when
-    #: one opponent swings at another.  ``you`` | ``opponent`` | ``any``.
+    #: one opponent swings at another.  ``you`` | ``opponent`` | ``any``, or
+    #: ``most_life`` on ``attacks`` only: dethrone's "attacks **the player with
+    #: the most life or tied for most life**" (702.105a), a player and not a
+    #: planeswalker or battle, asked as part of the event.
     defending: str | None = None
     #: A zone-change ``cause`` this trigger refuses to fire on -- the loop guard
     #: behind "if it wasn't put onto the battlefield with this ability".
@@ -1737,3 +1740,35 @@ EXALTED_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(EXALTED_TRIGGER)
+
+
+#: Dethrone's trigger (702.105a): "Whenever this creature attacks the player
+#: with the most life or tied for most life, put a +1/+1 counter on it."
+#:
+#: Rules-supplied for exalted's reason: Marchesa, the Black Rose and Dack's
+#: Duplicate *grant* dethrone, so the sentence cannot live on the printed card.
+#: `triggers._candidate_abilities` yields it once for every battlefield
+#: permanent whose derived keywords include dethrone, with that permanent as
+#: the source.
+#:
+#: "The player with the most life" is the `defending: "most_life"` clause, so
+#: it is part of the trigger event and not an intervening-if: the life totals
+#: are compared as attackers are declared and never again, and a counter is put
+#: on the creature even if the defender's life total changes before the
+#: ability resolves.
+DETHRONE_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Dethrone",
+    trigger=TriggerSpec(event="attacks", controller="you", source="self", defending="most_life"),
+    effects=(
+        {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"zone": "battlefield", "self_only": True},
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(DETHRONE_TRIGGER)
