@@ -554,6 +554,9 @@ class TriggerSpec:
     source: str | None = None  # "self" restricts to this permanent
     filter: Mapping[str, Any] | None = None
     condition: Mapping[str, Any] | None = None  # intervening "if" clause
+    #: False for a "while" clause: ``condition`` is checked as the event
+    #: happens and not again on resolution (603.4 names "if" only).
+    recheck: bool = True
     #: Who is being attacked, for ``attacks``.  ``controller`` answers *whose
     #: creature* is attacking, which is a different question and not a
     #: substitute: in a pod, "whenever a creature attacks you" must not fire when
@@ -1289,6 +1292,12 @@ class CardDef:
     #: under, so the residual gate can say which printed line the cost claims and
     #: check that the symbols on that line are the ones actually charged.
     multikicker: ManaCost | None = None
+    #: **Escalate {G}** (702.120a). Desugared by the loader into the
+    #: repeatable optional additional cost above, like multikicker; this one is
+    #: read too, by `casting._additional_ceiling` (at most one payment per mode
+    #: beyond the first) and `Game._cast` (the cast chooses exactly one mode
+    #: more than it paid for).
+    escalate: ManaCost | None = None
     #: **Strive**: the mana added to the spell's total cost once for each target
     #: beyond the first (601.2f). Read by `casting.strive_surcharge`, which both
     #: legality and `Game._cast` price through, so the line offered and the

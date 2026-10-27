@@ -1248,8 +1248,10 @@ def _resolve_ability(state: GameState, item: StackItem) -> Generator[Any, list[i
         source_def_id=card.id if card else "",
     )
 
-    # Intervening-if clauses are checked again on resolution (rule 603.4).
-    condition = ability.trigger.condition if ability.trigger is not None else None
+    # Intervening-if clauses are checked again on resolution (rule 603.4); a
+    # "while" clause (`recheck: false`) is not.
+    trigger = ability.trigger
+    condition = trigger.condition if trigger is not None and trigger.recheck else None
     if condition is not None and not evaluate(ctx, condition):
         state.emit(
             EventType.ABILITY_RESOLVED,

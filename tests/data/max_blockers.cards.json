@@ -1,0 +1,26 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_max_blockers.py. t_mb_troll is Challenger Troll: each creature you control with power 4 or greater can't be blocked by more than one creature.",
+  "cards": [
+    {
+      "id": "t_mb_troll",
+      "name": "Test Challenger Troll",
+      "oracle_text": "Each creature you control with power 4 or greater can't be blocked by more than one creature.",
+      "mana_cost": "{4}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Troll"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 6,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each creature you control with power 4 or greater can't be blocked by more than one creature.",
+          "effect": "block_restriction",
+          "affects": {"controller": "you", "types": ["Creature"], "power": {"op": ">=", "value": 4}},
+          "max_blockers": 1
+        }
+      ]
+    }
+  ]
+}

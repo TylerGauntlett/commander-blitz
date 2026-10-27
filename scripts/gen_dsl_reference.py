@@ -330,6 +330,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "add_energy": ("Life & damage", "A player gets N energy counters ({E}).", "Energy"),
     "prevent_damage": ("Life & damage", "Prevent damage to a player this turn.",
                        "Preventing all damage to a player for the turn"),
+    "prevent_combat_damage": ("Life & damage", "Prevent combat damage this turn, optionally only from sources matching `by`.",
+                              "Fog — combat damage prevented by its source"),
     "prevent_damage_permanent": ("Life & damage", "Prevent damage dealt to or by a permanent for a duration.",
                                  "Preventing all damage to or by a **permanent**, for a while"),
     "lock_life_total": ("Life & damage", "A player's life total can't change for a duration.",
@@ -620,8 +622,16 @@ CONDITIONS: dict[str, Entry] = {
     "zone_is": ("The source is in the named zone.", None),
 }
 
+#: Static-only value leaves, which the effect-side `VALUES` does not have.
+STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "greatest_commander_mana_value": (
+        "The greatest printed mana value among your commanders, wherever they are.", None),
+}
+
 STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
     "counters": ("The source has (or lacks) counters of a kind.", None),
+    "exists_derived": ("A permanent with these current characteristics exists (cant_attack, cant_block only).",
+                       None),
     "is_attached": ("The source is attached to something.", None),
     "top_of_library": ("The top card of a library matches a filter.",
                        '"The top card of your library is black"'),
@@ -891,6 +901,7 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "madness": ("Madness cost.", H_DREDGE),
     "morph": ("Morph cost.", H_MORPH),
     "multikicker": ("Multikicker cost.", "Multikicker"),
+    "escalate": ("Escalate cost, paid once per mode beyond the first.", "Escalate"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),
     "overload": ("Overload cost.", "Overload"),
     "pay_generic_with": ("Convoke, improvise or delve: what may pay generic mana.",
@@ -1204,7 +1215,8 @@ def families() -> list[Family]:
             "What a static's \"as long as …\" `condition` may ask.",
         ),
         Family(
-            "Static values", H_STATIC_MAGNITUDE, tuple(sorted(STATIC_VALUE_KEYS)), VALUES.get,
+            "Static values", H_STATIC_MAGNITUDE, tuple(sorted(STATIC_VALUE_KEYS)),
+            lambda name: VALUES.get(name) or STATIC_VALUE_EXTRAS.get(name),
             "The subset of the value language a static's magnitude (`power`, `amount`, …) "
             "may use.",
         ),

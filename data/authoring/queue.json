@@ -10742,12 +10742,12 @@
     },
     "Arachnogenesis": {
       "edhrec_rank": 1232,
-      "gate": "template",
+      "gate": null,
       "name": "Arachnogenesis",
-      "reason": "no template for: Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures a",
+      "reason": "",
       "scryfall_id": "77e2f5ac-5c0d-4503-b8ab-fee00eaaa4a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arachnoid": {
@@ -10942,12 +10942,12 @@
     },
     "Arasta of the Endless Web": {
       "edhrec_rank": 1012,
-      "gate": "template",
+      "gate": null,
       "name": "Arasta of the Endless Web",
-      "reason": "no template for: Whenever an opponent casts an instant or sorcery spell, create a 1/2 green Spider creature",
+      "reason": "",
       "scryfall_id": "255544be-db0f-4dcc-8787-f05652cd2684",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Araumi of the Dead Tide": {
@@ -31982,12 +31982,12 @@
     },
     "Borrowed Grace": {
       "edhrec_rank": 26918,
-      "gate": "template",
+      "gate": null,
       "name": "Borrowed Grace",
-      "reason": "no template for: Escalate {1}{W}",
+      "reason": "",
       "scryfall_id": "2b33bcf6-2acf-476f-a49b-48bdb2f5786e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Borrowed Hostility": {
@@ -43252,12 +43252,12 @@
     },
     "Challenger Troll": {
       "edhrec_rank": 12001,
-      "gate": "template",
+      "gate": null,
       "name": "Challenger Troll",
-      "reason": "no template for: Each creature you control with power 4 or greater can't be blocked by more than one creatu",
+      "reason": "",
       "scryfall_id": "0feaac7e-7d68-458e-b02a-e61216c821d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chamber Sentry": {
@@ -48162,12 +48162,12 @@
     },
     "Clifftop Lookout": {
       "edhrec_rank": 2637,
-      "gate": "template",
+      "gate": null,
       "name": "Clifftop Lookout",
-      "reason": "no template for: When this creature enters, reveal cards from the top of your library until you reveal a la",
+      "reason": "",
       "scryfall_id": "662d3bcc-65f3-4c69-8ea1-446870a1193d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Clifftop Retreat": {
@@ -50032,12 +50032,12 @@
     },
     "Collective Resistance": {
       "edhrec_rank": 788,
-      "gate": "template",
+      "gate": null,
       "name": "Collective Resistance",
-      "reason": "no template for: Escalate {G}",
+      "reason": "",
       "scryfall_id": "f260bd08-68b6-44f4-ace9-e298cb13d82e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Collective Restraint": {
@@ -61352,12 +61352,12 @@
     },
     "Darkness": {
       "edhrec_rank": 1910,
-      "gate": "template",
+      "gate": null,
       "name": "Darkness",
-      "reason": "no template for: Prevent all combat damage that would be dealt this turn",
+      "reason": "",
       "scryfall_id": "ef4c2c08-0a4d-4588-bc35-078da7120937",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Darkness Descends": {
@@ -89552,12 +89552,12 @@
     },
     "Ezuri's Predation": {
       "edhrec_rank": 1191,
-      "gate": "template",
+      "gate": null,
       "name": "Ezuri's Predation",
-      "reason": "no template for: For each creature your opponents control, create a 4/4 green Phyrexian Beast creature toke",
+      "reason": "",
       "scryfall_id": "9a6cd6f6-ae6e-4a77-95ca-64c6882357d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ezuri, Claw of Progress": {
@@ -99252,12 +99252,12 @@
     },
     "Fog": {
       "edhrec_rank": 690,
-      "gate": "template",
+      "gate": null,
       "name": "Fog",
-      "reason": "no template for: Prevent all combat damage that would be dealt this turn",
+      "reason": "",
       "scryfall_id": "92bfd2c6-2226-4f92-bb77-e614ad096996",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fog Bank": {
@@ -115212,12 +115212,12 @@
     },
     "Goreclaw, Terror of Qal Sisma": {
       "edhrec_rank": 675,
-      "gate": "template",
+      "gate": null,
       "name": "Goreclaw, Terror of Qal Sisma",
-      "reason": "no template for: Creature spells you cast with power 4 or greater cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "967fb583-48cd-453b-be52-b0249f22ea69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gorehorn Minotaurs": {
@@ -131482,12 +131482,12 @@
     },
     "Hungering Hydra": {
       "edhrec_rank": 3532,
-      "gate": "template",
+      "gate": null,
       "name": "Hungering Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "cce0561d-252a-499f-bfa0-9de59e4ea5ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hungering Puppetbeast": {
@@ -205972,12 +205972,12 @@
     },
     "Preacher of the Schism": {
       "edhrec_rank": 4604,
-      "gate": "template",
+      "gate": null,
       "name": "Preacher of the Schism",
-      "reason": "no template for: Whenever this creature attacks the player with the most life or tied for most life, create",
+      "reason": "",
       "scryfall_id": "3a0db433-7ca2-48d6-b60c-0a9a9149378a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Precinct Captain": {
@@ -209672,12 +209672,12 @@
     },
     "Pugnacious Hammerskull": {
       "edhrec_rank": 5244,
-      "gate": "template",
+      "gate": null,
       "name": "Pugnacious Hammerskull",
-      "reason": "no template for: Whenever this creature attacks while you don't control another Dinosaur, put a stun counte",
+      "reason": "",
       "scryfall_id": "632e5635-a9bc-473a-a885-02e1fd258f7b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pugnacious Pugilist": {
@@ -223032,12 +223032,12 @@
     },
     "Rhonas the Indomitable": {
       "edhrec_rank": 5123,
-      "gate": "template",
+      "gate": null,
       "name": "Rhonas the Indomitable",
-      "reason": "no template for: Rhonas can't attack or block unless you control another creature with power 4 or greater",
+      "reason": "",
       "scryfall_id": "bd0bd038-727f-4e7e-8b87-fccc7b2ca0a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rhonas's Last Stand": {
@@ -260942,12 +260942,12 @@
     },
     "Spore Frog": {
       "edhrec_rank": 1124,
-      "gate": "template",
+      "gate": null,
       "name": "Spore Frog",
-      "reason": "no template for: Sacrifice this creature: Prevent all combat damage that would be dealt this turn",
+      "reason": "",
       "scryfall_id": "3164ebb4-269a-4be6-a535-a112303f9fe8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spore Swarm": {
@@ -263752,12 +263752,12 @@
     },
     "Steel Leaf Champion": {
       "edhrec_rank": 13014,
-      "gate": "template",
+      "gate": null,
       "name": "Steel Leaf Champion",
-      "reason": "no template for: This creature can't be blocked by creatures with power 2 or less",
+      "reason": "",
       "scryfall_id": "24d8a688-79d4-49b9-ab0c-c7f5c9b551f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steel Leaf Paladin": {
@@ -275152,12 +275152,12 @@
     },
     "Tangleweave Armor": {
       "edhrec_rank": 11958,
-      "gate": "template",
+      "gate": null,
       "name": "Tangleweave Armor",
-      "reason": "no template for: Living weapon",
+      "reason": "",
       "scryfall_id": "2d7bfd95-fb9c-44fa-9dda-bc22b03f0443",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Taniwha": {
@@ -294802,12 +294802,12 @@
     },
     "Twin-Silk Spider": {
       "edhrec_rank": 8610,
-      "gate": "template",
+      "gate": null,
       "name": "Twin-Silk Spider",
-      "reason": "no template for: When this creature enters, create a 1/2 green Spider creature token with reach",
+      "reason": "",
       "scryfall_id": "68e9ba91-9bab-4b2f-a82d-05b333b8deed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twinblade Assassins": {
@@ -298762,12 +298762,12 @@
     },
     "Unstoppable Slasher": {
       "edhrec_rank": 1595,
-      "gate": "template",
+      "gate": null,
       "name": "Unstoppable Slasher",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, they lose half their life, rounded",
+      "reason": "",
       "scryfall_id": "0a30a301-8e87-46e7-89aa-cd55b1a14420",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unsubstantiate": {

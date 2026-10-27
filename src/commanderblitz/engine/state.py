@@ -18,6 +18,7 @@ from .structs import (
     AttackRestriction,
     BlockProhibition,
     CastLock,
+    CombatFog,
     CombatState,
     DamageShield,
     DelayedTrigger,
@@ -361,6 +362,9 @@ class GameState:
     #: moment a second duration exists. Normally empty, which is why
     #: `primitives.damage_player` short-circuits on it before doing any work.
     damage_shields: list[DamageShield] = field(default_factory=list)
+    #: "Prevent all combat damage that would be dealt this turn" -- see
+    #: :class:`structs.CombatFog`. A timed table for `damage_shields`' reason.
+    combat_fogs: list[CombatFog] = field(default_factory=list)
     #: "You gain protection from everything until your next turn" -- see
     #: :class:`structs.PlayerProtection`.
     #:

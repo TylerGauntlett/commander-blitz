@@ -539,6 +539,13 @@
     },
     "zone": "library"
   },
+  "arachnogenesis": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "arachnoid": {
     "zone": "battlefield"
   },
@@ -549,6 +556,10 @@
     "life": {
       "0": 43
     }
+  },
+  "arasta_of_the_endless_web": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "arbor_elf": {
     "battlefield_count": 33,
@@ -1476,6 +1487,12 @@
   "boros_swiftblade": {
     "zone": "battlefield"
   },
+  "borrowed_grace": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "boseiju_who_endures": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1980,6 +1997,10 @@
     },
     "zone": "graveyard"
   },
+  "challenger_troll": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "champion_of_arashin": {
     "zone": "battlefield"
   },
@@ -2179,6 +2200,13 @@
     },
     "zone": "battlefield"
   },
+  "clifftop_lookout": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "clifftop_retreat": {
     "zone": "battlefield"
   },
@@ -2240,6 +2268,10 @@
   },
   "cold_water_snapper": {
     "zone": "battlefield"
+  },
+  "collective_resistance": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "colorful_feiyi_sparrow": {
     "zone": "battlefield"
@@ -2731,6 +2763,16 @@
   },
   "darkmoss_bridge": {
     "zone": "battlefield"
+  },
+  "darkness": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "darkslick_shores": {
     "zone": "battlefield"
@@ -3826,6 +3868,9 @@
   "exultant_skymarcher": {
     "zone": "battlefield"
   },
+  "ezuri_s_predation": {
+    "zone": "graveyard"
+  },
   "fabled_passage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4285,6 +4330,12 @@
   },
   "flying_men": {
     "zone": "battlefield"
+  },
+  "fog": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "folio_of_fancies": {
     "battlefield_count": 33,
@@ -5025,6 +5076,10 @@
   "gore_swine": {
     "zone": "battlefield"
   },
+  "goreclaw_terror_of_qal_sisma": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gorgon_flail": {
     "zone": "battlefield"
   },
@@ -5690,6 +5745,14 @@
     "zone": "battlefield"
   },
   "hundroog": {
+    "zone": "battlefield"
+  },
+  "hungering_hydra": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "hunter_s_insight": {
@@ -8881,6 +8944,10 @@
     },
     "zone": "battlefield"
   },
+  "preacher_of_the_schism": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "preeminent_captain": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8997,6 +9064,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "pugnacious_hammerskull": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "pull_from_the_grave": {
@@ -9504,6 +9575,10 @@
     "zone": "battlefield"
   },
   "rhonas_s_monument": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "rhonas_the_indomitable": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11092,6 +11167,10 @@
   "spitting_image": {
     "zone": "graveyard"
   },
+  "spore_frog": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sporecap_spider": {
     "zone": "battlefield"
   },
@@ -11190,6 +11269,9 @@
   "steel_hellkite": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "steel_leaf_champion": {
     "zone": "battlefield"
   },
   "steel_overseer": {
@@ -11701,6 +11783,10 @@
     "zone": "battlefield"
   },
   "tanglepool_bridge": {
+    "zone": "battlefield"
+  },
+  "tangleweave_armor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tannuk_steadfast_second": {
@@ -12463,6 +12549,14 @@
   "twilight_mire": {
     "zone": "battlefield"
   },
+  "twin_silk_spider": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "spider_1_2_g_reach"
+    },
+    "zone": "battlefield"
+  },
   "twinblade_blessing": {
     "zone": [
       "battlefield",
@@ -12628,6 +12722,10 @@
     "zone": "battlefield"
   },
   "unnatural_growth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "unstoppable_slasher": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

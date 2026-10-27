@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 144 |
+| [Effect ops](#effect-ops) | 145 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 54 |
@@ -22,14 +22,14 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Grantable statics](#grantable-statics) | 38 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
-| [Card-level costs](#card-level-costs) | 28 |
+| [Card-level costs](#card-level-costs) | 29 |
 | [Keywords](#keywords) | 39 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
-| [Static conditions](#static-conditions) | 11 |
-| [Static values](#static-values) | 12 |
+| [Static conditions](#static-conditions) | 12 |
+| [Static values](#static-values) | 13 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
 | [Mana rider ops](#mana-rider-ops) | 6 |
@@ -147,6 +147,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
 | `lock_life_total` | Life & damage |  | A player's life total can't change for a duration. | ["Your life total can't change"](card-dsl-cookbook.md#your-life-total-cant-change) |
 | `lose_life` | Life & damage | yes | A player loses N life; `as` records how much. | [Effect ops](card-dsl.md#effect-ops) |
+| `prevent_combat_damage` | Life & damage |  | Prevent combat damage this turn, optionally only from sources matching `by`. | [Fog — combat damage prevented by its source](card-dsl-cookbook.md#fog--combat-damage-prevented-by-its-source) |
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn. | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
 | `prevent_damage_permanent` | Life & damage |  | Prevent damage dealt to or by a permanent for a duration. | [Preventing all damage to or by a permanent, for a while](card-dsl-cookbook.md#preventing-all-damage-to-or-by-a-permanent-for-a-while) |
 | `become_monarch` | Players |  | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
@@ -719,6 +720,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `cost_reduction` | This spell costs less to cast. | [Cost reduction](card-dsl-cookbook.md#cost-reduction) |
 | `dredge` | Dredge N. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `emerge` | Emerge cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `escalate` | Escalate cost, paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |
 | `evoke` | Evoke cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `flashback` | Flashback cost. | [Flashback](card-dsl-cookbook.md#flashback) |
 | `foretell` | Foretell cost. | [Foretell](card-dsl-cookbook.md#foretell) |
@@ -877,6 +879,7 @@ What a static's "as long as …" `condition` may ask. Defined under ["As long as
 | `cmp` | Compare `left` and `right` values with `op`. | ["As long as…"](card-dsl.md#as-long-as) |
 | `counters` | The source has (or lacks) counters of a kind. | ["As long as…"](card-dsl.md#as-long-as) |
 | `exists` | A selector finds at least one object. | ["As long as…"](card-dsl.md#as-long-as) |
+| `exists_derived` | A permanent with these current characteristics exists (cant_attack, cant_block only). | ["As long as…"](card-dsl.md#as-long-as) |
 | `has_city_s_blessing` | The player has the city's blessing (ascend). | [Ascend](card-dsl-cookbook.md#ascend) |
 | `is_attached` | The source is attached to something. | ["As long as…"](card-dsl.md#as-long-as) |
 | `is_monarch` | The given player is the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
@@ -893,6 +896,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `const` | A literal number. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `count` | How many objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `counters_on` | Counters of a kind on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `greatest_commander_mana_value` | The greatest printed mana value among your commanders, wherever they are. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `mana_symbols` | Pips of a color among a pool's mana costs (chroma). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `max_life_of` | The highest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |

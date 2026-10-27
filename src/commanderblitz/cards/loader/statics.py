@@ -297,6 +297,16 @@ def _validate_static_condition(condition: Any, where: str) -> None:
         _validate_static_condition(condition["not"], f"{where}.not")
     elif head == "exists":
         _validate_static_count_filter(condition["exists"], f"{where}.exists")
+    elif head == "exists_derived":
+        spec = condition["exists_derived"]
+        # The battlefield only: derived characteristics are a permanent's, and
+        # a card in a graveyard has nothing but its printed face.
+        if isinstance(spec, Mapping) and spec.get("zone", "battlefield") != "battlefield":
+            raise DslError(
+                f"{where}.exists_derived: reads permanents on the battlefield; "
+                f"got zone {spec.get('zone')!r}"
+            )
+        _validate_static_count_filter(spec, f"{where}.exists_derived")
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
@@ -402,6 +412,14 @@ def _validate_static_value(value: Any, where: str) -> None:
             raise DslError(
                 f"{where}.starting_life_of: a static can only ask about 'you' "
                 f"(one seat's starting life total, rule 103.4), got {who!r}"
+            )
+    if "greatest_commander_mana_value" in value:
+        # "Among your commanders": one seat's, for `starting_life_of`'s reason.
+        who = value["greatest_commander_mana_value"]
+        if who != "you":
+            raise DslError(
+                f"{where}.greatest_commander_mana_value: a static can only ask "
+                f"about 'you' (your commanders), got {who!r}"
             )
     if "permanents_entered_this_turn" in value:
         # Kinbinding: "Creatures you control get +X/+X, where X is the number of

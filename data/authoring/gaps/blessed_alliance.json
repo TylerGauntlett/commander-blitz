@@ -1,0 +1,18 @@
+{
+  "card_id": "blessed_alliance",
+  "name": "Blessed Alliance",
+  "oracle_text": "Escalate {2} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Target player gains 4 life.\n• Untap up to two target creatures.\n• Target opponent sacrifices an attacking creature of their choice.",
+  "blocked_sentences": [
+    "• Untap up to two target creatures."
+  ],
+  "needs": [
+    {
+      "capability": "mode_owned_variable_targets",
+      "kind": "engine",
+      "what": "a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)",
+      "why_existing_wont_do": "`loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible"
+    }
+  ],
+  "closest_existing": ["collective_resistance", "abrade"],
+  "confidence": "high"
+}

@@ -6,8 +6,8 @@ rule, ``_expired``.
 
 from __future__ import annotations
 
-from collections.abc import Iterable
-from typing import TYPE_CHECKING
+from collections.abc import Iterable, Mapping
+from typing import TYPE_CHECKING, Any
 
 from .characteristics import _matches
 from .player_statics import _battlefield_statics, static_life_floor
@@ -15,6 +15,7 @@ from .structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CAST_LOCK_DURATIONS,
+    COMBAT_FOG_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
@@ -23,6 +24,7 @@ from .structs import (
     AttackRestriction,
     BlockProhibition,
     CastLock,
+    CombatFog,
     DamageShield,
     FlashPermission,
     LifeFloor,
@@ -788,6 +790,63 @@ def clear_permanent_shields(state: GameState, duration: str, player: int | None 
         if obj is None or not obj.damage_shields:
             continue
         obj.damage_shields = _expired(obj.damage_shields, duration, player)
+
+
+def fog_combat_damage(
+    state: GameState,
+    controller: int,
+    by: Mapping[str, Any] | None = None,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> None:
+    """Prevent combat damage dealt this turn by sources matching ``by``.
+
+    One rules-relevant thing: it records the `CombatFog`. Reading it is
+    `combat_fogged`'s job, asked by both damage primitives.
+    """
+    if duration not in COMBAT_FOG_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown combat fog duration {duration!r}")
+    entry = CombatFog(
+        by=dict(by) if by is not None else None,
+        controller=controller,
+        duration=duration,
+        source=source,
+    )
+    if entry not in state.combat_fogs:
+        state.combat_fogs.append(entry)
+
+
+def combat_fogged(state: GameState, source_oid: int | None) -> bool:
+    """Is combat damage dealt by ``source_oid`` being prevented right now?
+
+    ``by`` is read off the source's **current** characteristics, as the damage
+    would be dealt (615.1): a creature that became a Spider after the fog
+    resolved is spared it, and one that stopped being one is not. Asked on
+    every instance of combat damage, so the empty table costs nothing.
+    """
+    if not state.combat_fogs:
+        return False
+    # Deferred: the effect layer imports this module.
+    from .effects.context import EffectContext
+    from .effects.selectors import matches
+
+    for fog in state.combat_fogs:
+        if fog.by is None:
+            return True
+        if source_oid is None:
+            continue
+        # The effect-side selector, which reads derived characteristics and
+        # says "non-Spider" (`not_subtypes`); "you" is the fog's controller.
+        ctx = EffectContext(state=state, controller=fog.controller, source_oid=fog.source)
+        if matches(ctx, source_oid, fog.by):
+            return True
+    return False
+
+
+def clear_combat_fogs(state: GameState, duration: str) -> None:
+    """Drop the combat fogs of one duration, at cleanup with the damage shields."""
+    if state.combat_fogs:
+        state.combat_fogs = [f for f in state.combat_fogs if f.duration != duration]
 
 
 def clear_damage_shields(state: GameState, duration: str) -> None:

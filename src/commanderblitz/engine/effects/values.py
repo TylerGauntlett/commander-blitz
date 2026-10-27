@@ -35,7 +35,7 @@ from typing import Any
 from ..characteristics import _matches_printed, chars, min_count, min_life
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
-from ..objects import PLUS_ONE, SHIELD
+from ..objects import PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
 from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
 
@@ -925,6 +925,13 @@ def validate_counter_kind(kind: Any, where: str) -> None:
             f"{where}: write the shield counter as {SHIELD!r}, not {kind!r}. A shield "
             f"counter replaces damage and destruction (122.1c) and the lookup is exact, "
             f"so {kind!r} would be an inert tally on a permanent that never spends it"
+        )
+    if normalised != kind and normalised == STUN:
+        # A stun counter is spent by `primitives.untap_or_stun` (122.1d), which
+        # reads the kind exactly; `"Stun"` would leave the creature untapping.
+        raise DslError(
+            f"{where}: write the stun counter as {STUN!r}, not {kind!r}. A stun "
+            f"counter replaces untapping (122.1d) and the lookup is exact"
         )
     if normalised != kind and normalised in KEYWORD_COUNTERS:
         raise DslError(

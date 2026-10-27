@@ -94,6 +94,9 @@ CARD_LEVEL_COST_KEYS = (
     "cost_reduction",  # int; "this spell costs {X} less to cast"
     "dredge",  # int
     "emerge",
+    #: "Escalate {G}": paid once per mode beyond the first, on a spell that is
+    #: one top-level choose_mode with or_more.
+    "escalate",
     "evoke",
     "flashback",
     "foretell",

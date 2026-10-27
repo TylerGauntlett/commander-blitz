@@ -35,6 +35,7 @@ from commanderblitz.engine.carddef import (
 from commanderblitz.engine.characteristics import (
     AFFECTED_CONTROLLER,
     static_condition_names_affected,
+    static_condition_reads_derived,
 )
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
@@ -144,6 +145,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
     STATIC_COUNT_ZONES,
+    STATIC_DERIVED_CONDITION_EFFECTS,
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
     STATIC_LIFE_KEYS,
@@ -1265,6 +1267,32 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_optional = True
         additional_repeatable = True
 
+    escalate = ManaCost.parse(model.escalate) if model.escalate else None
+    if escalate is not None:
+        if escalate.x_count or escalate.mana_value() == 0:
+            raise DslError(
+                f"{where}: escalate {model.escalate!r} must be a fixed, non-free mana cost"
+            )
+        if additional_cost is not None or model.additional_optional or model.additional_repeatable:
+            # Escalate *is* the additional cost, desugared below; a second one
+            # would be a different slot whose lines nothing ties to the modes.
+            raise DslError(
+                f"{where}: 'escalate' is the spell's additional cost -- do not give "
+                f"'additional_cost', 'multikicker' or the additional_* flags beside it"
+            )
+        if model.spree:
+            raise DslError(f"{where}: 'escalate' and 'spree' are two ways to price modes")
+        if not cast_modes or not cast_modes.get("or_more"):
+            # "For each mode chosen beyond the first" needs a cast-time choice
+            # of one or more; anywhere else nothing counts the modes.
+            raise DslError(
+                f"{where}: 'escalate' needs the spell's effects to be one top-level "
+                f"'choose_mode' with 'or_more'"
+            )
+        additional_cost = _compile_cost(CostModel(mana=model.escalate), f"{where}.escalate")
+        additional_optional = True
+        additional_repeatable = True
+
     if additional_cost is None and (model.additional_optional or model.additional_repeatable):
         raise DslError(
             f"{where}: 'additional_optional' and 'additional_repeatable' need an "
@@ -1698,6 +1726,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker=kicker,
         gift=model.gift,
         multikicker=multikicker,
+        escalate=escalate,
         strive=strive,
         evoke=evoke,
         bestow=bestow,
@@ -2184,6 +2213,12 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"'self' (the object that has the ability), got {shares!r}"
             )
         validate_condition(model.trigger.condition, f"{where}.trigger.condition")
+        if not model.trigger.recheck and not model.trigger.condition:
+            # "While" qualifies a condition; with none there is nothing to not
+            # re-check, and the key would load and say nothing.
+            raise DslError(
+                f"{where}.trigger: 'recheck' is only meaningful beside a 'condition'"
+            )
         if model.trigger.defending is not None and model.trigger.event not in DEFENDING_TRIGGERS:
             # Silently ignoring it would produce a card that looks like it reads
             # "attacks you" and fires on everything. The other direction is just
@@ -2410,6 +2445,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             source=source,
             filter=dict(model.trigger.filter) if model.trigger.filter else None,
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
+            recheck=model.trigger.recheck,
             defending=model.trigger.defending,
             not_cause=model.trigger.not_cause,
             cause_controller=model.trigger.cause_controller,
@@ -3011,10 +3047,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that
         # evades nothing -- which loads clean and shows nothing on the board.
-        if (model.blockers is None) == (not model.require_all):
+        forms = (
+            (model.blockers is not None) + bool(model.require_all) + (model.max_blockers is not None)
+        )
+        if forms != 1:
             raise DslError(
                 f"{where}: block_restriction needs exactly one of 'blockers' "
-                f"(a filter on the would-be blocker) or 'require_all'"
+                f"(a filter on the would-be blocker), 'require_all' or 'max_blockers'"
+            )
+        # "More than one" is the printed floor; zero would be "can't be
+        # blocked", which is a different static and a different card.
+        if model.max_blockers is not None and (
+            isinstance(model.max_blockers, bool) or model.max_blockers < 1
+        ):
+            raise DslError(
+                f"{where}: block_restriction 'max_blockers' is a positive integer, "
+                f"got {model.max_blockers!r}"
             )
         if model.blockers is not None:
             unknown = set(model.blockers) - STATIC_FILTER_KEYS
@@ -3024,9 +3072,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
             _check_owner_key(model.blockers, f"{where}.blockers")
-    elif model.blockers is not None or model.require_all:
+    elif model.blockers is not None or model.require_all or model.max_blockers is not None:
         raise DslError(
-            f"{where}: 'blockers'/'require_all' only mean anything on a "
+            f"{where}: 'blockers'/'require_all'/'max_blockers' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
         )
     if model.effect == "double_triggers":
@@ -4526,6 +4574,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{model.effect!r} does not"
         )
 
+    if (
+        static_condition_reads_derived(model.condition)
+        and model.effect not in STATIC_DERIVED_CONDITION_EFFECTS
+    ):
+        # Anywhere else the condition is asked inside the pipeline, where the
+        # derived board is half-computed; `_static_active` would defer it for
+        # ever and the static would apply as if the clause were not printed.
+        raise DslError(
+            f"{where}.condition: 'exists_derived' reads current characteristics, "
+            f"which only {sorted(STATIC_DERIVED_CONDITION_EFFECTS)} read outside the "
+            f"layer pipeline; {model.effect!r} does not"
+        )
+
     static: dict[str, Any] = {"effect": model.effect}
     if model.condition is not None:
         static["condition"] = dict(model.condition)
@@ -4637,6 +4698,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["blockers"] = dict(model.blockers)
     if model.require_all:
         static["require_all"] = True
+    if model.max_blockers is not None:
+        static["max_blockers"] = model.max_blockers
     if model.effect == "ward":
         # Pruned of the fields the model dump carries unset, because this
         # mapping is also what `carddef.ward_ability` keys its intern table on:

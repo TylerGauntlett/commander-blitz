@@ -341,6 +341,11 @@ class TriggerModel(BaseModel):
     source: Literal["self"] | None = None
     filter: dict[str, Any] | None = None
     condition: dict[str, Any] | None = None
+    #: ``false`` makes ``condition`` a **"while"** clause rather than an
+    #: intervening "if": checked as the event happens and not again on
+    #: resolution (603.4 names "if" only) -- "Whenever this creature attacks
+    #: while you don't control another Dinosaur" (Pugnacious Hammerskull).
+    recheck: bool = True
     #: For ``becomes_level``: the level it waits for -- "When this Class becomes
     #: level **2**". Required there and refused on every other event.
     level: int | None = None
@@ -812,6 +817,10 @@ class AbilityModel(BaseModel):
     #: declaration rather than per pair, so it cannot be a ``blockers``
     #: filter.
     require_all: bool = False
+    #: ``block_restriction``: Challenger Troll's "can't be blocked by more than
+    #: one creature" -- the most creatures that may block it. A count, judged
+    #: on the declaration, so neither of the two forms above.
+    max_blockers: int | None = None
     #: ``attack_tax``: the tax also prices an attack on a planeswalker the
     #: static's controller controls -- "creatures can't attack you **or
     #: planeswalkers you control** unless ..." (Archangel of Tithes, Sphere of
@@ -1312,6 +1321,12 @@ class CardModel(BaseModel):
     #: action and ``{"kicked": true}`` can only answer yes or no, never how many.
     #: Give one or the other, not both spellings of the same slot.
     multikicker: str | None = None
+    #: **Escalate {G}** (702.120a): the mana charged once for each mode chosen
+    #: beyond the first, on a spell whose effect tree is one top-level
+    #: ``choose_mode`` with ``or_more``. Desugared like ``multikicker`` -- a
+    #: repeatable optional additional cost -- with the number of times paid
+    #: fixing how many modes the cast chooses (601.2b, then 601.2f).
+    escalate: str | None = None
     #: **Strive** (Journey into Nyx): "This spell costs {1}{W} more to cast for
     #: each target beyond the first." The mana string charged once per target
     #: past the first, on a card whose one target spec is ``count: "any"``. A

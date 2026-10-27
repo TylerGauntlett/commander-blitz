@@ -51,7 +51,7 @@ each heading; this table is generated from them.
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
 | [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) | S | high | Read ahead on Sagas (702.155) | 0 |
-| [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) | S | high | nothing | 0 |
+| [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) | S | high | Damage divided among targets on a spell (601.2d) | 0 |
 | [Multiverse Reforged (Reality Fracture Commander)](#multiverse-reforged-reality-fracture-commander) | L | high | nothing | 0 |
 | [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) | L | high | nothing | 0 |
 | [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) | L | high | nothing | 0 |
@@ -154,6 +154,7 @@ each heading; this table is generated from them.
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
+| [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -172,108 +173,108 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Ready now, best first:**
 
-1. [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) — S, high
-2. [Multiverse Reforged (Reality Fracture Commander)](#multiverse-reforged-reality-fracture-commander) — L, high
-3. [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) — L, high
-4. [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) — L, high
-5. [Doom Prevails (Marvel Super Heroes Commander)](#doom-prevails-marvel-super-heroes-commander) — L, high
-6. [The Fantastic Four (Marvel Super Heroes Commander)](#the-fantastic-four-marvel-super-heroes-commander) — L, high
-7. [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — L, high
-8. [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — L, high
-9. [Witherbloom Pestilence (Secrets of Strixhaven Commander)](#witherbloom-pestilence-secrets-of-strixhaven-commander) — L, high
-10. [Silverquill Influence (Secrets of Strixhaven Commander)](#silverquill-influence-secrets-of-strixhaven-commander) — L, high
-11. [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) — L, high
-12. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
-13. [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — L, high
-14. [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) — L, high
-15. [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) — L, high
-16. [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) — S, high
-17. [Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)](#scions--spellcraft-final-fantasy-xiv-final-fantasy-commander) — L, high
-18. [Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)](#limit-break-final-fantasy-vii-final-fantasy-commander) — L, high
-19. [Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)](#counter-blitz-final-fantasy-x-final-fantasy-commander) — L, high
-20. [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) — M, high
-21. [Mardu Surge (Tarkir: Dragonstorm Commander)](#mardu-surge-tarkir-dragonstorm-commander) — M, high
-22. [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) — M, high
-23. [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) — L, high
-24. [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — L, high
-25. [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — L, high
-26. [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) — L, high
-27. [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — L, high
-28. [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — L, high
-29. [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — L, high
-30. [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — L, high
-31. [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) — M, high
-32. [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — L, high
-33. [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) — L, high
-34. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
-35. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
-36. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
-37. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
-38. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
-39. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
-40. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
-41. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
-42. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
-43. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
-44. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
-45. [Science! (Fallout)](#science-fallout) — L, high
-46. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
-47. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
-48. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
-49. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
-50. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
-51. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
-52. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
-53. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
-54. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
-55. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
-56. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
-57. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
-58. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
-59. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
-60. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
-61. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
-62. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
-63. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
-64. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
-65. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
-66. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
-67. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
-68. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
-69. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
-70. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
-71. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
-72. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
-73. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
-74. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
-75. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
-76. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
-77. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
-78. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
-79. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
-80. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
-81. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
-82. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
-83. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
-84. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
-85. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
-86. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
-87. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
-88. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
-89. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
-90. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
-91. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
-92. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
-93. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
-94. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
-95. [Difficulty](#difficulty) — S, medium
-96. [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155) — S, medium
-97. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-98. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-99. [Why a press is refused](#why-a-press-is-refused) — S, medium
-100. [Outcomes as data](#outcomes-as-data) — M, medium
-101. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-102. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+1. [Multiverse Reforged (Reality Fracture Commander)](#multiverse-reforged-reality-fracture-commander) — L, high
+2. [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) — L, high
+3. [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) — L, high
+4. [Doom Prevails (Marvel Super Heroes Commander)](#doom-prevails-marvel-super-heroes-commander) — L, high
+5. [The Fantastic Four (Marvel Super Heroes Commander)](#the-fantastic-four-marvel-super-heroes-commander) — L, high
+6. [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — L, high
+7. [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — L, high
+8. [Witherbloom Pestilence (Secrets of Strixhaven Commander)](#witherbloom-pestilence-secrets-of-strixhaven-commander) — L, high
+9. [Silverquill Influence (Secrets of Strixhaven Commander)](#silverquill-influence-secrets-of-strixhaven-commander) — L, high
+10. [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) — L, high
+11. [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) — L, high
+12. [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — L, high
+13. [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) — L, high
+14. [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) — L, high
+15. [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) — S, high
+16. [Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)](#scions--spellcraft-final-fantasy-xiv-final-fantasy-commander) — L, high
+17. [Limit Break (FINAL FANTASY VII) (Final Fantasy Commander)](#limit-break-final-fantasy-vii-final-fantasy-commander) — L, high
+18. [Counter Blitz (FINAL FANTASY X) (Final Fantasy Commander)](#counter-blitz-final-fantasy-x-final-fantasy-commander) — L, high
+19. [Jeskai Striker (Tarkir: Dragonstorm Commander)](#jeskai-striker-tarkir-dragonstorm-commander) — M, high
+20. [Mardu Surge (Tarkir: Dragonstorm Commander)](#mardu-surge-tarkir-dragonstorm-commander) — M, high
+21. [Temur Roar (Tarkir: Dragonstorm Commander)](#temur-roar-tarkir-dragonstorm-commander) — M, high
+22. [Abzan Armor (Tarkir: Dragonstorm Commander)](#abzan-armor-tarkir-dragonstorm-commander) — L, high
+23. [Sultai Arisen (Tarkir: Dragonstorm Commander)](#sultai-arisen-tarkir-dragonstorm-commander) — L, high
+24. [Eternal Might (Aetherdrift Commander)](#eternal-might-aetherdrift-commander) — L, high
+25. [Living Energy (Aetherdrift Commander)](#living-energy-aetherdrift-commander) — L, high
+26. [Endless Punishment (Duskmourn: House of Horror Commander)](#endless-punishment-duskmourn-house-of-horror-commander) — L, high
+27. [Death Toll (Duskmourn: House of Horror Commander)](#death-toll-duskmourn-house-of-horror-commander) — L, high
+28. [Jump Scare! (Duskmourn: House of Horror Commander)](#jump-scare-duskmourn-house-of-horror-commander) — L, high
+29. [Miracle Worker (Duskmourn: House of Horror Commander)](#miracle-worker-duskmourn-house-of-horror-commander) — L, high
+30. [Animated Army (Bloomburrow Commander)](#animated-army-bloomburrow-commander) — M, high
+31. [Family Matters (Bloomburrow Commander)](#family-matters-bloomburrow-commander) — L, high
+32. [Peace Offering (Bloomburrow Commander)](#peace-offering-bloomburrow-commander) — L, high
+33. [Squirreled Away (Bloomburrow Commander)](#squirreled-away-bloomburrow-commander) — L, high
+34. [Creative Energy (Modern Horizons 3 Commander)](#creative-energy-modern-horizons-3-commander) — L, high
+35. [Graveyard Overdrive (Modern Horizons 3 Commander)](#graveyard-overdrive-modern-horizons-3-commander) — L, high
+36. [Tricky Terrain (Modern Horizons 3 Commander)](#tricky-terrain-modern-horizons-3-commander) — L, high
+37. [Eldrazi Incursion (Modern Horizons 3 Commander)](#eldrazi-incursion-modern-horizons-3-commander) — L, high
+38. [Quick Draw (Outlaws of Thunder Junction Commander)](#quick-draw-outlaws-of-thunder-junction-commander) — M, high
+39. [Desert Bloom (Outlaws of Thunder Junction Commander)](#desert-bloom-outlaws-of-thunder-junction-commander) — L, high
+40. [Grand Larceny (Outlaws of Thunder Junction Commander)](#grand-larceny-outlaws-of-thunder-junction-commander) — L, high
+41. [Most Wanted (Outlaws of Thunder Junction Commander)](#most-wanted-outlaws-of-thunder-junction-commander) — L, high
+42. [Hail, Caesar (Fallout)](#hail-caesar-fallout) — L, high
+43. [Scrappy Survivors (Fallout)](#scrappy-survivors-fallout) — L, high
+44. [Science! (Fallout)](#science-fallout) — L, high
+45. [Mutant Menace (Fallout)](#mutant-menace-fallout) — L, high
+46. [Deep Clue Sea (Murders at Karlov Manor Commander)](#deep-clue-sea-murders-at-karlov-manor-commander) — L, high
+47. [Revenant Recon (Murders at Karlov Manor Commander)](#revenant-recon-murders-at-karlov-manor-commander) — L, high
+48. [Blame Game (Murders at Karlov Manor Commander)](#blame-game-murders-at-karlov-manor-commander) — L, high
+49. [Deadly Disguise (Murders at Karlov Manor Commander)](#deadly-disguise-murders-at-karlov-manor-commander) — L, high
+50. [Blood Rites (The Lost Caverns of Ixalan Commander)](#blood-rites-the-lost-caverns-of-ixalan-commander) — M, high
+51. [Veloci-Ramp-Tor (The Lost Caverns of Ixalan Commander)](#veloci-ramp-tor-the-lost-caverns-of-ixalan-commander) — L, high
+52. [Ahoy Mateys (The Lost Caverns of Ixalan Commander)](#ahoy-mateys-the-lost-caverns-of-ixalan-commander) — L, high
+53. [Explorers of the Deep (The Lost Caverns of Ixalan Commander)](#explorers-of-the-deep-the-lost-caverns-of-ixalan-commander) — L, high
+54. [Masters of Evil (Doctor Who)](#masters-of-evil-doctor-who) — L, high
+55. [Paradox Power (Doctor Who)](#paradox-power-doctor-who) — L, high
+56. [Blast from the Past (Doctor Who)](#blast-from-the-past-doctor-who) — L, high
+57. [Timey-Wimey (Doctor Who)](#timey-wimey-doctor-who) — L, high
+58. [Fae Dominion (Wilds of Eldraine Commander)](#fae-dominion-wilds-of-eldraine-commander) — L, high
+59. [Virtue and Valor (Wilds of Eldraine Commander)](#virtue-and-valor-wilds-of-eldraine-commander) — L, high
+60. [Riders of Rohan (Tales of Middle-earth Commander)](#riders-of-rohan-tales-of-middle-earth-commander) — S, high
+61. [Food and Fellowship (Tales of Middle-earth Commander)](#food-and-fellowship-tales-of-middle-earth-commander) — L, high
+62. [Elven Council (Tales of Middle-earth Commander)](#elven-council-tales-of-middle-earth-commander) — L, high
+63. [The Hosts of Mordor (Tales of Middle-earth Commander)](#the-hosts-of-mordor-tales-of-middle-earth-commander) — L, high
+64. [Cavalry Charge (March of the Machine Commander)](#cavalry-charge-march-of-the-machine-commander) — L, high
+65. [Divine Convocation (March of the Machine Commander)](#divine-convocation-march-of-the-machine-commander) — L, high
+66. [Tinker Time (March of the Machine Commander)](#tinker-time-march-of-the-machine-commander) — L, high
+67. [Growing Threat (March of the Machine Commander)](#growing-threat-march-of-the-machine-commander) — L, high
+68. [Call for Backup (March of the Machine Commander)](#call-for-backup-march-of-the-machine-commander) — L, high
+69. [Rebellion Rising (Phyrexia: All Will Be One Commander)](#rebellion-rising-phyrexia-all-will-be-one-commander) — M, high
+70. [Corrupting Influence (Phyrexia: All Will Be One Commander)](#corrupting-influence-phyrexia-all-will-be-one-commander) — L, high
+71. [Draconic Destruction (Starter Commander Decks)](#draconic-destruction-starter-commander-decks) — M, high
+72. [Grave Danger (Starter Commander Decks)](#grave-danger-starter-commander-decks) — M, high
+73. [First Flight (Starter Commander Decks)](#first-flight-starter-commander-decks) — M, high
+74. [Chaos Incarnate (Starter Commander Decks)](#chaos-incarnate-starter-commander-decks) — M, high
+75. [Token Triumph (Starter Commander Decks)](#token-triumph-starter-commander-decks) — L, high
+76. [Urza's Iron Alliance (The Brothers' War Commander)](#urzas-iron-alliance-the-brothers-war-commander) — M, high
+77. [Mishra's Burnished Banner (The Brothers' War Commander)](#mishras-burnished-banner-the-brothers-war-commander) — L, high
+78. [Forces of the Imperium (Warhammer 40,000 Commander)](#forces-of-the-imperium-warhammer-40000-commander) — L, high
+79. [The Ruinous Powers (Warhammer 40,000 Commander)](#the-ruinous-powers-warhammer-40000-commander) — L, high
+80. [Necron Dynasties (Warhammer 40,000 Commander)](#necron-dynasties-warhammer-40000-commander) — L, high
+81. [Tyranid Swarm (Warhammer 40,000 Commander)](#tyranid-swarm-warhammer-40000-commander) — L, high
+82. [Legends' Legacy (Dominaria United Commander)](#legends-legacy-dominaria-united-commander) — L, high
+83. [Painbow (Dominaria United Commander)](#painbow-dominaria-united-commander) — L, high
+84. [Cabaretti Cacophony (New Capenna Commander)](#cabaretti-cacophony-new-capenna-commander) — L, high
+85. [Maestros Massacre (New Capenna Commander)](#maestros-massacre-new-capenna-commander) — L, high
+86. [Riveteers Rampage (New Capenna Commander)](#riveteers-rampage-new-capenna-commander) — L, high
+87. [Obscura Operation (New Capenna Commander)](#obscura-operation-new-capenna-commander) — L, high
+88. [Bedecked Brokers (New Capenna Commander)](#bedecked-brokers-new-capenna-commander) — L, high
+89. [Buckle Up (Neon Dynasty Commander)](#buckle-up-neon-dynasty-commander) — L, high
+90. [Upgrades Unleashed (Neon Dynasty Commander)](#upgrades-unleashed-neon-dynasty-commander) — L, high
+91. [Vampiric Bloodline (Crimson Vow Commander)](#vampiric-bloodline-crimson-vow-commander) — M, high
+92. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
+93. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
+94. [Difficulty](#difficulty) — S, medium
+95. [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155) — S, medium
+96. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+97. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+98. [Why a press is refused](#why-a-press-is-refused) — S, medium
+99. [Outcomes as data](#outcomes-as-data) — M, medium
+100. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+101. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+102. [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d) — M, medium
 103. [Replays and sharing](#replays-and-sharing) — M, medium
 104. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
 105. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
@@ -285,6 +286,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Blocked, and by what:**
 
 - [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) — [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155)
+- [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) — [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -510,6 +512,75 @@ six gates.
   War only, titled `feat(cards):`; every other read-ahead Saga is left to the
   next `/author-cards` wave, so the review stays one mechanic.
 
+### Damage divided among targets on a spell (601.2d)
+
+Effort **M** · Impact **medium**, Monstrous Onslaught in Tramplesaurus Rex and Pyrokinesis wait on it, and every divided-damage spell after them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+A spell cannot divide damage among its targets. The `damage` op in
+`engine/effects/ops_life.py` deals its full `amount` to every object its
+selector names, so "4 damage divided as you choose among any number of target
+creatures" would deal 4 to each. The one dividing op is `distribute_counters`
+in `engine/effects/ops_counters.py`, whose division is announced by
+`Game._ask_distribution` as an **activated** ability is put on the stack
+(601.2d via 602.2b) and carried as `bindings["distribution"]`; `Game._cast`
+asks nothing of the kind, and the loader keeps the op to activated abilities
+with a printed amount. [rules-coverage.md](rules-coverage.md) lists
+"dividing damage among targets" under "Not implemented".
+
+Two gap records name the capability, `divided_damage`:
+`data/authoring/gaps/monstrous_onslaught.json`, the last card the Tramplesaurus
+Rex precon lacks, and `data/authoring/gaps/pyrokinesis.json`. Monstrous
+Onslaught also needs its X, "the greatest power among creatures you control
+**as you cast this spell**", fixed at cast time: `extreme_value` reads the
+board only as the spell resolves.
+
+#### The change
+
+1. A `divided` key on the `damage` op (or a sibling op), naming one target spec
+   whose objects share the `amount`. `Game._cast` announces the division after
+   the targets and before payment (601.2d), through the same one-at-a-time
+   `ask_objects` walk `_ask_distribution` uses, every target taking at least one,
+   and records it on the stack item; resolution deals each still-legal target its
+   share and redistributes nothing (608.2b).
+2. A value fixed as the spell is cast, for an amount that 601.2d needs to know
+   before the division: the amount is evaluated at announcement and carried on
+   the stack item rather than re-read on resolution.
+3. The verifier's auto-answer handles the division without a new decision kind,
+   since it composes `ask_objects`.
+4. Harvest Monstrous Onslaught and Pyrokinesis through `/author-cards`, then
+   finish [precon-fdc-tramplesaurus-rex](precon-fdc-tramplesaurus-rex.md),
+   which depends on this item.
+
+It does not touch combat damage assignment (510.1c), which stays as it is.
+
+#### Gate
+
+A unit test under `tests/unit/damage/` that casts a divided-damage spell at two
+and three targets and asserts each target's damage, that every target was
+assigned at least one, that a target made illegal in response loses its share
+without the rest moving, and that the cast-time amount does not change when the
+board does before resolution; `tests/cards` with Monstrous Onslaught and
+Pyrokinesis through the six gates.
+
+#### Open questions
+
+- **One op or a key:** a `divided: true` key on `damage` naming the target spec,
+  or a `divide_damage` op beside `distribute_counters`. Recommended: the key on
+  `damage`, because the effect is damage in every other respect (lifelink,
+  deathtouch, `damage_multiplier`, prevention) and a sibling op would have to
+  re-route all of it.
+- **How the cast-time amount is written:** a general `as_cast` wrapper on any
+  value, or a field on the divided damage that says its amount is evaluated at
+  announcement. Recommended: the field, since 601.2d only needs the amount
+  fixed where a division is announced, and a general wrapper would open every
+  value to cast-time reads no other card needs yet.
+- **Scope of the pull request:** the capability, Monstrous Onslaught and
+  Pyrokinesis only, titled `feat(cards):`, with the Tramplesaurus Rex deck
+  written once Monstrous Onslaught lands. Recommended, so the review stays one
+  mechanic and the precon item retires in the same pull request.
+
 ## Decks
 
 ### Reign of Dragons (Foundations Commander)
@@ -563,7 +634,7 @@ whole-game test able to draw the deck.
 
 ### Tramplesaurus Rex (Foundations Commander)
 
-Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing.
+Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d).
 
 #### Today
 

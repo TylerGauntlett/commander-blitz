@@ -3826,9 +3826,15 @@ quality it names is a parameter:
 // Tromokratis: can't be blocked unless all creatures defending player controls block it
 { "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
   "require_all": true }
+
+// Challenger Troll: each creature you control with power 4 or greater can't be
+// blocked by more than one creature
+{ "kind": "static", "effect": "block_restriction",
+  "affects": { "controller": "you", "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
+  "max_blockers": 1 }
 ```
 
-The two forms are evaluated at different moments and neither is the other with a
+The forms are evaluated at different moments and none is another with a
 parameter. `blockers` is a **per-pair** question — is *this* creature allowed to
 block? — and is asked in `combat.can_block`, beside flying and protection.
 `require_all` cannot be answered per pair at all, because whether one block is
@@ -3851,8 +3857,16 @@ fire.
 still makes the block illegal, which is why Tromokratis is close to unblockable
 and is the entire point of the card.
 
-A `block_restriction` carrying neither field is refused at load time — an
-evasion ability that evades nothing, which would load perfectly cleanly.
+`max_blockers` is a count, menace's mirror: the most creatures that may block the
+attacker, a positive integer. `blocks_valid` refuses a declaration over the cap,
+and `can_block` refuses one more blocker once the attacker has its quota, since
+no later choice could make that declaration legal again. Two caps on one
+creature are both obeyed, so the least wins. "Can't be blocked by more than one"
+is not `blockers` refusing everyone, which would be "can't be blocked".
+
+A `block_restriction` carrying none of the three fields, or more than one, is
+refused at load time — an evasion ability that evades nothing would load
+perfectly cleanly.
 
 ### Skulk
 
@@ -4728,6 +4742,29 @@ something to a card that counts the times — without a reader the card charges
 more and does the same thing. A free (`{0}`) or X multikicker is refused too:
 free-and-repeatable is six kicks for nothing, and X would have to be asked per
 payment.
+
+#### Escalate
+
+```jsonc
+// Collective Resistance: "Escalate {G} (Pay this cost for each mode chosen
+// beyond the first.) Choose one or more — …"
+"escalate": "{G}",
+"spell_effects": [ { "op": "choose_mode", "count": 1, "or_more": true, "modes": [ … ] } ]
+```
+
+702.120a, and multikicker's desugaring: `additional_cost: {mana: "{G}"}`,
+`additional_optional` and `additional_repeatable`, so legality offers one cast
+line per number of payments. Two readers tie that number to the modes:
+`casting._additional_ceiling` offers at most one payment per mode beyond the
+first (per 601.2b's selectable modes, when a mode-owned target has nothing to
+aim at), and `Game._cast` makes the cast choose **exactly** one mode more than
+it paid for. The near misses each price something else: `spree` charges the
+first mode too, a plain `or_more` takes every mode for the printed cost, and
+multikicker counts payments nothing ties to the modes.
+
+The loader refuses escalate beside any other additional cost or `spree`, a free
+or X escalate, and a spell whose effects are not one top-level `choose_mode`
+with `or_more`.
 
 The residual-gate claimant is narrower than `kicker`'s. It fires only when the
 loader has actually desugared the cost, and it checks that the **symbols printed
@@ -6119,6 +6156,26 @@ reads the recipient's `to` shield and the dealer's `by` shield beside the
 beside protection. Prevented damage was never dealt — no mark, no loyalty lost,
 no lifelink, no `DAMAGE_DEALT` — and each instance fires `DAMAGE_PREVENTED` with
 `reason: "permanent_shield"`.
+
+## Fog — combat damage prevented by its source
+
+```jsonc
+// Arachnogenesis: "Prevent all combat damage that would be dealt this turn by
+// non-Spider creatures."
+{ "op": "prevent_combat_damage", "duration": "this_turn",
+  "by": { "types": ["Creature"], "not_subtypes": ["Spider"] } }
+```
+
+Keyed to the creature **dealing** the damage, which neither shield above can
+say: `prevent_damage` shields a seat and stops burn as well, and
+`prevent_damage_permanent` shields objects chosen at resolution. `by` is an
+effect-side selector matched against the dealer's current characteristics each
+time combat damage would be dealt (615.1), so a creature that enters later in
+the turn is covered and the Spiders the same card made still deal theirs.
+Omitted, every source is fogged — Fog itself. It installs a `CombatFog` on
+`GameState.combat_fogs`, read by both damage primitives and cleared at cleanup;
+noncombat damage is never touched. `duration` is required (`this_turn`), and the
+loader refuses an `amount` and a `by` naming a target, binding, count or zone.
 
 ## Prevent all but N of that damage
 
@@ -7818,6 +7875,21 @@ near-miss shield counter is *visible on the board*. It is placed, it is shown,
 `move_counters` carries it, `proliferate` adds another — and the permanent still
 dies to the removal it is printed to survive. That card passes all six authoring
 gates, because placing the counter is genuine and only its meaning is missing.
+
+## Stun counters
+
+```jsonc
+// Pugnacious Hammerskull: "…put a stun counter on it."
+{ "op": "add_counters", "objects": { "self_only": true }, "counter": "stun", "amount": 1 }
+```
+
+Rule 122.1d's third named kind: if a permanent with a stun counter would become
+untapped, one is removed instead and it stays tapped. Every untap goes through
+`primitives.untap_or_stun` — the untap step, the `untap` op and an {Q} cost — so
+the cause does not matter, and one counter is spent per untap. A permanent that
+is already untapped is not becoming untapped, so its counter waits. The spelling
+is exact and the loader refuses `"Stun"` and `"stun counter"`, as it refuses a
+near-miss shield counter.
 
 ## Energy
 
@@ -10827,6 +10899,11 @@ written, and one large enough to fake "until" would reveal and randomize the
 whole library on every resolution. And it offers *every* match inside that window
 and lets the player take the best one; "until you reveal" takes the **first**,
 which is why `reveal_until` asks nothing and is not a generator.
+
+`tapped: true` puts the card it stops at onto the battlefield tapped — Clifftop
+Lookout's "until you reveal a land card. Put that card onto the battlefield
+tapped" — and the loader refuses it beside any other `destination`, where a card
+is never tapped.
 
 Running the library out with no match is an outcome and not an error: everything
 revealed goes to the bottom in a random order and nothing reaches `destination`.

@@ -1291,6 +1291,23 @@ def static_condition_names_affected(cond: Any) -> bool:
     return False
 
 
+def static_condition_reads_derived(cond: Any) -> bool:
+    """Does this static condition tree read derived characteristics anywhere?
+
+    `exists_derived` -- see `loader.vocabulary.STATIC_DERIVED_CONDITION_EFFECTS`.
+    """
+    if not isinstance(cond, Mapping):
+        return False
+    if "exists_derived" in cond:
+        return True
+    if "not" in cond:
+        return static_condition_reads_derived(cond["not"])
+    for head in ("all", "any"):
+        if head in cond:
+            return any(static_condition_reads_derived(c) for c in cond[head] or ())
+    return False
+
+
 def _static_active(
     state: GameState,
     source: GameObject,
@@ -1310,7 +1327,13 @@ def _static_active(
     condition = static.get("condition")
     if not condition:
         return True
-    if affected is None and static_condition_names_affected(condition):
+    # A condition reading derived characteristics is deferred on the same
+    # terms, and it is what keeps the pipeline acyclic: every walk inside
+    # `chars` asks with no permanent, so `exists_derived` is only ever
+    # evaluated by `attack_forbidden` and `block_forbidden`, outside it.
+    if affected is None and (
+        static_condition_names_affected(condition) or static_condition_reads_derived(condition)
+    ):
         return True
     return _condition_met(state, source, condition, affected)
 
@@ -1348,6 +1371,19 @@ def _condition_met(
         return not _condition_met(state, source, cond["not"], affected)
     if "exists" in cond:
         return _count_matching(state, cond["exists"], source) > 0
+    if "exists_derived" in cond:
+        # Rhonas's "unless you control another creature with power 4 or
+        # greater": current power, pumps and counters included. Only reached
+        # with a permanent in hand -- `_static_active` defers it otherwise --
+        # which is to say only outside the pipeline.
+        if affected is None:
+            raise DslError("static condition 'exists_derived' asked inside the pipeline")
+        spec = cond["exists_derived"] or {}
+        return any(
+            (obj := state.objects.get(oid)) is not None
+            and _matches(state, obj, source, spec, derived=True)
+            for oid in state.battlefield
+        )
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
     if "is_attached" in cond:
@@ -1509,6 +1545,23 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         return sum(
             state.card_of(obj).mana_cost.symbols_of(color)
             for obj in _matching_objects(state, spec.get("objects") or {}, source)
+        )
+    if "greatest_commander_mana_value" in expr:
+        # Tangleweave Armor: "+X/+X, where X is the greatest mana value among
+        # your commanders." Read off the commander's printed card wherever it is
+        # -- the command zone most of the game -- which no selector reaches, and
+        # 0 for a seat with no commander. A printed mana cost is a pipeline
+        # input on `mana_symbols`' terms, so the anthem cannot come to depend on
+        # another static's output.
+        pids = _static_players(state, source, expr["greatest_commander_mana_value"])
+        return max(
+            (
+                state.card_of(obj).mana_value
+                for pid in pids
+                for oid in state.commanders_of(pid)
+                if (obj := state.objects.get(oid)) is not None
+            ),
+            default=0,
         )
     if "min_life_of" in expr:
         pids = _static_players(state, source, expr["min_life_of"])

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **82** capabilities.
+**91 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,14 +22,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [spider-token](#spider-token) | 2 | 1012 | token |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attack-block-restriction-current-power](#attack-block-restriction-current-power) | 1 | 5123 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -42,15 +40,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
-| [escalate](#escalate) | 1 | 788 | cost |
+| [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [fog](#fog) | 1 | 1232 | op |
 | [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
-| [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -59,36 +55,33 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
-| [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
+| [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
-| [power-evasion](#power-evasion) | 1 | 13014 | static_effect |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
-| [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-filter-power](#spell-filter-power) | 1 | 675 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [stun-counters](#stun-counters) | 1 | 5244 | replacement |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
+| [targeted-discard](#targeted-discard) | 1 | 11817 | op |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -353,25 +346,6 @@ Blocks **2** cards.
 
 </details>
 
-## spider-token
-
-Blocks **2** cards.
-
-- **(token)** a 1/2 green Spider creature token with reach (e.g. spider_1_2_g_reach)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no Spider; the nearest green tokens (plant_0_1_g, insect_1_1_g, saproling_1_1_g) differ in type, size and lack reach. The X itself is expressible as a count of {types: [Creature], attacking_player/attacking: you} creatures, so only the token is missing for this sentence
-- **(token)** a 1/2 green Spider creature token with reach (e.g. id spider_1_2_g_reach)
-  <br>Why the existing vocabulary won't do: The trigger is expressible (spell_cast with controller opponent and filter any_types [Instant, Sorcery]) and create_token exists, but token_ids has no Spider token at all; the nearest green tokens (insect_1_1_g, plant_0_1_g) differ in type, P/T and lack reach
-
-<details><summary>Cards waiting on this</summary>
-
-- **Arasta of the Endless Web** (rank 1012) — `arasta_of_the_endless_web`
-  - Whenever an opponent casts an instant or sorcery spell, create a 1/2 green Spider creature token with reach.
-- **Arachnogenesis** (rank 1232) — `arachnogenesis`
-  - Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.
-  - Prevent all combat damage that would be dealt this turn by non-Spider creatures.
-
-</details>
-
 ## venture
 
 Blocks **2** cards.
@@ -462,20 +436,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attack-block-restriction-current-power
-
-Blocks **1** card.
-
-- **(static_effect)** a self-only attack/block restriction (cant_attack + cant_block) whose 'unless' condition is checked at declare-attackers/declare-blockers time against the CURRENT, fully derived power of other creatures you control (pumps, +1/+1 counters, anthems included), e.g. a restriction condition {"exists": {"controller": "you", "types": ["Creature"], "exclude_self": true, "power": {"op": ">=", "value": 4}}} evaluated with derived characteristics
-  <br>Why the existing vocabulary won't do: The static cant_attack/cant_block with a static `condition` of `not`+`exists` loads, but static conditions are evaluated in characteristics._static_active before any layer applies and the `power` filter reads _base_pt (printed power only). So a 3-power creature pumped by Rhonas's own {2}{G} ability (+2/+0), or one with +1/+1 counters or an anthem, would not let Rhonas attack -- the card's central interaction silently breaks, and a printed 4-power creature shrunk below 4 would still enable it. That is an approximation, not the printed rule.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rhonas the Indomitable** (rank 5123) — `rhonas_the_indomitable`
-  - Rhonas can't attack or block unless you control another creature with power 4 or greater.
 
 </details>
 
@@ -653,17 +613,18 @@ Blocks **1** card.
 
 </details>
 
-## escalate
+## escalate-non-mana
 
 Blocks **1** card.
 
-- **(cost)** a card-level additional cost for a modal spell (choose_mode with or_more) that charges the printed escalate cost once for each mode chosen beyond the first, with the modes (and their per-mode targets) chosen at cast time so the total cost is locked in during 601.2b-f
-  <br>Why the existing vocabulary won't do: card_level_cost_keys has no escalate. spree prices each mode individually, so it would charge for the first mode too (whichever it is); additional_repeatable/multikicker lets the caster pay any number of times with no tie to how many modes were chosen; choose_mode's `budget` spends a resolution-time budget on mode prices rather than adding mana to the cast cost; a plain `or_more` choose_mode would let all three modes be chosen for {1}{G}, which is strictly better than the printed card
+- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"discard": 1}), charged once per mode chosen beyond the first, with the same mode-count tie that mana escalate has (casting._additional_ceiling and Game._cast's `exactly`); the discarded card must not be the spell itself (601.2a)
+  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse and desugars it to CostModel(mana=...), and rejects a free (mana value 0) escalate, so "Discard a card" cannot be written there. Hand-desugaring to additional_cost {discard: 1} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of discards to the number of modes, so a plain `or_more` choose_mode would take every mode for one or zero discards. `spree` prices each mode individually including the first.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Collective Resistance** (rank 788) — `collective_resistance`
-  - Escalate {G} (Pay this cost for each mode chosen beyond the first.)
+- **Collective Brutality** (rank 11817) — `collective_brutality`
+  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
+  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 
 </details>
 
@@ -727,21 +688,6 @@ Blocks **1** card.
 
 </details>
 
-## fog
-
-Blocks **1** card.
-
-- **(op)** a one-shot, this-turn prevention of COMBAT damage only, dealt BY creatures matching a filter (non-Spider: not_subtypes [Spider]) evaluated when the damage would be dealt, so creatures that become or stop being Spiders, or enter later in the turn, are covered correctly
-  <br>Why the existing vocabulary won't do: prevent_damage_permanent resolves its objects at resolution and shields all damage (not combat-only) from those fixed permanents; prevent_damage the op is seat-keyed (damage to a player); the prevent_damage / prevent_all_but statics live on a printed permanent and have no 'this turn' duration installable by a spell. None carries a combat_only flag together with a dealt-by creature filter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Arachnogenesis** (rank 1232) — `arachnogenesis`
-  - Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.
-  - Prevent all combat damage that would be dealt this turn by non-Spider creatures.
-
-</details>
-
 ## gain-control-until-end-of-your-next-turn
 
 Blocks **1** card.
@@ -767,20 +713,6 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
-
-</details>
-
-## greatest-commander-mana-value
-
-Blocks **1** card.
-
-- **(value)** a static value (usable as a buff's power/toughness) giving the greatest mana value among the cards that are your commanders, read wherever those commanders are (command zone, battlefield, hand, graveyard, exile, library), and 0 if you have none
-  <br>Why the existing vocabulary won't do: static_value_keys has const, count, counters_on, mana_symbols, max_count_of, min_count_of and life readers, but nothing reads a mana value; max_count_of is the largest per-player COUNT of matching objects (used for 'an opponent controls more lands'), not the largest mana value among objects. The value_keys mana_value_of/extreme_value are effect-time values not accepted by a static, and the cost_reduction greatest_mana_value key exists only for cost reduction, not buff magnitudes. A selector with is_commander would also only see one zone, while a commander is usually in the command zone
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tangleweave Armor** (rank 11958) — `tangleweave_armor`
-  - Equipped creature gets +X/+X, where X is the greatest mana value among your commanders.
 
 </details>
 
@@ -899,20 +831,6 @@ Blocks **1** card.
 
 </details>
 
-## max-blockers
-
-Blocks **1** card.
-
-- **(static_effect)** a static block restriction on the attacker that caps how many creatures may block it (here at most one), judged on the whole blocker declaration (509.1c), applied to each creature its controller controls whose CURRENT power is 4 or greater, so a creature pumped to 4 power gains it and one shrunk below 4 loses it
-  <br>Why the existing vocabulary won't do: block_restriction carries only 'blockers' (a per-pair filter refusing a blocker by what it is) or 'require_all' (Tromokratis' all-or-nothing); neither counts blockers, and refusing every blocker would make the creature unblockable. Its 'affects' filter, like every static filter, reads printed characteristics, so 'power 4 or greater' would test printed power rather than current power. Menace is the opposite cap (at least two), and cant_block / block_tax act on blockers, not on the number per attacker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Challenger Troll** (rank 12001) — `challenger_troll`
-  - Each creature you control with power 4 or greater can't be blocked by more than one creature.
-
-</details>
-
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -938,6 +856,20 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
+
+</details>
+
+## mode-owned-variable-targets
+
+Blocks **1** card.
+
+- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
+  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blessed Alliance** (rank 16968) — `blessed_alliance`
+  - • Untap up to two target creatures.
 
 </details>
 
@@ -1034,20 +966,6 @@ Blocks **1** card.
 
 </details>
 
-## phyrexian-beast-token
-
-Blocks **1** card.
-
-- **(token)** a 4/4 green Phyrexian Beast creature token (subtypes Phyrexian and Beast), e.g. id phyrexian_beast_4_4_g
-  <br>Why the existing vocabulary won't do: token_ids has beast_4_4_g, a 4/4 green Beast with no Phyrexian subtype; the pool does distinguish Phyrexian (germ_0_0_b is a Phyrexian Germ), so substituting it would make tokens that miss Phyrexian-matters cards. Once the token exists, the rest looks expressible as a for_each over {zone: battlefield, controller: opponent, types: [Creature]} whose body is create_token with `as` followed by fight pairing that bound token with the loop object, which gives each token a different creature.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ezuri's Predation** (rank 1191) — `ezuri_s_predation`
-  - For each creature your opponents control, create a 4/4 green Phyrexian Beast creature token.
-
-</details>
-
 ## played-or-cast-from-non-hand-this-turn
 
 Blocks **1** card.
@@ -1101,20 +1019,6 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
-
-</details>
-
-## power-evasion
-
-Blocks **1** card.
-
-- **(static_effect)** a block restriction on the attacker that refuses would-be blockers by their DERIVED (current) power at declare-blockers -- "can't be blocked by creatures with power N or less" -- so an anthem, pump spell or +1/+1 counter on the blocker changes whether it may block; e.g. a block_restriction whose blockers filter may carry a derived-power comparison ({"op": "<=", "value": 2}) read from chars in combat.can_block
-  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter goes through matches_static, whose `power` key is read at _base_pt (the size before any layer), so a 2/2 given +1/+1 would still be refused and a 3/3 shrunk to 2/2 could still block -- the same reason the engine made skulk a keyword reading derived power instead of a blockers filter. Skulk itself compares against the attacker's power (greater power), not a fixed threshold, so it is a different sentence.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Steel Leaf Champion** (rank 13014) — `steel_leaf_champion`
-  - This creature can't be blocked by creatures with power 2 or less.
 
 </details>
 
@@ -1189,20 +1093,6 @@ Blocks **1** card.
 
 </details>
 
-## reveal-until-tapped
-
-Blocks **1** card.
-
-- **(op)** a `tapped` option on the reveal_until op, so the card it stops at can be put onto the battlefield tapped (op_reveal_until calls _move_found with tapped=False hard-coded); alternatively an `as` binding on reveal_until naming the found card so a following `tap` op can tap exactly that card
-  <br>Why the existing vocabulary won't do: reveal_until does the scan, the destination 'battlefield' and the random bottoming exactly, but ignores `tapped`, and the loader refuses `destination_if` (whose branches can carry tapped: true) on anything but search_library/search_zones. reveal_until has no `as`, so a later `tap` cannot name the found land; tapping 'lands you control that entered this turn' would also tap a land played earlier in the turn. Without tapped the card would ramp an untapped land, a strictly better card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Clifftop Lookout** (rank 2637) — `clifftop_lookout`
-  - When this creature enters, reveal cards from the top of your library until you reveal a land card. Put that card onto the battlefield tapped and the rest on the bottom of your library in a random order.
-
-</details>
-
 ## search-aura-attached
 
 Blocks **1** card.
@@ -1261,20 +1151,6 @@ Blocks **1** card.
 
 </details>
 
-## spell-filter-power
-
-Blocks **1** card.
-
-- **(selector)** a `power` comparison (e.g. {"op": ">=", "value": 4}) in the `affects_spells` filter of a `spell_cost_reduction` static, matched against the spell's printed power (a */* spell's power on the stack is evaluated per 208.2), so "creature spells you cast with power 4 or greater cost {2} less" reduces only those spells
-  <br>Why the existing vocabulary won't do: `spell_cost_reduction`'s `affects_spells` takes SPELL_COST_REDUCTION_FILTER_KEYS (controller, types, any_types, not_types, subtypes, supertypes, colors, min_colors, keywords, not_keywords, name, mana_cost, exclude_self) -- no `power`. `power` exists in `static_filter_keys` and `cost_reduction_filter_keys`, but those filter permanents or the card's own self-discount, not other spells being cast. Dropping the power clause would discount every creature spell.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Goreclaw, Terror of Qal Sisma** (rank 675) — `goreclaw_terror_of_qal_sisma`
-  - Creature spells you cast with power 4 or greater cost {2} less to cast.
-
-</details>
-
 ## spells-cast-per-player
 
 Blocks **1** card.
@@ -1287,20 +1163,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## stun-counters
-
-Blocks **1** card.
-
-- **(replacement)** the rule 122.1d replacement for stun counters: if a permanent with a stun counter on it would become untapped (untap step, untap op, untap cost, any effect), instead remove one stun counter from it and it stays tapped
-  <br>Why the existing vocabulary won't do: add_counters can place a counter named "stun" and the trigger half is expressible (event "attacks", source self, condition not-exists another Dinosaur you control), but the engine only lists "stun" as a harmful counter for AI/cost ordering; untap_permanent and untap_all in engine/primitives.py untap unconditionally, so the counter would be inert. skip_untap / untap_limit are not counter-driven and do not remove a counter instead, so writing the card now would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Pugnacious Hammerskull** (rank 5244) — `pugnacious_hammerskull`
-  - Whenever this creature attacks while you don't control another Dinosaur, put a stun counter on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)
 
 </details>
 
@@ -1318,6 +1180,20 @@ Blocks **1** card.
 
 </details>
 
+## target-opponent-or-planeswalker
+
+Blocks **1** card.
+
+- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
+  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. `any_of` branches are ANDed with the top-level controller and are not consulted by the player half; two separate targets would target twice and need both legal.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Defiance** (rank 7525) — `collective_defiance`
+  - • Collective Defiance deals 3 damage to target opponent or planeswalker.
+
+</details>
+
 ## target-player-dealt-combat-damage-by
 
 Blocks **1** card.
@@ -1329,6 +1205,21 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## targeted-discard
+
+Blocks **1** card.
+
+- **(op)** a discard in which the target player reveals their hand and the spell's controller (not the discarding player) chooses a card matching a filter (here an instant or sorcery card) to be discarded -- Duress's shape; no discard if none matches
+  <br>Why the existing vocabulary won't do: `discard` takes only amount, as, player, random, up_to and whole_hand: the discarding player always chooses (or it is random), and there is no filter on which card may be taken. `reveal` and `look_at_hand` show the hand but cannot hand the choice to the caster or restrict it to instants and sorceries.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Brutality** (rank 11817) — `collective_brutality`
+  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
+  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 
 </details>
 

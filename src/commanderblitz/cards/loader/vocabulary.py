@@ -867,7 +867,11 @@ SPELL_FILTER_KEYS = frozenset(
 #: never on the stack while that permanent is on the battlefield. A commander's
 #: is, because the command zone its eminence static is gathered from is the very
 #: zone it is cast out of.
-SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
+#:
+#: ``power`` is the other: "Creature spells you cast **with power 4 or greater**
+#: cost {2} less" (Goreclaw). The spell's power as it is cast -- printed, or a
+#: `*/*`'s CDA -- read by `player_statics.spell_cost_reduction` too.
+SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self", "power"}
 
 #: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
 #:
@@ -1239,7 +1243,20 @@ STATIC_CONDITION_HEADS = (
     # the designation moving bumps `char_version`. Takes a player spec, and
     # `AFFECTED_CONTROLLER` among them -- see `characteristics`.
     "is_monarch",
+    # "Rhonas can't attack or block unless you control another creature with
+    # power 4 or greater." `exists` over the board's **current** characteristics
+    # -- not a pipeline input, so admitted only on the rule-modifying statics
+    # in `STATIC_DERIVED_CONDITION_EFFECTS`, read outside the pipeline.
+    "exists_derived",
 )
+
+#: The static effects whose condition may read *derived* characteristics
+#: (`exists_derived`). Their readers -- `player_statics.attack_forbidden` and
+#: `block_forbidden` -- ask at declaration, one creature at a time and outside
+#: the characteristics pipeline, so the derived board is finished when they
+#: look at it. A layered static reading it would read another static's output,
+#: which ADR 0001 refuses.
+STATIC_DERIVED_CONDITION_EFFECTS = frozenset({"cant_attack", "cant_block"})
 
 #: The static effects whose reader evaluates the condition once per affected
 #: permanent, and so may carry the `AFFECTED_CONTROLLER` player spec. Anywhere
@@ -1333,6 +1350,8 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: written once when the seat is created, so it is a pipeline input on stronger
 #: terms than a life total; `sum` adds leaves that are all inputs, so it is safe
 #: for the reason `times` is.
+#: `greatest_commander_mana_value` is Tangleweave Armor's "the greatest mana value
+#: among your commanders", read off the printed cards wherever they are.
 STATIC_VALUE_KEYS = (
     frozenset(
         {
@@ -1344,6 +1363,7 @@ STATIC_VALUE_KEYS = (
             "counters_on",
             "permanents_entered_this_turn",
             "starting_life_of",
+            "greatest_commander_mana_value",
         }
     )
     | STATIC_LIFE_KEYS

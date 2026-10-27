@@ -2071,8 +2071,13 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
         )
         # The match moves first. Bottoming first would put it among "the rest"
         # and there would be nothing left on top to take.
+        # "Put that card onto the battlefield **tapped**" (Clifftop Lookout).
+        # The loader admits `tapped` only beside the battlefield, so an untapped
+        # land never arrives off a card that printed a tapped one.
         if hit is not None:
-            _move_found(ctx, [hit], pid, destination, spec, False, "reveal_until")
+            _move_found(
+                ctx, [hit], pid, destination, spec, bool(spec.get("tapped")), "reveal_until"
+            )
         if rest_to_bottom:
             _bottom_in_random_order(ctx, pid, [oid for oid in revealed if oid != hit])
 

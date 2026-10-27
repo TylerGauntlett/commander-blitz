@@ -1557,6 +1557,13 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.multikicker is not None and stripped.lower().startswith("multikicker "):
         return _declares_printed_cost(stripped[len("multikicker ") :], card.multikicker)
 
+    # "Escalate {G} (Pay this cost for each mode chosen beyond the first.)" --
+    # multikicker's shape and its strictness: `card.escalate` is set only once
+    # the loader has desugared it beside a one-or-more modal spell, and the
+    # symbols on the line have to be the ones charged.
+    if card.escalate is not None and stripped.lower().startswith("escalate "):
+        return _declares_printed_cost(stripped[len("escalate ") :], card.escalate)
+
     # "Strive — This spell costs {1}{W} more to cast for each target beyond the
     # first." Multikicker's shape: a card-level price charged inside
     # `game._cast`, so no ability can honestly carry the line -- and strict for

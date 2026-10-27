@@ -21,6 +21,7 @@ from .characteristics import (
     _static_value,
     card_in_exile_characteristics,
     chars,
+    compare_pt,
     resolve_chosen_color_list,
     resolve_chosen_colors,
     resolve_chosen_subtypes,
@@ -775,7 +776,11 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "cant_attack":
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        # Asked again with the creature in hand: a condition reading derived
+        # characteristics was deferred by `_battlefield_statics` (Rhonas).
+        if _matches(state, obj, source_obj, static.get("affects")) and _static_active(
+            state, source_obj, static, affected=obj
+        ):
             return True
     return False
 
@@ -963,7 +968,10 @@ def block_forbidden(state: GameState, oid: int) -> bool:
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "cant_block":
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        # As `attack_forbidden`: a deferred derived condition is answered here.
+        if _matches(state, obj, source_obj, static.get("affects")) and _static_active(
+            state, source_obj, static, affected=obj
+        ):
             return True
     return False
 
@@ -1076,6 +1084,11 @@ def spell_cost_reduction(
         resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
         if not _matches_printed(card, resolved):
             continue
+        # "Creature spells you cast **with power 4 or greater**" (Goreclaw).
+        if (spec := filt.get("power")) is not None and not compare_pt(
+            _spell_power(state, pid, card), spec
+        ):
+            continue
         if (
             (aimed := static.get("targeting")) is not None
             and targets is not None
@@ -1089,6 +1102,31 @@ def spell_cost_reduction(
             continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
+
+
+def _spell_power(state: GameState, pid: int, card: CardDef) -> int:
+    """The power of ``pid``'s ``card`` as it is being cast.
+
+    Printed, except a `*/*`: 604.3 gives a characteristic-defining ability a
+    function in every zone, so a Broodstar in hand has the power its CDA says
+    and not the 0 printed beside it. The CDA needs the object it is measured
+    from and this function is handed a `CardDef`, so the object is found the way
+    `exclude_self` matches -- by card, among ``pid``'s cards off the
+    battlefield, which a singleton format makes the same question.
+    """
+    has_cda = any(
+        ability.is_static
+        and (static := ability.static)
+        and static.get("effect") == "set_pt"
+        and not static.get("condition")
+        and dict(static.get("affects") or {}) == {"self_only": True}
+        for ability in card.abilities
+    )
+    if has_cda:
+        for obj in state.objects.values():
+            if obj.owner == pid and not obj.on_battlefield and state.card_of(obj).id == card.id:
+                return card_in_exile_characteristics(state, obj)[0]
+    return card.power or 0
 
 
 def spell_life_tax(

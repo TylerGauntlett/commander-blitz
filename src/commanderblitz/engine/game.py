@@ -617,6 +617,18 @@ class Game:
             # is read here off the same static `_cast_variant` read.
             cost = cost.as_any_color()
 
+        # The mana half of an additional cost paid `additional_times` over --
+        # replicate, multikicker, escalate -- and every bought spree mode's
+        # price (601.2f). Folded in at the point `_cast_variant` folds them
+        # when it prices the line, after the relaxations above, so the line
+        # offered and the mana charged are one number. Without it the line was
+        # priced with the kicks and charged without them.
+        additional_branch = chosen_additional(card, action.additional_choice)
+        if action.additional_times and additional_branch is not None:
+            cost = cost.plus(additional_branch.mana.scaled(action.additional_times))
+        for mode in action.spree_modes:
+            cost = cost.plus(card.spree[mode].mana)
+
         # Convoke and delve. Which creatures tap, or which cards are exiled, is
         # asked here -- the one line legality offered carries only the fewest
         # the player must spend -- and netted into `extra` alongside the
@@ -660,6 +672,10 @@ class Game:
             card.cast_time_modes,
             kicked=action.kicked,
             selectable=selectable_modes(state, pid, card, oid),
+            # Escalate: the line paid for this many modes beyond the first, so
+            # the cast chooses exactly that many (601.2b fixes the modes before
+            # 601.2f totals the cost, and legality priced this line).
+            exactly=action.additional_times + 1 if card.escalate is not None else None,
         )
         # 601.2c, and the printed order: a mode-owned target is declared only
         # once its mode has been taken. Appended to the action's own refs, which
@@ -1398,6 +1414,7 @@ class Game:
         *,
         kicked: bool = False,
         selectable: Sequence[int] | None = None,
+        exactly: int | None = None,
     ) -> Generator[Any, list[int], tuple[int, ...]]:
         """Which mode, asked as the spell or ability is put on the stack.
 
@@ -1446,6 +1463,9 @@ class Game:
         # the spell compiled, played, cleared every gate, and silently chose
         # one mode.
         floor, up_to = modal_bounds(ctx, spec)
+        if exactly is not None:
+            # ``exactly`` is escalate's count, already paid for.
+            floor = up_to = exactly
         offered = list(range(len(modes))) if selectable is None else list(selectable)
         # A floor that outruns what is on offer is not a spell that chooses
         # fewer modes -- it is one that cannot be cast, and `legality` already

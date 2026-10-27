@@ -5534,6 +5534,49 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "arachnogenesis",
+      "mana_cost": "{2}{G}",
+      "name": "Arachnogenesis",
+      "oracle_text": "Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you. Prevent all combat damage that would be dealt this turn by non-Spider creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "attacking_player": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "create_token",
+          "token": "spider_1_2_g_reach"
+        },
+        {
+          "by": {
+            "not_subtypes": [
+              "Spider"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "duration": "this_turn",
+          "op": "prevent_combat_damage"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "arachnoid",
@@ -5685,6 +5728,59 @@
       ],
       "toughness": 3,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spider_1_2_g_reach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts an instant or sorcery spell, create a 1/2 green Spider creature token with reach.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "arasta_of_the_endless_web",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{G}{G}",
+      "name": "Arasta of the Endless Web",
+      "oracle_text": "Reach\nWhenever an opponent casts an instant or sorcery spell, create a 1/2 green Spider creature token with reach.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spider"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
         "Creature"
       ]
     },
@@ -15658,6 +15754,76 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "escalate": "{1}{W}",
+      "id": "borrowed_grace",
+      "mana_cost": "{2}{W}",
+      "name": "Borrowed Grace",
+      "oracle_text": "Escalate {1}{W} (Pay this cost for each mode chosen beyond the first.)\nChoose one or both —\n• Creatures you control get +2/+0 until end of turn.\n• Creatures you control get +0/+2 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                }
+              ],
+              "label": "Creatures you control get +2/+0 until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 0
+                  },
+                  "toughness": {
+                    "const": 2
+                  }
+                }
+              ],
+              "label": "Creatures you control get +0/+2 until end of turn."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -21616,6 +21782,45 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "power": {
+              "op": ">=",
+              "value": 4
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "max_blockers": 1,
+          "text": "Each creature you control with power 4 or greater can't be blocked by more than one creature."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "challenger_troll",
+      "mana_cost": "{4}{G}",
+      "name": "Challenger Troll",
+      "oracle_text": "Each creature you control with power 4 or greater can't be blocked by more than one creature.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Troll"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -24153,6 +24358,55 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "destination": "battlefield",
+              "objects": {
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "rest_to_bottom": true,
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, reveal cards from the top of your library until you reveal a land card. Put that card onto the battlefield tapped and the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "clifftop_lookout",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Clifftop Lookout",
+      "oracle_text": "Reach\nWhen this creature enters, reveal cards from the top of your library until you reveal a land card. Put that card onto the battlefield tapped and the rest on the bottom of your library in a random order.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Scout"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -24954,6 +25208,104 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "escalate": "{G}",
+      "id": "collective_resistance",
+      "mana_cost": "{1}{G}",
+      "name": "Collective Resistance",
+      "oracle_text": "Escalate {G} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Destroy target artifact.\n• Destroy target enchantment.\n• Target creature gains hexproof and indestructible until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "artifact"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "enchantment"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "hexproof",
+                    "indestructible"
+                  ],
+                  "objects": {
+                    "target": "protected"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Target creature gains hexproof and indestructible until end of turn."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "artifact",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "id": "enchantment",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "id": "protected",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -29806,6 +30158,28 @@
       "types": [
         "Artifact",
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "darkness",
+      "mana_cost": "{B}",
+      "name": "Darkness",
+      "oracle_text": "Prevent all combat damage that would be dealt this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "op": "prevent_combat_damage"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -41800,6 +42174,54 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ezuri_s_predation",
+      "mana_cost": "{5}{G}{G}{G}",
+      "name": "Ezuri's Predation",
+      "oracle_text": "For each creature your opponents control, create a 4/4 green Phyrexian Beast creature token. Each of those tokens fights a different one of those creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "predator",
+              "op": "create_token",
+              "token": "phyrexian_beast_4_4_g"
+            },
+            {
+              "objects": {
+                "binding": "predator"
+              },
+              "op": "fight",
+              "other": {
+                "binding": "each"
+              }
+            }
+          ],
+          "objects": {
+            "controller": "opponent",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "for_each"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -46443,6 +46865,28 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "fog",
+      "mana_cost": "{G}",
+      "name": "Fog",
+      "oracle_text": "Prevent all combat damage that would be dealt this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "op": "prevent_combat_damage"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -54836,6 +55280,100 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "power": {
+              "op": ">=",
+              "value": 4
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Creature spells you cast with power 4 or greater cost {2} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 1
+                  },
+                  "toughness": {
+                    "const": 1
+                  }
+                },
+                {
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "binding": "each"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Goreclaw attacks, each creature you control with power 4 or greater gets +1/+1 and gains trample until end of turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "goreclaw_terror_of_qal_sisma",
+      "mana_cost": "{3}{G}",
+      "name": "Goreclaw, Terror of Qal Sisma",
+      "oracle_text": "Creature spells you cast with power 4 or greater cost {2} less to cast.\nWhenever Goreclaw attacks, each creature you control with power 4 or greater gets +1/+1 and gains trample until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Bear"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -62691,6 +63229,67 @@
         "Beast"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "max_blockers": 1,
+          "text": "This creature can't be blocked by more than one creature."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, put that many +1/+1 counters on it. (It must survive the damage to get the counters.)",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "hungering_hydra",
+      "mana_cost": "{X}{G}",
+      "name": "Hungering Hydra",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.\nThis creature can't be blocked by more than one creature.\nWhenever this creature is dealt damage, put that many +1/+1 counters on it. (It must survive the damage to get the counters.)",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -99960,6 +100559,85 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "vampire_1_1_w_lifelink"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks the player with the most life or tied for most life, create a 1/1 white Vampire creature token with lifelink.",
+          "trigger": {
+            "defending": "most_life",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks while you have the most life or are tied for most life, you draw a card and you lose 1 life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "life_of": "you"
+              },
+              "right": {
+                "max_life_of": "each_opponent"
+              }
+            },
+            "event": "attacks",
+            "recheck": false,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "preacher_of_the_schism",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Preacher of the Schism",
+      "oracle_text": "Deathtouch\nWhenever this creature attacks the player with the most life or tied for most life, create a 1/1 white Vampire creature token with lifelink.\nWhenever this creature attacks while you have the most life or are tied for most life, you draw a card and you lose 1 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Cleric"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "attacking": true,
@@ -101345,6 +102023,62 @@
       "toughness": 0,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "stun",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks while you don't control another Dinosaur, put a stun counter on it.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "exists": {
+                  "controller": "you",
+                  "exclude_self": true,
+                  "subtypes": [
+                    "Dinosaur"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            },
+            "event": "attacks",
+            "recheck": false,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "pugnacious_hammerskull",
+      "mana_cost": "{2}{G}",
+      "name": "Pugnacious Hammerskull",
+      "oracle_text": "Whenever this creature attacks while you don't control another Dinosaur, put a stun counter on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dinosaur"
+      ],
+      "toughness": 6,
+      "types": [
         "Creature"
       ]
     },
@@ -106198,6 +106932,126 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists_derived": {
+                "controller": "you",
+                "exclude_self": true,
+                "power": {
+                  "op": ">=",
+                  "value": 4
+                },
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Rhonas can't attack or block unless you control another creature with power 4 or greater."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists_derived": {
+                "controller": "you",
+                "exclude_self": true,
+                "power": {
+                  "op": ">=",
+                  "value": 4
+                },
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Rhonas can't attack or block unless you control another creature with power 4 or greater."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{G}: Another target creature gets +2/+0 and gains trample until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "rhonas_the_indomitable",
+      "keywords": [
+        "deathtouch",
+        "indestructible"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Rhonas the Indomitable",
+      "oracle_text": "Deathtouch, indestructible\nRhonas can't attack or block unless you control another creature with power 4 or greater.\n{2}{G}: Another target creature gets +2/+0 and gains trample until end of turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -123702,6 +124556,47 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "op": "prevent_combat_damage"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Prevent all combat damage that would be dealt this turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "spore_frog",
+      "mana_cost": "{G}",
+      "name": "Spore Frog",
+      "oracle_text": "Sacrifice this creature: Prevent all combat damage that would be dealt this turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Frog"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -124853,6 +125748,44 @@
       "toughness": 5,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "power": {
+              "op": "<=",
+              "value": 2
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked by creatures with power 2 or less."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "steel_leaf_champion",
+      "mana_cost": "{G}{G}{G}",
+      "name": "Steel Leaf Champion",
+      "oracle_text": "This creature can't be blocked by creatures with power 2 or less.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Knight"
+      ],
+      "toughness": 4,
+      "types": [
         "Creature"
       ]
     },
@@ -131554,6 +132487,97 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "germ",
+              "controller": "you",
+              "op": "create_token",
+              "token": "germ_0_0_b"
+            },
+            {
+              "objects": {
+                "binding": "germ"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "greatest_commander_mana_value": "you"
+          },
+          "text": "Equipped creature gets +X/+X, where X is the greatest mana value among your commanders.",
+          "toughness": {
+            "greatest_commander_mana_value": "you"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {4}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tangleweave_armor",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Tangleweave Armor",
+      "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +X/+X, where X is the greatest mana value among your commanders.\nEquip {4}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -140601,6 +141625,46 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "spider_1_2_g_reach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a 1/2 green Spider creature token with reach.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "twin_silk_spider",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Twin-Silk Spider",
+      "oracle_text": "Reach\nWhen this creature enters, create a 1/2 green Spider creature token with reach.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spider"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -142457,6 +143521,90 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "half": {
+                  "of": {
+                    "life_of": {
+                      "binding": "event_player"
+                    }
+                  },
+                  "round": "up"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, they lose half their life, rounded up.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "stun": 2
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, if it had no counters on it, return it to the battlefield tapped under its owner's control with two stun counters on it.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "unstoppable_slasher",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Unstoppable Slasher",
+      "oracle_text": "Deathtouch\nWhenever this creature deals combat damage to a player, they lose half their life, rounded up.\nWhen this creature dies, if it had no counters on it, return it to the battlefield tapped under its owner's control with two stun counters on it.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Assassin"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

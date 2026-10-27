@@ -1,0 +1,70 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_spell_power_filter.py. t_spf_goreclaw is Goreclaw's first line on its own; t_spf_counted is a */* whose CDA counts the creatures you control.",
+  "cards": [
+    {
+      "id": "t_spf_goreclaw",
+      "name": "Test Power Discount",
+      "oracle_text": "Creature spells you cast with power 4 or greater cost {2} less to cast.",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 4,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creature spells you cast with power 4 or greater cost {2} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {"controller": "you", "types": ["Creature"], "power": {"op": ">=", "value": 4}},
+          "amount": {"const": 2}
+        }
+      ]
+    },
+    {
+      "id": "t_spf_four",
+      "name": "Test Four Power",
+      "mana_cost": "{4}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 4,
+      "toughness": 4
+    },
+    {
+      "id": "t_spf_three",
+      "name": "Test Three Power",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 3,
+      "toughness": 5
+    },
+    {
+      "id": "t_spf_counted",
+      "name": "Test Counted Power",
+      "oracle_text": "This creature's power is equal to the number of creatures you control.",
+      "mana_cost": "{4}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 0,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature's power is equal to the number of creatures you control.",
+          "effect": "set_pt",
+          "affects": {"self_only": true},
+          "power": {"count": {"controller": "you", "types": ["Creature"]}},
+          "toughness": {"const": 4}
+        }
+      ]
+    }
+  ]
+}

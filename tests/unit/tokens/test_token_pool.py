@@ -526,3 +526,52 @@ class TestUtvaraHellkitesDragonIsASixSix:
         other = pool.get("dragon_5_5_r_flying")
         assert other is not None
         assert (other.power, other.toughness) == (5, 5)
+
+
+class TestTheSpiderIsAOneTwoWithReach:
+    """Arasta of the Endless Web and Arachnogenesis: *"create a 1/2 green
+    Spider creature token with reach."*
+
+    `insect_1_1_g` and `plant_0_1_g` are the nearest green bodies, and both
+    are the wrong type, size and keyword. Arachnogenesis prevents combat
+    damage from every non-Spider, so a token that is not a Spider would turn
+    its own blockers off.
+    """
+
+    def test_it_is_a_one_two_green_spider_with_reach(self, pool):
+        token = pool.get("spider_1_2_g_reach")
+        assert token is not None
+        assert (token.power, token.toughness) == (1, 2)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Spider"]
+        assert list(token.keywords) == ["reach"]
+        assert token.is_creature and token.is_token
+
+    def test_the_insect_is_still_a_separate_token(self, pool):
+        insect = pool.get("insect_1_1_g")
+        assert insect is not None
+        assert list(insect.subtypes) == ["Insect"]
+
+
+class TestEzurisPredationMakesPhyrexianBeasts:
+    """Ezuri's Predation: *"create a 4/4 green **Phyrexian** Beast creature
+    token."*
+
+    `beast_4_4_g` is the same body without the Phyrexian subtype, and the
+    pool does read it (`germ_0_0_b` is a Phyrexian Germ), so the plain Beast
+    would miss every Phyrexian-matters card.
+    """
+
+    def test_it_is_a_four_four_green_phyrexian_beast(self, pool):
+        token = pool.get("phyrexian_beast_4_4_g")
+        assert token is not None
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Beast", "Phyrexian"]
+        assert not token.keywords
+        assert token.is_creature and token.is_token
+
+    def test_the_plain_beast_is_still_a_separate_token(self, pool):
+        beast = pool.get("beast_4_4_g")
+        assert beast is not None
+        assert list(beast.subtypes) == ["Beast"]

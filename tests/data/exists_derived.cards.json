@@ -1,0 +1,34 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_exists_derived.py. t_ed_rhonas is Rhonas the Indomitable's restriction on its own.",
+  "cards": [
+    {
+      "id": "t_ed_rhonas",
+      "name": "Test Rhonas",
+      "oracle_text": "This creature can't attack or block unless you control another creature with power 4 or greater.",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["God"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature can't attack or block unless you control another creature with power 4 or greater.",
+          "effect": "cant_attack",
+          "affects": {"self_only": true},
+          "condition": {"not": {"exists_derived": {"controller": "you", "types": ["Creature"], "exclude_self": true, "power": {"op": ">=", "value": 4}}}}
+        },
+        {
+          "kind": "static",
+          "text": "This creature can't attack or block unless you control another creature with power 4 or greater.",
+          "effect": "cant_block",
+          "affects": {"self_only": true},
+          "condition": {"not": {"exists_derived": {"controller": "you", "types": ["Creature"], "exclude_self": true, "power": {"op": ">=", "value": 4}}}}
+        }
+      ]
+    }
+  ]
+}

@@ -25,6 +25,7 @@ from ..structs import (
     PERMANENT_SHIELD_DURATIONS,
 )
 from ..temp_effects import (
+    fog_combat_damage,
     lock_game_outcome,
     lock_life_total,
     set_life_floor,
@@ -196,6 +197,25 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
             player=ctx.controller,
             source=ctx.source_oid,
         )
+
+
+@register("prevent_combat_damage")
+def op_prevent_combat_damage(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Prevent all combat damage that would be dealt this turn by non-Spider
+    creatures." (Arachnogenesis.)
+
+    Keyed to the damage's source, where `prevent_damage` is keyed to a seat and
+    stops burn too, and `prevent_damage_permanent` shields objects chosen now.
+    ``by`` is a static filter over the creature dealing the damage, read on its
+    current characteristics each time combat damage would be dealt, so a
+    creature entering later in the turn is covered; omitted, it is every source
+    (Fog). ``duration`` is ``this_turn``, required for `prevent_damage`'s reason.
+    Installs a `structs.CombatFog` and modifies nothing else.
+    """
+    duration = str(spec.get("duration", "this_turn"))
+    fog_combat_damage(
+        ctx.state, ctx.controller, spec.get("by"), duration, source=ctx.source_oid
+    )
 
 
 @register("lock_life_total")

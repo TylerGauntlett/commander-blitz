@@ -1741,6 +1741,12 @@ card-level `cost_reduction` and does not count it in a static's `count`. That
 divergence is deliberate and is pinned by
 `tests/unit/statics/test_static_power_filter.py`.
 
+A `spell_cost_reduction`'s `affects_spells` takes `power` too, and there it is
+the power of the **spell being cast** — Goreclaw's "creature spells you cast with
+power 4 or greater cost {2} less": printed, or what a `*/*`'s characteristic-defining
+`set_pt` says in hand (604.3), never its printed 0. It is the reduction's key
+alone; no other `affects_spells` reads it.
+
 Off the battlefield the key is refused at load time with the rest of the board
 state: a card in a graveyard has a printed P/T, but no printed line asks a
 counting filter about it yet, and `static_zone_filter_keys` stays the list of
@@ -3668,6 +3674,7 @@ and the filter keys are
     "source": "self",                // restrict to this permanent
     "filter": { "types": ["Land"] }, // a selector applied to the event's subject
     "condition": { ... },            // intervening "if", re-checked on resolution
+    "recheck": false,                // makes `condition` a "while": checked as it triggers only
     "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
@@ -3679,6 +3686,12 @@ and the filter keys are
   "effects": [ ... ]
 }
 ```
+
+**"While" is not "if".** 603.4 re-checks an intervening "if" on resolution and
+says nothing of "while", which qualifies the event: Pugnacious Hammerskull's
+"whenever this creature attacks while you don't control another Dinosaur" is
+`condition` plus `recheck: false`, so a Dinosaur arriving in response does not
+stop the stun counter. The loader refuses `recheck` with no `condition`.
 
 **A trigger `filter` is a subset of the selector language.** It is matched against
 the event's subject by `triggers.matches_card_filter`, which answers
@@ -4731,6 +4744,7 @@ smaller than the effect-side `value_keys`:
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
+| `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
 | `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
 
 `permanents_entered_this_turn` is the leaf whose near miss is worst. Kinbinding
@@ -4894,6 +4908,7 @@ Each node names **exactly one** form:
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
+| `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack` and `cant_block` only (below) |
 
 A condition works on a [player-wide static](card-dsl-cookbook.md#player-wide-statics) too — the
 `affects_player` effects go through the same `_static_active`, from
@@ -4911,6 +4926,21 @@ The rule binds the statics the pipeline applies; the rule-modifying ones it does
 not — `attacks_if_able` and `block_restriction` — match their filters against
 derived characteristics instead (`characteristics._matches` with `derived`),
 since nothing they say can feed back into a layer.
+`exists_derived` is the condition-side form of that exception. Rhonas the
+Indomitable "can't attack or block unless you control another creature with
+power 4 or greater", and the creature its own ability pumps to 5 has to count:
+
+```jsonc
+{ "kind": "static", "effect": "cant_attack", "affects": { "self_only": true },
+  "condition": { "not": { "exists_derived": { "controller": "you", "types": ["Creature"],
+                                              "exclude_self": true,
+                                              "power": { "op": ">=", "value": 4 } } } } }
+```
+
+`_static_active` defers a tree holding it, as it defers `affected_controller`,
+and `attack_forbidden` and `block_forbidden` ask it once per creature at
+declaration, outside the pipeline. The loader refuses it on every other effect,
+and off the battlefield.
 A condition on an object static is evaluated in `_battlefield_statics`, *before*
 the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and

@@ -1,0 +1,27 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_escalate.py. t_esc_spell is a three-mode escalate sorcery with no targets; t_esc_targeted owns a target in each of two modes, so 601.2b can narrow the modes on offer.",
+  "cards": [
+    {
+      "id": "t_esc_spell",
+      "name": "Test Escalate Spell",
+      "oracle_text": "Escalate {G} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• You gain 3 life.\n• Draw a card.\n• You lose 1 life.",
+      "mana_cost": "{1}{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "escalate": "{G}",
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "or_more": true,
+          "modes": [
+            {"label": "You gain 3 life.", "effects": [{"op": "gain_life", "amount": {"const": 3}}]},
+            {"label": "Draw a card.", "effects": [{"op": "draw", "amount": {"const": 1}}]},
+            {"label": "You lose 1 life.", "effects": [{"op": "lose_life", "amount": {"const": 1}, "player": "you"}]}
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -48,6 +48,7 @@ from .targeting import (
     describe_ref,
     enumerate_target_tuples,
     kicked_targets,
+    selectable_modes,
 )
 from .temp_effects import sacrifice_forbidden
 
@@ -1110,6 +1111,14 @@ def _additional_ceiling(
     branch = chosen_additional(card, choice)
     if branch is not None and not can_pay(state, pid, branch.without_mana(), oid):
         return 0
+    if card.escalate is not None:
+        # Escalate (702.120a): one payment per mode chosen beyond the first, so
+        # at most one fewer than the modes the cast can choose -- 601.2b's
+        # selectable ones, when a mode-owned target has nothing to point at.
+        modal = card.cast_time_modes
+        selectable = selectable_modes(state, pid, card, oid)
+        modes = len(modal.get("modes") or ()) if selectable is None else len(selectable)
+        return max(0, min(MAX_ADDITIONAL_TIMES, modes - 1))
     if not card.additional_repeatable:
         return 1
     # A repeatable cost is paid once *per line*, so the ceiling has to know how
@@ -1827,7 +1836,9 @@ def _cast_variant(
             label_base += " (foretold)"
         if face_down:
             label_base = "Cast a face-down creature"
-        if additional_times:
+        if additional_times and card.escalate is not None:
+            label_base += f" (escalate, {additional_times + 1} modes)"
+        elif additional_times:
             label_base += f" (+{additional_times} additional)"
         if additional_choice is not None and branch is not None:
             # The branches are two prices for one spell, so the panel has to say

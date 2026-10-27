@@ -1,0 +1,27 @@
+{
+  "_comment": "Shapes for tests/unit/commander/test_greatest_commander_mana_value.py. t_gcmv_host is Tangleweave Armor's +X/+X on a creature's own body, so the static is read without an attachment in the way.",
+  "cards": [
+    {
+      "id": "t_gcmv_host",
+      "name": "Test Commander Mana Value Host",
+      "oracle_text": "This creature gets +X/+X, where X is the greatest mana value among your commanders.",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Beast"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature gets +X/+X, where X is the greatest mana value among your commanders.",
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"greatest_commander_mana_value": "you"},
+          "toughness": {"greatest_commander_mana_value": "you"}
+        }
+      ]
+    }
+  ]
+}
