@@ -1487,6 +1487,12 @@
   "boros_swiftblade": {
     "zone": "battlefield"
   },
+  "borrowed_grace": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "boseiju_who_endures": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8930,6 +8936,10 @@
     },
     "zone": "battlefield"
   },
+  "preacher_of_the_schism": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "preeminent_captain": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12529,6 +12539,14 @@
     "zone": "battlefield"
   },
   "twilight_mire": {
+    "zone": "battlefield"
+  },
+  "twin_silk_spider": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "spider_1_2_g_reach"
+    },
     "zone": "battlefield"
   },
   "twinblade_blessing": {

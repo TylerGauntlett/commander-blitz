@@ -31982,12 +31982,12 @@
     },
     "Borrowed Grace": {
       "edhrec_rank": 26918,
-      "gate": "template",
+      "gate": null,
       "name": "Borrowed Grace",
-      "reason": "no template for: Escalate {1}{W}",
+      "reason": "",
       "scryfall_id": "2b33bcf6-2acf-476f-a49b-48bdb2f5786e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Borrowed Hostility": {
@@ -131482,12 +131482,12 @@
     },
     "Hungering Hydra": {
       "edhrec_rank": 3532,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Hungering Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "+1/+1 counters is 20, expected 29",
       "scryfall_id": "cce0561d-252a-499f-bfa0-9de59e4ea5ba",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Hungering Puppetbeast": {
@@ -205972,12 +205972,12 @@
     },
     "Preacher of the Schism": {
       "edhrec_rank": 4604,
-      "gate": "template",
+      "gate": null,
       "name": "Preacher of the Schism",
-      "reason": "no template for: Whenever this creature attacks the player with the most life or tied for most life, create",
+      "reason": "",
       "scryfall_id": "3a0db433-7ca2-48d6-b60c-0a9a9149378a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Precinct Captain": {
@@ -294802,12 +294802,12 @@
     },
     "Twin-Silk Spider": {
       "edhrec_rank": 8610,
-      "gate": "template",
+      "gate": null,
       "name": "Twin-Silk Spider",
-      "reason": "no template for: When this creature enters, create a 1/2 green Spider creature token with reach",
+      "reason": "",
       "scryfall_id": "68e9ba91-9bab-4b2f-a82d-05b333b8deed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twinblade Assassins": {
