@@ -567,7 +567,7 @@ class TestEzurisPredationMakesPhyrexianBeasts:
         assert token is not None
         assert (token.power, token.toughness) == (4, 4)
         assert sorted(token.colors) == ["G"]
-        assert list(token.subtypes) == ["Phyrexian", "Beast"]
+        assert sorted(token.subtypes) == ["Beast", "Phyrexian"]
         assert not token.keywords
         assert token.is_creature and token.is_token
 
