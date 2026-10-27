@@ -941,6 +941,7 @@ RIDER_KEYS: dict[str, Entry] = {
     "melds_into": ("The permanent the pair melds into.", H_MELD),
     "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
                               "Narrowing when a spell may be cast"),
+    "toxic": ("Toxic N: the N, beside `toxic` in `keywords`.", "Toxic N"),
 }
 
 DELAYED_TRIGGER: dict[str, Entry] = {
@@ -990,6 +991,7 @@ KEYWORDS: dict[str, Entry] = {
     "skulk": ("Skulk.", "Skulk"),
     "swampwalk": ("Swampwalk.", H_LANDWALK),
     "totem_armor": ("Totem armor (umbra armor).", None),
+    "toxic": ("Toxic; N is the card-level `toxic` field. Never granted.", "Toxic N"),
     "trample": ("Trample.", None),
     "vigilance": ("Vigilance.", None),
     "wither": ("Wither.", "Wither and infect"),

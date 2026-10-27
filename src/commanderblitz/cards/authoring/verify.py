@@ -49,6 +49,7 @@ from commanderblitz.engine.state import new_object
 
 from ..loader import compile_card
 from ..loader.linking import link_faces, validate_token_references
+from ..loader.vocabulary import KNOWN_KEYWORDS, normalize_keyword
 from ..proxy import CardFacts, lift_keywords
 from ..proxy import _residual as proxy_residual
 from ..registry import CardRegistry
@@ -1471,6 +1472,26 @@ def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     )
 
 
+_TOXIC_PART = re.compile(r"toxic (\d+)")
+
+
+def _claims_toxic_line(card: CardDef, stripped: str) -> bool:
+    """Whether a printed keyword line holding "toxic N" is exactly this card's."""
+    bare = re.sub(r"\s*\([^)]*\)", "", stripped).strip().rstrip(".")
+    parts = [p.strip().casefold() for p in re.split(r"[,;]", bare) if p.strip()]
+    numbered = [m for p in parts if (m := _TOXIC_PART.fullmatch(p))]
+    if len(numbered) != 1 or int(numbered[0].group(1)) != card.toxic:
+        return False
+    have = {str(k) for k in card.keywords}
+    for part in parts:
+        if _TOXIC_PART.fullmatch(part):
+            continue
+        word = normalize_keyword(part.replace(" ", "_"))
+        if word not in KNOWN_KEYWORDS or word not in have:
+            return False
+    return True
+
+
 def _covered(card: CardDef, line: str) -> bool:
     """Whether an ability on the card claims this printed line.
 
@@ -1514,6 +1535,13 @@ def _covered(card: CardDef, line: str) -> bool:
     # `CardDef.can_be_commander` -- strict the same way the "any number" line
     # below is: claimed only when the sentence names this card.
     if card.can_be_commander and stripped.lower().endswith("can be your commander"):
+        return True
+
+    # "Toxic 2", "Trample, toxic 1": a keyword line with one numbered part.
+    # `lift_keywords` cannot consume it -- "toxic_2" is no keyword -- so it is
+    # claimed here, strictly: the number must be the card's `toxic`, and every
+    # other part a keyword the card really has, as the lift would demand.
+    if card.toxic and "toxic" in card.keywords and _claims_toxic_line(card, stripped):
         return True
 
     # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an

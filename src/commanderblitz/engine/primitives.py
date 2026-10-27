@@ -548,6 +548,18 @@ def damage_player(
         # Teferi's Protection prints both sentences because they differ.
         if lost:
             fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
+    # Toxic N (702.164b, 120.3g): *combat* damage to a player from a creature
+    # with toxic also gives that player N poison counters -- "in addition to the
+    # damage's other results", so it sits after the branch above rather than in
+    # it, and an infect creature with toxic gives both. N is the total of every
+    # printed instance (702.164c), `CardDef.toxic`; the keyword is read on the
+    # **derived** characteristics, so a Mite that has lost all abilities gives
+    # none. After every prevention and on the dealt amount being positive: the
+    # poison is a result of damage dealt, and damage never dealt has no results.
+    if is_combat and source_oid is not None and _has(state, source_oid, Keyword.TOXIC):
+        toxic = state.card_of(state.objects[source_oid]).toxic
+        if toxic > 0:
+            add_poison(state, pid, toxic, source=source_oid)
     src = state.objects.get(source_oid) if source_oid is not None else None
     fire(
         state,

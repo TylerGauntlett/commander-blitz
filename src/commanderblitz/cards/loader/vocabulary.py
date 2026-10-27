@@ -13,11 +13,13 @@ from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
 )
 from commanderblitz.engine.enums import (
+    NUMBERED_KEYWORDS,
     CardType,
     Color,
     Keyword,
     Supertype,
 )
+from commanderblitz.engine.errors import DslError
 
 #: Trigger events whose payload carries a defending player, and therefore the
 #: only ones a ``defending`` clause can be asked of. The per-creature `attacks`
@@ -80,6 +82,28 @@ KNOWN_COLORS = frozenset(c.value for c in Color)
 #: values for one ability would need every reader to check both, and the one
 #: that forgot would be a card that quietly loses its totem armor.
 KEYWORD_ALIASES = {"umbra_armor": Keyword.TOTEM_ARMOR.value}
+
+
+#: The keywords a card may print with their number but nothing may grant --
+#: `enums.NUMBERED_KEYWORDS`, as the strings the loader compares.
+UNGRANTABLE_KEYWORDS = frozenset(k.value for k in NUMBERED_KEYWORDS)
+
+
+def refuse_numbered_grant(keywords: object, where: str) -> None:
+    """Refuse a grant of a keyword whose number lives on the card (toxic).
+
+    Called by every spelling of "gains/has <keyword>" the loader accepts. A
+    grant is a bare word, so "gains toxic 1" written as ``["toxic"]`` would make
+    a creature that filters as toxic and gives no poison -- a weaker card that
+    loads clean, which is the failure this pass exists to refuse.
+    """
+    for k in keywords or ():
+        if k in UNGRANTABLE_KEYWORDS:
+            raise DslError(
+                f"{where}: {k!r} carries a number (toxic N) that a grant has no "
+                f"place for, so it may only be printed -- 'keywords' plus the "
+                f"card-level {k!r} field -- and never granted"
+            )
 
 
 def normalize_keyword(word: str) -> str:

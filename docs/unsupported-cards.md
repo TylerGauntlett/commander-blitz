@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**110 cards** blocked by **99** capabilities.
+**109 cards** blocked by **98** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,8 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [phyrexian-mite-token](#phyrexian-mite-token) | 2 | 1992 | token |
-| [toxic](#toxic) | 2 | 1992 | keyword |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -42,6 +40,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-card-type](#choose-card-type) | 1 | 2680 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
+| [corrupted](#corrupted) | 1 | 2052 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
@@ -394,44 +393,6 @@ Blocks **2** cards.
 
 </details>
 
-## phyrexian-mite-token
-
-Blocks **2** cards.
-
-- **(token)** a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
-  <br>Why the existing vocabulary won't do: token_ids has no Mite; the nearest colorless 1/1 artifact creatures (servo_1_1_c, myr_1_1_c, gnome_1_1_c) lack toxic and the can't-block restriction
-- **(token)** a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
-  <br>Why the existing vocabulary won't do: token_ids has no Mite token (only germ_0_0_b and phyrexian_beast_4_4_g are Phyrexian), and toxic is not in the keyword list, so the token cannot be defined from existing vocabulary either
-
-<details><summary>Cards waiting on this</summary>
-
-- **White Sun's Twilight** (rank 1992) — `white_sun_s_twilight`
-  - Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and "This token can't block."
-- **Skrelv's Hive** (rank 2052) — `skrelv_s_hive`
-  - At the beginning of your upkeep, you lose 1 life and create a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
-  - Corrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink
-
-</details>
-
-## toxic
-
-Blocks **2** cards.
-
-- **(keyword)** the toxic N keyword: combat damage this creature deals to a player also gives that player N poison counters; static filters must be able to select creatures that have toxic (any N)
-  <br>Why the existing vocabulary won't do: The keyword list has infect but no toxic; infect replaces damage with poison and wither-style -1/-1 counters on creatures, whereas toxic deals normal damage plus poison, and 'creatures you control with toxic' cannot be filtered without the keyword existing
-- **(keyword)** toxic N: a player dealt combat damage by this creature also gets N poison counters
-  <br>Why the existing vocabulary won't do: keywords has infect but not toxic; infect replaces life damage with poison, whereas toxic adds poison on top of normal damage
-
-<details><summary>Cards waiting on this</summary>
-
-- **White Sun's Twilight** (rank 1992) — `white_sun_s_twilight`
-  - Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and "This token can't block."
-- **Skrelv's Hive** (rank 2052) — `skrelv_s_hive`
-  - At the beginning of your upkeep, you lose 1 life and create a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
-  - Corrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink
-
-</details>
-
 ## venture
 
 Blocks **2** cards.
@@ -683,6 +644,20 @@ Blocks **1** card.
 
 - **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
   - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
+
+</details>
+
+## corrupted
+
+Blocks **1** card.
+
+- **(value)** a static-condition value reading a player's poison counters -- the most among a player spec, e.g. {"max_poison_of": "each_opponent"} beside max_life_of -- so "as long as an opponent has three or more poison counters" is a cmp >= 3. The rest of the card is expressible: the upkeep trigger is lose_life plus create_token phyrexian_mite_1_1_c_toxic, and "creatures you control with toxic" is a grant_keyword lifelink static filtered keywords: ["toxic"]
+  <br>Why the existing vocabulary won't do: The value vocabulary reads life (life_of, max_life_of, min_life_of), counters on objects (counters_on) and event tallies, but nothing reads PlayerState.poison; counters_on selects permanents, not players
+
+<details><summary>Cards waiting on this</summary>
+
+- **Skrelv's Hive** (rank 2052) — `skrelv_s_hive`
+  - Corrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink
 
 </details>
 

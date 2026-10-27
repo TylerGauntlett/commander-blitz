@@ -153479,6 +153479,65 @@
       "colors": [
         "W"
       ],
+      "id": "white_sun_s_twilight",
+      "mana_cost": "{X}{W}{W}",
+      "name": "White Sun's Twilight",
+      "oracle_text": "You gain X life. Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\" If X is 5 or more, destroy all other creatures. (Players dealt combat damage by a creature with toxic 1 also get a poison counter.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "gain_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "mites",
+          "op": "create_token",
+          "token": "phyrexian_mite_1_1_c_toxic"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "x": true
+            },
+            "right": {
+              "const": 5
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_binding": "mites",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "whitesun_s_passage",
       "mana_cost": "{1}{W}",
       "name": "Whitesun's Passage",

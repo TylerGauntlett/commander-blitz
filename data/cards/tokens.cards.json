@@ -1694,6 +1694,38 @@
       "is_token": true
     },
     {
+      "id": "phyrexian_mite_1_1_c_toxic",
+      "name": "Phyrexian Mite Token",
+      "oracle_text": "1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and \"This token can't block.\"",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Mite"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "toxic"
+      ],
+      "toxic": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token can't block.",
+          "effect": "cant_block",
+          "affects": {
+            "self_only": true
+          }
+        }
+      ]
+    },
+    {
       "id": "pilot_1_1_c_crew2",
       "name": "Pilot Token",
       "oracle_text": "1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",

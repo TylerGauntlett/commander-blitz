@@ -1416,6 +1416,9 @@ class CardDef:
     graveyard_cast_transformed: bool = False
     #: Dredge N -- the mill that replaces a draw. See `engine/replacements.py`.
     dredge: int = 0
+    #: Toxic N (702.164) -- the total N of every printed toxic instance, read
+    #: with `Keyword.TOXIC` by `primitives.damage_player`. Zero means no toxic.
+    toxic: int = 0
     #: Madness -- the price of casting it out of the exile a discard sent it to.
     madness: ManaCost | None = None
     #: Miracle -- the price of casting it as the first card drawn this turn.

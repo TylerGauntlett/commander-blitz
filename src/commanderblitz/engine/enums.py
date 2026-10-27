@@ -301,6 +301,23 @@ class Keyword(str, Enum):
     #: moment the answer exists, and which only an arrival that *was* this cast
     #: (`entered_by_cast`) may read.
     COMPLEATED = "compleated"
+    #: Toxic N (702.164).  "Players dealt combat damage by this creature also
+    #: get N poison counters" -- in addition to the damage's other results
+    #: (120.3g), which is the whole difference from infect: the hit is still
+    #: life lost, and the poison rides on top of it.
+    #:
+    #: The one `Keyword` whose quality carries a **number**, and both halves of
+    #: the routing table want it: "creatures you control **with toxic**" (Skrelv's
+    #: Hive) filters on the word whatever its N, which only a `Keyword` can be
+    #: filtered on, and N has nowhere to live on a bare string.  So the word is
+    #: the keyword and the number is the card-level `CardDef.toxic` beside it --
+    #: the total of every printed instance, which is the whole of 702.164c's
+    #: "add up".  The loader requires the two together.
+    #:
+    #: Read at exactly one point, `primitives.damage_player`, on **derived**
+    #: keywords: a Mite that loses all abilities stops poisoning.  It is in
+    #: `NUMBERED_KEYWORDS`, so nothing may *grant* it: a grant has no N to give.
+    TOXIC = "toxic"
 
 
 LANDWALK_SUBTYPE = {
@@ -330,6 +347,14 @@ EVASION_KEYWORDS = frozenset(
 #: nothing during a game, or it belongs in the engine instead.
 INERT_KEYWORDS = frozenset({Keyword.PARTNER, Keyword.CHOOSE_A_BACKGROUND})
 
+#: Keywords whose printed quality carries a number that lives on the card
+#: rather than on the keyword -- toxic's N is `CardDef.toxic`.  Such a keyword
+#: may be *printed* (with its number) but never granted, whether by a static, an
+#: op, an animation or a counter: every grant spelling is a bare word, and a
+#: toxic with no N would be a keyword that filters as toxic and poisons nobody.
+#: The loader refuses each grant spelling of one.
+NUMBERED_KEYWORDS = frozenset({Keyword.TOXIC})
+
 #: Counter kinds that are **keyword counters** (122.1c): "a keyword counter is a
 #: counter with a keyword ability's name, and a permanent with one has that
 #: keyword ability".
@@ -348,7 +373,10 @@ INERT_KEYWORDS = frozenset({Keyword.PARTNER, Keyword.CHOOSE_A_BACKGROUND})
 #:
 #: Read by `characteristics._compute` (the keyword-grant layer) and by
 #: `cards.loader` (which refuses a near-miss spelling of one).
-KEYWORD_COUNTERS = frozenset(k.value for k in Keyword) - {k.value for k in INERT_KEYWORDS}
+#: `NUMBERED_KEYWORDS` are excluded too: a toxic counter would have no N.
+KEYWORD_COUNTERS = frozenset(k.value for k in Keyword) - {
+    k.value for k in INERT_KEYWORDS | NUMBERED_KEYWORDS
+}
 
 
 class AbilityKind(str, Enum):

@@ -1480,6 +1480,14 @@ class CardModel(BaseModel):
     #: mill, and it is also the price -- a player with fewer than N cards left is
     #: not offered the replacement at all.
     dredge: int = 0
+    #: **Toxic N** (702.164a): "Players dealt combat damage by this creature
+    #: also get N poison counters." The number, written beside ``"toxic"`` in
+    #: ``keywords`` -- the word is what "creatures with toxic" filters on, and
+    #: this is how many poison counters it gives. Two printed instances add up
+    #: (702.164c), so the field is their total. The loader requires the two
+    #: together: either alone is a creature that filters as toxic and poisons
+    #: nobody, or poisons and is not "with toxic".
+    toxic: int = 0
     #: **Madness** (702.35a): "If you would discard this card, exile it instead.
     #: Then you may cast it for its madness cost." The exile happens whether or
     #: not the cast is taken.

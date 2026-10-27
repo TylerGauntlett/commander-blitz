@@ -157,6 +157,7 @@ from .vocabulary import (  # noqa: F401
     UNGRANTABLE_STATIC_EFFECTS,
     WARP_GRANT_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
+    refuse_numbered_grant,
 )
 from .walk import (
     _check_counter_kind,
@@ -718,6 +719,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                             f"{where}.replacements[{i}].except_.add_keywords: "
                             f"unknown keyword {k!r}"
                         )
+                refuse_numbered_grant(added, f"{where}.replacements[{i}].except_.add_keywords")
         else:
             for key in ("copying", "except_"):
                 if getattr(replacement, key) is not None:
@@ -1339,6 +1341,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             )
     if model.dredge < 0:
         raise DslError(f"{where}: 'dredge' is how many cards are milled, so it cannot be negative")
+    # Toxic N (702.164): the word and the number, together or not at all. The
+    # word alone filters as "with toxic" and poisons nobody; the number alone
+    # poisons and is not "with toxic" -- each a different card from the printed
+    # one, and each would load clean without this.
+    if model.toxic < 0:
+        raise DslError(f"{where}: 'toxic' is how many poison counters, so it cannot be negative")
+    if (model.toxic > 0) != ("toxic" in model.keywords):
+        raise DslError(
+            f"{where}: toxic N is the keyword 'toxic' in 'keywords' *and* the "
+            f"card-level 'toxic' field holding N -- write both or neither"
+        )
     if model.morph_counter and model.morph is None:
         raise DslError(f"{where}: 'morph_counter' is megamorph's rider and needs a 'morph' cost")
     if model.morph is not None and "Creature" not in model.types:
@@ -1709,6 +1722,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
+        toxic=model.toxic,
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
@@ -3158,6 +3172,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     for k in model.cast_gains_keywords:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}.cast_gains_keywords: unknown keyword {k!r}")
+    refuse_numbered_grant(model.cast_gains_keywords, f"{where}.cast_gains_keywords")
     if model.effect == "cast_from_graveyard" and "graveyard" in model.active_zones:
         # "You may cast **this card** from your graveyard as long as you control
         # a Zombie" -- Gravecrawler. The card's own permission, read off it by
@@ -4235,6 +4250,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     for k in model.keywords:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: unknown keyword {k!r}")
+    # Losing toxic is sayable -- `chars` drops the word and `damage_player`
+    # reads the derived keywords -- so only the granting statics are refused.
+    if model.effect != "lose_keyword":
+        refuse_numbered_grant(model.keywords, where)
 
     if model.effect == "activate_loyalty_as_though_instant":
         # Whose loyalty abilities, in the permanent-filter language every other

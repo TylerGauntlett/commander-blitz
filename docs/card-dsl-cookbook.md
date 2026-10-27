@@ -3969,6 +3969,36 @@ nothing about damage to **players**, so a wither creature that gets through hits
 for life in the ordinary way. Folding the two together would make every wither
 creature a poison threat.
 
+### Toxic N
+
+    Phyrexian Mite token — "Toxic 1"
+    "Creatures you control with toxic have lifelink." — Skrelv's Hive
+
+```jsonc
+"keywords": ["trample", "toxic"],
+"toxic": 2
+```
+
+The word goes in `keywords` and N in the card-level `toxic` field, and the
+loader refuses either without the other. A `Keyword` despite the number,
+because "creatures you control **with toxic**" is an ordinary static filter,
+`"keywords": ["toxic"]`, matching any N. The field is the total of every
+printed instance (702.164c).
+
+Combat damage to a player from a creature with toxic gives that player N
+poison counters **as well as** the damage (`damage_player`, after the life loss
+or infect's poison). Infect is the near miss: it replaces the life loss, and
+toxic does not. Noncombat damage gives none, and the keyword is read on derived
+characteristics, so a `lose_keyword` or "loses all abilities" switches it off.
+
+Toxic is never granted. Every grant spelling — a `grant_keyword` static or op,
+an `animate`, `cast_gains_keywords`, `mana_grant`, a copy's `add_keywords` — is a
+bare word with no N, and the loader refuses `toxic` in each
+(`enums.NUMBERED_KEYWORDS`). For the same reason there is no toxic counter. A
+printed keyword line such as "Trample, toxic 2" is claimed for the residual
+gate only when N equals the card's `toxic` and every other word is one of the
+card's keywords.
+
 ### Fear, intimidate, horsemanship, shadow and nonbasic landwalk
 
     Shriekmaw — "Fear."

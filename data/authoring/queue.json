@@ -314492,12 +314492,12 @@
     },
     "White Sun's Twilight": {
       "edhrec_rank": 1992,
-      "gate": "template",
+      "gate": null,
       "name": "White Sun's Twilight",
-      "reason": "no template for: You gain X life. Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic",
+      "reason": "",
       "scryfall_id": "920c8d13-45e5-4ead-8617-0b3939bb9123",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "White Sun's Zenith": {

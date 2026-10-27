@@ -330,6 +330,43 @@ class TestAngelOfInventionsServosAreColorlessArtifacts:
         assert servo.is_token
 
 
+class TestThePhyrexianMiteHasToxicAndCantBlock:
+    """Skrelv's Hive and White Sun's Twilight: *"create a 1/1 colorless
+    **Phyrexian Mite** artifact creature token with **toxic 1** and "This token
+    can't block.""*
+
+    The nearest bodies are the Servo above, the Myr and the Gnome: the right
+    size and colour with neither the toxic nor the restriction. Toxic is the
+    load-bearing half -- Skrelv's Hive gives lifelink to "creatures you control
+    with toxic", so a Servo would gain nothing and poison nobody -- and the
+    restriction is a drawback a near miss would quietly drop.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("phyrexian_mite_1_1_c_toxic") is not None
+
+    def test_it_is_a_one_one_colorless_artifact_phyrexian_mite(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        assert (mite.power, mite.toughness) == (1, 1)
+        assert not mite.colors, "colorless -- the printed word"
+        assert "Artifact" in mite.types and "Creature" in mite.types
+        assert set(mite.subtypes) == {"Phyrexian", "Mite"}
+        assert mite.is_token
+
+    def test_it_has_toxic_1(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        assert set(mite.keywords) == {"toxic"}
+        assert mite.toxic == 1
+
+    def test_it_cannot_block(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        assert [a.static.get("effect") for a in mite.abilities] == ["cant_block"]
+
+    def test_the_servo_is_still_a_separate_token(self, pool):
+        servo = pool.get("servo_1_1_c")
+        assert not servo.keywords and servo.toxic == 0
+
+
 class TestDawnOfHopesSoldiersHaveLifelink:
     """Dawn of Hope: *"{3}{W}: Create a 1/1 white Soldier creature token with
     **lifelink**."*

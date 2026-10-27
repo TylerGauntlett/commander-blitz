@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 29 |
-| [Keywords](#keywords) | 39 |
+| [Keywords](#keywords) | 40 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -35,7 +35,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 6 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 14 |
+| [Card-level rider keys](#card-level-rider-keys) | 15 |
 | [Engine events](#engine-events) | 75 |
 
 ## Effect ops
@@ -781,6 +781,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `skulk` | Skulk. | [Skulk](card-dsl-cookbook.md#skulk) |
 | `swampwalk` | Swampwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `totem_armor` | Totem armor (umbra armor). | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `toxic` | Toxic; N is the card-level `toxic` field. Never granted. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 | `trample` | Trample. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `vigilance` | Vigilance. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `wither` | Wither. | [Wither and infect](card-dsl-cookbook.md#wither-and-infect) |
@@ -994,6 +995,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `melds_with` | The card this one melds with. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `melds_into` | The permanent the pair melds into. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
+| `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
 
 ## Engine events
 

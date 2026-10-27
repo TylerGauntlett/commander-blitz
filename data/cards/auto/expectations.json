@@ -13664,6 +13664,20 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "white_sun_s_twilight": {
+    "battlefield_count": 50,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 60
+    },
+    "tokens": {
+      "count": 20,
+      "id": "phyrexian_mite_1_1_c_toxic"
+    },
+    "zone": "graveyard"
+  },
   "whitesun_s_passage": {
     "life": {
       "0": 45

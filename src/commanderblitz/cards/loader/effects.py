@@ -69,6 +69,7 @@ from .vocabulary import (
     PLAYER_TARGET_KINDS,
     PLURAL_PLAYER_SPEC_NAMES,
     WAS_CAST_TRIGGERS,
+    refuse_numbered_grant,
 )
 from .walk import (
     _check_counter_kind,
@@ -2026,6 +2027,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.or_planeswalker: widens `attacking` to 'that player or a "
                 f"planeswalker they control' and needs an `attacking` to widen"
             )
+    # "Another target creature you control gains toxic 1" (Skrelv, Defector
+    # Mite) has a number a granted word cannot carry.
+    if op == "grant_keyword":
+        refuse_numbered_grant(
+            list(effect.get("keywords") or ()) + ([effect["keyword"]] if "keyword" in effect else []),
+            where,
+        )
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
@@ -2838,6 +2846,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for k in effect.get("keywords", ()) or ():
             if k not in KNOWN_KEYWORDS:
                 raise DslError(f"{where}: unknown keyword {k!r}")
+        refuse_numbered_grant(effect.get("keywords"), f"{where}.keywords")
+        refuse_numbered_grant(effect.get("your_turn_keywords"), f"{where}.your_turn_keywords")
         for c in effect.get("colors", ()) or ():
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown colour {c!r}")
