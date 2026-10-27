@@ -325,6 +325,7 @@
    "name",
    "not_keywords",
    "not_types",
+   "power",
    "subtypes",
    "supertypes",
    "types"
@@ -388,7 +389,8 @@
    "cmp",
    "is_attached",
    "top_of_library",
-   "is_monarch"
+   "is_monarch",
+   "exists_derived"
   ],
   "STATIC_CONDITION_OPS": [
    "!=",
@@ -438,6 +440,10 @@
    "graveyard",
    "hand",
    "library"
+  ],
+  "STATIC_DERIVED_CONDITION_EFFECTS": [
+   "cant_attack",
+   "cant_block"
   ],
   "STATIC_EFFECTS": [
    "ability_cost_reduction",
@@ -568,6 +574,7 @@
    "const",
    "count",
    "counters_on",
+   "greatest_commander_mana_value",
    "mana_symbols",
    "max_count_of",
    "max_life_of",
@@ -883,6 +890,7 @@
   "phase_in",
   "phase_out",
   "play_exiled",
+  "prevent_combat_damage",
   "prevent_damage",
   "prevent_damage_permanent",
   "proliferate",
