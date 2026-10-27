@@ -61,7 +61,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
-| [mana-retention](#mana-retention) | 1 | 2381 | static_effect |
 | [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
@@ -70,6 +69,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [pack-tactics](#pack-tactics) | 1 | 6179 | value |
+| [pay-any-amount-of-colored-mana](#pay-any-amount-of-colored-mana) | 1 | 2381 | cost |
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
@@ -928,20 +928,6 @@ Blocks **1** card.
 
 </details>
 
-## mana-retention
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (affects_player: "you") that exempts unspent mana of the listed colors (here red) from emptying the mana pool at the end of every step and phase (rule 500.4 exception), lasting while the permanent is on the battlefield, across turns
-  <br>Why the existing vocabulary won't do: No static in static_effects touches mana-pool emptying; spend_mana_as_any_color, double_land_mana and add_mana_on_tap change how mana is made or spent, not how long it lasts. The add_mana option persists_until_end_of_turn is per-production, applies to all colors of that one ability's mana, and still empties at end of turn, so it cannot keep red mana from other sources or carry it into later turns
-
-<details><summary>Cards waiting on this</summary>
-
-- **Leyline Tyrant** (rank 2381) — `leyline_tyrant`
-  - You don't lose unspent red mana as steps and phases end.
-
-</details>
-
 ## max-blockers
 
 Blocks **1** card.
@@ -1060,6 +1046,20 @@ Blocks **1** card.
 
 - **Minion of the Mighty** (rank 6179) — `minion_of_the_mighty`
   - Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may put a Dragon creature card from your hand onto the battlefield tapped and attacking.
+
+</details>
+
+## pay-any-amount-of-colored-mana
+
+Blocks **1** card.
+
+- **(cost)** an optional mid-resolution payment of a player-chosen number N of one coloured symbol ({R} N times), announced like may.x and bound with `as` so a reflexive trigger can read N -- 'you may pay any amount of {R}. When you do, it deals that much damage'
+  <br>Why the existing vocabulary won't do: may.x announces the X of a {X} pay, and ManaCost.with_x adds X as generic mana, so red-only cannot be required; pay.times scales a fixed cost by a value the card computes, not one the player chooses, and is refused beside x; repeat paying {R} once per loop is several separate payments with no count to bind and would split the damage into several events. The mana_retention line is expressible (mana_retention static, colors ["R"])
+
+<details><summary>Cards waiting on this</summary>
+
+- **Leyline Tyrant** (rank 2381) — `leyline_tyrant`
+  - When this creature dies, you may pay any amount of {R}. When you do, it deals that much damage to any target.
 
 </details>
 

@@ -37149,6 +37149,113 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "colors": [
+            "R"
+          ],
+          "effect": "mana_retention",
+          "kind": "static",
+          "text": "You don't lose unspent red mana as steps and phases end."
+        },
+        {
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, add {R}.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "electro_zap",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{X}"
+              },
+              "player": "you",
+              "prompt": "Pay {X} for Electro to deal X damage to target player?",
+              "x": {
+                "as": "paid_x"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Electro leaves the battlefield, you may pay {X}.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "paid_x"
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "id": "electro_zap",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "When you do, he deals X damage to target player."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "electro_assaulting_battery",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{R}{R}",
+      "name": "Electro, Assaulting Battery",
+      "oracle_text": "Flying\nYou don't lose unspent red mana as steps and phases end.\nWhenever you cast an instant or sorcery spell, add {R}.\nWhen Electro leaves the battlefield, you may pay {X}. When you do, he deals X damage to target player.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -139848,6 +139955,38 @@
           "event": "self_enters_tapped"
         }
       ],
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "any",
+          "colors": [
+            "W",
+            "U",
+            "B",
+            "R",
+            "G",
+            "C"
+          ],
+          "effect": "mana_retention",
+          "kind": "static",
+          "text": "Players don't lose unspent mana as steps and phases end."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "upwelling",
+      "mana_cost": "{3}{G}",
+      "name": "Upwelling",
+      "oracle_text": "Players don't lose unspent mana as steps and phases end.",
       "source": "auto",
       "types": [
         "Enchantment"

@@ -3367,6 +3367,10 @@
     },
     "zone": "graveyard"
   },
+  "electro_assaulting_battery": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "electrodominance": {
     "hand_size": {
       "0": 1
@@ -12486,6 +12490,10 @@
     "zone": "battlefield"
   },
   "uphill_battle": {
+    "zone": "battlefield"
+  },
+  "upwelling": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ur_golem_s_eye": {

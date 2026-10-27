@@ -80462,12 +80462,12 @@
     },
     "Electro, Assaulting Battery": {
       "edhrec_rank": 1397,
-      "gate": "template",
+      "gate": null,
       "name": "Electro, Assaulting Battery",
-      "reason": "no template for: You don't lose unspent red mana as steps and phases end",
+      "reason": "",
       "scryfall_id": "40466912-0d20-42ff-8232-807bf947030b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Electrodominance": {
@@ -299092,12 +299092,12 @@
     },
     "Upwelling": {
       "edhrec_rank": 13950,
-      "gate": "template",
+      "gate": null,
       "name": "Upwelling",
-      "reason": "no template for: Players don't lose unspent mana as steps and phases end",
+      "reason": "",
       "scryfall_id": "4cec2a66-0725-4933-8651-e2ba41a8f434",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ur-Drago": {

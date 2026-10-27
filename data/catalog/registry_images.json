@@ -3328,6 +3328,10 @@
     "artist": "Peter Polach",
     "scryfall_id": "281a741f-288c-4f19-b200-cacef57674e9"
   },
+  "electro_assaulting_battery": {
+    "artist": "Piotr Dura",
+    "scryfall_id": "40466912-0d20-42ff-8232-807bf947030b"
+  },
   "electrodominance": {
     "artist": "Mark A. Nelson",
     "scryfall_id": "6d550bc9-2cb5-4947-a48d-2c92b5c72541"
@@ -12269,6 +12273,10 @@
   "uphill_battle": {
     "artist": "Pete Venters",
     "scryfall_id": "73fa3455-3ba0-41ad-aefd-40f183aed2a6"
+  },
+  "upwelling": {
+    "artist": "Chippy",
+    "scryfall_id": "4cec2a66-0725-4933-8651-e2ba41a8f434"
   },
   "ur_golem_s_eye": {
     "artist": "Heather Hudson",
