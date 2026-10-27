@@ -5,8 +5,8 @@ area: decks
 effort: S
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [divided-damage]
+status: proposed
 rank: 3
 ---
 
