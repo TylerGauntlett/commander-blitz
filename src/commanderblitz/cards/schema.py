@@ -982,6 +982,20 @@ class ReplacementModel(BaseModel):
     #: "**You may** have this enter as a copy", and a copy nobody was asked
     #: about would be a strictly different card.
     copying: dict[str, Any] | None = None
+    #: `self_enters_as_copy`: the copy exception (707.9b), written into the
+    #: copiable values the permanent enters with -- "…except it has **haste and
+    #: dethrone**" (Dack's Duplicate) is ``{"add_keywords": ["haste",
+    #: "dethrone"]}``. ``add_keywords`` is the one key: the keywords are part of
+    #: the copy, not a layer-6 grant on top of it, so the copy has them from the
+    #: moment it arrives and loses them only when the copy itself ends.
+    except_: dict[str, Any] | None = None
+    #: `self_enters_as_copy`: how long the copy lasts. ``permanent`` (the
+    #: default) is Phyrexian Metamorph's -- 706.2 gives a copy no duration, so
+    #: it lasts as long as the permanent does. ``end_of_turn`` is Cursed
+    #: Mirror's "…become a copy of any creature on the battlefield **until end
+    #: of turn**": at cleanup the copy and its exception end together and the
+    #: permanent is its own printed card again.
+    duration: Literal["permanent", "end_of_turn"] = "permanent"
     counter: str | None = None
     #: How many, as a plain integer or a **value expression** -- "enters with a
     #: +1/+1 counter on it for each other Human you control" is

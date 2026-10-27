@@ -142,6 +142,14 @@ class GameObject:
     #: The name the copy keeps, for the "except its name is…" clause. `None`
     #: takes the copied card's own name, which is the ordinary case.
     copying_name: str | None = None
+    #: Keywords the copy carries as part of its copiable values (707.9b) -- the
+    #: "…except it has **haste and dethrone**" of Dack's Duplicate, written by
+    #: `zones._enter_battlefield` from a `self_enters_as_copy` replacement's
+    #: ``except_``. Read by `GameState.card_of` beside `copying_name`, so the
+    #: keywords are on the copied face itself and every reader sees them; and
+    #: cleared with `copying`, because an exception to a copy ends when the
+    #: copy does.
+    copying_keywords: frozenset[str] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -1089,6 +1097,7 @@ class GameObject:
         # this reset is clearing the way for, and each is cleared by whichever
         # of `move_object` and `_enter_battlefield` has read it.
         self.copying_name = None
+        self.copying_keywords = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False

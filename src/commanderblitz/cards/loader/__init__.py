@@ -693,11 +693,41 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             validate_selector(
                 replacement.copying, f"{where}.replacements[{i}].copying"
             )
-        elif replacement.copying is not None:
-            raise DslError(
-                f"{where}.replacements[{i}]: 'copying' is read only by "
-                f"'self_enters_as_copy', not by {replacement.event!r}"
-            )
+            if replacement.except_ is not None:
+                # "…except it has haste and dethrone." The one exception this
+                # replacement writes, and checked the way a printed keyword
+                # list is: a misspelt keyword would enter as a copy with
+                # nothing added, a cheaper card than the printed one.
+                unknown = set(replacement.except_) - {"add_keywords"}
+                if unknown:
+                    raise DslError(
+                        f"{where}.replacements[{i}].except_: unsupported keys "
+                        f"{sorted(unknown)} (only 'add_keywords')"
+                    )
+                added = replacement.except_.get("add_keywords")
+                if not isinstance(added, list) or not added:
+                    raise DslError(
+                        f"{where}.replacements[{i}].except_.add_keywords: "
+                        f"needs a non-empty list of keywords"
+                    )
+                for k in added:
+                    if k not in KNOWN_KEYWORDS:
+                        raise DslError(
+                            f"{where}.replacements[{i}].except_.add_keywords: "
+                            f"unknown keyword {k!r}"
+                        )
+        else:
+            for key in ("copying", "except_"):
+                if getattr(replacement, key) is not None:
+                    raise DslError(
+                        f"{where}.replacements[{i}]: {key!r} is read only by "
+                        f"'self_enters_as_copy', not by {replacement.event!r}"
+                    )
+            if replacement.duration != "permanent":
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'duration' is read only by "
+                    f"'self_enters_as_copy', not by {replacement.event!r}"
+                )
         if replacement.event == "self_enters_replaced":
             # The price, which is the whole clause: "you may **discard a land
             # card** instead". Required, because this replacement's declined

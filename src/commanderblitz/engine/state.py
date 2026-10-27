@@ -545,6 +545,11 @@ class GameState:
                 # override individual characteristics (706.2), and the name is
                 # the one this cycle overrides.
                 copied = replace(copied, name=obj.copying_name)
+            if obj.copying_keywords:
+                # "…except it has haste and dethrone" (707.9b). On the face
+                # itself rather than granted on top of it: the exception is
+                # part of what the copy is, so it is there before any layer.
+                copied = replace(copied, keywords=copied.keywords | obj.copying_keywords)
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied

@@ -1,0 +1,50 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_except.py. t_eacx_duplicate is Dack's Duplicate: a 0/0 that may enter as a copy of any creature, except it has haste and dethrone. t_eacx_mirror is Cursed Mirror: a mana rock that may enter as a copy of any creature until end of turn, except it has haste.",
+  "cards": [
+    {
+      "id": "t_eacx_duplicate",
+      "name": "Test Duplicate",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it has haste and dethrone.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Shapeshifter"],
+      "power": 0,
+      "toughness": 0,
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "types": ["Creature"]},
+          "except_": {"add_keywords": ["haste", "dethrone"]}
+        }
+      ]
+    },
+    {
+      "id": "t_eacx_mirror",
+      "name": "Test Mirror",
+      "oracle_text": "{T}: Add {R}.\nAs this artifact enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R}.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "effects": [{"op": "add_mana", "mana": "{R}"}]
+        }
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "types": ["Creature"]},
+          "duration": "end_of_turn",
+          "except_": {"add_keywords": ["haste"]}
+        }
+      ]
+    }
+  ]
+}

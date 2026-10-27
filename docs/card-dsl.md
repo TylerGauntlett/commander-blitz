@@ -2197,11 +2197,35 @@ with the question unanswered.
 The answer rides on `GameObject.enters_copy_of`, a field of its own rather than
 `copying` written early, because `reset_permanent_state` clears `copying` — a
 permanent that leaves the battlefield stops being a copy — and it runs during the
-very move the answer has to survive. `_enter_battlefield` turns it into `copying`
-with no end-of-turn duration, since 706.2 gives a copy applied as a permanent
-enters none.
+very move the answer has to survive. `_enter_battlefield` turns it into `copying`.
 
-`copying` is required on the event and refused on the other four. Always an
+```jsonc
+// Cursed Mirror
+"replacements": [
+  { "event": "self_enters_as_copy",
+    "copying": { "zone": "battlefield", "types": ["Creature"] },
+    "duration": "end_of_turn",
+    "except_": { "add_keywords": ["haste"] } }
+]
+```
+
+`duration` is `permanent` by default, since 706.2 gives a copy applied as a
+permanent enters none (Phyrexian Metamorph). `end_of_turn` is Cursed Mirror's
+"…become a copy of any creature on the battlefield **until end of turn**": the
+copy is `clear_until_eot`'s timed form, and after cleanup the permanent is its
+own printed card again.
+
+`except_` is the copy exception, 707.9b, and `add_keywords` is its one key —
+Dack's Duplicate's "…except it has haste and dethrone" is
+`{"add_keywords": ["haste", "dethrone"]}`. The keywords go on
+`GameObject.copying_keywords`, which `GameState.card_of` writes into the copied
+face, so they are part of the copy rather than granted on top of it and they end
+when the copy ends. The near miss is a printed `grant_keyword` static: that is a
+layer-6 grant which keeps working on the uncopied card when the controller
+declines. The loader refuses an unknown keyword, an empty list and any other key.
+
+`copying` is required on the event; `copying`, `except_` and a non-default
+`duration` are refused on the other four. Always an
 offer, because every printed card in this family says "you may"; an empty pool
 asks nothing, and the arriving permanent is not on the battlefield yet, so it
 cannot find itself.

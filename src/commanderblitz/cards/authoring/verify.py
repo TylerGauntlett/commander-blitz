@@ -1803,6 +1803,14 @@ def _covered(card: CardDef, line: str) -> bool:
             # The words are matched rather than skipped, and the loader will not
             # let the event be written without a `copying` pool, so the sentence
             # cannot be claimed by a card that copies nothing.
+            #
+            # Nor by a copy that drops a printed half: "…until end of turn"
+            # needs the timed `duration` and "…except it has haste" needs an
+            # `except_`, or the card claims a sentence it only half performs.
+            if "until end of turn" in lowered and replacement.get("duration") != "end_of_turn":
+                continue
+            if "except it has" in lowered and not replacement.get("except_"):
+                continue
             return True
         if event == "self_enters_replaced" and "would enter" in lowered:
             # "If this artifact would enter, you may discard a land card
