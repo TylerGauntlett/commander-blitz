@@ -48,6 +48,7 @@ from commanderblitz.engine.effects.values import (
 )
 from commanderblitz.engine.enums import (
     PERMANENT_TYPES,
+    SUBTYPE_CLASS,
     AbilityKind,
     CardType,
     Step,
@@ -2841,10 +2842,11 @@ def _validate_static_subtypes(model: AbilityModel, where: str) -> None:
 
     * a **near-miss spelling** (``{"chosen_type_of": "source"}``, say) would
       resolve to nothing and grant no type at all, for ever;
-    * the entry on **any static but** ``add_subtype``. `subtypes` is read by
-      exactly one static -- an `animate` or a `set_types` carries its own type
-      line elsewhere -- so a mapping written on another effect is a printed
-      sentence with no reader, which is the quietest way a card can be wrong.
+    * the entry on **any static but** ``add_subtype``. The mapping is resolved
+      by exactly one static -- the others that read `subtypes`,
+      `imprint_characteristics` and `set_creature_types`, take literal names --
+      so a mapping written on another effect is a printed sentence with no
+      reader, which is the quietest way a card can be wrong.
     """
     for index, entry in enumerate(model.subtypes):
         if not isinstance(entry, Mapping):
@@ -4263,6 +4265,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.subtypes: imprint_characteristics keeps literal "
                     f"creature types ('It's still a Shapeshifter'), not {entry!r}"
                 )
+
+    if model.effect == "set_creature_types":
+        # "…is a Dragon … (It loses all other creature types.)" The list is
+        # the creature-type line the permanent ends with, so an empty one is
+        # refused -- it would strip a creature's types and print no sentence
+        # that says so -- and so is a non-creature subtype: an Equipment named
+        # here would be kept off every creature it never belonged on (205.3d)
+        # and the line would silently grant nothing. `types` has no reader on
+        # this static; "is a green Elk *creature*" is `set_types` beside it.
+        if not model.subtypes:
+            raise DslError(f"{where}: set_creature_types needs the creature types it sets")
+        for entry in model.subtypes:
+            if not isinstance(entry, str):
+                raise DslError(
+                    f"{where}.subtypes: set_creature_types names literal creature "
+                    f"types, not {entry!r}"
+                )
+            if SUBTYPE_CLASS.get(entry, "Creature") != "Creature":
+                raise DslError(
+                    f"{where}.subtypes: {entry!r} is not a creature type -- "
+                    f"set_creature_types replaces creature types only"
+                )
+        if model.types:
+            raise DslError(
+                f"{where}: set_creature_types takes no 'types' -- replace the card "
+                f"types with a set_types static beside it"
+            )
 
     if model.effect == "set_colors":
         # `[]` is colourless and is the point of the effect, so the check is for

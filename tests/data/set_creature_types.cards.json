@@ -1,0 +1,127 @@
+{
+  "_comment": "Cards that exist only for the set_creature_types test (tests/unit/statics/test_set_creature_types.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_sct_reveler` is Goddric's Celebration shape on a legendary Human Noble; `t_sct_elk_curse` is the Kenrith's Transformation shape of type replacement and `t_sct_elk_mark` its creature-type line alone; `t_sct_sash` is a creature that is also an Equipment; `t_sct_idol` is a noncreature artifact carrying the static; `t_sct_spirit` is a plain creature to make arrive.",
+  "cards": [
+    {
+      "id": "t_sct_reveler",
+      "name": "Test Celebrant Noble",
+      "oracle_text": "Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, this creature is a Dragon. (It loses all other creature types.)",
+      "mana_cost": "{1}{R}{R}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Human", "Noble"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "set_creature_types",
+          "affects": {"self_only": true},
+          "subtypes": ["Dragon"],
+          "condition": {
+            "cmp": ">=",
+            "left": {"permanents_entered_this_turn": {"controller": "you", "not_types": ["Land"]}},
+            "right": {"const": 2}
+          },
+          "text": "Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, this creature is a Dragon. (It loses all other creature types.)"
+        }
+      ]
+    },
+    {
+      "id": "t_sct_elk_curse",
+      "name": "Test Elk Curse",
+      "oracle_text": "Enchant creature\nEnchanted creature is an Elk creature. (It loses all other card types and creature types.)",
+      "mana_cost": "{1}{G}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [
+        {"id": "enchanted", "kind": "permanent",
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "set_types",
+          "affects": {"attached": true},
+          "types": ["Creature"],
+          "text": "Enchanted creature is an Elk creature. (It loses all other card types and creature types.)"
+        },
+        {
+          "kind": "static",
+          "effect": "set_creature_types",
+          "affects": {"attached": true},
+          "subtypes": ["Elk"],
+          "text": "Enchanted creature is an Elk creature. (It loses all other card types and creature types.)"
+        }
+      ]
+    },
+    {
+      "id": "t_sct_elk_mark",
+      "name": "Test Elk Mark",
+      "oracle_text": "Enchant creature\nEnchanted creature is an Elk. (It loses all other creature types.)",
+      "mana_cost": "{G}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [
+        {"id": "enchanted", "kind": "permanent",
+         "selector": {"zone": "battlefield", "types": ["Creature"]}}
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "set_creature_types",
+          "affects": {"attached": true},
+          "subtypes": ["Elk"],
+          "text": "Enchanted creature is an Elk. (It loses all other creature types.)"
+        }
+      ]
+    },
+    {
+      "id": "t_sct_sash",
+      "name": "Test Sash Cat",
+      "oracle_text": "A creature that is also an Equipment.",
+      "mana_cost": "{2}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Equipment", "Cat", "Samurai"],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_sct_idol",
+      "name": "Test Dragon Idol",
+      "oracle_text": "This artifact is a Dragon. (It loses all other creature types.)",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "set_creature_types",
+          "affects": {"self_only": true},
+          "subtypes": ["Dragon"],
+          "text": "This artifact is a Dragon. (It loses all other creature types.)"
+        }
+      ]
+    },
+    {
+      "id": "t_sct_spirit",
+      "name": "Test Arriving Spirit",
+      "oracle_text": "A plain creature to make arrive.",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Spirit"],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

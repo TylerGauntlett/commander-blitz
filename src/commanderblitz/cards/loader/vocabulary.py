@@ -186,6 +186,12 @@ STATIC_EFFECTS = frozenset(
         # the source's ordered `exiled_cards` link; applied first in
         # `characteristics._compute`, a 7b size and a layer-4 type replacement.
         "imprint_characteristics",
+        # "...is a Dragon ... (It loses all other creature types.)" Goddric,
+        # Cloaked Reveler; Kenrith's Transformation. Replaces the creature
+        # types with its literal `subtypes` and leaves every other subtype,
+        # card type and supertype alone -- `set_types` keeps creature types
+        # while Creature stays, and `add_subtype` only adds.
+        "set_creature_types",
         # "...and loses all other card types and abilities." The only effect in
         # the engine that takes an ability away rather than adding one, which is
         # why `characteristics.abilities_of` exists at all -- before it, every

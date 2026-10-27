@@ -699,9 +699,12 @@ class AbilityModel(BaseModel):
     #: time, and the grant has to be re-read as the game goes on -- a second
     #: ``choose_type`` or a ``change_text`` moves it.
     #:
-    #: Accepted on ``add_subtype`` and refused on every other static, which is
-    #: the only effect that reads this field: a mapping quietly ignored is a
-    #: printed line that does nothing.
+    #: The mapping is accepted on ``add_subtype`` and refused on every other
+    #: static, which is the only effect that resolves it: a mapping quietly
+    #: ignored is a printed line that does nothing. Literal names are also the
+    #: kept type of ``imprint_characteristics`` ("It's still a Shapeshifter")
+    #: and the whole creature-type line of ``set_creature_types`` ("is a
+    #: Dragon … It loses all other creature types").
     subtypes: list[str | dict[str, str]] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None

@@ -517,6 +517,7 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             and entry.matches(
                 controllers=controllers,
                 types=spec.get("types") or (),
+                not_types=spec.get("not_types") or (),
                 subtypes=spec.get("subtypes") or (),
                 colors=spec.get("colors") or (),
             )
@@ -1000,7 +1001,9 @@ def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = 
 #: What ``{"permanents_entered_this_turn": {...}}`` may filter on. Every clause
 #: is one the snapshot can honestly answer -- `EnteredPermanent` carries exactly
 #: these characteristics, taken as the permanent arrived.
-ENTERED_FILTER_KEYS = frozenset({"controller", "types", "subtypes", "colors", "exclude_self"})
+ENTERED_FILTER_KEYS = frozenset(
+    {"controller", "types", "not_types", "subtypes", "colors", "exclude_self"}
+)
 
 
 def validate_rolled(spec: Any, where: str) -> None:
@@ -1078,7 +1081,7 @@ def validate_entered_filter(spec: Any, where: str) -> None:
             f"{where}.controller: must name one of {sorted(PLAYER_SPEC_NAMES)} "
             f"-- 'under whose control' is part of the printed sentence, got {who!r}"
         )
-    for key in ("types", "subtypes", "colors"):
+    for key in ("types", "not_types", "subtypes", "colors"):
         if key not in spec:
             continue
         names = spec[key]

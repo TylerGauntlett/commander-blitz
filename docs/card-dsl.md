@@ -1559,7 +1559,11 @@ creatures, and the value when the card is only counting them.
 The only ledger value that takes a **filter** rather than a player spec, because
 the printed sentence asks *which* permanents entered and not how many did. The
 clauses are the selector language's, spelled the same way: `controller` (a player
-spec), `types` (all-of), `subtypes` and `colors` (any-of), and `exclude_self`.
+spec), `types` (all-of), `not_types` (none-of — Celebration's "two or more
+**nonland** permanents"), `subtypes` and `colors` (any-of), and `exclude_self`.
+`not_types` is not a list of every other card type written into `types`: that
+is all-of, so it would count only permanents that were all of them at once, and
+an any-of spelling would still count an artifact land.
 
 | | |
 |---|---|

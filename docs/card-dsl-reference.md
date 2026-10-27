@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 30 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 33 |
-| [Static effects](#static-effects) | 80 |
+| [Static effects](#static-effects) | 81 |
 | [Player-wide statics](#player-wide-statics) | 40 |
-| [Grantable statics](#grantable-statics) | 37 |
+| [Grantable statics](#grantable-statics) | 38 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 27 |
 | [Card-level costs](#card-level-costs) | 28 |
@@ -539,6 +539,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `replace_token_creation` |  |  | If the player would create tokens, create more or different ones instead. | ["If you would create a … token, instead …"](card-dsl-cookbook.md#if-you-would-create-a--token-instead-) |
 | `reveal_library_top` | yes |  | The player plays with the top card of their library revealed. | [Static abilities](card-dsl.md#static-abilities) |
 | `set_colors` |  | yes | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
+| `set_creature_types` |  | yes | Matching permanents' creature types are exactly the given ones; other subtypes and types stay. | [set_creature_types — "it loses all other creature types"](card-dsl-cookbook.md#set_creature_types--it-loses-all-other-creature-types) |
 | `set_pt` |  | yes | Matching permanents have base P/T N/M. | [Static abilities](card-dsl.md#static-abilities) |
 | `set_types` |  | yes | Matching permanents are the given card types and lose the others. | [set_types now strips orphaned subtypes](card-dsl-cookbook.md#set_types-now-strips-orphaned-subtypes) |
 | `skip_draw_step` | yes |  | The player skips their draw step. | [Static abilities](card-dsl.md#static-abilities) |
@@ -634,6 +635,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `replace_dies` | If a matching permanent would die, exile it instead, optionally creating tokens. | ["If a nontoken creature an opponent controls would die, instead exile that card"](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) |
 | `replace_graveyard` | If a matching card would go to a graveyard, it goes elsewhere. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `set_colors` | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
+| `set_creature_types` | Matching permanents' creature types are exactly the given ones; other subtypes and types stay. | [set_creature_types — "it loses all other creature types"](card-dsl-cookbook.md#set_creature_types--it-loses-all-other-creature-types) |
 | `set_pt` | Matching permanents have base P/T N/M. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `set_types` | Matching permanents are the given card types and lose the others. | [set_types now strips orphaned subtypes](card-dsl-cookbook.md#set_types-now-strips-orphaned-subtypes) |
 | `skip_untap_step` | Matching permanents don't untap during their controller's untap step. | [Not untapping at all](card-dsl-cookbook.md#not-untapping-at-all) |

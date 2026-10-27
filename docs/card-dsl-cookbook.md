@@ -7236,6 +7236,49 @@ answer), and a non-literal kept subtype.
 name, colour, abilities — and is a different card; a `set_pt` cannot read a
 card in exile at all.
 
+### `set_creature_types` — "it loses all other creature types"
+
+"Celebration — As long as two or more nonland permanents entered the
+battlefield under your control this turn, Goddric is a Dragon with base power
+and toughness 4/4, flying, and … (It loses all other creature types.)"
+
+```jsonc
+{"kind": "static", "effect": "set_creature_types", "affects": {"self_only": true},
+ "subtypes": ["Dragon"],
+ "condition": {"cmp": ">=",
+               "left": {"permanents_entered_this_turn":
+                          {"controller": "you", "not_types": ["Land"]}},
+               "right": {"const": 2}}}
+```
+
+beside `set_pt`, `grant_keyword` and `grant_ability` statics under the same
+condition. The permanent's creature types become exactly the literal
+`subtypes` while the static applies (613.1d, layer 4), and come back the moment
+it stops. Nothing else moves: non-creature subtypes (an Equipment, a Vehicle)
+stay, and so do the card types and supertypes. The named types arrive only on a
+creature (205.3d), so a permanent something has made a land is not a
+"Land — Dragon".
+
+It applies after `set_types`, so an Aura reading "is a green Elk creature (It
+loses all other card types and creature types)" — Kenrith's Transformation — is
+a `set_types: ["Creature"]` and a `set_creature_types: ["Elk"]` side by side,
+and their order on the card does not matter. Grants still union on top: an
+`add_subtype` static or a type recorded "in addition" survives the replacement,
+whatever its timestamp.
+
+The loader refuses an empty list, a mapping entry (the chosen-type leaf belongs
+to `add_subtype`), a subtype that is not a creature type, and a `types` field
+(that is `set_types`' job).
+
+**The near misses.** `set_types: ["Creature"]` keeps every creature type while
+Creature stays; `add_subtype` only adds, so a Human Noble would be a Human
+Noble Dragon; `animate` with `exact` replaces creature types but is a one-shot
+with a duration, not a static that switches with a condition or an Aura.
+
+Like every layer output, the result is in `chars()` and in the effect-side
+selectors ("Dragons you control get +1/+0 until end of turn" sees the
+celebrating Goddric) but not in another static's filter ([ADR 0001](adr/0001-layers-lite.md)).
+
 ### `set_types` now strips orphaned subtypes
 
 205.1b and 613.1d: the subtypes of a card type a permanent no longer has go with

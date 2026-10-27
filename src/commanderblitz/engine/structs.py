@@ -1266,19 +1266,23 @@ class EnteredPermanent:
         *,
         controllers: Iterable[int],
         types: Iterable[str] = (),
+        not_types: Iterable[str] = (),
         subtypes: Iterable[str] = (),
         colors: Iterable[str] = (),
     ) -> bool:
         """Does this arrival answer a card's filter?
 
-        Spelled exactly as `selectors.matches` spells the same four clauses, so
+        Spelled exactly as `selectors.matches` spells the same five clauses, so
         a card author who knows one knows the other: ``types`` is all-of ("an
-        artifact creature" is both), ``subtypes`` and ``colors`` are any-of ("a
-        Human or an Elf").  A clause left out filters nothing.
+        artifact creature" is both), ``not_types`` none-of ("two or more
+        **nonland** permanents", Celebration), ``subtypes`` and ``colors`` are
+        any-of ("a Human or an Elf").  A clause left out filters nothing.
         """
         if self.controller not in set(controllers):
             return False
         if types and not set(types).issubset(self.types):
+            return False
+        if not_types and set(not_types) & self.types:
             return False
         if subtypes and not (set(subtypes) & self.subtypes):
             return False

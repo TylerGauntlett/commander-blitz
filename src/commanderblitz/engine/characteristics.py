@@ -524,6 +524,30 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 types = set(static.get("types", ()))
                 subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
 
+        # 0a. creature-type replacement -- "…is a Dragon with base power and
+        #     toughness 4/4 … (It loses all other creature types.)" Goddric,
+        #     Cloaked Reveler; Kenrith's Transformation's "is a green Elk
+        #     creature". Layer 4 like `set_types` above, and after it, so an
+        #     Aura that makes a creature exactly a Creature *and* exactly an Elk
+        #     ends with both whichever order its lines are printed in.
+        #
+        #     Only the creature types go (205.3m): an Equipment or a Vehicle
+        #     stays one, and card types and supertypes are not touched -- a
+        #     legendary Goddric is still legendary. The named types arrive only
+        #     on a creature, because 205.3d forbids a subtype whose card type
+        #     the object lacks; a permanent something has made a land is not a
+        #     "Land -- Dragon". Before the grants below, for the same promise
+        #     `set_types` keeps: what is added in addition survives.
+        for source_obj, static in statics:
+            if static.get("effect") != "set_creature_types":
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                subtypes = {
+                    sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
+                }
+                if "Creature" in types:
+                    subtypes.update(static.get("subtypes", ()))
+
         # 0b. colour replacement -- "enchanted permanent is a **colorless**
         #     land". Real layer 5, and it sits here for the reason `set_types`
         #     does: it replaces rather than modifies, and nothing below reads
@@ -1525,6 +1549,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             and entry.matches(
                 controllers=controllers,
                 types=spec.get("types") or (),
+                not_types=spec.get("not_types") or (),
                 subtypes=spec.get("subtypes") or (),
                 colors=spec.get("colors") or (),
             )

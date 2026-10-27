@@ -778,6 +778,8 @@ STATICS: dict[str, Entry] = {
                                '"If you would create a … token, instead …"'),
     "reveal_library_top": ("The player plays with the top card of their library revealed.", None),
     "set_colors": ("Matching permanents are the given colors.", "`set_colors`"),
+    "set_creature_types": ("Matching permanents' creature types are exactly the given ones; other subtypes and types stay.",
+                           "`set_creature_types` — \"it loses all other creature types\""),
     "set_pt": ("Matching permanents have base P/T N/M.", None),
     "set_types": ("Matching permanents are the given card types and lose the others.",
                   "`set_types` now strips orphaned subtypes"),
