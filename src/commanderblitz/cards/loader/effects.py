@@ -10,6 +10,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from commanderblitz.engine.effects import RECORDING_OPS, known_ops
+from commanderblitz.engine.effects.behold import validate_behold_selector
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_cards import (
     DESTINATIONS,
@@ -769,6 +770,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         ):
             raise DslError(
                 f"{where}.reset: a list of binding names to clear before each pass"
+            )
+
+    if op == "behold":
+        validate_behold_selector(effect.get("objects"), f"{where}.objects")
+        if "optional" in effect and not isinstance(effect["optional"], bool):
+            raise DslError(f"{where}: behold's 'optional' is a boolean (the printed 'may')")
+        if not effect.get("effects") and not effect.get("else") and "as" not in effect:
+            # A behold nothing reads is a reveal for no reason: the card loads,
+            # shows a Dragon, and the "if you do" it was written for is gone.
+            raise DslError(
+                f"{where}: behold needs 'effects' (the 'if you do'), 'else', or an "
+                f"'as' something later reads"
             )
 
     if op == "may" and "pay" in effect:

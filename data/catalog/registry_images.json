@@ -1851,6 +1851,10 @@
     "artist": "Michael C. Hayes",
     "scryfall_id": "de3d0a45-3b3a-4718-9cb8-ff0c2464d634"
   },
+  "caustic_exhale": {
+    "artist": "Camille Alquier",
+    "scryfall_id": "488152ce-2048-4ccb-b2d6-b9628958286f"
+  },
   "cave_of_the_frost_dragon": {
     "artist": "Johannes Voss",
     "scryfall_id": "bde28ceb-8b92-4a8c-8e35-5c9f72d20d52"
@@ -2963,6 +2967,10 @@
     "artist": "Donato Giancola",
     "scryfall_id": "302ada66-9da3-4a88-81f7-111dfa737874"
   },
+  "dispelling_exhale": {
+    "artist": "David Auden Nash",
+    "scryfall_id": "1c9af3f1-711e-42ae-803a-1100eba3fb13"
+  },
   "dissolve": {
     "artist": "Wesley Burt",
     "scryfall_id": "b4fb87ab-8595-459a-a5f2-087296d9b120"
@@ -3399,6 +3407,10 @@
   "elspeth_sun_s_champion": {
     "artist": "Eric Deschamps",
     "scryfall_id": "a91d9163-c1f2-4eae-acab-5dabbc71d7d4"
+  },
+  "elven_passage": {
+    "artist": "Kristina Carroll",
+    "scryfall_id": "75cb4095-b252-49b0-ad2e-0ea52ae4709a"
   },
   "elves_of_deep_shadow": {
     "artist": "Julie Bell",
@@ -6137,6 +6149,10 @@
     "artist": "Square Enix",
     "scryfall_id": "e141f975-945e-4e2c-ac04-6083b5bdaf16"
   },
+  "kinsbaile_aspirant": {
+    "artist": "Margaret Organ-Kean",
+    "scryfall_id": "56dfdab1-ea3f-4663-a855-a9e72505f85e"
+  },
   "kiora_behemoth_beckoner": {
     "artist": "Jaime Jones",
     "scryfall_id": "8966483f-7977-44ee-b255-3e89262e0a71"
@@ -6801,6 +6817,10 @@
   "lyra_dawnbringer": {
     "artist": "Chris Rahn",
     "scryfall_id": "15e10422-44e9-421c-b9ec-4006245f71a2"
+  },
+  "lys_alana_dignitary": {
+    "artist": "Heather Hudson",
+    "scryfall_id": "94e8d6a9-7aa3-4e93-8e4d-e50da7ff09d2"
   },
   "macetail_hystrodon": {
     "artist": "Daren Bader",
@@ -7517,6 +7537,10 @@
   "muck_rats": {
     "artist": "Una Fricker",
     "scryfall_id": "cf2018ec-94e4-4e29-8b4b-ce30fb0d4a99"
+  },
+  "mudbutton_cursetosser": {
+    "artist": "Ioannis Fiore",
+    "scryfall_id": "35bc841a-9a21-4c17-a60a-a3ee01472fcb"
   },
   "muddle_the_mixture": {
     "artist": "Luca Zontini",
@@ -8406,6 +8430,10 @@
   "phyrexian_walker": {
     "artist": "Bryan Talbot",
     "scryfall_id": "7aef15b6-3655-4daa-8236-ecfcb349c077"
+  },
+  "piercing_exhale": {
+    "artist": "Jorge Jacinto",
+    "scryfall_id": "b2a0deb9-5bc3-42d5-9e1e-5f463d176aef"
   },
   "pikemen": {
     "artist": "Dan Frazier",
@@ -10650,6 +10678,10 @@
   "soulbound_guardians": {
     "artist": "Erica Yang",
     "scryfall_id": "62e8128f-9858-4c48-ab43-1beca3db70e5"
+  },
+  "soulbright_seeker": {
+    "artist": "Kev Fang",
+    "scryfall_id": "895ac890-608a-47de-8bc8-9337fd2064e8"
   },
   "soulless_one": {
     "artist": "Thomas M. Baxa",

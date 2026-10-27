@@ -794,6 +794,7 @@
   "become_level",
   "become_monarch",
   "become_prepared",
+  "behold",
   "cant_attack_player",
   "cant_block",
   "cant_cast_spells_from_zones",

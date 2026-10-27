@@ -41522,12 +41522,12 @@
     },
     "Caustic Exhale": {
       "edhrec_rank": 16534,
-      "gate": "template",
+      "gate": null,
       "name": "Caustic Exhale",
-      "reason": "no template for: As an additional cost to cast this spell, behold a Dragon or pay {1}",
+      "reason": "",
       "scryfall_id": "488152ce-2048-4ccb-b2d6-b9628958286f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Caustic Hound": {
@@ -70132,12 +70132,12 @@
     },
     "Dispelling Exhale": {
       "edhrec_rank": 9045,
-      "gate": "template",
+      "gate": null,
       "name": "Dispelling Exhale",
-      "reason": "no template for: As an additional cost to cast this spell, you may behold a Dragon",
+      "reason": "",
       "scryfall_id": "1c9af3f1-711e-42ae-803a-1100eba3fb13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dispense Justice": {
@@ -81722,12 +81722,12 @@
     },
     "Elven Passage": {
       "edhrec_rank": 25231,
-      "gate": "template",
+      "gate": null,
       "name": "Elven Passage",
-      "reason": "no template for: {T}, Pay 1 life, Sacrifice this land: Search your library for a basic land card, put it on",
+      "reason": "",
       "scryfall_id": "75cb4095-b252-49b0-ad2e-0ea52ae4709a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elven Raft-Steerer": {
@@ -132452,12 +132452,12 @@
     },
     "Hyperion's Atomic Vision": {
       "edhrec_rank": 29356,
-      "gate": "template",
+      "gate": "playable",
       "name": "Hyperion's Atomic Vision",
-      "reason": "no template for: As an additional cost to cast this spell, you may behold a Hero",
+      "reason": "CommanderBlitzError: hyperion_s_atomic_vision is not playable in the sandbox; offered: ['Pass', 'Play Forest']",
       "scryfall_id": "13940d64-16f6-473b-9b6c-80a187c3d4fa",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Hyperion, Supreme Hero": {
@@ -149322,12 +149322,12 @@
     },
     "Kinsbaile Aspirant": {
       "edhrec_rank": 19579,
-      "gate": "template",
+      "gate": null,
       "name": "Kinsbaile Aspirant",
-      "reason": "no template for: As an additional cost to cast this spell, behold a Kithkin or pay {2}",
+      "reason": "",
       "scryfall_id": "56dfdab1-ea3f-4663-a855-a9e72505f85e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kinsbaile Balloonist": {
@@ -163612,12 +163612,12 @@
     },
     "Lys Alana Dignitary": {
       "edhrec_rank": 13078,
-      "gate": "template",
+      "gate": null,
       "name": "Lys Alana Dignitary",
-      "reason": "no template for: As an additional cost to cast this spell, behold an Elf or pay {2}",
+      "reason": "",
       "scryfall_id": "94e8d6a9-7aa3-4e93-8e4d-e50da7ff09d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lys Alana Huntmaster": {
@@ -180562,12 +180562,12 @@
     },
     "Mudbutton Cursetosser": {
       "edhrec_rank": 18848,
-      "gate": "template",
+      "gate": null,
       "name": "Mudbutton Cursetosser",
-      "reason": "no template for: As an additional cost to cast this spell, behold a Goblin or pay {2}",
+      "reason": "",
       "scryfall_id": "35bc841a-9a21-4c17-a60a-a3ee01472fcb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mudbutton Torchrunner": {
@@ -195182,12 +195182,12 @@
     },
     "Osseous Exhale": {
       "edhrec_rank": 17006,
-      "gate": "template",
+      "gate": "playable",
       "name": "Osseous Exhale",
-      "reason": "no template for: As an additional cost to cast this spell, you may behold a Dragon",
+      "reason": "CommanderBlitzError: osseous_exhale is not playable in the sandbox; offered: ['Pass', 'Play Forest']",
       "scryfall_id": "2300da2f-2297-4c2f-90c1-11ce2b42d91f",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Osseous Sticktwister": {
@@ -202292,12 +202292,12 @@
     },
     "Piercing Exhale": {
       "edhrec_rank": 14004,
-      "gate": "template",
+      "gate": null,
       "name": "Piercing Exhale",
-      "reason": "no template for: As an additional cost to cast this spell, you may behold a Dragon",
+      "reason": "",
       "scryfall_id": "b2a0deb9-5bc3-42d5-9e1e-5f463d176aef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Piercing Light": {
@@ -256262,12 +256262,12 @@
     },
     "Soulbright Seeker": {
       "edhrec_rank": 17344,
-      "gate": "template",
+      "gate": null,
       "name": "Soulbright Seeker",
-      "reason": "no template for: As an additional cost to cast this spell, behold an Elemental or pay {2}",
+      "reason": "",
       "scryfall_id": "895ac890-608a-47de-8bc8-9337fd2064e8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soulcage Fiend": {

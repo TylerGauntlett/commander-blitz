@@ -20351,6 +20351,61 @@
       ]
     },
     {
+      "additional_cost_options": [
+        {
+          "behold": {
+            "subtypes": [
+              "Dragon"
+            ]
+          }
+        },
+        {
+          "mana": "{1}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "caustic_exhale",
+      "mana_cost": "{B}",
+      "name": "Caustic Exhale",
+      "oracle_text": "As an additional cost to cast this spell, behold a Dragon or pay {1}. (To behold a Dragon, choose a Dragon you control or reveal a Dragon card from your hand.)\nTarget creature gets -3/-3 until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -3
+          },
+          "toughness": {
+            "const": -3
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -33283,6 +33338,88 @@
       ]
     },
     {
+      "additional_cost": {
+        "behold": {
+          "subtypes": [
+            "Dragon"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "dispelling_exhale",
+      "mana_cost": "{1}{U}",
+      "name": "Dispelling Exhale",
+      "oracle_text": "As an additional cost to cast this spell, you may behold a Dragon. (You may choose a Dragon you control or reveal a Dragon card from your hand.)\nCounter target spell unless its controller pays {2}. If a Dragon was beheld, counter that spell unless its controller pays {4} instead.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "additional_paid": true
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "else": [
+            {
+              "else": [
+                {
+                  "op": "counter",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": {
+                "controller_of_target": "t1"
+              },
+              "prompt": "Pay {2} to stop Dispelling Exhale countering your spell?"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "else": [
+                {
+                  "op": "counter",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{4}"
+              },
+              "player": {
+                "controller_of_target": "t1"
+              },
+              "prompt": "Pay {4} to stop Dispelling Exhale countering your spell?"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -38100,6 +38237,68 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "fetched",
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "fetched"
+                  },
+                  "op": "untap"
+                }
+              ],
+              "objects": {
+                "subtypes": [
+                  "Elf"
+                ]
+              },
+              "op": "behold",
+              "optional": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. You may behold an Elf. If you do, untap that land."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "elven_passage",
+      "name": "Elven Passage",
+      "oracle_text": "{T}, Pay 1 life, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. You may behold an Elf. If you do, untap that land. (To behold an Elf, choose an Elf you control or reveal an Elf card from your hand.)",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -69666,6 +69865,70 @@
         {
           "effects": [
             {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, this creature gets +1/+1 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "additional_cost_options": [
+        {
+          "behold": {
+            "subtypes": [
+              "Kithkin"
+            ]
+          }
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kinsbaile_aspirant",
+      "mana_cost": "{W}",
+      "name": "Kinsbaile Aspirant",
+      "oracle_text": "As an additional cost to cast this spell, behold a Kithkin or pay {2}. (To behold a Kithkin, choose a Kithkin you control or reveal a Kithkin card from your hand.)\nWhenever another creature you control enters, this creature gets +1/+1 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kithkin",
+        "Citizen"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -77048,6 +77311,65 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Elf"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}{G}. Activate only if there is an Elf card in your graveyard."
+        }
+      ],
+      "additional_cost_options": [
+        {
+          "behold": {
+            "subtypes": [
+              "Elf"
+            ]
+          }
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lys_alana_dignitary",
+      "mana_cost": "{1}{G}",
+      "name": "Lys Alana Dignitary",
+      "oracle_text": "As an additional cost to cast this spell, behold an Elf or pay {2}. (To behold an Elf, choose an Elf you control or reveal an Elf card from your hand.)\n{T}: Add {G}{G}. Activate only if there is an Elf card in your graveyard.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Advisor"
       ],
       "toughness": 3,
       "types": [
@@ -84792,6 +85114,86 @@
       "source": "auto",
       "subtypes": [
         "Rat"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "This creature can't block."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "const": 2
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature dies, destroy target creature an opponent controls with power 2 or less.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "additional_cost_options": [
+        {
+          "behold": {
+            "subtypes": [
+              "Goblin"
+            ]
+          }
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "mudbutton_cursetosser",
+      "mana_cost": "{B}",
+      "name": "Mudbutton Cursetosser",
+      "oracle_text": "As an additional cost to cast this spell, behold a Goblin or pay {2}. (To behold a Goblin, choose a Goblin you control or reveal a Goblin card from your hand.)\nThis creature can't block.\nWhen this creature dies, destroy target creature an opponent controls with power 2 or less.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warlock"
       ],
       "toughness": 1,
       "types": [
@@ -96330,6 +96732,93 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "additional_cost": {
+        "behold": {
+          "subtypes": [
+            "Dragon"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "piercing_exhale",
+      "mana_cost": "{1}{G}",
+      "name": "Piercing Exhale",
+      "oracle_text": "As an additional cost to cast this spell, you may behold a Dragon. (You may choose a Dragon you control or reveal a Dragon card from your hand.)\nTarget creature you control deals damage equal to its power to target creature or planeswalker. If a Dragon was beheld, surveil 2.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "power_of": {
+              "target": "biter"
+            }
+          },
+          "objects": {
+            "target": "bitten"
+          },
+          "op": "damage",
+          "source_object": {
+            "target": "biter"
+          }
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "additional_paid": true
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "surveil"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "biter",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "bitten",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "any",
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -120176,6 +120665,92 @@
         "Spirit"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{R}"
+          },
+          "effects": [
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "mana": "{R}{R}{R}{R}",
+                  "op": "add_mana"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{R}: Target creature you control gains trample until end of turn. If this is the third time this ability has resolved this turn, add {R}{R}{R}{R}."
+        }
+      ],
+      "additional_cost_options": [
+        {
+          "behold": {
+            "subtypes": [
+              "Elemental"
+            ]
+          }
+        },
+        {
+          "mana": "{2}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "soulbright_seeker",
+      "mana_cost": "{R}",
+      "name": "Soulbright Seeker",
+      "oracle_text": "As an additional cost to cast this spell, behold an Elemental or pay {2}. (To behold an Elemental, choose an Elemental you control or reveal an Elemental card from your hand.)\n{R}: Target creature you control gains trample until end of turn. If this is the third time this ability has resolved this turn, add {R}{R}{R}{R}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Sorcerer"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]

@@ -16,6 +16,7 @@ from .carddef import Ability, CardDef, Cost
 from .characteristics import abilities_of, chars, crew_power_bonus, mana_source_traits
 from .cost_reduction import reduction_amount
 from .effects import execute
+from .effects.behold import announce_beheld, behold_count, behold_pool
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_objects
 from .effects.selectors import matches, resolve_pool
@@ -1275,6 +1276,10 @@ def can_pay(
             return False
     if cost.exile_from_hand is not None and not _hand_exile_pool(state, pid, cost, source_oid):
         return False
+    if cost.behold is not None and len(
+        behold_pool(state, pid, cost.behold, source_oid, exclude_source=True)
+    ) < behold_count(cost.behold):
+        return False
     if cost.sacrifice is not None and not _sacrifice_pool(state, pid, cost, source_oid):
         return False
     if cost.return_to_hand is not None and not _return_pool(state, pid, cost, source_oid):
@@ -1784,6 +1789,17 @@ def pay(
         )
         for oid in picked:
             exile_object(state, oid, cause="cost")
+
+    if cost.behold is not None:
+        # Nothing moves: the permanent stays where it is and the hand card goes
+        # back among the others. Choosing it, and showing the table a card from
+        # hand, is the whole payment.
+        count = behold_count(cost.behold)
+        pool = behold_pool(state, pid, cost.behold, source_oid, exclude_source=True)
+        picked = yield from ask_objects(ctx, "Behold", pool, count, count, pid)
+        if len(picked) < count:
+            return False
+        announce_beheld(state, pid, picked, source_oid)
 
     if cost.sacrifice is not None:
         spec = dict(cost.sacrifice)

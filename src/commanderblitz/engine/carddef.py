@@ -276,6 +276,13 @@ class Cost:
     #: zone, or leaving a Spirit Guide that loads clean and can never be
     #: activated.
     exile_self_from_hand: bool = False
+    #: "As an additional cost to cast this spell, **behold a Dragon** or pay
+    #: {1}" -- Caustic Exhale. A selector (with an optional ``count``) naming
+    #: what the payer must choose among the permanents they control or reveal
+    #: from their own hand; see `effects.behold`. The source is never its own
+    #: beholding (601.2a), and nothing moves: a permanent stays put, a card
+    #: goes back among the hand, and the reveal is the whole price.
+    behold: Mapping[str, Any] | None = None
     #: An integer, or a value expression evaluated at payment time -- see
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
@@ -411,6 +418,7 @@ class Cost:
                 dict(spec["exile_from_hand"]) if spec.get("exile_from_hand") else None
             ),
             exile_self_from_hand=bool(spec.get("exile_self_from_hand")),
+            behold=(dict(spec["behold"]) if spec.get("behold") else None),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
@@ -469,6 +477,7 @@ class Cost:
             # exile cards out of a hand it was never asked about.
             and not self.exile_self_from_hand
             and self.exile_from_hand is None
+            and self.behold is None
             and not self.pay_life
             and not self.pay_energy
             and self.remove_counters is None
@@ -510,6 +519,9 @@ class Cost:
         if self.exile_from_hand:
             count = self.exile_from_hand.get("count", 1)
             parts.append(f"Exile {count} from your hand")
+        if self.behold:
+            count = self.behold.get("count", 1)
+            parts.append("Behold" if count == 1 else f"Behold {count}")
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")

@@ -126,6 +126,14 @@ class CostModel(BaseModel):
     #: the player could "activate" the Spirit Guide by exiling something else
     #: and keeping it.
     exile_self_from_hand: bool = False
+    #: "As an additional cost to cast this spell, **behold a Dragon** or pay
+    #: {1}" -- Caustic Exhale. A selector with an optional ``count``: choose
+    #: that many matching permanents you control and/or reveal matching cards
+    #: from your hand. ``zone`` and ``controller`` are implied and refused. The
+    #: spell being cast never beholds itself (601.2a). Nothing moves, so this
+    #: is not ``exile_from_hand`` -- "behold a Kithkin **and exile it**" is a
+    #: different cost.
+    behold: dict[str, Any] | None = None
     #: Usually an integer. A mapping is a value expression evaluated when the
     #: cost is paid -- War Room's "pay life equal to the number of colors in
     #: your commanders' color identity", the only life cost that is not fixed

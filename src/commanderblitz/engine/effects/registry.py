@@ -31,6 +31,9 @@ RECORDING_OPS = frozenset(
         #: accumulating semantics -- "airbend all other creatures" is one pool
         #: a later line may need to name.
         "airbend",
+        #: What was beheld -- the chosen permanent or the revealed hand card.
+        #: See `ops_cards.op_behold`.
+        "behold",
         #: The one recorder whose binding is a **card name** -- a string, read
         #: back only by a selector's ``{"name": {"binding": …}}``. Tamiyo,
         #: Collector of Tales. See `ops_control.op_choose_card_name`.

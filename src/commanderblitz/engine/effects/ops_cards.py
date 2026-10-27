@@ -22,6 +22,8 @@ from ..structs import GraveyardCastGrant
 from ..suspend import cast_for_free
 from ..triggers import fire
 from ..zones import link_exiled, move_object, offer_enters_replacement, offer_riot_choice
+from . import execute
+from .behold import announce_beheld, behold_count, behold_pool
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .registry import register
 from .selectors import (
@@ -1192,6 +1194,42 @@ def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
             source=ctx.source_oid,
             cards=[ctx.state.objects[o].def_id for o in oids if o in ctx.state.objects],
         )
+
+
+@register("behold")
+def op_behold(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may behold a Dragon. **If you do**, create a Treasure token."
+
+    To behold is to choose a permanent you control matching ``objects`` or to
+    reveal a matching card from your hand (`behold.behold_pool`). ``effects``
+    are the "if you do" branch and run only once something was beheld;
+    ``else`` runs on a refusal or when there was nothing to behold.
+
+    ``optional`` is the printed "may". The yes/no is asked only when the pool
+    can pay, so "yes" always means a behold happened; the choice of *which*
+    follows (`ask_objects`, which asks nothing when only one qualifies). Not the
+    ``may`` op with an ``exists`` condition: that never asks which object and
+    never reveals the hand card, and the reveal is the price of the action --
+    an opponent learns the Dragon you are holding.
+
+    ``as`` binds what was beheld, for "the beheld card" later on.
+    """
+    selector = spec.get("objects") or {}
+    count = behold_count(selector)
+    pool = behold_pool(ctx.state, ctx.controller, selector, ctx.source_oid)
+    if len(pool) < count:
+        yield from execute(ctx, spec.get("else") or [])
+        return
+    if spec.get("optional"):
+        prompt = str(spec.get("prompt") or f"{ctx.source_name or 'Behold'}: behold?")
+        if not (yield from ask_yes_no(ctx, prompt, ctx.controller)):
+            yield from execute(ctx, spec.get("else") or [])
+            return
+    picked = yield from ask_objects(ctx, "Behold", pool, count, count, ctx.controller)
+    announce_beheld(ctx.state, ctx.controller, picked, ctx.source_oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = list(picked)
+    yield from execute(ctx, spec.get("effects") or [])
 
 
 @register("look_at_hand")

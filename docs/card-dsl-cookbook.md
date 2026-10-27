@@ -10777,6 +10777,51 @@ them out of the library.
 The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
 `cast_free`.
 
+## behold — choose a permanent or reveal a card
+
+```jsonc
+// Sarkhan, Dragon Ascendant -- "When Sarkhan enters, you may behold a Dragon.
+// If you do, create a Treasure token."
+{ "op": "behold", "optional": true,
+  "objects": { "subtypes": ["Dragon"] },
+  "effects": [{ "op": "create_token", "token": "treasure_token" }] }
+
+// Caustic Exhale -- "As an additional cost to cast this spell, behold a Dragon
+// or pay {1}."
+"additional_cost_options": [{ "behold": { "subtypes": ["Dragon"] } }, { "mana": "{1}" }]
+
+// Dispelling Exhale -- "As an additional cost to cast this spell, you may behold
+// a Dragon. … If a Dragon was beheld, …"
+"additional_cost": { "behold": { "subtypes": ["Dragon"] } }, "additional_optional": true
+// …and the spell reads it back with {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+```
+
+To behold is to choose a permanent you control matching the selector **or** reveal
+a matching card from your own hand. Nothing moves: the permanent stays put, the
+card goes back among the hand, and the reveal (the ordinary `reveal` event) is
+the price, because every opponent learns the card. Choosing a permanent reveals
+nothing. The pool is built once, in `effects.behold.behold_pool`, for both forms.
+
+- **The op.** `effects` is the "if you do" branch and `else` the refusal or the
+  empty pool. `optional` is the printed "may". The yes/no is asked only when the
+  pool can pay, so a yes always means a behold happened, and the choice of which
+  object follows (asked only when more than one qualifies). `as` binds what was
+  beheld. A permanent beholding "a Dragon you control" may choose itself.
+- **The cost.** `behold` on a `Cost`: a selector with an optional `count`
+  ("behold three Elementals"). Payable when that many qualify; the spell being
+  cast never beholds itself (601.2a), so a Dragon with a behold cost needs a
+  second Dragon. "Or pay {N}" is `additional_cost_options`; "you may" is
+  `additional_optional`, read back with `additional_paid`.
+
+The near miss is `may` with an `exists` condition over the battlefield and hand:
+it never asks which object and never reveals the card, so it is a cheaper card.
+"Behold a Kithkin **and exile it**" is a different cost: the beheld card moves
+and a later line returns it, and this capability does not say it.
+
+The loader refuses a missing or empty selector, a `zone` or `controller` in it
+(both are fixed by the action), a `count` below 1, and an op with no `effects`,
+`else` or `as` to read the result.
+
 ## Connive
 
 ```jsonc

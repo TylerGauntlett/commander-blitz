@@ -1894,6 +1894,12 @@
       "0": 43
     }
   },
+  "caustic_exhale": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "cave_of_the_frost_dragon": {
     "zone": "battlefield"
   },
@@ -3038,6 +3044,13 @@
   "dismember": {
     "zone": "graveyard"
   },
+  "dispelling_exhale": {
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "distant_melody": {
     "hand_size": {
       "0": 1
@@ -3444,6 +3457,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "elven_passage": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "elves_of_deep_shadow": {
@@ -6256,6 +6273,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "kinsbaile_aspirant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "kiora_behemoth_beckoner": {
     "battlefield_count": 33,
     "counters": {
@@ -6873,6 +6897,10 @@
     "zone": "battlefield"
   },
   "lyra_archangel_of_dawn": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "lys_alana_dignitary": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7669,6 +7697,10 @@
     "zone": "battlefield"
   },
   "muck_rats": {
+    "zone": "battlefield"
+  },
+  "mudbutton_cursetosser": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "muddle_the_mixture": {
@@ -8604,6 +8636,12 @@
   },
   "phyrexian_walker": {
     "zone": "battlefield"
+  },
+  "piercing_exhale": {
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "pikemen": {
     "zone": "battlefield"
@@ -10847,6 +10885,10 @@
     "zone": "battlefield"
   },
   "soulbound_guardians": {
+    "zone": "battlefield"
+  },
+  "soulbright_seeker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "soulless_one": {

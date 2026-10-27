@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**97 cards** blocked by **82** capabilities.
+**99 cards** blocked by **84** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,10 +26,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
+| [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-block-restriction-current-power](#attack-block-restriction-current-power) | 1 | 5123 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [behold](#behold) | 1 | 7614 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
@@ -61,6 +61,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
+| [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -90,6 +91,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
+| [temporary-subtype](#temporary-subtype) | 1 | 7614 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -419,6 +421,20 @@ Blocks **1** card.
 
 </details>
 
+## additional-cost-target
+
+Blocks **1** card.
+
+- **(selector)** a target spec declared only when the spell's optional additional cost is paid (the additional-cost twin of `count_if_kicked`): 'If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment'
+  <br>Why the existing vocabulary won't do: `count_if_kicked` keys the extra target on kicker alone; the behold cost is `additional_cost` with `additional_optional`, read by `additional_paid` at resolution, which is after targets are declared (601.2c). Declaring the target unconditionally makes an unpaid cast need, and possibly lack, a third target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hulk's Thunderclap** (rank 20956) — `hulk_s_thunderclap`
+  - Target creature you control deals damage equal to its power to another target creature. If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -458,20 +474,6 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
-
-</details>
-
-## behold
-
-Blocks **1** card.
-
-- **(op)** an optional 'behold a <quality>' action: the player either chooses a permanent they control matching a selector (here subtypes [Dragon]) or reveals a matching card from their hand, and the outcome ('if you do') gates the following effects; the chosen/revealed object should be bindable for cards that later refer to it
-  <br>Why the existing vocabulary won't do: No op performs behold. The nearest spelling, `may` with a `condition` of `exists` over a Dragon on the battlefield or in hand, skips the reveal from hand (a real disclosure of hidden information to opponents) and the choice itself; `reveal` reveals but has no 'choose a permanent you control instead' branch and no 'if you do' result to gate `create_token` on. Writing it from those would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sarkhan, Dragon Ascendant** (rank 7614) — `sarkhan_dragon_ascendant`
-  - When Sarkhan enters, you may behold a Dragon. If you do, create a Treasure token. (To behold a Dragon, choose a Dragon you control or reveal a Dragon card from your hand.)
 
 </details>
 
@@ -927,6 +929,20 @@ Blocks **1** card.
 
 </details>
 
+## merfolk-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 white and blue Merfolk creature token
+  <br>Why the existing vocabulary won't do: No Merfolk token is among the token ids; the behold-or-pay additional cost is expressible with the `behold` cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
+  - When this creature enters, create a 1/1 white and blue Merfolk creature token.
+
+</details>
+
 ## more-than-meets-the-eye
 
 Blocks **1** card.
@@ -1343,6 +1359,20 @@ Blocks **1** card.
 
 - **Imperial Mask** (rank 26785) — `imperial_mask`
   - When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.
+
+</details>
+
+## temporary-subtype
+
+Blocks **1** card.
+
+- **(op)** a one-shot 'until end of turn, <permanent> becomes a <subtype> in addition to its other types': a creature-type addition that wears off at cleanup, on the permanent the effect names
+  <br>Why the existing vocabulary won't do: The `add_subtype` op writes the subtype onto the object with no duration, so Sarkhan would stay a Dragon for good; `animate` sets base power and toughness (0/0 unless given), so it would replace Sarkhan's 2/2; granting an `add_subtype` static through `grant_ability` makes it an ability, which an ability-removing effect would strip where the printed one-shot effect would survive. The behold sentence is expressible with the `behold` op
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sarkhan, Dragon Ascendant** (rank 7614) — `sarkhan_dragon_ascendant`
+  - Whenever a Dragon you control enters, put a +1/+1 counter on Sarkhan. Until end of turn, Sarkhan becomes a Dragon in addition to its other types and gains flying.
 
 </details>
 

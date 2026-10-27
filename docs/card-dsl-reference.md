@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 143 |
+| [Effect ops](#effect-ops) | 144 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 53 |
@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 41 |
 | [Grantable statics](#grantable-statics) | 38 |
 | [Cost reduction](#cost-reduction) | 6 |
-| [Ability costs](#ability-costs) | 27 |
+| [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 28 |
 | [Keywords](#keywords) | 38 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
@@ -44,6 +44,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 
 | Name | Group | Records `as` | Description | Defined in |
 |---|---|---|---|---|
+| `behold` | Cards | yes | Choose a matching permanent you control or reveal a matching card from hand; `effects` is "if you do". | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `cascade` | Cards |  | Cascade: exile from the top until a cheaper nonland, cast it free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `cast_from_hand` | Cards |  | Cast a spell from hand (or listed zones) without paying its mana cost. | [Effect ops](card-dsl.md#effect-ops) |
 | `clash` | Cards |  | Clash with an opponent; the winner is bound for a later `if`. | [Clash](card-dsl-cookbook.md#clash) |
@@ -670,6 +671,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 
 | Name | Description | Defined in |
 |---|---|---|
+| `behold` | Behold: choose matching permanents you control or reveal matching cards from hand. | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `discard` | Discard N cards. | [Costs](card-dsl.md#costs) |
 | `discard_selector` | …matching this selector. | [Costs](card-dsl.md#costs) |
 | `discard_self` | Discard this card (cycling). | [Cycling](card-dsl-cookbook.md#cycling) |

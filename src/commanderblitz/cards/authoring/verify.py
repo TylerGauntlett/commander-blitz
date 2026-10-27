@@ -1682,6 +1682,23 @@ def _covered(card: CardDef, line: str) -> bool:
         "as an additional cost"
     ):
         return True
+    # "As an additional cost to cast this spell, behold a Kithkin **or** pay
+    # {2}" -- the same card-level cost written as `additional_cost_options`,
+    # and unclaimed for the same reason on a creature, which has no
+    # `spell_effects` to claim it wholesale. Stricter than the line above,
+    # because it is added after the fact: a printed "behold" needs a behold
+    # branch and a declared one needs the word, and printed mana symbols must be
+    # some branch's mana, so a card declaring "or pay {1}" cannot claim a
+    # printed "or pay {2}". A mismatch leaves the line residual.
+    if card.additional_cost_options and stripped.lower().startswith("as an additional cost"):
+        printed = stripped.split("(")[0]
+        options = card.additional_cost_options
+        beholds = any(option.behold is not None for option in options)
+        symbols = "".join(re.findall(r"\{[^}]+\}", printed))
+        if ("behold" in printed.lower()) == beholds and (
+            not symbols or any(_declares_printed_cost(symbols, o.mana) for o in options)
+        ):
+            return True
 
     # "You may pay {W} and tap four untapped creatures you control with flying
     # rather than pay this spell's mana cost." -- Sephara, Sky's Blade. The
