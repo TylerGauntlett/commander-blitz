@@ -23,7 +23,7 @@ from .characteristics import (
 from .characteristics import chars as _chars
 from .enums import Keyword, Step, Zone
 from .events import EventType
-from .objects import MINUS_ONE, PLUS_ONE, SHIELD, GameObject
+from .objects import MINUS_ONE, PLUS_ONE, SHIELD, STUN, GameObject
 from .player_statics import (
     counter_placement_replacements,
     damage_cap,
@@ -885,9 +885,26 @@ def untap_permanent(state: GameState, oid: int) -> bool:
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield or not obj.tapped:
         return False
-    obj.tapped = False
+    if not untap_or_stun(state, obj):
+        return False
     state.bump_chars()
     fire(state, EventType.UNTAPPED, player=obj.controller, source=oid, oid=oid)
+    return True
+
+
+def untap_or_stun(state: GameState, obj: GameObject) -> bool:
+    """Untap a tapped permanent, unless a stun counter replaces it (122.1d).
+
+    "If a permanent with a stun counter on it would become untapped, instead
+    remove a stun counter from it." One counter per untap, whatever is doing the
+    untapping -- the untap step, an `untap` op, an {Q} cost -- which is why all
+    three call this rather than writing ``tapped = False``. Returns whether the
+    permanent became untapped; the caller says so, and a stunned one did not.
+    """
+    if obj.counter(STUN) > 0:
+        remove_counters(state, obj.oid, STUN, 1)
+        return False
+    obj.tapped = False
     return True
 
 
@@ -2092,7 +2109,8 @@ def untap_all(state: GameState, pid: int, *, capped_out: set[int] | None = None)
             if holder is not None and holder.on_battlefield:
                 continue
             obj.frozen_by = None
-        obj.tapped = False
+        if not untap_or_stun(state, obj):
+            continue
         untapped.append(oid)
     if untapped:
         state.bump_chars()

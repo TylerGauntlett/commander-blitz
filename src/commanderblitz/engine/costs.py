@@ -58,6 +58,7 @@ from .primitives import (
     pay_energy,
     remove_counters,
     tap_permanent,
+    untap_or_stun,
     untap_permanent,
 )
 from .replacements import discard as discard_with_replacements
@@ -1679,7 +1680,9 @@ def pay(
     if cost.untap and source_oid is not None:
         obj = state.objects.get(source_oid)
         if obj is not None:
-            obj.tapped = False
+            # {Q} untaps like anything else, so a stun counter is spent instead
+            # (122.1d) and the permanent stays tapped.
+            untap_or_stun(state, obj)
             state.bump_chars()
     if cost.exert and source_oid is not None:
         obj = state.objects.get(source_oid)

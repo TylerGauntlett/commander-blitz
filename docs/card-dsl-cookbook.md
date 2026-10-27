@@ -7833,6 +7833,21 @@ near-miss shield counter is *visible on the board*. It is placed, it is shown,
 dies to the removal it is printed to survive. That card passes all six authoring
 gates, because placing the counter is genuine and only its meaning is missing.
 
+## Stun counters
+
+```jsonc
+// Pugnacious Hammerskull: "…put a stun counter on it."
+{ "op": "add_counters", "objects": { "self_only": true }, "counter": "stun", "amount": 1 }
+```
+
+Rule 122.1d's third named kind: if a permanent with a stun counter would become
+untapped, one is removed instead and it stays tapped. Every untap goes through
+`primitives.untap_or_stun` — the untap step, the `untap` op and an {Q} cost — so
+the cause does not matter, and one counter is spent per untap. A permanent that
+is already untapped is not becoming untapped, so its counter waits. The spelling
+is exact and the loader refuses `"Stun"` and `"stun counter"`, as it refuses a
+near-miss shield counter.
+
 ## Energy
 
 Energy (107.14) is a counter on a **player**, held in `PlayerState.energy`

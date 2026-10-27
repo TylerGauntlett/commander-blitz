@@ -111,6 +111,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Wither, infect and poison** | 702.90b, 702.90c: keywords read by `damage_permanent` and `damage_player`, still damage for deathtouch, lifelink and the ledger; `add_poison` with its own `LossReason` at ten (704.5c) |
 | **Regeneration and totem armor** | 701.15, 702.88a: both at `zones.destroy`, regeneration a spent-once shield cleared at cleanup, totem armor a `Keyword` on the Aura; `no_regeneration` on `destroy` (701.15c); `KEYWORD_ALIASES` folds "Umbra armor" |
 | **Shield counters** | 122.1c: `spend_shield_counter` at `zones.destroy` and `primitives.damage_permanent`, one counter per event, not indestructible and not regeneration |
+| **Stun counters** | 122.1d: `primitives.untap_or_stun` at the untap step, `untap_permanent` and an {Q} cost, one counter removed instead of each untap; an untapped permanent keeps its counter |
 | **Absorb** | 702.63a: the `prevent_damage` static, per source and per instance |
 | **Riot** | 702.113: a `Keyword` whose content is a 614.1c replacement, `zones.offer_riot_choice` asked on every arrival that can stop; grantable |
 | **Exalted** | 702.83: a `Keyword` whose content is the rules-supplied `carddef.EXALTED_TRIGGER`, one per permanent with it; grantable; a permanent holding it twice triggers once |

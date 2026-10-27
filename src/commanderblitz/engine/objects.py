@@ -35,6 +35,10 @@ MINUS_ONE = "-1/-1"
 #: in `GameObject.counters` like any other kind, so `move_counters` carries it
 #: onto a creature the shielding card never mentions and it keeps working there.
 SHIELD = "shield"
+#: A stun counter (122.1d) is the third kind spent by a replacement: if the
+#: permanent would become untapped, one is removed instead and it stays tapped.
+#: Read by `primitives.untap_or_stun`, which every untap goes through.
+STUN = "stun"
 
 
 @dataclass
