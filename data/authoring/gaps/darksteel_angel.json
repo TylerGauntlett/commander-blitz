@@ -1,0 +1,18 @@
+{
+  "card_id": "darksteel_angel",
+  "name": "Darksteel Angel",
+  "oracle_text": "Flying, indestructible\nYou can't lose the game and your opponents can't win the game.\nCreatures you control can't have -1/-1 counters put on them.",
+  "blocked_sentences": [
+    "Creatures you control can't have -1/-1 counters put on them."
+  ],
+  "needs": [
+    {
+      "capability": "cant_have_counters",
+      "kind": "static_effect",
+      "what": "a static effect that stops counters of a named kind (here -1/-1) from being put on permanents matching an affects filter (creatures you control), covering effects, costs, wither/infect damage and enters-with counters alike",
+      "why_existing_wont_do": "replace_counters only scales a placement (counter_multiplier is refused below 2 and counter_addend adds), so there is no way to reduce a placement to zero; prevent_damage and the cant_* statics do not touch counters"
+    }
+  ],
+  "closest_existing": ["replace_counters"],
+  "confidence": "high"
+}

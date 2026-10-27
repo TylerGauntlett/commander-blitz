@@ -1,0 +1,31 @@
+{
+  "card_id": "serra_s_emissary",
+  "name": "Serra's Emissary",
+  "oracle_text": "Flying\nAs this creature enters, choose a card type.\nYou and creatures you control have protection from the chosen card type.",
+  "blocked_sentences": [
+    "As this creature enters, choose a card type.",
+    "You and creatures you control have protection from the chosen card type."
+  ],
+  "needs": [
+    {
+      "capability": "choose_card_type",
+      "kind": "op",
+      "what": "choose_type with of: \"card_type\" offering every card type (Artifact, Battle, Creature, Enchantment, Instant, Kindred, Land, Planeswalker, Sorcery), stored in chosen_card_type",
+      "why_existing_wont_do": "choose_type's 'of' only offers creature_type or permanent_type; permanent_type leaves out Instant, Sorcery and Kindred, which are legal answers and the commonest choices for this card"
+    },
+    {
+      "capability": "protection_from_chosen_type",
+      "kind": "static_effect",
+      "what": "a protection static whose from_types can be the binding {\"chosen_card_type_of\": \"self\"}, read off the source's chosen card type",
+      "why_existing_wont_do": "the protection static's from_types accepts only literal type names checked against KNOWN_TYPES; chosen_card_type_of is read only in selector 'types', not in from_types"
+    },
+    {
+      "capability": "player_protection",
+      "kind": "static_effect",
+      "what": "a player-wide static granting the controller (\"You have protection from ...\") protection from a card type: damage from sources of that type is prevented and the player can't be targeted or enchanted by them",
+      "why_existing_wont_do": "protection only affects objects; player_hexproof covers untargetability only, not damage prevention or a quality filter"
+    }
+  ],
+  "closest_existing": ["choose_type", "protection", "player_hexproof"],
+  "confidence": "high"
+}

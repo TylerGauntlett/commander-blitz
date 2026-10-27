@@ -1,0 +1,14 @@
+{
+  "card_id": "currency_converter",
+  "name": "Currency Converter",
+  "oracle_text": "Whenever you discard a card, you may exile that card from your graveyard.\n{2}, {T}: Draw a card, then discard a card.\n{T}: Put a card exiled with this artifact into its owner's graveyard. If it's a land card, create a Treasure token. If it's a nonland card, create a 2/2 black Rogue creature token.",
+  "blocked_sentences": ["{T}: Put a card exiled with this artifact into its owner's graveyard. If it's a land card, create a Treasure token. If it's a nonland card, create a 2/2 black Rogue creature token."],
+  "needs": [{
+    "capability": "rogue_2_2_b",
+    "kind": "token",
+    "what": "a 2/2 black Rogue creature token",
+    "why_existing_wont_do": "token_ids has only vampire_rogue_1_1_b_lifelink (a 1/1 Vampire Rogue with lifelink) and other 2/2 black tokens of different types (zombie_2_2_b, pirate_2_2_b_menace); none is a plain 2/2 black Rogue"
+  }],
+  "closest_existing": ["zombie_2_2_b", "vampire_rogue_1_1_b_lifelink"],
+  "confidence": "high"
+}

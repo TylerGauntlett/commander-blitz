@@ -6649,6 +6649,65 @@
     {
       "abilities": [
         {
+          "affects_player": "opponent",
+          "effect": "cant_gain_life",
+          "kind": "static",
+          "text": "Your opponents can't gain life."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "life_lost_this_turn": {
+                      "binding": "each_player"
+                    }
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "binding": "each_player"
+                  }
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, each opponent loses life equal to the life that player lost this turn. (Damage causes loss of life.)",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "archfiend_of_despair",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{B}{B}",
+      "name": "Archfiend of Despair",
+      "oracle_text": "Flying\nYour opponents can't gain life.\nAt the beginning of each end step, each opponent loses life equal to the life that player lost this turn. (Damage causes loss of life.)",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -6921,6 +6980,167 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "chooser": "owner",
+                "controller": {
+                  "target": "t1"
+                },
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, target opponent sacrifices a creature or planeswalker of their choice, discards a card, and loses 3 life. You draw a card and gain 3 life.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "chooser": "owner",
+                "controller": {
+                  "target": "t1"
+                },
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, target opponent sacrifices a creature or planeswalker of their choice, discards a card, and loses 3 life. You draw a card and gain 3 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "archon_of_cruelty",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{B}{B}",
+      "name": "Archon of Cruelty",
+      "oracle_text": "Flying\nWhenever this creature enters or attacks, target opponent sacrifices a creature or planeswalker of their choice, discards a card, and loses 3 life. You draw a card and gain 3 life.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Archon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -8899,6 +9119,65 @@
       "mana_cost": "{5}{W}{W}{W}",
       "name": "Avacyn, Angel of Hope",
       "oracle_text": "Flying, vigilance, indestructible\nOther permanents you control have indestructible.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 8,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Avacyn or another nontoken creature you control dies, return that card to the battlefield under your control at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "avacyn_angel_of_horror",
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ],
+      "mana_cost": "{5}{B}{B}{B}",
+      "name": "Avacyn, Angel of Horror",
+      "oracle_text": "Flying, deathtouch\nWhenever Avacyn or another nontoken creature you control dies, return that card to the battlefield under your control at the beginning of the next end step.",
       "power": 8,
       "source": "auto",
       "subtypes": [
@@ -16259,6 +16538,40 @@
           "player": "you"
         },
         {
+          "objects": {
+            "controller": "you",
+            "count": 2,
+            "zone": "hand"
+          },
+          "op": "put_on_top"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "brainsurge",
+      "mana_cost": "{2}{U}",
+      "name": "Brainsurge",
+      "oracle_text": "Draw four cards, then put two cards from your hand on top of your library in any order.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "any_order": true,
           "objects": {
             "controller": "you",
             "count": 2,
@@ -33174,6 +33487,47 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "despark",
+      "mana_cost": "{W}{B}",
+      "name": "Despark",
+      "oracle_text": "Exile target permanent with mana value 4 or greater.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "mana_value": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            },
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -55733,6 +56087,45 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "grand_crescendo",
+      "mana_cost": "{X}{W}{W}",
+      "name": "Grand Crescendo",
+      "oracle_text": "Create X 1/1 green and white Citizen creature tokens. Creatures you control gain indestructible until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "token": "citizen_1_1_gw"
+        },
+        {
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "active_zones": [
@@ -76005,6 +76398,35 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "flashback": {
+        "mana": "{1}{B}"
+      },
+      "id": "lingering_souls",
+      "mana_cost": "{2}{W}",
+      "name": "Lingering Souls",
+      "oracle_text": "Create two 1/1 white Spirit creature tokens with flying.\nFlashback {1}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "create_token",
+          "token": "spirit_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -82410,6 +82832,72 @@
       ],
       "toughness": 4,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "myr_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Memnarch enters, create two 1/1 colorless Myr artifact creature tokens.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Artifact"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Memnarch attacks, draw a card for each artifact you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "memnarch_the_warden",
+      "keywords": [
+        "indestructible"
+      ],
+      "mana_cost": "{10}",
+      "name": "Memnarch, the Warden",
+      "oracle_text": "Indestructible\nWhen Memnarch enters, create two 1/1 colorless Myr artifact creature tokens.\nWhenever Memnarch attacks, draw a card for each artifact you control.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 9,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -90680,6 +91168,90 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "resolutions_this_turn": "self"
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "destination": "battlefield",
+                  "objects": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "op": "reveal_until",
+                  "player": "you",
+                  "rest_to_bottom": true
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, draw a card. Then if this is the first time this ability has resolved this turn, reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "nissa_leyline_tamer",
+      "keywords": [
+        "deathtouch",
+        "vigilance"
+      ],
+      "mana_cost": "{3}{W}{U}{B}{R}",
+      "name": "Nissa, Leyline Tamer",
+      "oracle_text": "Deathtouch, vigilance\nLandfall — Whenever a land you control enters, draw a card. Then if this is the first time this ability has resolved this turn, reveal cards from the top of your library until you reveal a creature card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 1
           },
@@ -93051,6 +93623,52 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "occult_epiphany",
+      "mana_cost": "{X}{U}",
+      "name": "Occult Epiphany",
+      "oracle_text": "Draw X cards, then discard X cards. Create a 1/1 white Spirit creature token with flying for each card type among cards discarded this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "discarded",
+          "op": "discard",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "distinct": {
+              "objects": {
+                "binding": "discarded"
+              },
+              "of": "card_type"
+            }
+          },
+          "controller": "you",
+          "op": "create_token",
+          "token": "spirit_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -101949,6 +102567,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "bottom": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "destination": "battlefield",
+              "objects": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "reveal_until",
+              "player": {
+                "controller_of": "victim"
+              },
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{U}, {T}: Put target creature on the bottom of its owner's library. That creature's controller reveals cards from the top of their library until they reveal a creature card. The player puts that card onto the battlefield and the rest on the bottom of their library in any order. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "proteus_staff",
+      "mana_cost": "{3}",
+      "name": "Proteus Staff",
+      "oracle_text": "{2}{U}, {T}: Put target creature on the bottom of its owner's library. That creature's controller reveals cards from the top of their library until they reveal a creature card. The player puts that card onto the battlefield and the rest on the bottom of their library in any order. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -106372,6 +107054,107 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {U}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{W}{U}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "W",
+                "U"
+              ],
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "const": 2
+              },
+              "subtypes": [
+                "Bird"
+              ],
+              "toughness": {
+                "const": 3
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}{U}: Until end of turn, this land becomes a 2/3 white and blue Bird creature with flying. It's still a land."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "map_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this land attacks, create a Map token.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "restless_anchorage",
+      "mana_cost": "",
+      "name": "Restless Anchorage",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {U}.\n{1}{W}{U}: Until end of turn, this land becomes a 2/3 white and blue Bird creature with flying. It's still a land.\nWhenever this land attacks, create a Map token.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -132192,6 +132975,85 @@
         {
           "effects": [
             {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Tamiyo enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "damagers"
+              },
+              "op": "tap"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "stun",
+              "objects": {
+                "binding": "damagers"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures deal combat damage to you while you're the monarch, tap those creatures and put a stun counter on each of them.",
+          "trigger": {
+            "condition": {
+              "is_monarch": "you"
+            },
+            "controller": "any",
+            "defending": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "tamiyo_upriser_crowned",
+      "keywords": [
+        "flying",
+        "double_strike",
+        "haste"
+      ],
+      "mana_cost": "{4}{R}{W}",
+      "name": "Tamiyo, Upriser Crowned",
+      "oracle_text": "Flying, double strike, haste\nWhen Tamiyo enters, you become the monarch.\nWhenever one or more creatures deal combat damage to you while you're the monarch, tap those creatures and put a stun counter on each of them.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Moonfolk",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "controller": "you",
                 "types": [
@@ -133599,6 +134461,63 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "exiles_itself": true,
+      "id": "teferi_s_reproach",
+      "mana_cost": "{2}{W}",
+      "name": "Teferi's Reproach",
+      "oracle_text": "Choose target opponent. Until that player's next turn, they gain protection from everything and their life total can't change. All nonland permanents they control phase out. (While they're phased out, they're treated as though they don't exist. They phase in before that player untaps during their next untap step.)\nExile Teferi's Reproach.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_your_next_turn",
+          "from_everything": true,
+          "op": "grant_protection",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "duration": "until_your_next_turn",
+          "op": "lock_life_total",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "objects": {
+            "controller": {
+              "target": "t1"
+            },
+            "count": "all",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "phase_out"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -141385,6 +142304,221 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {B} or {R}.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "turbulent_crater",
+      "name": "Turbulent Crater",
+      "oracle_text": "({T}: Add {B} or {R}.)\nThis land enters tapped unless your opponents control eight or more lands.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "opponent",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 8
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Swamp",
+        "Mountain"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {W} or {U}.)"
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [],
+      "id": "turbulent_shore",
+      "name": "Turbulent Shore",
+      "oracle_text": "({T}: Add {W} or {U}.)\nThis land enters tapped unless your opponents control eight or more lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "opponent",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 8
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plains",
+        "Island"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {U} or {B}.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [],
+      "id": "turbulent_wetlands",
+      "name": "Turbulent Wetlands",
+      "oracle_text": "({T}: Add {U} or {B}.)\nThis land enters tapped unless your opponents control eight or more lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "opponent",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 8
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Island",
+        "Swamp"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -146239,6 +147373,127 @@
         "Tyranid"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "new_targets": true,
+                      "op": "copy_spell",
+                      "target": "t_spell"
+                    }
+                  ],
+                  "label": "Copy target instant or sorcery spell an opponent controls twice. You may choose new targets for the copies."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 2
+                      },
+                      "as": "venser_copies",
+                      "controller": "you",
+                      "objects": {
+                        "target": "t_perm"
+                      },
+                      "op": "copy_permanent"
+                    },
+                    {
+                      "duration": "permanent",
+                      "keyword": "haste",
+                      "objects": {
+                        "binding": "venser_copies"
+                      },
+                      "op": "grant_keyword"
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "venser_copies"
+                          },
+                          "op": "sacrifice"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_step",
+                      "text": "At the beginning of the next end step, sacrifice them."
+                    }
+                  ],
+                  "label": "Create two tokens that are copies of target permanent an opponent controls. They gain haste. At the beginning of the next end step, sacrifice them."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t_spell",
+              "kind": "spell",
+              "mode": 0,
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "opponent"
+              }
+            },
+            {
+              "count": 1,
+              "id": "t_perm",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Venser enters, choose one —\n• Copy target instant or sorcery spell an opponent controls twice. You may choose new targets for the copies.\n• Create two tokens that are copies of target permanent an opponent controls. They gain haste. At the beginning of the next end step, sacrifice them.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "venser_fervent_forger",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Venser, Fervent Forger",
+      "oracle_text": "Flash\n When Venser enters, choose one —\n• Copy target instant or sorcery spell an opponent controls twice. You may choose new targets for the copies.\n• Create two tokens that are copies of target permanent an opponent controls. They gain haste. At the beginning of the next end step, sacrifice them.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Sorcerer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -151590,6 +152845,49 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "whirlwind_of_thought",
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Whirlwind of Thought",
+      "oracle_text": "Whenever you cast a noncreature spell, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

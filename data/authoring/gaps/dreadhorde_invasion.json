@@ -1,0 +1,24 @@
+{
+  "card_id": "dreadhorde_invasion",
+  "name": "Dreadhorde Invasion",
+  "oracle_text": "At the beginning of your upkeep, you lose 1 life and amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)\nWhenever a Zombie token you control with power 6 or greater attacks, it gains lifelink until end of turn.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, you lose 1 life and amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)"
+  ],
+  "needs": [
+    {
+      "capability": "amass",
+      "kind": "op",
+      "what": "an amass op taking a creature type and N: if you control no Army, create a 0/0 black <Type> Army creature token; then choose an Army you control, put N +1/+1 counters on it, and it permanently gains the named creature type",
+      "why_existing_wont_do": "There is no amass op, and composing it from if/exists + create_token + choose_permanents + add_counters + add_subtype fails because no 0/0 black Zombie Army creature token exists in token_ids (only zombie_2_2_b and zombie_knight_2_2_b_menace)"
+    },
+    {
+      "capability": "amass",
+      "kind": "token",
+      "what": "a 0/0 black Zombie Army creature token",
+      "why_existing_wont_do": "token_ids has no Army token; zombie_2_2_b is a 2/2 without the Army subtype"
+    }
+  ],
+  "closest_existing": ["create_token", "add_counters", "add_subtype"],
+  "confidence": "high"
+}

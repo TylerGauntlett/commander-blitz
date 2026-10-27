@@ -1,0 +1,29 @@
+{
+  "card_id": "skrelv_s_hive",
+  "name": "Skrelv's Hive",
+  "oracle_text": "At the beginning of your upkeep, you lose 1 life and create a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and \"This token can't block.\"\nCorrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, you lose 1 life and create a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and \"This token can't block.\"",
+    "Corrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink"
+  ],
+  "needs": [
+    {
+      "capability": "toxic",
+      "kind": "keyword",
+      "what": "the toxic N keyword: combat damage this creature deals to a player also gives that player N poison counters; static filters must be able to select creatures that have toxic (any N)",
+      "why_existing_wont_do": "The keyword list has infect but no toxic; infect replaces damage with poison and wither-style -1/-1 counters on creatures, whereas toxic deals normal damage plus poison, and 'creatures you control with toxic' cannot be filtered without the keyword existing"
+    },
+    {
+      "capability": "phyrexian_mite_token",
+      "kind": "token",
+      "what": "a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and \"This token can't block.\"",
+      "why_existing_wont_do": "token_ids has no Mite; the nearest colorless 1/1 artifact creatures (servo_1_1_c, myr_1_1_c, gnome_1_1_c) lack toxic and the can't-block restriction"
+    }
+  ],
+  "closest_existing": [
+    "infect",
+    "servo_1_1_c",
+    "add_poison"
+  ],
+  "confidence": "high"
+}

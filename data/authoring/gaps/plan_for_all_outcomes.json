@@ -1,0 +1,21 @@
+{
+  "card_id": "plan_for_all_outcomes",
+  "name": "Plan for All Outcomes",
+  "oracle_text": "When this enchantment enters, the owner of up to one other target nonland permanent puts it on their choice of the top or bottom of their library.\nWhenever you cast your first noncreature spell each turn, empower Jace 1. (Put a loyalty counter on a Jace token you control. If you don't control one, first create a blue Jace planeswalker token with \"[−1]: Surveil 1\" and \"[−3]: Draw a card.\")",
+  "blocked_sentences": [
+    "Whenever you cast your first noncreature spell each turn, empower Jace 1. (Put a loyalty counter on a Jace token you control. If you don't control one, first create a blue Jace planeswalker token with \"[−1]: Surveil 1\" and \"[−3]: Draw a card.\")"
+  ],
+  "needs": [
+    {
+      "capability": "empower",
+      "kind": "op",
+      "what": "the keyword action 'Empower Jace N': put N loyalty counters on a Jace token you control, first creating a blue Jace planeswalker token with loyalty abilities \"[-1]: Surveil 1\" and \"[-3]: Draw a card.\" if you control none",
+      "why_existing_wont_do": "No empower op exists, and token_ids has no Jace planeswalker token; add_counters plus create_token cannot express the conditional create-then-counter without the token, and the trigger itself (spell_cast with max_per_turn 1 and a not_types Creature filter) is otherwise expressible"
+    }
+  ],
+  "closest_existing": [
+    "add_counters",
+    "create_token"
+  ],
+  "confidence": "high"
+}

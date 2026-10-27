@@ -10,28 +10,38 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**91 cards** blocked by **75** capabilities.
+**115 cards** blocked by **102** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [reveal-until-count](#reveal-until-count) | 3 | 13848 | op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
+| [empower](#empower) | 2 | 26189 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
+| [phyrexian-mite-token](#phyrexian-mite-token) | 2 | 1992 | token |
+| [toxic](#toxic) | 2 | 1992 | keyword |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
+| [amass](#amass) | 1 | 1481 | op, token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [batched-token-created](#batched-token-created) | 1 | 3172 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [cant-attack-planeswalkers-filtered](#cant-attack-planeswalkers-filtered) | 1 | 24795 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cant-have-counters](#cant-have-counters) | 1 | 24328 | static_effect |
+| [cast-milled-cards-free](#cast-milled-cards-free) | 1 | 23890 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [choose-card-type](#choose-card-type) | 1 | 2680 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -39,6 +49,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [distribute-control-among-opponents](#distribute-control-among-opponents) | 1 | 29052 | op |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
@@ -46,38 +57,52 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
+| [gingerbrute-token](#gingerbrute-token) | 1 | 28865 | token |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [impending](#impending) | 1 | 4255 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
+| [incubate](#incubate) | 1 | 3908 | token |
+| [insect-2-1-w-flying](#insect-2-1-w-flying) | 1 | 4255 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
+| [kobold-token](#kobold-token) | 1 | 1663 | token |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
+| [mana-becomes-colorless](#mana-becomes-colorless) | 1 | 24391 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
+| [morph](#morph) | 1 | 7104 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [pay-life-variable](#pay-life-variable) | 1 | 24283 | cost |
+| [permanent-goad](#permanent-goad) | 1 | 29052 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
+| [player-protection](#player-protection) | 1 | 2680 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
+| [protection-from-chosen-type](#protection-from-chosen-type) | 1 | 2680 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
+| [reveal-until-steal](#reveal-until-steal) | 1 | 29257 | op |
+| [rogue-2-2-b](#rogue-2-2-b) | 1 | 2831 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [static-condition-has-flag](#static-condition-has-flag) | 1 | 1368 | static_effect |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -87,7 +112,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [unspent-mana-count](#unspent-mana-count) | 1 | 24391 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
+| [variable-pt-token](#variable-pt-token) | 1 | 1242 | token |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
 ## combat-only-permanent-shield
@@ -253,6 +280,30 @@ Blocks **8** cards.
 
 </details>
 
+## reveal-until-count
+
+Blocks **3** cards.
+
+- **(op)** reveal_until with an amount: keep revealing until N matching cards (N a value, here the number of opponents) are revealed, move all N to the destination, then shuffle the rest into the library and bind the moved cards for later effects
+  <br>Why the existing vocabulary won't do: reveal_until stops at the first match and bottoms the rest; wrapping it in repeat would bottom per iteration rather than reveal one run and shuffle, and leaves no binding of the set of creatures put onto the battlefield
+- **(op)** reveal_until with an amount: one reveal run that continues until N matching cards are revealed (N a value, here the number of creatures exiled by the preceding exile, e.g. a count over its `as` binding), puts all N onto the battlefield simultaneously, then shuffles the rest of the revealed cards into the library
+  <br>Why the existing vocabulary won't do: reveal_until stops at the first match and has no amount; wrapping it in repeat with rest_to_bottom false and a trailing shuffle would put the creatures onto the battlefield one at a time across separate reveals rather than all at once, which changes enters triggers and 'as enters' counts that see the other creatures entering
+- **(op)** a reveal-until walk that stops after N matching cards (N a value, here the number of creatures exiled by the spell's first sentence, carried into a delayed end-step trigger), moves every match to the destination, and shuffles the rest into the library instead of bottoming them
+  <br>Why the existing vocabulary won't do: reveal_until stops at the first match and moves only that one card, has no amount, and only bottoms the rest in random order (rest_to_bottom) rather than shuffling; there is also no value that reads how many objects an earlier exile in the same spell moved for use inside a delayed_trigger
+
+<details><summary>Cards waiting on this</summary>
+
+- **Synthetic Destiny** (rank 13848) — `synthetic_destiny`
+  - At the beginning of the next end step, reveal cards from the top of your library until you reveal that many creature cards, put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library.
+- **Mass Polymorph** (rank 14581) — `mass_polymorph`
+  - Exile all creatures you control, then reveal cards from the top of your library until you reveal that many creature cards. Put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library.
+- **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
+  - When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have.
+  - They're goaded for the rest of the game.
+  - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
+
+</details>
+
 ## cast-as-though-flash
 
 Blocks **2** cards.
@@ -327,6 +378,24 @@ Blocks **2** cards.
 
 </details>
 
+## empower
+
+Blocks **2** cards.
+
+- **(op)** a keyword action 'Empower <name> N' that empowers the named planeswalker (Jace) by N, per its Multiverse Reforged rules (e.g. adding loyalty to / advancing a named planeswalker you control or in your command zone)
+  <br>Why the existing vocabulary won't do: The packet's reference has no empower op, keyword or value; add_counters with loyalty would need a selector by planeswalker name and still would not match empower's own rules for when no such Jace is present
+- **(op)** the keyword action 'Empower Jace N': put N loyalty counters on a Jace token you control, first creating a blue Jace planeswalker token with loyalty abilities "[-1]: Surveil 1" and "[-3]: Draw a card." if you control none
+  <br>Why the existing vocabulary won't do: No empower op exists, and token_ids has no Jace planeswalker token; add_counters plus create_token cannot express the conditional create-then-counter without the token, and the trigger itself (spell_cast with max_per_turn 1 and a not_types Creature filter) is otherwise expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fatehold Charm** (rank 26189) — `fatehold_charm`
+  - • Draw a card. Empower Jace 2.
+- **Plan for All Outcomes** (rank 28658) — `plan_for_all_outcomes`
+  - Whenever you cast your first noncreature spell each turn, empower Jace 1. (Put a loyalty counter on a Jace token you control. If you don't control one, first create a blue Jace planeswalker token with "[−1]: Surveil 1" and "[−3]: Draw a card.")
+
+</details>
+
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -343,6 +412,44 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
+
+</details>
+
+## phyrexian-mite-token
+
+Blocks **2** cards.
+
+- **(token)** a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
+  <br>Why the existing vocabulary won't do: token_ids has no Mite; the nearest colorless 1/1 artifact creatures (servo_1_1_c, myr_1_1_c, gnome_1_1_c) lack toxic and the can't-block restriction
+- **(token)** a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
+  <br>Why the existing vocabulary won't do: token_ids has no Mite token (only germ_0_0_b and phyrexian_beast_4_4_g are Phyrexian), and toxic is not in the keyword list, so the token cannot be defined from existing vocabulary either
+
+<details><summary>Cards waiting on this</summary>
+
+- **White Sun's Twilight** (rank 1992) — `white_sun_s_twilight`
+  - Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and "This token can't block."
+- **Skrelv's Hive** (rank 2052) — `skrelv_s_hive`
+  - At the beginning of your upkeep, you lose 1 life and create a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
+  - Corrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink
+
+</details>
+
+## toxic
+
+Blocks **2** cards.
+
+- **(keyword)** the toxic N keyword: combat damage this creature deals to a player also gives that player N poison counters; static filters must be able to select creatures that have toxic (any N)
+  <br>Why the existing vocabulary won't do: The keyword list has infect but no toxic; infect replaces damage with poison and wither-style -1/-1 counters on creatures, whereas toxic deals normal damage plus poison, and 'creatures you control with toxic' cannot be filtered without the keyword existing
+- **(keyword)** toxic N: a player dealt combat damage by this creature also gets N poison counters
+  <br>Why the existing vocabulary won't do: keywords has infect but not toxic; infect replaces life damage with poison, whereas toxic adds poison on top of normal damage
+
+<details><summary>Cards waiting on this</summary>
+
+- **White Sun's Twilight** (rank 1992) — `white_sun_s_twilight`
+  - Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and "This token can't block."
+- **Skrelv's Hive** (rank 2052) — `skrelv_s_hive`
+  - At the beginning of your upkeep, you lose 1 life and create a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and "This token can't block."
+  - Corrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink
 
 </details>
 
@@ -425,6 +532,22 @@ Blocks **1** card.
 
 </details>
 
+## amass
+
+Blocks **1** card.
+
+- **(op)** an amass op taking a creature type and N: if you control no Army, create a 0/0 black <Type> Army creature token; then choose an Army you control, put N +1/+1 counters on it, and it permanently gains the named creature type
+  <br>Why the existing vocabulary won't do: There is no amass op, and composing it from if/exists + create_token + choose_permanents + add_counters + add_subtype fails because no 0/0 black Zombie Army creature token exists in token_ids (only zombie_2_2_b and zombie_knight_2_2_b_menace)
+- **(token)** a 0/0 black Zombie Army creature token
+  <br>Why the existing vocabulary won't do: token_ids has no Army token; zombie_2_2_b is a 2/2 without the Army subtype
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dreadhorde Invasion** (rank 1481) — `dreadhorde_invasion`
+  - At the beginning of your upkeep, you lose 1 life and amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -453,6 +576,20 @@ Blocks **1** card.
 
 </details>
 
+## batched-token-created
+
+Blocks **1** card.
+
+- **(trigger_event)** a token_created trigger honouring `batched: true`, so "whenever you create one or more creature tokens" fires once per simultaneous creation rather than once per token
+  <br>Why the existing vocabulary won't do: token_created with a Creature filter exists, but primitives.create_token fires TOKEN_CREATED without the `batch` field that triggers._queue reads, so `batched` is silently ignored and making three tokens at once would add three counters; batched permanent_enters with is_token is the documented near miss (reads the entering permanent's controller, not the creator)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Staff of the Storyteller** (rank 3172) — `staff_of_the_storyteller`
+  - Whenever you create one or more creature tokens, put a story counter on this artifact.
+
+</details>
+
 ## blocked-by-source
 
 Blocks **1** card.
@@ -465,6 +602,20 @@ Blocks **1** card.
 - **Goblin Snowman** (rank 21010) — `goblin_snowman`
   - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
   - {T}: This creature deals 1 damage to target creature it's blocking.
+
+</details>
+
+## cant-attack-planeswalkers-filtered
+
+Blocks **1** card.
+
+- **(op)** a one-turn attack prohibition that stops a player's creatures from attacking only the planeswalkers matching a filter (here: planeswalkers with subtype Jace controlled by you), while leaving attacks on you and your other planeswalkers legal
+  <br>Why the existing vocabulary won't do: cant_attack_player restricts by defending seat, and its planeswalkers flag closes the seat AND every planeswalker of that player at once, with no filter; the cant_attack / cant_attack_you statics are continuous and seat-scoped, so none can close only Jaces for this turn after an unpaid may-pay
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jace, Multiverse Architect** (rank 24795) — `jace_multiverse_architect`
+  - At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creatures they control can't attack Jaces you control this turn.
 
 </details>
 
@@ -482,6 +633,34 @@ Blocks **1** card.
 
 </details>
 
+## cant-have-counters
+
+Blocks **1** card.
+
+- **(static_effect)** a static effect that stops counters of a named kind (here -1/-1) from being put on permanents matching an affects filter (creatures you control), covering effects, costs, wither/infect damage and enters-with counters alike
+  <br>Why the existing vocabulary won't do: replace_counters only scales a placement (counter_multiplier is refused below 2 and counter_addend adds), so there is no way to reduce a placement to zero; prevent_damage and the cant_* statics do not touch counters
+
+<details><summary>Cards waiting on this</summary>
+
+- **Darksteel Angel** (rank 24328) — `darksteel_angel`
+  - Creatures you control can't have -1/-1 counters put on them.
+
+</details>
+
+## cast-milled-cards-free
+
+Blocks **1** card.
+
+- **(op)** an op that, for each player, lets you cast one card from among the cards that player milled this way (a mill `as` binding, cards in another player's graveyard) without paying its mana cost
+  <br>Why the existing vocabulary won't do: cast_from_hand casts free but builds its pool only from the caster's own zone lists, so it can never reach a card in an opponent's graveyard, and it offers one card total rather than one per player; play_exiled and look_at_top's cast_free read exile and the library top, not graveyards; grant_graveyard_cast and grant_playable charge the printed cost. The 'that many' count of attacking Sphinxes from a batched attack trigger is also unconfirmed
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Ur-Sphinx** (rank 23890) — `the_ur_sphinx`
+  - Whenever one or more Sphinxes you control attack, each player mills that many cards. For each player, you may cast a card that player milled this way without paying its mana cost.
+
+</details>
+
 ## cast-timing-restriction
 
 Blocks **1** card.
@@ -495,6 +674,21 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## choose-card-type
+
+Blocks **1** card.
+
+- **(op)** choose_type with of: "card_type" offering every card type (Artifact, Battle, Creature, Enchantment, Instant, Kindred, Land, Planeswalker, Sorcery), stored in chosen_card_type
+  <br>Why the existing vocabulary won't do: choose_type's 'of' only offers creature_type or permanent_type; permanent_type leaves out Instant, Sorcery and Kindred, which are legal answers and the commonest choices for this card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serra's Emissary** (rank 2680) — `serra_s_emissary`
+  - As this creature enters, choose a card type.
+  - You and creatures you control have protection from the chosen card type.
 
 </details>
 
@@ -595,6 +789,22 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## distribute-control-among-opponents
+
+Blocks **1** card.
+
+- **(op)** for each of a set of permanents, choose a different opponent, and each opponent gains control (permanently) of the permanent chosen for them
+  <br>Why the existing vocabulary won't do: gain_control gives a whole selector to one player and rotate_control passes in a seat direction; nothing pairs each object with a distinct chosen opponent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
+  - When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have.
+  - They're goaded for the rest of the game.
+  - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
 
 </details>
 
@@ -702,6 +912,20 @@ Blocks **1** card.
 
 </details>
 
+## gingerbrute-token
+
+Blocks **1** card.
+
+- **(token)** a Gingerbrute token: a colorless 1/1 Food Golem artifact creature token with haste, "{1}: This token can't be blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice this token: You gain 3 life."
+  <br>Why the existing vocabulary won't do: token_ids has food_token (a noncreature Food artifact) and creature artifact tokens like gnome_1_1_c, but none is a 1/1 Food Golem artifact creature with haste and the haste-only blocking evasion ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ginger, Queen of Sweets** (rank 28865) — `ginger_queen_of_sweets`
+  - At the beginning of each upkeep, if you're the monarch, create a Gingerbrute token. (It's a {1} 1/1 Food Golem artifact creature with haste, "{1}: This token can't be blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice this token: You gain 3 life.")
+
+</details>
+
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -713,6 +937,21 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## impending
+
+Blocks **1** card.
+
+- **(cost)** an alternative cost (Impending N—cost) that, when paid, makes the permanent enter with N time counters, makes it not a creature while it has a time counter on it, and adds an end-step trigger removing a time counter from it
+  <br>Why the existing vocabulary won't do: alternative_cost only swaps the payment; there is no condition key reporting that a specific alternative cost was paid to gate enters-with-counters, and no static that removes the Creature type only while time counters remain (set_types is unconditional on printed characteristics)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overlord of the Mistmoors** (rank 4255) — `overlord_of_the_mistmoors`
+  - Impending 4—{2}{W}{W} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)
+  - Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.
 
 </details>
 
@@ -730,6 +969,35 @@ Blocks **1** card.
 
 </details>
 
+## incubate
+
+Blocks **1** card.
+
+- **(token)** a double-faced Incubator artifact token (front: colorless Incubator artifact with "{2}: Transform this token."; back: 0/0 colorless Phyrexian artifact creature) created with X +1/+1 counters, where X is the number of creatures the preceding exile actually moved
+  <br>Why the existing vocabulary won't do: token_ids has no Incubator token (the only Phyrexian token is phyrexian_beast_4_4_g), and create_token has no way to make a transforming token or place counters on it as it is created; exile has an `as` binding but no value key reads the count of objects it moved
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sunfall** (rank 3908) — `sunfall`
+  - Exile all creatures. Incubate X, where X is the number of creatures exiled this way
+
+</details>
+
+## insect-2-1-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 2/1 white Insect creature token with flying
+  <br>Why the existing vocabulary won't do: the only Insect in token_ids is insect_1_1_g, a 1/1 green Insect
+
+<details><summary>Cards waiting on this</summary>
+
+- **Overlord of the Mistmoors** (rank 4255) — `overlord_of_the_mistmoors`
+  - Impending 4—{2}{W}{W} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)
+  - Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.
+
+</details>
+
 ## keyword-counters
 
 Blocks **1** card.
@@ -741,6 +1009,20 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
+
+</details>
+
+## kobold-token
+
+Blocks **1** card.
+
+- **(token)** a 0/1 red Kobold creature token named Kobolds of Kher Keep
+  <br>Why the existing vocabulary won't do: token_ids has no Kobold token; the only 0/1 tokens are plant_0_1_g (green Plant) and eldrazi_spawn_0_1_c (colorless with a sacrifice mana ability), neither of which matches color, subtype or name
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kher Keep** (rank 1663) — `kher_keep`
+  - {1}{R}, {T}: Create a 0/1 red Kobold creature token named Kobolds of Kher Keep.
 
 </details>
 
@@ -831,6 +1113,21 @@ Blocks **1** card.
 
 </details>
 
+## mana-becomes-colorless
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static (Kruphix, Omnath, Locus of the Void) that, when the controller's mana pool would empty between steps and phases, keeps every unspent mana but converts each one to {C}
+  <br>Why the existing vocabulary won't do: `mana_retention` keeps the mana in its original colors (Leyline Tyrant / Upwelling), and the packet notes say outright that 'that mana becomes colorless instead' is not it and is still a gap
+
+<details><summary>Cards waiting on this</summary>
+
+- **Omnath, Locus of the Void** (rank 24391) — `omnath_locus_of_the_void`
+  - Omnath gets +1/+1 for each unspent mana you have.
+  - If you would lose unspent mana, that mana becomes colorless instead.
+
+</details>
+
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -885,6 +1182,20 @@ Blocks **1** card.
 - **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
   - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
   - Living metal (During your turn, this Vehicle is also a creature.)
+
+</details>
+
+## morph
+
+Blocks **1** card.
+
+- **(engine)** a residual-gate claimant in authoring/verify.py `_covered` that accepts a printed 'Morph <cost>' (or 'Megamorph <cost>') line when the card's card-level `morph` field equals that printed cost, dropping the reminder text, the way the kicker/multikicker claimants do
+  <br>Why the existing vocabulary won't do: The card-level `morph` field exists in the schema, loader and casting (face-down cast for MORPH_COST), but `_covered` has no branch for it and 'Morph' is not a keyword `lift_keywords` lifts, so a correctly declared `morph: "{3}{R}{R}{R}"` is rejected as 'printed text not represented: Morph {3}{R}{R}{R}'; claiming the line with an ability's text would mislabel an ability that does not implement it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Akroma, Angel of Fury** (rank 7104) — `akroma_angel_of_fury`
+  - Morph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)
 
 </details>
 
@@ -966,6 +1277,36 @@ Blocks **1** card.
 
 </details>
 
+## pay-life-variable
+
+Blocks **1** card.
+
+- **(cost)** a `may` whose `pay` is `pay_life` priced by a value expression read in the resolving effect's context, so it can read the trigger's `{"binding": "amount"}` (the life just gained) and charge exactly that much life as a payment, with the `effects` (draw that many) running only if it was paid
+  <br>Why the existing vocabulary won't do: `may.pay` accepts a `pay_life` value expression, but `costs` evaluates it in a fresh EffectContext with no trigger bindings, so `{"binding": "amount"}` reads nothing and the payment would be 0 life for a free draw; `pay.times` scales only mana, not life; and a `may` wrapping `lose_life` is not a payment (it ignores can't-pay-life effects such as lock_life_total and the affordability check of 119.4)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Niv-Mizzet, Ghost Counsel** (rank 24283) — `niv_mizzet_ghost_counsel`
+  - Whenever you gain life, you may pay that much life. If you do, draw that many cards.
+
+</details>
+
+## permanent-goad
+
+Blocks **1** card.
+
+- **(op)** a goad that never expires: a `duration: "permanent"` ("for the rest of the game") option on the goad op, so the goaded_by mark is not cleared at the goader's next untap step
+  <br>Why the existing vocabulary won't do: goad takes only objects and player, and goad_creature's mark is cleared in turn._untap_step when the goading player untaps, so it lasts only until your next turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
+  - When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have.
+  - They're goaded for the rest of the game.
+  - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
+
+</details>
+
 ## played-or-cast-from-non-hand-this-turn
 
 Blocks **1** card.
@@ -991,6 +1332,21 @@ Blocks **1** card.
 
 - **Orbs of Warding** (rank 13000) — `orbs_of_warding`
   - If a creature would deal damage to you, prevent 1 of that damage.
+
+</details>
+
+## player-protection
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static granting the controller ("You have protection from ...") protection from a card type: damage from sources of that type is prevented and the player can't be targeted or enchanted by them
+  <br>Why the existing vocabulary won't do: protection only affects objects; player_hexproof covers untargetability only, not damage prevention or a quality filter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serra's Emissary** (rank 2680) — `serra_s_emissary`
+  - As this creature enters, choose a card type.
+  - You and creatures you control have protection from the chosen card type.
 
 </details>
 
@@ -1033,6 +1389,21 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
+
+</details>
+
+## protection-from-chosen-type
+
+Blocks **1** card.
+
+- **(static_effect)** a protection static whose from_types can be the binding {"chosen_card_type_of": "self"}, read off the source's chosen card type
+  <br>Why the existing vocabulary won't do: the protection static's from_types accepts only literal type names checked against KNOWN_TYPES; chosen_card_type_of is read only in selector 'types', not in from_types
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serra's Emissary** (rank 2680) — `serra_s_emissary`
+  - As this creature enters, choose a card type.
+  - You and creatures you control have protection from the chosen card type.
 
 </details>
 
@@ -1090,6 +1461,34 @@ Blocks **1** card.
 
 - **Scolding Administrator** (rank 18369) — `scolding_administrator`
   - Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.
+
+</details>
+
+## reveal-until-steal
+
+Blocks **1** card.
+
+- **(op)** reveal_until on another player's library that puts the found card onto the battlefield under YOUR control (not the library owner's) and binds it with `as`, so a following lose_life can read its mana value (mana_value_of the binding)
+  <br>Why the existing vocabulary won't do: reveal_until's options carry no `controller` or `as`: _move_found sets the moved card's controller to the player whose library was scanned, so with player={target: t1} the historic card would enter under the opponent's control, and nothing binds the hit for 'lose life equal to that permanent's mana value'; routing through exile+link then put_onto_battlefield would add an exile step the card does not have
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jhoira, Weatherlight Corsair** (rank 29257) — `jhoira_weatherlight_corsair`
+  - Whenever Jhoira enters or attacks, target opponent reveals cards from the top of their library until they reveal a historic permanent card. You put that card onto the battlefield under your control and lose life equal to that permanent's mana value. That player puts the rest of the revealed cards on the bottom of their library in a random order
+
+</details>
+
+## rogue-2-2-b
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Rogue creature token
+  <br>Why the existing vocabulary won't do: token_ids has only vampire_rogue_1_1_b_lifelink (a 1/1 Vampire Rogue with lifelink) and other 2/2 black tokens of different types (zombie_2_2_b, pirate_2_2_b_menace); none is a plain 2/2 black Rogue
+
+<details><summary>Cards waiting on this</summary>
+
+- **Currency Converter** (rank 2831) — `currency_converter`
+  - {T}: Put a card exiled with this artifact into its owner's graveyard. If it's a land card, create a Treasure token. If it's a nonland card, create a 2/2 black Rogue creature token.
 
 </details>
 
@@ -1163,6 +1562,20 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## static-condition-has-flag
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability's `condition` that asks whether its own source carries a flag (`{"has_flag": "mardu"}`), so a Siege's "as this enters, choose X or Y" choice -- recorded with choose_mode + set_flag on self -- can switch a static mode (here a double_triggers with cause_events ["attacks"]) on only when that mode was chosen
+  <br>Why the existing vocabulary won't do: has_flag exists only in trigger/effect condition_keys (which is how Outpost Siege gates its triggered modes); static_condition_keys has counters, exists, cmp, is_your_turn etc. but no has_flag, and no static_filter_key reads flags, so the Mardu double_triggers static would be on regardless of the choice. Faking the choice with a counter would be visible to proliferate and counter removal, so is not exact
+
+<details><summary>Cards waiting on this</summary>
+
+- **Windcrag Siege** (rank 1368) — `windcrag_siege`
+  - • Mardu — If a creature attacking causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time
 
 </details>
 
@@ -1293,6 +1706,21 @@ Blocks **1** card.
 
 </details>
 
+## unspent-mana-count
+
+Blocks **1** card.
+
+- **(value)** a value (usable as a static `buff` amount) reading the total amount of unspent mana in the controller's mana pool, so 'gets +1/+1 for each unspent mana you have' tracks the pool continuously
+  <br>Why the existing vocabulary won't do: neither `value_keys` nor `static_value_keys` has anything that reads the mana pool; `mana_spent_of` and `colors_of_mana_spent` read mana spent on a spell, not mana still floating
+
+<details><summary>Cards waiting on this</summary>
+
+- **Omnath, Locus of the Void** (rank 24391) — `omnath_locus_of_the_void`
+  - Omnath gets +1/+1 for each unspent mana you have.
+  - If you would lose unspent mana, that mana becomes colorless instead.
+
+</details>
+
 ## value-locked-on-cast
 
 Blocks **1** card.
@@ -1304,6 +1732,21 @@ Blocks **1** card.
 
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
+
+</details>
+
+## variable-pt-token
+
+Blocks **1** card.
+
+- **(token)** an X/X blue Shark creature token with flying whose base power and toughness are set to a value fixed at creation (the cast spell's mana value, or the X paid for cycling)
+  <br>Why the existing vocabulary won't do: token_ids has no Shark token, and create_token carries only amount/as/attached_to/attacking/controller/player/tapped/token -- no power or toughness value; the 0/0 tokens (fractal_0_0_gu) are the wrong type and colour, and 0/0 plus +1/+1 counters is not a base X/X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shark Typhoon** (rank 1242) — `shark_typhoon`
+  - Whenever you cast a noncreature spell, create an X/X blue Shark creature token with flying, where X is that spell's mana value.
+  - When you cycle this card, create an X/X blue Shark creature token with flying.
 
 </details>
 

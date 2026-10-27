@@ -1,0 +1,21 @@
+{
+  "card_id": "fatehold_charm",
+  "name": "Fatehold Charm",
+  "oracle_text": "Choose one —\n• Draw a card. Empower Jace 2.\n• Return target spell or creature to its owner's hand.\n• Creatures you control get +1/+2 until end of turn.",
+  "blocked_sentences": [
+    "• Draw a card. Empower Jace 2."
+  ],
+  "needs": [
+    {
+      "capability": "empower",
+      "kind": "op",
+      "what": "a keyword action 'Empower <name> N' that empowers the named planeswalker (Jace) by N, per its Multiverse Reforged rules (e.g. adding loyalty to / advancing a named planeswalker you control or in your command zone)",
+      "why_existing_wont_do": "The packet's reference has no empower op, keyword or value; add_counters with loyalty would need a selector by planeswalker name and still would not match empower's own rules for when no such Jace is present"
+    }
+  ],
+  "closest_existing": [
+    "add_counters",
+    "choose_mode"
+  ],
+  "confidence": "high"
+}

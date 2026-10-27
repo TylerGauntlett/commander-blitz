@@ -1,0 +1,19 @@
+{
+  "card_id": "shark_typhoon",
+  "name": "Shark Typhoon",
+  "oracle_text": "Whenever you cast a noncreature spell, create an X/X blue Shark creature token with flying, where X is that spell's mana value.\nCycling {X}{1}{U} ({X}{1}{U}, Discard this card: Draw a card.)\nWhen you cycle this card, create an X/X blue Shark creature token with flying.",
+  "blocked_sentences": [
+    "Whenever you cast a noncreature spell, create an X/X blue Shark creature token with flying, where X is that spell's mana value.",
+    "When you cycle this card, create an X/X blue Shark creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "variable_pt_token",
+      "kind": "token",
+      "what": "an X/X blue Shark creature token with flying whose base power and toughness are set to a value fixed at creation (the cast spell's mana value, or the X paid for cycling)",
+      "why_existing_wont_do": "token_ids has no Shark token, and create_token carries only amount/as/attached_to/attacking/controller/player/tapped/token -- no power or toughness value; the 0/0 tokens (fractal_0_0_gu) are the wrong type and colour, and 0/0 plus +1/+1 counters is not a base X/X"
+    }
+  ],
+  "closest_existing": ["create_token", "fractal_0_0_gu", "set_pt"],
+  "confidence": "high"
+}

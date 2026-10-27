@@ -1,0 +1,28 @@
+{
+  "card_id": "white_sun_s_twilight",
+  "name": "White Sun's Twilight",
+  "oracle_text": "You gain X life. Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\" If X is 5 or more, destroy all other creatures. (Players dealt combat damage by a creature with toxic 1 also get a poison counter.)",
+  "blocked_sentences": [
+    "Create X 1/1 colorless Phyrexian Mite artifact creature tokens with toxic 1 and \"This token can't block.\""
+  ],
+  "needs": [
+    {
+      "capability": "phyrexian_mite_token",
+      "kind": "token",
+      "what": "a 1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and \"This token can't block.\"",
+      "why_existing_wont_do": "token_ids has no Mite token (only germ_0_0_b and phyrexian_beast_4_4_g are Phyrexian), and toxic is not in the keyword list, so the token cannot be defined from existing vocabulary either"
+    },
+    {
+      "capability": "toxic",
+      "kind": "keyword",
+      "what": "toxic N: a player dealt combat damage by this creature also gets N poison counters",
+      "why_existing_wont_do": "keywords has infect but not toxic; infect replaces life damage with poison, whereas toxic adds poison on top of normal damage"
+    }
+  ],
+  "closest_existing": [
+    "create_token",
+    "add_poison",
+    "infect"
+  ],
+  "confidence": "high"
+}

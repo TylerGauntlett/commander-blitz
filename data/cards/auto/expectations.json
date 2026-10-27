@@ -650,6 +650,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "archfiend_of_despair": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archivist_of_oghma": {
     "battlefield_count": 33,
     "hand_size": {
@@ -685,6 +689,20 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "archon_of_cruelty": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 43,
+      "1": 37
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
   },
   "archweaver": {
     "zone": "battlefield"
@@ -860,6 +878,10 @@
         "indestructible"
       ]
     },
+    "zone": "battlefield"
+  },
+  "avacyn_angel_of_horror": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "avacyn_s_pilgrim": {
@@ -1535,6 +1557,15 @@
     },
     "library_size": {
       "0": 39
+    },
+    "zone": "graveyard"
+  },
+  "brainsurge": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
     },
     "zone": "graveyard"
   },
@@ -3042,6 +3073,9 @@
   },
   "desolate_mire": {
     "zone": "battlefield"
+  },
+  "despark": {
+    "zone": "graveyard"
   },
   "destroy_evil": {
     "zone": "graveyard"
@@ -5099,6 +5133,20 @@
   "grand_coliseum": {
     "zone": "battlefield"
   },
+  "grand_crescendo": {
+    "battlefield_count": 52,
+    "granted": {
+      "count": 22,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "tokens": {
+      "count": 20,
+      "id": "citizen_1_1_gw"
+    },
+    "zone": "graveyard"
+  },
   "granitic_titan": {
     "zone": "battlefield"
   },
@@ -6798,6 +6846,14 @@
     },
     "zone": "battlefield"
   },
+  "lingering_souls": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "spirit_1_1_w_flying"
+    },
+    "zone": "graveyard"
+  },
   "linvala_the_preserver": {
     "zone": "battlefield"
   },
@@ -7385,6 +7441,14 @@
   },
   "meloku_the_clouded_mirror": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "memnarch_the_warden": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "myr_1_1_c"
+    },
     "zone": "battlefield"
   },
   "memnite": {
@@ -8151,6 +8215,13 @@
   "nip_gwyllion": {
     "zone": "battlefield"
   },
+  "nissa_leyline_tamer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "nissa_vital_force": {
     "battlefield_count": 33,
     "counters": {
@@ -8338,6 +8409,12 @@
   },
   "obsidian_giant": {
     "zone": "battlefield"
+  },
+  "occult_epiphany": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "ocelot_pride": {
     "battlefield_count": 33,
@@ -9052,6 +9129,10 @@
       "0": 2
     }
   },
+  "proteus_staff": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "prowling_caracal": {
     "zone": "battlefield"
   },
@@ -9522,6 +9603,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "restless_anchorage": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "restless_spire": {
@@ -11769,6 +11854,10 @@
     },
     "zone": "graveyard"
   },
+  "tamiyo_upriser_crowned": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tandem_lookout": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11861,6 +11950,10 @@
   "teferi_s_puzzle_box": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "teferi_s_reproach": {
+    "opponent_battlefield_count": 2,
+    "zone": "exile"
   },
   "teferi_s_tutelage": {
     "battlefield_count": 33,
@@ -12522,6 +12615,18 @@
   "tundra_wolves": {
     "zone": "battlefield"
   },
+  "turbulent_crater": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "turbulent_shore": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "turbulent_wetlands": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "turntimber_ascetic": {
     "life": {
       "0": 43
@@ -12974,6 +13079,9 @@
     "zone": "battlefield"
   },
   "venomthrope": {
+    "zone": "battlefield"
+  },
+  "venser_fervent_forger": {
     "zone": "battlefield"
   },
   "venser_s_sliver": {
@@ -13505,6 +13613,15 @@
     "zone": "battlefield"
   },
   "whirlwind_adept": {
+    "zone": "battlefield"
+  },
+  "whirlwind_of_thought": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "whisper_agent": {

@@ -1,0 +1,16 @@
+{
+  "card_id": "staff_of_the_storyteller",
+  "name": "Staff of the Storyteller",
+  "oracle_text": "When this artifact enters, create a 1/1 white Spirit creature token with flying.\nWhenever you create one or more creature tokens, put a story counter on this artifact.\n{W}, {T}, Remove a story counter from this artifact: Draw a card.",
+  "blocked_sentences": [
+    "Whenever you create one or more creature tokens, put a story counter on this artifact."
+  ],
+  "needs": [{
+    "capability": "batched_token_created",
+    "kind": "trigger_event",
+    "what": "a token_created trigger honouring `batched: true`, so \"whenever you create one or more creature tokens\" fires once per simultaneous creation rather than once per token",
+    "why_existing_wont_do": "token_created with a Creature filter exists, but primitives.create_token fires TOKEN_CREATED without the `batch` field that triggers._queue reads, so `batched` is silently ignored and making three tokens at once would add three counters; batched permanent_enters with is_token is the documented near miss (reads the entering permanent's controller, not the creator)"
+  }],
+  "closest_existing": ["token_created", "permanent_enters"],
+  "confidence": "high"
+}

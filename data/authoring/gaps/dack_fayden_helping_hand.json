@@ -1,0 +1,32 @@
+{
+  "card_id": "dack_fayden_helping_hand",
+  "name": "Dack Fayden, Helping Hand",
+  "oracle_text": "When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have. Put those creature cards onto the battlefield, then shuffle. They're goaded for the rest of the game. For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.",
+  "blocked_sentences": [
+    "When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have.",
+    "They're goaded for the rest of the game.",
+    "For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen."
+  ],
+  "needs": [
+    {
+      "capability": "permanent_goad",
+      "kind": "op",
+      "what": "a goad that never expires: a `duration: \"permanent\"` (\"for the rest of the game\") option on the goad op, so the goaded_by mark is not cleared at the goader's next untap step",
+      "why_existing_wont_do": "goad takes only objects and player, and goad_creature's mark is cleared in turn._untap_step when the goading player untaps, so it lasts only until your next turn"
+    },
+    {
+      "capability": "reveal_until_count",
+      "kind": "op",
+      "what": "reveal_until with an amount: keep revealing until N matching cards (N a value, here the number of opponents) are revealed, move all N to the destination, then shuffle the rest into the library and bind the moved cards for later effects",
+      "why_existing_wont_do": "reveal_until stops at the first match and bottoms the rest; wrapping it in repeat would bottom per iteration rather than reveal one run and shuffle, and leaves no binding of the set of creatures put onto the battlefield"
+    },
+    {
+      "capability": "distribute_control_among_opponents",
+      "kind": "op",
+      "what": "for each of a set of permanents, choose a different opponent, and each opponent gains control (permanently) of the permanent chosen for them",
+      "why_existing_wont_do": "gain_control gives a whole selector to one player and rotate_control passes in a seat direction; nothing pairs each object with a distinct chosen opponent"
+    }
+  ],
+  "closest_existing": ["reveal_until", "goad", "gain_control", "rotate_control"],
+  "confidence": "high"
+}

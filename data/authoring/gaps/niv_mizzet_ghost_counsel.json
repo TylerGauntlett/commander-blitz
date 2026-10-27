@@ -1,0 +1,18 @@
+{
+  "card_id": "niv_mizzet_ghost_counsel",
+  "name": "Niv-Mizzet, Ghost Counsel",
+  "oracle_text": "Flying\nWhenever you gain life, you may pay that much life. If you do, draw that many cards.\n{T}: Each opponent loses 1 life and you gain 1 life.",
+  "blocked_sentences": [
+    "Whenever you gain life, you may pay that much life. If you do, draw that many cards."
+  ],
+  "needs": [
+    {
+      "capability": "pay_life_variable",
+      "kind": "cost",
+      "what": "a `may` whose `pay` is `pay_life` priced by a value expression read in the resolving effect's context, so it can read the trigger's `{\"binding\": \"amount\"}` (the life just gained) and charge exactly that much life as a payment, with the `effects` (draw that many) running only if it was paid",
+      "why_existing_wont_do": "`may.pay` accepts a `pay_life` value expression, but `costs` evaluates it in a fresh EffectContext with no trigger bindings, so `{\"binding\": \"amount\"}` reads nothing and the payment would be 0 life for a free draw; `pay.times` scales only mana, not life; and a `may` wrapping `lose_life` is not a payment (it ignores can't-pay-life effects such as lock_life_total and the affordability check of 119.4)"
+    }
+  ],
+  "closest_existing": ["may", "pay_life", "lose_life"],
+  "confidence": "high"
+}

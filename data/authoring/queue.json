@@ -12002,12 +12002,12 @@
     },
     "Archfiend of Despair": {
       "edhrec_rank": 2741,
-      "gate": "template",
+      "gate": null,
       "name": "Archfiend of Despair",
-      "reason": "no template for: Your opponents can't gain life",
+      "reason": "",
       "scryfall_id": "afce9284-9d3a-4ab9-8dd0-8fda1ee0c64f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archfiend of Ifnir": {
@@ -12252,12 +12252,12 @@
     },
     "Archon of Cruelty": {
       "edhrec_rank": 1100,
-      "gate": "template",
+      "gate": null,
       "name": "Archon of Cruelty",
-      "reason": "no template for: Whenever this creature enters or attacks, target opponent sacrifices a creature or planesw",
+      "reason": "",
       "scryfall_id": "78f5933b-4901-45fd-ae3f-aeae3bdf200b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archon of Emeria": {
@@ -16986,8 +16986,8 @@
       "name": "Avacyn, Angel of Horror",
       "reason": "",
       "scryfall_id": "4fc478a2-7cf8-4946-a631-51bd4f1823e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avacyn, Guardian Angel": {
@@ -32902,12 +32902,12 @@
     },
     "Brainsurge": {
       "edhrec_rank": 1333,
-      "gate": "template",
+      "gate": null,
       "name": "Brainsurge",
-      "reason": "no template for: Draw four cards, then put two cards from your hand on top of your library in any order",
+      "reason": "",
       "scryfall_id": "95a6997b-a8b1-4655-a9b0-5f9a305ca96e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brainwash": {
@@ -59832,9 +59832,9 @@
     },
     "Dack Fayden, Helping Hand": {
       "edhrec_rank": 29052,
-      "gate": null,
+      "gate": "template",
       "name": "Dack Fayden, Helping Hand",
-      "reason": "",
+      "reason": "no template for: When Dack Fayden enters, reveal cards from the top of your library until you reveal X crea",
       "scryfall_id": "77a1ef5a-9ebf-4e23-97c6-39ff744c84da",
       "source": "",
       "status": "pending",
@@ -67342,12 +67342,12 @@
     },
     "Despark": {
       "edhrec_rank": 408,
-      "gate": "template",
+      "gate": null,
       "name": "Despark",
-      "reason": "no template for: Exile target permanent with mana value 4 or greater",
+      "reason": "",
       "scryfall_id": "8555d8c1-ef77-4471-8fbf-22bb16d0f040",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Desperate Bloodseeker": {
@@ -91962,9 +91962,9 @@
     },
     "Fatehold Charm": {
       "edhrec_rank": 26189,
-      "gate": null,
+      "gate": "template",
       "name": "Fatehold Charm",
-      "reason": "",
+      "reason": "no template for: Choose one —",
       "scryfall_id": "a2008313-659e-4132-85a2-e7b7be93bcdc",
       "source": "",
       "status": "pending",
@@ -109652,9 +109652,9 @@
     },
     "Ginger, Queen of Sweets": {
       "edhrec_rank": 28865,
-      "gate": null,
+      "gate": "template",
       "name": "Ginger, Queen of Sweets",
-      "reason": "",
+      "reason": "no template for: When Ginger enters, you become the monarch",
       "scryfall_id": "321e0ec3-e2d7-4bd8-98df-8fec88e365c0",
       "source": "",
       "status": "pending",
@@ -115912,12 +115912,12 @@
     },
     "Grand Crescendo": {
       "edhrec_rank": 1451,
-      "gate": "template",
+      "gate": null,
       "name": "Grand Crescendo",
-      "reason": "no template for: Create X 1/1 green and white Citizen creature tokens. Creatures you control gain indestruc",
+      "reason": "",
       "scryfall_id": "59e34237-1ef5-4376-b671-11692693fc61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grand Entryway // Elegant Rotunda": {
@@ -141392,9 +141392,9 @@
     },
     "Jace, Multiverse Architect": {
       "edhrec_rank": 24795,
-      "gate": null,
+      "gate": "template",
       "name": "Jace, Multiverse Architect",
-      "reason": "",
+      "reason": "no template for: At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creat",
       "scryfall_id": "55cd03d9-2535-4cf3-a8b2-1418e1190f4a",
       "source": "",
       "status": "pending",
@@ -143122,9 +143122,9 @@
     },
     "Jhoira, Weatherlight Corsair": {
       "edhrec_rank": 29257,
-      "gate": null,
+      "gate": "template",
       "name": "Jhoira, Weatherlight Corsair",
-      "reason": "",
+      "reason": "no template for: Whenever Jhoira enters or attacks, target opponent reveals cards from the top of their lib",
       "scryfall_id": "116dc6fb-cfa4-4bc6-b897-95dd0ee0a642",
       "source": "",
       "status": "pending",
@@ -159272,12 +159272,12 @@
     },
     "Lingering Souls": {
       "edhrec_rank": 5185,
-      "gate": "template",
+      "gate": null,
       "name": "Lingering Souls",
-      "reason": "no template for: Create two 1/1 white Spirit creature tokens with flying",
+      "reason": "",
       "scryfall_id": "e464408d-3e50-4a9e-beca-b91e15baacaf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lingering Tormentor": {
@@ -170696,8 +170696,8 @@
       "name": "Memnarch, the Warden",
       "reason": "",
       "scryfall_id": "264ff4ea-8dd3-4a57-9829-8f127956b108",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Memnite": {
@@ -187766,8 +187766,8 @@
       "name": "Nissa, Leyline Tamer",
       "reason": "",
       "scryfall_id": "e969d1f3-9595-498b-81cb-6cf4df2cad5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nissa, Nature's Artisan": {
@@ -187912,9 +187912,9 @@
     },
     "Niv-Mizzet, Ghost Counsel": {
       "edhrec_rank": 24283,
-      "gate": null,
+      "gate": "template",
       "name": "Niv-Mizzet, Ghost Counsel",
-      "reason": "",
+      "reason": "no template for: Whenever you gain life, you may pay that much life. If you do, draw that many cards",
       "scryfall_id": "0ad0e168-ac5c-4e1b-83f2-0488067a58d7",
       "source": "",
       "status": "pending",
@@ -190952,12 +190952,12 @@
     },
     "Occult Epiphany": {
       "edhrec_rank": 10039,
-      "gate": "template",
+      "gate": null,
       "name": "Occult Epiphany",
-      "reason": "no template for: Draw X cards, then discard X cards. Create a 1/1 white Spirit creature token with flying f",
+      "reason": "",
       "scryfall_id": "6920c895-bc98-4871-a53f-219fa27a74e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oceanus Dragon": {
@@ -192552,9 +192552,9 @@
     },
     "Omnath, Locus of the Void": {
       "edhrec_rank": 24391,
-      "gate": null,
+      "gate": "template",
       "name": "Omnath, Locus of the Void",
-      "reason": "",
+      "reason": "no template for: Omnath gets +1/+1 for each unspent mana you have",
       "scryfall_id": "6183342b-7dce-49e1-a1c3-bdadbeeabbd3",
       "source": "",
       "status": "pending",
@@ -203652,9 +203652,9 @@
     },
     "Plan for All Outcomes": {
       "edhrec_rank": 28658,
-      "gate": null,
+      "gate": "template",
       "name": "Plan for All Outcomes",
-      "reason": "",
+      "reason": "no template for: When this enchantment enters, the owner of up to one other target nonland permanent puts i",
       "scryfall_id": "c4effc17-0d0e-423a-b5f2-597ea6c71f67",
       "source": "",
       "status": "pending",
@@ -208832,12 +208832,12 @@
     },
     "Proteus Staff": {
       "edhrec_rank": 9153,
-      "gate": "template",
+      "gate": null,
       "name": "Proteus Staff",
-      "reason": "no template for: {2}{U}, {T}: Put target creature on the bottom of its owner's library. That creature's con",
+      "reason": "",
       "scryfall_id": "825889d4-a0ed-4950-a8b0-bfbc2a2d1ea0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Protocol Knight": {
@@ -221522,12 +221522,12 @@
     },
     "Restless Anchorage": {
       "edhrec_rank": 3916,
-      "gate": "template",
+      "gate": null,
       "name": "Restless Anchorage",
-      "reason": "no template for: Whenever this land attacks, create a Map token",
+      "reason": "",
       "scryfall_id": "0fc7725d-eb04-4778-8f5e-4c1239ed08b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Restless Apparition": {
@@ -274846,8 +274846,8 @@
       "name": "Tamiyo, Upriser Crowned",
       "reason": "",
       "scryfall_id": "0d52b0fd-60a4-4e90-bc4a-3200493779d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tamiyo, the Moon Sage": {
@@ -276436,8 +276436,8 @@
       "name": "Teferi's Reproach",
       "reason": "",
       "scryfall_id": "1a03bb37-70fe-4d70-880e-d6214bb250d6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teferi's Response": {
@@ -282742,9 +282742,9 @@
     },
     "The Ur-Sphinx": {
       "edhrec_rank": 23890,
-      "gate": null,
+      "gate": "template",
       "name": "The Ur-Sphinx",
-      "reason": "",
+      "reason": "no template for: Eminence — As long as is in the command zone or on the battlefield, other Sphinx spells yo",
       "scryfall_id": "2395b07a-d237-4e48-9723-b9a50e9fffc2",
       "source": "",
       "status": "pending",
@@ -294186,8 +294186,8 @@
       "name": "Turbulent Crater",
       "reason": "",
       "scryfall_id": "0cb04417-063e-45f7-86d3-7648111d04d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Dreams": {
@@ -294226,8 +294226,8 @@
       "name": "Turbulent Shore",
       "reason": "",
       "scryfall_id": "68353281-ebcc-4dcb-853c-f4d128c992d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Springs": {
@@ -294256,8 +294256,8 @@
       "name": "Turbulent Wetlands",
       "reason": "",
       "scryfall_id": "0da94a82-cd65-478d-a3f7-e54ae6ca7e9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Wilderness": {
@@ -302906,8 +302906,8 @@
       "name": "Venser, Fervent Forger",
       "reason": "",
       "scryfall_id": "0de6353b-5c19-40f7-951a-2b600db21846",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Venser, Shaper Savant": {
@@ -314142,12 +314142,12 @@
     },
     "Whirlwind of Thought": {
       "edhrec_rank": 1648,
-      "gate": "template",
+      "gate": null,
       "name": "Whirlwind of Thought",
-      "reason": "no template for: Whenever you cast a noncreature spell, draw a card",
+      "reason": "",
       "scryfall_id": "5ed52b7d-de2d-4a32-8897-4a5f821c1994",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whirlwind, Killer Cyclone": {

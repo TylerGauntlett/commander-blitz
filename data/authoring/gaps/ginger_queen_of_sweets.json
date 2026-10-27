@@ -1,0 +1,21 @@
+{
+  "card_id": "ginger_queen_of_sweets",
+  "name": "Ginger, Queen of Sweets",
+  "oracle_text": "When Ginger enters, you become the monarch.\n{2}, {T}, Sacrifice Ginger: You gain 6 life.\nAt the beginning of each upkeep, if you're the monarch, create a Gingerbrute token. (It's a {1} 1/1 Food Golem artifact creature with haste, \"{1}: This token can't be blocked this turn except by creatures with haste,\" and \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+  "blocked_sentences": [
+    "At the beginning of each upkeep, if you're the monarch, create a Gingerbrute token. (It's a {1} 1/1 Food Golem artifact creature with haste, \"{1}: This token can't be blocked this turn except by creatures with haste,\" and \"{2}, {T}, Sacrifice this token: You gain 3 life.\")"
+  ],
+  "needs": [
+    {
+      "capability": "gingerbrute_token",
+      "kind": "token",
+      "what": "a Gingerbrute token: a colorless 1/1 Food Golem artifact creature token with haste, \"{1}: This token can't be blocked this turn except by creatures with haste,\" and \"{2}, {T}, Sacrifice this token: You gain 3 life.\"",
+      "why_existing_wont_do": "token_ids has food_token (a noncreature Food artifact) and creature artifact tokens like gnome_1_1_c, but none is a 1/1 Food Golem artifact creature with haste and the haste-only blocking evasion ability"
+    }
+  ],
+  "closest_existing": [
+    "food_token",
+    "gnome_1_1_c"
+  ],
+  "confidence": "high"
+}
