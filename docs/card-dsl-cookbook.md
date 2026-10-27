@@ -4743,6 +4743,29 @@ more and does the same thing. A free (`{0}`) or X multikicker is refused too:
 free-and-repeatable is six kicks for nothing, and X would have to be asked per
 payment.
 
+#### Escalate
+
+```jsonc
+// Collective Resistance: "Escalate {G} (Pay this cost for each mode chosen
+// beyond the first.) Choose one or more — …"
+"escalate": "{G}",
+"spell_effects": [ { "op": "choose_mode", "count": 1, "or_more": true, "modes": [ … ] } ]
+```
+
+702.120a, and multikicker's desugaring: `additional_cost: {mana: "{G}"}`,
+`additional_optional` and `additional_repeatable`, so legality offers one cast
+line per number of payments. Two readers tie that number to the modes:
+`casting._additional_ceiling` offers at most one payment per mode beyond the
+first (per 601.2b's selectable modes, when a mode-owned target has nothing to
+aim at), and `Game._cast` makes the cast choose **exactly** one mode more than
+it paid for. The near misses each price something else: `spree` charges the
+first mode too, a plain `or_more` takes every mode for the printed cost, and
+multikicker counts payments nothing ties to the modes.
+
+The loader refuses escalate beside any other additional cost or `spree`, a free
+or X escalate, and a spell whose effects are not one top-level `choose_mode`
+with `or_more`.
+
 The residual-gate claimant is narrower than `kicker`'s. It fires only when the
 loader has actually desugared the cost, and it checks that the **symbols printed
 on the line are the symbols charged** — a card declaring `multikicker: "{1}"`

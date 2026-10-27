@@ -131,6 +131,16 @@ class TestThePriceIsEveryChosenMode:
         }
 
 
+class TestEveryChosenModeIsPaidFor:
+    def test_all_three_modes_cost_every_price(self, builder):
+        """{G} plus {1}, {2} and {4}: eight lands. Legality priced the line that
+        way, and `Game._cast` once charged the printed {G} alone."""
+        game = position(builder)
+        cast_modes(game, (0, 1, 2))
+
+        assert sum(1 for o in game.state.battlefield_objects(0) if o.tapped) == 8
+
+
 class TestEveryChosenModeResolves:
     def test_one_mode_runs_only_its_own_effect(self, builder):
         game = position(builder)

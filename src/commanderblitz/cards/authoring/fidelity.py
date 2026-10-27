@@ -317,6 +317,9 @@ def unimplemented_mechanics(card: CardDef, printed: str) -> list[str]:
         # like any other declaration, so without this an instant that really has
         # the cost would be reported as missing it.
         declared.add("multikicker")
+    if card.escalate is not None:
+        # Collective Resistance's first line, "Escalate {G} (…)".
+        declared.add("escalate")
     if card.strive is not None:
         # Call the Coppercoats' first line, "Strive — This spell costs {1}{W}
         # more…", which `_MECHANIC_LINE` reads as a mechanic declaration.

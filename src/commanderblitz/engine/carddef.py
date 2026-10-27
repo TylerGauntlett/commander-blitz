@@ -1292,6 +1292,12 @@ class CardDef:
     #: under, so the residual gate can say which printed line the cost claims and
     #: check that the symbols on that line are the ones actually charged.
     multikicker: ManaCost | None = None
+    #: **Escalate {G}** (702.120a). Desugared by the loader into the
+    #: repeatable optional additional cost above, like multikicker; this one is
+    #: read too, by `casting._additional_ceiling` (at most one payment per mode
+    #: beyond the first) and `Game._cast` (the cast chooses exactly one mode
+    #: more than it paid for).
+    escalate: ManaCost | None = None
     #: **Strive**: the mana added to the spell's total cost once for each target
     #: beyond the first (601.2f). Read by `casting.strive_surcharge`, which both
     #: legality and `Game._cast` price through, so the line offered and the

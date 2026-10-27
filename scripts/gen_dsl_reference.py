@@ -899,6 +899,7 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "madness": ("Madness cost.", H_DREDGE),
     "morph": ("Morph cost.", H_MORPH),
     "multikicker": ("Multikicker cost.", "Multikicker"),
+    "escalate": ("Escalate cost, paid once per mode beyond the first.", "Escalate"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),
     "overload": ("Overload cost.", "Overload"),
     "pay_generic_with": ("Convoke, improvise or delve: what may pay generic mana.",

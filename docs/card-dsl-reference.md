@@ -22,7 +22,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Grantable statics](#grantable-statics) | 38 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
-| [Card-level costs](#card-level-costs) | 28 |
+| [Card-level costs](#card-level-costs) | 29 |
 | [Keywords](#keywords) | 39 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
@@ -719,6 +719,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `cost_reduction` | This spell costs less to cast. | [Cost reduction](card-dsl-cookbook.md#cost-reduction) |
 | `dredge` | Dredge N. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `emerge` | Emerge cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `escalate` | Escalate cost, paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |
 | `evoke` | Evoke cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `flashback` | Flashback cost. | [Flashback](card-dsl-cookbook.md#flashback) |
 | `foretell` | Foretell cost. | [Foretell](card-dsl-cookbook.md#foretell) |

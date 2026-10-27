@@ -1267,6 +1267,32 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_optional = True
         additional_repeatable = True
 
+    escalate = ManaCost.parse(model.escalate) if model.escalate else None
+    if escalate is not None:
+        if escalate.x_count or escalate.mana_value() == 0:
+            raise DslError(
+                f"{where}: escalate {model.escalate!r} must be a fixed, non-free mana cost"
+            )
+        if additional_cost is not None or model.additional_optional or model.additional_repeatable:
+            # Escalate *is* the additional cost, desugared below; a second one
+            # would be a different slot whose lines nothing ties to the modes.
+            raise DslError(
+                f"{where}: 'escalate' is the spell's additional cost -- do not give "
+                f"'additional_cost', 'multikicker' or the additional_* flags beside it"
+            )
+        if model.spree:
+            raise DslError(f"{where}: 'escalate' and 'spree' are two ways to price modes")
+        if not cast_modes or not cast_modes.get("or_more"):
+            # "For each mode chosen beyond the first" needs a cast-time choice
+            # of one or more; anywhere else nothing counts the modes.
+            raise DslError(
+                f"{where}: 'escalate' needs the spell's effects to be one top-level "
+                f"'choose_mode' with 'or_more'"
+            )
+        additional_cost = _compile_cost(CostModel(mana=model.escalate), f"{where}.escalate")
+        additional_optional = True
+        additional_repeatable = True
+
     if additional_cost is None and (model.additional_optional or model.additional_repeatable):
         raise DslError(
             f"{where}: 'additional_optional' and 'additional_repeatable' need an "
@@ -1700,6 +1726,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         kicker=kicker,
         gift=model.gift,
         multikicker=multikicker,
+        escalate=escalate,
         strive=strive,
         evoke=evoke,
         bestow=bestow,

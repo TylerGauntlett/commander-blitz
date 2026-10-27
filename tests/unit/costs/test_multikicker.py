@@ -160,6 +160,14 @@ class TestTheCountSurvivesEnteringTheBattlefield:
         assert the_anthem(game).cast_additional == 3
         assert len(game.state.players[0].hand) == hand - 1 + 3
 
+    def test_every_kick_is_paid_for(self, builder):
+        """{1}{W} plus two kicks of {1}{W} is six mana. The line was priced with
+        the kicks and `Game._cast` once charged the printed cost alone."""
+        game = board(builder, lands=8)
+        cast_paying(game, 2)
+
+        assert sum(1 for o in game.state.battlefield_objects(0) if o.tapped) == 6
+
     def test_it_is_on_the_battlefield_either_way(self, builder):
         """The kicks buy the trigger's size, not whether the card resolves."""
         game = board(builder, lands=8)
