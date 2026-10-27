@@ -141392,12 +141392,12 @@
     },
     "Jace, Multiverse Architect": {
       "edhrec_rank": 24795,
-      "gate": "template",
+      "gate": null,
       "name": "Jace, Multiverse Architect",
-      "reason": "no template for: At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creat",
+      "reason": "",
       "scryfall_id": "55cd03d9-2535-4cf3-a8b2-1418e1190f4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jace, Reality Sculptor": {

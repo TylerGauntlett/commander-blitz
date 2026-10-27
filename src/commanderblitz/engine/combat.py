@@ -398,6 +398,17 @@ def _attack_prohibited(
         for restriction in state.attack_restrictions:
             if restriction.attacker != obj.controller or restriction.defender != defender:
                 continue
+            if restriction.walker_subtypes:
+                # "…can't attack Jaces you control": the seat and every other
+                # permanent stay attackable, and only a walker that *is* one of
+                # the named subtypes right now is closed.
+                if permanent is not None:
+                    walker = chars(state, permanent)
+                    if "Planeswalker" in walker.types and any(
+                        t in walker.subtypes for t in restriction.walker_subtypes
+                    ):
+                        return True
+                continue
             if permanent is None or restriction.planeswalkers:
                 return True
     # Combat Calligrapher: "Inklings can't attack you or planeswalkers you

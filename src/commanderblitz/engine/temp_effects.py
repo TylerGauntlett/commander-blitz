@@ -47,6 +47,7 @@ def restrict_attack(
     duration: str = "this_turn",
     source: int | None = None,
     planeswalkers: bool = False,
+    walker_subtypes: tuple[str, ...] = (),
 ) -> bool:
     """ "``attacker`` can't attack ``defender``" for ``duration``.
 
@@ -71,6 +72,12 @@ def restrict_attack(
     prohibition, and folding them together would let a Ghostly-Prison-shaped
     entry swallow "creatures can't attack this combat". See
     :class:`structs.AttackRestriction`.
+
+    ``walker_subtypes`` narrows the other way: the seat stays open and only the
+    defender's planeswalkers of those subtypes are closed ("can't attack Jaces
+    you control"). It is part of the key for the same reason, and the two are
+    never set together -- one widens a seat to its walkers, the other replaces
+    the seat with some of them.
     """
 
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
@@ -84,6 +91,7 @@ def restrict_attack(
         defender=defender,
         duration=duration,
         planeswalkers=planeswalkers,
+        walker_subtypes=tuple(walker_subtypes),
         source=source,
     )
     if entry in state.attack_restrictions:

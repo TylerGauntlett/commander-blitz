@@ -1328,6 +1328,39 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"sentence naming no defender at all ('creatures can't attack this "
                 f"combat'), false for every line that names a seat (506.2)"
             )
+        # `planeswalkers_matching` keeps the seat open and closes only the
+        # defender's walkers of the named subtypes ("can't attack Jaces you
+        # control"). Each refusal below is a card that would load as a different
+        # one: beside `planeswalkers: true` it would close the seat it promises
+        # to leave open; an empty or unknown filter would close nothing (or, read
+        # loosely, everything); and a creature subtype names no planeswalker, so
+        # the line would prohibit nothing.
+        if "planeswalkers_matching" in effect:
+            matching = effect["planeswalkers_matching"]
+            subtypes = matching.get("subtypes") if isinstance(matching, dict) else None
+            if (
+                not isinstance(matching, dict)
+                or set(matching) != {"subtypes"}
+                or not isinstance(subtypes, list)
+                or not subtypes
+                or not all(isinstance(t, str) for t in subtypes)
+            ):
+                raise DslError(
+                    f"{where}.planeswalkers_matching: must be {{'subtypes': [...]}} "
+                    f"naming at least one planeswalker subtype"
+                )
+            for sub in subtypes:
+                if SUBTYPE_CLASS.get(sub) != "Planeswalker":
+                    raise DslError(
+                        f"{where}.planeswalkers_matching: {sub!r} is not a "
+                        f"planeswalker subtype"
+                    )
+            if effect.get("planeswalkers") is True:
+                raise DslError(
+                    f"{where}: cant_attack_player takes 'planeswalkers_matching' or "
+                    f"'planeswalkers: true', not both -- one closes only some walkers "
+                    f"and leaves the seat open, the other closes the seat and every walker"
+                )
     if op == "goad":
         # A goad with no selector goads nobody: the spell resolves, the log says
         # nothing, and every creature attacks exactly as it pleases. Detain's

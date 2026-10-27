@@ -223,6 +223,16 @@ class AttackRestriction:
     #: each time: by what the printed sentence names, never by a house rule
     #: about walkers.
     planeswalkers: bool = False
+    #: Non-empty means the restriction covers **only** ``defender``'s
+    #: planeswalkers with one of these subtypes, and neither the seat nor any
+    #: other permanent: Jace, Multiverse Architect's "creatures they control
+    #: can't attack Jaces you control this turn". The narrow mirror of
+    #: ``planeswalkers``, which adds the walkers to the seat; this takes the
+    #: seat away and keeps a subset of the walkers. The subtypes are read off
+    #: the walker's current characteristics at declaration, so a Jace that
+    #: arrives later in the turn is covered too -- a prohibition is not one of
+    #: the effects 611.2c locks to the objects present at resolution.
+    walker_subtypes: tuple[str, ...] = ()
     #: The permanent or spell that installed it, for the log.  Not part of the
     #: lifetime: unlike `frozen_by` this outlives its source leaving the
     #: battlefield, because a resolved one-shot effect does not care what
@@ -235,6 +245,7 @@ class AttackRestriction:
             "defender": self.defender,
             "duration": self.duration,
             "planeswalkers": self.planeswalkers,
+            "walker_subtypes": list(self.walker_subtypes),
             "source": self.source,
         }
 

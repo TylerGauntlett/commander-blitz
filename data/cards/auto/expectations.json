@@ -6105,6 +6105,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jace_multiverse_architect": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 4,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "jace_unraveler_of_secrets": {
     "battlefield_count": 33,
     "counters": {

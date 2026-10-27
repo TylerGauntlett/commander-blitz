@@ -67532,6 +67532,140 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "else": [
+                {
+                  "attacker": {
+                    "binding": "event_player"
+                  },
+                  "defender": "you",
+                  "duration": "this_turn",
+                  "op": "cant_attack_player",
+                  "planeswalkers_matching": {
+                    "subtypes": [
+                      "Jace"
+                    ]
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Pay {2}, or your creatures can't attack Jaces controlled by Jace, Multiverse Architect's controller this turn?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creatures they control can't attack Jaces you control this turn.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "bottom": true,
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "zone": "hand"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: Draw two cards, then put a card from your hand on the bottom of your library."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "destination": "battlefield",
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Planeswalker",
+                  "Creature"
+                ],
+                "controller": "you",
+                "exclude_self": true,
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Exile another target planeswalker or creature you control. Reveal cards from the top of your library until you reveal a creature or planeswalker card. Put that card onto the battlefield and the rest on the bottom of your library in a random order."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "jace_multiverse_architect",
+      "loyalty": 4,
+      "mana_cost": "{1}{W}{U}{B}{R}",
+      "name": "Jace, Multiverse Architect",
+      "oracle_text": "At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creatures they control can't attack Jaces you control this turn.\n+1: Draw two cards, then put a card from your hand on the bottom of your library.\n−3: Exile another target planeswalker or creature you control. Reveal cards from the top of your library until you reveal a creature or planeswalker card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.\nJace, Multiverse Architect can be your commander.",
+      "source": "auto",
+      "subtypes": [
+        "Jace"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "loyalty": 1
           },

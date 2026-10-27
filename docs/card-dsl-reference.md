@@ -81,7 +81,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `aura_swap` | Board |  | Exchange the source for an Aura card in hand. | [Aura swap — an exchange, not two moves](card-dsl-cookbook.md#aura-swap--an-exchange-not-two-moves) |
 | `become_copy` | Board |  | A permanent becomes a copy of another. | [A permanent that enters as a copy](card-dsl.md#a-permanent-that-enters-as-a-copy) |
 | `become_prepared` | Board |  | Prepare the source so it may cast a copy of its `prepared_face`. | [Prepared](card-dsl-cookbook.md#prepared) |
-| `cant_attack_player` | Board |  | Creatures can't attack a player until a duration ends. | ["That player can't attack you"](card-dsl-cookbook.md#that-player-cant-attack-you) |
+| `cant_attack_player` | Board |  | Creatures can't attack a player (or only their walkers of a subtype) until a duration ends. | ["That player can't attack you"](card-dsl-cookbook.md#that-player-cant-attack-you) |
 | `cant_block` | Board |  | Creatures can't block this turn. | [The cant_block op — the same sentence with a clock](card-dsl-cookbook.md#the-cant_block-op--the-same-sentence-with-a-clock) |
 | `cant_sacrifice` | Board |  | Permanents can't be sacrificed for a duration. | [The cant_sacrifice op — a prohibition on a game action, not a zone change](card-dsl-cookbook.md#the-cant_sacrifice-op--a-prohibition-on-a-game-action-not-a-zone-change) |
 | `cast_copy` | Board |  | Cast a copy of an encoded or linked card without paying its cost. | [Effect ops](card-dsl.md#effect-ops) |

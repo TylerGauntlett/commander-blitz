@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**115 cards** blocked by **102** capabilities.
+**114 cards** blocked by **101** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -36,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [batched-token-created](#batched-token-created) | 1 | 3172 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
-| [cant-attack-planeswalkers-filtered](#cant-attack-planeswalkers-filtered) | 1 | 24795 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-have-counters](#cant-have-counters) | 1 | 24328 | static_effect |
 | [cast-milled-cards-free](#cast-milled-cards-free) | 1 | 23890 | op |
@@ -602,20 +601,6 @@ Blocks **1** card.
 - **Goblin Snowman** (rank 21010) — `goblin_snowman`
   - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
   - {T}: This creature deals 1 damage to target creature it's blocking.
-
-</details>
-
-## cant-attack-planeswalkers-filtered
-
-Blocks **1** card.
-
-- **(op)** a one-turn attack prohibition that stops a player's creatures from attacking only the planeswalkers matching a filter (here: planeswalkers with subtype Jace controlled by you), while leaving attacks on you and your other planeswalkers legal
-  <br>Why the existing vocabulary won't do: cant_attack_player restricts by defending seat, and its planeswalkers flag closes the seat AND every planeswalker of that player at once, with no filter; the cant_attack / cant_attack_you statics are continuous and seat-scoped, so none can close only Jaces for this turn after an unpaid may-pay
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jace, Multiverse Architect** (rank 24795) — `jace_multiverse_architect`
-  - At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creatures they control can't attack Jaces you control this turn.
 
 </details>
 

@@ -3727,6 +3727,36 @@ lock is bought and lost by a payment each combat while the Aura never moves.
 `cant_attack_you` is a static too, and is scoped to the seat its permanent sits
 under. Hence a flag on the pair rather than a third spelling of the sentence.
 
+### `planeswalkers_matching` — "can't attack Jaces you control"
+
+    Jace, Multiverse Architect — "At the beginning of combat on each opponent's
+                                  turn, they may pay {2}. If they don't,
+                                  creatures they control can't attack Jaces you
+                                  control this turn."
+
+```jsonc
+{ "op": "may", "player": { "binding": "event_player" }, "pay": { "mana": "{2}" },
+  "else": [ { "op": "cant_attack_player", "attacker": { "binding": "event_player" },
+              "defender": "you", "duration": "this_turn",
+              "planeswalkers_matching": { "subtypes": ["Jace"] } } ] }
+```
+
+The narrow mirror of `planeswalkers: true`. The flag adds the defender's walkers
+to their seat; this key **takes the seat away** and closes only the defender's
+planeswalkers with one of the listed subtypes. The player, their other
+planeswalkers and their battles all stay attackable. "You control" is the
+`defender` side, because a walker's controller is the defending player (506.2).
+
+The subtypes are read off the walker's current characteristics when attackers
+are declared, not snapshotted when the ability resolved: a prohibition is not one
+of the effects 611.2c locks to the objects present at resolution, so a Jace that
+enters later in the turn is covered too.
+
+The loader takes exactly `{"subtypes": [...]}`, non-empty, with each entry a
+planeswalker subtype (`enums.SUBTYPE_CLASS`), and refuses it beside
+`planeswalkers: true`. The near miss is the seat form with no key at all, which is
+the opposite card: it closes the player and leaves every Jace open.
+
 The legality seam is `combat.attack_target_forbidden(state, oid, defender,
 planeswalker=…)`, and `legal_defenders`, `legal_planeswalker_defenders` and
 `add_attacker` all take the attacking oid and route through it. One predicate,

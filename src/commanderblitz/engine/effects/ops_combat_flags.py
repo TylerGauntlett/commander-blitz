@@ -537,6 +537,15 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     lost each combat by a payment. `cant_attack_you` is the other and is a
     static too, besides being scoped to the seat its permanent sits under.
 
+    ``planeswalkers_matching``  optional, ``{"subtypes": [...]}``. The narrow
+    mirror of the flag: the defender's **seat stays open** and so does every
+    other permanent of theirs, and only their planeswalkers with one of those
+    subtypes are closed -- Jace, Multiverse Architect's "creatures they control
+    can't attack Jaces you control this turn". Read off the walker's current
+    subtypes when attackers are declared, so a Jace that arrives later in the
+    turn is covered as well. Never beside ``planeswalkers: true``; the loader
+    refuses the pair.
+
     Nothing is written on any permanent, and that is the point: a resolving
     sorcery leaves no source on the battlefield to hang a static off, which is
     the first of the three reasons the `cant_attack` static could not do this job.
@@ -546,6 +555,7 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_attack_player duration {duration!r}")
     planeswalkers = bool(spec.get("planeswalkers", False))
+    walker_subtypes = tuple((spec.get("planeswalkers_matching") or {}).get("subtypes") or ())
     attackers = _players(ctx, spec.get("attacker"))
     defenders = _players(ctx, spec.get("defender"))
     for attacker in attackers:
@@ -557,6 +567,7 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
                 duration,
                 source=ctx.source_oid,
                 planeswalkers=planeswalkers,
+                walker_subtypes=walker_subtypes,
             )
     yield from ()
 
