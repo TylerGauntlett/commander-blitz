@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**104 cards** blocked by **88** capabilities.
+**102 cards** blocked by **87** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [set-creature-types](#set-creature-types) | 2 | 715 | static_effect |
 | [spider-token](#spider-token) | 2 | 1012 | token |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -356,24 +355,6 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
-
-</details>
-
-## set-creature-types
-
-Blocks **2** cards.
-
-- **(static_effect)** a static effect (layer 4) that REPLACES a permanent's creature types with a printed list while it applies -- "is a Dragon ... (It loses all other creature types.)" -- e.g. `subtypes` on the `set_types` static, or a `set_subtypes` static, read in `characteristics` so that, under its `condition`, the permanent's creature subtypes become exactly ["Dragon"] (Human and Noble removed) while its card types and supertypes are untouched. The same shape covers every 'is a <type> ... loses all other creature types' static (Celebration cards, Ixalan-style flip-free shapeshifts).
-  <br>Why the existing vocabulary won't do: `set_types` replaces only card types and keeps every subtype whose class is still present (characteristics.py layer 0: `subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, 'Creature') in types}`), so `set_types: ["Creature"]` leaves Human Noble in place; `add_subtype` only unions Dragon on top, giving a Human Noble Dragon that a Human or Noble lord would still pump and a Human/Noble filter would still match; the `animate` op's `exact` flag does replace creature types but is a one-shot op with a duration, not a static that switches on and off with the Celebration condition. The rest of the sentence is expressible: the condition is a static `cmp` >= 2 over `{"permanents_entered_this_turn": {"controller": "you", "not_types": ["Land"]}}`, base 4/4 is a `set_pt` static, flying a `grant_keyword` static, and the quoted ability a `grant_ability` static over `grantable_abilities` holding an activated `{R}` pump of Dragons you control -- so only the type replacement is missing, and no partial answer was written.
-- **(static_effect)** a static effect (layer 4) that REPLACES a permanent's creature types with a printed list for as long as it applies -- here `affects: {"attached": true}` making the enchanted creature's creature subtypes exactly ["Elk"] (a Human Wizard loses Human and Wizard) -- e.g. `subtypes` on the `set_types` static, or a `set_subtypes` static, read in `characteristics` beside layer 0. The same need as goddric_cloaked_reveler's gap.
-  <br>Why the existing vocabulary won't do: `set_types: ["Creature"]` with `affects: {attached: true}` removes the other card types (Artifact) but keeps every subtype whose class is still present (characteristics.py layer 0 keeps creature subtypes because Creature remains), and the loader refuses `set_types` with empty `types`, so the subtypes cannot be wiped and rebuilt with `add_subtype` either; `add_subtype` ["Elk"] only unions, giving a Human Wizard Elk that a Human lord still pumps. The `animate` op's `exact` flag does replace creature types, but it is a one-shot op whose duration is only until_end_of_turn or permanent, so it would outlive the Aura. Everything else is expressible: card-level target `enchanted` (Creature), a self_enters `draw` trigger, and attached statics `lose_all_abilities`, `set_colors` ["G"], `set_types` ["Creature"], `add_subtype` ["Elk"], `set_pt` 3/3 -- so only the creature-type replacement is missing and no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kenrith's Transformation** (rank 715) — `kenrith_s_transformation`
-  - Enchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3. (It loses all other card types and creature types.)
-- **Goddric, Cloaked Reveler** (rank 18527) — `goddric_cloaked_reveler`
-  - Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, Goddric is a Dragon with base power and toughness 4/4, flying, and "{R}: Dragons you control get +1/+0 until end of turn." (It loses all other creature types.)
 
 </details>
 

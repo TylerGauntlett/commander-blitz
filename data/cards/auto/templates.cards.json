@@ -52396,6 +52396,165 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "permanents_entered_this_turn": {
+                "controller": "you",
+                "not_types": [
+                  "Land"
+                ]
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "effect": "set_creature_types",
+          "kind": "static",
+          "subtypes": [
+            "Dragon"
+          ],
+          "text": "Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, Goddric is a Dragon with base power and toughness 4/4, flying, and \"{R}: Dragons you control get +1/+0 until end of turn.\""
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "permanents_entered_this_turn": {
+                "controller": "you",
+                "not_types": [
+                  "Land"
+                ]
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 4
+          },
+          "text": "Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, Goddric is a Dragon with base power and toughness 4/4, flying, and \"{R}: Dragons you control get +1/+0 until end of turn.\"",
+          "toughness": {
+            "const": 4
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "permanents_entered_this_turn": {
+                "controller": "you",
+                "not_types": [
+                  "Land"
+                ]
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, Goddric is a Dragon with base power and toughness 4/4, flying, and \"{R}: Dragons you control get +1/+0 until end of turn.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "permanents_entered_this_turn": {
+                "controller": "you",
+                "not_types": [
+                  "Land"
+                ]
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, Goddric is a Dragon with base power and toughness 4/4, flying, and \"{R}: Dragons you control get +1/+0 until end of turn.\""
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "mana": "{R}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Dragon"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{R}: Dragons you control get +1/+0 until end of turn."
+        }
+      ],
+      "id": "goddric_cloaked_reveler",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{1}{R}{R}",
+      "name": "Goddric, Cloaked Reveler",
+      "oracle_text": "Haste\nCelebration — As long as two or more nonland permanents entered the battlefield under your control this turn, Goddric is a Dragon with base power and toughness 4/4, flying, and \"{R}: Dragons you control get +1/+0 until end of turn.\" (It loses all other creature types.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -68373,6 +68532,110 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, draw a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_all_abilities",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "colors": [
+            "G"
+          ],
+          "effect": "set_colors",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3.",
+          "types": [
+            "Creature"
+          ]
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_creature_types",
+          "kind": "static",
+          "subtypes": [
+            "Elk"
+          ],
+          "text": "Enchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Enchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3.",
+          "toughness": {
+            "const": 3
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "kenrith_s_transformation",
+      "mana_cost": "{1}{G}",
+      "name": "Kenrith's Transformation",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, draw a card.\nEnchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3. (It loses all other card types and creature types.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

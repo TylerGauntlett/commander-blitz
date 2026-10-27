@@ -114072,12 +114072,12 @@
     },
     "Goddric, Cloaked Reveler": {
       "edhrec_rank": 18527,
-      "gate": "template",
+      "gate": null,
       "name": "Goddric, Cloaked Reveler",
-      "reason": "no template for: Celebration — As long as two or more nonland permanents entered the battlefield under your",
+      "reason": "",
       "scryfall_id": "bb884762-5468-43be-870a-96328f8172c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Godhead of Awe": {
@@ -148062,12 +148062,12 @@
     },
     "Kenrith's Transformation": {
       "edhrec_rank": 715,
-      "gate": "template",
+      "gate": null,
       "name": "Kenrith's Transformation",
-      "reason": "no template for: When this Aura enters, draw a card",
+      "reason": "",
       "scryfall_id": "0d662942-4f87-42c7-a8b5-30308979611b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kenrith, the Returned King": {

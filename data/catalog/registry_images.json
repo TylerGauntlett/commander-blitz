@@ -4684,6 +4684,10 @@
     "artist": "Lius Lasahido",
     "scryfall_id": "0070d335-d42d-4ccc-b828-405b7dd00868"
   },
+  "goddric_cloaked_reveler": {
+    "artist": "Jason A. Engle",
+    "scryfall_id": "89950a60-8e6c-494e-93be-e0a44d81d598"
+  },
   "godless_shrine": {
     "artist": "John Thacker",
     "scryfall_id": "8fbd1ae0-3d4c-492a-a1ea-85a95fa3d7b6"
@@ -6060,6 +6064,10 @@
   "kemba_s_skyguard": {
     "artist": "Whit Brachna",
     "scryfall_id": "b9f20a74-7614-4bd9-ac08-0e098f98df0c"
+  },
+  "kenrith_s_transformation": {
+    "artist": "Kimonas Theodossiou",
+    "scryfall_id": "f265caeb-d1d2-4d95-ba38-9425482746e7"
   },
   "kessig_recluse": {
     "artist": "Vincent Proce",
