@@ -2758,6 +2758,16 @@
   "darkmoss_bridge": {
     "zone": "battlefield"
   },
+  "darkness": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
+  },
   "darkslick_shores": {
     "zone": "battlefield"
   },
@@ -4314,6 +4324,12 @@
   },
   "flying_men": {
     "zone": "battlefield"
+  },
+  "fog": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "folio_of_fancies": {
     "battlefield_count": 33,
@@ -11132,6 +11148,10 @@
   },
   "spitting_image": {
     "zone": "graveyard"
+  },
+  "spore_frog": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "sporecap_spider": {
     "zone": "battlefield"

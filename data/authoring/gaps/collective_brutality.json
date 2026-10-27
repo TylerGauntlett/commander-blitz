@@ -1,0 +1,30 @@
+{
+  "card_id": "collective_brutality",
+  "name": "Collective Brutality",
+  "oracle_text": "Escalate\u2014Discard a card. (Pay this cost for each mode chosen beyond the first.)\nChoose one or more \u2014\n\u2022 Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.\n\u2022 Target creature gets -2/-2 until end of turn.\n\u2022 Target opponent loses 2 life and you gain 2 life.",
+  "blocked_sentences": [
+    "Escalate\u2014Discard a card. (Pay this cost for each mode chosen beyond the first.)",
+    "\u2022 Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card."
+  ],
+  "needs": [
+    {
+      "capability": "escalate_non_mana",
+      "kind": "cost",
+      "what": "card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {\"discard\": 1}), charged once per mode chosen beyond the first, with the same mode-count tie that mana escalate has (casting._additional_ceiling and Game._cast's `exactly`); the discarded card must not be the spell itself (601.2a)",
+      "why_existing_wont_do": "The loader parses `escalate` with ManaCost.parse and desugars it to CostModel(mana=...), and rejects a free (mana value 0) escalate, so \"Discard a card\" cannot be written there. Hand-desugaring to additional_cost {discard: 1} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of discards to the number of modes, so a plain `or_more` choose_mode would take every mode for one or zero discards. `spree` prices each mode individually including the first."
+    },
+    {
+      "capability": "targeted_discard",
+      "kind": "op",
+      "what": "a discard in which the target player reveals their hand and the spell's controller (not the discarding player) chooses a card matching a filter (here an instant or sorcery card) to be discarded -- Duress's shape; no discard if none matches",
+      "why_existing_wont_do": "`discard` takes only amount, as, player, random, up_to and whole_hand: the discarding player always chooses (or it is random), and there is no filter on which card may be taken. `reveal` and `look_at_hand` show the hand but cannot hand the choice to the caster or restrict it to instants and sorceries."
+    }
+  ],
+  "closest_existing": [
+    "escalate",
+    "discard",
+    "look_at_hand",
+    "multikicker"
+  ],
+  "confidence": "high"
+}

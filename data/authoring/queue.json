@@ -61352,12 +61352,12 @@
     },
     "Darkness": {
       "edhrec_rank": 1910,
-      "gate": "template",
+      "gate": null,
       "name": "Darkness",
-      "reason": "no template for: Prevent all combat damage that would be dealt this turn",
+      "reason": "",
       "scryfall_id": "ef4c2c08-0a4d-4588-bc35-078da7120937",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Darkness Descends": {
@@ -99252,12 +99252,12 @@
     },
     "Fog": {
       "edhrec_rank": 690,
-      "gate": "template",
+      "gate": null,
       "name": "Fog",
-      "reason": "no template for: Prevent all combat damage that would be dealt this turn",
+      "reason": "",
       "scryfall_id": "92bfd2c6-2226-4f92-bb77-e614ad096996",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fog Bank": {
@@ -260942,12 +260942,12 @@
     },
     "Spore Frog": {
       "edhrec_rank": 1124,
-      "gate": "template",
+      "gate": null,
       "name": "Spore Frog",
-      "reason": "no template for: Sacrifice this creature: Prevent all combat damage that would be dealt this turn",
+      "reason": "",
       "scryfall_id": "3164ebb4-269a-4be6-a535-a112303f9fe8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spore Swarm": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**88 cards** blocked by **71** capabilities.
+**90 cards** blocked by **74** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,6 +40,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
+| [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -56,6 +57,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
+| [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -78,6 +80,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
+| [targeted-discard](#targeted-discard) | 1 | 11817 | op |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -609,6 +612,21 @@ Blocks **1** card.
 
 </details>
 
+## escalate-non-mana
+
+Blocks **1** card.
+
+- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"discard": 1}), charged once per mode chosen beyond the first, with the same mode-count tie that mana escalate has (casting._additional_ceiling and Game._cast's `exactly`); the discarded card must not be the spell itself (601.2a)
+  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse and desugars it to CostModel(mana=...), and rejects a free (mana value 0) escalate, so "Discard a card" cannot be written there. Hand-desugaring to additional_cost {discard: 1} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of discards to the number of modes, so a plain `or_more` choose_mode would take every mode for one or zero discards. `spree` prices each mode individually including the first.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Brutality** (rank 11817) — `collective_brutality`
+  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
+  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
 ## escape
 
 Blocks **1** card.
@@ -837,6 +855,20 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
+
+</details>
+
+## mode-owned-variable-targets
+
+Blocks **1** card.
+
+- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
+  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blessed Alliance** (rank 16968) — `blessed_alliance`
+  - • Untap up to two target creatures.
 
 </details>
 
@@ -1158,6 +1190,21 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## targeted-discard
+
+Blocks **1** card.
+
+- **(op)** a discard in which the target player reveals their hand and the spell's controller (not the discarding player) chooses a card matching a filter (here an instant or sorcery card) to be discarded -- Duress's shape; no discard if none matches
+  <br>Why the existing vocabulary won't do: `discard` takes only amount, as, player, random, up_to and whole_hand: the discarding player always chooses (or it is random), and there is no filter on which card may be taken. `reveal` and `look_at_hand` show the hand but cannot hand the choice to the caster or restrict it to instants and sorceries.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Brutality** (rank 11817) — `collective_brutality`
+  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
+  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 
 </details>
 

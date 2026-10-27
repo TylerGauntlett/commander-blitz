@@ -30091,6 +30091,28 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "darkness",
+      "mana_cost": "{B}",
+      "name": "Darkness",
+      "oracle_text": "Prevent all combat damage that would be dealt this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "op": "prevent_combat_damage"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -46773,6 +46795,28 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "fog",
+      "mana_cost": "{G}",
+      "name": "Fog",
+      "oracle_text": "Prevent all combat damage that would be dealt this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "op": "prevent_combat_damage"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -124299,6 +124343,47 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "op": "prevent_combat_damage"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Prevent all combat damage that would be dealt this turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "spore_frog",
+      "mana_cost": "{G}",
+      "name": "Spore Frog",
+      "oracle_text": "Sacrifice this creature: Prevent all combat damage that would be dealt this turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Frog"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
