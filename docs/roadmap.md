@@ -50,7 +50,7 @@ each heading; this table is generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) | S | high | nothing | 0 |
+| [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) | S | high | Read ahead on Sagas (702.155) | 0 |
 | [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) | S | high | nothing | 0 |
 | [Multiverse Reforged (Reality Fracture Commander)](#multiverse-reforged-reality-fracture-commander) | L | high | nothing | 0 |
 | [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) | L | high | nothing | 0 |
@@ -147,6 +147,7 @@ each heading; this table is generated from them.
 | [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) | L, continuous | high | nothing | 0 |
 | [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) | L | high | Outcomes as data, Replays and sharing, Difficulty | 0 |
 | [Difficulty](#difficulty) | S | medium | nothing | 1 |
+| [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155) | S | medium | nothing | 1 |
 | [Gate the debug endpoint](#gate-the-debug-endpoint) | S | medium | nothing | 0 |
 | [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) | S | medium | nothing | 0 |
 | [Why a press is refused](#why-a-press-is-refused) | S | medium | nothing | 0 |
@@ -168,8 +169,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander).
 
 **Ready now, best first:**
 
@@ -268,22 +267,24 @@ same list, and `/extend-roadmap` starts at the top of it.
 93. [Spirit Squadron (Crimson Vow Commander)](#spirit-squadron-crimson-vow-commander) — L, high
 94. [Every precon native, one at a time, then every import](#every-precon-native-one-at-a-time-then-every-import) — L, continuous, high
 95. [Difficulty](#difficulty) — S, medium
-96. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
-97. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
-98. [Why a press is refused](#why-a-press-is-refused) — S, medium
-99. [Outcomes as data](#outcomes-as-data) — M, medium
-100. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
-101. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-102. [Replays and sharing](#replays-and-sharing) — M, medium
-103. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-104. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-105. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-106. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-107. [Archidekt import](#archidekt-import) — S, low
-108. [Sound](#sound) — S, low
+96. [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155) — S, medium
+97. [Gate the debug endpoint](#gate-the-debug-endpoint) — S, medium
+98. [The stack reads in order from the panel](#the-stack-reads-in-order-from-the-panel) — S, medium
+99. [Why a press is refused](#why-a-press-is-refused) — S, medium
+100. [Outcomes as data](#outcomes-as-data) — M, medium
+101. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
+102. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
+103. [Replays and sharing](#replays-and-sharing) — M, medium
+104. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+105. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+106. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+107. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+108. [Archidekt import](#archidekt-import) — S, low
+109. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
+- [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) — [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -437,11 +438,68 @@ The timing test still holds every golden batch at or under its cost, since a
 cue that waits on a file load would be a lag the narration must never have;
 and the mute setting's e2e assertion still passes.
 
+## Cards
+
+### Read ahead on Sagas (702.155)
+
+Effort **S** · Impact **medium**, every read-ahead Saga, The Elder Dragon War in Reign of Dragons among them, waits on it · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Sagas are rule 714 in `engine/sagas.py`: the lore counter a Saga enters with is
+an enters replacement (714.2b), `sagas.entered` fires chapter I off it through
+`chapters_reached` counted from zero, `turn_based_lore` adds one after the draw
+step, and the sacrifice after the final chapter is a state-based action. Read
+ahead is listed under "Not implemented" in
+[rules-coverage.md](rules-coverage.md): `Keyword` has no `READ_AHEAD`, no
+card-level key lets the controller choose the starting lore count, and
+`enters_with_additional_counters` is a fixed amount with no choice and no
+suppression of the chapters it skips. The gap record
+`data/authoring/gaps/the_elder_dragon_war.json` names this capability, and a
+second need, the 4/4 red flying Dragon token its chapter III creates, which
+`data/cards/tokens.cards.json` does not define (it has the 5/5 and the 6/6).
+
+#### The change
+
+1. `Keyword.READ_AHEAD`, with its row in [keywords.md](keywords.md) edited
+   together with `engine/enums.py`. As a Saga with the keyword enters, its
+   controller chooses a number from 1 to `final_chapter`, asked beside
+   `offer_enters_costs` in `engine/zones.py` the way the other as-enters
+   choices are, and the Saga enters with that many lore counters.
+2. `sagas.entered` fires only the chosen chapter for that first placement
+   (702.155: chapters below the chosen number do not trigger); every later
+   tick goes through `chapters_reached` unchanged, and the sacrifice after the
+   final chapter still applies.
+3. The `dragon_4_4_r_flying` token, under `/extend-dsl` Tier 0.
+4. Harvest The Elder Dragon War through `/author-cards`, then finish
+   [precon-fdc-reign-of-dragons](precon-fdc-reign-of-dragons.md), which depends
+   on this item.
+
+It adds no double-lore effects, which stay under "Not implemented".
+
+#### Gate
+
+A unit test under `tests/unit/` beside `test_saga.py` that enters a read-ahead
+Saga at each chapter and asserts which chapter triggers and when it is
+sacrificed; the token pinned in `tests/unit/tokens/test_token_pool.py`; the
+keyword census test; and `tests/cards` with The Elder Dragon War through the
+six gates.
+
+#### Open questions
+
+- **Who answers the chapter choice when nobody is asked (the behaviour gate,
+  a CPU):** recommend chapter 1, the printed default for a Saga without the
+  keyword, so the auto-answer table in `cards/authoring/verify.py` and the
+  CPU strategies need no new reading of the board.
+- **Scope of the pull request:** recommend the keyword, the token and The Elder
+  Dragon War only, with every other read-ahead Saga left to the next
+  `/author-cards` wave, so the review stays one mechanic.
+
 ## Decks
 
 ### Reign of Dragons (Foundations Commander)
 
-Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155).
 
 #### Today
 
