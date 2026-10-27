@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**102 cards** blocked by **84** capabilities.
+**100 cards** blocked by **83** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,7 +21,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
-| [enters-as-copy](#enters-as-copy) | 2 | 450 | replacement |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [spider-token](#spider-token) | 2 | 1012 | token |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -333,24 +332,6 @@ Blocks **2** cards.
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
-
-</details>
-
-## enters-as-copy
-
-Blocks **2** cards.
-
-- **(replacement)** an optional 'as this enters, it becomes a copy of <selector>' replacement (706.9 / 614.1c, no stack, no trigger) whose copy effect carries a duration ('until end of turn', after which it reverts to Cursed Mirror) and a copy exception adding a keyword to the copiable values ('except it has haste')
-  <br>Why the existing vocabulary won't do: The packet's `become_copy` op takes `copying`, `duration`, `except_name` and `objects` but has no keyword exception, and it can only run from a `self_enters` trigger, which uses the stack and lets the artifact exist on the battlefield uncopied first (wrong for an 'as enters' replacement and for anything reading what entered). No trigger event or card-level key in `reference` expresses an enters-as-copy replacement; `grant_keyword` haste after the fact is a layer-6 grant, not a copy exception.
-- **(replacement)** an `except` on the `self_enters_as_copy` replacement that adds keywords (here haste and dethrone) to the copiable values the permanent enters with (707.9b), so the exception survives as part of the copy
-  <br>Why the existing vocabulary won't do: `self_enters_as_copy` takes only `copying` (the pool) and `zones.offer_enters_as_copy` records the chosen card id alone; `copy_permanent` and `become_copy` have exceptions but neither is a 614.1b replacement on the creature's own arrival, and a separate static granting haste and dethrone would not be part of the copiable values
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cursed Mirror** (rank 450) — `cursed_mirror`
-  - As this artifact enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste.
-- **Dack's Duplicate** (rank 10960) — `dack_s_duplicate`
-  - You may have this creature enter as a copy of any creature on the battlefield, except it has haste and dethrone. (Whenever it attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
 
 </details>
 

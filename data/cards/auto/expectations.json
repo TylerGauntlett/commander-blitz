@@ -2623,6 +2623,15 @@
   "cursed_minotaur": {
     "zone": "battlefield"
   },
+  "cursed_mirror": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "custodian_of_the_trove": {
     "zone": "battlefield"
   },
@@ -2657,6 +2666,16 @@
     "zone": "battlefield"
   },
   "cystbearer": {
+    "zone": "battlefield"
+  },
+  "dack_s_duplicate": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "haste",
+        "dethrone"
+      ]
+    },
     "zone": "battlefield"
   },
   "daggerback_basilisk": {

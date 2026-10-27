@@ -59062,12 +59062,12 @@
     },
     "Cursed Mirror": {
       "edhrec_rank": 450,
-      "gate": "template",
+      "gate": null,
       "name": "Cursed Mirror",
-      "reason": "no template for: As this artifact enters, you may have it become a copy of any creature on the battlefield ",
+      "reason": "",
       "scryfall_id": "077392b3-6b06-46c8-8737-51e85f690448",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cursed Monstrosity": {
@@ -59842,12 +59842,12 @@
     },
     "Dack's Duplicate": {
       "edhrec_rank": 10960,
-      "gate": "template",
+      "gate": null,
       "name": "Dack's Duplicate",
-      "reason": "no template for: You may have this creature enter as a copy of any creature on the battlefield, except it h",
+      "reason": "",
       "scryfall_id": "121ea9e6-aebd-4053-9104-339a47a1430a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Daemogoth Titan": {

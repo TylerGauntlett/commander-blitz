@@ -29141,6 +29141,55 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cursed_mirror",
+      "mana_cost": "{2}{R}",
+      "name": "Cursed Mirror",
+      "oracle_text": "{T}: Add {R}.\nAs this artifact enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste.",
+      "replacements": [
+        {
+          "copying": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "duration": "end_of_turn",
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_keywords": [
+              "haste"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "custodian_of_the_trove",
@@ -29396,6 +29445,46 @@
         "Beast"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "dack_s_duplicate",
+      "mana_cost": "{2}{U}{R}",
+      "name": "Dack's Duplicate",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it has haste and dethrone. (Whenever it attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_keywords": [
+              "haste",
+              "dethrone"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]

@@ -2551,6 +2551,10 @@
     "artist": "David Palumbo",
     "scryfall_id": "df48004d-004b-41b6-b975-80b350408944"
   },
+  "cursed_mirror": {
+    "artist": "David Gaillet",
+    "scryfall_id": "e69eef8f-f3fe-49fd-a567-6425c8f30d4c"
+  },
   "custodian_of_the_trove": {
     "artist": "Raoul Vitale",
     "scryfall_id": "eb14f061-9506-40fb-b10d-4bada38ca0f7"
@@ -2578,6 +2582,10 @@
   "cystbearer": {
     "artist": "Kev Walker",
     "scryfall_id": "b6c10302-f0b3-4076-ae5c-a8c8c09a7d41"
+  },
+  "dack_s_duplicate": {
+    "artist": "Karl Kopinski",
+    "scryfall_id": "121ea9e6-aebd-4053-9104-339a47a1430a"
   },
   "daggerback_basilisk": {
     "artist": "Jesper Ejsing",
