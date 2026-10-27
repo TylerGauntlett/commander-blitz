@@ -192,6 +192,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 H_CASCADE),
     "discover": ("Cards", "Discover N: exile until a nonland of mana value N or less; cast it free or take it.",
                  "Discover — cascade's walk, N or less, cast or hand"),
+    "exile_until": ("Cards", "Exile from the top until a card matches; the rest stay exiled, the hit may be cast free.",
+                    "exile_until — a walk that leaves its cards in exile"),
     "ripple": ("Cards", "Ripple N: reveal the top N, cast any with the same name free.",
                H_CASCADE),
     "reveal_until": ("Cards", "Reveal from the top until a card matches, then act on it.",

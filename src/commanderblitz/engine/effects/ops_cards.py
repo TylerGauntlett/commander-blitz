@@ -1862,6 +1862,69 @@ def op_discover(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.bindings[str(binding)] = [hit] if hit is not None else []
 
 
+#: Where `exile_until`'s ``else_destination`` may send a hit that was not cast.
+#: Only the hand is printed; anything else is refused by the loader rather than
+#: guessed at.
+EXILE_UNTIL_ELSE_DESTINATIONS = frozenset({"hand"})
+
+
+@register("exile_until")
+def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Exile cards from the top of your library until you exile a nonland
+    card. You may cast it without paying its mana cost if that spell's mana
+    value is 8 or less. If you don't, put that card into your hand."
+    — Breaching Dragonstorm.
+
+    Cascade's walk with `reveal_until`'s selector stop test, and the one walk
+    that **leaves what it exiled in exile**. That is the printed sentence: it
+    never says to put the walked-past cards anywhere, so they stay where the
+    scan put them. `cascade` and `discover` both bottom them, and `reveal_until`
+    never moves them out of the library at all -- each is a different card.
+
+    - ``objects`` is the stop test, tested as a card in the library (it is still
+      there when the scan reads it), and is required.
+    - ``cast_free`` offers the hit as a free cast through `_offer_free_cast`.
+    - ``cast_free_if`` is a selector the hit must match, tested in exile, for the
+      cast to be offered at all -- "if that spell's mana value is 8 or less" is
+      ``{"mana_value": {"op": "<=", "value": 8}}``. A hit that fails it is not
+      asked about: a "you may" whose yes is forbidden is no question.
+    - ``else_destination`` is where the hit goes when it is not cast -- declined,
+      disallowed by ``cast_free_if``, or refused by `cast_for_free`. Omitted, it
+      stays in exile with the rest (Wanda's Vision).
+    - ``as`` records the hit, cast or not, as a list of zero or one oids; an
+      exhausted library binds the empty list.
+    """
+    pid = ctx.controller
+    library = ctx.state.players[pid].library
+    selector = spec.get("objects") or {}
+
+    hit: int | None = None
+    walked = 0
+    while library:
+        oid = library[0]
+        found = _matches_library(ctx, oid, selector)
+        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="exile_until")
+        walked += 1
+        if found:
+            hit = oid
+            break
+    ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
+
+    if binding := spec.get("as"):
+        ctx.bindings[str(binding)] = [hit] if hit is not None else []
+    if hit is None:
+        return
+    cast = False
+    condition = spec.get("cast_free_if")
+    if spec.get("cast_free") and (
+        condition is None or _matches_in_zone(ctx, hit, condition, "exile")
+    ):
+        name = ctx.state.card_of(ctx.state.objects[hit]).name
+        cast = yield from _offer_free_cast(ctx, pid, hit, f"Cast {name} for free?")
+    if not cast and (where := spec.get("else_destination")):
+        move_object(ctx.state, hit, DESTINATIONS[str(where)], to_player=pid, cause="exile_until")
+
+
 @register("ripple")
 def op_ripple(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 702.20a — reveal the top N, cast the ones that match this card.

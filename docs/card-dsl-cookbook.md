@@ -10742,6 +10742,41 @@ snapshot and gives 0 for a list.
 *less than* the spell's own mana value, a card it does not cast is bottomed with
 the rest, and it records nothing.
 
+## exile_until — a walk that leaves its cards in exile
+
+```jsonc
+// Breaching Dragonstorm -- "exile cards from the top of your library until you
+// exile a nonland card. You may cast it without paying its mana cost if that
+// spell's mana value is 8 or less. If you don't, put that card into your hand."
+{ "op": "exile_until",
+  "objects": { "not_types": ["Land"] },
+  "cast_free": true,
+  "cast_free_if": { "mana_value": { "op": "<=", "value": { "const": 8 } } },
+  "else_destination": "hand" }
+```
+
+Exile cards from the top of your library one at a time until one matches
+`objects`, the stop test (required and non-empty: an empty one stops at the first
+card). Every card walked past **stays in exile**, because the sentence never
+moves them; `cascade` and `discover` bottom them and `reveal_until` never takes
+them out of the library.
+
+- `cast_free` offers the hit as a free cast (`_offer_free_cast`'s yes/no).
+- `cast_free_if` is a selector the hit must match, tested in exile, before the
+  cast is offered. A hit that fails it is not asked about. It is a condition on
+  the cast, not on the stop: the first nonland card is the hit whatever its mana
+  value, which is what separates Breaching Dragonstorm from `discover 8`. Its
+  `value` is an ordinary value expression, so "less than the number of Mountains
+  you control" is a `count` there.
+- `else_destination` (`"hand"`) is where a hit that was not cast goes: declined,
+  failing `cast_free_if`, or refused by `cast_for_free`. Omitted, it stays in
+  exile with the rest.
+- `as` records the hit, cast or not, as a list of zero or one oids; an exhausted
+  library binds the empty list.
+
+The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
+`cast_free`.
+
 ## Connive
 
 ```jsonc

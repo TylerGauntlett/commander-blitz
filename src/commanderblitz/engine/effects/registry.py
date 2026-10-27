@@ -64,6 +64,9 @@ RECORDING_OPS = frozenset(
         #: a pool of objects. See `ops_cards.op_draw`.
         "draw",
         "exile",
+        #: The card the walk stopped at, a list of zero or one oids, cast or
+        #: not. See `ops_cards.op_exile_until`.
+        "exile_until",
         "gain_control",
         "join_forces",
         #: The cards a bounded look off the top actually **took** -- "exile the

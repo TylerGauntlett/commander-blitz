@@ -11,7 +11,12 @@ from typing import Any
 
 from commanderblitz.engine.effects import RECORDING_OPS, known_ops
 from commanderblitz.engine.effects.conditions import validate_condition
-from commanderblitz.engine.effects.ops_cards import DESTINATIONS, LOOK_STEP_KEYS, SEARCHABLE
+from commanderblitz.engine.effects.ops_cards import (
+    DESTINATIONS,
+    EXILE_UNTIL_ELSE_DESTINATIONS,
+    LOOK_STEP_KEYS,
+    SEARCHABLE,
+)
 from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
 from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from commanderblitz.engine.effects.values import (
@@ -884,14 +889,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # card and one question per card; a run arranged together has to
             # go to one end, so the two sentences cannot share an effect.
             raise DslError(f"{where}: 'any_order' cannot be combined with 'owner_chooses'")
-    if "cast_free" in effect and op != "look_at_top":
+    if "cast_free" in effect and op not in ("look_at_top", "exile_until"):
         # "…without paying its mana cost" is free, and every other op that could
         # plausibly be written with it (`exile`, `search_library`, `reveal`)
         # ignores unknown keys -- so the card would load, resolve, and quietly
         # charge full price for a spell the printing gives away.
         raise DslError(
-            f"{where}: 'cast_free' is a look_at_top key and only it reads the "
-            f"free cast, not {op!r} (see `play_exiled` for a free cast from exile)"
+            f"{where}: 'cast_free' is a look_at_top key (or an exile_until one) and "
+            f"only it reads the free cast, not {op!r} (see `play_exiled` for a "
+            f"free cast from exile)"
         )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
@@ -1179,6 +1185,35 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # nonland card, so most scans would exile the whole library and find nothing.
     if op == "discover" and "amount" not in effect:
         raise DslError(f"{where}: discover needs an 'amount' -- discover N")
+    if op == "exile_until":
+        # reveal_until's argument: the selector is the "until", and an empty
+        # one stops at the first card exiled.
+        selector = effect.get("objects")
+        if not isinstance(selector, Mapping) or not selector:
+            raise DslError(
+                f"{where}: exile_until needs a non-empty 'objects' -- "
+                f"the selector is the card it stops at"
+            )
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: exile_until takes no 'amount' -- the scan is unbounded"
+            )
+        # A condition on a cast nobody offers would load and gate nothing.
+        if "cast_free_if" in effect:
+            if not effect.get("cast_free"):
+                raise DslError(f"{where}: exile_until 'cast_free_if' needs 'cast_free'")
+            validate_selector(effect["cast_free_if"], f"{where}.cast_free_if")
+        if "else_destination" in effect:
+            if not effect.get("cast_free"):
+                # Without a cast every hit would take the "else" -- that is a
+                # plain destination, and no printed card says it this way.
+                raise DslError(f"{where}: exile_until 'else_destination' needs 'cast_free'")
+            if effect["else_destination"] not in EXILE_UNTIL_ELSE_DESTINATIONS:
+                raise DslError(
+                    f"{where}: unknown exile_until else_destination "
+                    f"{effect['else_destination']!r} "
+                    f"(implemented: {sorted(EXILE_UNTIL_ELSE_DESTINATIONS)})"
+                )
     if op == "cant_attack_player":
         # All three keys are required, and each omission is silent in its own
         # way. Without `attacker`/`defender` the spec defaults to the controller
