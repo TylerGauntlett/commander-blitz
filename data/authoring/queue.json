@@ -300042,12 +300042,12 @@
     },
     "Utvara Hellkite": {
       "edhrec_rank": 1517,
-      "gate": "template",
+      "gate": null,
       "name": "Utvara Hellkite",
-      "reason": "no template for: Whenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying",
+      "reason": "",
       "scryfall_id": "05145c58-8317-4629-8573-9dff02e62c94",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Utvara Scalper": {

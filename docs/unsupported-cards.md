@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**105 cards** blocked by **89** capabilities.
+**104 cards** blocked by **88** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -47,7 +47,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [discover](#discover) | 1 | 1845 | op, value |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
-| [dragon-6-6-r-flying-token](#dragon-6-6-r-flying-token) | 1 | 1517 | token |
 | [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
@@ -733,20 +732,6 @@ Blocks **1** card.
 - **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
   - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
   - III — Create a 4/4 red Dragon creature token with flying.
-
-</details>
-
-## dragon-6-6-r-flying-token
-
-Blocks **1** card.
-
-- **(token)** a 6/6 red Dragon creature token with flying (e.g. id dragon_6_6_r_flying)
-  <br>Why the existing vocabulary won't do: The trigger itself is expressible (an `attacks` trigger with filter {controller: you, subtypes: [Dragon]} plus create_token), but token_ids holds only dragon_5_5_r_flying, a 5/5 -- substituting it would make a smaller token than the card prints
-
-<details><summary>Cards waiting on this</summary>
-
-- **Utvara Hellkite** (rank 1517) — `utvara_hellkite`
-  - Whenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying.
 
 </details>
 

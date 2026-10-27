@@ -140235,6 +140235,51 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "dragon_6_6_r_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "utvara_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{R}{R}",
+      "name": "Utvara Hellkite",
+      "oracle_text": "Flying\nWhenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

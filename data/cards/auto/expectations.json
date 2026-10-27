@@ -12518,6 +12518,10 @@
   "utopia_tree": {
     "zone": "battlefield"
   },
+  "utvara_hellkite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "valiant_guard": {
     "zone": "battlefield"
   },

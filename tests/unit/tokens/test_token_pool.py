@@ -500,3 +500,29 @@ class TestMyrBattlespheresMyrAreColorlessArtifactMyr:
         servo = pool.get("servo_1_1_c")
         assert servo is not None
         assert list(servo.subtypes) == ["Servo"]
+
+
+class TestUtvaraHellkitesDragonIsASixSix:
+    """Utvara Hellkite: *"Whenever a Dragon you control attacks, create a
+    **6/6** red Dragon creature token with flying."*
+
+    `dragon_5_5_r_flying` is the right colour, type and keyword on the wrong
+    body. The Hellkite's tokens are Dragons that attack and make more of
+    themselves, so a smaller token is not made once but compounds every turn.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("dragon_6_6_r_flying") is not None
+
+    def test_it_is_a_six_six_red_dragon_with_flying(self, pool):
+        token = pool.get("dragon_6_6_r_flying")
+        assert (token.power, token.toughness) == (6, 6)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Dragon"]
+        assert list(token.keywords) == ["flying"]
+        assert token.is_creature and token.is_token
+
+    def test_the_five_five_dragon_is_still_a_separate_token(self, pool):
+        other = pool.get("dragon_5_5_r_flying")
+        assert other is not None
+        assert (other.power, other.toughness) == (5, 5)

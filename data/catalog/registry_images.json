@@ -3023,6 +3023,10 @@
     "artist": "Alex Konstad",
     "scryfall_id": "4fbb6ef8-cf45-476b-8985-36023b6884ee"
   },
+  "dragon_6_6_r_flying": {
+    "artist": "Alex Konstad",
+    "scryfall_id": "4fbb6ef8-cf45-476b-8985-36023b6884ee"
+  },
   "dragon_bell_monk": {
     "artist": "Lius Lasahido",
     "scryfall_id": "5a4db84d-8aa2-4cb0-a30f-5f1abd2136b5"
@@ -12301,6 +12305,10 @@
   "utopia_tree": {
     "artist": "Gary Ruddell",
     "scryfall_id": "49bed540-da8d-4148-8794-8e8d01ed5387"
+  },
+  "utvara_hellkite": {
+    "artist": "Mark Zug",
+    "scryfall_id": "a299293c-cdf9-42fa-af9c-ac2e9966234a"
   },
   "valiant_guard": {
     "artist": "Chris Rahn",

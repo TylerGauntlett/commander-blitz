@@ -569,6 +569,29 @@
       ]
     },
     {
+      "id": "dragon_6_6_r_flying",
+      "name": "Dragon Token",
+      "oracle_text": "6/6 red Dragon creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "drake_2_2_u_flying",
       "name": "Drake Token",
       "oracle_text": "2/2 blue Drake creature token with flying.",
