@@ -17,6 +17,8 @@ forms::
         {"controller": "you",           this turn, by subtype and by
          "subtypes": ["Human"]}}        controller-at-entry
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
+    {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
+        "each_opponent"}                this turn, where the plain tally sums
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
@@ -103,6 +105,14 @@ VALUE_KEYS = frozenset(
         # tally would fire the trigger off a land drop.
         "permanents_entered_this_turn",
         "damage_taken_this_turn",
+        # "…if **an opponent** was dealt 7 or more damage this turn" --
+        # Spinerock Knoll. `damage_taken_this_turn` SUMS over its player spec,
+        # so at a pod 4 damage to each of two opponents reads 8 and opens a
+        # threshold no single opponent reached. This asks about ONE player and
+        # takes the greatest -- the existential, `min_life_of`'s argument read
+        # off the damage ledger. "Each opponent was dealt…" would be the
+        # `min_` twin, which no printed card needs yet.
+        "max_damage_taken_this_turn",
         "life_lost_this_turn",
         # "…if you gained life this turn" -- Witch of the Moors. The gain twin
         # of the line above; "did it happen" is a `cmp` against 0.
@@ -525,6 +535,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "damage_taken_this_turn" in expr:
         pids = _players(ctx, expr["damage_taken_this_turn"])
         return sum(ledger.damage_taken.get(p, 0) for p in pids)
+    if "max_damage_taken_this_turn" in expr:
+        pids = _players(ctx, expr["max_damage_taken_this_turn"])
+        return max((ledger.damage_taken.get(p, 0) for p in pids), default=0)
     if "life_lost_this_turn" in expr:
         pids = _players(ctx, expr["life_lost_this_turn"])
         return sum(ledger.life_lost.get(p, 0) for p in pids)

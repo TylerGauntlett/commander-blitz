@@ -1272,7 +1272,8 @@ Anywhere a number is expected -- the leaf list is
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
 { "permanents_entered_this_turn":               // WHICH permanents entered; see below
     { "controller": "you", "subtypes": ["Human"], "exclude_self": true } }
-{ "damage_taken_this_turn": "each_opponent" }   // bloodthirst
+{ "damage_taken_this_turn": "each_opponent" }   // bloodthirst; SUMMED over the spec
+{ "max_damage_taken_this_turn": "each_opponent" } // "an opponent was dealt N or more"; ONE player's total
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
@@ -2865,6 +2866,14 @@ Two things about that ledger are load-bearing:
   Spectacle is printed on cards you cast after hitting somebody with a burn
   spell, so a `life_lost_this_turn` that only saw `lose_life` would read false
   in exactly the case the mechanic exists for.
+
+- **A plural spec sums.** `{"damage_taken_this_turn": "each_opponent"}` is the
+  table's total, which is bloodthirst's "an opponent was dealt damage" at any
+  threshold of 1 but not at a larger one: Spinerock Knoll's "an opponent was
+  dealt 7 or more damage this turn" is true of no opponent when two of them
+  took 4 each. `max_damage_taken_this_turn` reads each player's total and
+  takes the greatest, so the `cmp` asks about one opponent — the
+  `life_of` / `min_life_of` split, for the same reason.
 
 It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn`
 — nothing it counts can happen before turn 1, so it has no opening hand to

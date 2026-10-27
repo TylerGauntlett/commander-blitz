@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 142 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 52 |
+| [Values](#values) | 53 |
 | [Conditions](#conditions) | 30 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
@@ -299,7 +299,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `counters_on` | Counters of a kind on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
-| `damage_taken_this_turn` | Damage the player was dealt this turn (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `distinct` | Distinct values of a quality among a pool (domain, coven). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
@@ -315,6 +315,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `mana_value_of` | Mana value of an object (summed over a pool). | [Value expressions](card-dsl.md#value-expressions) |
 | `max` | The greatest of several values. | [Value expressions](card-dsl.md#value-expressions) |
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
+| `max_damage_taken_this_turn` | The most damage any one of a spec's players was dealt this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `max_life_of` | The highest life total among a spec's players. | [Value expressions](card-dsl.md#value-expressions) |
 | `min` | The least of several values. | [Value expressions](card-dsl.md#value-expressions) |
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
