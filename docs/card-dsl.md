@@ -434,7 +434,7 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
   "not_supertypes": ["Basic"],    // "target NONBASIC land" -- see below
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
-  "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"
+  "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
@@ -1272,7 +1272,8 @@ Anywhere a number is expected -- the leaf list is
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
 { "permanents_entered_this_turn":               // WHICH permanents entered; see below
     { "controller": "you", "subtypes": ["Human"], "exclude_self": true } }
-{ "damage_taken_this_turn": "each_opponent" }   // bloodthirst
+{ "damage_taken_this_turn": "each_opponent" }   // bloodthirst; SUMMED over the spec
+{ "max_damage_taken_this_turn": "each_opponent" } // "an opponent was dealt N or more"; ONE player's total
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
@@ -1542,6 +1543,35 @@ very turn it was supposed to open. The value reads the ledger's oids instead, so
 it survives the death. Use the selector when the effect has to *reach* the
 creatures, and the value when the card is only counting them.
 
+### Pack tactics — attackers' total power as declared
+
+```jsonc
+// Minion of the Mighty: "Pack tactics — Whenever this creature attacks, if you
+// attacked with creatures with total power 6 or greater this combat, …"
+"trigger": {
+  "event": "attacks", "source": "self",
+  "condition": { "cmp": ">=", "left": { "attack_power_this_combat": "you" },
+                 "right": { "const": 6 } } }
+```
+
+Pack tactics is an ability word, so the whole mechanic is this value in an
+ordinary intervening-if `condition`. `attack_power_this_combat` takes a player
+spec and reads `TurnLedger.attack_power_this_combat`: the derived power of the
+creatures that player declared as attackers in the combat in progress, summed
+at `ATTACKERS_DECLARED` and frozen there. That event fires before any
+creature's `attacks` trigger, so the condition already sees the total when the
+trigger is checked, and nothing done to the attackers afterwards changes it —
+the rulings read the power as attackers are declared, so the recheck on
+resolution (603.4) passes after an attacker is shrunk, killed or removed from
+combat. A creature put onto the battlefield attacking was never declared and
+adds nothing. `combat.start_combat` resets it, so in an extra combat only that
+combat's attackers count. Power is summed as crew sums it, a negative power
+included. The loader refuses anything but a player spec.
+
+The near miss is `{"power_of": {"objects": {"attacking": true, "controller":
+"you"}}}`: it sums the **live** board, so it loses an attacker that left combat
+before the trigger resolved and counts one put onto the battlefield attacking.
+
 ### Which permanents entered the battlefield this turn
 
 ```jsonc
@@ -1559,7 +1589,11 @@ creatures, and the value when the card is only counting them.
 The only ledger value that takes a **filter** rather than a player spec, because
 the printed sentence asks *which* permanents entered and not how many did. The
 clauses are the selector language's, spelled the same way: `controller` (a player
-spec), `types` (all-of), `subtypes` and `colors` (any-of), and `exclude_self`.
+spec), `types` (all-of), `not_types` (none-of — Celebration's "two or more
+**nonland** permanents"), `subtypes` and `colors` (any-of), and `exclude_self`.
+`not_types` is not a list of every other card type written into `types`: that
+is all-of, so it would count only permanents that were all of them at once, and
+an any-of spelling would still count an artifact land.
 
 | | |
 |---|---|
@@ -2163,11 +2197,35 @@ with the question unanswered.
 The answer rides on `GameObject.enters_copy_of`, a field of its own rather than
 `copying` written early, because `reset_permanent_state` clears `copying` — a
 permanent that leaves the battlefield stops being a copy — and it runs during the
-very move the answer has to survive. `_enter_battlefield` turns it into `copying`
-with no end-of-turn duration, since 706.2 gives a copy applied as a permanent
-enters none.
+very move the answer has to survive. `_enter_battlefield` turns it into `copying`.
 
-`copying` is required on the event and refused on the other four. Always an
+```jsonc
+// Cursed Mirror
+"replacements": [
+  { "event": "self_enters_as_copy",
+    "copying": { "zone": "battlefield", "types": ["Creature"] },
+    "duration": "end_of_turn",
+    "except_": { "add_keywords": ["haste"] } }
+]
+```
+
+`duration` is `permanent` by default, since 706.2 gives a copy applied as a
+permanent enters none (Phyrexian Metamorph). `end_of_turn` is Cursed Mirror's
+"…become a copy of any creature on the battlefield **until end of turn**": the
+copy is `clear_until_eot`'s timed form, and after cleanup the permanent is its
+own printed card again.
+
+`except_` is the copy exception, 707.9b, and `add_keywords` is its one key —
+Dack's Duplicate's "…except it has haste and dethrone" is
+`{"add_keywords": ["haste", "dethrone"]}`. The keywords go on
+`GameObject.copying_keywords`, which `GameState.card_of` writes into the copied
+face, so they are part of the copy rather than granted on top of it and they end
+when the copy ends. The near miss is a printed `grant_keyword` static: that is a
+layer-6 grant which keeps working on the uncopied card when the controller
+declines. The loader refuses an unknown keyword, an empty list and any other key.
+
+`copying` is required on the event; `copying`, `except_` and a non-default
+`duration` are refused on the other four. Always an
 offer, because every printed card in this family says "you may"; an empty pool
 asks nothing, and the arriving permanent is not on the battlefield yet, so it
 cannot find itself.
@@ -2861,6 +2919,14 @@ Two things about that ledger are load-bearing:
   Spectacle is printed on cards you cast after hitting somebody with a burn
   spell, so a `life_lost_this_turn` that only saw `lose_life` would read false
   in exactly the case the mechanic exists for.
+
+- **A plural spec sums.** `{"damage_taken_this_turn": "each_opponent"}` is the
+  table's total, which is bloodthirst's "an opponent was dealt damage" at any
+  threshold of 1 but not at a larger one: Spinerock Knoll's "an opponent was
+  dealt 7 or more damage this turn" is true of no opponent when two of them
+  took 4 each. `max_damage_taken_this_turn` reads each player's total and
+  takes the greatest, so the `cmp` asks about one opponent — the
+  `life_of` / `min_life_of` split, for the same reason.
 
 It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn`
 — nothing it counts can happen before turn 1, so it has no opening hand to
@@ -3633,6 +3699,17 @@ opponent's commander you have stolen does not. `controller: "you"` in the filter
 other way. Not an intervening-if either: 603.4 re-checks a `condition` on
 resolution, and the printed card has no "if".
 
+`any_of` is "a noncreature **or** Dragon spell" -- Firespitter Whelp:
+`filter: {"any_of": [{"not_types": ["Creature"]}, {"subtypes": ["Dragon"]}]}`.
+Every other key is ANDed, so the two halves written as one filter say
+"noncreature Dragon spell", and `any_types` cannot reach a subtype. Each branch
+is a trigger filter asked about the same subject, held to `TRIGGER_FILTER_KEYS`
+itself; keys beside `any_of` narrow every branch; it takes at least two
+branches. Two triggers, one per half, are the near miss and a different card: a
+spell answering both halves fires them twice, where one cast fires the printed
+ability once (603.2). An `nth` spell-cast trigger cannot carry it
+(`ORDINAL_FILTER_KEYS`).
+
 `not_cause` is "…**if it wasn't put onto the battlefield with this ability**".
 Zone changes carry a `cause`, and `put_onto_battlefield` can set its own, so an
 ability that puts permanents down can refuse to trigger on its own output.
@@ -3666,7 +3743,23 @@ Three events carry a defending player and so accept the clause: `attacks`,
 `creatures_attack_player` and `deals_damage_to_player`. The last is the one that
 is not about combat — Curiosity's "whenever enchanted creature deals damage to
 **an opponent**" asks who took the damage, and `controller` there is a question
-about whose *creature* dealt it.
+about whose *creature* dealt it. `creatures_deal_combat_damage` accepts it only
+with `per_player`, where each firing is about the one seat it hit.
+
+`defending: "most_life"` is dethrone's "whenever this creature attacks **the
+player with the most life or tied for most life**" (702.105a), legal on
+`attacks` only. It matches when the creature attacked a player, not a
+planeswalker or battle that player controls (the event's `attacked_permanent`),
+whose life is at least every other living player's, the attacker's controller
+included (`GameState.has_most_life`). It is part of the trigger event, so it is
+asked once as the creature attacks and never on resolution. The near miss is a
+`condition` comparing `{"life_of": {"binding": "defender"}}` with
+`{"max_life_of": "each_player"}`: an intervening-if is re-checked on
+resolution, which dethrone is not, and `defender` names a planeswalker's
+controller, so it fires on an attack at the walker. Printed dethrone is the
+`dethrone` keyword ([cookbook](card-dsl-cookbook.md#dethrone)); this clause is
+for the cards that print the sentence with another effect (Preacher of the
+Schism, Undercover Butler).
 
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
@@ -3694,7 +3787,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast` or a `you_gain_life` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life` or an `attacks` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -3751,6 +3844,26 @@ is four gains of 1 to it.
 { "event": "you_gain_life", "nth": 1 }
 ```
 
+On `attacks` it is "whenever this creature attacks **for the first time each
+turn**" (Scourge of the Throne): the ledger fold counts each creature's ATTACKS
+events in `TurnLedger.attacks_by_creature` and writes the count onto the event,
+so the ordinal moves on every attack whether or not anything triggered. That is
+what `max_per_turn: 1` cannot say: it counts the ability's queued firings, so a
+first attack whose intervening-if failed leaves the cap unspent and the second
+attack, in an extra combat, fires the ability. An attack on a planeswalker or a
+battle is an attack and counts; a creature put onto the battlefield attacking
+never attacked and does not; a creature that leaves the battlefield starts again.
+"If it's attacking the player with the most life" beside it is an ordinary
+intervening-if over the source with the `attacking_player: "most_life"`
+selector key, re-asked on resolution as the printed "if" requires.
+
+```jsonc
+// Scourge of the Throne
+{ "event": "attacks", "source": "self", "nth": 1,
+  "condition": { "exists": { "zone": "battlefield", "self_only": true,
+                             "attacking_player": "most_life" } } }
+```
+
 Three near misses. `max_per_turn: 1` is a cap **per permanent**, so in a pod the
 first opponent's spell spends it and the second opponent's first spell does
 nothing — right only for "whenever **you** cast your first … each turn". A
@@ -3777,6 +3890,12 @@ batching work.
 combat damage to a player", which is Zurgo and Ojutai's "or battle". Off by
 default, and refused by the loader on any other event. See
 ["One or more Dragons … a player or battle"](card-dsl-cookbook.md#one-or-more-dragons--a-player-or-battle).
+
+`per_player` reads the same event per seat: "one or more creatures you control
+deal combat damage to **a player**" triggers once for each player dealt damage,
+with "that player" bound as `defender` and `defending` naming whom it may be.
+Off by default, and refused anywhere else. See
+["… to an opponent, … that opponent"](card-dsl-cookbook.md#-to-an-opponent--that-opponent).
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·

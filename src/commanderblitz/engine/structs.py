@@ -56,8 +56,9 @@ class TempEffect:
     ``"lock_abilities"`` ("its activated abilities can't be activated this
     turn"), ``"ability"`` (a whole triggered or activated ability granted by
     another permanent), ``"animate"`` ("becomes a 4/4 creature until end of
-    turn"), or ``"control"`` ("gain control of target permanent until end of
-    turn").  The lock is not a keyword because it is not a characteristic: it is
+    turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
+    addition to its other types": ``subtypes`` added, base P/T untouched), or
+    ``"control"`` ("gain control of target permanent until end of turn").  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 
@@ -1266,19 +1267,23 @@ class EnteredPermanent:
         *,
         controllers: Iterable[int],
         types: Iterable[str] = (),
+        not_types: Iterable[str] = (),
         subtypes: Iterable[str] = (),
         colors: Iterable[str] = (),
     ) -> bool:
         """Does this arrival answer a card's filter?
 
-        Spelled exactly as `selectors.matches` spells the same four clauses, so
+        Spelled exactly as `selectors.matches` spells the same five clauses, so
         a card author who knows one knows the other: ``types`` is all-of ("an
-        artifact creature" is both), ``subtypes`` and ``colors`` are any-of ("a
-        Human or an Elf").  A clause left out filters nothing.
+        artifact creature" is both), ``not_types`` none-of ("two or more
+        **nonland** permanents", Celebration), ``subtypes`` and ``colors`` are
+        any-of ("a Human or an Elf").  A clause left out filters nothing.
         """
         if self.controller not in set(controllers):
             return False
         if types and not set(types).issubset(self.types):
+            return False
+        if not_types and set(not_types) & self.types:
             return False
         if subtypes and not (set(subtypes) & self.subtypes):
             return False
@@ -1331,6 +1336,23 @@ class TurnLedger:
     #: one to carry a counter would put a new entry on the trigger bus that no
     #: card subscribes to.
     combats: int = 0
+    #: The total power of the creatures each player **declared as attackers in
+    #: the combat in progress**, read as they were declared: player id -> sum.
+    #: Pack tactics -- "if you attacked with creatures with total power 6 or
+    #: greater this combat" (Minion of the Mighty).
+    #:
+    #: A number frozen at the declaration rather than a sum of live power,
+    #: because the rulings fix it there: shrinking, killing or removing an
+    #: attacker after the declaration does not stop the trigger, so the
+    #: intervening-if recheck on resolution (603.4) has to read the same total
+    #: it triggered on. `power_of` over `attacking: true` is the near miss and
+    #: drops exactly those creatures. A creature put onto the battlefield
+    #: attacking was never declared and adds nothing.
+    #:
+    #: Per **combat**, not per turn: `combat.start_combat` resets it, so a
+    #: second combat's pack tactics counts only that combat's attackers.
+    #: Summed with derived power and negatives included, as crew sums.
+    attack_power_this_combat: dict[int, int] = field(default_factory=dict)
     #: Which creatures each player has **declared as attackers** this turn:
     #: player id -> the oids they attacked with.  Two questions, one record.
     #:
@@ -1369,6 +1391,21 @@ class TurnLedger:
     #: battlefield: an oid survives the zone change but the object does not
     #: (400.7), and a flickered Angel back from exile attacked nobody.
     players_attacked_by: dict[int, set[int]] = field(default_factory=dict)
+    #: How many times each creature has **attacked** this turn: attacker oid ->
+    #: the number of ATTACKS events it has been the subject of. "Whenever this
+    #: creature attacks **for the first time each turn**" (Scourge of the
+    #: Throne) is an `attacks` trigger with `nth: 1`, and the ordinal is written
+    #: onto the ATTACKS event from this count, as a draw's or a cast's is.
+    #:
+    #: Counted whether or not anything triggered, which is why `max_per_turn: 1`
+    #: is the near miss: that cap counts the ability's *queued* firings, so a
+    #: first attack whose intervening-if failed leaves it unspent and the
+    #: second attack in an extra combat fires the ability the card forbids.
+    #: Every attack counts, a planeswalker or battle attack included, since the
+    #: printed word is "attacks". A creature put onto the battlefield attacking
+    #: never attacked (508.4) and adds nothing; one that leaves the battlefield
+    #: is a new object (400.7) and starts again from nought.
+    attacks_by_creature: dict[int, int] = field(default_factory=dict)
     #: Which **players** each creature dealt **combat damage** to this turn:
     #: source oid -> the seats. "Destroy each nonland permanent with mana value X
     #: whose controller was dealt combat damage by this creature this turn" --
@@ -1512,6 +1549,23 @@ class TurnLedger:
     #: the same argument `creatures_attacked` makes above.
     object_flags: dict[int, set[str]] = field(default_factory=dict)
 
+    #: object id -> the printed labels of the modes its "choose one **that
+    #: hasn't been chosen this turn**" ability has chosen this turn (Parapet
+    #: Thrasher, Gala Greeters, Monument to Endurance).
+    #:
+    #: Not `object_flags`, whose record deliberately survives the permanent
+    #: leaving the battlefield because "has been exerted this turn" is about
+    #: the card's history.  This record is about one *object*: 400.7 makes a
+    #: permanent that left and came back a new object, which has chosen
+    #: nothing, so `zones.move_object` drops the entry at the same zone change
+    #: that runs `reset_permanent_state`.  And not `GameObject.flags`, which
+    #: has no turn boundary -- that is `choose_mode`'s `once_each: true`,
+    #: "hasn't been chosen" for the object's whole life.
+    #:
+    #: Keyed by label rather than mode index, as `_mode_flag` is, so a card
+    #: whose modes are reordered cannot re-open a spent one.
+    modes_chosen: dict[int, set[str]] = field(default_factory=dict)
+
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
     #:
@@ -1587,6 +1641,14 @@ class TurnLedger:
         """Has this object been given that word **this turn**?"""
         return flag in self.object_flags.get(oid, ())
 
+    def mode_chosen(self, oid: int, label: str) -> None:
+        """Record that this object chose the mode so labelled, this turn."""
+        self.modes_chosen.setdefault(oid, set()).add(label)
+
+    def chosen_modes(self, oid: int) -> set[str]:
+        """The labels this object has chosen this turn; empty if none."""
+        return self.modes_chosen.get(oid, set())
+
     def activations(self, oid: int, ability_index: int) -> int:
         return self.ability_activations.get((oid, ability_index), 0)
 
@@ -1604,7 +1666,9 @@ class TurnLedger:
     def clear(self) -> None:
         self.creatures_died.clear()
         self.creatures_attacked.clear()
+        self.attack_power_this_combat.clear()
         self.players_attacked_by.clear()
+        self.attacks_by_creature.clear()
         self.players_dealt_combat_damage_by.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
@@ -1620,6 +1684,7 @@ class TurnLedger:
         self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()
         self.object_flags.clear()
+        self.modes_chosen.clear()
         self.permanents_entered.clear()
         self.combats = 0
 

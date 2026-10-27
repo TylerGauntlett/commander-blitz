@@ -524,6 +524,30 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 types = set(static.get("types", ()))
                 subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
 
+        # 0a. creature-type replacement -- "…is a Dragon with base power and
+        #     toughness 4/4 … (It loses all other creature types.)" Goddric,
+        #     Cloaked Reveler; Kenrith's Transformation's "is a green Elk
+        #     creature". Layer 4 like `set_types` above, and after it, so an
+        #     Aura that makes a creature exactly a Creature *and* exactly an Elk
+        #     ends with both whichever order its lines are printed in.
+        #
+        #     Only the creature types go (205.3m): an Equipment or a Vehicle
+        #     stays one, and card types and supertypes are not touched -- a
+        #     legendary Goddric is still legendary. The named types arrive only
+        #     on a creature, because 205.3d forbids a subtype whose card type
+        #     the object lacks; a permanent something has made a land is not a
+        #     "Land -- Dragon". Before the grants below, for the same promise
+        #     `set_types` keeps: what is added in addition survives.
+        for source_obj, static in statics:
+            if static.get("effect") != "set_creature_types":
+                continue
+            if _matches(state, obj, source_obj, static.get("affects")):
+                subtypes = {
+                    sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
+                }
+                if "Creature" in types:
+                    subtypes.update(static.get("subtypes", ()))
+
         # 0b. colour replacement -- "enchanted permanent is a **colorless**
         #     land". Real layer 5, and it sits here for the reason `set_types`
         #     does: it replaces rather than modifies, and nothing below reads
@@ -547,7 +571,9 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    written onto the permanent, so it is an input to this pipeline
         #    rather than a product of it, and a static's `add_subtype` layering
         #    on top of it is the ordinary case.
-        subtypes.update(obj.added_subtypes)
+        #    "Until end of turn, Sarkhan becomes a Dragon in addition to its
+        #    other types" is the same input with a clock (`recorded_subtypes`).
+        subtypes.update(recorded_subtypes(obj))
 
         #    The grant is resolved per source rather than read off the compiled
         #    static, because one entry in that list is not a literal name:
@@ -1525,6 +1551,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             and entry.matches(
                 controllers=controllers,
                 types=spec.get("types") or (),
+                not_types=spec.get("not_types") or (),
                 subtypes=spec.get("subtypes") or (),
                 colors=spec.get("colors") or (),
             )
@@ -1777,6 +1804,22 @@ def resolve_chosen_colors(
         return selector
     out = resolve_chosen_color_list(wanted, source)
     return {**selector, "colors": out or ["\0none"]}
+
+
+def recorded_subtypes(obj: GameObject) -> tuple[str, ...]:
+    """The subtypes written onto ``obj`` "in addition to its other types".
+
+    `GameObject.added_subtypes` -- the one-shot with no clock -- and every
+    ``subtype`` `TempEffect` still standing: "until end of turn, Sarkhan becomes
+    a Dragon in addition to its other types". Both are pipeline *inputs*, so
+    `_compute` and a static's filter read them alike; a Dragon lord's anthem
+    reaches a Sarkhan that is a Dragon for the turn, as it reaches a Vampire
+    Captivating Vampire converted.
+    """
+    timed = tuple(
+        sub for temp in obj.until_eot if temp.kind == "subtype" for sub in temp.subtypes
+    )
+    return obj.added_subtypes + timed if timed else obj.added_subtypes
 
 
 def _matches_printed(
@@ -2105,7 +2148,7 @@ def _matches_wherever(
             return False
         size = (c.power, c.toughness)
     else:
-        if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
+        if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None
 

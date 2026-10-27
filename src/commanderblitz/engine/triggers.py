@@ -13,7 +13,7 @@ from collections.abc import Generator, Mapping
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CLOAK_WARD, EXALTED_TRIGGER, Ability, TriggerSpec
+from .carddef import CLOAK_WARD, DETHRONE_TRIGGER, EXALTED_TRIGGER, Ability, TriggerSpec
 from .characteristics import (
     _battlefield_statics,
     _matches_printed,
@@ -533,26 +533,78 @@ def collect(state: GameState, event: GameEvent) -> None:
         spec = ability.trigger
         if spec is None:
             continue
-        if not _matches(state, obj, spec, event):
-            continue
-        _queue(state, obj, ability, event)
-        if obj.controller in doubled:
-            # Ancient Greenwarden: "that ability triggers an additional time".
-            # Queued twice rather than resolved twice, because the two copies are
-            # separate abilities on the stack and anything in between -- another
-            # landfall trigger, a response -- goes between them.
-            _queue(state, obj, ability, event)
-        for source_obj, static in doublers:
-            # `affects` asks about the permanent whose ability just triggered,
-            # which is the axis Harmonic Prodigy scopes on ("a Shaman or another
-            # Wizard you control"); the *cause* was already matched once, above
-            # the loop, because it is a fact about the event and not about this
-            # ability. Two doublers stack, and so does a doubler with Ancient
-            # Greenwarden -- each queues one more copy, which is what "triggers
-            # an additional time" says however many say it.
-            if _static_matches(state, obj, source_obj, static.get("affects")):
-                _queue(state, obj, ability, event)
+        for heard in _per_player_events(spec, event):
+            _collect_one(state, obj, ability, heard, doubled, doublers)
     _arm_delayed(state, event)
+
+
+def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
+    """The event as this trigger hears it: whole, or once per damaged seat.
+
+    "Whenever one or more Dragons you control deal combat damage to **an
+    opponent**, … destroy target artifact **that opponent** controls" --
+    Parapet Thrasher. The trigger fires once for each player the batch dealt
+    damage to (the official rulings on every "…to a player" batch say so: hit
+    two opponents and it triggers twice), and each firing knows one seat.
+    `_fire_damage_batch` fires one event per damaging player, which is right
+    for "…to one or more players", so a `per_player` trigger is handed one
+    narrowed copy of it per entry in `hits`: `damaged` is that seat alone,
+    `damagers` the creatures that hit that seat, and `defender` the seat --
+    so `defending: "opponent"` is "to an opponent" and `{"binding":
+    "defender"}` is "that player", the same spelling as on
+    `creatures_attack_player`.
+
+    A copy rather than a second fired event, because a second event would
+    fire every unflagged trigger on this event again. The copy is never
+    emitted into the log; it is only what `_matches` and `_queue` read.
+    """
+    if not spec.per_player or event.type != EventType.CREATURES_DEALT_COMBAT_DAMAGE:
+        return [event]
+    heard: list[GameEvent] = []
+    for hit in event.data.get("hits") or []:
+        data = dict(event.data)
+        seat = int(hit["player"])
+        data.update(
+            damaged=[seat],
+            damagers=list(hit["damagers"]),
+            damaged_battles=[],
+            hits=[hit],
+            defender=seat,
+        )
+        heard.append(replace(event, data=data))
+    return heard
+
+
+def _collect_one(
+    state: GameState,
+    obj: GameObject,
+    ability: Ability,
+    event: GameEvent,
+    doubled: frozenset[int],
+    doublers,
+) -> None:
+    """Queue one ability for one event it heard, with its doublers."""
+    spec = ability.trigger
+    assert spec is not None
+    if not _matches(state, obj, spec, event):
+        return
+    _queue(state, obj, ability, event)
+    if obj.controller in doubled:
+        # Ancient Greenwarden: "that ability triggers an additional time".
+        # Queued twice rather than resolved twice, because the two copies are
+        # separate abilities on the stack and anything in between -- another
+        # landfall trigger, a response -- goes between them.
+        _queue(state, obj, ability, event)
+    for source_obj, static in doublers:
+        # `affects` asks about the permanent whose ability just triggered,
+        # which is the axis Harmonic Prodigy scopes on ("a Shaman or another
+        # Wizard you control"); the *cause* was already matched once, above
+        # the loop, because it is a fact about the event and not about this
+        # ability. Two doublers stack, and so does a doubler with Ancient
+        # Greenwarden -- each queues one more copy, which is what "triggers
+        # an additional time" says however many say it.
+        if _static_matches(state, obj, source_obj, static.get("affects")):
+            _queue(state, obj, ability, event)
 
 
 def _arm_delayed(state: GameState, event: GameEvent) -> None:
@@ -878,6 +930,10 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # of Truth's Clues) listens and a removed one does not.
         if not obj.face_down and has_keyword(state, oid, Keyword.EXALTED.value):
             yield obj, EXALTED_TRIGGER
+        # Dethrone (702.105): exalted's shape, a rules trigger per permanent
+        # with the keyword, so Marchesa's granted dethrone listens too.
+        if not obj.face_down and has_keyword(state, oid, Keyword.DETHRONE.value):
+            yield obj, DETHRONE_TRIGGER
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.
@@ -1134,7 +1190,7 @@ def _matches(
         if spec.controller == "opponent" and actor == obj.controller:
             return False
 
-    if spec.defending is not None and not _defender_matches(spec.defending, obj, event):
+    if spec.defending is not None and not _defender_matches(state, spec.defending, obj, event):
         return False
 
     # "Whenever one or more **Dragons you control** deal combat damage to a
@@ -1387,7 +1443,9 @@ EVENT_BINDING_KEYS = (
 )
 
 
-def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
+def _defender_matches(
+    state: GameState, clause: str, obj: GameObject, event: GameEvent
+) -> bool:
     """Whether the player being attacked is the one the trigger asks about.
 
     ``defender`` is already on the ``attacks`` event -- combat records which
@@ -1400,10 +1458,22 @@ def _defender_matches(clause: str, obj: GameObject, event: GameEvent) -> bool:
     declaration coarser.  The absent-defender guard below is why that event had
     to exist at all: on a bare ``ATTACKERS_DECLARED`` there is nothing to
     compare, so a ``defending`` clause matches nothing, forever and silently.
+
+    ``most_life`` is dethrone's "attacks **the player** with the most life or
+    tied for most life" (702.105a). Two things are asked, both as the event
+    happens and neither again on resolution, because dethrone has no "if":
+    the creature attacked a *player* -- an attack on a planeswalker or a battle
+    names its controller as ``defender`` but carries ``attacked_permanent``,
+    and attacked the permanent (506.2) -- and that player's life is at least
+    every other living player's (`GameState.has_most_life`).
     """
     defender = event.data.get("defender")
     if defender is None:
         return False
+    if clause == "most_life":
+        if event.data.get("attacked_permanent") is not None:
+            return False
+        return state.has_most_life(int(defender))
     if clause == "you":
         return int(defender) == obj.controller
     if clause == "opponent":
@@ -1553,6 +1623,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "mana_cost",
         "power",
         "toughness",
+        "any_of",
     }
 )
 
@@ -1586,6 +1657,27 @@ def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
                 f"{where}: {key} {word!r} is not answered by a trigger filter "
                 f"(use one of {sorted(TRIGGER_FILTER_PLAYER_WORDS)})"
             )
+    # "…a noncreature **or** Dragon spell" -- Firespitter Whelp. Each branch is
+    # a trigger filter of its own, matched by `matches_card_filter` against the
+    # same subject, so it is held to the same list the outer filter is: a key a
+    # branch carried and the matcher never read would make that branch match
+    # everything, and the whole disjunction with it.
+    branches = filt.get("any_of")
+    if branches is not None:
+        if not isinstance(branches, (list, tuple)) or len(branches) < 2:
+            raise DslError(f"{where}: any_of takes a list of at least two filters")
+        for i, branch in enumerate(branches):
+            here = f"{where}.any_of[{i}]"
+            if not isinstance(branch, Mapping) or not branch:
+                raise DslError(f"{here}: each branch is a non-empty filter object")
+            shares = branch.get("shares_a_creature_type_with")
+            if shares is not None and shares != "self":
+                # The loader checks this word on the outer filter; a branch is
+                # matched by the same function and binds nothing either.
+                raise DslError(
+                    f"{here}: shares_a_creature_type_with must be 'self', got {shares!r}"
+                )
+            validate_trigger_filter(branch, here)
 
 
 def matches_card_filter(
@@ -1608,6 +1700,20 @@ def matches_card_filter(
     # "…a creature spell of the chosen type." The same substitution the static
     # filters do, because Vanquisher's Banner asks the question from both.
     filt = resolve_chosen_subtypes(filt, ability_source)
+
+    # "Whenever you cast a noncreature **or** Dragon spell" -- Firespitter
+    # Whelp. Every other key here is ANDed, so the two printed halves written
+    # as one filter collapse to "noncreature Dragon spell"; and two triggers,
+    # one per half, would fire twice for a Kindred Dragon instant, which the
+    # printed sentence does not. A branch is the same filter asked about the
+    # same subject, as `characteristics._matches_printed` and
+    # `selectors.matches` recurse for their own `any_of`, and the keys beside
+    # it still apply to every branch.
+    branches = filt.get("any_of")
+    if branches is not None and not any(
+        matches_card_filter(state, oid, branch, ability_source) for branch in branches
+    ):
+        return False
 
     if filt.get("exclude_self") and oid == ability_source.oid:
         return False
@@ -1849,7 +1955,7 @@ def matches_card_filter(
     # planeswalker would count as one attacking you.
     who = filt.get("attacking_player")
     if who is not None and not attacking_player_matches(
-        state.combat, oid, str(who), ability_source.controller
+        state.combat, oid, str(who), ability_source.controller, state
     ):
         return False
     mv = filt.get("mana_value")

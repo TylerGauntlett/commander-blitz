@@ -32,7 +32,9 @@ from commanderblitz.engine.enums import (
 #: damaged seat as `defender` for exactly this comparison. Two-player play hides
 #: the difference; a pod does not, and neither does a creature you control that
 #: somehow damages you.
-DEFENDING_TRIGGERS = frozenset({"attacks", "creatures_attack_player", "deals_damage_to_player"})
+DEFENDING_TRIGGERS = frozenset(
+    {"attacks", "creatures_attack_player", "deals_damage_to_player", "creatures_deal_combat_damage"}
+)
 
 #: Cost keys that charge the **source permanent**, and so may not appear on a
 #: card-level `alternative_cost`.
@@ -186,6 +188,12 @@ STATIC_EFFECTS = frozenset(
         # the source's ordered `exiled_cards` link; applied first in
         # `characteristics._compute`, a 7b size and a layer-4 type replacement.
         "imprint_characteristics",
+        # "...is a Dragon ... (It loses all other creature types.)" Goddric,
+        # Cloaked Reveler; Kenrith's Transformation. Replaces the creature
+        # types with its literal `subtypes` and leaves every other subtype,
+        # card type and supertype alone -- `set_types` keeps creature types
+        # while Creature stays, and `add_subtype` only adds.
+        "set_creature_types",
         # "...and loses all other card types and abilities." The only effect in
         # the engine that takes an ability away rather than adding one, which is
         # why `characteristics.abilities_of` exists at all -- before it, every
@@ -297,6 +305,12 @@ STATIC_EFFECTS = frozenset(
         # on `exile` / `grant_playable`, which is the same waiver granted for
         # one named card.
         "spend_mana_as_any_color",
+        # "You don't lose unspent red mana as steps and phases end." Leyline
+        # Tyrant, Omnath, Locus of Mana, Upwelling. Player-wide: the pool is the
+        # player's, so there is no object to attach it to. `colors` names the
+        # mana symbols kept; read by `player_statics.retained_mana_by_player`
+        # where every pool empties as a step ends (500.4), and nowhere else.
+        "mana_retention",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -714,6 +728,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "granted_alternative_cost",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
+        "mana_retention",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",
@@ -893,6 +908,18 @@ FREE_CAST_FILTER_KEYS = SPELL_FILTER_KEYS | {"from_zone"}
 #: that set is shared with three statics whose readers were written before the
 #: word existed and would walk past it -- a silent over-grant.
 WARP_GRANT_FILTER_KEYS = SPELL_FILTER_KEYS | {"any_of"}
+
+#: What a ``cast_from_library_top`` static's ``affects_spells`` filter may use.
+#:
+#: `SPELL_FILTER_KEYS` without `controller` -- `affects_player` already names
+#: the caster -- and with ``power`` and ``toughness``: "You may cast creature
+#: spells **with power 4 or greater** from the top of your library" (Thundermane
+#: Dragon), a comparison in `walk._check_pt_keys`' shape. Only this filter takes
+#: them, because only this reader matches an *object* rather than a card face:
+#: `player_statics.library_top_cast_permissions` measures the top card where it
+#: sits, its characteristic-defining abilities applied (604.3), and a `*/*`
+#: answered off the printed face would be a 0 in every zone.
+LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"power", "toughness"}
 
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics

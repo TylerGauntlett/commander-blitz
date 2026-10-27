@@ -12,6 +12,7 @@ from .enums import STEP_PHASE, Phase, Step, Zone
 from .events import EventType, GameEvent
 from .objects import GameObject
 from .player import PlayerState
+from .player_statics import retained_mana_by_player
 from .rng import Rng
 from .structs import (
     AttackRestriction,
@@ -544,6 +545,11 @@ class GameState:
                 # override individual characteristics (706.2), and the name is
                 # the one this cycle overrides.
                 copied = replace(copied, name=obj.copying_name)
+            if obj.copying_keywords:
+                # "…except it has haste and dethrone" (707.9b). On the face
+                # itself rather than granted on top of it: the exception is
+                # part of what the copy is, so it is there before any layer.
+                copied = replace(copied, keywords=copied.keywords | obj.copying_keywords)
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied
@@ -600,6 +606,19 @@ class GameState:
 
     def is_alive(self, pid: int) -> bool:
         return not self.players[pid].has_lost
+
+    def has_most_life(self, pid: int) -> bool:
+        """Whether this player has the most life or is tied for it (702.105a).
+
+        Dethrone's "the player with the most life or tied for most life":
+        compared with every other player still in the game, since a player who
+        has left is no longer anybody's comparison. A player who has left has
+        no life total to have the most of, so that seat answers ``False``.
+        """
+        if not self.is_alive(pid):
+            return False
+        life = self.players[pid].life
+        return all(life >= self.players[p].life for p in self.alive())
 
     def opponents(self, pid: int) -> list[int]:
         return [p for p in self.alive() if p != pid]
@@ -752,7 +771,15 @@ class GameState:
                 # derived from the *keys*, and raid must not depend on a future
                 # emitter remembering to list them.
                 attacked = ledger.creatures_attacked.setdefault(pid, set())
-                attacked.update(int(oid) for oid in data.get("attackers") or ())
+                declared = [int(oid) for oid in data.get("attackers") or ()]
+                attacked.update(declared)
+                # Pack tactics' total, frozen here: the rulings read the power
+                # "as attackers are declared", and this is that moment -- the
+                # per-creature ATTACKS triggers fire after this event, so an
+                # intervening-if checking it at trigger time already sees it.
+                power = sum(chars(self, oid).power for oid in declared if oid in self.objects)
+                totals = ledger.attack_power_this_combat
+                totals[pid] = totals.get(pid, 0) + power
         elif event.type == EventType.ATTACKS:
             # Angel of Destiny's "each player this creature attacked this turn".
             # Only an attack on a seat: one aimed at a planeswalker or a battle
@@ -761,6 +788,14 @@ class GameState:
             attacker, defender = data.get("attacker"), data.get("defender")
             if attacker is not None and defender is not None and not data.get("attacked_permanent"):
                 ledger.players_attacked_by.setdefault(int(attacker), set()).add(int(defender))
+            # "Whenever this creature attacks for the first time each turn."
+            # The ordinal goes on the event, as a cast's and a draw's do, so an
+            # `attacks` trigger with `nth` reads it at queue time -- and every
+            # attack is counted whether or not anything triggered on it.
+            if attacker is not None:
+                counts = ledger.attacks_by_creature
+                counts[int(attacker)] = counts.get(int(attacker), 0) + 1
+                data["nth"] = counts[int(attacker)]
         elif event.type == EventType.ENTERS_BATTLEFIELD:
             # "…if another Human entered the battlefield under your control this
             # turn." Snapshotted here rather than counted, because the question
@@ -879,6 +914,7 @@ class GameState:
             # this turn, so the record of whom it attacked goes with it.
             if data.get("from") == Zone.BATTLEFIELD.value:
                 ledger.players_attacked_by.pop(data.get("oid"), None)
+                ledger.attacks_by_creature.pop(data.get("oid"), None)
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # The departure half. Keyed by the graveyard's **owner** rather than
@@ -909,10 +945,14 @@ class GameState:
 
         ``keep_for_turn`` is the current turn at an ordinary step or phase
         boundary and ``None`` at the end of the turn, which is where "until end
-        of turn" runs out.
+        of turn" runs out. A `mana_retention` static (Leyline Tyrant) spares its
+        symbols at every boundary, the end of the turn included.
         """
+        retained = retained_mana_by_player(self)
         for p in self.players:
-            lost = p.mana_pool.clear(keep_for_turn)
+            lost = p.mana_pool.clear(
+                keep_for_turn, retained.get(p.pid, frozenset())
+            )
             if lost:
                 self.emit("mana_emptied", player=p.pid, amount=lost)
 

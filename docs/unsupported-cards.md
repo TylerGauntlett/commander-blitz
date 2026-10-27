@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**105 cards** blocked by **89** capabilities.
+**99 cards** blocked by **82** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,40 +22,33 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [set-creature-types](#set-creature-types) | 2 | 715 | static_effect |
 | [spider-token](#spider-token) | 2 | 1012 | token |
+| [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
+| [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-block-restriction-current-power](#attack-block-restriction-current-power) | 1 | 5123 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [behold](#behold) | 1 | 7614 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
-| [damage-taken-this-turn-per-player](#damage-taken-this-turn-per-player) | 1 | 759 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
-| [dethrone](#dethrone) | 1 | 1278 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [discover](#discover) | 1 | 1845 | op, value |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
-| [dragon-6-6-r-flying-token](#dragon-6-6-r-flying-token) | 1 | 1517 | token |
-| [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
-| [exile-until-cast-free](#exile-until-cast-free) | 1 | 4075 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [first-attack-each-turn](#first-attack-each-turn) | 1 | 1278 | trigger_event |
+| [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [fog](#fog) | 1 | 1232 | op |
+| [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -66,15 +59,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
-| [mana-retention](#mana-retention) | 1 | 2381 | static_effect |
 | [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
+| [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
+| [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [pack-tactics](#pack-tactics) | 1 | 6179 | value |
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
@@ -84,6 +77,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
+| [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -97,11 +91,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
-| [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
+| [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
-| [venture](#venture) | 1 | 19644 | engine |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
 ## combat-only-permanent-shield
@@ -360,24 +353,6 @@ Blocks **2** cards.
 
 </details>
 
-## set-creature-types
-
-Blocks **2** cards.
-
-- **(static_effect)** a static effect (layer 4) that REPLACES a permanent's creature types with a printed list while it applies -- "is a Dragon ... (It loses all other creature types.)" -- e.g. `subtypes` on the `set_types` static, or a `set_subtypes` static, read in `characteristics` so that, under its `condition`, the permanent's creature subtypes become exactly ["Dragon"] (Human and Noble removed) while its card types and supertypes are untouched. The same shape covers every 'is a <type> ... loses all other creature types' static (Celebration cards, Ixalan-style flip-free shapeshifts).
-  <br>Why the existing vocabulary won't do: `set_types` replaces only card types and keeps every subtype whose class is still present (characteristics.py layer 0: `subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, 'Creature') in types}`), so `set_types: ["Creature"]` leaves Human Noble in place; `add_subtype` only unions Dragon on top, giving a Human Noble Dragon that a Human or Noble lord would still pump and a Human/Noble filter would still match; the `animate` op's `exact` flag does replace creature types but is a one-shot op with a duration, not a static that switches on and off with the Celebration condition. The rest of the sentence is expressible: the condition is a static `cmp` >= 2 over `{"permanents_entered_this_turn": {"controller": "you", "not_types": ["Land"]}}`, base 4/4 is a `set_pt` static, flying a `grant_keyword` static, and the quoted ability a `grant_ability` static over `grantable_abilities` holding an activated `{R}` pump of Dragons you control -- so only the type replacement is missing, and no partial answer was written.
-- **(static_effect)** a static effect (layer 4) that REPLACES a permanent's creature types with a printed list for as long as it applies -- here `affects: {"attached": true}` making the enchanted creature's creature subtypes exactly ["Elk"] (a Human Wizard loses Human and Wizard) -- e.g. `subtypes` on the `set_types` static, or a `set_subtypes` static, read in `characteristics` beside layer 0. The same need as goddric_cloaked_reveler's gap.
-  <br>Why the existing vocabulary won't do: `set_types: ["Creature"]` with `affects: {attached: true}` removes the other card types (Artifact) but keeps every subtype whose class is still present (characteristics.py layer 0 keeps creature subtypes because Creature remains), and the loader refuses `set_types` with empty `types`, so the subtypes cannot be wiped and rebuilt with `add_subtype` either; `add_subtype` ["Elk"] only unions, giving a Human Wizard Elk that a Human lord still pumps. The `animate` op's `exact` flag does replace creature types, but it is a one-shot op whose duration is only until_end_of_turn or permanent, so it would outlive the Aura. Everything else is expressible: card-level target `enchanted` (Creature), a self_enters `draw` trigger, and attached statics `lose_all_abilities`, `set_colors` ["G"], `set_types` ["Creature"], `add_subtype` ["Elk"], `set_pt` 3/3 -- so only the creature-type replacement is missing and no partial answer was written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kenrith's Transformation** (rank 715) — `kenrith_s_transformation`
-  - Enchanted creature loses all abilities and is a green Elk creature with base power and toughness 3/3. (It loses all other card types and creature types.)
-- **Goddric, Cloaked Reveler** (rank 18527) — `goddric_cloaked_reveler`
-  - Celebration — As long as two or more nonland permanents entered the battlefield under your control this turn, Goddric is a Dragon with base power and toughness 4/4, flying, and "{R}: Dragons you control get +1/+0 until end of turn." (It loses all other creature types.)
-
-</details>
-
 ## spider-token
 
 Blocks **2** cards.
@@ -394,6 +369,24 @@ Blocks **2** cards.
 - **Arachnogenesis** (rank 1232) — `arachnogenesis`
   - Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.
   - Prevent all combat damage that would be dealt this turn by non-Spider creatures.
+
+</details>
+
+## venture
+
+Blocks **2** cards.
+
+- **(engine)** venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, as an op
+  <br>Why the existing vocabulary won't do: The pack tactics condition is the attack_power_this_combat value, but the reference has no venture op and no dungeon objects
+- **(engine)** venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, plus a player-wide static capping how many times each opponent may venture each turn (affects_player: opponent, amount 1), counted per player per turn, with a venture past the cap simply not happening
+  <br>Why the existing vocabulary won't do: The reference has no venture op, no dungeon objects and no venture event or tally; the closest cap, the draw_limit static, counts only cards drawn, and once_each_turn / max_per_turn limit a permanent's own ability or trigger rather than a player's actions. The first sentence alone is expressible as the player_hexproof static, but a partial answer is not allowed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Keen-Eared Sentry** (rank 19644) — `keen_eared_sentry`
+  - Each opponent can't venture into the dungeon more than once each turn.
+- **Intrepid Outlander** (rank 21117) — `intrepid_outlander`
+  - Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, venture into the dungeon. (Enter the first room or advance to the next room.)
 
 </details>
 
@@ -444,6 +437,20 @@ Blocks **1** card.
 
 </details>
 
+## additional-cost-target
+
+Blocks **1** card.
+
+- **(selector)** a target spec declared only when the spell's optional additional cost is paid (the additional-cost twin of `count_if_kicked`): 'If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment'
+  <br>Why the existing vocabulary won't do: `count_if_kicked` keys the extra target on kicker alone; the behold cost is `additional_cost` with `additional_optional`, read by `additional_paid` at resolution, which is after targets are declared (601.2c). Declaring the target unconditionally makes an unpaid cast need, and possibly lack, a third target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hulk's Thunderclap** (rank 20956) — `hulk_s_thunderclap`
+  - Target creature you control deals damage equal to its power to another target creature. If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -486,20 +493,6 @@ Blocks **1** card.
 
 </details>
 
-## behold
-
-Blocks **1** card.
-
-- **(op)** an optional 'behold a <quality>' action: the player either chooses a permanent they control matching a selector (here subtypes [Dragon]) or reveals a matching card from their hand, and the outcome ('if you do') gates the following effects; the chosen/revealed object should be bindable for cards that later refer to it
-  <br>Why the existing vocabulary won't do: No op performs behold. The nearest spelling, `may` with a `condition` of `exists` over a Dragon on the battlefield or in hand, skips the reveal from hand (a real disclosure of hidden information to opponents) and the choice itself; `reveal` reveals but has no 'choose a permanent you control instead' branch and no 'if you do' result to gate `create_token` on. Writing it from those would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sarkhan, Dragon Ascendant** (rank 7614) — `sarkhan_dragon_ascendant`
-  - When Sarkhan enters, you may behold a Dragon. If you do, create a Treasure token. (To behold a Dragon, choose a Dragon you control or reveal a Dragon card from your hand.)
-
-</details>
-
 ## blocked-by-source
 
 Blocks **1** card.
@@ -529,20 +522,6 @@ Blocks **1** card.
 
 </details>
 
-## cast-from-library-top
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide permission to cast spells from the top of your library at their printed mana cost, narrowed by an affects_spells filter over printed characteristics (here types: [Creature] with power >= 4), plus a rider that gives each spell cast through that permission a keyword (haste) until end of turn on the permanent it becomes
-  <br>Why the existing vocabulary won't do: The static cast_from_library_top is Bolas's Citadel only: the loader refuses it without pay_life_instead, so it always swaps the price to life, and it takes no affects_spells filter (casting.py offers any nonland top card) and has no rider for a keyword granted to the spell cast this way. mana_grant reaches the permanent with haste but only from a mana ability's mana, not from a cast permission; free_cast_permission changes the price, not the zone; grant_playable marks only the cards it sees on resolution and is not a standing permission.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thundermane Dragon** (rank 3727) — `thundermane_dragon`
-  - You may cast creature spells with power 4 or greater from the top of your library. If you cast a creature spell this way, it gains haste until end of turn.
-
-</details>
-
 ## cast-timing-restriction
 
 Blocks **1** card.
@@ -556,22 +535,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## combat-damage-batch-per-opponent
-
-Blocks **1** card.
-
-- **(trigger_event)** a batched combat-damage trigger that fires once per damaged opponent ("one or more Dragons you control deal combat damage to an opponent") and binds that single damaged player, so the effects can say "artifact that opponent controls" (a target selector with controller = the bound player) and "each other opponent" (opponents excluding the bound player)
-  <br>Why the existing vocabulary won't do: creatures_deal_combat_damage fires once per damaging player per step with every hit seat folded into one `damaged` list (combat._fire_damage_batch), and `damaged` is not in triggers.EVENT_BINDING_KEYS, so there is neither a per-opponent firing nor a single 'that opponent' binding; deals_combat_damage_to_player is per creature, so two Dragons hitting the same opponent would trigger twice instead of once
-
-<details><summary>Cards waiting on this</summary>
-
-- **Parapet Thrasher** (rank 3729) — `parapet_thrasher`
-  - Whenever one or more Dragons you control deal combat damage to an opponent, choose one that hasn't been chosen this turn —
-  - • Destroy target artifact that opponent controls.
-  - • This creature deals 4 damage to each other opponent.
 
 </details>
 
@@ -633,20 +596,6 @@ Blocks **1** card.
 
 </details>
 
-## damage-taken-this-turn-per-player
-
-Blocks **1** card.
-
-- **(value)** a value reading the GREATEST damage any single opponent was dealt this turn (e.g. {"max_damage_taken_this_turn": "each_opponent"}, or a per-player mode on damage_taken_this_turn), so "if an opponent was dealt 7 or more damage this turn" compares one opponent's total against 7
-  <br>Why the existing vocabulary won't do: damage_taken_this_turn over each_opponent returns the SUM across all opponents (values.py: sum(ledger.damage_taken.get(p) for p in pids)), so 4 damage to each of two opponents wrongly satisfies the 7 threshold in multiplayer; `max` only takes a fixed list of expressions and cannot map over opponents, and wrapping the effect in for_each_player with a per-seat binding would re-offer the free play once per qualifying opponent rather than test a single condition
-
-<details><summary>Cards waiting on this</summary>
-
-- **Spinerock Knoll** (rank 759) — `spinerock_knoll`
-  - {R}, {T}: You may play the exiled card without paying its mana cost if an opponent was dealt 7 or more damage this turn.
-
-</details>
-
 ## dealt-damage-to-player-this-turn
 
 Blocks **1** card.
@@ -675,21 +624,6 @@ Blocks **1** card.
 
 </details>
 
-## dethrone
-
-Blocks **1** card.
-
-- **(trigger_event)** an `attacks` trigger clause that matches only when the creature attacks a PLAYER (not a planeswalker or battle that player controls) whose life is greater than or equal to every other living player's life, checked as part of the trigger event (702.105a), not as an intervening-if re-checked on resolution
-  <br>Why the existing vocabulary won't do: The trigger's `defending` clause takes only you/opponent/any (`triggers._defender_matches`). Writing it as a `condition` cmp of `{life_of: {binding: defender}}` >= `{max_life_of: each_player}` would be an intervening-if (re-checked at resolution, which dethrone is not), and the `defender` binding is the planeswalker's or battle's controller on an attack at a permanent; the ATTACKS event's `attacked_permanent` flag is not in `EVENT_BINDING_KEYS`, so the card would wrongly trigger when attacking the top-life player's planeswalker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Scourge of the Throne** (rank 1278) — `scourge_of_the_throne`
-  - Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
-  - Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.
-
-</details>
-
 ## discard-your-hand
 
 Blocks **1** card.
@@ -701,23 +635,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## discover
-
-Blocks **1** card.
-
-- **(op)** a `discover` op taking N: exile cards from the top of your library until a nonland card with mana value N or less is exiled, then let the player either cast it without paying its mana cost or put it into their hand, and put the rest on the bottom in a random order (701.57); it must bind the discovered card (`as`) so later effects can read it
-  <br>Why the existing vocabulary won't do: `cascade` takes `max_mana_value` but only offers cast-or-bottom (no put-into-hand choice), uses a strict 'less than' bound, and binds nothing; `reveal_until` has `selector`, `destination` and `rest_to_bottom` but no free-cast option, no cast-or-hand choice and no `as` binding; `look_at_top` has `cast_free` but looks at a fixed number of cards rather than exiling until a match
-- **(value)** reading the discovered card's mana value after it has been cast or moved to hand, so the follow-up can compute `minus(const 10, mana_value_of(binding discovered))` as the number of tapped `treasure_token`s, and do nothing when no card was discovered
-  <br>Why the existing vocabulary won't do: `mana_value_of` and `minus` exist but there is no binding to the discovered card for them to read, since no op in reference both performs the discover and records its result
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hit the Mother Lode** (rank 1845) — `hit_the_mother_lode`
-  - Discover 10.
-  - If the discovered card's mana value is less than 10, create a number of tapped Treasure tokens equal to the difference.
 
 </details>
 
@@ -733,34 +650,6 @@ Blocks **1** card.
 - **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
   - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
   - III — Create a 4/4 red Dragon creature token with flying.
-
-</details>
-
-## dragon-6-6-r-flying-token
-
-Blocks **1** card.
-
-- **(token)** a 6/6 red Dragon creature token with flying (e.g. id dragon_6_6_r_flying)
-  <br>Why the existing vocabulary won't do: The trigger itself is expressible (an `attacks` trigger with filter {controller: you, subtypes: [Dragon]} plus create_token), but token_ids holds only dragon_5_5_r_flying, a 5/5 -- substituting it would make a smaller token than the card prints
-
-<details><summary>Cards waiting on this</summary>
-
-- **Utvara Hellkite** (rank 1517) — `utvara_hellkite`
-  - Whenever a Dragon you control attacks, create a 6/6 red Dragon creature token with flying.
-
-</details>
-
-## enters-as-copy
-
-Blocks **1** card.
-
-- **(replacement)** an optional 'as this enters, it becomes a copy of <selector>' replacement (706.9 / 614.1c, no stack, no trigger) whose copy effect carries a duration ('until end of turn', after which it reverts to Cursed Mirror) and a copy exception adding a keyword to the copiable values ('except it has haste')
-  <br>Why the existing vocabulary won't do: The packet's `become_copy` op takes `copying`, `duration`, `except_name` and `objects` but has no keyword exception, and it can only run from a `self_enters` trigger, which uses the stack and lets the artifact exist on the battlefield uncopied first (wrong for an 'as enters' replacement and for anything reading what entered). No trigger event or card-level key in `reference` expresses an enters-as-copy replacement; `grant_keyword` haste after the fact is a layer-6 grant, not a copy exception.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cursed Mirror** (rank 450) — `cursed_mirror`
-  - As this artifact enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste.
 
 </details>
 
@@ -809,20 +698,6 @@ Blocks **1** card.
 
 </details>
 
-## exile-until-cast-free
-
-Blocks **1** card.
-
-- **(op)** an exile-until walk (like cascade) whose stop test is a selector (here: nonland, any mana value), that leaves every walked-past card in exile (no bottoming), offers a free cast of the hit only if a separate condition holds (its mana value <= 8), and on a declined or disallowed cast moves the hit to a fallback destination (hand) -- e.g. reveal_until with exile-as-you-walk, a `cast_free` + `cast_free_if` (selector on the hit) and `else_destination`
-  <br>Why the existing vocabulary won't do: cascade hardcodes the stop test to 'nonland with lesser mana value' and bottoms every exiled card including a declined hit; reveal_until takes a selector stop test but reveals rather than exiles, either bottoms the rest or leaves it in the library (never exiles it), and has no cast_free; look_at_top has cast_free but a fixed depth; chaining reveal_until(destination exile, link self) + play_exiled cannot exile the walked-past lands nor say 'if you don't cast it, put it into your hand'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Breaching Dragonstorm** (rank 4075) — `breaching_dragonstorm`
-  - When this enchantment enters, exile cards from the top of your library until you exile a nonland card. You may cast it without paying its mana cost if that spell's mana value is 8 or less. If you don't, put that card into your hand.
-
-</details>
-
 ## extra-turn
 
 Blocks **1** card.
@@ -838,18 +713,17 @@ Blocks **1** card.
 
 </details>
 
-## first-attack-each-turn
+## faerie-rogue-1-1-b-flying-token
 
 Blocks **1** card.
 
-- **(trigger_event)** "whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life": an `attacks` trigger that fires only on the creature's first attack declaration of the turn regardless of whether the intervening-if passed, plus the same attacked-a-player-with-most-life test as dethrone
-  <br>Why the existing vocabulary won't do: `max_per_turn: 1` counts only queued firings (`triggers._queue`), so if the creature's first attack is against a player who does not have the most life, the cap is not used and a second attack in an extra combat would trigger it, which the printed card forbids; and the most-life defender test has the same planeswalker and binding problem as dethrone. `untap` over `{attacking: true}` and `extra_combat` would cover the effect half
+- **(token)** a 1/1 black Faerie Rogue creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has faerie_1_1_u_flying (blue Faerie, no Rogue) and faerie_dragon_1_1_u_flying, neither of which is a black Faerie Rogue (111.4)
 
 <details><summary>Cards waiting on this</summary>
 
-- **Scourge of the Throne** (rank 1278) — `scourge_of_the_throne`
-  - Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
-  - Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.
+- **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
+  - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
 
 </details>
 
@@ -865,6 +739,20 @@ Blocks **1** card.
 - **Arachnogenesis** (rank 1232) — `arachnogenesis`
   - Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.
   - Prevent all combat damage that would be dealt this turn by non-Spider creatures.
+
+</details>
+
+## gain-control-until-end-of-your-next-turn
+
+Blocks **1** card.
+
+- **(op)** gain_control with a duration that ends at the end of the controller's next turn, and a granted "this permanent can't be sacrificed" with the same duration
+  <br>Why the existing vocabulary won't do: structs.CONTROL_DURATIONS is only permanent and until_end_of_turn; the trigger half (per_player, target controller {"binding": "defender"}) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stilt-Man, Towering Terror** (rank 18564) — `stilt_man_towering_terror`
+  - Whenever one or more Villains you control deal combat damage to a player, gain control of target noncreature, nonland permanent that player controls until the end of your next turn. It gains "This permanent can't be sacrificed" until the end of your next turn.
 
 </details>
 
@@ -1011,20 +899,6 @@ Blocks **1** card.
 
 </details>
 
-## mana-retention
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (affects_player: "you") that exempts unspent mana of the listed colors (here red) from emptying the mana pool at the end of every step and phase (rule 500.4 exception), lasting while the permanent is on the battlefield, across turns
-  <br>Why the existing vocabulary won't do: No static in static_effects touches mana-pool emptying; spend_mana_as_any_color, double_land_mana and add_mana_on_tap change how mana is made or spent, not how long it lasts. The add_mana option persists_until_end_of_turn is per-production, applies to all colors of that one ability's mana, and still empties at end of turn, so it cannot keep red mana from other sources or carry it into later turns
-
-<details><summary>Cards waiting on this</summary>
-
-- **Leyline Tyrant** (rank 2381) — `leyline_tyrant`
-  - You don't lose unspent red mana as steps and phases end.
-
-</details>
-
 ## max-blockers
 
 Blocks **1** card.
@@ -1036,6 +910,34 @@ Blocks **1** card.
 
 - **Challenger Troll** (rank 12001) — `challenger_troll`
   - Each creature you control with power 4 or greater can't be blocked by more than one creature.
+
+</details>
+
+## may-pay-named-cost
+
+Blocks **1** card.
+
+- **(op)** `may` with `pay: {sacrifice: {..., as: name}}` writing the sacrificed creature's snapshot into the effect bindings, so a reflexive_trigger in its effects can read `power_of {binding: name}` -- "you may sacrifice another creature. When you do, ... the sacrificed creature's power"
+  <br>Why the existing vocabulary won't do: op_may pays its cost without a bindings dict, so a cost's `as` names nothing there. Writing the sacrifice as an effect op inside may instead fires the reflexive trigger even when nothing could be sacrificed (a creature under a can't-be-sacrificed effect), which the printed 'When you do' does not. The pack tactics condition itself is attack_power_this_combat
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tiger-Tribe Hunter** (rank 24675) — `tiger_tribe_hunter`
+  - Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may sacrifice another creature. When you do, this creature deals damage equal to the sacrificed creature's power to target creature.
+
+</details>
+
+## merfolk-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 white and blue Merfolk creature token
+  <br>Why the existing vocabulary won't do: No Merfolk token is among the token ids; the behold-or-pay additional cost is expressible with the `behold` cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
+  - When this creature enters, create a 1/1 white and blue Merfolk creature token.
 
 </details>
 
@@ -1129,20 +1031,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## pack-tactics
-
-Blocks **1** card.
-
-- **(value)** a value reading the total power of the creatures you declared as attackers this combat, as they were when declared (a combat ledger of attacker power recorded at declare-attackers), usable as an intervening-if trigger condition `cmp >= 6`
-  <br>Why the existing vocabulary won't do: `attackers_this_turn` counts attacking creatures, not their power. `power_of` with `objects: {attacking: true, controller: you}` sums the LIVE power of creatures still attacking, so it reads differently from the printed card once an attacker is removed from combat, killed or shrunk in response to the trigger: the rulings say the creatures you attacked with still count at their declared power, and the intervening-if recheck on resolution would wrongly fail. It also counts by turn-free board state rather than 'this combat'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Minion of the Mighty** (rank 6179) — `minion_of_the_mighty`
-  - Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may put a Dragon creature card from your hand onto the battlefield tapped and attacking.
 
 </details>
 
@@ -1270,6 +1158,20 @@ Blocks **1** card.
 - **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
   - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
   - III — Create a 4/4 red Dragon creature token with flying.
+
+</details>
+
+## remove-subtype
+
+Blocks **1** card.
+
+- **(op)** an op removing one creature type from a permanent until end of turn (layer 4), leaving its other types and subtypes untouched -- "isn't a Human"
+  <br>Why the existing vocabulary won't do: add_subtype only adds; animate's subtypes add, and animate with exact replaces every subtype, so a Werewolf that had also gained other types would lose them too. The pack tactics line is expressible with attack_power_this_combat, but a partial answer is not allowed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Werewolf Pack Leader** (rank 8384) — `werewolf_pack_leader`
+  - {3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.
 
 </details>
 
@@ -1458,17 +1360,17 @@ Blocks **1** card.
 
 </details>
 
-## trigger-filter-any-of
+## token-zombie-druid-2-2-b
 
 Blocks **1** card.
 
-- **(selector)** an `any_of` disjunction inside a trigger's `filter`, so a `spell_cast` trigger can match a spell that is EITHER noncreature (`not_types: ["Creature"]`) OR has subtype Dragon (`subtypes: ["Dragon"]`), firing once per spell
-  <br>Why the existing vocabulary won't do: TRIGGER_FILTER_KEYS (engine/triggers.py) has no `any_of`, and validate_trigger_filter refuses it; every listed key is ANDed, so one filter can say only 'noncreature Dragon spell'. `any_types` is an or over card types alone and cannot reach a subtype. Two separate spell_cast triggers (one noncreature, one Dragon) would deal 2 damage for a noncreature Dragon spell (a Kindred Dragon instant or sorcery), which is a different card. The selector and static-filter `any_of` already exists (characteristics._matches_printed, selectors.py), so the trigger-side matcher only needs to recurse the same way
+- **(token)** a 2/2 black Zombie Druid creature token
+  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b, a 2/2 black Zombie with no Druid subtype; rule 111.4 makes a token exactly what its effect says. The rest of the card is expressible: leaves_graveyard for the trigger and choose_mode with once_each "turn" for "choose one that hasn't been chosen this turn"
 
 <details><summary>Cards waiting on this</summary>
 
-- **Firespitter Whelp** (rank 4074) — `firespitter_whelp`
-  - Whenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each opponent.
+- **Teval's Judgment** (rank 1802) — `teval_s_judgment`
+  - • Create a 2/2 black Zombie Druid creature token.
 
 </details>
 
@@ -1511,20 +1413,6 @@ Blocks **1** card.
 
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
-
-</details>
-
-## venture
-
-Blocks **1** card.
-
-- **(engine)** venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, plus a player-wide static capping how many times each opponent may venture each turn (affects_player: opponent, amount 1), counted per player per turn, with a venture past the cap simply not happening
-  <br>Why the existing vocabulary won't do: The reference has no venture op, no dungeon objects and no venture event or tally; the closest cap, the draw_limit static, counts only cards drawn, and once_each_turn / max_per_turn limit a permanent's own ability or trigger rather than a player's actions. The first sentence alone is expressible as the player_hexproof static, but a partial answer is not allowed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Keen-Eared Sentry** (rank 19644) — `keen_eared_sentry`
-  - Each opponent can't venture into the dungeon more than once each turn.
 
 </details>
 

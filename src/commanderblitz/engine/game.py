@@ -60,6 +60,7 @@ from .player import PlayerState
 from .player_statics import (
     cast_lock_min_x,
     graveyard_cast_permissions,
+    library_top_cast_permissions,
     own_graveyard_cast_permission,
     player_pays_life_for_black,
     player_spends_mana_as_any_color,
@@ -407,6 +408,26 @@ class Game:
                 targets=tuple(card.targets) + tuple(face.targets),
             )
         from_command = obj.zone is Zone.COMMAND
+        # "If you cast a creature spell this way, it gains haste until end of
+        # turn" -- Thundermane Dragon. Read now, as the spell is proposed
+        # (601.2a), off the permissions of the lane this action took: the
+        # Citadel's life line is `from_library_top`, every other line off the
+        # top is the printed-price permission's. A cost paid below may take the
+        # granting permanent with it, and the cast was still made "this way".
+        # Where two permissions of one lane hold, the player would use the one
+        # whose rider gives the most, so that one is read.
+        cast_gains: frozenset[str] = frozenset()
+        if obj.zone is Zone.LIBRARY:
+            lane = [
+                static
+                for _, static in library_top_cast_permissions(state, pid, oid)
+                if bool(static.get("pay_life_instead")) == action.from_library_top
+            ]
+            cast_gains = max(
+                (frozenset(static.get("cast_gains_keywords") or ()) for static in lane),
+                key=len,
+                default=frozenset(),
+            )
 
         # 601.2c for the one spec legality left empty: "any number of target
         # permanents" is declared here, as a set, rather than picked from a
@@ -893,6 +914,14 @@ class Game:
             # `StackItem.modes_answered`.
             modes_answered=card.cast_time_modes is not None,
         )
+        if cast_gains:
+            # Staged on the spell for the permanent it becomes, in the field
+            # Arena of Glory's mana stages its haste in: `move_object` carries
+            # it across the reset onto the battlefield and nowhere else, and
+            # `_enter_battlefield` grants it until end of turn. After
+            # `push_spell`, so a cast abandoned above leaves the card owing
+            # nothing.
+            state.objects[oid].mana_granted_keywords.update(cast_gains)
         triggers.fire(
             state,
             EventType.SPELL_CAST,

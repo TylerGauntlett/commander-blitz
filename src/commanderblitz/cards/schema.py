@@ -126,6 +126,14 @@ class CostModel(BaseModel):
     #: the player could "activate" the Spirit Guide by exiling something else
     #: and keeping it.
     exile_self_from_hand: bool = False
+    #: "As an additional cost to cast this spell, **behold a Dragon** or pay
+    #: {1}" -- Caustic Exhale. A selector with an optional ``count``: choose
+    #: that many matching permanents you control and/or reveal matching cards
+    #: from your hand. ``zone`` and ``controller`` are implied and refused. The
+    #: spell being cast never beholds itself (601.2a). Nothing moves, so this
+    #: is not ``exile_from_hand`` -- "behold a Kithkin **and exile it**" is a
+    #: different cost.
+    behold: dict[str, Any] | None = None
     #: Usually an integer. A mapping is a value expression evaluated when the
     #: cost is paid -- War Room's "pay life equal to the number of colors in
     #: your commanders' color identity", the only life cost that is not fixed
@@ -338,8 +346,9 @@ class TriggerModel(BaseModel):
     level: int | None = None
     #: For ``attacks``: whom the creature is attacking.  ``controller`` says
     #: whose creature is swinging, which is a different question -- "attacks you"
-    #: needs this one.
-    defending: Literal["you", "opponent", "any"] | None = None
+    #: needs this one. ``most_life`` is dethrone's "attacks the player with the
+    #: most life or tied for most life", and is legal on ``attacks`` only.
+    defending: Literal["you", "opponent", "any", "most_life"] | None = None
     #: "…if it wasn't put onto the battlefield with this ability."  Names the
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
     #: puts permanents onto the battlefield avoids triggering on its own output.
@@ -380,7 +389,9 @@ class TriggerModel(BaseModel):
     #: ordinal that draw must have had for its player this turn.  For
     #: ``spell_cast``: "whenever an opponent casts their second spell each
     #: turn", counted over the spells matching ``filter`` when there is one
-    #: ("their first **noncreature** spell").  Matched where
+    #: ("their first **noncreature** spell").  For ``attacks``: "whenever this
+    #: creature attacks **for the first time each turn**", the creature's own
+    #: count of attacks this turn.  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
     #: tally, which rule 603.4 re-evaluates after the tally has moved on.
     nth: int | None = None
@@ -406,6 +417,12 @@ class TriggerModel(BaseModel):
     #: other card using this event is "to one or more players", and a swing that
     #: connected only with a battle must not fire those.
     or_battle: bool = False
+    #: "…deal combat damage to **a player**" / "…to **an opponent**" -- Parapet
+    #: Thrasher. Fires `creatures_deal_combat_damage` once per damaged seat, with
+    #: "that player" as ``{"binding": "defender"}`` and ``defending`` naming
+    #: whom it may be. The loader refuses it on any other event and beside
+    #: ``or_battle``.
+    per_player: bool = False
     #: For ``leaves_battlefield``: the zones the permanent must have gone *to*.
     #: "When this creature **dies or is put into exile**" -- Kaya the
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
@@ -681,9 +698,16 @@ class AbilityModel(BaseModel):
     #: express: that one lowers a mana cost by an amount and cannot swap the
     #: payment to a different resource entirely.
     #:
-    #: Required on that static, because the permission without its price is
-    #: every spell in the deck castable off the top at its printed cost.
+    #: That static needs this or an `affects_spells` filter, because the
+    #: permission with neither is every spell in the deck castable off the top
+    #: at its printed cost.
     pay_life_instead: bool = False
+    #: "If you cast a creature spell this way, **it gains haste until end of
+    #: turn**" -- Thundermane Dragon, on a `cast_from_library_top` static. The
+    #: keywords the permanent a spell cast through that permission becomes has
+    #: until end of turn, staged on the spell the way a `mana_grant`'s are.
+    #: Refused on every other static.
+    cast_gains_keywords: list[str] = Field(default_factory=list)
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)
@@ -699,9 +723,12 @@ class AbilityModel(BaseModel):
     #: time, and the grant has to be re-read as the game goes on -- a second
     #: ``choose_type`` or a ``change_text`` moves it.
     #:
-    #: Accepted on ``add_subtype`` and refused on every other static, which is
-    #: the only effect that reads this field: a mapping quietly ignored is a
-    #: printed line that does nothing.
+    #: The mapping is accepted on ``add_subtype`` and refused on every other
+    #: static, which is the only effect that resolves it: a mapping quietly
+    #: ignored is a printed line that does nothing. Literal names are also the
+    #: kept type of ``imprint_characteristics`` ("It's still a Shapeshifter")
+    #: and the whole creature-type line of ``set_creature_types`` ("is a
+    #: Dragon … It loses all other creature types").
     subtypes: list[str | dict[str, str]] = Field(default_factory=list)
     types: list[str] = Field(default_factory=list)
     amount: Any = None
@@ -768,6 +795,10 @@ class AbilityModel(BaseModel):
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not
     #: given", never `[]`.
+    #:
+    #: ``mana_retention``: the mana symbols the player does not lose as steps
+    #: and phases end -- ``["R"]`` for Leyline Tyrant, all six (``C`` included)
+    #: for Upwelling. Required and non-empty there.
     colors: list[str] | None = None
     #: ``grant_ability``: which of the granting card's `grantable_abilities` the
     #: permanents this affects get, by index.
@@ -951,6 +982,20 @@ class ReplacementModel(BaseModel):
     #: "**You may** have this enter as a copy", and a copy nobody was asked
     #: about would be a strictly different card.
     copying: dict[str, Any] | None = None
+    #: `self_enters_as_copy`: the copy exception (707.9b), written into the
+    #: copiable values the permanent enters with -- "…except it has **haste and
+    #: dethrone**" (Dack's Duplicate) is ``{"add_keywords": ["haste",
+    #: "dethrone"]}``. ``add_keywords`` is the one key: the keywords are part of
+    #: the copy, not a layer-6 grant on top of it, so the copy has them from the
+    #: moment it arrives and loses them only when the copy itself ends.
+    except_: dict[str, Any] | None = None
+    #: `self_enters_as_copy`: how long the copy lasts. ``permanent`` (the
+    #: default) is Phyrexian Metamorph's -- 706.2 gives a copy no duration, so
+    #: it lasts as long as the permanent does. ``end_of_turn`` is Cursed
+    #: Mirror's "…become a copy of any creature on the battlefield **until end
+    #: of turn**": at cleanup the copy and its exception end together and the
+    #: permanent is its own printed card again.
+    duration: Literal["permanent", "end_of_turn"] = "permanent"
     counter: str | None = None
     #: How many, as a plain integer or a **value expression** -- "enters with a
     #: +1/+1 counter on it for each other Human you control" is

@@ -296,6 +296,9 @@ def move_object(
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
         obj.reset_permanent_state()
+        # 400.7: the object that arrives has chosen no modes this turn, though
+        # it keeps its oid. See `TurnLedger.modes_chosen`.
+        state.turn_ledger.modes_chosen.pop(oid, None)
 
     if as_face is not None:
         # After the reset, which clears `transformed`, and before anything reads
@@ -1353,9 +1356,14 @@ def _enter_battlefield(
             # itself -- which is exactly what a `self_enters` trigger running
             # `become_copy` could not promise.
             #
-            # `copying_until_eot` is False: a copy applied as a permanent enters
-            # lasts as long as the permanent does (706.2 has no duration), and
-            # `clear_until_eot` only takes the timed form.
+            # `duration` defaults to ``permanent``: a copy applied as a
+            # permanent enters lasts as long as the permanent does (706.2 has no
+            # duration). Cursed Mirror's "until end of turn" is the timed form,
+            # which `clear_until_eot` ends -- and with it the exception, so the
+            # artifact is its printed self again.
+            #
+            # ``except_``'s ``add_keywords`` is 707.9b: "…except it has haste"
+            # is written into the copiable values, on `copying_keywords`.
             #
             # The rest of this loop goes on reading the **printed** card's
             # replacements, which is what every card in this family wants:
@@ -1363,7 +1371,9 @@ def _enter_battlefield(
             # copies.
             if copy_on_arrival is not None:
                 obj.copying = copy_on_arrival
-                obj.copying_until_eot = False
+                obj.copying_until_eot = replacement.get("duration") == "end_of_turn"
+                added = (replacement.get("except_") or {}).get("add_keywords")
+                obj.copying_keywords = frozenset(added) if added else None
             continue
         if event == "self_enters_prepared":
             # "This creature **enters prepared**." A characteristic of the

@@ -14,10 +14,12 @@ from typing import TYPE_CHECKING, Any
 from .carddef import CardDef
 from .characteristics import (
     _battlefield_statics,
+    _compare_printed,
     _matches,
     _matches_printed,
     _static_active,
     _static_value,
+    card_in_exile_characteristics,
     chars,
     resolve_chosen_color_list,
     resolve_chosen_colors,
@@ -684,6 +686,41 @@ def player_spends_mana_as_any_color(
             if _matches_printed(card, resolved):
                 return True
     return False
+
+
+def retained_mana_symbols(state: GameState, pid: int) -> frozenset[str]:
+    """The mana symbols this player does not lose as steps and phases end.
+
+    Leyline Tyrant: "You don't lose unspent red mana as steps and phases end."
+    Omnath, Locus of Mana says it of green and Upwelling of every type for every
+    player. The exception 500.4 itself names: the pool empties at the end of
+    each step and phase *unless* an effect says otherwise, and this is that
+    effect. Read by `GameState.empty_all_mana_pools` -- the one place a pool
+    empties as a step ends -- and by nothing else, so "loses all unspent mana"
+    (Mana Short, a player leaving the game) still takes everything.
+
+    Player-wide and continuous: it asks the battlefield at each boundary, so the
+    mana is kept across turns for exactly as long as the permanent stays, and
+    the first boundary after it leaves empties the pool. A union over every
+    active static reaching ``pid``, since two of them keep both sets.
+    """
+    return retained_mana_by_player(state).get(pid, frozenset())
+
+
+def retained_mana_by_player(state: GameState) -> dict[int, frozenset[str]]:
+    """:func:`retained_mana_symbols` for every seat, from one battlefield walk.
+
+    The shape the step boundary wants: it empties every pool at once, and
+    walking the battlefield once per seat at every boundary of every turn is
+    the cost the games playing none of these cards would pay for nothing.
+    """
+    kept: dict[int, set[str]] = {}
+    for obj, static in _active_player_statics(state, "mana_retention"):
+        symbols = static.get("colors") or ()
+        for player in state.players:
+            if _reaches_player(obj, static, player.pid):
+                kept.setdefault(player.pid, set()).update(symbols)
+    return {pid: frozenset(symbols) for pid, symbols in kept.items()}
 
 
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
@@ -1884,19 +1921,59 @@ def graveyard_cast_arrival_ok(state: GameState, static: Mapping[str, Any], obj: 
     return obj.graveyard_from in allowed
 
 
-def library_top_cast_permission(state: GameState, pid: int):
-    """The permanent letting this player cast off the top of their library.
+def library_top_cast_permissions(
+    state: GameState, pid: int, oid: int
+) -> list[tuple[GameObject, Mapping[str, Any]]]:
+    """The permanents letting this player cast ``oid`` off the top of their library.
 
-    Bolas's Citadel. The casting twin of
-    `player_plays_lands_from_library_top`, which is documented as lands only and
-    so grants nothing for a nonland spell -- and unlike it this returns the
-    granting permanent rather than a bool, because the price rides on the same
-    static and `Game._cast` has to read it.
+    Two shapes of one permission, and a board may hold both at once.
+
+    * **Bolas's Citadel**, ``pay_life_instead``: any nonland top card, for life
+      equal to its mana value rather than its mana cost. `Game._cast` charges
+      the life; the line is `Action.from_library_top`.
+    * **Thundermane Dragon**, an ``affects_spells`` filter: "creature spells
+      with power 4 or greater", at their printed cost and every way of paying
+      it -- kicker, an additional cost, Dracogenesis' free line -- so the top
+      card is offered through `_cast_options` like a card in hand.
+      ``cast_gains_keywords`` is its rider, "it gains haste until end of turn".
+
+    The casting twin of `player_plays_lands_from_library_top`, which is
+    documented as lands only and so grants nothing for a nonland spell -- and
+    unlike it this returns the granting statics rather than a bool, because the
+    price and the rider ride on them and `Game._cast` has to read both.
+
+    The filter is matched against the **object** where it sits, not only the
+    face: ``power`` and ``toughness`` are its values with its own
+    characteristic-defining abilities applied (604.3), which are numbers in a
+    library as in every other zone. A card with no power -- a noncreature --
+    never passes a power clause.
     """
+    out: list[tuple[GameObject, Mapping[str, Any]]] = []
+    card = state.card(oid)
     for obj, static in _active_player_statics(state, "cast_from_library_top"):
-        if _reaches_player(obj, static, pid):
-            return obj, static
-    return None
+        if not _reaches_player(obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        if filt is not None:
+            if not filt:
+                # The loader refuses an empty one; `{}` read here would be the
+                # unpriced permission on every spell, so it fails closed.
+                continue
+            resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, obj), obj)
+            printed = {k: v for k, v in resolved.items() if k not in ("power", "toughness")}
+            if not _matches_printed(card, printed):
+                continue
+            if "power" in resolved or "toughness" in resolved:
+                power, toughness, _ = card_in_exile_characteristics(state, state.objects[oid])
+                sizes = {"power": power, "toughness": toughness}
+                if any(
+                    key in resolved
+                    and (sizes[key] is None or not _compare_printed(sizes[key], resolved[key]))
+                    for key in ("power", "toughness")
+                ):
+                    continue
+        out.append((obj, static))
+    return out
 
 
 def free_cast_permission(
@@ -1907,7 +1984,7 @@ def free_cast_permission(
     "You may cast Dragon spells without paying their mana costs" --
     Dracogenesis. Omniscience with a filter on it, and the third casting
     permission beside `graveyard_cast_permissions` and
-    `library_top_cast_permission`: those two say *where* a spell may be cast
+    `library_top_cast_permissions`: those two say *where* a spell may be cast
     from and leave the price alone, and this one says nothing about the zone
     and replaces the price entirely.
 

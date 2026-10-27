@@ -1,0 +1,189 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_per_player_combat_damage.py. Each is a creatures_deal_combat_damage trigger with per_player, fanned out once per damaged seat: t_ppc_draw counts the firings; t_ppc_drain reads 'that player' through the defender binding; t_ppc_others is 'each other opponent', the opponents other than the bound one; t_ppc_shatter targets an artifact the bound player controls. The bodies are t_bcd_wyrm and t_bcd_elf from batched_combat_damage.cards.json.",
+  "cards": [
+    {
+      "id": "t_ppc_draw",
+      "name": "Test Per-Seat Wyrm Flock",
+      "oracle_text": "Whenever one or more Wyrms you control deal combat damage to a player, draw a card.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more Wyrms you control deal combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Wyrm"
+              ]
+            },
+            "per_player": true
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ppc_drain",
+      "name": "Test Per-Seat Wyrm Leech",
+      "oracle_text": "Whenever one or more Wyrms you control deal combat damage to an opponent, that player loses 5 life.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more Wyrms you control deal combat damage to an opponent, that player loses 5 life.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Wyrm"
+              ]
+            },
+            "per_player": true,
+            "defending": "opponent"
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              },
+              "amount": {
+                "const": 5
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ppc_others",
+      "name": "Test Per-Seat Wyrm Spite",
+      "oracle_text": "Whenever one or more Wyrms you control deal combat damage to an opponent, this enchantment deals 4 damage to each other opponent.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more Wyrms you control deal combat damage to an opponent, this enchantment deals 4 damage to each other opponent.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Wyrm"
+              ]
+            },
+            "per_player": true,
+            "defending": "opponent"
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "player": {
+                "not": {
+                  "binding": "defender"
+                },
+                "except": "you"
+              },
+              "amount": {
+                "const": 4
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ppc_shatter",
+      "name": "Test Per-Seat Wyrm Shatter",
+      "oracle_text": "Whenever one or more Wyrms you control deal combat damage to an opponent, destroy target artifact that opponent controls.",
+      "mana_cost": "{3}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more Wyrms you control deal combat damage to an opponent, destroy target artifact that opponent controls.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "you",
+            "filter": {
+              "subtypes": [
+                "Wyrm"
+              ]
+            },
+            "per_player": true,
+            "defending": "opponent"
+          },
+          "effects": [
+            {
+              "op": "destroy",
+              "objects": {
+                "target": "t1"
+              }
+            }
+          ],
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Artifact"
+                ],
+                "controller": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

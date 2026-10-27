@@ -17,6 +17,7 @@ from typing import Any
 from commanderblitz.engine.carddef import (
     Cost,
 )
+from commanderblitz.engine.effects.behold import validate_behold_selector
 from commanderblitz.engine.effects.selectors import validate_selector
 from commanderblitz.engine.effects.values import (
     validate_counter_kind,
@@ -104,6 +105,8 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             )
         exile_hand.pop("count", None)
         validate_selector(exile_hand, f"{where}.cost.exile_from_hand")
+    if model.behold is not None:
+        validate_behold_selector(model.behold, f"{where}.cost.behold")
     if model.exile_self_from_hand and model.exile_self:
         # One source, two zones. Whichever `can_pay` checked first would decide
         # where the card had to be, and the other half would be dead text.

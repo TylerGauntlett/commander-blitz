@@ -1411,7 +1411,15 @@ def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
     return True
 
 
-def add_subtypes(state: GameState, oid: int, subtypes: Sequence[str]) -> tuple[str, ...]:
+def add_subtypes(
+    state: GameState,
+    oid: int,
+    subtypes: Sequence[str],
+    *,
+    timed: bool = False,
+    source: int | None = None,
+    until_player: int | None = None,
+) -> tuple[str, ...]:
     """ "It becomes a Vampire in addition to its other types." Captivating Vampire.
 
     A one-shot with no duration, written onto the object.  The `add_subtype`
@@ -1420,6 +1428,14 @@ def add_subtypes(state: GameState, oid: int, subtypes: Sequence[str]) -> tuple[s
     moment its source leaves, while this stays on the one permanent it was
     pointed at until that permanent changes zones.
 
+    ``timed`` is the same sentence with a clock on it: "**until end of turn**,
+    Sarkhan becomes a Dragon in addition to its other types" (Sarkhan, Dragon
+    Ascendant). The words go into a ``subtype`` `TempEffect` instead, which
+    `clear_until_eot` sweeps at cleanup -- or, with ``until_player``, that
+    seat's next untap step. Not `animate`, which would also set the base power
+    and toughness, and not a granted static, which is an ability that a
+    "loses all abilities" would strip where the printed effect survives.
+
     "In addition to its other types" is the only reading offered, because it is
     what every printed line of this shape says.  Wholesale type *replacement* is
     what `animate` and the `set_types` static are for.
@@ -1427,6 +1443,21 @@ def add_subtypes(state: GameState, oid: int, subtypes: Sequence[str]) -> tuple[s
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return ()
+    if timed:
+        added = tuple(dict.fromkeys(subtypes))
+        if not added:
+            return ()
+        obj.until_eot.append(
+            TempEffect(
+                kind="subtype",
+                subtypes=added,
+                source=source,
+                timestamp=state.alloc_timestamp(),
+                until_player=until_player,
+            )
+        )
+        state.bump_chars()
+        return added
     added = tuple(t for t in subtypes if t not in obj.added_subtypes)
     if not added:
         return ()
@@ -1914,6 +1945,7 @@ def clear_until_eot(state: GameState) -> None:
         if obj.copying_until_eot:
             obj.copying = None
             obj.copying_name = None
+            obj.copying_keywords = None
             obj.copying_until_eot = False
         handbacks.extend(
             (oid, temp)

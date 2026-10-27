@@ -1,0 +1,22 @@
+{
+  "card_id": "tiger_tribe_hunter",
+  "name": "Tiger-Tribe Hunter",
+  "oracle_text": "Trample\nPack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may sacrifice another creature. When you do, this creature deals damage equal to the sacrificed creature's power to target creature.",
+  "blocked_sentences": [
+    "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may sacrifice another creature. When you do, this creature deals damage equal to the sacrificed creature's power to target creature."
+  ],
+  "needs": [
+    {
+      "capability": "may_pay_named_cost",
+      "kind": "op",
+      "what": "`may` with `pay: {sacrifice: {..., as: name}}` writing the sacrificed creature's snapshot into the effect bindings, so a reflexive_trigger in its effects can read `power_of {binding: name}` -- \"you may sacrifice another creature. When you do, ... the sacrificed creature's power\"",
+      "why_existing_wont_do": "op_may pays its cost without a bindings dict, so a cost's `as` names nothing there. Writing the sacrifice as an effect op inside may instead fires the reflexive trigger even when nothing could be sacrificed (a creature under a can't-be-sacrificed effect), which the printed 'When you do' does not. The pack tactics condition itself is attack_power_this_combat"
+    }
+  ],
+  "closest_existing": [
+    "may",
+    "sacrifice",
+    "reflexive_trigger"
+  ],
+  "confidence": "low"
+}

@@ -22,6 +22,8 @@ from ..structs import GraveyardCastGrant
 from ..suspend import cast_for_free
 from ..triggers import fire
 from ..zones import link_exiled, move_object, offer_enters_replacement, offer_riot_choice
+from . import execute
+from .behold import announce_beheld, behold_count, behold_pool
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .registry import register
 from .selectors import (
@@ -1194,6 +1196,42 @@ def op_reveal(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
+@register("behold")
+def op_behold(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may behold a Dragon. **If you do**, create a Treasure token."
+
+    To behold is to choose a permanent you control matching ``objects`` or to
+    reveal a matching card from your hand (`behold.behold_pool`). ``effects``
+    are the "if you do" branch and run only once something was beheld;
+    ``else`` runs on a refusal or when there was nothing to behold.
+
+    ``optional`` is the printed "may". The yes/no is asked only when the pool
+    can pay, so "yes" always means a behold happened; the choice of *which*
+    follows (`ask_objects`, which asks nothing when only one qualifies). Not the
+    ``may`` op with an ``exists`` condition: that never asks which object and
+    never reveals the hand card, and the reveal is the price of the action --
+    an opponent learns the Dragon you are holding.
+
+    ``as`` binds what was beheld, for "the beheld card" later on.
+    """
+    selector = spec.get("objects") or {}
+    count = behold_count(selector)
+    pool = behold_pool(ctx.state, ctx.controller, selector, ctx.source_oid)
+    if len(pool) < count:
+        yield from execute(ctx, spec.get("else") or [])
+        return
+    if spec.get("optional"):
+        prompt = str(spec.get("prompt") or f"{ctx.source_name or 'Behold'}: behold?")
+        if not (yield from ask_yes_no(ctx, prompt, ctx.controller)):
+            yield from execute(ctx, spec.get("else") or [])
+            return
+    picked = yield from ask_objects(ctx, "Behold", pool, count, count, ctx.controller)
+    announce_beheld(ctx.state, ctx.controller, picked, ctx.source_oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = list(picked)
+    yield from execute(ctx, spec.get("effects") or [])
+
+
 @register("look_at_hand")
 def op_look_at_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Look at target player's hand." Private information, to one seat.
@@ -1806,6 +1844,123 @@ def op_cascade(ctx: EffectContext, spec: Mapping[str, Any]):
     # cast -- 702.85a bottoms "the exiled cards", and the one that was cast is
     # on the stack rather than among them.
     _bottom_in_random_order(ctx, pid, exiled)
+
+
+@register("discover")
+def op_discover(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.57a — discover N.
+
+    "Exile cards from the top of your library until you exile a nonland card
+    with mana value N or less. Cast it without paying its mana cost or put it
+    into your hand. Put the rest on the bottom in a random order."
+
+    Cascade's walk, and three differences that are each the printed words
+    rather than a preference, which is why it is an op of its own and not a
+    `cascade` parameter:
+
+    - the bound is **N or less**, where cascade's is strictly *less than* the
+      spell's own mana value; ``amount`` is N and is required.
+    - a card that is not cast goes to its owner's **hand**, where cascade
+      bottoms it with the rest. Declining the free cast is therefore a real
+      choice between the two, and the one question asked is `_offer_free_cast`'s
+      yes/no; a card whose cast is refused (no legal target, a "can't cast")
+      goes to hand too, because 701.57a says "if you don't cast it".
+    - ``as`` records the **discovered card** (701.57c: the one exiled by the
+      scan, whether it was cast or not) as a list of zero or one oids, so a
+      later effect can read it -- Hit the Mother Lode's "if the discovered
+      card's mana value is less than 10" is `mana_value_of` over that binding.
+      An exhausted library binds the empty list, which `exists` reads as no
+      card, so a follow-up guarded by it does nothing.
+    """
+    pid = ctx.controller
+    library = ctx.state.players[pid].library
+    ceiling = evaluate_value(ctx, spec.get("amount"))
+
+    exiled: list[int] = []
+    hit: int | None = None
+    while library:
+        oid = library[0]
+        card = ctx.state.card_of(ctx.state.objects[oid])
+        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="discover")
+        exiled.append(oid)
+        if not card.is_land and card.mana_value <= ceiling:
+            hit = oid
+            break
+
+    if hit is not None:
+        exiled.remove(hit)
+        name = ctx.state.card_of(ctx.state.objects[hit]).name
+        cast = yield from _offer_free_cast(
+            ctx, pid, hit, f"Cast {name} for free? (No puts it into your hand.)"
+        )
+        if not cast:
+            move_object(ctx.state, hit, Zone.HAND, to_player=pid, cause="discover")
+    _bottom_in_random_order(ctx, pid, exiled)
+    if binding := spec.get("as"):
+        ctx.bindings[str(binding)] = [hit] if hit is not None else []
+
+
+#: Where `exile_until`'s ``else_destination`` may send a hit that was not cast.
+#: Only the hand is printed; anything else is refused by the loader rather than
+#: guessed at.
+EXILE_UNTIL_ELSE_DESTINATIONS = frozenset({"hand"})
+
+
+@register("exile_until")
+def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Exile cards from the top of your library until you exile a nonland
+    card. You may cast it without paying its mana cost if that spell's mana
+    value is 8 or less. If you don't, put that card into your hand."
+    — Breaching Dragonstorm.
+
+    Cascade's walk with `reveal_until`'s selector stop test, and the one walk
+    that **leaves what it exiled in exile**. That is the printed sentence: it
+    never says to put the walked-past cards anywhere, so they stay where the
+    scan put them. `cascade` and `discover` both bottom them, and `reveal_until`
+    never moves them out of the library at all -- each is a different card.
+
+    - ``objects`` is the stop test, tested as a card in the library (it is still
+      there when the scan reads it), and is required.
+    - ``cast_free`` offers the hit as a free cast through `_offer_free_cast`.
+    - ``cast_free_if`` is a selector the hit must match, tested in exile, for the
+      cast to be offered at all -- "if that spell's mana value is 8 or less" is
+      ``{"mana_value": {"op": "<=", "value": 8}}``. A hit that fails it is not
+      asked about: a "you may" whose yes is forbidden is no question.
+    - ``else_destination`` is where the hit goes when it is not cast -- declined,
+      disallowed by ``cast_free_if``, or refused by `cast_for_free`. Omitted, it
+      stays in exile with the rest (Wanda's Vision).
+    - ``as`` records the hit, cast or not, as a list of zero or one oids; an
+      exhausted library binds the empty list.
+    """
+    pid = ctx.controller
+    library = ctx.state.players[pid].library
+    selector = spec.get("objects") or {}
+
+    hit: int | None = None
+    walked = 0
+    while library:
+        oid = library[0]
+        found = _matches_library(ctx, oid, selector)
+        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="exile_until")
+        walked += 1
+        if found:
+            hit = oid
+            break
+    ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
+
+    if binding := spec.get("as"):
+        ctx.bindings[str(binding)] = [hit] if hit is not None else []
+    if hit is None:
+        return
+    cast = False
+    condition = spec.get("cast_free_if")
+    if spec.get("cast_free") and (
+        condition is None or _matches_in_zone(ctx, hit, condition, "exile")
+    ):
+        name = ctx.state.card_of(ctx.state.objects[hit]).name
+        cast = yield from _offer_free_cast(ctx, pid, hit, f"Cast {name} for free?")
+    if not cast and (where := spec.get("else_destination")):
+        move_object(ctx.state, hit, DESTINATIONS[str(where)], to_player=pid, cause="exile_until")
 
 
 @register("ripple")

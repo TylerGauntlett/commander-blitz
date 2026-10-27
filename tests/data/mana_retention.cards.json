@@ -1,0 +1,56 @@
+{
+  "_comment": "Shapes for tests/unit/mana/test_mana_retention.py. t_retain_red is Leyline Tyrant's second line on a vanilla body; t_retain_all is Upwelling, every mana symbol for every player; t_retain_rr is a {R}{R} sorcery, so a position with no lands can show that kept red mana still pays for a spell on a later turn.",
+  "cards": [
+    {
+      "id": "t_retain_red",
+      "name": "Test Red Retainer",
+      "oracle_text": "You don't lose unspent red mana as steps and phases end.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You don't lose unspent red mana as steps and phases end.",
+          "effect": "mana_retention",
+          "affects_player": "you",
+          "colors": ["R"]
+        }
+      ]
+    },
+    {
+      "id": "t_retain_all",
+      "name": "Test Upwelling",
+      "oracle_text": "Players don't lose unspent mana as steps and phases end.",
+      "mana_cost": "{3}{G}",
+      "types": ["Enchantment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Players don't lose unspent mana as steps and phases end.",
+          "effect": "mana_retention",
+          "affects_player": "any",
+          "colors": ["W", "U", "B", "R", "G", "C"]
+        }
+      ]
+    },
+    {
+      "id": "t_retain_rr",
+      "name": "Test Double Red Sorcery",
+      "oracle_text": "Add {G}.",
+      "mana_cost": "{R}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R", "G"],
+      "spell_effects": [
+        {"op": "add_mana", "mana": "{G}"}
+      ]
+    }
+  ]
+}

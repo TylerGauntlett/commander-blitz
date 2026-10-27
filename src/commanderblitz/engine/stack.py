@@ -24,7 +24,7 @@ from .characteristics import abilities_of, granted_ability_origin, printed_abili
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_targets, ask_yes_no
-from .effects.modes import _mode_flag, modal_bounds, mode_labels
+from .effects.modes import modal_bounds, mode_labels, record_per_turn, unspent
 from .enums import DecisionKind, Zone
 from .events import EventType
 from .primitives import attach, attach_to_player, merge_permanents
@@ -457,7 +457,9 @@ def _choose_trigger_modes(
     * **"that hasn't been chosen" is filtered here too.** Henrika Domnathi's
       spent modes are struck off by `op_choose_mode`, which only does so on the
       branch that asks -- and it no longer asks, because this answered it. An
-      unfiltered offer would put a spent mode back on the table.
+      unfiltered offer would put a spent mode back on the table. The "this
+      turn" spelling (Parapet Thrasher) is also *spent* here, since this is
+      where 603.3c chooses it.
 
     Returns the chosen indices in **printed** order for `StackItem.modes`;
     700.2e executes them that way and `Ability.specs_for_modes` splits the
@@ -497,9 +499,7 @@ def _choose_trigger_modes(
             bindings=trig.bindings,
         )
     ]
-    source = state.objects.get(trig.source_oid) if trig.source_oid is not None else None
-    if spec.get("once_each") and source is not None:
-        offered = [i for i in offered if _mode_flag(labels[i]) not in source.flags]
+    offered = unspent(state, trig.source_oid, spec, labels, offered)
     # A floor that outruns what is on offer is not an ability that chooses fewer
     # modes -- 601.2b makes it one that cannot choose at all, and 603.3d removes
     # it from the stack. Clamped rather than refused because the two are
@@ -509,7 +509,11 @@ def _choose_trigger_modes(
     picked = yield from ask_mode(
         ctx, "Choose", [labels[i] for i in offered], trig.controller, floor, up_to
     )
-    return tuple(sorted(offered[i] for i in picked))
+    chosen = tuple(sorted(offered[i] for i in picked))
+    # "…that hasn't been chosen **this turn**" is spent here, as the trigger is
+    # put on the stack (603.3c), not when it resolves -- see `record_per_turn`.
+    record_per_turn(state, trig.source_oid, spec, labels, chosen)
+    return chosen
 
 
 def _choose_each_target(

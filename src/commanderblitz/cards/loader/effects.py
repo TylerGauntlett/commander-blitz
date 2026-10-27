@@ -10,8 +10,14 @@ from collections.abc import Mapping
 from typing import Any
 
 from commanderblitz.engine.effects import RECORDING_OPS, known_ops
+from commanderblitz.engine.effects.behold import validate_behold_selector
 from commanderblitz.engine.effects.conditions import validate_condition
-from commanderblitz.engine.effects.ops_cards import DESTINATIONS, LOOK_STEP_KEYS, SEARCHABLE
+from commanderblitz.engine.effects.ops_cards import (
+    DESTINATIONS,
+    EXILE_UNTIL_ELSE_DESTINATIONS,
+    LOOK_STEP_KEYS,
+    SEARCHABLE,
+)
 from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
 from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from commanderblitz.engine.effects.values import (
@@ -178,6 +184,52 @@ def _validate_pay_x(effect: Mapping[str, Any], where: str) -> None:
         # The ceiling is priced off the printed mana; a reduction would make the
         # offered X and the charged X disagree.
         raise DslError(f"{where}.x: an announced X cannot be combined with 'pay.mana_reduction'")
+
+
+def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
+    """``may``'s ``any_amount``: "you may pay any amount of {R}" -- Leyline Tyrant.
+
+    The ``pay`` is **exactly one coloured (or {C}) symbol and nothing else**,
+    because the announced count multiplies it: ``{R}`` at three is
+    ``{R}{R}{R}``. A generic ``{1}`` there is "any amount of mana", which is
+    ``{X}`` and the ``x`` key; ``{R}{R}`` would charge pairs; a life or
+    sacrifice beside it would be multiplied or charged once, and no printing
+    says which.
+
+    ``as`` is required -- the count is the whole point of "deals that much
+    damage", and without it the payment buys a number nothing reads.
+
+    Refused beside ``x`` (two announcements of one payment), ``repeat`` (each
+    yes would rebind the count over the last), ``pay.times`` (a computed
+    multiplier on top of a chosen one) and ``pay.mana_reduction`` (the ceiling
+    is priced off the printed symbol).
+    """
+    spec = effect["any_amount"]
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}.any_amount: must be an object with 'as' and an optional 'prompt'")
+    if unknown := set(spec) - {"as", "prompt"}:
+        raise DslError(
+            f"{where}.any_amount: unsupported keys {sorted(unknown)} (takes 'as', 'prompt')"
+        )
+    if not (isinstance(spec.get("as"), str) and spec["as"]):
+        raise DslError(f"{where}.any_amount.as: a binding name for the amount paid is required")
+    pay_spec = effect["pay"]
+    if extra := {k for k, v in pay_spec.items() if v not in (None, False, 0)} - {"mana"}:
+        raise DslError(
+            f"{where}.any_amount: the payment is one mana symbol and nothing else; "
+            f"'pay' also has {sorted(extra)}"
+        )
+    mana = ManaCost.parse(pay_spec.get("mana"))
+    if mana.generic or mana.x_count or mana.hybrid or sum(mana.colored) != 1:
+        raise DslError(
+            f"{where}.any_amount: 'pay.mana' must be exactly one coloured or {{C}} symbol "
+            f"(\"{{R}}\"), not {pay_spec.get('mana')!r} -- any amount of generic mana is "
+            f"'{{X}}' with 'x'"
+        )
+    if "x" in effect:
+        raise DslError(f"{where}.any_amount: cannot be combined with 'x'")
+    if effect.get("repeat"):
+        raise DslError(f"{where}.any_amount: cannot be combined with 'repeat'")
 
 
 def _validate_enchanted_player(model: CardModel, where: str) -> None:
@@ -766,6 +818,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.reset: a list of binding names to clear before each pass"
             )
 
+    if op == "behold":
+        validate_behold_selector(effect.get("objects"), f"{where}.objects")
+        if "optional" in effect and not isinstance(effect["optional"], bool):
+            raise DslError(f"{where}: behold's 'optional' is a boolean (the printed 'may')")
+        if not effect.get("effects") and not effect.get("else") and "as" not in effect:
+            # A behold nothing reads is a reveal for no reason: the card loads,
+            # shows a Dragon, and the "if you do" it was written for is gone.
+            raise DslError(
+                f"{where}: behold needs 'effects' (the 'if you do'), 'else', or an "
+                f"'as' something later reads"
+            )
+
     if op == "may" and "pay" in effect:
         # "You may pay {2}. If you do, draw a card." Validated through the same
         # CostModel an activated ability's cost uses, so an unknown key here is a
@@ -777,6 +841,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             CostModel.model_validate(effect["pay"])
         except Exception as exc:  # pydantic ValidationError
             raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+        if "any_amount" in effect:
+            _validate_pay_any_amount(effect, where)
         # A payment has to buy *something*, but there are two things it can buy.
         # "You may pay {2}. If you do, draw a card" buys the `effects`. Rhystic
         # Study's "unless that player pays {1}" buys the **absence** of the
@@ -825,6 +891,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(times, f"{where}.pay.times")
             if not effect["pay"].get("mana"):
                 raise DslError(f"{where}.pay: 'times' multiplies the mana cost, and there is none")
+    if "any_amount" in effect and (op != "may" or "pay" not in effect):
+        # Every other op ignores the key, so the card would load and pay nothing.
+        raise DslError(
+            f"{where}: 'any_amount' counts how many times a may's 'pay' is paid, "
+            f"and {op!r} has no 'pay' to count"
+        )
     if "x" in effect and (op != "may" or "pay" not in effect):
         # `may` without a `pay` has no {X} to announce, and every other op
         # ignores the key -- the card would load and draw 0.
@@ -884,14 +956,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # card and one question per card; a run arranged together has to
             # go to one end, so the two sentences cannot share an effect.
             raise DslError(f"{where}: 'any_order' cannot be combined with 'owner_chooses'")
-    if "cast_free" in effect and op != "look_at_top":
+    if "cast_free" in effect and op not in ("look_at_top", "exile_until"):
         # "…without paying its mana cost" is free, and every other op that could
         # plausibly be written with it (`exile`, `search_library`, `reveal`)
         # ignores unknown keys -- so the card would load, resolve, and quietly
         # charge full price for a spell the printing gives away.
         raise DslError(
-            f"{where}: 'cast_free' is a look_at_top key and only it reads the "
-            f"free cast, not {op!r} (see `play_exiled` for a free cast from exile)"
+            f"{where}: 'cast_free' is a look_at_top key (or an exile_until one) and "
+            f"only it reads the free cast, not {op!r} (see `play_exiled` for a "
+            f"free cast from exile)"
         )
     if op == "look_at_hand" and "player" not in effect:
         # Whose hand is the whole ability. Defaulted, Glasses of Urza would
@@ -1174,6 +1247,40 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # ever complain.
     if op == "hideaway" and "amount" not in effect:
         raise DslError(f"{where}: hideaway needs an 'amount' -- hideaway N")
+    # "Discover N" is named for its number too, and here an omitted one is
+    # worse than hideaway's: evaluated as 0 it stops only at a mana-value-0
+    # nonland card, so most scans would exile the whole library and find nothing.
+    if op == "discover" and "amount" not in effect:
+        raise DslError(f"{where}: discover needs an 'amount' -- discover N")
+    if op == "exile_until":
+        # reveal_until's argument: the selector is the "until", and an empty
+        # one stops at the first card exiled.
+        selector = effect.get("objects")
+        if not isinstance(selector, Mapping) or not selector:
+            raise DslError(
+                f"{where}: exile_until needs a non-empty 'objects' -- "
+                f"the selector is the card it stops at"
+            )
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: exile_until takes no 'amount' -- the scan is unbounded"
+            )
+        # A condition on a cast nobody offers would load and gate nothing.
+        if "cast_free_if" in effect:
+            if not effect.get("cast_free"):
+                raise DslError(f"{where}: exile_until 'cast_free_if' needs 'cast_free'")
+            validate_selector(effect["cast_free_if"], f"{where}.cast_free_if")
+        if "else_destination" in effect:
+            if not effect.get("cast_free"):
+                # Without a cast every hit would take the "else" -- that is a
+                # plain destination, and no printed card says it this way.
+                raise DslError(f"{where}: exile_until 'else_destination' needs 'cast_free'")
+            if effect["else_destination"] not in EXILE_UNTIL_ELSE_DESTINATIONS:
+                raise DslError(
+                    f"{where}: unknown exile_until else_destination "
+                    f"{effect['else_destination']!r} "
+                    f"(implemented: {sorted(EXILE_UNTIL_ELSE_DESTINATIONS)})"
+                )
     if op == "cant_attack_player":
         # All three keys are required, and each omission is silent in its own
         # way. Without `attacker`/`defender` the spec defaults to the controller
@@ -1673,6 +1780,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             # how a card silently half-works.
             raise DslError(
                 f"{where}: add_subtype changes subtypes only; use 'animate' for card types"
+            )
+        # "**Until end of turn**, Sarkhan becomes a Dragon…" A misspelled clock
+        # would otherwise read as no clock at all, and a Dragon for the turn
+        # would stay one for good.
+        if effect.get("duration", "permanent") not in (
+            "permanent",
+            "until_end_of_turn",
+            "until_your_next_turn",
+        ):
+            raise DslError(
+                f"{where}: unknown add_subtype duration {effect['duration']!r} "
+                f"(use 'until_end_of_turn', 'until_your_next_turn', or omit it for "
+                f"a type change with no duration)"
             )
     if op == "gain_control":
         # "Gain control of" with nothing named is a card that reads like removal
@@ -2770,6 +2890,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # spent modes would still be offered and the flag written for nothing. And
     # the clause is meaningless there anyway: a spell is a new object each cast,
     # with no record of the last one.
+    # Two lifetimes and nothing else: `true` is "hasn't been chosen" for the
+    # object's life, `"turn"` is "…this turn". Any other truthy value would be
+    # read as the life-long one and run a card out of modes for ever.
+    if op == "choose_mode" and effect.get("once_each") not in (None, False, True, "turn"):
+        raise DslError(
+            f"{where}: 'once_each' is true (\"hasn't been chosen\") or \"turn\" "
+            f"(\"hasn't been chosen this turn\"), got {effect.get('once_each')!r}"
+        )
     if op == "choose_mode" and effect.get("once_each") and ".spell_effects[" in where:
         raise DslError(
             f"{where}: 'once_each' is for a permanent's repeated modal ability; "

@@ -1,0 +1,22 @@
+{
+  "card_id": "werewolf_pack_leader",
+  "name": "Werewolf Pack Leader",
+  "oracle_text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, draw a card.\n{3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.",
+  "blocked_sentences": [
+    "{3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human."
+  ],
+  "needs": [
+    {
+      "capability": "remove_subtype",
+      "kind": "op",
+      "what": "an op removing one creature type from a permanent until end of turn (layer 4), leaving its other types and subtypes untouched -- \"isn't a Human\"",
+      "why_existing_wont_do": "add_subtype only adds; animate's subtypes add, and animate with exact replaces every subtype, so a Werewolf that had also gained other types would lose them too. The pack tactics line is expressible with attack_power_this_combat, but a partial answer is not allowed"
+    }
+  ],
+  "closest_existing": [
+    "add_subtype",
+    "animate",
+    "set_pt"
+  ],
+  "confidence": "high"
+}

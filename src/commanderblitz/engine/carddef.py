@@ -276,6 +276,13 @@ class Cost:
     #: zone, or leaving a Spirit Guide that loads clean and can never be
     #: activated.
     exile_self_from_hand: bool = False
+    #: "As an additional cost to cast this spell, **behold a Dragon** or pay
+    #: {1}" -- Caustic Exhale. A selector (with an optional ``count``) naming
+    #: what the payer must choose among the permanents they control or reveal
+    #: from their own hand; see `effects.behold`. The source is never its own
+    #: beholding (601.2a), and nothing moves: a permanent stays put, a card
+    #: goes back among the hand, and the reveal is the whole price.
+    behold: Mapping[str, Any] | None = None
     #: An integer, or a value expression evaluated at payment time -- see
     #: `costs.life_cost`, which both `can_pay` and `pay` go through so the two
     #: cannot price the same cost differently.
@@ -411,6 +418,7 @@ class Cost:
                 dict(spec["exile_from_hand"]) if spec.get("exile_from_hand") else None
             ),
             exile_self_from_hand=bool(spec.get("exile_self_from_hand")),
+            behold=(dict(spec["behold"]) if spec.get("behold") else None),
             mana_reduction=(
                 dict(spec["mana_reduction"]) if spec.get("mana_reduction") else None
             ),
@@ -469,6 +477,7 @@ class Cost:
             # exile cards out of a hand it was never asked about.
             and not self.exile_self_from_hand
             and self.exile_from_hand is None
+            and self.behold is None
             and not self.pay_life
             and not self.pay_energy
             and self.remove_counters is None
@@ -510,6 +519,9 @@ class Cost:
         if self.exile_from_hand:
             count = self.exile_from_hand.get("count", 1)
             parts.append(f"Exile {count} from your hand")
+        if self.behold:
+            count = self.behold.get("count", 1)
+            parts.append("Behold" if count == 1 else f"Behold {count}")
         if self.pay_life:
             amount = self.pay_life if isinstance(self.pay_life, int) else "X"
             parts.append(f"Pay {amount} life")
@@ -545,7 +557,10 @@ class TriggerSpec:
     #: Who is being attacked, for ``attacks``.  ``controller`` answers *whose
     #: creature* is attacking, which is a different question and not a
     #: substitute: in a pod, "whenever a creature attacks you" must not fire when
-    #: one opponent swings at another.  ``you`` | ``opponent`` | ``any``.
+    #: one opponent swings at another.  ``you`` | ``opponent`` | ``any``, or
+    #: ``most_life`` on ``attacks`` only: dethrone's "attacks **the player with
+    #: the most life or tied for most life**" (702.105a), a player and not a
+    #: planeswalker or battle, asked as part of the event.
     defending: str | None = None
     #: A zone-change ``cause`` this trigger refuses to fire on -- the loop guard
     #: behind "if it wasn't put onto the battlefield with this ability".
@@ -673,6 +688,13 @@ class TriggerSpec:
     #: Named for `or_planeswalker`, the effect-side key with the same job on
     #: `attacking` -- same word, same disjunction, same default.
     or_battle: bool = False
+    #: "…deal combat damage to **a player**" / "…to **an opponent**", read the
+    #: way the rulings read it: once for each player dealt damage, with "that
+    #: player" bound. Only on ``creatures_deal_combat_damage``; `triggers.collect`
+    #: hands the trigger one copy of the batch per seat in its ``hits``, each
+    #: with ``damaged``, ``damagers`` and ``defender`` narrowed to that seat.
+    #: Off by default: "…to one or more players" is one trigger for the batch.
+    per_player: bool = False
     #: For ``leaves_battlefield``: the zone names the permanent must have gone
     #: to -- "when this creature dies **or is put into exile**" is
     #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which
@@ -1725,3 +1747,35 @@ EXALTED_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(EXALTED_TRIGGER)
+
+
+#: Dethrone's trigger (702.105a): "Whenever this creature attacks the player
+#: with the most life or tied for most life, put a +1/+1 counter on it."
+#:
+#: Rules-supplied for exalted's reason: Marchesa, the Black Rose and Dack's
+#: Duplicate *grant* dethrone, so the sentence cannot live on the printed card.
+#: `triggers._candidate_abilities` yields it once for every battlefield
+#: permanent whose derived keywords include dethrone, with that permanent as
+#: the source.
+#:
+#: "The player with the most life" is the `defending: "most_life"` clause, so
+#: it is part of the trigger event and not an intervening-if: the life totals
+#: are compared as attackers are declared and never again, and a counter is put
+#: on the creature even if the defender's life total changes before the
+#: ability resolves.
+DETHRONE_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Dethrone",
+    trigger=TriggerSpec(event="attacks", controller="you", source="self", defending="most_life"),
+    effects=(
+        {
+            "op": "add_counters",
+            "counter": "+1/+1",
+            "amount": {"const": 1},
+            "objects": {"zone": "battlefield", "self_only": True},
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(DETHRONE_TRIGGER)

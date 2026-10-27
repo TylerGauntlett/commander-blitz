@@ -208,6 +208,55 @@ own included, since activating is not casting. The filter takes the spell keys
 `cant_cast_spells` takes (no `controller`: `affects_player` is the payer), and an
 empty filter is a load error rather than an Orrery.
 
+### `cast_from_library_top` — casting off the top of your library
+
+```jsonc
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "pay_life_instead": true }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
+  "cast_gains_keywords": ["haste"] }
+```
+
+Bolas's Citadel: *"You may … cast spells from the top of your library. If you
+cast a spell this way, pay life equal to its mana value rather than pay its mana
+cost."* Thundermane Dragon: *"You may cast creature spells with power 4 or
+greater from the top of your library. If you cast a creature spell this way, it
+gains haste until end of turn."* One permission over the one hidden zone a spell
+may be cast from — the top card and nothing below it — read by
+`player_statics.library_top_cast_permissions` whenever `casting._cast_actions`
+builds the lines.
+
+**It needs a price or a filter.** `pay_life_instead` is the Citadel's swap: the
+mana half is free, `Game._cast` charges the life, and the line is
+`Action.from_library_top`, offered only while the player has that much life
+(118.4). Without it the card is offered every line it would have in hand —
+`_cast_options`, at its printed cost, kicker and additional costs and a
+Dracogenesis free line included, hand-only alternatives still closed by their
+own zone checks — and it needs no flag, because the top card is in no other
+zone. The loader refuses the permission with neither: every spell in the deck
+off the top at its printed cost is Future Sight's line, not either of these.
+
+**`affects_spells` is matched against the object.** `SPELL_FILTER_KEYS` without
+`controller`, plus `power` and `toughness` as comparisons
+(`LIBRARY_TOP_CAST_FILTER_KEYS`). Those two are the card's values where it sits,
+its own characteristic-defining abilities applied
+(`characteristics.card_in_exile_characteristics`, 604.3): a `*/*` counting your
+creatures is a number in a library too. A noncreature has no power and never
+passes the clause.
+
+**`cast_gains_keywords` is the rider**, "it gains haste until end of turn". It is
+staged on the spell after `push_spell` in `GameObject.mana_granted_keywords` —
+Arena of Glory's field, carried across the reset onto the battlefield and
+nowhere else — and granted until end of turn as the permanent enters. Read off
+the lane the action took: a creature cast off the top through a Citadel beside
+the Dragon was not cast "this way" and gains nothing, and a board with both
+offers both prices (601.2b). Refused on every other static.
+
+`tests/unit/casting/test_cast_from_library_top.py` pins the Citadel;
+`test_cast_from_library_top_filter.py` pins the filter, the CDA, the printed
+price, the rider and its wearing off, and the two lanes side by side.
+
 ### `free_cast_permission` — Dracogenesis' standing free cast
 
 ```jsonc
@@ -930,7 +979,7 @@ silent.
 
 ## Player-wide statics
 
-Thirty-nine static effects describe the *player* rather than a characteristic, so
+Some static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -944,7 +993,8 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
-{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "pay_life_instead": true }
 { "kind": "static", "effect": "free_cast_permission", "affects_player": "you",
   "affects_spells": { "subtypes": ["Dragon"] } }
 { "kind": "static", "effect": "grant_warp", "affects_player": "you",
@@ -968,6 +1018,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "cant_cast_spells_from_zones", "affects_player": "opponent", "except_zones": ["hand"] }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
+{ "kind": "static", "effect": "mana_retention", "affects_player": "you", "colors": ["R"] }
 { "kind": "static", "effect": "damage_life_floor", "affects_player": "you", "amount": 1 }
 ```
 
@@ -992,6 +1043,20 @@ fifteen times and every other step-skip once or twice, across three different
 steps *and* two different lifetimes — "skip your **next** untap step" is a
 one-shot like `skip_untap`, not a continuous effect, so a shared `step:`
 parameter would not have carried it anyway.
+
+`mana_retention` is Leyline Tyrant's "You don't lose unspent red mana as steps
+and phases end" — the exception rule 500.4 itself allows. `colors` names the mana
+symbols kept and is required: `["G"]` is Omnath, Locus of Mana, and Upwelling's
+"Players don't lose unspent mana" is all six, `C` included, with
+`affects_player: "any"`. `GameState.empty_all_mana_pools` asks
+`player_statics.retained_mana_by_player` at every boundary, the end of the turn
+included, so the mana crosses into later turns for as long as the permanent stays
+and the first boundary after it leaves empties the pool. It is a fact about the
+player, unlike `add_mana`'s `persists_until_end_of_turn`, which rides on the mana
+one ability made and still runs out at end of turn (Tanuki Transplanter). "Lose
+all unspent mana" (Mana Short) clears the pool without asking it. The "becomes
+colorless instead" sentence (Kruphix, Horizon Stone) is a replacement that
+changes the mana and is not this static.
 
 `double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
 permanents' triggers fire an additional time. Read by `triggers.collect`, which
@@ -2361,11 +2426,11 @@ monarchy once per creature instead of once. `max_per_turn: 1` on top of it is th
 tempting repair and is wrong one step out — `extra_combat` gives a turn a second
 combat, and the printed line triggers again there.
 
-Per damaging **player** rather than per (player, defender) pair, which is where
-it stops being the shape `creatures_attack_player` has one phase earlier: that
-one is per defending seat because its printed clause is "one of your opponents",
-and this one says "to one or more **players**". A seat whose creatures connect
-with two opponents in one step gets one event with both on `damaged`.
+Per damaging **player** rather than per (player, defender) pair, because this
+card says "to one or more **players**": a seat whose creatures connect with two
+opponents in one step gets one event with both on `damaged`. "…to **a player**"
+is the per-seat reading, and is `per_player` --
+see ["… to an opponent, … that opponent"](#-to-an-opponent--that-opponent).
 
 It is fired from `combat.deal_combat_damage`, off the same assignment list
 `_monarch_transfer` reads and for the same reason: 510.2 makes combat damage
@@ -2417,6 +2482,49 @@ on cards that say nothing about battles. With it on, `_fire_damage_batch` fires
 for a battle-only swing. The loader refuses `or_battle` on any other event, since
 `_matches` would ignore it there and the printed half about battles would go
 missing on a card that looked complete.
+
+#### "… to an opponent, … that opponent"
+
+```jsonc
+// Parapet Thrasher -- "Whenever one or more Dragons you control deal combat
+//   damage to an opponent, … • Destroy target artifact that opponent controls.
+//   • This creature deals 4 damage to each other opponent."
+{ "kind": "triggered",
+  "trigger": { "event": "creatures_deal_combat_damage", "controller": "you",
+               "filter": { "subtypes": ["Dragon"] },
+               "per_player": true, "defending": "opponent" },
+  "targets": [ { "id": "t1", "kind": "permanent",
+                 "selector": { "zone": "battlefield", "types": ["Artifact"],
+                               "controller": { "binding": "defender" } } } ],
+  "effects": [ /* … */
+    { "op": "damage", "amount": { "const": 4 },
+      "player": { "not": { "binding": "defender" }, "except": "you" } } ] }
+```
+
+**`per_player: true` fires the trigger once for each player the batch dealt
+damage to**, which is how the rulings read "one or more creatures you control
+deal combat damage to **a player**": a swing that connects with two opponents
+triggers it twice, and each firing is about one seat. The event is the same
+one; `triggers.collect` hands the trigger one copy of it per entry in its `hits`
+payload, with three keys narrowed to that seat:
+
+- `damaged` is that seat alone;
+- `damagers` is the creatures that hit that seat, so the `filter` is asked of
+  them -- a Dragon at one opponent and an Elf at another is one firing, for the
+  Dragon's seat -- and "those Dragons" names only them;
+- `defender` is the seat, so `{"binding": "defender"}` is "that player" (the
+  same spelling `creatures_attack_player` uses), and `defending: "opponent"` is
+  "to **an opponent**".
+
+Two Dragons through to the same seat are still one firing: it is "one or more"
+per seat. "Each other opponent" is `{"not": {"binding": "defender"}, "except":
+"you"}` -- every living seat but the bound one, less you. `"each_opponent"` is
+the near miss and burns the opponent the card already hit.
+
+The loader refuses `per_player` on any other event and beside `or_battle` (each
+copy carries one seat and no battles, so the battle half would never fire), and
+refuses `defending` on this event without it, since the unsplit batch names no
+one seat to compare.
 
 `batched: true` is **not** the repair for any of this and is a no-op on every
 combat-damage event: `_queue` keys the batch off `event.data["batch"]`, which
@@ -3911,6 +4019,32 @@ of exalted: a grant cannot hand it to a Clue. Write the keyword.
 
 A keyword is a characteristic, not a count, so one permanent holding exalted
 twice (printed and granted) triggers once rather than twice.
+
+### Dethrone
+
+    Enraged Revolutionary — "Dethrone."
+    Marchesa, the Black Rose — "Other creatures you control have dethrone."
+
+```jsonc
+"keywords": ["dethrone"]                               // printed on the permanent
+
+{ "kind": "static", "text": "Other creatures you control have dethrone.",
+  "effect": "grant_keyword", "keywords": ["dethrone"],
+  "affects": { "controller": "you", "types": ["Creature"], "exclude_self": true } }
+```
+
+Exalted's shape: a `Keyword` whose content is a rules-supplied trigger,
+`carddef.DETHRONE_TRIGGER`, yielded once for every battlefield permanent whose
+derived keywords include dethrone. The trigger is "whenever this creature
+attacks the player with the most life or tied for most life, put a +1/+1
+counter on it" (702.105a): `attacks` from `source: "self"` with
+`defending: "most_life"`, so the comparison is part of the event, made as the
+creature attacks and never re-checked, and an attack on that player's
+planeswalker or battle does not count.
+
+**The near miss** is the same trigger printed on the card. It plays the same on
+the card that prints it, and a grant cannot hand it to another creature. Write
+the keyword. A permanent holding dethrone twice triggers once, as exalted does.
 
 ## Protection
 
@@ -7236,6 +7370,49 @@ answer), and a non-literal kept subtype.
 name, colour, abilities — and is a different card; a `set_pt` cannot read a
 card in exile at all.
 
+### `set_creature_types` — "it loses all other creature types"
+
+"Celebration — As long as two or more nonland permanents entered the
+battlefield under your control this turn, Goddric is a Dragon with base power
+and toughness 4/4, flying, and … (It loses all other creature types.)"
+
+```jsonc
+{"kind": "static", "effect": "set_creature_types", "affects": {"self_only": true},
+ "subtypes": ["Dragon"],
+ "condition": {"cmp": ">=",
+               "left": {"permanents_entered_this_turn":
+                          {"controller": "you", "not_types": ["Land"]}},
+               "right": {"const": 2}}}
+```
+
+beside `set_pt`, `grant_keyword` and `grant_ability` statics under the same
+condition. The permanent's creature types become exactly the literal
+`subtypes` while the static applies (613.1d, layer 4), and come back the moment
+it stops. Nothing else moves: non-creature subtypes (an Equipment, a Vehicle)
+stay, and so do the card types and supertypes. The named types arrive only on a
+creature (205.3d), so a permanent something has made a land is not a
+"Land — Dragon".
+
+It applies after `set_types`, so an Aura reading "is a green Elk creature (It
+loses all other card types and creature types)" — Kenrith's Transformation — is
+a `set_types: ["Creature"]` and a `set_creature_types: ["Elk"]` side by side,
+and their order on the card does not matter. Grants still union on top: an
+`add_subtype` static or a type recorded "in addition" survives the replacement,
+whatever its timestamp.
+
+The loader refuses an empty list, a mapping entry (the chosen-type leaf belongs
+to `add_subtype`), a subtype that is not a creature type, and a `types` field
+(that is `set_types`' job).
+
+**The near misses.** `set_types: ["Creature"]` keeps every creature type while
+Creature stays; `add_subtype` only adds, so a Human Noble would be a Human
+Noble Dragon; `animate` with `exact` replaces creature types but is a one-shot
+with a duration, not a static that switches with a condition or an Aura.
+
+Like every layer output, the result is in `chars()` and in the effect-side
+selectors ("Dragons you control get +1/+0 until end of turn" sees the
+celebrating Goddric) but not in another static's filter ([ADR 0001](adr/0001-layers-lite.md)).
+
 ### `set_types` now strips orphaned subtypes
 
 205.1b and 613.1d: the subtypes of a card type a permanent no longer has go with
@@ -7424,6 +7601,23 @@ another static's output; a subtype recorded on the object is a pipeline **input*
 rather than an output, so letting it through introduces no such dependency. It
 has to be let through, because Captivating Vampire's own "other Vampire
 creatures you control get +1/+1" is the reason to convert the creature at all.
+
+**With a `duration`** it is the same sentence with a clock — "until end of turn,
+Sarkhan becomes a Dragon in addition to its other types":
+
+```jsonc
+{ "op": "add_subtype", "subtypes": ["Dragon"], "objects": { "self_only": true },
+  "duration": "until_end_of_turn" }
+```
+
+`until_end_of_turn` and `until_your_next_turn` write a `subtype` `TempEffect`
+instead of `added_subtypes`, swept with the pumps and keyword grants; no
+`duration` (or `"permanent"`) is the one-shot above, and any other word is
+refused at load time, because a misread clock is a creature that stays a Dragon
+for good. A static filter sees the timed type too, so a Dragon lord pumps
+Sarkhan for the turn. Two near misses load and are wrong: `animate` sets the
+base power and toughness, and a granted `add_subtype` static is an ability that
+"loses all abilities" strips, where the printed type change survives it.
 
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the
@@ -8034,27 +8228,43 @@ Call Damage Control needs one more thing than this: a target per mode. See
 ## "Choose one that hasn't been chosen"
 
 ```jsonc
-{"op": "choose_mode", "count": 1, "once_each": true, "modes": [...]}
+{"op": "choose_mode", "count": 1, "once_each": true,   "modes": [...]}  // Henrika Domnathi
+{"op": "choose_mode", "count": 1, "once_each": "turn", "modes": [...]}  // "...this turn" -- Parapet Thrasher
 ```
 
 Spent modes are **struck off the offered list**, not offered and then ignored: an
 ability that listed a used mode and did nothing would read as a mode that
 fizzled, and the point of the printed clause is that the card runs out.
 
-Recorded as ordinary `flags` on the source, which gives the right lifetime for
-free — `reset_permanent_state` clears them on a zone change, and 712.13a makes a
-permanent that left and came back a new object that may choose again. Keyed by
-printed *label* rather than index, so reordering a card's modes cannot silently
-re-open a spent one.
+`once_each` takes one of two lifetimes, and each is a different printed card:
+
+- **`true` — "hasn't been chosen"**, for the object's whole life. Recorded as
+  ordinary `flags` on the source: `reset_permanent_state` clears them on a zone
+  change, and 712.13a makes a permanent that left and came back a new object
+  that may choose again.
+- **`"turn"` — "hasn't been chosen this turn"** (Parapet Thrasher, Gala
+  Greeters, Monument to Endurance). Recorded in `TurnLedger.modes_chosen`, which
+  cleanup clears, so every mode is back next turn. `true` is the near miss and
+  runs the card out of modes for good after its first busy turn. The mode is
+  spent **as it is chosen** — for a trigger, as it goes on the stack (603.3c) —
+  so two triggers put on the stack together (two opponents hit) cannot take the
+  same mode. `zones.move_object` drops the record at the zone change that makes
+  the permanent a new object (400.7), though the oid survives it.
+
+Both are keyed by printed *label* rather than index, so reordering a card's modes
+cannot silently re-open a spent one. Any other value is refused at load time.
 
 With one mode left there is nothing to choose between, so `ask_mode` does not
 stop to ask and the survivor is taken without a prompt. When every mode is spent
-the ability still triggers and resolves, and does nothing.
+the ability still triggers and resolves, and does nothing — the printed ruling
+for a fourth Parapet Thrasher trigger in one turn.
 
 **Refused inside a spell's `spell_effects`.** A spell's top-level modes are
 chosen at cast time (601.2b, `Game._ask_modes`), a path this filter never sees —
 the spent modes would still be offered and the flag written for nothing. It is
-meaningless there anyway: a spell is a new object each cast.
+meaningless there anyway: a spell is a new object each cast. **`"turn"` is also
+refused on an activated ability** (Kargan Intimidator), for the same reason:
+602.2b answers its modes in `Game._ask_modes`, which strikes nothing off.
 
 ## One choice across two zones — `union`
 
@@ -8813,7 +9023,11 @@ attack is recorded in `combat.attacking_planeswalker`. It narrows the binding
 inside `count`, and works on any pool (`{"attacking_player": "opponent"}` over the
 battlefield) and in a trigger filter. Out of combat it matches nothing. It is a
 word, not a boolean — `true` is refused, because read as a word it would name
-nobody. `attacking` stays the whom-less boolean. Battles are not attackable in
+nobody. `attacking` stays the whom-less boolean. `"most_life"` is "attacking
+the player with the most life or tied for most life" (Scourge of the Throne's
+intervening-if): the defender passes `GameState.has_most_life`, read live, so
+in a `condition` it is asked again on resolution. Dethrone, which has no "if",
+is the trigger's `defending: "most_life"` instead. Battles are not attackable in
 this engine; when they are, a creature attacking one belongs outside this key too.
 
 ## An additional combat phase
@@ -9805,6 +10019,37 @@ silently *becomes* the card's real maximum.
 it would charge {0}), as is `x` without an `{X}`, without `as`, on any op but a
 `may` with a `pay`, and beside `repeat`, `pay.times` or `pay.mana_reduction`.
 
+### "You may pay any amount of {R}. When you do…"
+
+`any_amount` is the count of a `pay` that is **one coloured symbol** (or
+`{C}`), chosen by the player as the ability resolves; `as` binds it:
+
+```jsonc
+// Leyline Tyrant: when this creature dies, you may pay any amount of {R}.
+//                 When you do, it deals that much damage to any target.
+{ "op": "may", "pay": { "mana": "{R}" },
+  "any_amount": { "as": "paid_red" },
+  "effects": [ { "op": "reflexive_trigger", "ability": "tyrant_burn" } ] }
+// …and the reflexive ability deals { "binding": "paid_red" } to its target.
+```
+
+After the yes the player is asked `choose_x` from **1** up to the most times
+that symbol can be paid (`mana.max_affordable_times`, which asks the solver for
+`{R}` scaled N times, so only red pays it), and exactly that many are charged.
+0 is never offered: the no is how a player pays none, and paying none is not
+paying, so "when you do" cannot fire off {0}. Kept mana counts — a
+`mana_retention` static's red is what the Tyrant's trigger usually spends. No
+card prints a ceiling, so there is no `max`.
+
+The near miss is `x` with `{X}`: X is added as *generic* mana, so a Tyrant
+written that way burns for mana of any colour. `pay.times` is a count the card
+computes, and `repeat` around `{R}` is several payments with no count to bind.
+
+Refused at load: a `pay` that is anything but one non-generic, non-hybrid
+symbol (`{1}` is `{X}` with `x`; `{R}{R}` would charge pairs), any other cost
+beside it, `pay.times` or `pay.mana_reduction`, no `as`, and `any_amount`
+beside `x`, beside `repeat`, or on anything but a `may` with a `pay`.
+
 ### "…unless that player pays {1}"
 
 The same op, with two things moved. `player` says *who is asked* — it has always
@@ -10595,6 +10840,124 @@ take stay on top in order, and no printed "reveal until" leaves them there. The
 loader refuses an `amount` (the scan is unbounded — use `look_at_top` for a
 window) and an empty `objects` (an empty selector matches the first card
 revealed, quietly turning the card into "put the top card into your hand").
+
+## Discover — cascade's walk, N or less, cast or hand
+
+```jsonc
+// Hit the Mother Lode -- "Discover 10. If the discovered card's mana value is
+// less than 10, create a number of tapped Treasure tokens equal to the difference."
+{ "op": "discover", "amount": { "const": 10 }, "as": "discovered" },
+{ "op": "if",
+  "condition": { "all": [
+    { "exists": { "binding": "discovered" } },
+    { "cmp": "<", "left": { "mana_value_of": { "objects": { "binding": "discovered" } } },
+      "right": { "const": 10 } } ] },
+  "then": [ { "op": "create_token", "token": "treasure_token", "tapped": true,
+    "amount": { "minus": [ { "const": 10 },
+      { "mana_value_of": { "objects": { "binding": "discovered" } } } ] } } ] }
+```
+
+Rule 701.57a: exile from the top of your library until a **nonland card with mana
+value N or less** is exiled; you may cast it without paying its mana cost, and if
+you don't, it goes into your hand; the rest go to the bottom in a random order
+(`_bottom_in_random_order`, shared with cascade). `amount` is N and is required —
+the loader refuses a `discover` without one.
+
+The cast-or-hand choice is `_offer_free_cast`'s one yes/no, and "no" is the hand.
+A card whose free cast is refused — no legal target, a "can't cast" in force —
+goes to hand as well, because the rule's alternative is "if you don't cast it".
+
+`as` records **the discovered card** (701.57c), cast or not, as a list of zero or
+one oids. An exhausted library binds the empty list, so a follow-up that reads
+it is guarded by `exists`: unguarded, `mana_value_of` over an empty binding reads
+0 and Hit the Mother Lode would make ten Treasures for finding nothing. Read the
+mana value through the `objects` form, `{"mana_value_of": {"objects": {"binding":
+…}}}`, which sums the pool; the bare `{"binding": …}` form reads a single oid or a
+snapshot and gives 0 for a list.
+
+`cascade` is the near miss and differs on all three counts: its bound is strictly
+*less than* the spell's own mana value, a card it does not cast is bottomed with
+the rest, and it records nothing.
+
+## exile_until — a walk that leaves its cards in exile
+
+```jsonc
+// Breaching Dragonstorm -- "exile cards from the top of your library until you
+// exile a nonland card. You may cast it without paying its mana cost if that
+// spell's mana value is 8 or less. If you don't, put that card into your hand."
+{ "op": "exile_until",
+  "objects": { "not_types": ["Land"] },
+  "cast_free": true,
+  "cast_free_if": { "mana_value": { "op": "<=", "value": { "const": 8 } } },
+  "else_destination": "hand" }
+```
+
+Exile cards from the top of your library one at a time until one matches
+`objects`, the stop test (required and non-empty: an empty one stops at the first
+card). Every card walked past **stays in exile**, because the sentence never
+moves them; `cascade` and `discover` bottom them and `reveal_until` never takes
+them out of the library.
+
+- `cast_free` offers the hit as a free cast (`_offer_free_cast`'s yes/no).
+- `cast_free_if` is a selector the hit must match, tested in exile, before the
+  cast is offered. A hit that fails it is not asked about. It is a condition on
+  the cast, not on the stop: the first nonland card is the hit whatever its mana
+  value, which is what separates Breaching Dragonstorm from `discover 8`. Its
+  `value` is an ordinary value expression, so "less than the number of Mountains
+  you control" is a `count` there.
+- `else_destination` (`"hand"`) is where a hit that was not cast goes: declined,
+  failing `cast_free_if`, or refused by `cast_for_free`. Omitted, it stays in
+  exile with the rest.
+- `as` records the hit, cast or not, as a list of zero or one oids; an exhausted
+  library binds the empty list.
+
+The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
+`cast_free`.
+
+## behold — choose a permanent or reveal a card
+
+```jsonc
+// Sarkhan, Dragon Ascendant -- "When Sarkhan enters, you may behold a Dragon.
+// If you do, create a Treasure token."
+{ "op": "behold", "optional": true,
+  "objects": { "subtypes": ["Dragon"] },
+  "effects": [{ "op": "create_token", "token": "treasure_token" }] }
+
+// Caustic Exhale -- "As an additional cost to cast this spell, behold a Dragon
+// or pay {1}."
+"additional_cost_options": [{ "behold": { "subtypes": ["Dragon"] } }, { "mana": "{1}" }]
+
+// Dispelling Exhale -- "As an additional cost to cast this spell, you may behold
+// a Dragon. … If a Dragon was beheld, …"
+"additional_cost": { "behold": { "subtypes": ["Dragon"] } }, "additional_optional": true
+// …and the spell reads it back with {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+```
+
+To behold is to choose a permanent you control matching the selector **or** reveal
+a matching card from your own hand. Nothing moves: the permanent stays put, the
+card goes back among the hand, and the reveal (the ordinary `reveal` event) is
+the price, because every opponent learns the card. Choosing a permanent reveals
+nothing. The pool is built once, in `effects.behold.behold_pool`, for both forms.
+
+- **The op.** `effects` is the "if you do" branch and `else` the refusal or the
+  empty pool. `optional` is the printed "may". The yes/no is asked only when the
+  pool can pay, so a yes always means a behold happened, and the choice of which
+  object follows (asked only when more than one qualifies). `as` binds what was
+  beheld. A permanent beholding "a Dragon you control" may choose itself.
+- **The cost.** `behold` on a `Cost`: a selector with an optional `count`
+  ("behold three Elementals"). Payable when that many qualify; the spell being
+  cast never beholds itself (601.2a), so a Dragon with a behold cost needs a
+  second Dragon. "Or pay {N}" is `additional_cost_options`; "you may" is
+  `additional_optional`, read back with `additional_paid`.
+
+The near miss is `may` with an `exists` condition over the battlefield and hand:
+it never asks which object and never reveals the card, so it is a cheaper card.
+"Behold a Kithkin **and exile it**" is a different cost: the beheld card moves
+and a later line returns it, and this capability does not say it.
+
+The loader refuses a missing or empty selector, a `zone` or `controller` in it
+(both are fixed by the action), a `count` below 1, and an op with no `effects`,
+`else` or `as` to read the result.
 
 ## Connive
 

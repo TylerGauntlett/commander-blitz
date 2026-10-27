@@ -167,7 +167,9 @@ SELECTOR_KEYS = frozenset(
         #: narrows that binding (or any pool) by also reading
         #: `combat.attacking_permanent`. `"you"`, `"opponent"` or `"any"`
         #: (some player, never a planeswalker), relative to the ability's
-        #: controller.
+        #: controller, or `"most_life"`: the player with the most life or tied
+        #: for it (Scourge of the Throne's "if it's attacking the player with
+        #: the most life").
         "attacking_player",
         #: "Untap all creatures that **attacked this turn**" -- Relentless
         #: Assault, Aggravated Assault, Seize the Day. Not `attacking`, which is
@@ -1038,7 +1040,7 @@ def matches(
     ):
         return False
     if (who := selector.get("attacking_player")) is not None and not attacking_player_matches(
-        combat, oid, str(who), ctx.controller
+        combat, oid, str(who), ctx.controller, state
     ):
         return False
     if "blocked" in selector:
@@ -1118,10 +1120,12 @@ def matches(
 
 
 #: What `attacking_player` may name, relative to the ability's controller.
-ATTACKING_PLAYER_WORDS = ("you", "opponent", "any")
+ATTACKING_PLAYER_WORDS = ("you", "opponent", "any", "most_life")
 
 
-def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -> bool:
+def attacking_player_matches(
+    combat: Any, oid: int, who: str, controller: int, state: Any = None
+) -> bool:
     """Is ``oid`` attacking a **player** -- the one ``who`` names -- rather than a
     planeswalker or battle that player controls?
 
@@ -1134,6 +1138,12 @@ def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -
     so a creature swinging at a battle is not attacking anybody, which is what
     this asks and what 506.2 says.
 
+    ``most_life`` is "if it's attacking **the player with the most life or
+    tied for most life**" (Scourge of the Throne): the defending player passes
+    `GameState.has_most_life`, read live, so an intervening-if written with it
+    is asked again on resolution (603.4) and fails once that player has been
+    drained below somebody else. It needs ``state``; without one it is false.
+
     Shared by `matches` and `triggers.matches_card_filter`, so the effect and
     trigger halves of the filter language cannot disagree about it.
     """
@@ -1144,6 +1154,8 @@ def attacking_player_matches(combat: Any, oid: int, who: str, controller: int) -
         return defender == controller
     if who == "opponent":
         return defender != controller
+    if who == "most_life":
+        return state is not None and state.has_most_life(defender)
     return True
 
 

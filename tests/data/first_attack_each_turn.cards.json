@@ -1,0 +1,38 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_first_attack_each_turn.py. t_fa_scourge is Scourge of the Throne's third ability on a vanilla body: an attacks trigger with nth 1 and an intervening-if on attacking_player most_life.",
+  "cards": [
+    {
+      "id": "t_fa_scourge",
+      "name": "Test First Attack Scourge",
+      "oracle_text": "Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.",
+      "mana_cost": "{4}{R}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "nth": 1,
+            "condition": {
+              "exists": {"zone": "battlefield", "self_only": true, "attacking_player": "most_life"}
+            }
+          },
+          "effects": [
+            {
+              "op": "untap",
+              "objects": {"zone": "battlefield", "types": ["Creature"], "attacking": true, "controller": "any", "count": "all"}
+            },
+            {"op": "extra_combat"}
+          ]
+        }
+      ]
+    }
+  ]
+}

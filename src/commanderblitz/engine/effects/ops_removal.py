@@ -132,6 +132,8 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
             continue
         obj.copying = copied.id
         obj.copying_name = spec.get("except_name")
+        # A new copy effect replaces the old one whole, exception and all.
+        obj.copying_keywords = None
         obj.copying_until_eot = until_eot
     ctx.state.bump_chars()
 

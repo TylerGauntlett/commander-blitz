@@ -31,6 +31,9 @@ RECORDING_OPS = frozenset(
         #: accumulating semantics -- "airbend all other creatures" is one pool
         #: a later line may need to name.
         "airbend",
+        #: What was beheld -- the chosen permanent or the revealed hand card.
+        #: See `ops_cards.op_behold`.
+        "behold",
         #: The one recorder whose binding is a **card name** -- a string, read
         #: back only by a selector's ``{"name": {"binding": …}}``. Tamiyo,
         #: Collector of Tales. See `ops_control.op_choose_card_name`.
@@ -51,6 +54,11 @@ RECORDING_OPS = frozenset(
         #: and then asks what was discarded at all, not what the last player
         #: pitched. See `ops_cards.op_discard`.
         "discard",
+        #: The **discovered card** (701.57c), a list of zero or one oids,
+        #: whether it was cast or put into hand -- Hit the Mother Lode's "if
+        #: the discovered card's mana value is less than 10". Empty when the
+        #: scan ran the library out. See `ops_cards.op_discover`.
+        "discover",
         #: The second recorder whose binding is a **set of seats**, beside
         #: `may`: the players who actually drew at least one card. Cut a Deal's
         #: "each opponent who drew a card this way" -- an opponent with an empty
@@ -59,6 +67,9 @@ RECORDING_OPS = frozenset(
         #: a pool of objects. See `ops_cards.op_draw`.
         "draw",
         "exile",
+        #: The card the walk stopped at, a list of zero or one oids, cast or
+        #: not. See `ops_cards.op_exile_until`.
+        "exile_until",
         "gain_control",
         "join_forces",
         #: The cards a bounded look off the top actually **took** -- "exile the

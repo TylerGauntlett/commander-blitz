@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from ..carddef import Cost, TriggerSpec
 from ..costs import can_pay, mana_sources, pay
-from ..mana import max_affordable_x
+from ..mana import max_affordable_times, max_affordable_x
 from ..player_statics import forced_discard_or_sacrifice_barred
 from ..primitives import change_control
 from ..structs import DelayedTrigger
@@ -17,7 +17,7 @@ from ..zones import snapshot as capture_snapshot
 from . import execute
 from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
-from .modes import _mode_flag, modal_bounds, mode_labels
+from .modes import _mode_flag, modal_bounds, mode_labels, per_turn, record_per_turn, unspent
 from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
@@ -72,6 +72,14 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     the smaller of the ceiling and what they can actually pay -- `ask_x`, the
     same question a spell's X is, so no new decision kind -- and exactly that
     much is charged. See :func:`_announce_x`.
+
+    ``any_amount`` is "you may pay **any amount of {R}**. When you do, …" --
+    Leyline Tyrant. The ``pay`` is one coloured symbol; after the yes the
+    player announces how many times to pay it, from 1 up to what they can
+    actually pay *in that symbol*, and ``any_amount.as`` binds the count for
+    the effects (typically a ``reflexive_trigger``) to read. Paying none is not
+    paying, so 0 is the no and is never offered after the yes. See
+    :func:`_announce_amount`.
     """
 
     players = select_players(ctx, spec.get("player", "you"))
@@ -80,6 +88,7 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     condition = spec.get("condition")
     pay_spec = spec.get("pay")
     x_spec = spec.get("x")
+    amount_spec = spec.get("any_amount")
     cost = cost_from_spec(pay_spec)
     if cost is not None and pay_spec is not None and pay_spec.get("times") is not None:
         # Cumulative upkeep: "pay its upkeep cost for each age counter on it".
@@ -115,8 +124,18 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
         x = 0
         if cost is not None and x_spec is not None:
             x = yield from _announce_x(ctx, chooser, cost, x_spec)
-        if cost is not None:
-            paid = yield from pay(ctx.state, chooser, cost, ctx.source_oid, x=x)
+        charged = cost
+        count = 0
+        if cost is not None and amount_spec is not None:
+            count = yield from _announce_amount(ctx, chooser, cost, amount_spec)
+            if count <= 0:
+                # The board changed between `can_pay` and the question: not
+                # even one is payable now, and paying none is not paying.
+                yield from execute(ctx, spec.get("else") or [])
+                return
+            charged = replace(cost, mana=cost.mana.scaled(count))
+        if charged is not None:
+            paid = yield from pay(ctx.state, chooser, charged, ctx.source_oid, x=x)
             if not paid:
                 # `can_pay` said yes a moment ago, so this is the board having
                 # changed underneath us. "If you do" is false, so the effects
@@ -146,6 +165,8 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
             # After the payment, so it is the X that was *paid*: "if you do,
             # draw X cards" never sees a number nobody paid for.
             ctx.bindings[str(x_spec["as"])] = x
+        if amount_spec is not None:
+            ctx.bindings[str(amount_spec["as"])] = count
         yield from execute(ctx, spec.get("effects") or [])
         if not spec.get("repeat") or not evaluate(ctx, condition):
             return
@@ -190,6 +211,34 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
             ctx, prompt, max(0, offered), chooser, per_point=cost.mana.x_count
         )
     )
+
+
+def _announce_amount(
+    ctx: EffectContext, chooser: int, cost: Cost, amount_spec: Mapping[str, Any]
+):
+    """Ask how many times to pay the one symbol of a "pay any amount of {R}".
+
+    The ceiling is 118.3's and nothing else: what the player can pay in *that
+    symbol*, read by `max_affordable_times` off the pool -- red mana a
+    `mana_retention` static kept counts, which is how Leyline Tyrant is played
+    -- and the sources that can still make it. No card prints a maximum.
+
+    The floor is 1, because the yes was already the "pay" and paying none is
+    not paying: a "when you do" must not fire off {0}. With exactly one
+    payable, `ask_x` does not ask. Read after the yes, as `_announce_x` is,
+    because mana abilities activated in between change the ceiling.
+    """
+
+    pool = ctx.state.players[chooser].mana_pool.spendable()
+    sources = mana_sources(ctx.state, chooser)
+    affordable = max_affordable_times(cost.mana, pool, sources)
+    if affordable <= 0:
+        return 0
+    prompt = str(
+        amount_spec.get("prompt")
+        or f"How much {cost.mana.text or 'mana'} to pay for {ctx.source_name or 'the effect'}?"
+    )
+    return (yield from ask_x(ctx, prompt, affordable, chooser, min_x=1))
 
 
 #: How many creature types a "choose a creature type" prompt will offer.
@@ -570,10 +619,18 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             return
         chooser = picked_players[0]
     source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    # "…that hasn't been chosen **this turn**" (Parapet Thrasher) is
+    # `once_each: "turn"`: the same strike-off, against `TurnLedger.modes_chosen`
+    # instead of the source's flags, so the modes come back next turn.
+    per_turn_modes = per_turn(spec)
     offered = list(range(len(modes)))
     if once_each and source is not None:
-        offered = [i for i in offered if _mode_flag(labels[i]) not in source.flags]
-        if not offered:
+        offered = unspent(ctx.state, ctx.source_oid, spec, labels, offered)
+        # Only when there is still a question to ask. A trigger's modes were
+        # answered as it went on the stack, and under "this turn" they were
+        # spent there too, so the answer being resolved is itself struck off
+        # by now -- returning here would drop the very mode that was chosen.
+        if not offered and not (ctx.modes or ctx.modes_answered):
             # Every mode is spent. The ability still triggered and still
             # resolved; there is simply nothing left to choose.
             return
@@ -608,6 +665,9 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             up_to,
         )
         chosen = [offered[i] for i in picked]
+        # Spent as it is chosen. A pre-answered `ctx.modes` was spent where it
+        # was asked, by `stack._choose_trigger_modes`.
+        record_per_turn(ctx.state, ctx.source_oid, spec, labels, chosen)
     else:
         chosen = yield from ask_mode(ctx, "Choose", labels, chooser, floor, up_to)
 
@@ -615,7 +675,7 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     # order they were clicked in -- which matters the moment one mode's effect
     # depends on another's having happened.
     for index in sorted(chosen):
-        if once_each and source is not None:
+        if once_each and not per_turn_modes and source is not None:
             source.flags.add(_mode_flag(labels[index]))
         yield from execute(ctx, modes[index].get("effects") or [])
 

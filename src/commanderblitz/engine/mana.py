@@ -818,22 +818,41 @@ class ManaPool:
     def total(self) -> int:
         return sum(self.amounts)
 
-    def clear(self, keep_for_turn: int | None = None) -> int:
+    def clear(
+        self,
+        keep_for_turn: int | None = None,
+        keep_symbols: frozenset[str] = frozenset(),
+    ) -> int:
         """Empty the pool, returning how much mana was lost.
 
         ``keep_for_turn`` spares the pips that say they survive that turn's step
         and phase boundaries -- Tanuki Transplanter's "until end of turn, you
         don't lose this mana". ``None`` empties everything, which is what the
         end of the turn does and what every caller wanting a clean pool means.
+
+        ``keep_symbols`` spares every pip of those symbols whatever its turn --
+        Leyline Tyrant's "you don't lose unspent red mana as steps and phases
+        end", a fact about the *player* read off `mana_retention` statics by
+        `GameState.empty_all_mana_pools`. It survives the end of the turn too,
+        because the end of a turn is only the last step ending (500.4). Empty,
+        the default, is every caller that means "lose all unspent mana" (Mana
+        Short), which no retention effect stops.
         """
-        if keep_for_turn is None:
+        if keep_for_turn is None and not keep_symbols:
             lost = sum(self.amounts)
             self.amounts = _zeros()
             self.tags = [[] for _ in range(N_SYMBOLS)]
             return lost
         lost = 0
         for i, pips in enumerate(self.tags):
-            kept = [pip for pip in pips if pip.persists_through_turn == keep_for_turn]
+            if SYMBOLS[i] in keep_symbols:
+                continue
+            kept = [
+                pip
+                for pip in pips
+                if keep_for_turn is not None
+                and pip.persists_through_turn == keep_for_turn
+            ]
             lost += len(pips) - len(kept)
             self.tags[i] = kept
             self.amounts[i] = len(kept)
@@ -1715,6 +1734,32 @@ def max_affordable_x(
         if not probe(x):
             break
         best = x
+    return best
+
+
+def max_affordable_times(
+    cost: ManaCost,
+    pool: ManaPool | Sequence[int],
+    sources: Sequence[ManaSource],
+    cap: int = 100,
+) -> int:
+    """Largest ``N`` for which ``cost`` charged ``N`` times over is payable.
+
+    "You may pay **any amount of {R}**" (Leyline Tyrant) is a player-chosen
+    count of one fixed symbol, which `max_affordable_x` cannot price: ``with_x``
+    adds X as *generic*, so a red-only demand would be met by any mana. This
+    probes `ManaCost.scaled` instead, so {R} at three is ``{R}{R}{R}`` and only
+    red pays it. 0 when not even one is affordable.
+
+    ``cap`` is the engine's guard against a pathological board, not a rule any
+    card makes; the walk stops at the first unaffordable ``N``, so on an
+    ordinary board it costs one solve per point actually payable.
+    """
+    best = 0
+    for n in range(1, cap + 1):
+        if solve_payment(cost.scaled(n).with_x(0), pool, sources) is None:
+            break
+        best = n
     return best
 
 

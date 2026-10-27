@@ -239,6 +239,7 @@ This is the long tail, and where the build order comes from.
 | Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand`. The label also lifts evoke's cheaper-than-printed guard, since a dash may cost more | — |
 | Daybound / nightbound | shipped | `GameState.day_night` — the table's designation, switched by a turn-based action off `TurnLedger.spells_cast`, turning the permanents over with `transform` | `daybound` |
 | Delve | free | `pay_generic_with: "exile_from_graveyard"` — convoke's shape with a different currency | `pay_generic_with` |
+| Dethrone | shipped | `Keyword`, whose trigger `carddef.DETHRONE_TRIGGER` the rules supply once per permanent with the keyword: `attacks` with `defending: "most_life"` (a player, not a planeswalker or battle, with the most life or tied, asked as part of the event), then `add_counters` +1/+1 on itself. A keyword for exalted's reason: Marchesa, the Black Rose grants it — cashed by `test_dethrone.py` | `dethrone` |
 | Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
 | Devour | free | `self_enters` trigger: `sacrifice` with `count: "any"` and `as`, then `add_counters` off the recorded set | `as` |
 | Disturb | shipped | `graveyard_cost` plus `graveyard_cast_transformed` -- the card is the back face from the moment it is cast | `graveyard_cast_transformed` |

@@ -13,10 +13,14 @@ forms::
     {"attacked_this_turn": "you"}          raid, bloodthirst, spectacle,
     {"attackers_this_turn": "you"}         storm and gravestorm -- and how
     {"spells_cast_this_turn": "all"}       many creatures attacked, not seats
+    {"attack_power_this_combat": "you"}  pack tactics: attackers' total power
+                                        as declared, this combat
     {"permanents_entered_this_turn":  WHICH permanents entered the battlefield
         {"controller": "you",           this turn, by subtype and by
          "subtypes": ["Human"]}}        controller-at-entry
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
+    {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
+        "each_opponent"}                this turn, where the plain tally sums
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
@@ -96,6 +100,15 @@ VALUE_KEYS = frozenset(
         # the battlefield, because an attacker that died in combat still
         # attacked and the board has forgotten it.
         "attackers_this_turn",
+        # Pack tactics -- "…if you attacked with creatures with **total power 6
+        # or greater this combat**" (Minion of the Mighty). The power summed as
+        # the attackers were declared and frozen there
+        # (`TurnLedger.attack_power_this_combat`), because the rulings read it
+        # at the declaration: an attacker killed, bounced or shrunk in response
+        # still counts, so the intervening-if recheck on resolution passes.
+        # `power_of` over `attacking: true` is the near miss and reads the live
+        # board. Per combat, not per turn.
+        "attack_power_this_combat",
         # "…if another **Human** entered the battlefield under **your control**
         # this turn" -- Éowyn, Shieldmaiden. The one ledger read that takes a
         # filter rather than a player spec, because the printed sentence asks
@@ -103,6 +116,14 @@ VALUE_KEYS = frozenset(
         # tally would fire the trigger off a land drop.
         "permanents_entered_this_turn",
         "damage_taken_this_turn",
+        # "…if **an opponent** was dealt 7 or more damage this turn" --
+        # Spinerock Knoll. `damage_taken_this_turn` SUMS over its player spec,
+        # so at a pod 4 damage to each of two opponents reads 8 and opens a
+        # threshold no single opponent reached. This asks about ONE player and
+        # takes the greatest -- the existential, `min_life_of`'s argument read
+        # off the damage ledger. "Each opponent was dealt…" would be the
+        # `min_` twin, which no printed card needs yet.
+        "max_damage_taken_this_turn",
         "life_lost_this_turn",
         # "…if you gained life this turn" -- Witch of the Moors. The gain twin
         # of the line above; "did it happen" is a `cmp` against 0.
@@ -497,6 +518,11 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         for p in _players(ctx, expr["attackers_this_turn"]):
             oids |= ledger.creatures_attacked.get(p, set())
         return len(oids)
+    if "attack_power_this_combat" in expr:
+        # Summed per named player: only the active player declares, so "you"
+        # is the whole of pack tactics and an opponent's total reads 0.
+        totals = ledger.attack_power_this_combat
+        return sum(totals.get(p, 0) for p in _players(ctx, expr["attack_power_this_combat"]))
     if "permanents_entered_this_turn" in expr:
         # How many permanents matching the filter have entered the battlefield
         # this turn. Read off the ledger's snapshots rather than the board,
@@ -517,6 +543,7 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             and entry.matches(
                 controllers=controllers,
                 types=spec.get("types") or (),
+                not_types=spec.get("not_types") or (),
                 subtypes=spec.get("subtypes") or (),
                 colors=spec.get("colors") or (),
             )
@@ -524,6 +551,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "damage_taken_this_turn" in expr:
         pids = _players(ctx, expr["damage_taken_this_turn"])
         return sum(ledger.damage_taken.get(p, 0) for p in pids)
+    if "max_damage_taken_this_turn" in expr:
+        pids = _players(ctx, expr["max_damage_taken_this_turn"])
+        return max((ledger.damage_taken.get(p, 0) for p in pids), default=0)
     if "life_lost_this_turn" in expr:
         pids = _players(ctx, expr["life_lost_this_turn"])
         return sum(ledger.life_lost.get(p, 0) for p in pids)
@@ -1000,7 +1030,9 @@ def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = 
 #: What ``{"permanents_entered_this_turn": {...}}`` may filter on. Every clause
 #: is one the snapshot can honestly answer -- `EnteredPermanent` carries exactly
 #: these characteristics, taken as the permanent arrived.
-ENTERED_FILTER_KEYS = frozenset({"controller", "types", "subtypes", "colors", "exclude_self"})
+ENTERED_FILTER_KEYS = frozenset(
+    {"controller", "types", "not_types", "subtypes", "colors", "exclude_self"}
+)
 
 
 def validate_rolled(spec: Any, where: str) -> None:
@@ -1078,7 +1110,7 @@ def validate_entered_filter(spec: Any, where: str) -> None:
             f"{where}.controller: must name one of {sorted(PLAYER_SPEC_NAMES)} "
             f"-- 'under whose control' is part of the printed sentence, got {who!r}"
         )
-    for key in ("types", "subtypes", "colors"):
+    for key in ("types", "not_types", "subtypes", "colors"):
         if key not in spec:
             continue
         names = spec[key]
@@ -1166,6 +1198,13 @@ def validate_value(expr: Any, where: str) -> None:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "counters_on" in expr:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
+    if "attack_power_this_combat" in expr:
+        who = expr["attack_power_this_combat"]
+        if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
+            raise DslError(
+                f"{where}.attack_power_this_combat: needs a player spec, e.g. 'you' "
+                f"(whose attackers' declared power), got {who!r}"
+            )
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(
             expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"

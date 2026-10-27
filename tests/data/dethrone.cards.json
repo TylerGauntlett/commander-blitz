@@ -1,0 +1,39 @@
+{
+  "_comment": "Shapes for tests/unit/keywords/test_dethrone.py. t_dt_rebel carries dethrone as a printed keyword (Enraged Revolutionary); t_dt_marchesa is Marchesa, the Black Rose's grant line on its own.",
+  "cards": [
+    {
+      "id": "t_dt_rebel",
+      "name": "Test Dethrone Rebel",
+      "oracle_text": "Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Warrior"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 2,
+      "toughness": 1,
+      "keywords": ["dethrone"]
+    },
+    {
+      "id": "t_dt_marchesa",
+      "name": "Test Dethrone Marchesa",
+      "oracle_text": "Other creatures you control have dethrone.",
+      "mana_cost": "{1}{U}{B}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Wizard"],
+      "colors": ["U", "B", "R"],
+      "color_identity": ["U", "B", "R"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other creatures you control have dethrone.",
+          "effect": "grant_keyword",
+          "keywords": ["dethrone"],
+          "affects": {"controller": "you", "types": ["Creature"], "exclude_self": true}
+        }
+      ]
+    }
+  ]
+}
