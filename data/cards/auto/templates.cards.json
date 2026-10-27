@@ -74237,6 +74237,89 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "colors": [
+            "R"
+          ],
+          "effect": "mana_retention",
+          "kind": "static",
+          "text": "You don't lose unspent red mana as steps and phases end."
+        },
+        {
+          "effects": [
+            {
+              "any_amount": {
+                "as": "paid_red"
+              },
+              "effects": [
+                {
+                  "ability": "leyline_tyrant_burn",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{R}"
+              },
+              "player": "you",
+              "prompt": "Pay any amount of {R} for Leyline Tyrant to deal that much damage to any target?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, you may pay any amount of {R}.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "paid_red"
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "id": "leyline_tyrant_burn",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any"
+            }
+          ],
+          "text": "When you do, it deals that much damage to any target."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "leyline_tyrant",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Leyline Tyrant",
+      "oracle_text": "Flying\nYou don't lose unspent red mana as steps and phases end.\nWhen this creature dies, you may pay any amount of {R}. When you do, it deals that much damage to any target.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effect": "spells_cant_be_countered",
           "kind": "static",
           "text": "Spells can't be countered."

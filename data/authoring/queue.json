@@ -157092,12 +157092,12 @@
     },
     "Leyline Tyrant": {
       "edhrec_rank": 2381,
-      "gate": "template",
+      "gate": null,
       "name": "Leyline Tyrant",
-      "reason": "no template for: You don't lose unspent red mana as steps and phases end",
+      "reason": "",
       "scryfall_id": "633ebe69-493b-486a-a5b3-5a12418623f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Leyline of Abundance": {

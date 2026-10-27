@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**100 cards** blocked by **83** capabilities.
+**99 cards** blocked by **82** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -68,7 +68,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [pay-any-amount-of-colored-mana](#pay-any-amount-of-colored-mana) | 1 | 2381 | cost |
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
@@ -1032,20 +1031,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## pay-any-amount-of-colored-mana
-
-Blocks **1** card.
-
-- **(cost)** an optional mid-resolution payment of a player-chosen number N of one coloured symbol ({R} N times), announced like may.x and bound with `as` so a reflexive trigger can read N -- 'you may pay any amount of {R}. When you do, it deals that much damage'
-  <br>Why the existing vocabulary won't do: may.x announces the X of a {X} pay, and ManaCost.with_x adds X as generic mana, so red-only cannot be required; pay.times scales a fixed cost by a value the card computes, not one the player chooses, and is refused beside x; repeat paying {R} once per loop is several separate payments with no count to bind and would split the damage into several events. The mana_retention line is expressible (mana_retention static, colors ["R"])
-
-<details><summary>Cards waiting on this</summary>
-
-- **Leyline Tyrant** (rank 2381) — `leyline_tyrant`
-  - When this creature dies, you may pay any amount of {R}. When you do, it deals that much damage to any target.
 
 </details>
 

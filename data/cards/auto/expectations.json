@@ -6651,6 +6651,10 @@
   "leyline_prowler": {
     "zone": "battlefield"
   },
+  "leyline_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lier_disciple_of_the_drowned": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
