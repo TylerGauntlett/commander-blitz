@@ -988,6 +988,16 @@ def can_block(
     # checked on the attacker because the attacker is what has it and the
     # blocker is what has the quality -- the same asymmetry as protection above.
     for source_obj, static in block_restrictions(state, attacker_oid):
+        # "Can't be blocked by more than one creature" (Challenger Troll).
+        # Asked per pair as well as on the whole declaration: once the attacker
+        # has its quota no further blocker can ever make the declaration legal
+        # again, so offering one would only build a block `blocks_valid` refuses.
+        # This blocker is left out of the count, so a requirement asked with
+        # `ignore_existing` does not count the creature against itself.
+        if (cap := static.get("max_blockers")) is not None and (
+            _blocker_count(state, attacker_oid, defender, excluding=blocker_oid) >= cap
+        ):
+            return False
         spec = static.get("blockers")
         if spec is None:
             continue
@@ -1223,7 +1233,40 @@ def blocks_valid(state: GameState, defender: int) -> bool:
             return False
         if blockers and not _all_blockers_present(state, attacker_oid, defender, blockers):
             return False
+        if len(blockers) > _max_blockers(state, attacker_oid):
+            return False
     return True
+
+
+def _blocker_count(
+    state: GameState, attacker_oid: int, defender: int, *, excluding: int | None = None
+) -> int:
+    """How many of ``defender``'s creatures are declared blocking this attacker."""
+    combat = state.combat
+    if combat is None:
+        return 0
+    return sum(
+        1
+        for b in combat.block_order.get(attacker_oid, [])
+        if b != excluding
+        and (obj := state.objects.get(b)) is not None
+        and obj.controller == defender
+    )
+
+
+def _max_blockers(state: GameState, attacker_oid: int) -> float:
+    """The most creatures that may block this attacker; unbounded without a cap.
+
+    Challenger Troll's "can't be blocked by more than one creature", a
+    `block_restriction` with `max_blockers`. Two caps on one creature are both
+    obeyed, so the least of them wins.
+    """
+    caps = [
+        int(static["max_blockers"])
+        for _source, static in block_restrictions(state, attacker_oid)
+        if static.get("max_blockers") is not None
+    ]
+    return min(caps, default=float("inf"))
 
 
 def _all_blockers_present(

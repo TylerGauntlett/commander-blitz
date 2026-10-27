@@ -867,7 +867,11 @@ SPELL_FILTER_KEYS = frozenset(
 #: never on the stack while that permanent is on the battlefield. A commander's
 #: is, because the command zone its eminence static is gathered from is the very
 #: zone it is cast out of.
-SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self"}
+#:
+#: ``power`` is the other: "Creature spells you cast **with power 4 or greater**
+#: cost {2} less" (Goreclaw). The spell's power as it is cast -- printed, or a
+#: `*/*`'s CDA -- read by `player_statics.spell_cost_reduction` too.
+SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self", "power"}
 
 #: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
 #:
@@ -1333,6 +1337,8 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: written once when the seat is created, so it is a pipeline input on stronger
 #: terms than a life total; `sum` adds leaves that are all inputs, so it is safe
 #: for the reason `times` is.
+#: `greatest_commander_mana_value` is Tangleweave Armor's "the greatest mana value
+#: among your commanders", read off the printed cards wherever they are.
 STATIC_VALUE_KEYS = (
     frozenset(
         {
@@ -1344,6 +1350,7 @@ STATIC_VALUE_KEYS = (
             "counters_on",
             "permanents_entered_this_turn",
             "starting_life_of",
+            "greatest_commander_mana_value",
         }
     )
     | STATIC_LIFE_KEYS

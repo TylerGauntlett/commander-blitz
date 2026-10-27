@@ -342,3 +342,72 @@ class TestTheLoaderRefusesTheCardsThatWouldBeWrong:
                     {"op": "reveal_until", "objects": CREATURE, "destination": "the_moon"}
                 )
             )
+
+    def test_tapped_needs_the_battlefield(self):
+        """A card in a hand or a graveyard is never tapped, so the key would
+        load and say nothing."""
+        with pytest.raises(DslError, match="reveal_until 'tapped'"):
+            compile_card(
+                self._card({"op": "reveal_until", "objects": CREATURE, "tapped": True})
+            )
+
+    def test_tapped_on_the_battlefield_loads(self):
+        compile_card(
+            self._card(
+                {
+                    "op": "reveal_until",
+                    "objects": {"types": ["Land"]},
+                    "destination": "battlefield",
+                    "tapped": True,
+                }
+            )
+        )
+
+
+class TestTheLandArrivesTapped:
+    """Clifftop Lookout -- "reveal cards from the top of your library until you
+    reveal a land card. Put that card onto the battlefield **tapped**."
+
+    Without the key the land would arrive untapped and could be tapped for mana
+    the turn the Lookout entered, which is a strictly better card.
+    """
+
+    LAND = {"types": ["Land"]}
+
+    def _found(self, game):
+        return [
+            o
+            for o in game.state.battlefield_objects(0)
+            if o.def_id == FOREST and o.oid not in self.before
+        ]
+
+    def test_the_found_land_enters_tapped(self, builder):
+        game, src = board(builder, [BEAR, FOREST, GIANT], battlefield=[ELF])
+        self.before = set(game.state.battlefield)
+
+        run(
+            game,
+            {"op": "reveal_until", "objects": self.LAND, "destination": "battlefield",
+             "tapped": True},
+            src,
+        )
+
+        found = self._found(game)
+        assert len(found) == 1
+        assert found[0].tapped
+        assert found[0].controller == 0
+        assert library_ids(game) == [GIANT, BEAR]
+
+    def test_without_the_key_it_enters_untapped(self, builder):
+        game, src = board(builder, [BEAR, FOREST], battlefield=[ELF])
+        self.before = set(game.state.battlefield)
+
+        run(
+            game,
+            {"op": "reveal_until", "objects": self.LAND, "destination": "battlefield"},
+            src,
+        )
+
+        found = self._found(game)
+        assert len(found) == 1
+        assert not found[0].tapped

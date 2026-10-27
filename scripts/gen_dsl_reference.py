@@ -620,6 +620,12 @@ CONDITIONS: dict[str, Entry] = {
     "zone_is": ("The source is in the named zone.", None),
 }
 
+#: Static-only value leaves, which the effect-side `VALUES` does not have.
+STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "greatest_commander_mana_value": (
+        "The greatest printed mana value among your commanders, wherever they are.", None),
+}
+
 STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
     "counters": ("The source has (or lacks) counters of a kind.", None),
     "is_attached": ("The source is attached to something.", None),
@@ -1204,7 +1210,8 @@ def families() -> list[Family]:
             "What a static's \"as long as …\" `condition` may ask.",
         ),
         Family(
-            "Static values", H_STATIC_MAGNITUDE, tuple(sorted(STATIC_VALUE_KEYS)), VALUES.get,
+            "Static values", H_STATIC_MAGNITUDE, tuple(sorted(STATIC_VALUE_KEYS)),
+            lambda name: VALUES.get(name) or STATIC_VALUE_EXTRAS.get(name),
             "The subset of the value language a static's magnitude (`power`, `amount`, …) "
             "may use.",
         ),

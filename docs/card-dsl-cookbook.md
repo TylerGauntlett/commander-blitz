@@ -3826,9 +3826,15 @@ quality it names is a parameter:
 // Tromokratis: can't be blocked unless all creatures defending player controls block it
 { "kind": "static", "effect": "block_restriction", "affects": { "self_only": true },
   "require_all": true }
+
+// Challenger Troll: each creature you control with power 4 or greater can't be
+// blocked by more than one creature
+{ "kind": "static", "effect": "block_restriction",
+  "affects": { "controller": "you", "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
+  "max_blockers": 1 }
 ```
 
-The two forms are evaluated at different moments and neither is the other with a
+The forms are evaluated at different moments and none is another with a
 parameter. `blockers` is a **per-pair** question — is *this* creature allowed to
 block? — and is asked in `combat.can_block`, beside flying and protection.
 `require_all` cannot be answered per pair at all, because whether one block is
@@ -3851,8 +3857,16 @@ fire.
 still makes the block illegal, which is why Tromokratis is close to unblockable
 and is the entire point of the card.
 
-A `block_restriction` carrying neither field is refused at load time — an
-evasion ability that evades nothing, which would load perfectly cleanly.
+`max_blockers` is a count, menace's mirror: the most creatures that may block the
+attacker, a positive integer. `blocks_valid` refuses a declaration over the cap,
+and `can_block` refuses one more blocker once the attacker has its quota, since
+no later choice could make that declaration legal again. Two caps on one
+creature are both obeyed, so the least wins. "Can't be blocked by more than one"
+is not `blockers` refusing everyone, which would be "can't be blocked".
+
+A `block_restriction` carrying none of the three fields, or more than one, is
+refused at load time — an evasion ability that evades nothing would load
+perfectly cleanly.
 
 ### Skulk
 
@@ -10827,6 +10841,11 @@ written, and one large enough to fake "until" would reveal and randomize the
 whole library on every resolution. And it offers *every* match inside that window
 and lets the player take the best one; "until you reveal" takes the **first**,
 which is why `reveal_until` asks nothing and is not a generator.
+
+`tapped: true` puts the card it stops at onto the battlefield tapped — Clifftop
+Lookout's "until you reveal a land card. Put that card onto the battlefield
+tapped" — and the loader refuses it beside any other `destination`, where a card
+is never tapped.
 
 Running the library out with no match is an outcome and not an error: everything
 revealed goes to the bottom in a random order and nothing reaches `destination`.

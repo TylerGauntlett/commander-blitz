@@ -3011,10 +3011,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # Exactly one of the two forms, because they are evaluated at different
         # moments and a static carrying neither is an evasion ability that
         # evades nothing -- which loads clean and shows nothing on the board.
-        if (model.blockers is None) == (not model.require_all):
+        forms = (
+            (model.blockers is not None) + bool(model.require_all) + (model.max_blockers is not None)
+        )
+        if forms != 1:
             raise DslError(
                 f"{where}: block_restriction needs exactly one of 'blockers' "
-                f"(a filter on the would-be blocker) or 'require_all'"
+                f"(a filter on the would-be blocker), 'require_all' or 'max_blockers'"
+            )
+        # "More than one" is the printed floor; zero would be "can't be
+        # blocked", which is a different static and a different card.
+        if model.max_blockers is not None and (
+            isinstance(model.max_blockers, bool) or model.max_blockers < 1
+        ):
+            raise DslError(
+                f"{where}: block_restriction 'max_blockers' is a positive integer, "
+                f"got {model.max_blockers!r}"
             )
         if model.blockers is not None:
             unknown = set(model.blockers) - STATIC_FILTER_KEYS
@@ -3024,9 +3036,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
             _check_owner_key(model.blockers, f"{where}.blockers")
-    elif model.blockers is not None or model.require_all:
+    elif model.blockers is not None or model.require_all or model.max_blockers is not None:
         raise DslError(
-            f"{where}: 'blockers'/'require_all' only mean anything on a "
+            f"{where}: 'blockers'/'require_all'/'max_blockers' only mean anything on a "
             f"block_restriction static, not on {model.effect!r}"
         )
     if model.effect == "double_triggers":
@@ -4637,6 +4649,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["blockers"] = dict(model.blockers)
     if model.require_all:
         static["require_all"] = True
+    if model.max_blockers is not None:
+        static["max_blockers"] = model.max_blockers
     if model.effect == "ward":
         # Pruned of the fields the model dump carries unset, because this
         # mapping is also what `carddef.ward_ability` keys its intern table on:

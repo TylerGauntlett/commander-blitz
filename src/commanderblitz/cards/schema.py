@@ -812,6 +812,10 @@ class AbilityModel(BaseModel):
     #: declaration rather than per pair, so it cannot be a ``blockers``
     #: filter.
     require_all: bool = False
+    #: ``block_restriction``: Challenger Troll's "can't be blocked by more than
+    #: one creature" -- the most creatures that may block it. A count, judged
+    #: on the declaration, so neither of the two forms above.
+    max_blockers: int | None = None
     #: ``attack_tax``: the tax also prices an attack on a planeswalker the
     #: static's controller controls -- "creatures can't attack you **or
     #: planeswalkers you control** unless ..." (Archangel of Tithes, Sphere of

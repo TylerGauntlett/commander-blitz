@@ -1241,6 +1241,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown reveal_until destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+        # "Put that card onto the battlefield tapped." Anywhere else a card is
+        # never tapped, so the key would load and say nothing.
+        if "tapped" in effect and (
+            not isinstance(effect["tapped"], bool) or destination != "battlefield"
+        ):
+            raise DslError(
+                f"{where}: reveal_until 'tapped' is a boolean and needs "
+                f"destination 'battlefield'"
+            )
     # Same argument as look_at_top, and the printed keyword is *named* for the
     # number -- "hideaway 4". Defaulted it would look at one card, and the
     # ability that later plays it would still work, so nothing downstream would

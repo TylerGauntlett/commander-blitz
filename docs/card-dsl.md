@@ -1741,6 +1741,12 @@ card-level `cost_reduction` and does not count it in a static's `count`. That
 divergence is deliberate and is pinned by
 `tests/unit/statics/test_static_power_filter.py`.
 
+A `spell_cost_reduction`'s `affects_spells` takes `power` too, and there it is
+the power of the **spell being cast** — Goreclaw's "creature spells you cast with
+power 4 or greater cost {2} less": printed, or what a `*/*`'s characteristic-defining
+`set_pt` says in hand (604.3), never its printed 0. It is the reduction's key
+alone; no other `affects_spells` reads it.
+
 Off the battlefield the key is refused at load time with the rest of the board
 state: a card in a graveyard has a printed P/T, but no printed line asks a
 counting filter about it yet, and `static_zone_filter_keys` stays the list of
@@ -4731,6 +4737,7 @@ smaller than the effect-side `value_keys`:
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
+| `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
 | `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
 
 `permanents_entered_this_turn` is the leaf whose near miss is worst. Kinbinding

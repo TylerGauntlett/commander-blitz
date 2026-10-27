@@ -1510,6 +1510,23 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             state.card_of(obj).mana_cost.symbols_of(color)
             for obj in _matching_objects(state, spec.get("objects") or {}, source)
         )
+    if "greatest_commander_mana_value" in expr:
+        # Tangleweave Armor: "+X/+X, where X is the greatest mana value among
+        # your commanders." Read off the commander's printed card wherever it is
+        # -- the command zone most of the game -- which no selector reaches, and
+        # 0 for a seat with no commander. A printed mana cost is a pipeline
+        # input on `mana_symbols`' terms, so the anthem cannot come to depend on
+        # another static's output.
+        pids = _static_players(state, source, expr["greatest_commander_mana_value"])
+        return max(
+            (
+                state.card_of(obj).mana_value
+                for pid in pids
+                for oid in state.commanders_of(pid)
+                if (obj := state.objects.get(oid)) is not None
+            ),
+            default=0,
+        )
     if "min_life_of" in expr:
         pids = _static_players(state, source, expr["min_life_of"])
         return min_life([state.players[p].life for p in pids])

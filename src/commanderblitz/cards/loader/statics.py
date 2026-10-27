@@ -403,6 +403,14 @@ def _validate_static_value(value: Any, where: str) -> None:
                 f"{where}.starting_life_of: a static can only ask about 'you' "
                 f"(one seat's starting life total, rule 103.4), got {who!r}"
             )
+    if "greatest_commander_mana_value" in value:
+        # "Among your commanders": one seat's, for `starting_life_of`'s reason.
+        who = value["greatest_commander_mana_value"]
+        if who != "you":
+            raise DslError(
+                f"{where}.greatest_commander_mana_value: a static can only ask "
+                f"about 'you' (your commanders), got {who!r}"
+            )
     if "permanents_entered_this_turn" in value:
         # Kinbinding: "Creatures you control get +X/+X, where X is the number of
         # creatures that entered the battlefield under your control this turn."
