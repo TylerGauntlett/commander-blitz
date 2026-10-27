@@ -4071,6 +4071,9 @@
   "fireshrieker": {
     "zone": "battlefield"
   },
+  "firespitter_whelp": {
+    "zone": "battlefield"
+  },
   "first_sliver_s_chosen": {
     "battlefield_count": 33,
     "granted": {

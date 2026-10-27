@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**101 cards** blocked by **86** capabilities.
+**100 cards** blocked by **85** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -94,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
-| [trigger-filter-any-of](#trigger-filter-any-of) | 1 | 4074 | selector |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
@@ -1403,20 +1402,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## trigger-filter-any-of
-
-Blocks **1** card.
-
-- **(selector)** an `any_of` disjunction inside a trigger's `filter`, so a `spell_cast` trigger can match a spell that is EITHER noncreature (`not_types: ["Creature"]`) OR has subtype Dragon (`subtypes: ["Dragon"]`), firing once per spell
-  <br>Why the existing vocabulary won't do: TRIGGER_FILTER_KEYS (engine/triggers.py) has no `any_of`, and validate_trigger_filter refuses it; every listed key is ANDed, so one filter can say only 'noncreature Dragon spell'. `any_types` is an or over card types alone and cannot reach a subtype. Two separate spell_cast triggers (one noncreature, one Dragon) would deal 2 damage for a noncreature Dragon spell (a Kindred Dragon instant or sorcery), which is a different card. The selector and static-filter `any_of` already exists (characteristics._matches_printed, selectors.py), so the trigger-side matcher only needs to recurse the same way
-
-<details><summary>Cards waiting on this</summary>
-
-- **Firespitter Whelp** (rank 4074) — `firespitter_whelp`
-  - Whenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each opponent.
 
 </details>
 

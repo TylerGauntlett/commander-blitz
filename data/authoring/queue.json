@@ -96182,12 +96182,12 @@
     },
     "Firespitter Whelp": {
       "edhrec_rank": 4074,
-      "gate": "template",
+      "gate": null,
       "name": "Firespitter Whelp",
-      "reason": "no template for: Whenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each oppo",
+      "reason": "",
       "scryfall_id": "ddcc3c1b-b564-4444-9a1a-0f62f8e6b8bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Firespout": {

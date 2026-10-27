@@ -44255,6 +44255,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each opponent.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "not_types": [
+                    "Creature"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Dragon"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "firespitter_whelp",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Firespitter Whelp",
+      "oracle_text": "Flying\nWhenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each opponent.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "subtypes": [
