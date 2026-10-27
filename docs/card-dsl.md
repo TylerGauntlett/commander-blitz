@@ -3674,6 +3674,7 @@ and the filter keys are
     "source": "self",                // restrict to this permanent
     "filter": { "types": ["Land"] }, // a selector applied to the event's subject
     "condition": { ... },            // intervening "if", re-checked on resolution
+    "recheck": false,                // makes `condition` a "while": checked as it triggers only
     "defending": "you",              // attack and damage triggers: whom it hit
     "not_cause": "kodama_of_the_east_tree", // enters triggers only: a loop guard
     "counter": "+1/+1",              // `counter_placed` only: which kind
@@ -3685,6 +3686,12 @@ and the filter keys are
   "effects": [ ... ]
 }
 ```
+
+**"While" is not "if".** 603.4 re-checks an intervening "if" on resolution and
+says nothing of "while", which qualifies the event: Pugnacious Hammerskull's
+"whenever this creature attacks while you don't control another Dinosaur" is
+`condition` plus `recheck: false`, so a Dinosaur arriving in response does not
+stop the stun counter. The loader refuses `recheck` with no `condition`.
 
 **A trigger `filter` is a subset of the selector language.** It is matched against
 the event's subject by `triggers.matches_card_filter`, which answers

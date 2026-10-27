@@ -1,0 +1,112 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_while_condition.py. t_wc_while checks its condition only as it triggers; t_wc_if is the same line as an intervening if.",
+  "cards": [
+    {
+      "id": "t_wc_while",
+      "name": "Test While Wolf",
+      "oracle_text": "Whenever this creature attacks while you control no Bears, put a +1/+1 counter on it.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wolf"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks while you control no Bears, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "condition": {
+              "not": {
+                "exists": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Bear"
+                  ]
+                }
+              }
+            },
+            "recheck": false
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_wc_if",
+      "name": "Test If Wolf",
+      "oracle_text": "Whenever this creature attacks, if you control no Bears, put a +1/+1 counter on it.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wolf"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, if you control no Bears, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "condition": {
+              "not": {
+                "exists": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Bear"
+                  ]
+                }
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

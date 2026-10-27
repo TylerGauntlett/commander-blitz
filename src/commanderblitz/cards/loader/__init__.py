@@ -2186,6 +2186,12 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"'self' (the object that has the ability), got {shares!r}"
             )
         validate_condition(model.trigger.condition, f"{where}.trigger.condition")
+        if not model.trigger.recheck and not model.trigger.condition:
+            # "While" qualifies a condition; with none there is nothing to not
+            # re-check, and the key would load and say nothing.
+            raise DslError(
+                f"{where}.trigger: 'recheck' is only meaningful beside a 'condition'"
+            )
         if model.trigger.defending is not None and model.trigger.event not in DEFENDING_TRIGGERS:
             # Silently ignoring it would produce a card that looks like it reads
             # "attacks you" and fires on everything. The other direction is just
@@ -2412,6 +2418,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             source=source,
             filter=dict(model.trigger.filter) if model.trigger.filter else None,
             condition=dict(model.trigger.condition) if model.trigger.condition else None,
+            recheck=model.trigger.recheck,
             defending=model.trigger.defending,
             not_cause=model.trigger.not_cause,
             cause_controller=model.trigger.cause_controller,

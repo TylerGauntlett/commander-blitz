@@ -341,6 +341,11 @@ class TriggerModel(BaseModel):
     source: Literal["self"] | None = None
     filter: dict[str, Any] | None = None
     condition: dict[str, Any] | None = None
+    #: ``false`` makes ``condition`` a **"while"** clause rather than an
+    #: intervening "if": checked as the event happens and not again on
+    #: resolution (603.4 names "if" only) -- "Whenever this creature attacks
+    #: while you don't control another Dinosaur" (Pugnacious Hammerskull).
+    recheck: bool = True
     #: For ``becomes_level``: the level it waits for -- "When this Class becomes
     #: level **2**". Required there and refused on every other event.
     level: int | None = None

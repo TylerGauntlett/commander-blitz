@@ -554,6 +554,9 @@ class TriggerSpec:
     source: str | None = None  # "self" restricts to this permanent
     filter: Mapping[str, Any] | None = None
     condition: Mapping[str, Any] | None = None  # intervening "if" clause
+    #: False for a "while" clause: ``condition`` is checked as the event
+    #: happens and not again on resolution (603.4 names "if" only).
+    recheck: bool = True
     #: Who is being attacked, for ``attacks``.  ``controller`` answers *whose
     #: creature* is attacking, which is a different question and not a
     #: substitute: in a pod, "whenever a creature attacks you" must not fire when
