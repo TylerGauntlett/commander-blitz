@@ -1543,6 +1543,35 @@ very turn it was supposed to open. The value reads the ledger's oids instead, so
 it survives the death. Use the selector when the effect has to *reach* the
 creatures, and the value when the card is only counting them.
 
+### Pack tactics — attackers' total power as declared
+
+```jsonc
+// Minion of the Mighty: "Pack tactics — Whenever this creature attacks, if you
+// attacked with creatures with total power 6 or greater this combat, …"
+"trigger": {
+  "event": "attacks", "source": "self",
+  "condition": { "cmp": ">=", "left": { "attack_power_this_combat": "you" },
+                 "right": { "const": 6 } } }
+```
+
+Pack tactics is an ability word, so the whole mechanic is this value in an
+ordinary intervening-if `condition`. `attack_power_this_combat` takes a player
+spec and reads `TurnLedger.attack_power_this_combat`: the derived power of the
+creatures that player declared as attackers in the combat in progress, summed
+at `ATTACKERS_DECLARED` and frozen there. That event fires before any
+creature's `attacks` trigger, so the condition already sees the total when the
+trigger is checked, and nothing done to the attackers afterwards changes it —
+the rulings read the power as attackers are declared, so the recheck on
+resolution (603.4) passes after an attacker is shrunk, killed or removed from
+combat. A creature put onto the battlefield attacking was never declared and
+adds nothing. `combat.start_combat` resets it, so in an extra combat only that
+combat's attackers count. Power is summed as crew sums it, a negative power
+included. The loader refuses anything but a player spec.
+
+The near miss is `{"power_of": {"objects": {"attacking": true, "controller":
+"you"}}}`: it sums the **live** board, so it loses an attacker that left combat
+before the trigger resolved and counts one put onto the battlefield attacking.
+
 ### Which permanents entered the battlefield this turn
 
 ```jsonc

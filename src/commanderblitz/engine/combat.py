@@ -65,6 +65,9 @@ def start_combat(state: GameState) -> None:
     # combat phase of the turn" (Genji Glove). See `TurnLedger.combats` for why
     # the monotonic one cannot answer it.
     state.turn_ledger.combats += 1
+    # Pack tactics reads "this combat", so the last combat's attackers stop
+    # counting the moment the next one begins.
+    state.turn_ledger.attack_power_this_combat.clear()
     state.combat = CombatState(declaring_player=state.active_player)
 
 

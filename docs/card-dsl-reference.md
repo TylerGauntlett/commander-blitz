@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 144 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 53 |
+| [Values](#values) | 54 |
 | [Conditions](#conditions) | 30 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
@@ -285,6 +285,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | Name | Description | Defined in |
 |---|---|---|
 | `additional_paid` | Whether (or how often) an additional cost was paid. | [Value expressions](card-dsl.md#value-expressions) |
+| `attack_power_this_combat` | Total power of the player's attackers as declared this combat (pack tactics). | [Pack tactics — attackers' total power as declared](card-dsl.md#pack-tactics--attackers-total-power-as-declared) |
 | `attacked_this_turn` | 1 if the player attacked this turn, else 0 (raid). | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `attackers_this_turn` | How many creatures the player attacked with this turn. | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `binding` | A number a trigger or an `as` carried. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |

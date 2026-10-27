@@ -14056,6 +14056,52 @@
           "text": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
         }
       ]
+    },
+    {
+      "id": "t_pack_hunter",
+      "name": "Test Pack Hunter",
+      "oracle_text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, put a +1/+1 counter on this creature.",
+      "mana_cost": "{1}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Gnoll"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
     }
   ]
 }

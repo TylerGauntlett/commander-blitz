@@ -753,7 +753,15 @@ class GameState:
                 # derived from the *keys*, and raid must not depend on a future
                 # emitter remembering to list them.
                 attacked = ledger.creatures_attacked.setdefault(pid, set())
-                attacked.update(int(oid) for oid in data.get("attackers") or ())
+                declared = [int(oid) for oid in data.get("attackers") or ()]
+                attacked.update(declared)
+                # Pack tactics' total, frozen here: the rulings read the power
+                # "as attackers are declared", and this is that moment -- the
+                # per-creature ATTACKS triggers fire after this event, so an
+                # intervening-if checking it at trigger time already sees it.
+                power = sum(chars(self, oid).power for oid in declared if oid in self.objects)
+                totals = ledger.attack_power_this_combat
+                totals[pid] = totals.get(pid, 0) + power
         elif event.type == EventType.ATTACKS:
             # Angel of Destiny's "each player this creature attacked this turn".
             # Only an attack on a seat: one aimed at a planeswalker or a battle

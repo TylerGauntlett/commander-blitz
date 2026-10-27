@@ -1336,6 +1336,23 @@ class TurnLedger:
     #: one to carry a counter would put a new entry on the trigger bus that no
     #: card subscribes to.
     combats: int = 0
+    #: The total power of the creatures each player **declared as attackers in
+    #: the combat in progress**, read as they were declared: player id -> sum.
+    #: Pack tactics -- "if you attacked with creatures with total power 6 or
+    #: greater this combat" (Minion of the Mighty).
+    #:
+    #: A number frozen at the declaration rather than a sum of live power,
+    #: because the rulings fix it there: shrinking, killing or removing an
+    #: attacker after the declaration does not stop the trigger, so the
+    #: intervening-if recheck on resolution (603.4) has to read the same total
+    #: it triggered on. `power_of` over `attacking: true` is the near miss and
+    #: drops exactly those creatures. A creature put onto the battlefield
+    #: attacking was never declared and adds nothing.
+    #:
+    #: Per **combat**, not per turn: `combat.start_combat` resets it, so a
+    #: second combat's pack tactics counts only that combat's attackers.
+    #: Summed with derived power and negatives included, as crew sums.
+    attack_power_this_combat: dict[int, int] = field(default_factory=dict)
     #: Which creatures each player has **declared as attackers** this turn:
     #: player id -> the oids they attacked with.  Two questions, one record.
     #:
@@ -1609,6 +1626,7 @@ class TurnLedger:
     def clear(self) -> None:
         self.creatures_died.clear()
         self.creatures_attacked.clear()
+        self.attack_power_this_combat.clear()
         self.players_attacked_by.clear()
         self.players_dealt_combat_damage_by.clear()
         self.damage_taken.clear()

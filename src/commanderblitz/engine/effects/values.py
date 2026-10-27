@@ -13,6 +13,8 @@ forms::
     {"attacked_this_turn": "you"}          raid, bloodthirst, spectacle,
     {"attackers_this_turn": "you"}         storm and gravestorm -- and how
     {"spells_cast_this_turn": "all"}       many creatures attacked, not seats
+    {"attack_power_this_combat": "you"}  pack tactics: attackers' total power
+                                        as declared, this combat
     {"permanents_entered_this_turn":  WHICH permanents entered the battlefield
         {"controller": "you",           this turn, by subtype and by
          "subtypes": ["Human"]}}        controller-at-entry
@@ -98,6 +100,15 @@ VALUE_KEYS = frozenset(
         # the battlefield, because an attacker that died in combat still
         # attacked and the board has forgotten it.
         "attackers_this_turn",
+        # Pack tactics -- "…if you attacked with creatures with **total power 6
+        # or greater this combat**" (Minion of the Mighty). The power summed as
+        # the attackers were declared and frozen there
+        # (`TurnLedger.attack_power_this_combat`), because the rulings read it
+        # at the declaration: an attacker killed, bounced or shrunk in response
+        # still counts, so the intervening-if recheck on resolution passes.
+        # `power_of` over `attacking: true` is the near miss and reads the live
+        # board. Per combat, not per turn.
+        "attack_power_this_combat",
         # "…if another **Human** entered the battlefield under **your control**
         # this turn" -- Éowyn, Shieldmaiden. The one ledger read that takes a
         # filter rather than a player spec, because the printed sentence asks
@@ -507,6 +518,11 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         for p in _players(ctx, expr["attackers_this_turn"]):
             oids |= ledger.creatures_attacked.get(p, set())
         return len(oids)
+    if "attack_power_this_combat" in expr:
+        # Summed per named player: only the active player declares, so "you"
+        # is the whole of pack tactics and an opponent's total reads 0.
+        totals = ledger.attack_power_this_combat
+        return sum(totals.get(p, 0) for p in _players(ctx, expr["attack_power_this_combat"]))
     if "permanents_entered_this_turn" in expr:
         # How many permanents matching the filter have entered the battlefield
         # this turn. Read off the ledger's snapshots rather than the board,
@@ -1182,6 +1198,13 @@ def validate_value(expr: Any, where: str) -> None:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "counters_on" in expr:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
+    if "attack_power_this_combat" in expr:
+        who = expr["attack_power_this_combat"]
+        if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
+            raise DslError(
+                f"{where}.attack_power_this_combat: needs a player spec, e.g. 'you' "
+                f"(whose attackers' declared power), got {who!r}"
+            )
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(
             expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"

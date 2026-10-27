@@ -520,6 +520,8 @@ PLAYER_SPECS: dict[str, Entry] = {
 VALUES: dict[str, Entry] = {
     "additional_paid": ("Whether (or how often) an additional cost was paid.", None),
     "attacked_this_turn": ("1 if the player attacked this turn, else 0 (raid).", H_ATTACKED),
+    "attack_power_this_combat": ("Total power of the player's attackers as declared this combat (pack tactics).",
+                                 "Pack tactics — attackers' total power as declared"),
     "attackers_this_turn": ("How many creatures the player attacked with this turn.", H_ATTACKED),
     "binding": ("A number a trigger or an `as` carried.", H_RECORDING),
     "cards_drawn_this_turn": ("Cards the player drew this turn.", H_LEDGER),
