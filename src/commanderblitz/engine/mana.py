@@ -818,22 +818,41 @@ class ManaPool:
     def total(self) -> int:
         return sum(self.amounts)
 
-    def clear(self, keep_for_turn: int | None = None) -> int:
+    def clear(
+        self,
+        keep_for_turn: int | None = None,
+        keep_symbols: frozenset[str] = frozenset(),
+    ) -> int:
         """Empty the pool, returning how much mana was lost.
 
         ``keep_for_turn`` spares the pips that say they survive that turn's step
         and phase boundaries -- Tanuki Transplanter's "until end of turn, you
         don't lose this mana". ``None`` empties everything, which is what the
         end of the turn does and what every caller wanting a clean pool means.
+
+        ``keep_symbols`` spares every pip of those symbols whatever its turn --
+        Leyline Tyrant's "you don't lose unspent red mana as steps and phases
+        end", a fact about the *player* read off `mana_retention` statics by
+        `GameState.empty_all_mana_pools`. It survives the end of the turn too,
+        because the end of a turn is only the last step ending (500.4). Empty,
+        the default, is every caller that means "lose all unspent mana" (Mana
+        Short), which no retention effect stops.
         """
-        if keep_for_turn is None:
+        if keep_for_turn is None and not keep_symbols:
             lost = sum(self.amounts)
             self.amounts = _zeros()
             self.tags = [[] for _ in range(N_SYMBOLS)]
             return lost
         lost = 0
         for i, pips in enumerate(self.tags):
-            kept = [pip for pip in pips if pip.persists_through_turn == keep_for_turn]
+            if SYMBOLS[i] in keep_symbols:
+                continue
+            kept = [
+                pip
+                for pip in pips
+                if keep_for_turn is not None
+                and pip.persists_through_turn == keep_for_turn
+            ]
             lost += len(pips) - len(kept)
             self.tags[i] = kept
             self.amounts[i] = len(kept)

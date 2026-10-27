@@ -736,6 +736,14 @@ def reference() -> dict:
             " with `affects_spells: {\"types\": [\"Planeswalker\"]}` (the"
             " `cant_cast_spells` spell filter), which loosens only the cast of"
             " a matching spell and never an activated ability.",
+            "\"You don't lose unspent red mana as steps and phases end\" is the"
+            " player-wide static `mana_retention` with `affects_player: \"you\"`"
+            " and `colors: [\"R\"]`; \"Players don't lose unspent mana\" is"
+            " `affects_player: \"any\"` with all six symbols (`C` included)."
+            " The mana is kept across turns while the permanent stays. It is"
+            " NOT `persists_until_end_of_turn`, which is one ability's mana"
+            " until end of turn, and NOT \"that mana becomes colorless"
+            " instead\" (Kruphix), which is still a gap.",
             "\"If you would gain life, you gain twice that much life instead\""
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"

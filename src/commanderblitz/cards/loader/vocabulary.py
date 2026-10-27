@@ -303,6 +303,12 @@ STATIC_EFFECTS = frozenset(
         # on `exile` / `grant_playable`, which is the same waiver granted for
         # one named card.
         "spend_mana_as_any_color",
+        # "You don't lose unspent red mana as steps and phases end." Leyline
+        # Tyrant, Omnath, Locus of Mana, Upwelling. Player-wide: the pool is the
+        # player's, so there is no object to attach it to. `colors` names the
+        # mana symbols kept; read by `player_statics.retained_mana_by_player`
+        # where every pool empties as a step ends (500.4), and nowhere else.
+        "mana_retention",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -720,6 +726,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "granted_alternative_cost",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
+        "mana_retention",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",

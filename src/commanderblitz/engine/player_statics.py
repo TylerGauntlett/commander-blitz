@@ -688,6 +688,41 @@ def player_spends_mana_as_any_color(
     return False
 
 
+def retained_mana_symbols(state: GameState, pid: int) -> frozenset[str]:
+    """The mana symbols this player does not lose as steps and phases end.
+
+    Leyline Tyrant: "You don't lose unspent red mana as steps and phases end."
+    Omnath, Locus of Mana says it of green and Upwelling of every type for every
+    player. The exception 500.4 itself names: the pool empties at the end of
+    each step and phase *unless* an effect says otherwise, and this is that
+    effect. Read by `GameState.empty_all_mana_pools` -- the one place a pool
+    empties as a step ends -- and by nothing else, so "loses all unspent mana"
+    (Mana Short, a player leaving the game) still takes everything.
+
+    Player-wide and continuous: it asks the battlefield at each boundary, so the
+    mana is kept across turns for exactly as long as the permanent stays, and
+    the first boundary after it leaves empties the pool. A union over every
+    active static reaching ``pid``, since two of them keep both sets.
+    """
+    return retained_mana_by_player(state).get(pid, frozenset())
+
+
+def retained_mana_by_player(state: GameState) -> dict[int, frozenset[str]]:
+    """:func:`retained_mana_symbols` for every seat, from one battlefield walk.
+
+    The shape the step boundary wants: it empties every pool at once, and
+    walking the battlefield once per seat at every boundary of every turn is
+    the cost the games playing none of these cards would pay for nothing.
+    """
+    kept: dict[int, set[str]] = {}
+    for obj, static in _active_player_statics(state, "mana_retention"):
+        symbols = static.get("colors") or ()
+        for player in state.players:
+            if _reaches_player(obj, static, player.pid):
+                kept.setdefault(player.pid, set()).update(symbols)
+    return {pid: frozenset(symbols) for pid, symbols in kept.items()}
+
+
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
     """Whether any ``skip_draw_step`` static stops this player's turn-based draw.
 

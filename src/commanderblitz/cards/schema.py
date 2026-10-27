@@ -778,6 +778,10 @@ class AbilityModel(BaseModel):
     #: list is colourless and is the whole point of the effect -- "enchanted
     #: permanent is a **colorless** land" -- so it is `None` that means "not
     #: given", never `[]`.
+    #:
+    #: ``mana_retention``: the mana symbols the player does not lose as steps
+    #: and phases end -- ``["R"]`` for Leyline Tyrant, all six (``C`` included)
+    #: for Upwelling. Required and non-empty there.
     colors: list[str] | None = None
     #: ``grant_ability``: which of the granting card's `grantable_abilities` the
     #: permanents this affects get, by index.

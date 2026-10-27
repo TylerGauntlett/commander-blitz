@@ -979,7 +979,7 @@ silent.
 
 ## Player-wide statics
 
-Thirty-nine static effects describe the *player* rather than a characteristic, so
+Some static effects describe the *player* rather than a characteristic, so
 they take `affects_player` instead of `affects` — the full list is
 `PLAYER_WIDE_STATIC_EFFECTS` in `cards/loader/vocabulary.py`:
 
@@ -1018,6 +1018,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "cant_cast_spells_from_zones", "affects_player": "opponent", "except_zones": ["hand"] }
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
+{ "kind": "static", "effect": "mana_retention", "affects_player": "you", "colors": ["R"] }
 { "kind": "static", "effect": "damage_life_floor", "affects_player": "you", "amount": 1 }
 ```
 
@@ -1042,6 +1043,20 @@ fifteen times and every other step-skip once or twice, across three different
 steps *and* two different lifetimes — "skip your **next** untap step" is a
 one-shot like `skip_untap`, not a continuous effect, so a shared `step:`
 parameter would not have carried it anyway.
+
+`mana_retention` is Leyline Tyrant's "You don't lose unspent red mana as steps
+and phases end" — the exception rule 500.4 itself allows. `colors` names the mana
+symbols kept and is required: `["G"]` is Omnath, Locus of Mana, and Upwelling's
+"Players don't lose unspent mana" is all six, `C` included, with
+`affects_player: "any"`. `GameState.empty_all_mana_pools` asks
+`player_statics.retained_mana_by_player` at every boundary, the end of the turn
+included, so the mana crosses into later turns for as long as the permanent stays
+and the first boundary after it leaves empties the pool. It is a fact about the
+player, unlike `add_mana`'s `persists_until_end_of_turn`, which rides on the mana
+one ability made and still runs out at end of turn (Tanuki Transplanter). "Lose
+all unspent mana" (Mana Short) clears the pool without asking it. The "becomes
+colorless instead" sentence (Kruphix, Horizon Stone) is a replacement that
+changes the mana and is not this static.
 
 `double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
 permanents' triggers fire an additional time. Read by `triggers.collect`, which

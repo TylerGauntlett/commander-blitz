@@ -750,6 +750,8 @@ STATICS: dict[str, Entry] = {
                                 "`imprint_characteristics` — Duplicant's size from a card in exile"),
     "lose_keyword": ("Matching permanents lose keywords and can't have or gain them.",
                      "`lose_keyword` — the other kind of removal, at the other end of the pipeline"),
+    "mana_retention": ("The player doesn't lose unspent mana of the listed symbols as steps and phases end.",
+                       "Player-wide statics"),
     "no_hand_limit": ("The player has no maximum hand size.", None),
     "player_hexproof": ("The player has hexproof: opponents' spells and abilities can't target them.",
                         "Player-wide statics"),

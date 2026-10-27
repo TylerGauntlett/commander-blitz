@@ -4343,6 +4343,32 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if color not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown colour {color!r}")
 
+    if model.effect == "mana_retention":
+        # "You don't lose unspent red mana as steps and phases end." The
+        # symbols are the whole of the effect, so an absent or empty list is a
+        # static that keeps nothing -- the line printed and never true. `C` is
+        # a type of mana and not a colour, and Upwelling's "unspent mana" is
+        # all six types, so the list is over mana symbols rather than colours.
+        if not model.colors:
+            raise DslError(
+                f"{where}: mana_retention needs 'colors' -- the mana symbols "
+                f"(W, U, B, R, G, C) the player does not lose as steps end"
+            )
+        unknown = [c for c in model.colors if c not in MANA_SYMBOLS]
+        if unknown:
+            raise DslError(
+                f"{where}.colors: unknown mana symbol(s) {unknown}; "
+                f"mana_retention names {list(MANA_SYMBOLS)}"
+            )
+        if len(set(model.colors)) != len(model.colors):
+            raise DslError(f"{where}.colors: a symbol is named twice")
+        if model.affects is not None or model.amount is not None:
+            raise DslError(
+                f"{where}: mana_retention keeps mana for the named players; it "
+                f"takes 'affects_player', 'colors' and an optional 'condition', "
+                f"and no 'affects' or 'amount'"
+            )
+
     if model.effect == "grant_ability" and model.ability is None:
         raise DslError(
             f"{where}: grant_ability needs 'ability' -- the index into this "
@@ -4569,6 +4595,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'zones' / 'except_zones' belong to cant_cast_spells_from_zones, "
             f"not {model.effect!r}"
         )
+    if model.effect == "mana_retention":
+        # Copied for the whitelist reason above: left behind, the static would
+        # load and keep no mana at all.
+        static["colors"] = list(model.colors or ())
     if model.effect == "grant_ability":
         # Which of the card's `grantable_abilities` is handed over. Carried onto
         # the compiled mapping rather than left on the model, because the
