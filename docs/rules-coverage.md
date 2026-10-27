@@ -129,6 +129,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Soulbond, aura swap and reconfigure** | A symmetric `paired_with` with `paired` and `paired_with_source` filters; aura swap as one atomic op attaching after the move; reconfigure as `attach` (Equip), `unattach`, and `set_types` under `is_attached` (702.151d); `attach`'s `attachment` sub-key moves something other than the source (701.3), and `attach` refuses self-attachment (301.5c) |
 | **Extort and demonstrate** | Extort (702.101) written out by `templates.extort_ability`; demonstrate as `copy_spell` with a `controller` player spec and `choose_player` binding one seat, each copy's controller answering `new_targets` (115.7b) |
 | **Compleated** | 702.150a: `GameObject.cast_phyrexian_life` removes two loyalty per symbol in `zones._enter_battlefield`, on that arrival only |
+| **Empower** | The `empower` op: loyalty counters on one Jace token you control, the blue 0-loyalty Jace planeswalker token (`EMPOWER_TOKEN`) created first only when you control none, both in one effect so 704.5i looks only afterwards |
 
 ### Triggers
 

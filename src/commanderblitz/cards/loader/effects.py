@@ -1939,6 +1939,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "empower" and "amount" not in effect:
+        # "Empower Jace N" always prints its N. Defaulted, a card missing the
+        # key would load and empower by one -- Mindseeker Oculus putting one
+        # counter where it prints four.
+        raise DslError(f"{where}: empower needs an 'amount', the N of 'Empower Jace N'")
     if "destination_if" in effect:
         # "Put it onto the battlefield tapped if it's a land card. Otherwise,
         # put it into your hand." Only the two search ops read it; anywhere else

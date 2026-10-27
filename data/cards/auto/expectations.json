@@ -8935,6 +8935,13 @@
   "plague_stinger": {
     "zone": "battlefield"
   },
+  "plan_for_all_outcomes": {
+    "battlefield_count": 32,
+    "library_size": {
+      "0": 41
+    },
+    "zone": "battlefield"
+  },
   "plateau": {
     "zone": "battlefield"
   },

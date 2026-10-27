@@ -203652,12 +203652,12 @@
     },
     "Plan for All Outcomes": {
       "edhrec_rank": 28658,
-      "gate": "template",
+      "gate": null,
       "name": "Plan for All Outcomes",
-      "reason": "no template for: When this enchantment enters, the owner of up to one other target nonland permanent puts i",
+      "reason": "",
       "scryfall_id": "c4effc17-0d0e-423a-b5f2-597ea6c71f67",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plan the Heist": {

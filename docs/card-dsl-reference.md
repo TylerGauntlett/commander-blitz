@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 145 |
+| [Effect ops](#effect-ops) | 146 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 54 |
@@ -91,6 +91,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `detain` | Board |  | Detain permanents until your next turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `distribute_counters` | Board |  | Distribute N counters among targets as the player chooses. | [Distributing counters among targets](card-dsl.md#distributing-counters-among-targets) |
 | `double_counters` | Board |  | Double the counters of a kind on a permanent. | [Doubling the counters on a permanent](card-dsl.md#doubling-the-counters-on-a-permanent) |
+| `empower` | Board |  | Empower Jace N: N loyalty on a Jace token you control, creating one first if none. | [empower — "Empower Jace N"](card-dsl-cookbook.md#empower--empower-jace-n) |
 | `encode` | Board |  | Cipher: exile the spell encoded on a creature. | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `exchange_control` | Board |  | Exchange control of two permanents. | [Exchanging control](card-dsl-cookbook.md#exchanging-control) |
 | `exile` | Board | yes | Exile objects; `link`/`playable` tie them to the source or a permission. | [Effect ops](card-dsl.md#effect-ops) |

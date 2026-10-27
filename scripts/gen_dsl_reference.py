@@ -224,6 +224,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                              None),
     "create_token": ("Board", "Create N tokens by id; `as` records them.", None),
     "add_counters": ("Board", "Put N counters of a kind on permanents or players.", None),
+    "empower": ("Board", "Empower Jace N: N loyalty on a Jace token you control, creating one first if none.",
+                '`empower` — "Empower Jace N"'),
     "remove_counters": ("Board", "Remove N counters of a kind.", None),
     "tap": ("Board", "Tap permanents.", None),
     "untap": ("Board", "Untap permanents.", "Untapping on somebody else's turn"),

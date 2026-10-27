@@ -5961,6 +5961,10 @@
     "artist": "Volkan Ba\u01f5a",
     "scryfall_id": "55cd03d9-2535-4cf3-a8b2-1418e1190f4a"
   },
+  "jace_planeswalker_u": {
+    "artist": "Manuel Casta\u00f1\u00f3n",
+    "scryfall_id": "8d1e424f-6407-4f8c-bed2-eaf148237c81"
+  },
   "jace_unraveler_of_secrets": {
     "artist": "Tyler Jacobson",
     "scryfall_id": "3d9c8217-013d-4e75-bdd1-9c46c8467edb"
@@ -8694,6 +8698,10 @@
   "plains": {
     "artist": "Leon Tukker",
     "scryfall_id": "09b3c8bb-10ca-4b9f-8507-db6e8c52a918"
+  },
+  "plan_for_all_outcomes": {
+    "artist": "Chris Cold",
+    "scryfall_id": "c4effc17-0d0e-423a-b5f2-597ea6c71f67"
   },
   "plant_0_1_g": {
     "artist": "Daren Bader",

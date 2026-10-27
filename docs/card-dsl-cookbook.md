@@ -1759,6 +1759,32 @@ together with an Angel gives it no counters. A count of 0 adds none. A resolving
 permanent spell and a land drop are each their own event, so a token made while
 the spell waited on the stack is counted.
 
+### `empower` — "Empower Jace N"
+
+"Empower Jace 2. (Put two loyalty counters on a Jace token you control. If you
+don't control one, first create a blue Jace planeswalker token with "[−1]:
+Surveil 1" and "[−3]: Draw a card.")" — Reality Fracture's keyword action,
+whose reminder text is the whole rule.
+
+```jsonc
+{"op": "empower", "amount": {"const": 2}}
+```
+
+`amount` is required and is any value expression ("Empower Jace X, where X is
+the number of Islands you control"); below zero reads as zero. The op looks for
+a token with the Jace subtype you control; only when there is none does it
+create `jace_planeswalker_u` (`EMPOWER_TOKEN` in `effects/ops_counters.py`, a
+0-loyalty planeswalker token with the two printed loyalty abilities), and then
+it puts the loyalty counters on **one** Jace token, the empowering player
+choosing when there are several. Creating and countering happen in one effect,
+so the new token never meets 704.5i at zero loyalty unless the amount was zero
+or a doubled creation left a second Jace with nothing on it.
+
+Not `create_token` followed by `add_counters`: that pair makes a second Jace
+beside the one you already control. The loader refuses an `empower` without
+`amount`, and `validate_token_references` refuses a pool without the Jace
+token.
+
 ## Battles
 
 ```jsonc

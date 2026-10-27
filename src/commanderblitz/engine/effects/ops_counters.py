@@ -14,6 +14,7 @@ from ..primitives import (
     add_counters,
     attach,
     change_control,
+    create_token,
     remove_counters,
     tap_permanent,
     transform,
@@ -46,6 +47,49 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put counters on")
     for oid in oids:
         add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
+
+
+#: The token "empower Jace" creates when you control no Jace token: the blue
+#: Jace planeswalker with "[-1]: Surveil 1" and "[-3]: Draw a card." and no
+#: printed loyalty (the catalog's tfra token row prints 0).
+EMPOWER_TOKEN = "jace_planeswalker_u"
+
+#: "A Jace token you control" -- read off the characteristics, so it is any
+#: token with the Jace subtype, not only the one `EMPOWER_TOKEN` names.
+_JACE_TOKENS = {"zone": "battlefield", "controller": "you", "subtypes": ["Jace"], "is_token": True}
+
+
+@register("empower")
+def op_empower(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Empower Jace N." -- Reality Fracture's keyword action, whose reminder
+    text is the whole rule: *(Put N loyalty counters on a Jace token you
+    control. If you don't control one, first create a blue Jace planeswalker
+    token with "[-1]: Surveil 1" and "[-3]: Draw a card.")*
+
+    Two primitives in one op, because the order is the card. The token is
+    created only when you control no Jace token, and the counters go on **one**
+    Jace token, chosen by the empowering player when there is more than one --
+    so a doubled creation (Parallel Lives) still empowers one Jace, and the
+    other, at zero loyalty, is binned by 704.5i once the effect is done. Both
+    halves happen inside the same effect, so the new token is never looked at by
+    a state-based action before its counters arrive.
+
+    Not `create_token` then `add_counters`: that pair creates a second Jace
+    beside the one you already control, and with no condition between them it
+    cannot say "if you don't control one". X below zero is zero (107.1b), and
+    zero creates the token and puts nothing on it, which the zero-loyalty
+    state-based action then puts into the graveyard -- the printed outcome.
+    """
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    pool = resolve_pool(ctx, _JACE_TOKENS)
+    if not pool:
+        create_token(ctx.state, EMPOWER_TOKEN, ctx.controller, source=ctx.source_oid)
+        pool = resolve_pool(ctx, _JACE_TOKENS)
+    # The plain "choose" purpose, as `add_counters` asks: one permanent off the
+    # board, which the client's existing board picker already answers.
+    picked = yield from pick_from_pool(ctx, pool, {"count": 1}, "Empower which Jace?")
+    for oid in picked:
+        add_counters(ctx.state, oid, "loyalty", amount, source=ctx.source_oid)
 
 
 @register("distribute_counters")

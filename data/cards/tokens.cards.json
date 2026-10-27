@@ -1163,6 +1163,59 @@
       "is_token": true
     },
     {
+      "id": "jace_planeswalker_u",
+      "name": "Jace",
+      "oracle_text": "−1: Surveil 1.\n−3: Draw a card.",
+      "types": [
+        "Planeswalker"
+      ],
+      "subtypes": [
+        "Jace"
+      ],
+      "loyalty": 0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "−1: Surveil 1.",
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "op": "surveil",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "−3: Draw a card.",
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "junk_token",
       "name": "Junk",
       "oracle_text": "{T}, Sacrifice this token: Exile the top card of your library. You may play that card this turn. Activate only as a sorcery.",

@@ -9,6 +9,7 @@ from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
 )
+from commanderblitz.engine.effects.ops_counters import EMPOWER_TOKEN
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.mana import ManaCost, parse_mana_production
 
@@ -274,6 +275,10 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                         f"{card.id}: create_token 'attached_to' needs an Aura token, "
                         f"and {effect.get('token')!r} is not one"
                     )
+            if effect.get("op") == "empower":
+                # The op names its token itself, so a pool without the Jace
+                # fails here rather than the first time a card empowers.
+                check(card, EMPOWER_TOKEN, "empower")
         for ability in card.abilities:
             static = ability.static or {}
             for token_id in static.get("create_instead", ()):

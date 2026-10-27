@@ -632,3 +632,34 @@ class TestEzurisPredationMakesPhyrexianBeasts:
         beast = pool.get("beast_4_4_g")
         assert beast is not None
         assert list(beast.subtypes) == ["Beast"]
+
+
+class TestEmpowersJaceIsABlueZeroLoyaltyPlaneswalker:
+    """Empower Jace N: *"…first create a **blue Jace planeswalker** token with
+    "[-1]: Surveil 1" and "[-3]: Draw a card."*" (Plan for All Outcomes).
+    The catalog's tfra token row prints no loyalty, so it starts at 0 and
+    lives on the counters empower puts on it.
+
+    The pool's only planeswalker token, and nothing may stand in for it: a
+    printed starting loyalty would make every empower worth that much more,
+    and `op_empower` finds it by its Jace subtype.
+    """
+
+    def test_it_is_a_blue_jace_planeswalker_with_no_loyalty(self, pool):
+        jace = pool.get("jace_planeswalker_u")
+        assert jace is not None and jace.is_token
+        assert jace.name == "Jace"
+        assert list(jace.types) == ["Planeswalker"]
+        assert list(jace.subtypes) == ["Jace"]
+        assert not jace.supertypes, "not legendary: two may coexist"
+        assert sorted(jace.colors) == ["U"]
+        assert jace.loyalty == 0
+
+    def test_it_has_exactly_the_two_printed_abilities(self, pool):
+        jace = pool.get("jace_planeswalker_u")
+        assert [a.cost.loyalty for a in jace.abilities] == [-1, -3]
+        assert [a.effects[0]["op"] for a in jace.abilities] == ["surveil", "draw"]
+
+    def test_it_is_the_only_planeswalker_token(self, pool):
+        tokens = [c.id for c in pool if c.is_token and "Planeswalker" in c.types]
+        assert tokens == ["jace_planeswalker_u"]

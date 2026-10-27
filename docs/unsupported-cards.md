@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**112 cards** blocked by **100** capabilities.
+**111 cards** blocked by **100** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
-| [empower](#empower) | 2 | 26189 | op |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [phyrexian-mite-token](#phyrexian-mite-token) | 2 | 1992 | token |
 | [toxic](#toxic) | 2 | 1992 | keyword |
@@ -98,6 +97,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [spell-or-creature-target](#spell-or-creature-target) | 1 | 26189 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-condition-has-flag](#static-condition-has-flag) | 1 | 1368 | static_effect |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -373,24 +373,6 @@ Blocks **2** cards.
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
-
-</details>
-
-## empower
-
-Blocks **2** cards.
-
-- **(op)** a keyword action 'Empower <name> N' that empowers the named planeswalker (Jace) by N, per its Multiverse Reforged rules (e.g. adding loyalty to / advancing a named planeswalker you control or in your command zone)
-  <br>Why the existing vocabulary won't do: The packet's reference has no empower op, keyword or value; add_counters with loyalty would need a selector by planeswalker name and still would not match empower's own rules for when no such Jace is present
-- **(op)** the keyword action 'Empower Jace N': put N loyalty counters on a Jace token you control, first creating a blue Jace planeswalker token with loyalty abilities "[-1]: Surveil 1" and "[-3]: Draw a card." if you control none
-  <br>Why the existing vocabulary won't do: No empower op exists, and token_ids has no Jace planeswalker token; add_counters plus create_token cannot express the conditional create-then-counter without the token, and the trigger itself (spell_cast with max_per_turn 1 and a not_types Creature filter) is otherwise expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fatehold Charm** (rank 26189) — `fatehold_charm`
-  - • Draw a card. Empower Jace 2.
-- **Plan for All Outcomes** (rank 28658) — `plan_for_all_outcomes`
-  - Whenever you cast your first noncreature spell each turn, empower Jace 1. (Put a loyalty counter on a Jace token you control. If you don't control one, first create a blue Jace planeswalker token with "[−1]: Surveil 1" and "[−3]: Draw a card.")
 
 </details>
 
@@ -1503,6 +1485,20 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## spell-or-creature-target
+
+Blocks **1** card.
+
+- **(selector)** a single 'target spell or creature' spec: one target whose legal choices are any spell on the stack or a creature permanent, so the Creature restriction narrows only the permanent half (return_spell_to_hand already handles either half of a spell_or_permanent target)
+  <br>Why the existing vocabulary won't do: kind 'spell_or_permanent' applies its one selector to both halves, so types: [Creature] would restrict the spell half to creature spells; any_of branches cannot name a zone to tell a spell from a permanent, and two target specs would be a card that targets twice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fatehold Charm** (rank 26189) — `fatehold_charm`
+  - • Return target spell or creature to its owner's hand.
 
 </details>
 
