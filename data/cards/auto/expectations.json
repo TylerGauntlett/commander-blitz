@@ -3576,6 +3576,9 @@
   "enraged_giant": {
     "zone": "battlefield"
   },
+  "enraged_revolutionary": {
+    "zone": "battlefield"
+  },
   "entish_restoration": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -5118,6 +5121,9 @@
     "zone": "battlefield"
   },
   "grendel_spawn_of_knull": {
+    "zone": "battlefield"
+  },
+  "grenzo_s_cutthroat": {
     "zone": "battlefield"
   },
   "grey_havens_navigator": {
@@ -7143,6 +7149,15 @@
     },
     "zone": "battlefield"
   },
+  "marchesa_s_emissary": {
+    "zone": "battlefield"
+  },
+  "marchesa_s_infiltrator": {
+    "zone": "battlefield"
+  },
+  "marchesa_s_smuggler": {
+    "zone": "battlefield"
+  },
   "mardu_outrider": {
     "zone": "battlefield"
   },
@@ -8520,6 +8535,9 @@
     "zone": "battlefield"
   },
   "pardic_wanderer": {
+    "zone": "battlefield"
+  },
+  "park_heights_maverick": {
     "zone": "battlefield"
   },
   "parting_gust": {
@@ -9921,6 +9939,9 @@
       "1": 2
     },
     "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
+  "scourge_of_the_throne": {
     "zone": "battlefield"
   },
   "scourge_of_valkas": {
@@ -12294,6 +12315,9 @@
     "zone": "graveyard"
   },
   "traveling_philosopher": {
+    "zone": "battlefield"
+  },
+  "treasonous_ogre": {
     "zone": "battlefield"
   },
   "tree_monkey": {

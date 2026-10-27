@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**100 cards** blocked by **84** capabilities.
+**100 cards** blocked by **82** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -21,6 +21,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
+| [enters-as-copy](#enters-as-copy) | 2 | 450 | replacement |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [spider-token](#spider-token) | 2 | 1012 | token |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -41,15 +42,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
-| [dethrone](#dethrone) | 1 | 1278 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
-| [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
-| [first-attack-each-turn](#first-attack-each-turn) | 1 | 1278 | trigger_event |
 | [fog](#fog) | 1 | 1232 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
@@ -333,6 +331,24 @@ Blocks **2** cards.
   - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
+
+</details>
+
+## enters-as-copy
+
+Blocks **2** cards.
+
+- **(replacement)** an optional 'as this enters, it becomes a copy of <selector>' replacement (706.9 / 614.1c, no stack, no trigger) whose copy effect carries a duration ('until end of turn', after which it reverts to Cursed Mirror) and a copy exception adding a keyword to the copiable values ('except it has haste')
+  <br>Why the existing vocabulary won't do: The packet's `become_copy` op takes `copying`, `duration`, `except_name` and `objects` but has no keyword exception, and it can only run from a `self_enters` trigger, which uses the stack and lets the artifact exist on the battlefield uncopied first (wrong for an 'as enters' replacement and for anything reading what entered). No trigger event or card-level key in `reference` expresses an enters-as-copy replacement; `grant_keyword` haste after the fact is a layer-6 grant, not a copy exception.
+- **(replacement)** an `except` on the `self_enters_as_copy` replacement that adds keywords (here haste and dethrone) to the copiable values the permanent enters with (707.9b), so the exception survives as part of the copy
+  <br>Why the existing vocabulary won't do: `self_enters_as_copy` takes only `copying` (the pool) and `zones.offer_enters_as_copy` records the chosen card id alone; `copy_permanent` and `become_copy` have exceptions but neither is a 614.1b replacement on the creature's own arrival, and a separate static granting haste and dethrone would not be part of the copiable values
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cursed Mirror** (rank 450) — `cursed_mirror`
+  - As this artifact enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste.
+- **Dack's Duplicate** (rank 10960) — `dack_s_duplicate`
+  - You may have this creature enter as a copy of any creature on the battlefield, except it has haste and dethrone. (Whenever it attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
 
 </details>
 
@@ -642,21 +658,6 @@ Blocks **1** card.
 
 </details>
 
-## dethrone
-
-Blocks **1** card.
-
-- **(trigger_event)** an `attacks` trigger clause that matches only when the creature attacks a PLAYER (not a planeswalker or battle that player controls) whose life is greater than or equal to every other living player's life, checked as part of the trigger event (702.105a), not as an intervening-if re-checked on resolution
-  <br>Why the existing vocabulary won't do: The trigger's `defending` clause takes only you/opponent/any (`triggers._defender_matches`). Writing it as a `condition` cmp of `{life_of: {binding: defender}}` >= `{max_life_of: each_player}` would be an intervening-if (re-checked at resolution, which dethrone is not), and the `defender` binding is the planeswalker's or battle's controller on an attack at a permanent; the ATTACKS event's `attacked_permanent` flag is not in `EVENT_BINDING_KEYS`, so the card would wrongly trigger when attacking the top-life player's planeswalker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Scourge of the Throne** (rank 1278) — `scourge_of_the_throne`
-  - Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
-  - Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.
-
-</details>
-
 ## discard-your-hand
 
 Blocks **1** card.
@@ -683,20 +684,6 @@ Blocks **1** card.
 - **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
   - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
   - III — Create a 4/4 red Dragon creature token with flying.
-
-</details>
-
-## enters-as-copy
-
-Blocks **1** card.
-
-- **(replacement)** an optional 'as this enters, it becomes a copy of <selector>' replacement (706.9 / 614.1c, no stack, no trigger) whose copy effect carries a duration ('until end of turn', after which it reverts to Cursed Mirror) and a copy exception adding a keyword to the copiable values ('except it has haste')
-  <br>Why the existing vocabulary won't do: The packet's `become_copy` op takes `copying`, `duration`, `except_name` and `objects` but has no keyword exception, and it can only run from a `self_enters` trigger, which uses the stack and lets the artifact exist on the battlefield uncopied first (wrong for an 'as enters' replacement and for anything reading what entered). No trigger event or card-level key in `reference` expresses an enters-as-copy replacement; `grant_keyword` haste after the fact is a layer-6 grant, not a copy exception.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cursed Mirror** (rank 450) — `cursed_mirror`
-  - As this artifact enters, you may have it become a copy of any creature on the battlefield until end of turn, except it has haste.
 
 </details>
 
@@ -757,21 +744,6 @@ Blocks **1** card.
 - **Final Fortune** (rank 1512) — `final_fortune`
   - Take an extra turn after this one.
   - At the beginning of that turn's end step, you lose the game.
-
-</details>
-
-## first-attack-each-turn
-
-Blocks **1** card.
-
-- **(trigger_event)** "whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life": an `attacks` trigger that fires only on the creature's first attack declaration of the turn regardless of whether the intervening-if passed, plus the same attacked-a-player-with-most-life test as dethrone
-  <br>Why the existing vocabulary won't do: `max_per_turn: 1` counts only queued firings (`triggers._queue`), so if the creature's first attack is against a player who does not have the most life, the cap is not used and a second attack in an extra combat would trigger it, which the printed card forbids; and the most-life defender test has the same planeswalker and binding problem as dethrone. `untap` over `{attacking: true}` and `extra_combat` would cover the effect half
-
-<details><summary>Cards waiting on this</summary>
-
-- **Scourge of the Throne** (rank 1278) — `scourge_of_the_throne`
-  - Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)
-  - Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.
 
 </details>
 

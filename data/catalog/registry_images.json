@@ -3524,6 +3524,10 @@
     "artist": "Anthony Palumbo",
     "scryfall_id": "40dc3b59-baae-4bf0-b5ce-fa9a915af066"
   },
+  "enraged_revolutionary": {
+    "artist": "Drew Baker",
+    "scryfall_id": "dffcd035-e7e7-4763-813c-5e4193cdb893"
+  },
   "entish_restoration": {
     "artist": "Calder Moore",
     "scryfall_id": "cd4dbf80-187b-40e3-9e0b-526f78d9a34e"
@@ -4947,6 +4951,10 @@
   "grendel_spawn_of_knull": {
     "artist": "Steve Prescott",
     "scryfall_id": "5fa7a8dc-67b3-4f96-af6e-98bb0a052d92"
+  },
+  "grenzo_s_cutthroat": {
+    "artist": "Svetlin Velinov",
+    "scryfall_id": "9bb46638-eeb2-4bb3-bef2-bedd343722ef"
   },
   "grey_havens_navigator": {
     "artist": "Henry Peters",
@@ -7010,6 +7018,18 @@
     "artist": "Chris Rallis",
     "scryfall_id": "e94a5f83-24fe-4182-b70c-63303b4e3890"
   },
+  "marchesa_s_emissary": {
+    "artist": "Tyler Jacobson",
+    "scryfall_id": "567a2444-30c4-49aa-a1f4-b5f4fb98d6fa"
+  },
+  "marchesa_s_infiltrator": {
+    "artist": "Lucas Graciano",
+    "scryfall_id": "e9ac1e2c-1b9c-43b8-819e-9b391967e16c"
+  },
+  "marchesa_s_smuggler": {
+    "artist": "Dan Murayama Scott",
+    "scryfall_id": "ff3a2dc1-3549-4a92-a5fa-6297cb894d22"
+  },
   "mardu_hateblade": {
     "artist": "Ryan Alexander Lee",
     "scryfall_id": "f1d1cdfa-834c-4028-8036-c4bfb7da071b"
@@ -8317,6 +8337,10 @@
   "pardic_wanderer": {
     "artist": "Igor Kieryluk",
     "scryfall_id": "2fffe967-3a99-4f00-af46-f4e5567598df"
+  },
+  "park_heights_maverick": {
+    "artist": "Daarken",
+    "scryfall_id": "ecd0459c-c4df-40fc-b886-ac3882571e49"
   },
   "parting_gust": {
     "artist": "Nils Hamm",
@@ -9738,6 +9762,10 @@
   "scourge_of_fleets": {
     "artist": "Steven Belledin",
     "scryfall_id": "a79471f9-5cc0-48f5-9fa4-1f1374993825"
+  },
+  "scourge_of_the_throne": {
+    "artist": "Michael Komarck",
+    "scryfall_id": "b54f99f7-f579-466d-93b5-a856268b3851"
   },
   "scourge_of_valkas": {
     "artist": "Lucas Graciano",
@@ -12089,6 +12117,10 @@
   "traveling_philosopher": {
     "artist": "James Ryman",
     "scryfall_id": "edad0276-45d1-45e5-a6b1-1cd2a99b4f2c"
+  },
+  "treasonous_ogre": {
+    "artist": "Jay Howell",
+    "scryfall_id": "6bc3b304-4109-4f67-b0b0-f1c1de66ff0e"
   },
   "treasure_token": {
     "artist": "Alayna Danner",

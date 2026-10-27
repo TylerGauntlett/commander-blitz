@@ -84472,12 +84472,12 @@
     },
     "Enraged Revolutionary": {
       "edhrec_rank": 29870,
-      "gate": "template",
+      "gate": null,
       "name": "Enraged Revolutionary",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "dffcd035-e7e7-4763-813c-5e4193cdb893",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Enraging Licid": {
@@ -117792,12 +117792,12 @@
     },
     "Grenzo's Cutthroat": {
       "edhrec_rank": 24320,
-      "gate": "template",
+      "gate": null,
       "name": "Grenzo's Cutthroat",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "9bb46638-eeb2-4bb3-bef2-bedd343722ef",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Grenzo's Rebuttal": {
@@ -167422,32 +167422,32 @@
     },
     "Marchesa's Emissary": {
       "edhrec_rank": 28521,
-      "gate": "template",
+      "gate": null,
       "name": "Marchesa's Emissary",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "567a2444-30c4-49aa-a1f4-b5f4fb98d6fa",
-      "source": "",
-      "status": "pending",
+      "source": "template:proxy:complete",
+      "status": "done",
       "wanted": false
     },
     "Marchesa's Infiltrator": {
       "edhrec_rank": 21992,
-      "gate": "template",
+      "gate": null,
       "name": "Marchesa's Infiltrator",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "e9ac1e2c-1b9c-43b8-819e-9b391967e16c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marchesa's Smuggler": {
       "edhrec_rank": 23854,
-      "gate": "template",
+      "gate": null,
       "name": "Marchesa's Smuggler",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "ff3a2dc1-3549-4a92-a5fa-6297cb894d22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Marchesa's Surprise Party": {
@@ -167474,7 +167474,7 @@
       "edhrec_rank": 4825,
       "gate": "template",
       "name": "Marchesa, the Black Rose",
-      "reason": "no template for: Dethrone",
+      "reason": "no template for: Other creatures you control have dethrone",
       "scryfall_id": "e5fa557c-b23c-4e56-aedb-c51d2e20cda6",
       "source": "",
       "status": "pending",
@@ -198152,12 +198152,12 @@
     },
     "Park Heights Maverick": {
       "edhrec_rank": 11224,
-      "gate": "template",
+      "gate": null,
       "name": "Park Heights Maverick",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "ecd0459c-c4df-40fc-b886-ac3882571e49",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Park Heights Pegasus": {
@@ -236212,12 +236212,12 @@
     },
     "Scourge of the Throne": {
       "edhrec_rank": 1278,
-      "gate": "template",
+      "gate": null,
       "name": "Scourge of the Throne",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "63a2993d-0f0e-4386-89d7-1d046c02683d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scourge of the Undercity": {
@@ -291862,12 +291862,12 @@
     },
     "Treasonous Ogre": {
       "edhrec_rank": 2281,
-      "gate": "template",
+      "gate": null,
       "name": "Treasonous Ogre",
-      "reason": "no template for: Dethrone",
+      "reason": "",
       "scryfall_id": "6bc3b304-4109-4f67-b0b0-f1c1de66ff0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treasure Chest": {

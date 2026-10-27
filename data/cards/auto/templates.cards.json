@@ -39479,6 +39479,31 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "enraged_revolutionary",
+      "keywords": [
+        "dethrone"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Enraged Revolutionary",
+      "oracle_text": "Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -55930,6 +55955,32 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "grenzo_s_cutthroat",
+      "keywords": [
+        "first_strike",
+        "dethrone"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Grenzo's Cutthroat",
+      "oracle_text": "First strike\nDethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Rogue"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -79692,6 +79743,144 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "marchesa_s_emissary",
+      "keywords": [
+        "hexproof",
+        "dethrone"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Marchesa's Emissary",
+      "oracle_text": "Hexproof (This creature can't be the target of spells or abilities your opponents control.)\nDethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "marchesa_s_infiltrator",
+      "keywords": [
+        "dethrone"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Marchesa's Infiltrator",
+      "oracle_text": "Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)\nWhenever this creature deals combat damage to a player, draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{U}{R}"
+          },
+          "effects": [
+            {
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{U}{R}: Target creature you control gains haste until end of turn and can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "marchesa_s_smuggler",
+      "keywords": [
+        "dethrone"
+      ],
+      "mana_cost": "{U}{R}",
+      "name": "Marchesa's Smuggler",
+      "oracle_text": "Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)\n{1}{U}{R}: Target creature you control gains haste until end of turn and can't be blocked this turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost": {
         "discard": 1
       },
@@ -95462,6 +95651,73 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "power": {
+              "op": "<=",
+              "value": 2
+            }
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "This creature can't be blocked by creatures with power 2 or less."
+        },
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or dies, proliferate.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player or dies, proliferate.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "park_heights_maverick",
+      "keywords": [
+        "dethrone"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Park Heights Maverick",
+      "oracle_text": "Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)\nThis creature can't be blocked by creatures with power 2 or less.\nWhenever this creature deals combat damage to a player or dies, proliferate.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -110348,6 +110604,66 @@
         "Kraken"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacking": true,
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "op": "extra_combat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "attacking_player": "most_life",
+                "self_only": true,
+                "zone": "battlefield"
+              }
+            },
+            "event": "attacks",
+            "nth": 1,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "scourge_of_the_throne",
+      "keywords": [
+        "flying",
+        "dethrone"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Scourge of the Throne",
+      "oracle_text": "Flying\nDethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)\nWhenever this creature attacks for the first time each turn, if it's attacking the player with the most life or tied for most life, untap all attacking creatures. After this phase, there is an additional combat phase.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -138180,6 +138496,47 @@
         "Advisor"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 3
+          },
+          "effects": [
+            {
+              "mana": "{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "Pay 3 life: Add {R}."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "treasonous_ogre",
+      "keywords": [
+        "dethrone"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Treasonous Ogre",
+      "oracle_text": "Dethrone (Whenever this creature attacks the player with the most life or tied for most life, put a +1/+1 counter on it.)\nPay 3 life: Add {R}.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Shaman"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
