@@ -42,16 +42,20 @@ services:
       - "8000"
     healthcheck:
       # The image's own check, on the clock a deploy waits on: the handover
-      # stops the old colour only once this says the new one is healthy.
+      # stops the old colour only once this says the new one is healthy. Fast
+      # (`start_interval`) only while the container boots, which is all the
+      # handover waits on; every check after that starts a Python interpreter,
+      # so a running colour is checked at the slow `interval`.
       test:
         - CMD
         - python
         - -c
-        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()
-      interval: 3s
+        - import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live').read()
+      interval: 30s
       timeout: 5s
       retries: 3
       start_period: 120s
+      start_interval: 2s
     # Long enough for a long poll (MAX_POLL_SECONDS) to finish on the old colour
     # while the new one takes the next request.
     stop_grace_period: 30s

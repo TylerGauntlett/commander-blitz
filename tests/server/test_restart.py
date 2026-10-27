@@ -292,7 +292,7 @@ class TestTheHandoverShape:
         assert "reverse_proxy web_blue:8000 web_green:8000 {" in caddyfile
         assert "lb_policy first" in caddyfile
         assert "lb_try_duration" in caddyfile
-        assert "health_uri /health" in caddyfile
+        assert "health_uri /health/live" in caddyfile
 
     def test_the_deploy_hands_over_rather_than_replacing(self):
         workflow = (self.ROOT / ".github/workflows/deploy.yml").read_text(encoding="utf-8")
