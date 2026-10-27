@@ -1295,6 +1295,26 @@
       ]
     },
     {
+      "id": "kobolds_of_kher_keep_0_1_r",
+      "name": "Kobolds of Kher Keep",
+      "oracle_text": "0/1 red Kobold creature token named Kobolds of Kher Keep.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kobold"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
       "id": "komas_coil_3_3_u",
       "name": "Koma's Coil",
       "oracle_text": "3/3 blue Serpent creature token named Koma's Coil.",
@@ -1713,6 +1733,26 @@
       ],
       "color_identity": [
         "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "rogue_2_2_b",
+      "name": "Rogue Token",
+      "oracle_text": "2/2 black Rogue creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
       ],
       "is_token": true
     },

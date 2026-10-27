@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **101** capabilities.
+**112 cards** blocked by **100** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -63,7 +63,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [incubate](#incubate) | 1 | 3908 | token |
 | [insect-2-1-w-flying](#insect-2-1-w-flying) | 1 | 4255 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
-| [kobold-token](#kobold-token) | 1 | 1663 | token |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -95,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [reveal-until-steal](#reveal-until-steal) | 1 | 29257 | op |
-| [rogue-2-2-b](#rogue-2-2-b) | 1 | 2831 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -111,6 +109,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [unblockable-except](#unblockable-except) | 1 | 28865 | op |
 | [unspent-mana-count](#unspent-mana-count) | 1 | 24391 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
 | [variable-pt-token](#variable-pt-token) | 1 | 1242 | token |
@@ -901,8 +900,8 @@ Blocks **1** card.
 
 Blocks **1** card.
 
-- **(token)** a Gingerbrute token: a colorless 1/1 Food Golem artifact creature token with haste, "{1}: This token can't be blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice this token: You gain 3 life."
-  <br>Why the existing vocabulary won't do: token_ids has food_token (a noncreature Food artifact) and creature artifact tokens like gnome_1_1_c, but none is a 1/1 Food Golem artifact creature with haste and the haste-only blocking evasion ability
+- **(token)** a Gingerbrute token: a colorless 1/1 Food Golem artifact creature token with haste and mana cost {1} ("This token's mana cost is {1}"), "{1}: This token can't be blocked this turn except by creatures with haste." and "{2}, {T}, Sacrifice this token: You gain 3 life." -- a Tier 0 entry once unblockable_except exists, and not before: its first ability is the missing op
+  <br>Why the existing vocabulary won't do: food_token is a noncreature Food artifact and gnome_1_1_c a vanilla artifact creature; neither is a hasty Food Golem with these two abilities
 
 <details><summary>Cards waiting on this</summary>
 
@@ -994,20 +993,6 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
-## kobold-token
-
-Blocks **1** card.
-
-- **(token)** a 0/1 red Kobold creature token named Kobolds of Kher Keep
-  <br>Why the existing vocabulary won't do: token_ids has no Kobold token; the only 0/1 tokens are plant_0_1_g (green Plant) and eldrazi_spawn_0_1_c (colorless with a sacrifice mana ability), neither of which matches color, subtype or name
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kher Keep** (rank 1663) — `kher_keep`
-  - {1}{R}, {T}: Create a 0/1 red Kobold creature token named Kobolds of Kher Keep.
 
 </details>
 
@@ -1463,20 +1448,6 @@ Blocks **1** card.
 
 </details>
 
-## rogue-2-2-b
-
-Blocks **1** card.
-
-- **(token)** a 2/2 black Rogue creature token
-  <br>Why the existing vocabulary won't do: token_ids has only vampire_rogue_1_1_b_lifelink (a 1/1 Vampire Rogue with lifelink) and other 2/2 black tokens of different types (zombie_2_2_b, pirate_2_2_b_menace); none is a plain 2/2 black Rogue
-
-<details><summary>Cards waiting on this</summary>
-
-- **Currency Converter** (rank 2831) — `currency_converter`
-  - {T}: Put a card exiled with this artifact into its owner's graveyard. If it's a land card, create a Treasure token. If it's a nonland card, create a 2/2 black Rogue creature token.
-
-</details>
-
 ## search-aura-attached
 
 Blocks **1** card.
@@ -1688,6 +1659,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## unblockable-except
+
+Blocks **1** card.
+
+- **(op)** a one-shot, turn-scoped evasion for the Gingerbrute token's "{1}: This token can't be blocked this turn except by creatures with haste." -- the `unblockable` op (or a sibling) with a blocker exemption filter, here `{"keywords": ["haste"]}`, read from the blocker's derived characteristics in `combat.can_block` and ending at cleanup.
+  <br>Why the existing vocabulary won't do: `unblockable` stops every block, which is strictly better than printed; the `block_restriction` static ("can't be blocked except by ...") lasts as long as its permanent and its `condition` vocabulary (static conditions) cannot read `has_turn_flag`, so a `set_turn_flag` activation cannot switch it on for one turn; `grant_ability` cannot carry a static (characteristics._battlefield_statics never reads granted abilities); no keyword means "can't be blocked except by creatures with haste" (horsemanship and shadow are the nearest exemption-shaped evasions)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ginger, Queen of Sweets** (rank 28865) — `ginger_queen_of_sweets`
+  - At the beginning of each upkeep, if you're the monarch, create a Gingerbrute token. (It's a {1} 1/1 Food Golem artifact creature with haste, "{1}: This token can't be blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice this token: You gain 3 life.")
 
 </details>
 

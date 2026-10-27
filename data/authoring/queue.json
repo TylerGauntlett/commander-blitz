@@ -58572,12 +58572,12 @@
     },
     "Currency Converter": {
       "edhrec_rank": 2831,
-      "gate": "template",
+      "gate": null,
       "name": "Currency Converter",
-      "reason": "no template for: Whenever you discard a card, you may exile that card from your graveyard",
+      "reason": "",
       "scryfall_id": "4eab054c-93f8-4da4-afb9-8f4c73c19213",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curse Artifact": {
@@ -148472,12 +148472,12 @@
     },
     "Kher Keep": {
       "edhrec_rank": 1663,
-      "gate": "template",
+      "gate": null,
       "name": "Kher Keep",
-      "reason": "no template for: {1}{R}, {T}: Create a 0/1 red Kobold creature token named Kobolds of",
+      "reason": "",
       "scryfall_id": "f7f8cbda-be92-4f14-a626-81682544612f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kheru Bloodsucker": {

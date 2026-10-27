@@ -29725,6 +29725,135 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "link": true,
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile the discarded card with Currency Converter?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you discard a card, you may exile that card from your graveyard.",
+          "trigger": {
+            "controller": "you",
+            "event": "discard"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}: Draw a card, then discard a card."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "converted",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a card exiled with Currency Converter"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "converted",
+                  "controller": "any",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "exile"
+                }
+              },
+              "else": [
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "converted",
+                      "controller": "any",
+                      "zone": "exile"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "binding": "converted"
+                      },
+                      "op": "return_to_origin"
+                    },
+                    {
+                      "op": "create_token",
+                      "token": "rogue_2_2_b"
+                    }
+                  ]
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "binding": "converted"
+                  },
+                  "op": "return_to_origin"
+                },
+                {
+                  "op": "create_token",
+                  "token": "treasure_token"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Put a card exiled with this artifact into its owner's graveyard. If it's a land card, create a Treasure token. If it's a nonland card, create a 2/2 black Rogue creature token."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "currency_converter",
+      "mana_cost": "{1}",
+      "name": "Currency Converter",
+      "oracle_text": "Whenever you discard a card, you may exile that card from your graveyard.\n{2}, {T}: Draw a card, then discard a card.\n{T}: Put a card exiled with this artifact into its owner's graveyard. If it's a land card, create a Treasure token. If it's a nonland card, create a 2/2 black Rogue creature token.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -71444,6 +71573,52 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "kobolds_of_kher_keep_0_1_r"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, {T}: Create a 0/1 red Kobold creature token named Kobolds of Kher Keep."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "kher_keep",
+      "name": "Kher Keep",
+      "oracle_text": "{T}: Add {C}.\n{1}{R}, {T}: Create a 0/1 red Kobold creature token named Kobolds of Kher Keep.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Land"
       ]
     },
     {

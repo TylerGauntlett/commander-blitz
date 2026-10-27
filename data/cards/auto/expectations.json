@@ -2677,6 +2677,10 @@
     },
     "zone": "battlefield"
   },
+  "currency_converter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "cursed_flesh": {
     "zone": [
       "battlefield",
@@ -6404,6 +6408,10 @@
     "zone": "battlefield"
   },
   "khalni_heart_expedition": {
+    "zone": "battlefield"
+  },
+  "kher_keep": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kinbinding": {

@@ -474,6 +474,32 @@ class TestJosuVesssKnightsAreZombieKnightsWithMenace:
         assert "Knight" not in other.subtypes
 
 
+class TestCurrencyConvertersRogueIsATwoTwoBlack:
+    """Currency Converter: *"If it's a nonland card, create a **2/2 black
+    Rogue** creature token."*
+
+    Two near misses, each wrong on one axis. `vampire_rogue_1_1_b_lifelink` is
+    the pool's other black Rogue, on half the body with a keyword the card never
+    prints; `zombie_2_2_b` is the right body with the wrong creature type, and
+    Rogue- and Zombie-typal cards each read exactly that.
+    """
+
+    def test_it_is_a_vanilla_two_two_black_rogue(self, pool):
+        token = pool.get("rogue_2_2_b")
+        assert token is not None
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Rogue"]
+        assert not token.keywords
+        assert token.is_creature and token.is_token
+
+    def test_the_vampire_rogue_is_still_a_separate_token(self, pool):
+        other = pool.get("vampire_rogue_1_1_b_lifelink")
+        assert other is not None
+        assert (other.power, other.toughness) == (1, 1)
+        assert "lifelink" in other.keywords
+
+
 class TestMyrBattlespheresMyrAreColorlessArtifactMyr:
     """Myr Battlesphere: *"create four **1/1 colorless Myr artifact** creature
     tokens"*, and then *"you may tap X untapped **Myr** you control"*.
@@ -551,6 +577,37 @@ class TestTheSpiderIsAOneTwoWithReach:
         insect = pool.get("insect_1_1_g")
         assert insect is not None
         assert list(insect.subtypes) == ["Insect"]
+
+
+class TestKherKeepsKoboldsCarryTheirName:
+    """Kher Keep: *"Create a 0/1 red Kobold creature token **named Kobolds of
+    Kher Keep**."*
+
+    `plant_0_1_g` is the pool's other 0/1 and is the wrong colour and type.
+    The name is a characteristic too (111.4), and it is the one a vanilla
+    "Kobold Token" would get wrong: it is the name of a real {0} 0/1 card, which
+    is also why `CardRegistry.by_name` must never answer it with the token.
+    """
+
+    def test_it_is_a_zero_one_red_kobold_named_for_the_keep(self, pool):
+        token = pool.get("kobolds_of_kher_keep_0_1_r")
+        assert token is not None
+        assert token.name == "Kobolds of Kher Keep"
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Kobold"]
+        assert not token.keywords
+        assert token.is_creature and token.is_token
+
+    def test_the_card_of_the_same_name_is_still_a_separate_card(self, pool):
+        card = pool.get("kobolds_of_kher_keep")
+        assert card is not None and not card.is_token
+        assert pool.by_name("Kobolds of Kher Keep").id == "kobolds_of_kher_keep"
+
+    def test_the_plant_is_still_a_separate_token(self, pool):
+        plant = pool.get("plant_0_1_g")
+        assert plant is not None
+        assert sorted(plant.colors) == ["G"]
 
 
 class TestEzurisPredationMakesPhyrexianBeasts:

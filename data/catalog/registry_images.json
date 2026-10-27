@@ -2583,6 +2583,10 @@
     "artist": "Simon Dominic",
     "scryfall_id": "d5c8619f-753b-472f-a6cd-00bd9e897279"
   },
+  "currency_converter": {
+    "artist": "Sean Murray",
+    "scryfall_id": "f91b18ef-ac8a-4d4c-9586-b101681d33e2"
+  },
   "cursed_flesh": {
     "artist": "Ron Spencer",
     "scryfall_id": "d13520c4-d151-470e-9f30-b91f188a8192"
@@ -6237,6 +6241,10 @@
     "artist": "Jason Chan",
     "scryfall_id": "159c309c-568d-4780-9db5-b50a997e7bb2"
   },
+  "kher_keep": {
+    "artist": "Paolo Parente",
+    "scryfall_id": "15ca0b68-33a1-4d25-b622-d3f5ba05b0a5"
+  },
   "kinbinding": {
     "artist": "Caio Monteiro",
     "scryfall_id": "b6e35fd5-de7e-40a8-a23c-00d07fd1ac56"
@@ -6392,6 +6400,10 @@
   "kobolds_of_kher_keep": {
     "artist": "Julie Baroh",
     "scryfall_id": "df0320d9-7c2a-456a-9159-1b4fae67bfb5"
+  },
+  "kobolds_of_kher_keep_0_1_r": {
+    "artist": "Paolo Parente",
+    "scryfall_id": "d0d630b2-1e42-4cf7-bfa1-36d5c135877b"
   },
   "kodama_of_the_east_tree": {
     "artist": "Daarken",
@@ -9558,6 +9570,10 @@
   "rograkh_son_of_rohgahh": {
     "artist": "Chris Seaman",
     "scryfall_id": "465d0ef9-3dbc-4b80-a061-54db2f3ecefc"
+  },
+  "rogue_2_2_b": {
+    "artist": "Maria Poliakova",
+    "scryfall_id": "0526330e-40eb-4c5f-b0f5-5489839e5f44"
   },
   "rogue_s_passage": {
     "artist": "Christine Choi",
