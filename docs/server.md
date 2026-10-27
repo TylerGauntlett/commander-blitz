@@ -67,6 +67,12 @@ how far the art crawl has got and how many lazy fills this process attempted
 ([card-catalog.md](card-catalog.md#the-art-store)). Playwright's
 `webServer` waits on it; the desktop probe polls it.
 
+That report lists the art store and queries the catalog, so it is too dear for
+a machine to poll on a clock. `/health/live` answers `status` and `version` and
+nothing else, and it is what the droplet polls: Docker's healthcheck in
+`docker-compose.yml` and Caddy's active check in the `Caddyfile`. Anything that
+polls the site for as long as it is up belongs on it, not on `/health`.
+
 ### Serving the built client
 
 `_serve_client` registers a catch-all `GET /{client_path:path}` **last**, after
