@@ -142,9 +142,10 @@ for _ in $(seq 1 10); do
 done
 [ -n "$reloaded" ] || { echo "caddy never reloaded; $live stays live"; exit 1; }
 
-# Two of Caddy's health intervals, so it has seen the new colour healthy before
-# the old one goes and does not have to discover it from a failed request.
-sleep 5
+# Two of Caddy's health intervals (`health_interval` in the Caddyfile), so it
+# has seen the new colour healthy before the old one goes and does not have to
+# discover it from a failed request.
+sleep 20
 
 if [ "$live" = legacy ]; then
   # The single `web` service from before blue/green is an orphan now.

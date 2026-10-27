@@ -85,7 +85,7 @@ EXPOSE 8000
 # urllib rather than curl, so the image does not carry a network tool it would
 # otherwise never use.
 HEALTHCHECK --interval=30s --timeout=5s --start-period=40s --retries=3 \
-    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health').read()"
+    CMD python -c "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health/live').read()"
 
 # `--workers 1` is not a default, it is a constraint: a game is cached in the
 # memory of the process moving it (ADR 0023), and two processes moving one game

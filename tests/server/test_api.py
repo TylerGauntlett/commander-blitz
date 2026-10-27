@@ -40,6 +40,17 @@ class TestStaticData:
         # shipped decks plus the fixture decks the tests play.
         assert set(body["decks"]) == SHIPPED | FIXTURES
 
+    def test_the_polled_check_reads_nothing(self, client, monkeypatch):
+        # Docker and Caddy poll this every few seconds for as long as the site
+        # is up, so it must not list the art store or query the catalog.
+        def forbidden(*_args, **_kwargs):
+            raise AssertionError("/health/live read the art store")
+
+        monkeypatch.setattr(client.app.state.art, "cached_ids", forbidden)
+        body = client.get("/health/live").json()
+        assert body["status"] == "ok"
+        assert set(body) == {"status", "version"}
+
     def test_deck_list(self, client):
         decks = client.get("/api/decks").json()
         assert {d["id"] for d in decks} == SHIPPED | FIXTURES

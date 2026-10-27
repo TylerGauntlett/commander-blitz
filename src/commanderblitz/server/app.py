@@ -173,6 +173,15 @@ def create_app(
     app.include_router(pod_router)
     app.include_router(art_router)
 
+    # What the machines poll: Docker's healthcheck and Caddy's active check,
+    # every few seconds for as long as a colour is up.  It touches nothing but
+    # the process being alive, because `/health` below lists the art store and
+    # queries the catalog on every call, and at that rate it was the droplet's
+    # largest steady load.
+    @app.get("/health/live")
+    def live() -> dict:
+        return {"status": "ok", "version": __version__}
+
     @app.get("/health")
     def health() -> dict:
         registry = app.state.sessions
