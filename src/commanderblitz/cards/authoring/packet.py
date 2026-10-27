@@ -744,6 +744,12 @@ def reference() -> dict:
             " NOT `persists_until_end_of_turn`, which is one ability's mana"
             " until end of turn, and NOT \"that mana becomes colorless"
             " instead\" (Kruphix), which is still a gap.",
+            "\"You may pay any amount of {R}. When you do, it deals that much"
+            " damage to any target\" is `may` with `pay: {\"mana\": \"{R}\"}` and"
+            " `any_amount: {\"as\": \"paid\"}`, its `effects` a"
+            " `reflexive_trigger` whose ability reads `{\"binding\": \"paid\"}`."
+            " The player picks 1..what they can pay in that colour. NOT `x`"
+            " with `{X}` (any colour would pay), NOT `pay.times`, NOT `repeat`.",
             "\"If you would gain life, you gain twice that much life instead\""
             " is the player-wide static `replace_life_gain` with"
             " `affects_player: \"you\"` and `gain_multiplier: 2`. It is a real"

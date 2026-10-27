@@ -1,0 +1,47 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_pay_any_amount.py. t_any_red_tyrant is Leyline Tyrant on a smaller body: it keeps red mana, and when it dies its controller may pay any amount of {R}; when they do, it deals that much damage to any target.",
+  "cards": [
+    {
+      "id": "t_any_red_tyrant",
+      "name": "Test Any Red Tyrant",
+      "oracle_text": "You don't lose unspent red mana as steps and phases end.\nWhen this creature dies, you may pay any amount of {R}. When you do, it deals that much damage to any target.",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Dragon"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You don't lose unspent red mana as steps and phases end.",
+          "effect": "mana_retention",
+          "affects_player": "you",
+          "colors": ["R"]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, you may pay any amount of {R}.",
+          "trigger": {"event": "dies", "source": "self"},
+          "effects": [
+            {
+              "op": "may",
+              "player": "you",
+              "pay": {"mana": "{R}"},
+              "any_amount": {"as": "paid_red"},
+              "effects": [{"op": "reflexive_trigger", "ability": "tyrant_burn"}]
+            }
+          ]
+        },
+        {
+          "kind": "reflexive",
+          "id": "tyrant_burn",
+          "text": "When you do, it deals that much damage to any target.",
+          "targets": [{"id": "t1", "kind": "any", "count": 1}],
+          "effects": [{"op": "damage", "target": "t1", "amount": {"binding": "paid_red"}}]
+        }
+      ]
+    }
+  ]
+}

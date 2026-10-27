@@ -1737,6 +1737,32 @@ def max_affordable_x(
     return best
 
 
+def max_affordable_times(
+    cost: ManaCost,
+    pool: ManaPool | Sequence[int],
+    sources: Sequence[ManaSource],
+    cap: int = 100,
+) -> int:
+    """Largest ``N`` for which ``cost`` charged ``N`` times over is payable.
+
+    "You may pay **any amount of {R}**" (Leyline Tyrant) is a player-chosen
+    count of one fixed symbol, which `max_affordable_x` cannot price: ``with_x``
+    adds X as *generic*, so a red-only demand would be met by any mana. This
+    probes `ManaCost.scaled` instead, so {R} at three is ``{R}{R}{R}`` and only
+    red pays it. 0 when not even one is affordable.
+
+    ``cap`` is the engine's guard against a pathological board, not a rule any
+    card makes; the walk stops at the first unaffordable ``N``, so on an
+    ordinary board it costs one solve per point actually payable.
+    """
+    best = 0
+    for n in range(1, cap + 1):
+        if solve_payment(cost.scaled(n).with_x(0), pool, sources) is None:
+            break
+        best = n
+    return best
+
+
 # --------------------------------------------------------------------------
 # solver internals
 # --------------------------------------------------------------------------

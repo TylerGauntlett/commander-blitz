@@ -186,6 +186,52 @@ def _validate_pay_x(effect: Mapping[str, Any], where: str) -> None:
         raise DslError(f"{where}.x: an announced X cannot be combined with 'pay.mana_reduction'")
 
 
+def _validate_pay_any_amount(effect: Mapping[str, Any], where: str) -> None:
+    """``may``'s ``any_amount``: "you may pay any amount of {R}" -- Leyline Tyrant.
+
+    The ``pay`` is **exactly one coloured (or {C}) symbol and nothing else**,
+    because the announced count multiplies it: ``{R}`` at three is
+    ``{R}{R}{R}``. A generic ``{1}`` there is "any amount of mana", which is
+    ``{X}`` and the ``x`` key; ``{R}{R}`` would charge pairs; a life or
+    sacrifice beside it would be multiplied or charged once, and no printing
+    says which.
+
+    ``as`` is required -- the count is the whole point of "deals that much
+    damage", and without it the payment buys a number nothing reads.
+
+    Refused beside ``x`` (two announcements of one payment), ``repeat`` (each
+    yes would rebind the count over the last), ``pay.times`` (a computed
+    multiplier on top of a chosen one) and ``pay.mana_reduction`` (the ceiling
+    is priced off the printed symbol).
+    """
+    spec = effect["any_amount"]
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}.any_amount: must be an object with 'as' and an optional 'prompt'")
+    if unknown := set(spec) - {"as", "prompt"}:
+        raise DslError(
+            f"{where}.any_amount: unsupported keys {sorted(unknown)} (takes 'as', 'prompt')"
+        )
+    if not (isinstance(spec.get("as"), str) and spec["as"]):
+        raise DslError(f"{where}.any_amount.as: a binding name for the amount paid is required")
+    pay_spec = effect["pay"]
+    if extra := {k for k, v in pay_spec.items() if v not in (None, False, 0)} - {"mana"}:
+        raise DslError(
+            f"{where}.any_amount: the payment is one mana symbol and nothing else; "
+            f"'pay' also has {sorted(extra)}"
+        )
+    mana = ManaCost.parse(pay_spec.get("mana"))
+    if mana.generic or mana.x_count or mana.hybrid or sum(mana.colored) != 1:
+        raise DslError(
+            f"{where}.any_amount: 'pay.mana' must be exactly one coloured or {{C}} symbol "
+            f"(\"{{R}}\"), not {pay_spec.get('mana')!r} -- any amount of generic mana is "
+            f"'{{X}}' with 'x'"
+        )
+    if "x" in effect:
+        raise DslError(f"{where}.any_amount: cannot be combined with 'x'")
+    if effect.get("repeat"):
+        raise DslError(f"{where}.any_amount: cannot be combined with 'repeat'")
+
+
 def _validate_enchanted_player(model: CardModel, where: str) -> None:
     """``"enchanted_player"`` only on a card that can *be* attached to a player.
 
@@ -795,6 +841,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             CostModel.model_validate(effect["pay"])
         except Exception as exc:  # pydantic ValidationError
             raise DslError(f"{where}: bad 'pay' cost: {exc}") from exc
+        if "any_amount" in effect:
+            _validate_pay_any_amount(effect, where)
         # A payment has to buy *something*, but there are two things it can buy.
         # "You may pay {2}. If you do, draw a card" buys the `effects`. Rhystic
         # Study's "unless that player pays {1}" buys the **absence** of the
@@ -843,6 +891,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             validate_value(times, f"{where}.pay.times")
             if not effect["pay"].get("mana"):
                 raise DslError(f"{where}.pay: 'times' multiplies the mana cost, and there is none")
+    if "any_amount" in effect and (op != "may" or "pay" not in effect):
+        # Every other op ignores the key, so the card would load and pay nothing.
+        raise DslError(
+            f"{where}: 'any_amount' counts how many times a may's 'pay' is paid, "
+            f"and {op!r} has no 'pay' to count"
+        )
     if "x" in effect and (op != "may" or "pay" not in effect):
         # `may` without a `pay` has no {X} to announce, and every other op
         # ignores the key -- the card would load and draw 0.

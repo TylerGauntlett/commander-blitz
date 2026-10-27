@@ -10019,6 +10019,37 @@ silently *becomes* the card's real maximum.
 it would charge {0}), as is `x` without an `{X}`, without `as`, on any op but a
 `may` with a `pay`, and beside `repeat`, `pay.times` or `pay.mana_reduction`.
 
+### "You may pay any amount of {R}. When you do…"
+
+`any_amount` is the count of a `pay` that is **one coloured symbol** (or
+`{C}`), chosen by the player as the ability resolves; `as` binds it:
+
+```jsonc
+// Leyline Tyrant: when this creature dies, you may pay any amount of {R}.
+//                 When you do, it deals that much damage to any target.
+{ "op": "may", "pay": { "mana": "{R}" },
+  "any_amount": { "as": "paid_red" },
+  "effects": [ { "op": "reflexive_trigger", "ability": "tyrant_burn" } ] }
+// …and the reflexive ability deals { "binding": "paid_red" } to its target.
+```
+
+After the yes the player is asked `choose_x` from **1** up to the most times
+that symbol can be paid (`mana.max_affordable_times`, which asks the solver for
+`{R}` scaled N times, so only red pays it), and exactly that many are charged.
+0 is never offered: the no is how a player pays none, and paying none is not
+paying, so "when you do" cannot fire off {0}. Kept mana counts — a
+`mana_retention` static's red is what the Tyrant's trigger usually spends. No
+card prints a ceiling, so there is no `max`.
+
+The near miss is `x` with `{X}`: X is added as *generic* mana, so a Tyrant
+written that way burns for mana of any colour. `pay.times` is a count the card
+computes, and `repeat` around `{R}` is several payments with no count to bind.
+
+Refused at load: a `pay` that is anything but one non-generic, non-hybrid
+symbol (`{1}` is `{X}` with `x`; `{R}{R}` would charge pairs), any other cost
+beside it, `pay.times` or `pay.mana_reduction`, no `as`, and `any_amount`
+beside `x`, beside `repeat`, or on anything but a `may` with a `pay`.
+
 ### "…unless that player pays {1}"
 
 The same op, with two things moved. `player` says *who is asked* — it has always
