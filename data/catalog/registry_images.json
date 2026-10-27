@@ -1527,6 +1527,14 @@
     "artist": "Kev Walker",
     "scryfall_id": "eb84b86c-3276-4fc1-a09d-47de388cb729"
   },
+  "bre_of_clan_stoutarm": {
+    "artist": "Jesper Ejsing",
+    "scryfall_id": "013cefb7-a059-45c2-81b0-187f35aac4a2"
+  },
+  "breaching_dragonstorm": {
+    "artist": "Danny Schwartz",
+    "scryfall_id": "14f530e9-0eef-44df-9ef7-d9cf3536afd7"
+  },
   "breakneck_berserker": {
     "artist": "Scott Murphy",
     "scryfall_id": "d6eb23c9-6061-4ad1-a8f3-2c791c49f352"
@@ -10583,6 +10591,10 @@
     "artist": "Flavio Greco Paglia",
     "scryfall_id": "d00a69f9-0364-4a2f-9493-4e0d0db7f37f"
   },
+  "solstice_revelations": {
+    "artist": "Kotakan",
+    "scryfall_id": "f22ac19f-66fb-4d54-9f09-495a20a29577"
+  },
   "soltari_foot_soldier": {
     "artist": "Janet Aulisio",
     "scryfall_id": "3524d78b-d120-46ff-83e3-c502589fd5ba"
@@ -12841,6 +12853,10 @@
   "wall_of_wood": {
     "artist": "Rebecca Guay",
     "scryfall_id": "54b5d7d8-3eac-47be-80e8-cce5aaa8995e"
+  },
+  "wanda_s_vision": {
+    "artist": "Peter Scanlan",
+    "scryfall_id": "43cf33cc-c1ac-4196-aa82-b27083694f64"
   },
   "wandering_ones": {
     "artist": "Heather Hudson",

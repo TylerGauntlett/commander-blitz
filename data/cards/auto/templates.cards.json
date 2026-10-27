@@ -16383,6 +16383,174 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "keywords": [
+                "flying",
+                "lifelink"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{W}, {T}: Another target creature you control gains flying and lifelink until end of turn."
+        },
+        {
+          "effects": [
+            {
+              "cast_free": true,
+              "cast_free_if": {
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "life_gained_this_turn": "you"
+                  }
+                }
+              },
+              "else_destination": "hand",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you gained life this turn, exile cards from the top of your library until you exile a nonland card. You may cast that card without paying its mana cost if the spell's mana value is less than or equal to the amount of life you gained this turn. Otherwise, put it into your hand.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "bre_of_clan_stoutarm",
+      "mana_cost": "{2}{R}{W}",
+      "name": "Bre of Clan Stoutarm",
+      "oracle_text": "{1}{W}, {T}: Another target creature you control gains flying and lifelink until end of turn.\nAt the beginning of your end step, if you gained life this turn, exile cards from the top of your library until you exile a nonland card. You may cast that card without paying its mana cost if the spell's mana value is less than or equal to the amount of life you gained this turn. Otherwise, put it into your hand.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Giant",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "cast_free": true,
+              "cast_free_if": {
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 8
+                  }
+                }
+              },
+              "else_destination": "hand",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, exile cards from the top of your library until you exile a nonland card. You may cast it without paying its mana cost if that spell's mana value is 8 or less. If you don't, put that card into your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When a Dragon you control enters, return this enchantment to its owner's hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                "Dragon"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "breaching_dragonstorm",
+      "mana_cost": "{4}{R}",
+      "name": "Breaching Dragonstorm",
+      "oracle_text": "When this enchantment enters, exile cards from the top of your library until you exile a nonland card. You may cast it without paying its mana cost if that spell's mana value is 8 or less. If you don't, put that card into your hand.\nWhen a Dragon you control enters, return this enchantment to its owner's hand.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -119043,6 +119211,54 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "flashback": {
+        "mana": "{6}{R}"
+      },
+      "id": "solstice_revelations",
+      "mana_cost": "{2}{R}",
+      "name": "Solstice Revelations",
+      "oracle_text": "Exile cards from the top of your library until you exile a nonland card. You may cast that card without paying its mana cost if the spell's mana value is less than the number of Mountains you control. If you don't cast that card this way, put it into your hand.\nFlashback {6}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "cast_free": true,
+          "cast_free_if": {
+            "mana_value": {
+              "op": "<",
+              "value": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Mountain"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            }
+          },
+          "else_destination": "hand",
+          "objects": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "op": "exile_until"
+        }
+      ],
+      "subtypes": [
+        "Lesson"
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -145794,6 +146010,44 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "cast_free": true,
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your second spell each turn, exile cards from the top of your library until you exile a nonland card. You may cast that card without paying its mana cost.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "wanda_s_vision",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Wanda's Vision",
+      "oracle_text": "Whenever you cast your second spell each turn, exile cards from the top of your library until you exile a nonland card. You may cast that card without paying its mana cost.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

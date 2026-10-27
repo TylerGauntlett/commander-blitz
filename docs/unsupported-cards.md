@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**98 cards** blocked by **83** capabilities.
+**97 cards** blocked by **82** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -47,7 +47,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escalate](#escalate) | 1 | 788 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
-| [exile-until-cast-free](#exile-until-cast-free) | 1 | 4075 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [first-attack-each-turn](#first-attack-each-turn) | 1 | 1278 | trigger_event |
 | [fog](#fog) | 1 | 1232 | op |
@@ -723,20 +722,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## exile-until-cast-free
-
-Blocks **1** card.
-
-- **(op)** an exile-until walk (like cascade) whose stop test is a selector (here: nonland, any mana value), that leaves every walked-past card in exile (no bottoming), offers a free cast of the hit only if a separate condition holds (its mana value <= 8), and on a declined or disallowed cast moves the hit to a fallback destination (hand) -- e.g. reveal_until with exile-as-you-walk, a `cast_free` + `cast_free_if` (selector on the hit) and `else_destination`
-  <br>Why the existing vocabulary won't do: cascade hardcodes the stop test to 'nonland with lesser mana value' and bottoms every exiled card including a declined hit; reveal_until takes a selector stop test but reveals rather than exiles, either bottoms the rest or leaves it in the library (never exiles it), and has no cast_free; look_at_top has cast_free but a fixed depth; chaining reveal_until(destination exile, link self) + play_exiled cannot exile the walked-past lands nor say 'if you don't cast it, put it into your hand'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Breaching Dragonstorm** (rank 4075) — `breaching_dragonstorm`
-  - When this enchantment enters, exile cards from the top of your library until you exile a nonland card. You may cast it without paying its mana cost if that spell's mana value is 8 or less. If you don't, put that card into your hand.
 
 </details>
 

@@ -33512,12 +33512,12 @@
     },
     "Bre of Clan Stoutarm": {
       "edhrec_rank": 8261,
-      "gate": "template",
+      "gate": null,
       "name": "Bre of Clan Stoutarm",
-      "reason": "no template for: {1}{W}, {T}: Another target creature you control gains flying and lifelink until end of tu",
+      "reason": "",
       "scryfall_id": "013cefb7-a059-45c2-81b0-187f35aac4a2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breach": {
@@ -33542,12 +33542,12 @@
     },
     "Breaching Dragonstorm": {
       "edhrec_rank": 4075,
-      "gate": "template",
+      "gate": null,
       "name": "Breaching Dragonstorm",
-      "reason": "no template for: When this enchantment enters, exile cards from the top of your library until you exile a n",
+      "reason": "",
       "scryfall_id": "6bbfdf32-8b21-4f7a-aa30-42d5362ee352",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breaching Hippocamp": {
@@ -254532,12 +254532,12 @@
     },
     "Solstice Revelations": {
       "edhrec_rank": 7268,
-      "gate": "template",
+      "gate": null,
       "name": "Solstice Revelations",
-      "reason": "no template for: Exile cards from the top of your library until you exile a nonland card. You may cast that",
+      "reason": "",
       "scryfall_id": "f22ac19f-66fb-4d54-9f09-495a20a29577",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Solstice Zealot": {
@@ -309882,12 +309882,12 @@
     },
     "Wanda's Vision": {
       "edhrec_rank": 17176,
-      "gate": "template",
+      "gate": null,
       "name": "Wanda's Vision",
-      "reason": "no template for: Whenever you cast your second spell each turn, exile cards from the top of your library un",
+      "reason": "",
       "scryfall_id": "43cf33cc-c1ac-4196-aa82-b27083694f64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wander Off": {

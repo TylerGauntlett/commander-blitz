@@ -1541,6 +1541,18 @@
   "brazen_scourge": {
     "zone": "battlefield"
   },
+  "bre_of_clan_stoutarm": {
+    "zone": "battlefield"
+  },
+  "breaching_dragonstorm": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
+  },
   "breakneck_berserker": {
     "zone": "battlefield"
   },
@@ -10756,6 +10768,15 @@
   "solar_array": {
     "zone": "battlefield"
   },
+  "solstice_revelations": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "soltari_foot_soldier": {
     "zone": "battlefield"
   },
@@ -13040,6 +13061,9 @@
     "zone": "battlefield"
   },
   "wall_of_wood": {
+    "zone": "battlefield"
+  },
+  "wanda_s_vision": {
     "zone": "battlefield"
   },
   "wandering_ones": {
