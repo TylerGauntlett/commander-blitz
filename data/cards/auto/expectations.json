@@ -10854,6 +10854,10 @@
   "skeletal_snake": {
     "zone": "battlefield"
   },
+  "skrelv_s_hive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "skullclamp": {
     "battlefield_count": 33,
     "hand_size": {

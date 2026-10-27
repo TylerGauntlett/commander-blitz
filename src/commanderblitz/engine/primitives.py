@@ -1030,6 +1030,10 @@ def add_poison(
         player_counter_replacements(state, pid, "poison", by=by), amount
     )
     state.players[pid].poison += amount
+    # A poison count is an input to the static condition language (corrupted's
+    # "as long as an opponent has three or more poison counters"), and `chars`
+    # caches per `char_version` -- `_move_life`'s reason, for the other total.
+    state.bump_chars()
     state.emit(
         EventType.POISON_ADDED,
         player=pid,

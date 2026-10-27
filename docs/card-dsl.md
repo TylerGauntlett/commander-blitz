@@ -4758,6 +4758,7 @@ smaller than the effect-side `value_keys`:
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
+| `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -4917,7 +4918,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
@@ -5062,6 +5063,29 @@ that reading is correct.
 Both work in the `if`-effect language and in a static's `condition`; the two are
 validated separately, so a leaf added to one and not the other would load in a
 card that then quietly read 0.
+
+#### Corrupted — "an opponent has three or more poison counters"
+
+`{"max_poison_of": spec}` is the most poison counters (`PlayerState.poison`) on
+any **one** of the spec's players — the existential, for `min_life_of`'s reason:
+a sum would open "an opponent has three or more" at a pod on two opponents with
+two counters each.
+
+```jsonc
+// Skrelv's Hive -- "Corrupted — As long as an opponent has three or more poison
+// counters, creatures you control with toxic have lifelink."
+{ "kind": "static", "effect": "grant_keyword", "keyword": "lifelink",
+  "affects": { "types": ["Creature"], "controller": "you", "keywords": ["toxic"] },
+  "condition": { "cmp": ">=", "left": { "max_poison_of": "each_opponent" },
+                 "right": { "const": 3 } } }
+```
+
+Over nobody it is 0, so the condition is off once no opponent is left. A
+poison count is a pipeline input like a life total — only `primitives.add_poison`
+writes one, and it bumps `char_version`, so a static re-reads the condition the
+moment a counter lands. `counters_on` is the near miss and cannot reach it: it
+counts counters on objects, and a player is not one. The leaf works in both
+languages; in a static it takes the life leaves' player specs.
 
 #### "At least 7 life more than your starting life total"
 

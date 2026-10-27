@@ -1350,6 +1350,11 @@ STATIC_LIFE_PLAYERS = frozenset({"you", "opponent", "each_opponent", "each_playe
 #: characteristics pipeline can change one.
 STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 
+#: The per-player poison leaf -- corrupted, "as long as an opponent has three or
+#: more poison counters". A poison count is an input for a life total's reason,
+#: and takes the same player specs.
+STATIC_POISON_KEYS = frozenset({"max_poison_of"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1391,6 +1396,7 @@ STATIC_VALUE_KEYS = (
         }
     )
     | STATIC_LIFE_KEYS
+    | STATIC_POISON_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 

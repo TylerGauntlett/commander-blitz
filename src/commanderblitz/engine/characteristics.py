@@ -1569,6 +1569,12 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     if "max_life_of" in expr:
         pids = _static_players(state, source, expr["max_life_of"])
         return max([state.players[p].life for p in pids], default=0)
+    if "max_poison_of" in expr:
+        # Corrupted. A poison count is a pipeline input on a life total's terms:
+        # only `primitives.add_poison` writes one, nothing in this pipeline can,
+        # and that funnel bumps `char_version` so the condition is re-read.
+        pids = _static_players(state, source, expr["max_poison_of"])
+        return max((state.players[p].poison for p in pids), default=0)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

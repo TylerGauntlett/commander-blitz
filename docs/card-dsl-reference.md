@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 146 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 54 |
+| [Values](#values) | 55 |
 | [Conditions](#conditions) | 30 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
@@ -29,7 +29,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
 | [Static conditions](#static-conditions) | 12 |
-| [Static values](#static-values) | 13 |
+| [Static values](#static-values) | 14 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
 | [Mana rider ops](#mana-rider-ops) | 6 |
@@ -322,6 +322,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `max_damage_taken_this_turn` | The most damage any one of a spec's players was dealt this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `max_life_of` | The highest life total among a spec's players. | [Value expressions](card-dsl.md#value-expressions) |
+| `max_poison_of` | The most poison counters on any one of a spec's players (corrupted). | [Corrupted — "an opponent has three or more poison counters"](card-dsl.md#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `min` | The least of several values. | [Value expressions](card-dsl.md#value-expressions) |
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `min_life_of` | The lowest life total among a spec's players. | [Value expressions](card-dsl.md#value-expressions) |
@@ -902,6 +903,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `mana_symbols` | Pips of a color among a pool's mana costs (chroma). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `max_life_of` | The highest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `max_poison_of` | The most poison counters on any one of a spec's players (corrupted). | [Corrupted — "an opponent has three or more poison counters"](card-dsl.md#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `min_life_of` | The lowest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |

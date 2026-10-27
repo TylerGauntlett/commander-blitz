@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**109 cards** blocked by **98** capabilities.
+**108 cards** blocked by **97** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-card-type](#choose-card-type) | 1 | 2680 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
-| [corrupted](#corrupted) | 1 | 2052 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
@@ -644,20 +643,6 @@ Blocks **1** card.
 
 - **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
   - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
-
-</details>
-
-## corrupted
-
-Blocks **1** card.
-
-- **(value)** a static-condition value reading a player's poison counters -- the most among a player spec, e.g. {"max_poison_of": "each_opponent"} beside max_life_of -- so "as long as an opponent has three or more poison counters" is a cmp >= 3. The rest of the card is expressible: the upkeep trigger is lose_life plus create_token phyrexian_mite_1_1_c_toxic, and "creatures you control with toxic" is a grant_keyword lifelink static filtered keywords: ["toxic"]
-  <br>Why the existing vocabulary won't do: The value vocabulary reads life (life_of, max_life_of, min_life_of), counters on objects (counters_on) and event tallies, but nothing reads PlayerState.poison; counters_on selects permanents, not players
-
-<details><summary>Cards waiting on this</summary>
-
-- **Skrelv's Hive** (rank 2052) — `skrelv_s_hive`
-  - Corrupted — As long as an opponent has three or more poison counters, creatures you control with toxic have lifelink
 
 </details>
 

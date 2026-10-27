@@ -249832,12 +249832,12 @@
     },
     "Skrelv's Hive": {
       "edhrec_rank": 2052,
-      "gate": "template",
+      "gate": null,
       "name": "Skrelv's Hive",
-      "reason": "no template for: At the beginning of your upkeep, you lose 1 life and create a 1/1 colorless Phyrexian Mite",
+      "reason": "",
       "scryfall_id": "2029caf7-da57-4894-ab27-4718977817c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skrelv, Defector Mite": {
