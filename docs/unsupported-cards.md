@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **84** capabilities.
+**98 cards** blocked by **83** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -91,7 +91,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
-| [temporary-subtype](#temporary-subtype) | 1 | 7614 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -1359,20 +1358,6 @@ Blocks **1** card.
 
 - **Imperial Mask** (rank 26785) — `imperial_mask`
   - When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.
-
-</details>
-
-## temporary-subtype
-
-Blocks **1** card.
-
-- **(op)** a one-shot 'until end of turn, <permanent> becomes a <subtype> in addition to its other types': a creature-type addition that wears off at cleanup, on the permanent the effect names
-  <br>Why the existing vocabulary won't do: The `add_subtype` op writes the subtype onto the object with no duration, so Sarkhan would stay a Dragon for good; `animate` sets base power and toughness (0/0 unless given), so it would replace Sarkhan's 2/2; granting an `add_subtype` static through `grant_ability` makes it an ability, which an ability-removing effect would strip where the printed one-shot effect would survive. The behold sentence is expressible with the `behold` op
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sarkhan, Dragon Ascendant** (rank 7614) — `sarkhan_dragon_ascendant`
-  - Whenever a Dragon you control enters, put a +1/+1 counter on Sarkhan. Until end of turn, Sarkhan becomes a Dragon in addition to its other types and gains flying.
 
 </details>
 

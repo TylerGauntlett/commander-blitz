@@ -233472,12 +233472,12 @@
     },
     "Sarkhan, Dragon Ascendant": {
       "edhrec_rank": 7614,
-      "gate": "template",
+      "gate": null,
       "name": "Sarkhan, Dragon Ascendant",
-      "reason": "no template for: When Sarkhan enters, you may behold a Dragon. If you do, create a Treasure token",
+      "reason": "",
       "scryfall_id": "57c03255-e3dc-44c2-982b-7efa188280df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sarkhan, Dragonsoul": {
