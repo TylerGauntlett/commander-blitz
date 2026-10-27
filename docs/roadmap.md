@@ -514,7 +514,7 @@ six gates.
 
 ### Damage divided among targets on a spell (601.2d)
 
-Effort **M** · Impact **medium**, Monstrous Onslaught in Tramplesaurus Rex and Pyrokinesis wait on it, and every divided-damage spell after them · Depends on nothing · Awaiting decisions.
+Effort **M** · Impact **medium**, Monstrous Onslaught in Tramplesaurus Rex and Pyrokinesis wait on it, and every divided-damage spell after them · Depends on nothing.
 
 #### Today
 
@@ -564,22 +564,22 @@ without the rest moving, and that the cast-time amount does not change when the
 board does before resolution; `tests/cards` with Monstrous Onslaught and
 Pyrokinesis through the six gates.
 
-#### Open questions
+#### Decisions
 
-- **One op or a key:** a `divided: true` key on `damage` naming the target spec,
-  or a `divide_damage` op beside `distribute_counters`. Recommended: the key on
-  `damage`, because the effect is damage in every other respect (lifelink,
-  deathtouch, `damage_multiplier`, prevention) and a sibling op would have to
-  re-route all of it.
-- **How the cast-time amount is written:** a general `as_cast` wrapper on any
-  value, or a field on the divided damage that says its amount is evaluated at
-  announcement. Recommended: the field, since 601.2d only needs the amount
-  fixed where a division is announced, and a general wrapper would open every
-  value to cast-time reads no other card needs yet.
-- **Scope of the pull request:** the capability, Monstrous Onslaught and
-  Pyrokinesis only, titled `feat(cards):`, with the Tramplesaurus Rex deck
-  written once Monstrous Onslaught lands. Recommended, so the review stays one
-  mechanic and the precon item retires in the same pull request.
+- **One op or a key:** a `divided` key on the `damage` op, naming the target
+  spec whose objects share the `amount`. The effect is damage in every other
+  respect (lifelink, deathtouch, `damage_multiplier`, prevention), and a sibling
+  op would have to re-route all of it.
+- **How the cast-time amount is written:** a field on the divided damage that
+  says its amount is evaluated at announcement, not a general `as_cast` wrapper.
+  601.2d only needs the amount fixed where a division is announced, and a
+  general wrapper would open every value to cast-time reads no other card needs
+  yet.
+- **Scope of the pull request:** one pull request titled `feat(cards):` with the
+  capability, Monstrous Onslaught and Pyrokinesis, and the Tramplesaurus Rex
+  deck written once Monstrous Onslaught lands, so
+  [precon-fdc-tramplesaurus-rex](precon-fdc-tramplesaurus-rex.md) retires in the
+  same pull request. Combat damage assignment (510.1c) is not touched.
 
 ## Decks
 
