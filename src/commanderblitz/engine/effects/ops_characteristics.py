@@ -64,6 +64,11 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
     Types are always *added*.  Replacing a type line is `animate` or the
     `set_types` static.
 
+    ``duration`` is ``"permanent"`` when absent, which is the printed line with
+    no clock, or ``"until_end_of_turn"`` / ``"until_your_next_turn"`` for "until
+    end of turn, Sarkhan becomes a Dragon in addition to its other types": a
+    ``subtype`` `TempEffect` that wears off with the rest (`add_subtypes`).
+
     **Literal names only**, and the assertion is the point. `str()` stood where
     this check does, and it made `{"chosen_type_of": "self"}` -- which the
     static of the same name now takes, and which the loader refuses here -- into
@@ -83,9 +88,20 @@ def op_add_subtype(ctx: EffectContext, spec: Mapping[str, Any]):
     subtypes = list(wanted)
     if not subtypes:
         return
+    # "**Until end of turn**, Sarkhan becomes a Dragon…" -- the same words with
+    # a clock. No duration is the printed one-shot, which never wears off.
+    timed = "duration" in spec and spec["duration"] != "permanent"
+    until_player = until_player_of(ctx, spec) if timed else None
     oids = yield from choose_objects(ctx, spec.get("objects"), "Becomes")
     for oid in oids:
-        add_subtypes(ctx.state, oid, subtypes)
+        add_subtypes(
+            ctx.state,
+            oid,
+            subtypes,
+            timed=timed,
+            source=ctx.source_oid,
+            until_player=until_player,
+        )
 
 
 @register("lose_all_abilities")

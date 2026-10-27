@@ -571,7 +571,9 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    written onto the permanent, so it is an input to this pipeline
         #    rather than a product of it, and a static's `add_subtype` layering
         #    on top of it is the ordinary case.
-        subtypes.update(obj.added_subtypes)
+        #    "Until end of turn, Sarkhan becomes a Dragon in addition to its
+        #    other types" is the same input with a clock (`recorded_subtypes`).
+        subtypes.update(recorded_subtypes(obj))
 
         #    The grant is resolved per source rather than read off the compiled
         #    static, because one entry in that list is not a literal name:
@@ -1804,6 +1806,22 @@ def resolve_chosen_colors(
     return {**selector, "colors": out or ["\0none"]}
 
 
+def recorded_subtypes(obj: GameObject) -> tuple[str, ...]:
+    """The subtypes written onto ``obj`` "in addition to its other types".
+
+    `GameObject.added_subtypes` -- the one-shot with no clock -- and every
+    ``subtype`` `TempEffect` still standing: "until end of turn, Sarkhan becomes
+    a Dragon in addition to its other types". Both are pipeline *inputs*, so
+    `_compute` and a static's filter read them alike; a Dragon lord's anthem
+    reaches a Sarkhan that is a Dragon for the turn, as it reaches a Vampire
+    Captivating Vampire converted.
+    """
+    timed = tuple(
+        sub for temp in obj.until_eot if temp.kind == "subtype" for sub in temp.subtypes
+    )
+    return obj.added_subtypes + timed if timed else obj.added_subtypes
+
+
 def _matches_printed(
     card: CardDef,
     selector: Mapping[str, Any],
@@ -2130,7 +2148,7 @@ def _matches_wherever(
             return False
         size = (c.power, c.toughness)
     else:
-        if not _matches_printed(card, selector, obj.added_subtypes, obj.text_changes):
+        if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None
 

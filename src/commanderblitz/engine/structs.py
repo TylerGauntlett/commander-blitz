@@ -56,8 +56,9 @@ class TempEffect:
     ``"lock_abilities"`` ("its activated abilities can't be activated this
     turn"), ``"ability"`` (a whole triggered or activated ability granted by
     another permanent), ``"animate"`` ("becomes a 4/4 creature until end of
-    turn"), or ``"control"`` ("gain control of target permanent until end of
-    turn").  The lock is not a keyword because it is not a characteristic: it is
+    turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
+    addition to its other types": ``subtypes`` added, base P/T untouched), or
+    ``"control"`` ("gain control of target permanent until end of turn").  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 

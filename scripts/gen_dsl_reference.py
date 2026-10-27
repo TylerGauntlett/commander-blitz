@@ -308,7 +308,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "set_pt": ("Modify", "Set base power and toughness for a duration.", None),
     "animate": ("Modify", "A noncreature becomes a creature (types, P/T, colors) for a duration.",
                 "Creature-lands"),
-    "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others.",
+    "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others, "
+                    "for good or for a duration.",
                     '"It becomes a Vampire in addition to its other types"'),
     "change_text": ("Modify", "Replace one creature type or color word with another in its text.",
                     '`change_text` — "replacing all instances of one creature type"'),

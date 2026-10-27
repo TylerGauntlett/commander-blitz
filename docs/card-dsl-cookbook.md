@@ -7533,6 +7533,23 @@ rather than an output, so letting it through introduces no such dependency. It
 has to be let through, because Captivating Vampire's own "other Vampire
 creatures you control get +1/+1" is the reason to convert the creature at all.
 
+**With a `duration`** it is the same sentence with a clock — "until end of turn,
+Sarkhan becomes a Dragon in addition to its other types":
+
+```jsonc
+{ "op": "add_subtype", "subtypes": ["Dragon"], "objects": { "self_only": true },
+  "duration": "until_end_of_turn" }
+```
+
+`until_end_of_turn` and `until_your_next_turn` write a `subtype` `TempEffect`
+instead of `added_subtypes`, swept with the pumps and keyword grants; no
+`duration` (or `"permanent"`) is the one-shot above, and any other word is
+refused at load time, because a misread clock is a creature that stays a Dragon
+for good. A static filter sees the timed type too, so a Dragon lord pumps
+Sarkhan for the turn. Two near misses load and are wrong: `animate` sets the
+base power and toughness, and a granted `add_subtype` static is an ability that
+"loses all abilities" strips, where the printed type change survives it.
+
 Subtypes only. `types` is refused rather than dropped — "becomes an artifact in
 addition to its other types" is a different sentence, and `animate` and the
 `set_types` static are what change a card type.

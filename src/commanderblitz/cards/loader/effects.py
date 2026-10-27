@@ -1727,6 +1727,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: add_subtype changes subtypes only; use 'animate' for card types"
             )
+        # "**Until end of turn**, Sarkhan becomes a Dragon…" A misspelled clock
+        # would otherwise read as no clock at all, and a Dragon for the turn
+        # would stay one for good.
+        if effect.get("duration", "permanent") not in (
+            "permanent",
+            "until_end_of_turn",
+            "until_your_next_turn",
+        ):
+            raise DslError(
+                f"{where}: unknown add_subtype duration {effect['duration']!r} "
+                f"(use 'until_end_of_turn', 'until_your_next_turn', or omit it for "
+                f"a type change with no duration)"
+            )
     if op == "gain_control":
         # "Gain control of" with nothing named is a card that reads like removal
         # and does nothing at all.
