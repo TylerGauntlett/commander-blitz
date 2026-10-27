@@ -1899,6 +1899,17 @@ def _check_class_levels(model: CardModel, abilities: tuple[Ability, ...], where:
         )
 
 
+def _has_per_turn_modes(effects: Any) -> bool:
+    """Does any ``choose_mode`` in this effect tree say ``once_each: "turn"``?"""
+    if isinstance(effects, Mapping):
+        if effects.get("op") == "choose_mode" and effects.get("once_each") == "turn":
+            return True
+        return any(_has_per_turn_modes(v) for v in effects.values())
+    if isinstance(effects, (list, tuple)):
+        return any(_has_per_turn_modes(v) for v in effects)
+    return False
+
+
 def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
@@ -1909,6 +1920,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         raise DslError(
             f"{where}: 'activate_steps' and 'once_each_turn' restrict *activating*, "
             f"so they only mean anything on an activated ability"
+        )
+    if kind is AbilityKind.ACTIVATED and _has_per_turn_modes(model.effects):
+        # An activated ability's modes are answered at 602.2b by
+        # `Game._ask_modes`, which never sees the strike-off or spends a mode,
+        # so Kargan Intimidator would offer every bullet on every activation.
+        raise DslError(
+            f"{where}: choose_mode's once_each \"turn\" is supported on triggered "
+            f"abilities, whose modes are chosen as they go on the stack; an "
+            f"activated ability chooses at activation, which does not strike "
+            f"spent modes off"
         )
 
     threshold = _compile_threshold(model, kind, where)

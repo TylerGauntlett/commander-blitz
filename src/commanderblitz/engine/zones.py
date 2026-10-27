@@ -296,6 +296,9 @@ def move_object(
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
         obj.reset_permanent_state()
+        # 400.7: the object that arrives has chosen no modes this turn, though
+        # it keeps its oid. See `TurnLedger.modes_chosen`.
+        state.turn_ledger.modes_chosen.pop(oid, None)
 
     if as_face is not None:
         # After the reset, which clears `transformed`, and before anything reads

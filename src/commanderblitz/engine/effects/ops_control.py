@@ -17,7 +17,7 @@ from ..zones import snapshot as capture_snapshot
 from . import execute
 from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
-from .modes import _mode_flag, modal_bounds, mode_labels
+from .modes import _mode_flag, modal_bounds, mode_labels, per_turn, record_per_turn, unspent
 from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
@@ -570,10 +570,18 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             return
         chooser = picked_players[0]
     source = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    # "…that hasn't been chosen **this turn**" (Parapet Thrasher) is
+    # `once_each: "turn"`: the same strike-off, against `TurnLedger.modes_chosen`
+    # instead of the source's flags, so the modes come back next turn.
+    per_turn_modes = per_turn(spec)
     offered = list(range(len(modes)))
     if once_each and source is not None:
-        offered = [i for i in offered if _mode_flag(labels[i]) not in source.flags]
-        if not offered:
+        offered = unspent(ctx.state, ctx.source_oid, spec, labels, offered)
+        # Only when there is still a question to ask. A trigger's modes were
+        # answered as it went on the stack, and under "this turn" they were
+        # spent there too, so the answer being resolved is itself struck off
+        # by now -- returning here would drop the very mode that was chosen.
+        if not offered and not (ctx.modes or ctx.modes_answered):
             # Every mode is spent. The ability still triggered and still
             # resolved; there is simply nothing left to choose.
             return
@@ -608,6 +616,9 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
             up_to,
         )
         chosen = [offered[i] for i in picked]
+        # Spent as it is chosen. A pre-answered `ctx.modes` was spent where it
+        # was asked, by `stack._choose_trigger_modes`.
+        record_per_turn(ctx.state, ctx.source_oid, spec, labels, chosen)
     else:
         chosen = yield from ask_mode(ctx, "Choose", labels, chooser, floor, up_to)
 
@@ -615,7 +626,7 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     # order they were clicked in -- which matters the moment one mode's effect
     # depends on another's having happened.
     for index in sorted(chosen):
-        if once_each and source is not None:
+        if once_each and not per_turn_modes and source is not None:
             source.flags.add(_mode_flag(labels[index]))
         yield from execute(ctx, modes[index].get("effects") or [])
 

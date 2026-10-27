@@ -8228,27 +8228,43 @@ Call Damage Control needs one more thing than this: a target per mode. See
 ## "Choose one that hasn't been chosen"
 
 ```jsonc
-{"op": "choose_mode", "count": 1, "once_each": true, "modes": [...]}
+{"op": "choose_mode", "count": 1, "once_each": true,   "modes": [...]}  // Henrika Domnathi
+{"op": "choose_mode", "count": 1, "once_each": "turn", "modes": [...]}  // "...this turn" -- Parapet Thrasher
 ```
 
 Spent modes are **struck off the offered list**, not offered and then ignored: an
 ability that listed a used mode and did nothing would read as a mode that
 fizzled, and the point of the printed clause is that the card runs out.
 
-Recorded as ordinary `flags` on the source, which gives the right lifetime for
-free — `reset_permanent_state` clears them on a zone change, and 712.13a makes a
-permanent that left and came back a new object that may choose again. Keyed by
-printed *label* rather than index, so reordering a card's modes cannot silently
-re-open a spent one.
+`once_each` takes one of two lifetimes, and each is a different printed card:
+
+- **`true` — "hasn't been chosen"**, for the object's whole life. Recorded as
+  ordinary `flags` on the source: `reset_permanent_state` clears them on a zone
+  change, and 712.13a makes a permanent that left and came back a new object
+  that may choose again.
+- **`"turn"` — "hasn't been chosen this turn"** (Parapet Thrasher, Gala
+  Greeters, Monument to Endurance). Recorded in `TurnLedger.modes_chosen`, which
+  cleanup clears, so every mode is back next turn. `true` is the near miss and
+  runs the card out of modes for good after its first busy turn. The mode is
+  spent **as it is chosen** — for a trigger, as it goes on the stack (603.3c) —
+  so two triggers put on the stack together (two opponents hit) cannot take the
+  same mode. `zones.move_object` drops the record at the zone change that makes
+  the permanent a new object (400.7), though the oid survives it.
+
+Both are keyed by printed *label* rather than index, so reordering a card's modes
+cannot silently re-open a spent one. Any other value is refused at load time.
 
 With one mode left there is nothing to choose between, so `ask_mode` does not
 stop to ask and the survivor is taken without a prompt. When every mode is spent
-the ability still triggers and resolves, and does nothing.
+the ability still triggers and resolves, and does nothing — the printed ruling
+for a fourth Parapet Thrasher trigger in one turn.
 
 **Refused inside a spell's `spell_effects`.** A spell's top-level modes are
 chosen at cast time (601.2b, `Game._ask_modes`), a path this filter never sees —
 the spent modes would still be offered and the flag written for nothing. It is
-meaningless there anyway: a spell is a new object each cast.
+meaningless there anyway: a spell is a new object each cast. **`"turn"` is also
+refused on an activated ability** (Kargan Intimidator), for the same reason:
+602.2b answers its modes in `Game._ask_modes`, which strikes nothing off.
 
 ## One choice across two zones — `union`
 

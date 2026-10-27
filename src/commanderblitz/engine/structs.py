@@ -1549,6 +1549,23 @@ class TurnLedger:
     #: the same argument `creatures_attacked` makes above.
     object_flags: dict[int, set[str]] = field(default_factory=dict)
 
+    #: object id -> the printed labels of the modes its "choose one **that
+    #: hasn't been chosen this turn**" ability has chosen this turn (Parapet
+    #: Thrasher, Gala Greeters, Monument to Endurance).
+    #:
+    #: Not `object_flags`, whose record deliberately survives the permanent
+    #: leaving the battlefield because "has been exerted this turn" is about
+    #: the card's history.  This record is about one *object*: 400.7 makes a
+    #: permanent that left and came back a new object, which has chosen
+    #: nothing, so `zones.move_object` drops the entry at the same zone change
+    #: that runs `reset_permanent_state`.  And not `GameObject.flags`, which
+    #: has no turn boundary -- that is `choose_mode`'s `once_each: true`,
+    #: "hasn't been chosen" for the object's whole life.
+    #:
+    #: Keyed by label rather than mode index, as `_mode_flag` is, so a card
+    #: whose modes are reordered cannot re-open a spent one.
+    modes_chosen: dict[int, set[str]] = field(default_factory=dict)
+
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
     #:
@@ -1624,6 +1641,14 @@ class TurnLedger:
         """Has this object been given that word **this turn**?"""
         return flag in self.object_flags.get(oid, ())
 
+    def mode_chosen(self, oid: int, label: str) -> None:
+        """Record that this object chose the mode so labelled, this turn."""
+        self.modes_chosen.setdefault(oid, set()).add(label)
+
+    def chosen_modes(self, oid: int) -> set[str]:
+        """The labels this object has chosen this turn; empty if none."""
+        return self.modes_chosen.get(oid, set())
+
     def activations(self, oid: int, ability_index: int) -> int:
         return self.ability_activations.get((oid, ability_index), 0)
 
@@ -1659,6 +1684,7 @@ class TurnLedger:
         self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()
         self.object_flags.clear()
+        self.modes_chosen.clear()
         self.permanents_entered.clear()
         self.combats = 0
 

@@ -2836,6 +2836,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # spent modes would still be offered and the flag written for nothing. And
     # the clause is meaningless there anyway: a spell is a new object each cast,
     # with no record of the last one.
+    # Two lifetimes and nothing else: `true` is "hasn't been chosen" for the
+    # object's life, `"turn"` is "…this turn". Any other truthy value would be
+    # read as the life-long one and run a card out of modes for ever.
+    if op == "choose_mode" and effect.get("once_each") not in (None, False, True, "turn"):
+        raise DslError(
+            f"{where}: 'once_each' is true (\"hasn't been chosen\") or \"turn\" "
+            f"(\"hasn't been chosen this turn\"), got {effect.get('once_each')!r}"
+        )
     if op == "choose_mode" and effect.get("once_each") and ".spell_effects[" in where:
         raise DslError(
             f"{where}: 'once_each' is for a permanent's repeated modal ability; "
