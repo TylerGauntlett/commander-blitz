@@ -16,7 +16,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Values](#values) | 52 |
 | [Conditions](#conditions) | 30 |
 | [Trigger events](#trigger-events) | 47 |
-| [Trigger filters](#trigger-filters) | 33 |
+| [Trigger filters](#trigger-filters) | 34 |
 | [Static effects](#static-effects) | 81 |
 | [Player-wide statics](#player-wide-statics) | 40 |
 | [Grantable statics](#grantable-statics) | 38 |
@@ -432,6 +432,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 
 | Name | Description | Defined in |
 |---|---|---|
+| `any_of` | A union of whole selectors: any one may match. | [Triggers](card-dsl.md#triggers) |
 | `any_types` | Any one of these card types is enough. | [Triggers](card-dsl.md#triggers) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Triggers](card-dsl.md#triggers) |
 | `attacking_player` | Attacking this player (`you`/`opponent`/`any`), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |

@@ -1553,6 +1553,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "mana_cost",
         "power",
         "toughness",
+        "any_of",
     }
 )
 
@@ -1586,6 +1587,27 @@ def validate_trigger_filter(filt: Mapping[str, Any] | None, where: str) -> None:
                 f"{where}: {key} {word!r} is not answered by a trigger filter "
                 f"(use one of {sorted(TRIGGER_FILTER_PLAYER_WORDS)})"
             )
+    # "…a noncreature **or** Dragon spell" -- Firespitter Whelp. Each branch is
+    # a trigger filter of its own, matched by `matches_card_filter` against the
+    # same subject, so it is held to the same list the outer filter is: a key a
+    # branch carried and the matcher never read would make that branch match
+    # everything, and the whole disjunction with it.
+    branches = filt.get("any_of")
+    if branches is not None:
+        if not isinstance(branches, (list, tuple)) or len(branches) < 2:
+            raise DslError(f"{where}: any_of takes a list of at least two filters")
+        for i, branch in enumerate(branches):
+            here = f"{where}.any_of[{i}]"
+            if not isinstance(branch, Mapping) or not branch:
+                raise DslError(f"{here}: each branch is a non-empty filter object")
+            shares = branch.get("shares_a_creature_type_with")
+            if shares is not None and shares != "self":
+                # The loader checks this word on the outer filter; a branch is
+                # matched by the same function and binds nothing either.
+                raise DslError(
+                    f"{here}: shares_a_creature_type_with must be 'self', got {shares!r}"
+                )
+            validate_trigger_filter(branch, here)
 
 
 def matches_card_filter(
@@ -1608,6 +1630,20 @@ def matches_card_filter(
     # "…a creature spell of the chosen type." The same substitution the static
     # filters do, because Vanquisher's Banner asks the question from both.
     filt = resolve_chosen_subtypes(filt, ability_source)
+
+    # "Whenever you cast a noncreature **or** Dragon spell" -- Firespitter
+    # Whelp. Every other key here is ANDed, so the two printed halves written
+    # as one filter collapse to "noncreature Dragon spell"; and two triggers,
+    # one per half, would fire twice for a Kindred Dragon instant, which the
+    # printed sentence does not. A branch is the same filter asked about the
+    # same subject, as `characteristics._matches_printed` and
+    # `selectors.matches` recurse for their own `any_of`, and the keys beside
+    # it still apply to every branch.
+    branches = filt.get("any_of")
+    if branches is not None and not any(
+        matches_card_filter(state, oid, branch, ability_source) for branch in branches
+    ):
+        return False
 
     if filt.get("exclude_self") and oid == ability_source.oid:
         return False

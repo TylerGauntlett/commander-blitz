@@ -1,0 +1,163 @@
+{
+  "_comment": "Cards that exist only for tests/unit/triggers/test_trigger_filter_any_of.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_any_of_whelp` is Firespitter Whelp's trigger written as the card writes it; `t_any_of_overlap` has two branches a Dragon creature spell answers at once, so a cast that matches both must still fire once. The spells are one of each shape the disjunction has to sort: a noncreature, a non-Dragon creature and a Dragon creature.",
+  "cards": [
+    {
+      "id": "t_any_of_whelp",
+      "name": "Test Any Of Whelp",
+      "oracle_text": "Whenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each opponent.",
+      "mana_cost": "{2}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature or Dragon spell, this creature deals 1 damage to each opponent.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "any_of": [
+                {
+                  "not_types": [
+                    "Creature"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Dragon"
+                  ]
+                }
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "player": "each_opponent",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_any_of_overlap",
+      "name": "Test Any Of Overlap",
+      "oracle_text": "Whenever you cast a creature or Dragon spell, this creature deals 1 damage to each opponent.",
+      "mana_cost": "{2}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ox"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a creature or Dragon spell, this creature deals 1 damage to each opponent.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Creature"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Dragon"
+                  ]
+                }
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "player": "each_opponent",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_any_of_ox",
+      "name": "Test Any Of Ox",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ox"
+      ],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_any_of_drake",
+      "name": "Test Any Of Drake",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 1,
+      "toughness": 1
+    },
+    {
+      "id": "t_any_of_spark",
+      "name": "Test Any Of Spark",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "types": [
+        "Instant"
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    }
+  ]
+}

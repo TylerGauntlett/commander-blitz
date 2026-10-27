@@ -3637,6 +3637,17 @@ opponent's commander you have stolen does not. `controller: "you"` in the filter
 other way. Not an intervening-if either: 603.4 re-checks a `condition` on
 resolution, and the printed card has no "if".
 
+`any_of` is "a noncreature **or** Dragon spell" -- Firespitter Whelp:
+`filter: {"any_of": [{"not_types": ["Creature"]}, {"subtypes": ["Dragon"]}]}`.
+Every other key is ANDed, so the two halves written as one filter say
+"noncreature Dragon spell", and `any_types` cannot reach a subtype. Each branch
+is a trigger filter asked about the same subject, held to `TRIGGER_FILTER_KEYS`
+itself; keys beside `any_of` narrow every branch; it takes at least two
+branches. Two triggers, one per half, are the near miss and a different card: a
+spell answering both halves fires them twice, where one cast fires the printed
+ability once (603.2). An `nth` spell-cast trigger cannot carry it
+(`ORDINAL_FILTER_KEYS`).
+
 `not_cause` is "…**if it wasn't put onto the battlefield with this ability**".
 Zone changes carry a `cause`, and `put_onto_battlefield` can set its own, so an
 ability that puts permanents down can refuse to trigger on its own output.
