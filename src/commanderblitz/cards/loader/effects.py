@@ -1174,6 +1174,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # ever complain.
     if op == "hideaway" and "amount" not in effect:
         raise DslError(f"{where}: hideaway needs an 'amount' -- hideaway N")
+    # "Discover N" is named for its number too, and here an omitted one is
+    # worse than hideaway's: evaluated as 0 it stops only at a mana-value-0
+    # nonland card, so most scans would exile the whole library and find nothing.
+    if op == "discover" and "amount" not in effect:
+        raise DslError(f"{where}: discover needs an 'amount' -- discover N")
     if op == "cant_attack_player":
         # All three keys are required, and each omission is silent in its own
         # way. Without `attacker`/`defender` the spec defaults to the controller

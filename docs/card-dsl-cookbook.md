@@ -10639,6 +10639,44 @@ loader refuses an `amount` (the scan is unbounded — use `look_at_top` for a
 window) and an empty `objects` (an empty selector matches the first card
 revealed, quietly turning the card into "put the top card into your hand").
 
+## Discover — cascade's walk, N or less, cast or hand
+
+```jsonc
+// Hit the Mother Lode -- "Discover 10. If the discovered card's mana value is
+// less than 10, create a number of tapped Treasure tokens equal to the difference."
+{ "op": "discover", "amount": { "const": 10 }, "as": "discovered" },
+{ "op": "if",
+  "condition": { "all": [
+    { "exists": { "binding": "discovered" } },
+    { "cmp": "<", "left": { "mana_value_of": { "objects": { "binding": "discovered" } } },
+      "right": { "const": 10 } } ] },
+  "then": [ { "op": "create_token", "token": "treasure_token", "tapped": true,
+    "amount": { "minus": [ { "const": 10 },
+      { "mana_value_of": { "objects": { "binding": "discovered" } } } ] } } ] }
+```
+
+Rule 701.57a: exile from the top of your library until a **nonland card with mana
+value N or less** is exiled; you may cast it without paying its mana cost, and if
+you don't, it goes into your hand; the rest go to the bottom in a random order
+(`_bottom_in_random_order`, shared with cascade). `amount` is N and is required —
+the loader refuses a `discover` without one.
+
+The cast-or-hand choice is `_offer_free_cast`'s one yes/no, and "no" is the hand.
+A card whose free cast is refused — no legal target, a "can't cast" in force —
+goes to hand as well, because the rule's alternative is "if you don't cast it".
+
+`as` records **the discovered card** (701.57c), cast or not, as a list of zero or
+one oids. An exhausted library binds the empty list, so a follow-up that reads
+it is guarded by `exists`: unguarded, `mana_value_of` over an empty binding reads
+0 and Hit the Mother Lode would make ten Treasures for finding nothing. Read the
+mana value through the `objects` form, `{"mana_value_of": {"objects": {"binding":
+…}}}`, which sums the pool; the bare `{"binding": …}` form reads a single oid or a
+snapshot and gives 0 for a list.
+
+`cascade` is the near miss and differs on all three counts: its bound is strictly
+*less than* the spell's own mana value, a card it does not cast is bottomed with
+the rest, and it records nothing.
+
 ## Connive
 
 ```jsonc

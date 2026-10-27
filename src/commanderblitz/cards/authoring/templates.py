@@ -118,6 +118,14 @@ def _surveil(match: re.Match[str]) -> Translation:
     return Translation(effects=[{"op": "surveil", "player": "you", "amount": {"const": n}}])
 
 
+def _discover(match: re.Match[str]) -> Translation:
+    # Discover N (701.57a). Like scry, no count it changes is fixed in advance --
+    # the scan's depth is the library's and the card may be cast or kept -- so
+    # the expectation is left to `translate`'s fallback for scry's reason.
+    n = _count(match.group("n"))
+    return Translation(effects=[{"op": "discover", "amount": {"const": n}}])
+
+
 def _mill(match: re.Match[str]) -> Translation:
     n = _count(match.group("n"))
     return Translation(
@@ -135,6 +143,7 @@ SENTENCES: list[Sentence] = [
     (re.compile(rf"^each opponent loses {N} life$", re.I), _each_opponent_loses),
     (re.compile(rf"^scry {N}$", re.I), _scry),
     (re.compile(rf"^surveil {N}$", re.I), _surveil),
+    (re.compile(rf"^discover {N}$", re.I), _discover),
     (re.compile(rf"^each opponent mills {N} cards?$", re.I), _mill),
 ]
 

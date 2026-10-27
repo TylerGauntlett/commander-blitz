@@ -1808,6 +1808,60 @@ def op_cascade(ctx: EffectContext, spec: Mapping[str, Any]):
     _bottom_in_random_order(ctx, pid, exiled)
 
 
+@register("discover")
+def op_discover(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 701.57a — discover N.
+
+    "Exile cards from the top of your library until you exile a nonland card
+    with mana value N or less. Cast it without paying its mana cost or put it
+    into your hand. Put the rest on the bottom in a random order."
+
+    Cascade's walk, and three differences that are each the printed words
+    rather than a preference, which is why it is an op of its own and not a
+    `cascade` parameter:
+
+    - the bound is **N or less**, where cascade's is strictly *less than* the
+      spell's own mana value; ``amount`` is N and is required.
+    - a card that is not cast goes to its owner's **hand**, where cascade
+      bottoms it with the rest. Declining the free cast is therefore a real
+      choice between the two, and the one question asked is `_offer_free_cast`'s
+      yes/no; a card whose cast is refused (no legal target, a "can't cast")
+      goes to hand too, because 701.57a says "if you don't cast it".
+    - ``as`` records the **discovered card** (701.57c: the one exiled by the
+      scan, whether it was cast or not) as a list of zero or one oids, so a
+      later effect can read it -- Hit the Mother Lode's "if the discovered
+      card's mana value is less than 10" is `mana_value_of` over that binding.
+      An exhausted library binds the empty list, which `exists` reads as no
+      card, so a follow-up guarded by it does nothing.
+    """
+    pid = ctx.controller
+    library = ctx.state.players[pid].library
+    ceiling = evaluate_value(ctx, spec.get("amount"))
+
+    exiled: list[int] = []
+    hit: int | None = None
+    while library:
+        oid = library[0]
+        card = ctx.state.card_of(ctx.state.objects[oid])
+        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="discover")
+        exiled.append(oid)
+        if not card.is_land and card.mana_value <= ceiling:
+            hit = oid
+            break
+
+    if hit is not None:
+        exiled.remove(hit)
+        name = ctx.state.card_of(ctx.state.objects[hit]).name
+        cast = yield from _offer_free_cast(
+            ctx, pid, hit, f"Cast {name} for free? (No puts it into your hand.)"
+        )
+        if not cast:
+            move_object(ctx.state, hit, Zone.HAND, to_player=pid, cause="discover")
+    _bottom_in_random_order(ctx, pid, exiled)
+    if binding := spec.get("as"):
+        ctx.bindings[str(binding)] = [hit] if hit is not None else []
+
+
 @register("ripple")
 def op_ripple(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 702.20a — reveal the top N, cast the ones that match this card.

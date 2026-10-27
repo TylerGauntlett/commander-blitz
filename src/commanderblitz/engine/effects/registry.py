@@ -51,6 +51,11 @@ RECORDING_OPS = frozenset(
         #: and then asks what was discarded at all, not what the last player
         #: pitched. See `ops_cards.op_discard`.
         "discard",
+        #: The **discovered card** (701.57c), a list of zero or one oids,
+        #: whether it was cast or put into hand -- Hit the Mother Lode's "if
+        #: the discovered card's mana value is less than 10". Empty when the
+        #: scan ran the library out. See `ops_cards.op_discover`.
+        "discover",
         #: The second recorder whose binding is a **set of seats**, beside
         #: `may`: the players who actually drew at least one card. Cut a Deal's
         #: "each opponent who drew a card this way" -- an opponent with an empty

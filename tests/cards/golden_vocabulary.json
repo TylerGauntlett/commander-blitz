@@ -806,6 +806,7 @@
   "destroy",
   "detain",
   "discard",
+  "discover",
   "distribute_counters",
   "double_counters",
   "draw",

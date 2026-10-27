@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 141 |
+| [Effect ops](#effect-ops) | 142 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 52 |
@@ -49,6 +49,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `clash` | Cards |  | Clash with an opponent; the winner is bound for a later `if`. | [Clash](card-dsl-cookbook.md#clash) |
 | `connive` | Cards |  | Connive: draw, discard, +1/+1 counter if a nonland was discarded. | [Connive](card-dsl-cookbook.md#connive) |
 | `discard` | Cards | yes | A player discards N cards, chosen or at random; `as` records them. | [discard: up_to and as](card-dsl.md#discard-up_to-and-as) |
+| `discover` | Cards | yes | Discover N: exile until a nonland of mana value N or less; cast it free or take it. | [Discover — cascade's walk, N or less, cast or hand](card-dsl-cookbook.md#discover--cascades-walk-n-or-less-cast-or-hand) |
 | `draw` | Cards | yes | A player draws N cards; `as` records who drew. | [draw's as — "each opponent who drew a card this way"](card-dsl-cookbook.md#draws-as--each-opponent-who-drew-a-card-this-way) |
 | `explore` | Cards |  | Explore: reveal the top card, land to hand or a +1/+1 counter. | [Explore](card-dsl-cookbook.md#explore) |
 | `grant_graveyard_cast` | Cards |  | Permit casting matching spells from graveyards until end of turn. | [Casting out of every graveyard, until end of turn](card-dsl-cookbook.md#casting-out-of-every-graveyard-until-end-of-turn) |

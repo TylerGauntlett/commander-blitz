@@ -190,6 +190,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "clash": ("Cards", "Clash with an opponent; the winner is bound for a later `if`.", "Clash"),
     "cascade": ("Cards", "Cascade: exile from the top until a cheaper nonland, cast it free.",
                 H_CASCADE),
+    "discover": ("Cards", "Discover N: exile until a nonland of mana value N or less; cast it free or take it.",
+                 "Discover — cascade's walk, N or less, cast or hand"),
     "ripple": ("Cards", "Ripple N: reveal the top N, cast any with the same name free.",
                H_CASCADE),
     "reveal_until": ("Cards", "Reveal from the top until a card matches, then act on it.",
