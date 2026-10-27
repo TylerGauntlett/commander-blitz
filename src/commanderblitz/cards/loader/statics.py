@@ -297,6 +297,16 @@ def _validate_static_condition(condition: Any, where: str) -> None:
         _validate_static_condition(condition["not"], f"{where}.not")
     elif head == "exists":
         _validate_static_count_filter(condition["exists"], f"{where}.exists")
+    elif head == "exists_derived":
+        spec = condition["exists_derived"]
+        # The battlefield only: derived characteristics are a permanent's, and
+        # a card in a graveyard has nothing but its printed face.
+        if isinstance(spec, Mapping) and spec.get("zone", "battlefield") != "battlefield":
+            raise DslError(
+                f"{where}.exists_derived: reads permanents on the battlefield; "
+                f"got zone {spec.get('zone')!r}"
+            )
+        _validate_static_count_filter(spec, f"{where}.exists_derived")
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")

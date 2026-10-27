@@ -4901,6 +4901,7 @@ Each node names **exactly one** form:
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
+| `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack` and `cant_block` only (below) |
 
 A condition works on a [player-wide static](card-dsl-cookbook.md#player-wide-statics) too — the
 `affects_player` effects go through the same `_static_active`, from
@@ -4918,6 +4919,21 @@ The rule binds the statics the pipeline applies; the rule-modifying ones it does
 not — `attacks_if_able` and `block_restriction` — match their filters against
 derived characteristics instead (`characteristics._matches` with `derived`),
 since nothing they say can feed back into a layer.
+`exists_derived` is the condition-side form of that exception. Rhonas the
+Indomitable "can't attack or block unless you control another creature with
+power 4 or greater", and the creature its own ability pumps to 5 has to count:
+
+```jsonc
+{ "kind": "static", "effect": "cant_attack", "affects": { "self_only": true },
+  "condition": { "not": { "exists_derived": { "controller": "you", "types": ["Creature"],
+                                              "exclude_self": true,
+                                              "power": { "op": ">=", "value": 4 } } } } }
+```
+
+`_static_active` defers a tree holding it, as it defers `affected_controller`,
+and `attack_forbidden` and `block_forbidden` ask it once per creature at
+declaration, outside the pipeline. The loader refuses it on every other effect,
+and off the battlefield.
 A condition on an object static is evaluated in `_battlefield_statics`, *before*
 the first layer applies, so counters, printed characteristics, zone contents and
 whose turn it is are all safe — no layer can change whether another static is switched on, and

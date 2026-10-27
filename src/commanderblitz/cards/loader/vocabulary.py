@@ -1243,7 +1243,20 @@ STATIC_CONDITION_HEADS = (
     # the designation moving bumps `char_version`. Takes a player spec, and
     # `AFFECTED_CONTROLLER` among them -- see `characteristics`.
     "is_monarch",
+    # "Rhonas can't attack or block unless you control another creature with
+    # power 4 or greater." `exists` over the board's **current** characteristics
+    # -- not a pipeline input, so admitted only on the rule-modifying statics
+    # in `STATIC_DERIVED_CONDITION_EFFECTS`, read outside the pipeline.
+    "exists_derived",
 )
+
+#: The static effects whose condition may read *derived* characteristics
+#: (`exists_derived`). Their readers -- `player_statics.attack_forbidden` and
+#: `block_forbidden` -- ask at declaration, one creature at a time and outside
+#: the characteristics pipeline, so the derived board is finished when they
+#: look at it. A layered static reading it would read another static's output,
+#: which ADR 0001 refuses.
+STATIC_DERIVED_CONDITION_EFFECTS = frozenset({"cant_attack", "cant_block"})
 
 #: The static effects whose reader evaluates the condition once per affected
 #: permanent, and so may carry the `AFFECTED_CONTROLLER` player spec. Anywhere

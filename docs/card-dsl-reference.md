@@ -28,7 +28,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
-| [Static conditions](#static-conditions) | 11 |
+| [Static conditions](#static-conditions) | 12 |
 | [Static values](#static-values) | 13 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -877,6 +877,7 @@ What a static's "as long as …" `condition` may ask. Defined under ["As long as
 | `cmp` | Compare `left` and `right` values with `op`. | ["As long as…"](card-dsl.md#as-long-as) |
 | `counters` | The source has (or lacks) counters of a kind. | ["As long as…"](card-dsl.md#as-long-as) |
 | `exists` | A selector finds at least one object. | ["As long as…"](card-dsl.md#as-long-as) |
+| `exists_derived` | A permanent with these current characteristics exists (cant_attack, cant_block only). | ["As long as…"](card-dsl.md#as-long-as) |
 | `has_city_s_blessing` | The player has the city's blessing (ascend). | [Ascend](card-dsl-cookbook.md#ascend) |
 | `is_attached` | The source is attached to something. | ["As long as…"](card-dsl.md#as-long-as) |
 | `is_monarch` | The given player is the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |

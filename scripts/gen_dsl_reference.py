@@ -628,6 +628,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
 
 STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
     "counters": ("The source has (or lacks) counters of a kind.", None),
+    "exists_derived": ("A permanent with these current characteristics exists (cant_attack, cant_block only).",
+                       None),
     "is_attached": ("The source is attached to something.", None),
     "top_of_library": ("The top card of a library matches a filter.",
                        '"The top card of your library is black"'),

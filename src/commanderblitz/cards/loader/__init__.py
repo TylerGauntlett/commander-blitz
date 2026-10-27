@@ -35,6 +35,7 @@ from commanderblitz.engine.carddef import (
 from commanderblitz.engine.characteristics import (
     AFFECTED_CONTROLLER,
     static_condition_names_affected,
+    static_condition_reads_derived,
 )
 from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.ops_player import shut_cast_zones
@@ -144,6 +145,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
     STATIC_COUNT_ZONES,
+    STATIC_DERIVED_CONDITION_EFFECTS,
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
     STATIC_LIFE_KEYS,
@@ -4536,6 +4538,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"permanent the static is applied to, which only "
             f"{sorted(STATIC_AFFECTED_CONDITION_EFFECTS)} read one at a time; "
             f"{model.effect!r} does not"
+        )
+
+    if (
+        static_condition_reads_derived(model.condition)
+        and model.effect not in STATIC_DERIVED_CONDITION_EFFECTS
+    ):
+        # Anywhere else the condition is asked inside the pipeline, where the
+        # derived board is half-computed; `_static_active` would defer it for
+        # ever and the static would apply as if the clause were not printed.
+        raise DslError(
+            f"{where}.condition: 'exists_derived' reads current characteristics, "
+            f"which only {sorted(STATIC_DERIVED_CONDITION_EFFECTS)} read outside the "
+            f"layer pipeline; {model.effect!r} does not"
         )
 
     static: dict[str, Any] = {"effect": model.effect}

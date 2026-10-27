@@ -776,7 +776,11 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "cant_attack":
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        # Asked again with the creature in hand: a condition reading derived
+        # characteristics was deferred by `_battlefield_statics` (Rhonas).
+        if _matches(state, obj, source_obj, static.get("affects")) and _static_active(
+            state, source_obj, static, affected=obj
+        ):
             return True
     return False
 
@@ -964,7 +968,10 @@ def block_forbidden(state: GameState, oid: int) -> bool:
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "cant_block":
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        # As `attack_forbidden`: a deferred derived condition is answered here.
+        if _matches(state, obj, source_obj, static.get("affects")) and _static_active(
+            state, source_obj, static, affected=obj
+        ):
             return True
     return False
 
