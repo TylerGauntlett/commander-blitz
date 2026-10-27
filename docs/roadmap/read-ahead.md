@@ -50,12 +50,12 @@ sacrificed; the token pinned in `tests/unit/tokens/test_token_pool.py`; the
 keyword census test; and `tests/cards` with The Elder Dragon War through the
 six gates.
 
-## Open questions
+## Decisions
 
 - **Who answers the chapter choice when nobody is asked (the behaviour gate,
-  a CPU):** recommend chapter 1, the printed default for a Saga without the
-  keyword, so the auto-answer table in `cards/authoring/verify.py` and the
-  CPU strategies need no new reading of the board.
-- **Scope of the pull request:** recommend the keyword, the token and The Elder
-  Dragon War only, with every other read-ahead Saga left to the next
-  `/author-cards` wave, so the review stays one mechanic.
+  a CPU):** chapter 1, the printed default for a Saga without the keyword, so
+  the auto-answer table in `cards/authoring/verify.py` and the CPU strategies
+  need no new reading of the board.
+- **Scope of the pull request:** the keyword, the token and The Elder Dragon
+  War only, titled `feat(cards):`; every other read-ahead Saga is left to the
+  next `/author-cards` wave, so the review stays one mechanic.
