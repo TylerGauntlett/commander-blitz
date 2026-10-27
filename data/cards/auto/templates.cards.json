@@ -82674,6 +82674,52 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mass_polymorph",
+      "mana_cost": "{5}{U}",
+      "name": "Mass Polymorph",
+      "oracle_text": "Exile all creatures you control, then reveal cards from the top of your library until you reveal that many creature cards. Put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "exiled"
+            }
+          },
+          "destination": "battlefield",
+          "objects": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "reveal_until",
+          "player": "you",
+          "shuffle_rest": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -131786,6 +131832,59 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "synthetic_destiny",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Synthetic Destiny",
+      "oracle_text": "Exile all creatures you control. At the beginning of the next end step, reveal cards from the top of your library until you reveal that many creature cards, put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "binding": "exiled"
+                }
+              },
+              "destination": "battlefield",
+              "objects": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "shuffle_rest": true
+            }
+          ],
+          "op": "delay",
+          "step": "end_step",
+          "text": "At the beginning of the next end step, reveal cards from the top of your library until you reveal that many creature cards, put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library."
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

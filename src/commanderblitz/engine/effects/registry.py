@@ -120,6 +120,10 @@ RECORDING_OPS = frozenset(
         #: is carried forward where a target is not.
         "return_to_hand",
         "reveal",
+        #: The matches a reveal-until walk moved, every seat's -- "put those
+        #: creature cards onto the battlefield … they're goaded". See
+        #: `ops_cards.op_reveal_until`.
+        "reveal_until",
         #: The one recorder whose binding is not a set of objects: `roll_dice`
         #: writes the faces it threw, read back by `{"rolled": …}` rather than
         #: by `{"count": {"binding": …}}`. See `ops_cards.op_roll_dice`.

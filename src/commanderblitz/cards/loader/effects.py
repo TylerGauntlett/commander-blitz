@@ -1230,13 +1230,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: reveal_until needs a non-empty 'objects' -- "
                 f"the selector is the card it stops at"
             )
-        # An `amount` would be read by nobody: the depth is the library's, not
-        # the card's, and a card that wrote one would believe it was bounded.
-        if "amount" in effect:
-            raise DslError(
-                f"{where}: reveal_until takes no 'amount' -- the scan is unbounded; "
-                f"use look_at_top for a bounded window"
-            )
+        # `amount` is how many *matches* end the scan ("until you reveal that
+        # many creature cards"), validated as a value with every other
+        # `amount`; the depth stays the library's.
+        # "Shuffle the rest into your library" and "put the rest on the bottom
+        # in a random order" are two different actions, and a card prints one.
+        if "shuffle_rest" in effect:
+            if not isinstance(effect["shuffle_rest"], bool):
+                raise DslError(f"{where}: reveal_until 'shuffle_rest' is a boolean")
+            if effect["shuffle_rest"] and effect.get("rest_to_bottom"):
+                raise DslError(
+                    f"{where}: reveal_until 'shuffle_rest' and 'rest_to_bottom' are "
+                    f"two dispositions of the rest; a card prints one"
+                )
         destination = str(effect.get("destination", "hand"))
         if destination not in DESTINATIONS:
             raise DslError(

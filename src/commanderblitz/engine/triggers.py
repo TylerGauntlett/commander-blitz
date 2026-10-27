@@ -9,7 +9,8 @@ simplification -- real Magic lets the controller choose the order).
 
 from __future__ import annotations
 
-from collections.abc import Generator, Mapping
+from collections.abc import Generator, Iterator, Mapping
+from contextlib import contextmanager
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
@@ -521,8 +522,40 @@ def fire(
 ) -> GameEvent:
     """Record an event and queue every triggered ability that matches it."""
     event = state.emit(event_type, player=player, source=source, **data)
-    collect(state, event)
+    if state.held_events is not None:
+        state.held_events.append(event)
+    else:
+        collect(state, event)
     return event
+
+
+@contextmanager
+def entering_together(state: GameState) -> Iterator[None]:
+    """Move a group of objects as **one** event, as far as triggers can tell.
+
+    "Put all creature cards revealed this way onto the battlefield" (Mass
+    Polymorph) is one zone change for the whole group, and a permanent's
+    enters-the-battlefield ability looks at the game after that event (603.6a,
+    603.10): two Soul Wardens put down together each see the other enter. The
+    engine still moves them one at a time, and an event collected as it fires
+    is heard only by what has already arrived -- the first Warden would hear
+    the second and the second would hear nobody.
+
+    So the events are logged as they happen and **collected afterwards**, in
+    the order they fired, against the board the whole group produced. Nested
+    use is the outer group's. Only collection waits: the log, the turn ledger
+    and the event batch are written as each object moves, exactly as before.
+    """
+    if state.held_events is not None:
+        yield
+        return
+    state.held_events = []
+    try:
+        yield
+    finally:
+        held, state.held_events = state.held_events, None
+    for event in held:
+        collect(state, event)
 
 
 def collect(state: GameState, event: GameEvent) -> None:

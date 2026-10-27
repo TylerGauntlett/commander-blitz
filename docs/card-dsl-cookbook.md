@@ -11000,9 +11000,52 @@ would hand them a fully known deck.
 `rest_to_bottom` defaults to **true** here and to false on `look_at_top`, and the
 defaults disagree because the words do: "look at" means the cards you did not
 take stay on top in order, and no printed "reveal until" leaves them there. The
-loader refuses an `amount` (the scan is unbounded — use `look_at_top` for a
-window) and an empty `objects` (an empty selector matches the first card
+loader refuses an empty `objects` (an empty selector matches the first card
 revealed, quietly turning the card into "put the top card into your hand").
+
+### "Until you reveal that many" — `amount`, `shuffle_rest` and `as`
+
+```jsonc
+// Mass Polymorph -- "Exile all creatures you control, then reveal cards from the
+// top of your library until you reveal that many creature cards. Put all creature
+// cards revealed this way onto the battlefield, then shuffle the rest of the
+// revealed cards into your library."
+{ "op": "exile", "objects": { "types": ["Creature"], "controller": "you", "count": "all" },
+  "as": "exiled" },
+{ "op": "reveal_until", "objects": { "types": ["Creature"] },
+  "amount": { "count": { "binding": "exiled" } },
+  "destination": "battlefield", "shuffle_rest": true }
+```
+
+`amount` is the number of **matches** that ends the scan, a value expression read
+once before it starts; omitted it is one. It is never a window: the depth is
+still the library's. Zero reveals nothing. A library that runs out first moves
+every match it had.
+
+Every match moves in one `entering_together` group, because "put all creature
+cards revealed this way onto the battlefield" is one event and each arrival's
+enters abilities look at the game after it (603.6a): two Soul Wardens put down
+together each gain you a life. A `repeat` around a one-match walk is the near
+miss and makes a different card — N separate reveals, each bottoming or
+shuffling before the next, with each arrival seeing only the ones before it.
+
+`shuffle_rest: true` is "shuffle the rest of the revealed cards into your
+library" (and Dack Fayden's bare "then shuffle"): the revealed cards never left
+the library, so it shuffles the library once after the matches have moved. It
+turns off the default bottoming, and the loader refuses it beside
+`rest_to_bottom: true` — they are two different actions and a card prints one.
+
+"That many" counts the `exile` op's `as` binding through the bare-binding pool,
+`{"count": {"binding": "exiled"}}`, which keeps every oid the op exiled —
+tokens included, which have ceased to exist but were exiled this way. A
+`{"binding": …, "types": [...]}` filter would drop them. Inside a `delay`
+(Synthetic Destiny's "at the beginning of the next end step, reveal …") the
+same count works unchanged, because `delay` carries the resolution's bindings
+forward.
+
+`as` records the matches that moved, across every seat walked, for a sentence
+that names them afterwards ("put those creature cards onto the battlefield …
+they're goaded").
 
 ## Discover — cascade's walk, N or less, cast or hand
 

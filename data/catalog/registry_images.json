@@ -7234,6 +7234,10 @@
     "artist": "Lucio Parrillo",
     "scryfall_id": "cd816d37-7a9e-485e-9ed9-20c1c15a26dd"
   },
+  "mass_polymorph": {
+    "artist": "Christopher Moeller",
+    "scryfall_id": "b29db023-28d0-411d-864a-8f1e22ae1f74"
+  },
   "master_of_ceremonies": {
     "artist": "Stan Sakai",
     "scryfall_id": "ac736037-113f-4e4b-8b97-7b2300b0d276"
@@ -11554,6 +11558,10 @@
   "sylvia_brightspear": {
     "artist": "Carmen Sinek",
     "scryfall_id": "ab2b349a-1555-4aaa-8302-28667404e630"
+  },
+  "synthetic_destiny": {
+    "artist": "Dave Kendall",
+    "scryfall_id": "78ab1d69-da01-424b-9d09-ef985aef4cbd"
   },
   "syphon_flesh": {
     "artist": "Ironbrush",

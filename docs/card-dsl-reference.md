@@ -67,7 +67,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_origin` | Cards |  | Return an exiled card to the zone it came from. | ["…until this permanent leaves the battlefield" — giving it back](card-dsl-cookbook.md#until-this-permanent-leaves-the-battlefield--giving-it-back) |
 | `reveal` | Cards | yes | Reveal cards to the table; `as` records them. | [Effect ops](card-dsl.md#effect-ops) |
-| `reveal_until` | Cards |  | Reveal from the top until a card matches, then act on it. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
+| `reveal_until` | Cards | yes | Reveal from the top until `amount` cards match (default one), move them together; bottom or shuffle the rest. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `ripple` | Cards |  | Ripple N: reveal the top N, cast any with the same name free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
 | `scry` | Cards |  | Scry N; `chooser` separate from `player` is fateseal. | [Effect ops](card-dsl.md#effect-ops) |
 | `search_library` | Cards | yes | Search a library for cards matching a selector, then shuffle. | [Effect ops](card-dsl.md#effect-ops) |

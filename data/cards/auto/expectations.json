@@ -7429,6 +7429,13 @@
   "mass_of_ghouls": {
     "zone": "battlefield"
   },
+  "mass_polymorph": {
+    "battlefield_count": 30,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "master_of_ceremonies": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11771,6 +11778,13 @@
       ]
     },
     "zone": "battlefield"
+  },
+  "synthetic_destiny": {
+    "battlefield_count": 30,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "syphon_flesh": {
     "battlefield_count": 33,

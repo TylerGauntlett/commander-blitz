@@ -180,6 +180,11 @@ class GameState:
     #: matched again, and the set is bounded by how many batched triggers
     #: actually fired rather than by the length of the game.
     batched_triggers: set = field(default_factory=set)
+    #: Events fired inside `triggers.entering_together`, collected only once the
+    #: whole group has moved, so permanents that enter at the same time see one
+    #: another enter (603.6a, 603.10). ``None`` outside such a group, which is
+    #: every moment a state can be saved or copied.
+    held_events: list[Any] | None = field(default=None, repr=False)
     #: `replace_dies` statics whose permanent has just left the battlefield, as
     #: ``(event_batch, source as it last existed, static)``. Kalitas's ruling:
     #: if it dies at the same time as a nontoken creature an opponent controls,

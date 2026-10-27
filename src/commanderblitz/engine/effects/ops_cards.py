@@ -20,7 +20,7 @@ from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
 from ..structs import GraveyardCastGrant
 from ..suspend import cast_for_free
-from ..triggers import fire
+from ..triggers import entering_together, fire
 from ..zones import link_exiled, move_object, offer_enters_replacement, offer_riot_choice
 from . import execute
 from .behold import announce_beheld, behold_count, behold_pool
@@ -2023,12 +2023,13 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
     Three things separate it from `look_at_top`, and every one of them is the
     card rather than a preference:
 
-    - the depth is **unbounded** and decided by the library, so there is no
-      ``amount``. An amount large enough to fake "until" would reveal the whole
-      deck and randomize all of it every time the trigger resolved.
-    - there is **no choice**: the scan stops at the first match and that match
-      is what moves, so nothing here is a decision and the op is not a
-      generator. `look_at_top` offers every match inside its window and lets the
+    - the depth is **unbounded** and decided by the library. ``amount`` counts
+      matches, never cards revealed; a window large enough to fake "until"
+      would reveal the whole deck and randomize all of it every time the
+      trigger resolved.
+    - there is **no choice**: the scan stops at the first match (or the
+      ``amount``-th) and the matches are what move, so nothing here is a
+      decision and the op is not a generator. `look_at_top` offers every match inside its window and lets the
       player take the best one, which is a strictly better card.
     - the cards walked past are **public**. That is the difference between a
       reveal and a look, and it is information the whole table paid for.
@@ -2039,6 +2040,25 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
     Equipment on an empty-ish library sees it every game — and it is also the
     reason "the rest" is bottomed in a *random* order and not left in place:
     otherwise a failed scan would hand its controller a known deck.
+
+    ``amount`` is "until you reveal **that many** creature cards" -- Mass
+    Polymorph, Synthetic Destiny. A value expression evaluated once, before the
+    scan: the number of *matches* to stop at, not a window (there is still no
+    depth). Omitted it is one, the printed "until you reveal a card". Every
+    match moves, and they move **together** (`entering_together`), because the
+    printed "put all creature cards revealed this way onto the battlefield" is
+    one event: each arrival's enters triggers see the others arrive. Zero
+    reveals nothing.
+
+    ``shuffle_rest`` is "then shuffle the rest of the revealed cards into your
+    library". The revealed cards never left the library, so shuffling them in is
+    shuffling the library, done once after the matches have moved. It replaces
+    the default random bottoming, which is a different action (see
+    `_bottom_in_random_order`), and the loader refuses it beside
+    ``rest_to_bottom``.
+
+    ``as`` records the matches that moved, as a list -- "put those creature
+    cards onto the battlefield … they're goaded" names them afterwards.
     """
     selector = spec.get("objects") or spec.get("selector") or {}
     destination = DESTINATIONS[str(spec.get("destination", "hand"))]
@@ -2047,19 +2067,28 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
     # "reveal until" that leaves the revealed cards where they were, so an
     # omitted key here would silently make a card that keeps the top of its
     # library face up and in order.
-    rest_to_bottom = bool(spec.get("rest_to_bottom", True))
+    shuffle_rest = bool(spec.get("shuffle_rest"))
+    rest_to_bottom = bool(spec.get("rest_to_bottom", not shuffle_rest))
+    wanted = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    binding = spec.get("as")
+    if binding:
+        # Extended rather than replaced, like `look_at_top`'s: a `player:
+        # "each_player"` walk binds every seat's matches, not the last one's.
+        previous = ctx.bindings.get(str(binding))
+        ctx.bindings[str(binding)] = list(previous) if isinstance(previous, list) else []
 
     for pid in select_players(ctx, spec.get("player", "you")):
         # A snapshot taken up front, because a reveal changes no zone: unlike
         # cascade, which exiles as it walks and so can keep reading `library[0]`,
         # nothing moves here until the scan is over.
         revealed: list[int] = []
-        hit: int | None = None
-        for oid in list(ctx.state.players[pid].library):
+        hits: list[int] = []
+        for oid in list(ctx.state.players[pid].library) if wanted else []:
             revealed.append(oid)
             if _matches_library(ctx, oid, selector):
-                hit = oid
-                break
+                hits.append(oid)
+                if len(hits) >= wanted:
+                    break
         if not revealed:
             continue
 
@@ -2074,12 +2103,18 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
         # "Put that card onto the battlefield **tapped**" (Clifftop Lookout).
         # The loader admits `tapped` only beside the battlefield, so an untapped
         # land never arrives off a card that printed a tapped one.
-        if hit is not None:
-            _move_found(
-                ctx, [hit], pid, destination, spec, bool(spec.get("tapped")), "reveal_until"
-            )
+        if hits:
+            with entering_together(ctx.state):
+                _move_found(
+                    ctx, hits, pid, destination, spec, bool(spec.get("tapped")), "reveal_until"
+                )
+        if binding:
+            ctx.bindings[str(binding)].extend(hits)
+        moved = set(hits)
         if rest_to_bottom:
-            _bottom_in_random_order(ctx, pid, [oid for oid in revealed if oid != hit])
+            _bottom_in_random_order(ctx, pid, [oid for oid in revealed if oid not in moved])
+        elif shuffle_rest:
+            shuffle_library(ctx.state, pid)
 
 
 @register("two_piles")

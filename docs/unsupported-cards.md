@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**108 cards** blocked by **97** capabilities.
+**106 cards** blocked by **96** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [reveal-until-count](#reveal-until-count) | 3 | 13848 | op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
@@ -272,30 +271,6 @@ Blocks **8** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## reveal-until-count
-
-Blocks **3** cards.
-
-- **(op)** reveal_until with an amount: keep revealing until N matching cards (N a value, here the number of opponents) are revealed, move all N to the destination, then shuffle the rest into the library and bind the moved cards for later effects
-  <br>Why the existing vocabulary won't do: reveal_until stops at the first match and bottoms the rest; wrapping it in repeat would bottom per iteration rather than reveal one run and shuffle, and leaves no binding of the set of creatures put onto the battlefield
-- **(op)** reveal_until with an amount: one reveal run that continues until N matching cards are revealed (N a value, here the number of creatures exiled by the preceding exile, e.g. a count over its `as` binding), puts all N onto the battlefield simultaneously, then shuffles the rest of the revealed cards into the library
-  <br>Why the existing vocabulary won't do: reveal_until stops at the first match and has no amount; wrapping it in repeat with rest_to_bottom false and a trailing shuffle would put the creatures onto the battlefield one at a time across separate reveals rather than all at once, which changes enters triggers and 'as enters' counts that see the other creatures entering
-- **(op)** a reveal-until walk that stops after N matching cards (N a value, here the number of creatures exiled by the spell's first sentence, carried into a delayed end-step trigger), moves every match to the destination, and shuffles the rest into the library instead of bottoming them
-  <br>Why the existing vocabulary won't do: reveal_until stops at the first match and moves only that one card, has no amount, and only bottoms the rest in random order (rest_to_bottom) rather than shuffling; there is also no value that reads how many objects an earlier exile in the same spell moved for use inside a delayed_trigger
-
-<details><summary>Cards waiting on this</summary>
-
-- **Synthetic Destiny** (rank 13848) — `synthetic_destiny`
-  - At the beginning of the next end step, reveal cards from the top of your library until you reveal that many creature cards, put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library.
-- **Mass Polymorph** (rank 14581) — `mass_polymorph`
-  - Exile all creatures you control, then reveal cards from the top of your library until you reveal that many creature cards. Put all creature cards revealed this way onto the battlefield, then shuffle the rest of the revealed cards into your library.
-- **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
-  - When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have.
-  - They're goaded for the rest of the game.
-  - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
 
 </details>
 
@@ -727,7 +702,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
-  - When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have.
   - They're goaded for the rest of the game.
   - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
 
@@ -1212,7 +1186,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
-  - When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have.
   - They're goaded for the rest of the game.
   - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
 

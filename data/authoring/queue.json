@@ -168852,12 +168852,12 @@
     },
     "Mass Polymorph": {
       "edhrec_rank": 14581,
-      "gate": "template",
+      "gate": null,
       "name": "Mass Polymorph",
-      "reason": "no template for: Exile all creatures you control, then reveal cards from the top of your library until you ",
+      "reason": "",
       "scryfall_id": "8c39f8bd-5592-4d98-86d7-a705f82c098b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mass Production": {
@@ -273132,12 +273132,12 @@
     },
     "Synthetic Destiny": {
       "edhrec_rank": 13848,
-      "gate": "template",
+      "gate": null,
       "name": "Synthetic Destiny",
-      "reason": "no template for: Exile all creatures you control. At the beginning of the next end step, reveal cards from ",
+      "reason": "",
       "scryfall_id": "dc19002c-e87d-45a1-84f2-f953587ddfd1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Syphon Essence": {
