@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **84** capabilities.
+**98 cards** blocked by **83** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [behold](#behold) | 1 | 7614 | op |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cast-from-library-top](#cast-from-library-top) | 1 | 3727 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -503,20 +502,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cast-from-library-top
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide permission to cast spells from the top of your library at their printed mana cost, narrowed by an affects_spells filter over printed characteristics (here types: [Creature] with power >= 4), plus a rider that gives each spell cast through that permission a keyword (haste) until end of turn on the permanent it becomes
-  <br>Why the existing vocabulary won't do: The static cast_from_library_top is Bolas's Citadel only: the loader refuses it without pay_life_instead, so it always swaps the price to life, and it takes no affects_spells filter (casting.py offers any nonland top card) and has no rider for a keyword granted to the spell cast this way. mana_grant reaches the permanent with haste but only from a mana ability's mana, not from a cast permission; free_cast_permission changes the price, not the zone; grant_playable marks only the cards it sees on resolution and is not a standing permission.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thundermane Dragon** (rank 3727) — `thundermane_dragon`
-  - You may cast creature spells with power 4 or greater from the top of your library. If you cast a creature spell this way, it gains haste until end of turn.
 
 </details>
 

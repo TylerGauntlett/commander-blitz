@@ -286332,12 +286332,12 @@
     },
     "Thundermane Dragon": {
       "edhrec_rank": 3727,
-      "gate": "template",
+      "gate": null,
       "name": "Thundermane Dragon",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "2e9672b9-4534-4362-b6c0-f861cae1380e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thundermare": {

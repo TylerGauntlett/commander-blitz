@@ -12018,6 +12018,10 @@
   "thundering_tanadon": {
     "zone": "battlefield"
   },
+  "thundermane_dragon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tiamat": {
     "battlefield_count": 33,
     "hand_size": {
