@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**102 cards** blocked by **87** capabilities.
+**101 cards** blocked by **86** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -44,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [dethrone](#dethrone) | 1 | 1278 | trigger_event |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [discover](#discover) | 1 | 1845 | op, value |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [enters-as-copy](#enters-as-copy) | 1 | 450 | replacement |
 | [escalate](#escalate) | 1 | 788 | cost |
@@ -681,23 +680,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## discover
-
-Blocks **1** card.
-
-- **(op)** a `discover` op taking N: exile cards from the top of your library until a nonland card with mana value N or less is exiled, then let the player either cast it without paying its mana cost or put it into their hand, and put the rest on the bottom in a random order (701.57); it must bind the discovered card (`as`) so later effects can read it
-  <br>Why the existing vocabulary won't do: `cascade` takes `max_mana_value` but only offers cast-or-bottom (no put-into-hand choice), uses a strict 'less than' bound, and binds nothing; `reveal_until` has `selector`, `destination` and `rest_to_bottom` but no free-cast option, no cast-or-hand choice and no `as` binding; `look_at_top` has `cast_free` but looks at a fixed number of cards rather than exiling until a match
-- **(value)** reading the discovered card's mana value after it has been cast or moved to hand, so the follow-up can compute `minus(const 10, mana_value_of(binding discovered))` as the number of tapped `treasure_token`s, and do nothing when no card was discovered
-  <br>Why the existing vocabulary won't do: `mana_value_of` and `minus` exist but there is no binding to the discovered card for them to read, since no op in reference both performs the discover and records its result
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hit the Mother Lode** (rank 1845) — `hit_the_mother_lode`
-  - Discover 10.
-  - If the discovered card's mana value is less than 10, create a number of tapped Treasure tokens equal to the difference.
 
 </details>
 

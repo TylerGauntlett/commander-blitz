@@ -128372,12 +128372,12 @@
     },
     "Hit the Mother Lode": {
       "edhrec_rank": 1845,
-      "gate": "template",
+      "gate": null,
       "name": "Hit the Mother Lode",
-      "reason": "no template for: Discover 10. If the discovered card's mana value is less than 10, create a number of tappe",
+      "reason": "",
       "scryfall_id": "73e794c1-33a3-462f-b8e5-479c3acf91d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hit-Monkey": {

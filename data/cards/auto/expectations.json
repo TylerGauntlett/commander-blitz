@@ -5501,6 +5501,13 @@
   "hissing_quagmire": {
     "zone": "battlefield"
   },
+  "hit_the_mother_lode": {
+    "tokens": {
+      "count": 8,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
   "hitchclaw_recluse": {
     "zone": "battlefield"
   },

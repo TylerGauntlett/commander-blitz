@@ -60331,6 +60331,77 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hit_the_mother_lode",
+      "mana_cost": "{4}{R}{R}{R}",
+      "name": "Hit the Mother Lode",
+      "oracle_text": "Discover 10. If the discovered card's mana value is less than 10, create a number of tapped Treasure tokens equal to the difference. (To discover 10, exile cards from the top of your library until you exile a nonland card with mana value 10 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 10
+          },
+          "as": "discovered",
+          "op": "discover"
+        },
+        {
+          "condition": {
+            "all": [
+              {
+                "exists": {
+                  "binding": "discovered"
+                }
+              },
+              {
+                "cmp": "<",
+                "left": {
+                  "mana_value_of": {
+                    "objects": {
+                      "binding": "discovered"
+                    }
+                  }
+                },
+                "right": {
+                  "const": 10
+                }
+              }
+            ]
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "const": 10
+                  },
+                  {
+                    "mana_value_of": {
+                      "objects": {
+                        "binding": "discovered"
+                      }
+                    }
+                  }
+                ]
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
