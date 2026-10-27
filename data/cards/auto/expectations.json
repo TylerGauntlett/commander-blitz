@@ -539,6 +539,13 @@
     },
     "zone": "library"
   },
+  "arachnogenesis": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "arachnoid": {
     "zone": "battlefield"
   },
@@ -549,6 +556,10 @@
     "life": {
       "0": 43
     }
+  },
+  "arasta_of_the_endless_web": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "arbor_elf": {
     "battlefield_count": 33,
@@ -1980,6 +1991,10 @@
     },
     "zone": "graveyard"
   },
+  "challenger_troll": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "champion_of_arashin": {
     "zone": "battlefield"
   },
@@ -2179,6 +2194,13 @@
     },
     "zone": "battlefield"
   },
+  "clifftop_lookout": {
+    "battlefield_count": 34,
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "clifftop_retreat": {
     "zone": "battlefield"
   },
@@ -2240,6 +2262,10 @@
   },
   "cold_water_snapper": {
     "zone": "battlefield"
+  },
+  "collective_resistance": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "colorful_feiyi_sparrow": {
     "zone": "battlefield"
@@ -3826,6 +3852,9 @@
   "exultant_skymarcher": {
     "zone": "battlefield"
   },
+  "ezuri_s_predation": {
+    "zone": "graveyard"
+  },
   "fabled_passage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5023,6 +5052,10 @@
     "zone": "battlefield"
   },
   "gore_swine": {
+    "zone": "battlefield"
+  },
+  "goreclaw_terror_of_qal_sisma": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "gorgon_flail": {
@@ -8999,6 +9032,10 @@
     },
     "zone": "battlefield"
   },
+  "pugnacious_hammerskull": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "pull_from_the_grave": {
     "graveyard_size": {
       "0": 1
@@ -9504,6 +9541,10 @@
     "zone": "battlefield"
   },
   "rhonas_s_monument": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "rhonas_the_indomitable": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11192,6 +11233,9 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "steel_leaf_champion": {
+    "zone": "battlefield"
+  },
   "steel_overseer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11701,6 +11745,10 @@
     "zone": "battlefield"
   },
   "tanglepool_bridge": {
+    "zone": "battlefield"
+  },
+  "tangleweave_armor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tannuk_steadfast_second": {
