@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**100 cards** blocked by **82** capabilities.
+**102 cards** blocked by **84** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [combat-damage-batch-per-opponent](#combat-damage-batch-per-opponent) | 1 | 3729 | trigger_event |
+| [choose-mode-once-each-turn](#choose-mode-once-each-turn) | 1 | 3729 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -48,7 +48,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
+| [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [fog](#fog) | 1 | 1232 | op |
+| [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [greatest-commander-mana-value](#greatest-commander-mana-value) | 1 | 11958 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -556,19 +558,17 @@ Blocks **1** card.
 
 </details>
 
-## combat-damage-batch-per-opponent
+## choose-mode-once-each-turn
 
 Blocks **1** card.
 
-- **(trigger_event)** a batched combat-damage trigger that fires once per damaged opponent ("one or more Dragons you control deal combat damage to an opponent") and binds that single damaged player, so the effects can say "artifact that opponent controls" (a target selector with controller = the bound player) and "each other opponent" (opponents excluding the bound player)
-  <br>Why the existing vocabulary won't do: creatures_deal_combat_damage fires once per damaging player per step with every hit seat folded into one `damaged` list (combat._fire_damage_batch), and `damaged` is not in triggers.EVENT_BINDING_KEYS, so there is neither a per-opponent firing nor a single 'that opponent' binding; deals_combat_damage_to_player is per creature, so two Dragons hitting the same opponent would trigger twice instead of once
+- **(op)** choose_mode striking off the modes already chosen THIS TURN ("choose one that hasn't been chosen this turn"), so the spent modes come back at the next turn
+  <br>Why the existing vocabulary won't do: choose_mode's once_each records spent modes as permanent flags on the source (cleared only on a zone change), which is Henrika's "hasn't been chosen" for the object's whole life; after Parapet Thrasher's first turn of use the card would run out of modes for ever. The per-opponent trigger half of the line is now expressible: creatures_deal_combat_damage with per_player, defending: opponent, {"binding": "defender"} for "that opponent" and {"not": {"binding": "defender"}, "except": "you"} for "each other opponent"
 
 <details><summary>Cards waiting on this</summary>
 
 - **Parapet Thrasher** (rank 3729) — `parapet_thrasher`
   - Whenever one or more Dragons you control deal combat damage to an opponent, choose one that hasn't been chosen this turn —
-  - • Destroy target artifact that opponent controls.
-  - • This creature deals 4 damage to each other opponent.
 
 </details>
 
@@ -747,6 +747,20 @@ Blocks **1** card.
 
 </details>
 
+## faerie-rogue-1-1-b-flying-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 black Faerie Rogue creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has faerie_1_1_u_flying (blue Faerie, no Rogue) and faerie_dragon_1_1_u_flying, neither of which is a black Faerie Rogue (111.4)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
+  - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
+
+</details>
+
 ## fog
 
 Blocks **1** card.
@@ -759,6 +773,20 @@ Blocks **1** card.
 - **Arachnogenesis** (rank 1232) — `arachnogenesis`
   - Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.
   - Prevent all combat damage that would be dealt this turn by non-Spider creatures.
+
+</details>
+
+## gain-control-until-end-of-your-next-turn
+
+Blocks **1** card.
+
+- **(op)** gain_control with a duration that ends at the end of the controller's next turn, and a granted "this permanent can't be sacrificed" with the same duration
+  <br>Why the existing vocabulary won't do: structs.CONTROL_DURATIONS is only permanent and until_end_of_turn; the trigger half (per_player, target controller {"binding": "defender"}) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stilt-Man, Towering Terror** (rank 18564) — `stilt_man_towering_terror`
+  - Whenever one or more Villains you control deal combat damage to a player, gain control of target noncreature, nonland permanent that player controls until the end of your next turn. It gains "This permanent can't be sacrificed" until the end of your next turn.
 
 </details>
 

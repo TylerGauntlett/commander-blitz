@@ -533,26 +533,78 @@ def collect(state: GameState, event: GameEvent) -> None:
         spec = ability.trigger
         if spec is None:
             continue
-        if not _matches(state, obj, spec, event):
-            continue
-        _queue(state, obj, ability, event)
-        if obj.controller in doubled:
-            # Ancient Greenwarden: "that ability triggers an additional time".
-            # Queued twice rather than resolved twice, because the two copies are
-            # separate abilities on the stack and anything in between -- another
-            # landfall trigger, a response -- goes between them.
-            _queue(state, obj, ability, event)
-        for source_obj, static in doublers:
-            # `affects` asks about the permanent whose ability just triggered,
-            # which is the axis Harmonic Prodigy scopes on ("a Shaman or another
-            # Wizard you control"); the *cause* was already matched once, above
-            # the loop, because it is a fact about the event and not about this
-            # ability. Two doublers stack, and so does a doubler with Ancient
-            # Greenwarden -- each queues one more copy, which is what "triggers
-            # an additional time" says however many say it.
-            if _static_matches(state, obj, source_obj, static.get("affects")):
-                _queue(state, obj, ability, event)
+        for heard in _per_player_events(spec, event):
+            _collect_one(state, obj, ability, heard, doubled, doublers)
     _arm_delayed(state, event)
+
+
+def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
+    """The event as this trigger hears it: whole, or once per damaged seat.
+
+    "Whenever one or more Dragons you control deal combat damage to **an
+    opponent**, … destroy target artifact **that opponent** controls" --
+    Parapet Thrasher. The trigger fires once for each player the batch dealt
+    damage to (the official rulings on every "…to a player" batch say so: hit
+    two opponents and it triggers twice), and each firing knows one seat.
+    `_fire_damage_batch` fires one event per damaging player, which is right
+    for "…to one or more players", so a `per_player` trigger is handed one
+    narrowed copy of it per entry in `hits`: `damaged` is that seat alone,
+    `damagers` the creatures that hit that seat, and `defender` the seat --
+    so `defending: "opponent"` is "to an opponent" and `{"binding":
+    "defender"}` is "that player", the same spelling as on
+    `creatures_attack_player`.
+
+    A copy rather than a second fired event, because a second event would
+    fire every unflagged trigger on this event again. The copy is never
+    emitted into the log; it is only what `_matches` and `_queue` read.
+    """
+    if not spec.per_player or event.type != EventType.CREATURES_DEALT_COMBAT_DAMAGE:
+        return [event]
+    heard: list[GameEvent] = []
+    for hit in event.data.get("hits") or []:
+        data = dict(event.data)
+        seat = int(hit["player"])
+        data.update(
+            damaged=[seat],
+            damagers=list(hit["damagers"]),
+            damaged_battles=[],
+            hits=[hit],
+            defender=seat,
+        )
+        heard.append(replace(event, data=data))
+    return heard
+
+
+def _collect_one(
+    state: GameState,
+    obj: GameObject,
+    ability: Ability,
+    event: GameEvent,
+    doubled: frozenset[int],
+    doublers,
+) -> None:
+    """Queue one ability for one event it heard, with its doublers."""
+    spec = ability.trigger
+    assert spec is not None
+    if not _matches(state, obj, spec, event):
+        return
+    _queue(state, obj, ability, event)
+    if obj.controller in doubled:
+        # Ancient Greenwarden: "that ability triggers an additional time".
+        # Queued twice rather than resolved twice, because the two copies are
+        # separate abilities on the stack and anything in between -- another
+        # landfall trigger, a response -- goes between them.
+        _queue(state, obj, ability, event)
+    for source_obj, static in doublers:
+        # `affects` asks about the permanent whose ability just triggered,
+        # which is the axis Harmonic Prodigy scopes on ("a Shaman or another
+        # Wizard you control"); the *cause* was already matched once, above
+        # the loop, because it is a fact about the event and not about this
+        # ability. Two doublers stack, and so does a doubler with Ancient
+        # Greenwarden -- each queues one more copy, which is what "triggers
+        # an additional time" says however many say it.
+        if _static_matches(state, obj, source_obj, static.get("affects")):
+            _queue(state, obj, ability, event)
 
 
 def _arm_delayed(state: GameState, event: GameEvent) -> None:

@@ -1,0 +1,20 @@
+{
+  "card_id": "alela_cunning_conqueror",
+  "name": "Alela, Cunning Conqueror",
+  "oracle_text": "Flying\nWhenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.\nWhenever one or more Faeries you control deal combat damage to a player, goad target creature that player controls.",
+  "blocked_sentences": [
+    "Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "faerie_rogue_1_1_b_flying_token",
+      "kind": "token",
+      "what": "a 1/1 black Faerie Rogue creature token with flying",
+      "why_existing_wont_do": "token_ids has faerie_1_1_u_flying (blue Faerie, no Rogue) and faerie_dragon_1_1_u_flying, neither of which is a black Faerie Rogue (111.4)"
+    }
+  ],
+  "closest_existing": [
+    "faerie_1_1_u_flying"
+  ],
+  "confidence": "high"
+}

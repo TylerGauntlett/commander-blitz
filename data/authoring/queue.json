@@ -93102,12 +93102,12 @@
     },
     "Feline Sovereign": {
       "edhrec_rank": 3432,
-      "gate": "template",
+      "gate": null,
       "name": "Feline Sovereign",
-      "reason": "no template for: Other Cats you control get +1/+1 and have protection from Dogs",
+      "reason": "",
       "scryfall_id": "c4aabecd-f042-46c1-a621-3286fa4e0715",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Felisa, Fang of Silverquill": {
@@ -183942,12 +183942,12 @@
     },
     "Nature's Will": {
       "edhrec_rank": 2510,
-      "gate": "template",
+      "gate": null,
       "name": "Nature's Will",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, tap all lands t",
+      "reason": "",
       "scryfall_id": "ce7785c2-0b3f-4952-8b2d-71fe73cf64e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nature's Wrath": {
@@ -205072,12 +205072,12 @@
     },
     "Popular Entertainer": {
       "edhrec_rank": 8780,
-      "gate": "template",
+      "gate": null,
       "name": "Popular Entertainer",
-      "reason": "no template for: Commander creatures you own have \"Whenever one or more creatures you control deal combat d",
+      "reason": "",
       "scryfall_id": "91844266-8b2f-421f-a944-544c51734e64",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Porcelain Legionnaire": {

@@ -3840,6 +3840,10 @@
     "artist": "Stan Sakai",
     "scryfall_id": "5f8c16d5-c2ed-4e5c-8f50-d39013845f55"
   },
+  "feline_sovereign": {
+    "artist": "Dan Murayama Scott",
+    "scryfall_id": "c4aabecd-f042-46c1-a621-3286fa4e0715"
+  },
   "felisa_fang_of_silverquill": {
     "artist": "Sara Winters",
     "scryfall_id": "18b8abf0-e8c3-4c19-bdf1-18aabe75a3de"
@@ -7706,6 +7710,10 @@
     "artist": "Julie Dillon",
     "scryfall_id": "deb0e799-1920-4cd9-acd2-2df9df333712"
   },
+  "nature_s_will": {
+    "artist": "Matteo Bassini",
+    "scryfall_id": "ce7785c2-0b3f-4952-8b2d-71fe73cf64e0"
+  },
   "naya_panorama": {
     "artist": "Hideaki Takamura",
     "scryfall_id": "6a546a28-8df5-4080-9f50-af86d84a066f"
@@ -8606,6 +8614,10 @@
   "pongify": {
     "artist": "Dominik Mayer",
     "scryfall_id": "5780936e-629d-4737-9005-651234f5426d"
+  },
+  "popular_entertainer": {
+    "artist": "Zoltan Boros",
+    "scryfall_id": "91844266-8b2f-421f-a944-544c51734e64"
   },
   "porcelain_legionnaire": {
     "artist": "Eric Deschamps",

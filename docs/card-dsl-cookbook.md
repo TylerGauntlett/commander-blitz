@@ -2426,11 +2426,11 @@ monarchy once per creature instead of once. `max_per_turn: 1` on top of it is th
 tempting repair and is wrong one step out — `extra_combat` gives a turn a second
 combat, and the printed line triggers again there.
 
-Per damaging **player** rather than per (player, defender) pair, which is where
-it stops being the shape `creatures_attack_player` has one phase earlier: that
-one is per defending seat because its printed clause is "one of your opponents",
-and this one says "to one or more **players**". A seat whose creatures connect
-with two opponents in one step gets one event with both on `damaged`.
+Per damaging **player** rather than per (player, defender) pair, because this
+card says "to one or more **players**": a seat whose creatures connect with two
+opponents in one step gets one event with both on `damaged`. "…to **a player**"
+is the per-seat reading, and is `per_player` --
+see ["… to an opponent, … that opponent"](#-to-an-opponent--that-opponent).
 
 It is fired from `combat.deal_combat_damage`, off the same assignment list
 `_monarch_transfer` reads and for the same reason: 510.2 makes combat damage
@@ -2482,6 +2482,49 @@ on cards that say nothing about battles. With it on, `_fire_damage_batch` fires
 for a battle-only swing. The loader refuses `or_battle` on any other event, since
 `_matches` would ignore it there and the printed half about battles would go
 missing on a card that looked complete.
+
+#### "… to an opponent, … that opponent"
+
+```jsonc
+// Parapet Thrasher -- "Whenever one or more Dragons you control deal combat
+//   damage to an opponent, … • Destroy target artifact that opponent controls.
+//   • This creature deals 4 damage to each other opponent."
+{ "kind": "triggered",
+  "trigger": { "event": "creatures_deal_combat_damage", "controller": "you",
+               "filter": { "subtypes": ["Dragon"] },
+               "per_player": true, "defending": "opponent" },
+  "targets": [ { "id": "t1", "kind": "permanent",
+                 "selector": { "zone": "battlefield", "types": ["Artifact"],
+                               "controller": { "binding": "defender" } } } ],
+  "effects": [ /* … */
+    { "op": "damage", "amount": { "const": 4 },
+      "player": { "not": { "binding": "defender" }, "except": "you" } } ] }
+```
+
+**`per_player: true` fires the trigger once for each player the batch dealt
+damage to**, which is how the rulings read "one or more creatures you control
+deal combat damage to **a player**": a swing that connects with two opponents
+triggers it twice, and each firing is about one seat. The event is the same
+one; `triggers.collect` hands the trigger one copy of it per entry in its `hits`
+payload, with three keys narrowed to that seat:
+
+- `damaged` is that seat alone;
+- `damagers` is the creatures that hit that seat, so the `filter` is asked of
+  them -- a Dragon at one opponent and an Elf at another is one firing, for the
+  Dragon's seat -- and "those Dragons" names only them;
+- `defender` is the seat, so `{"binding": "defender"}` is "that player" (the
+  same spelling `creatures_attack_player` uses), and `defending: "opponent"` is
+  "to **an opponent**".
+
+Two Dragons through to the same seat are still one firing: it is "one or more"
+per seat. "Each other opponent" is `{"not": {"binding": "defender"}, "except":
+"you"}` -- every living seat but the bound one, less you. `"each_opponent"` is
+the near miss and burns the opponent the card already hit.
+
+The loader refuses `per_player` on any other event and beside `or_battle` (each
+copy carries one seat and no battles, so the battle half would never fire), and
+refuses `defending` on this event without it, since the unsplit batch names no
+one seat to compare.
 
 `batched: true` is **not** the repair for any of this and is a no-op on every
 combat-damage event: `_queue` keys the batch off `event.data["batch"]`, which

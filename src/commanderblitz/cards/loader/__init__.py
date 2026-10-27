@@ -2307,6 +2307,34 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"506.2's battle half and means nothing on "
                 f"{model.trigger.event!r}"
             )
+        if model.trigger.per_player:
+            # "…to a player" read once per seat. Only the batched combat-damage
+            # event has seats to fan out over; anywhere else `collect` would
+            # hand the trigger the whole event and the flag would say nothing.
+            if model.trigger.event != "creatures_deal_combat_damage":
+                raise DslError(
+                    f"{where}: 'per_player' fires 'creatures_deal_combat_damage' "
+                    f"once per damaged seat and means nothing on "
+                    f"{model.trigger.event!r}"
+                )
+            if model.trigger.or_battle:
+                # Each copy carries one seat and no battles, so the battle half
+                # of the sentence would silently never fire.
+                raise DslError(
+                    f"{where}: 'per_player' fires once per damaged *player*, so "
+                    f"it cannot also take 'or_battle'"
+                )
+        if (
+            model.trigger.event == "creatures_deal_combat_damage"
+            and model.trigger.defending is not None
+            and not model.trigger.per_player
+        ):
+            # The batch names no one seat until it is fanned out, so a
+            # `defending` clause on the whole batch would match nothing, ever.
+            raise DslError(
+                f"{where}: 'defending' on 'creatures_deal_combat_damage' asks who "
+                f"one firing hit, which only 'per_player' firings know"
+            )
         if model.trigger.to_zones is not None:
             # "When this creature dies or is put into exile." Only a departure
             # carries a destination, so anywhere else this would be a filter
@@ -2343,6 +2371,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             batched=model.trigger.batched,
             level=model.trigger.level,
             or_battle=model.trigger.or_battle,
+            per_player=model.trigger.per_player,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
             state=dict(model.trigger.state) if model.trigger.state else None,
         )

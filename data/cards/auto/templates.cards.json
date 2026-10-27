@@ -43119,6 +43119,108 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Cat"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Cats you control get +1/+1 and have protection from Dogs.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Cat"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "protection",
+          "from_subtypes": [
+            "Dog"
+          ],
+          "kind": "static",
+          "text": "Other Cats you control get +1/+1 and have protection from Dogs."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": {
+                  "binding": "defender"
+                },
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever one or more Cats you control deal combat damage to a player, destroy up to one target artifact or enchantment that player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "subtypes": [
+                "Cat"
+              ]
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "feline_sovereign",
+      "mana_cost": "{2}{G}",
+      "name": "Feline Sovereign",
+      "oracle_text": "Other Cats you control get +1/+1 and have protection from Dogs.\nWhenever one or more Cats you control deal combat damage to a player, destroy up to one target artifact or enchantment that player controls.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -87470,6 +87572,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, tap all lands that player controls and untap all lands you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nature_s_will",
+      "mana_cost": "{2}{G}{G}",
+      "name": "Nature's Will",
+      "oracle_text": "Whenever one or more creatures you control deal combat damage to a player, tap all lands that player controls and untap all lands you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -98507,6 +98662,77 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "is_commander": true,
+            "owner": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Commander creatures you own have \"Whenever one or more creatures you control deal combat damage to a player, goad target creature that player controls.\""
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever one or more creatures you control deal combat damage to a player, goad target creature that player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        }
+      ],
+      "id": "popular_entertainer",
+      "mana_cost": "{1}{R}",
+      "name": "Popular Entertainer",
+      "oracle_text": "Commander creatures you own have \"Whenever one or more creatures you control deal combat damage to a player, goad target creature that player controls.\" (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)",
+      "source": "auto",
+      "subtypes": [
+        "Background"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

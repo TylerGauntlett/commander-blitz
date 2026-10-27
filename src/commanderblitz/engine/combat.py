@@ -1460,6 +1460,13 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
     on `damaged` for anything that wants to ask, and the event itself counts
     seats that *swung*.
 
+    "…to **a player**" / "…to **an opponent**" is the other reading, and it is
+    per seat: the ability triggers once for each player dealt damage, and "that
+    player" is the one seat it fired for. That is not a second event -- it
+    would fire every existing card's trigger twice on the same swing -- but a
+    `per_player` trigger fanned out by `triggers.collect` over `hits`, which
+    pairs each damaged seat with the creatures that hit it.
+
     **Creatures**, by derived type, which is the same reading `_monarch_transfer`
     takes one line up: an animated Equipment that got through is a creature and
     its printed face says otherwise. Damage to a blocker is not damage to a
@@ -1502,13 +1509,16 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
         if source is None or "Creature" not in chars(state, source.oid).types:
             continue
         batch = by_player.setdefault(
-            source.controller, {"damagers": [], "damaged": [], "battles": []}
+            source.controller, {"damagers": [], "damaged": [], "battles": [], "hits": {}}
         )
         if source.oid not in batch["damagers"]:
             batch["damagers"].append(source.oid)
         if assignment.to_player is not None:
             if assignment.to_player not in batch["damaged"]:
                 batch["damaged"].append(assignment.to_player)
+            hit = batch["hits"].setdefault(assignment.to_player, [])
+            if source.oid not in hit:
+                hit.append(source.oid)
         elif assignment.to_object not in batch["battles"]:
             batch["battles"].append(assignment.to_object)
     for pid in state.turn_order():
@@ -1522,6 +1532,18 @@ def _fire_damage_batch(state: GameState, assignments: list[DamageAssignment]) ->
             damagers=sorted(batch["damagers"]),
             damaged=sorted(batch["damaged"]),
             damaged_battles=sorted(batch["battles"]),
+            # Which creatures connected with which seat, for the
+            # `per_player` reading -- "…deal combat damage to **an
+            # opponent**, destroy target artifact **that opponent**
+            # controls" (Parapet Thrasher). One entry per seat in `damaged`,
+            # in seat order, so `triggers.collect` can ask the trigger once
+            # per seat with only the creatures that hit *that* seat: a Dragon
+            # that hit one opponent and an Elf that hit another are not "one
+            # or more Dragons" for the second.
+            hits=[
+                {"player": seat, "damagers": sorted(batch["hits"][seat])}
+                for seat in sorted(batch["hits"])
+            ],
         )
 
 

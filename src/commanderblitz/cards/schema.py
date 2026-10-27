@@ -417,6 +417,12 @@ class TriggerModel(BaseModel):
     #: other card using this event is "to one or more players", and a swing that
     #: connected only with a battle must not fire those.
     or_battle: bool = False
+    #: "…deal combat damage to **a player**" / "…to **an opponent**" -- Parapet
+    #: Thrasher. Fires `creatures_deal_combat_damage` once per damaged seat, with
+    #: "that player" as ``{"binding": "defender"}`` and ``defending`` naming
+    #: whom it may be. The loader refuses it on any other event and beside
+    #: ``or_battle``.
+    per_player: bool = False
     #: For ``leaves_battlefield``: the zones the permanent must have gone *to*.
     #: "When this creature **dies or is put into exile**" -- Kaya the
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or

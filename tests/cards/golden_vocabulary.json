@@ -75,6 +75,7 @@
   "DEFENDING_TRIGGERS": [
    "attacks",
    "creatures_attack_player",
+   "creatures_deal_combat_damage",
    "deals_damage_to_player"
   ],
   "DELAYED_TRIGGER_KEYS": [

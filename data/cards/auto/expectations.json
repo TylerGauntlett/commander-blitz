@@ -3973,6 +3973,10 @@
     },
     "zone": "battlefield"
   },
+  "feline_sovereign": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "felisa_fang_of_silverquill": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7888,6 +7892,10 @@
     },
     "zone": "graveyard"
   },
+  "nature_s_will": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "naya_panorama": {
     "zone": "battlefield"
   },
@@ -8794,6 +8802,10 @@
       "id": "ape_3_3_g"
     },
     "zone": "graveyard"
+  },
+  "popular_entertainer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "porcelain_legionnaire": {
     "zone": "battlefield"

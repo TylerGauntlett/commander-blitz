@@ -32,7 +32,9 @@ from commanderblitz.engine.enums import (
 #: damaged seat as `defender` for exactly this comparison. Two-player play hides
 #: the difference; a pod does not, and neither does a creature you control that
 #: somehow damages you.
-DEFENDING_TRIGGERS = frozenset({"attacks", "creatures_attack_player", "deals_damage_to_player"})
+DEFENDING_TRIGGERS = frozenset(
+    {"attacks", "creatures_attack_player", "deals_damage_to_player", "creatures_deal_combat_damage"}
+)
 
 #: Cost keys that charge the **source permanent**, and so may not appear on a
 #: card-level `alternative_cost`.

@@ -3719,7 +3719,8 @@ Three events carry a defending player and so accept the clause: `attacks`,
 `creatures_attack_player` and `deals_damage_to_player`. The last is the one that
 is not about combat — Curiosity's "whenever enchanted creature deals damage to
 **an opponent**" asks who took the damage, and `controller` there is a question
-about whose *creature* dealt it.
+about whose *creature* dealt it. `creatures_deal_combat_damage` accepts it only
+with `per_player`, where each firing is about the one seat it hit.
 
 `defending: "most_life"` is dethrone's "whenever this creature attacks **the
 player with the most life or tied for most life**" (702.105a), legal on
@@ -3865,6 +3866,12 @@ batching work.
 combat damage to a player", which is Zurgo and Ojutai's "or battle". Off by
 default, and refused by the loader on any other event. See
 ["One or more Dragons … a player or battle"](card-dsl-cookbook.md#one-or-more-dragons--a-player-or-battle).
+
+`per_player` reads the same event per seat: "one or more creatures you control
+deal combat damage to **a player**" triggers once for each player dealt damage,
+with "that player" bound as `defender` and `defending` naming whom it may be.
+Off by default, and refused anywhere else. See
+["… to an opponent, … that opponent"](card-dsl-cookbook.md#-to-an-opponent--that-opponent).
 
 Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `leaves_battlefield` · `land_played` · `spell_cast` · `spell_copied` · `attacks` · `blocks` ·

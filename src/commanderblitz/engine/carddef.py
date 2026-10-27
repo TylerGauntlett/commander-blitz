@@ -688,6 +688,13 @@ class TriggerSpec:
     #: Named for `or_planeswalker`, the effect-side key with the same job on
     #: `attacking` -- same word, same disjunction, same default.
     or_battle: bool = False
+    #: "…deal combat damage to **a player**" / "…to **an opponent**", read the
+    #: way the rulings read it: once for each player dealt damage, with "that
+    #: player" bound. Only on ``creatures_deal_combat_damage``; `triggers.collect`
+    #: hands the trigger one copy of the batch per seat in its ``hits``, each
+    #: with ``damaged``, ``damagers`` and ``defender`` narrowed to that seat.
+    #: Off by default: "…to one or more players" is one trigger for the batch.
+    per_player: bool = False
     #: For ``leaves_battlefield``: the zone names the permanent must have gone
     #: to -- "when this creature dies **or is put into exile**" is
     #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which
