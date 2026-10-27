@@ -1056,6 +1056,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "battle_cry_goblin": {
+    "zone": "battlefield"
+  },
   "battle_hurda": {
     "zone": "battlefield"
   },
@@ -4842,6 +4845,9 @@
   "gnarled_mass": {
     "zone": "battlefield"
   },
+  "gnoll_hunter": {
+    "zone": "battlefield"
+  },
   "gnottvold_recluse": {
     "zone": "battlefield"
   },
@@ -5545,6 +5551,9 @@
     "zone": "graveyard"
   },
   "hitchclaw_recluse": {
+    "zone": "battlefield"
+  },
+  "hobgoblin_captain": {
     "zone": "battlefield"
   },
   "hobgoblin_dragoon": {
@@ -7419,6 +7428,9 @@
   },
   "mind_s_eye": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "minion_of_the_mighty": {
     "zone": "battlefield"
   },
   "minotaur_abomination": {
@@ -11632,6 +11644,9 @@
     "zone": "battlefield"
   },
   "taoist_hermit": {
+    "zone": "battlefield"
+  },
+  "targ_nar_demon_fang_gnoll": {
     "zone": "battlefield"
   },
   "tarnished_citadel": {

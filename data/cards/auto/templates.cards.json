@@ -11020,6 +11020,96 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Goblin"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Goblin"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}: Goblins you control get +1/+0 and gain haste until end of turn."
+        },
+        {
+          "effects": [
+            {
+              "attacking": true,
+              "op": "create_token",
+              "tapped": true,
+              "token": "goblin_1_1_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, create a 1/1 red Goblin creature token that's tapped and attacking.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "battle_cry_goblin",
+      "mana_cost": "{1}{R}",
+      "name": "Battle Cry Goblin",
+      "oracle_text": "{1}{R}: Goblins you control get +1/+0 and gain haste until end of turn.\nPack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, create a 1/1 red Goblin creature token that's tapped and attacking.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -52392,6 +52482,59 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "gnoll_hunter",
+      "mana_cost": "{1}{G}",
+      "name": "Gnoll Hunter",
+      "oracle_text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, put a +1/+1 counter on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Gnoll"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -60951,6 +61094,60 @@
         "Spider"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "first_strike"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, this creature gains first strike until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hobgoblin_captain",
+      "mana_cost": "{1}{R}",
+      "name": "Hobgoblin Captain",
+      "oracle_text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, this creature gains first strike until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Barbarian"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -82345,6 +82542,75 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attacking": true,
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "subtypes": [
+                      "Dragon"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "put_onto_battlefield",
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Put a Dragon creature card from your hand onto the battlefield tapped and attacking?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may put a Dragon creature card from your hand onto the battlefield tapped and attacking.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "minion_of_the_mighty",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{R}",
+      "name": "Minion of the Mighty",
+      "oracle_text": "Menace\nPack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may put a Dragon creature card from your hand onto the battlefield tapped and attacking.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Kobold"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -130237,6 +130503,98 @@
       "subtypes": [
         "Human",
         "Mystic"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "attacking": true,
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Pack tactics — Whenever Targ Nar attacks, if you attacked with creatures with total power 6 or greater this combat, attacking creatures get +1/+0 until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "attack_power_this_combat": "you"
+              },
+              "right": {
+                "const": 6
+              }
+            },
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}{G}"
+          },
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "toughness": {
+                "toughness_of": {
+                  "self": true
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}{G}: Double Targ Nar's power and toughness until end of turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "targ_nar_demon_fang_gnoll",
+      "mana_cost": "{R}{G}",
+      "name": "Targ Nar, Demon-Fang Gnoll",
+      "oracle_text": "Pack tactics — Whenever Targ Nar attacks, if you attacked with creatures with total power 6 or greater this combat, attacking creatures get +1/+0 until end of turn.\n{2}{R}{G}: Double Targ Nar's power and toughness until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Gnoll"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 2,
       "types": [

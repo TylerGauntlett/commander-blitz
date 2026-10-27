@@ -1,0 +1,20 @@
+{
+  "card_id": "intrepid_outlander",
+  "name": "Intrepid Outlander",
+  "oracle_text": "Reach\nPack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, venture into the dungeon. (Enter the first room or advance to the next room.)",
+  "blocked_sentences": [
+    "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, venture into the dungeon. (Enter the first room or advance to the next room.)"
+  ],
+  "needs": [
+    {
+      "capability": "venture",
+      "kind": "engine",
+      "what": "venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, as an op",
+      "why_existing_wont_do": "The pack tactics condition is the attack_power_this_combat value, but the reference has no venture op and no dungeon objects"
+    }
+  ],
+  "closest_existing": [
+    "attack_power_this_combat"
+  ],
+  "confidence": "high"
+}

@@ -1015,6 +1015,10 @@
     "artist": "Uzuri",
     "scryfall_id": "07226d56-35ae-46af-bb6e-20b568f87652"
   },
+  "battle_cry_goblin": {
+    "artist": "David Szabo",
+    "scryfall_id": "ba41ec1b-e631-4882-b897-df26e26ada04"
+  },
   "battle_hurda": {
     "artist": "Christopher Moeller",
     "scryfall_id": "2f540b83-67fd-4630-a461-69bc84b88ed3"
@@ -4628,6 +4632,10 @@
     "artist": "Tony Szczudlo",
     "scryfall_id": "5c28728d-4839-4cdf-91d4-b9fb4b5d0449"
   },
+  "gnoll_hunter": {
+    "artist": "Russ Nicholson",
+    "scryfall_id": "11b8a1e6-a649-4be1-8899-104fffdb2dff"
+  },
   "gnome_1_1_c": {
     "artist": "Racrufi",
     "scryfall_id": "e32673cc-bec9-49b3-bc34-e2b3982ca245"
@@ -5392,6 +5400,10 @@
   "hitchclaw_recluse": {
     "artist": "Mike Bierek",
     "scryfall_id": "fe349432-8726-49cf-ad07-6f8add8f78c8"
+  },
+  "hobgoblin_captain": {
+    "artist": "Karl Kopinski",
+    "scryfall_id": "f7c0aa86-fd3b-4e0f-9d37-ce1ea8922243"
   },
   "hobgoblin_dragoon": {
     "artist": "Matt Cavotta",
@@ -7261,6 +7273,10 @@
   "mind_stone": {
     "artist": "Adam Rex",
     "scryfall_id": "b30a8f92-ce42-4b27-a893-bcf97fde228d"
+  },
+  "minion_of_the_mighty": {
+    "artist": "Oriana Menendez",
+    "scryfall_id": "acf3b01f-6c67-4396-82ff-f3f416aea7c7"
   },
   "minotaur_abomination": {
     "artist": "Karl Kopinski",
@@ -11458,6 +11474,10 @@
   "taoist_hermit": {
     "artist": "Wang Yuqun",
     "scryfall_id": "d818c231-8d66-4024-91de-fe29f8622902"
+  },
+  "targ_nar_demon_fang_gnoll": {
+    "artist": "Tyler Jacobson",
+    "scryfall_id": "5fe57856-9d35-470e-9138-360b02ac0c90"
   },
   "tarnished_citadel": {
     "artist": "Viacom",

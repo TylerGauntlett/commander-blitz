@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**98 cards** blocked by **83** capabilities.
+**100 cards** blocked by **84** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,6 +23,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [spider-token](#spider-token) | 2 | 1012 | token |
+| [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
@@ -61,6 +62,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [max-blockers](#max-blockers) | 1 | 12001 | static_effect |
+| [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
@@ -68,7 +70,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [pack-tactics](#pack-tactics) | 1 | 6179 | value |
 | [pay-any-amount-of-colored-mana](#pay-any-amount-of-colored-mana) | 1 | 2381 | cost |
 | [phyrexian-beast-token](#phyrexian-beast-token) | 1 | 1191 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -79,6 +80,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
+| [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [reveal-until-tapped](#reveal-until-tapped) | 1 | 2637 | op |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -95,7 +97,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
-| [venture](#venture) | 1 | 19644 | engine |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
 ## combat-only-permanent-shield
@@ -370,6 +371,24 @@ Blocks **2** cards.
 - **Arachnogenesis** (rank 1232) — `arachnogenesis`
   - Create X 1/2 green Spider creature tokens with reach, where X is the number of creatures attacking you.
   - Prevent all combat damage that would be dealt this turn by non-Spider creatures.
+
+</details>
+
+## venture
+
+Blocks **2** cards.
+
+- **(engine)** venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, as an op
+  <br>Why the existing vocabulary won't do: The pack tactics condition is the attack_power_this_combat value, but the reference has no venture op and no dungeon objects
+- **(engine)** venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, plus a player-wide static capping how many times each opponent may venture each turn (affects_player: opponent, amount 1), counted per player per turn, with a venture past the cap simply not happening
+  <br>Why the existing vocabulary won't do: The reference has no venture op, no dungeon objects and no venture event or tally; the closest cap, the draw_limit static, counts only cards drawn, and once_each_turn / max_per_turn limit a permanent's own ability or trigger rather than a player's actions. The first sentence alone is expressible as the player_hexproof static, but a partial answer is not allowed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Keen-Eared Sentry** (rank 19644) — `keen_eared_sentry`
+  - Each opponent can't venture into the dungeon more than once each turn.
+- **Intrepid Outlander** (rank 21117) — `intrepid_outlander`
+  - Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, venture into the dungeon. (Enter the first room or advance to the next room.)
 
 </details>
 
@@ -928,6 +947,20 @@ Blocks **1** card.
 
 </details>
 
+## may-pay-named-cost
+
+Blocks **1** card.
+
+- **(op)** `may` with `pay: {sacrifice: {..., as: name}}` writing the sacrificed creature's snapshot into the effect bindings, so a reflexive_trigger in its effects can read `power_of {binding: name}` -- "you may sacrifice another creature. When you do, ... the sacrificed creature's power"
+  <br>Why the existing vocabulary won't do: op_may pays its cost without a bindings dict, so a cost's `as` names nothing there. Writing the sacrifice as an effect op inside may instead fires the reflexive trigger even when nothing could be sacrificed (a creature under a can't-be-sacrificed effect), which the printed 'When you do' does not. The pack tactics condition itself is attack_power_this_combat
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tiger-Tribe Hunter** (rank 24675) — `tiger_tribe_hunter`
+  - Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may sacrifice another creature. When you do, this creature deals damage equal to the sacrificed creature's power to target creature.
+
+</details>
+
 ## merfolk-token
 
 Blocks **1** card.
@@ -1032,20 +1065,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## pack-tactics
-
-Blocks **1** card.
-
-- **(value)** a value reading the total power of the creatures you declared as attackers this combat, as they were when declared (a combat ledger of attacker power recorded at declare-attackers), usable as an intervening-if trigger condition `cmp >= 6`
-  <br>Why the existing vocabulary won't do: `attackers_this_turn` counts attacking creatures, not their power. `power_of` with `objects: {attacking: true, controller: you}` sums the LIVE power of creatures still attacking, so it reads differently from the printed card once an attacker is removed from combat, killed or shrunk in response to the trigger: the rulings say the creatures you attacked with still count at their declared power, and the intervening-if recheck on resolution would wrongly fail. It also counts by turn-free board state rather than 'this combat'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Minion of the Mighty** (rank 6179) — `minion_of_the_mighty`
-  - Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, you may put a Dragon creature card from your hand onto the battlefield tapped and attacking.
 
 </details>
 
@@ -1187,6 +1206,20 @@ Blocks **1** card.
 - **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
   - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
   - III — Create a 4/4 red Dragon creature token with flying.
+
+</details>
+
+## remove-subtype
+
+Blocks **1** card.
+
+- **(op)** an op removing one creature type from a permanent until end of turn (layer 4), leaving its other types and subtypes untouched -- "isn't a Human"
+  <br>Why the existing vocabulary won't do: add_subtype only adds; animate's subtypes add, and animate with exact replaces every subtype, so a Werewolf that had also gained other types would lose them too. The pack tactics line is expressible with attack_power_this_combat, but a partial answer is not allowed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Werewolf Pack Leader** (rank 8384) — `werewolf_pack_leader`
+  - {3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.
 
 </details>
 
@@ -1414,20 +1447,6 @@ Blocks **1** card.
 
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
-
-</details>
-
-## venture
-
-Blocks **1** card.
-
-- **(engine)** venture into the dungeon (701.46): dungeon cards in the command zone, a per-player venture marker and room abilities, plus a player-wide static capping how many times each opponent may venture each turn (affects_player: opponent, amount 1), counted per player per turn, with a venture past the cap simply not happening
-  <br>Why the existing vocabulary won't do: The reference has no venture op, no dungeon objects and no venture event or tally; the closest cap, the draw_limit static, counts only cards drawn, and once_each_turn / max_per_turn limit a permanent's own ability or trigger rather than a player's actions. The first sentence alone is expressible as the player_hexproof static, but a partial answer is not allowed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Keen-Eared Sentry** (rank 19644) — `keen_eared_sentry`
-  - Each opponent can't venture into the dungeon more than once each turn.
 
 </details>
 

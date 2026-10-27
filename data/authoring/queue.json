@@ -21792,12 +21792,12 @@
     },
     "Battle Cry Goblin": {
       "edhrec_rank": 5023,
-      "gate": "template",
+      "gate": null,
       "name": "Battle Cry Goblin",
-      "reason": "no template for: {1}{R}: Goblins you control get +1/+0 and gain haste until end of turn",
+      "reason": "",
       "scryfall_id": "ba41ec1b-e631-4882-b897-df26e26ada04",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Battle Frenzy": {
@@ -112062,12 +112062,12 @@
     },
     "Gnoll Hunter": {
       "edhrec_rank": 23060,
-      "gate": "template",
+      "gate": null,
       "name": "Gnoll Hunter",
-      "reason": "no template for: Pack tactics — Whenever this creature attacks, if you attacked with creatures with total p",
+      "reason": "",
       "scryfall_id": "11b8a1e6-a649-4be1-8899-104fffdb2dff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gnoll War Band": {
@@ -128672,12 +128672,12 @@
     },
     "Hobgoblin Captain": {
       "edhrec_rank": 19323,
-      "gate": "template",
+      "gate": null,
       "name": "Hobgoblin Captain",
-      "reason": "no template for: Pack tactics — Whenever this creature attacks, if you attacked with creatures with total p",
+      "reason": "",
       "scryfall_id": "f7c0aa86-fd3b-4e0f-9d37-ce1ea8922243",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hobgoblin Dragoon": {
@@ -174492,12 +174492,12 @@
     },
     "Minion of the Mighty": {
       "edhrec_rank": 6179,
-      "gate": "template",
+      "gate": null,
       "name": "Minion of the Mighty",
-      "reason": "no template for: Pack tactics — Whenever this creature attacks, if you attacked with creatures with total p",
+      "reason": "",
       "scryfall_id": "720e763a-ba7d-4e32-a5f1-87a457b12db2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Minion of the Wastes": {
@@ -275322,12 +275322,12 @@
     },
     "Targ Nar, Demon-Fang Gnoll": {
       "edhrec_rank": 18554,
-      "gate": "template",
+      "gate": null,
       "name": "Targ Nar, Demon-Fang Gnoll",
-      "reason": "no template for: Pack tactics — Whenever Targ Nar attacks, if you attacked with creatures with total power ",
+      "reason": "",
       "scryfall_id": "5fe57856-9d35-470e-9138-360b02ac0c90",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tariel, Reckoner of Souls": {
