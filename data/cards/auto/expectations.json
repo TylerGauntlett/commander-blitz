@@ -1562,6 +1562,9 @@
   "breath_weapon": {
     "zone": "graveyard"
   },
+  "breeches_eager_pillager": {
+    "zone": "battlefield"
+  },
   "breeding_pool": {
     "zone": "battlefield"
   },
@@ -4480,7 +4483,13 @@
   "gaea_s_skyfolk": {
     "zone": "battlefield"
   },
+  "gala_greeters": {
+    "zone": "battlefield"
+  },
   "galadhrim_guide": {
+    "zone": "battlefield"
+  },
+  "galadriel_light_of_valinor": {
     "zone": "battlefield"
   },
   "galewind_moose": {
@@ -6706,6 +6715,9 @@
   "linvala_the_preserver": {
     "zone": "battlefield"
   },
+  "lita_little_orphan_amphibian": {
+    "zone": "battlefield"
+  },
   "living_laser": {
     "zone": "battlefield"
   },
@@ -7597,6 +7609,9 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "monument_to_endurance": {
+    "zone": "battlefield"
   },
   "moogles_valor": {
     "battlefield_count": 34,
@@ -8540,6 +8555,9 @@
   },
   "paradise_mantle": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "parapet_thrasher": {
     "zone": "battlefield"
   },
   "pardic_wanderer": {
@@ -11969,6 +11987,9 @@
   },
   "the_ur_dragon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_vision": {
     "zone": "battlefield"
   },
   "the_wandering_emperor": {

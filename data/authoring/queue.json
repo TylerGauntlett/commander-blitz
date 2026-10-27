@@ -33922,12 +33922,12 @@
     },
     "Breeches, Eager Pillager": {
       "edhrec_rank": 3035,
-      "gate": "template",
+      "gate": null,
       "name": "Breeches, Eager Pillager",
-      "reason": "no template for: Whenever a Pirate you control attacks, choose one that hasn't been chosen this turn —",
+      "reason": "",
       "scryfall_id": "480d639d-871d-4da3-9ae1-41bd5cef81db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breeches, the Blastmaker": {
@@ -104242,12 +104242,12 @@
     },
     "Gala Greeters": {
       "edhrec_rank": 1662,
-      "gate": "template",
+      "gate": null,
       "name": "Gala Greeters",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, choose one that hasn't been chose",
+      "reason": "",
       "scryfall_id": "3c1baaa2-bd0b-4627-b93a-0753e0acd0f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galactic Wayfarer": {
@@ -104352,12 +104352,12 @@
     },
     "Galadriel, Light of Valinor": {
       "edhrec_rank": 4209,
-      "gate": "template",
+      "gate": null,
       "name": "Galadriel, Light of Valinor",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, choose one that hasn't been chose",
+      "reason": "",
       "scryfall_id": "2e14edc5-9a68-4aef-baf6-43e7a6b732b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galazeth Prismari": {
@@ -159432,12 +159432,12 @@
     },
     "Lita, Little Orphan Amphibian": {
       "edhrec_rank": 8993,
-      "gate": "template",
+      "gate": null,
       "name": "Lita, Little Orphan Amphibian",
-      "reason": "no template for: Alliance — Whenever another creature you control enters, choose one that hasn't been chose",
+      "reason": "",
       "scryfall_id": "9fbaabb5-e981-4cbf-888c-46449412711f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lita, Mechanical Engineer": {
@@ -178522,12 +178522,12 @@
     },
     "Monument to Endurance": {
       "edhrec_rank": 1013,
-      "gate": "template",
+      "gate": null,
       "name": "Monument to Endurance",
-      "reason": "no template for: Whenever you discard a card, choose one that hasn't been chosen this turn —",
+      "reason": "",
       "scryfall_id": "c66cbdac-1d15-40f5-b76f-6f21b917abbc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Monument to Perfection": {
@@ -197902,12 +197902,12 @@
     },
     "Parapet Thrasher": {
       "edhrec_rank": 3729,
-      "gate": "template",
+      "gate": null,
       "name": "Parapet Thrasher",
-      "reason": "no template for: Whenever one or more Dragons you control deal combat damage to an opponent, choose one tha",
+      "reason": "",
       "scryfall_id": "39df10ff-42a4-480d-a808-3ce838d9f8ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Parapet Watchers": {
@@ -282762,12 +282762,12 @@
     },
     "The Vision": {
       "edhrec_rank": 9367,
-      "gate": "template",
+      "gate": null,
       "name": "The Vision",
-      "reason": "no template for: Whenever you cast a noncreature spell, choose one that hasn't been chosen this turn —",
+      "reason": "",
       "scryfall_id": "2961cf20-33c8-4e66-9d0f-6daca8ea7880",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Vision and Scarlet Witch": {

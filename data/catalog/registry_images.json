@@ -1547,6 +1547,10 @@
     "artist": "Adam Vehige",
     "scryfall_id": "e4e107ee-912d-45e0-8421-bb6ee6f38c86"
   },
+  "breeches_eager_pillager": {
+    "artist": "Jesper Ejsing",
+    "scryfall_id": "480d639d-871d-4da3-9ae1-41bd5cef81db"
+  },
   "breeding_pool": {
     "artist": "Cliff Nielsen",
     "scryfall_id": "63e4dc07-c742-41bd-8301-861637908fd1"
@@ -4312,9 +4316,17 @@
     "artist": "Terese Nielsen",
     "scryfall_id": "8a564432-c2b3-4cf6-b4bc-2e2600b92911"
   },
+  "gala_greeters": {
+    "artist": "Bud Cook",
+    "scryfall_id": "3c1baaa2-bd0b-4627-b93a-0753e0acd0f2"
+  },
   "galadhrim_guide": {
     "artist": "Inka Schulz",
     "scryfall_id": "0571a6b2-548a-43ed-9357-a27095d2e894"
+  },
+  "galadriel_light_of_valinor": {
+    "artist": "Rebecca Guay",
+    "scryfall_id": "2e14edc5-9a68-4aef-baf6-43e7a6b732b5"
   },
   "galewind_moose": {
     "artist": "Valera Lutfullina",
@@ -6625,6 +6637,10 @@
     "artist": "Magali Villeneuve",
     "scryfall_id": "b2777bed-a41e-4704-adf6-48cdf126bc9f"
   },
+  "lita_little_orphan_amphibian": {
+    "artist": "Anna Pavleeva",
+    "scryfall_id": "9fbaabb5-e981-4cbf-888c-46449412711f"
+  },
   "living_laser": {
     "artist": "Nathaniel Himawan",
     "scryfall_id": "595ee0b4-393f-4bda-bcb4-f0fa43cf7ed2"
@@ -7445,6 +7461,10 @@
   "monster_virtuous": {
     "artist": "Rovina Cai",
     "scryfall_id": "27927100-2587-4e05-9957-eb183d46c1f0"
+  },
+  "monument_to_endurance": {
+    "artist": "Victor Sales",
+    "scryfall_id": "c66cbdac-1d15-40f5-b76f-6f21b917abbc"
   },
   "moogle_1_2_w_lifelink": {
     "artist": "Ignatius Budi",
@@ -8341,6 +8361,10 @@
   "paradise_mantle": {
     "artist": "GOSSAN",
     "scryfall_id": "ccfffc0b-601f-4e21-90d6-72afbebf2579"
+  },
+  "parapet_thrasher": {
+    "artist": "Cristi Balanescu",
+    "scryfall_id": "93d8b962-2fe8-4323-a760-144979818f2c"
   },
   "pardic_wanderer": {
     "artist": "Igor Kieryluk",
@@ -11805,6 +11829,10 @@
   "the_ur_dragon": {
     "artist": "Jaime Jones",
     "scryfall_id": "10d42b35-844f-4a64-9981-c6118d45e826"
+  },
+  "the_vision": {
+    "artist": "Carissa Susilo",
+    "scryfall_id": "2961cf20-33c8-4e66-9d0f-6daca8ea7880"
   },
   "the_wandering_emperor": {
     "artist": "Hisashi Momose",

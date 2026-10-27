@@ -1,0 +1,20 @@
+{
+  "card_id": "teval_s_judgment",
+  "name": "Teval's Judgment",
+  "oracle_text": "Whenever one or more cards leave your graveyard, choose one that hasn't been chosen this turn —\n• Draw a card.\n• Create a Treasure token.\n• Create a 2/2 black Zombie Druid creature token.",
+  "blocked_sentences": [
+    "• Create a 2/2 black Zombie Druid creature token."
+  ],
+  "needs": [
+    {
+      "capability": "token_zombie_druid_2_2_b",
+      "kind": "token",
+      "what": "a 2/2 black Zombie Druid creature token",
+      "why_existing_wont_do": "token_ids has zombie_2_2_b, a 2/2 black Zombie with no Druid subtype; rule 111.4 makes a token exactly what its effect says. The rest of the card is expressible: leaves_graveyard for the trigger and choose_mode with once_each \"turn\" for \"choose one that hasn't been chosen this turn\""
+    }
+  ],
+  "closest_existing": [
+    "zombie_2_2_b"
+  ],
+  "confidence": "high"
+}

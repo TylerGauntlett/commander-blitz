@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [choose-mode-once-each-turn](#choose-mode-once-each-turn) | 1 | 3729 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -94,6 +93,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
+| [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
@@ -555,20 +555,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## choose-mode-once-each-turn
-
-Blocks **1** card.
-
-- **(op)** choose_mode striking off the modes already chosen THIS TURN ("choose one that hasn't been chosen this turn"), so the spent modes come back at the next turn
-  <br>Why the existing vocabulary won't do: choose_mode's once_each records spent modes as permanent flags on the source (cleared only on a zone change), which is Henrika's "hasn't been chosen" for the object's whole life; after Parapet Thrasher's first turn of use the card would run out of modes for ever. The per-opponent trigger half of the line is now expressible: creatures_deal_combat_damage with per_player, defending: opponent, {"binding": "defender"} for "that opponent" and {"not": {"binding": "defender"}, "except": "you"} for "each other opponent"
-
-<details><summary>Cards waiting on this</summary>
-
-- **Parapet Thrasher** (rank 3729) — `parapet_thrasher`
-  - Whenever one or more Dragons you control deal combat damage to an opponent, choose one that hasn't been chosen this turn —
 
 </details>
 
@@ -1405,6 +1391,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## token-zombie-druid-2-2-b
+
+Blocks **1** card.
+
+- **(token)** a 2/2 black Zombie Druid creature token
+  <br>Why the existing vocabulary won't do: token_ids has zombie_2_2_b, a 2/2 black Zombie with no Druid subtype; rule 111.4 makes a token exactly what its effect says. The rest of the card is expressible: leaves_graveyard for the trigger and choose_mode with once_each "turn" for "choose one that hasn't been chosen this turn"
+
+<details><summary>Cards waiting on this</summary>
+
+- **Teval's Judgment** (rank 1802) — `teval_s_judgment`
+  - • Create a 2/2 black Zombie Druid creature token.
 
 </details>
 
