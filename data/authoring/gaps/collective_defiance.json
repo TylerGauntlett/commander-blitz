@@ -1,0 +1,22 @@
+{
+  "card_id": "collective_defiance",
+  "name": "Collective Defiance",
+  "oracle_text": "Escalate {1} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Target player discards all the cards in their hand, then draws that many cards.\n• Collective Defiance deals 4 damage to target creature.\n• Collective Defiance deals 3 damage to target opponent or planeswalker.",
+  "blocked_sentences": [
+    "• Collective Defiance deals 3 damage to target opponent or planeswalker."
+  ],
+  "needs": [
+    {
+      "capability": "target_opponent_or_planeswalker",
+      "kind": "selector",
+      "what": "one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller (\"target opponent or planeswalker\", 115.4)",
+      "why_existing_wont_do": "kind \"any\" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller \"opponent\" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. `any_of` branches are ANDed with the top-level controller and are not consulted by the player half; two separate targets would target twice and need both legal."
+    }
+  ],
+  "closest_existing": [
+    "kind: any",
+    "kind: player",
+    "any_of"
+  ],
+  "confidence": "high"
+}

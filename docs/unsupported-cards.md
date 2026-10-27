@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**90 cards** blocked by **74** capabilities.
+**91 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -79,6 +79,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
+| [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targeted-discard](#targeted-discard) | 1 | 11817 | op |
 | [teammates](#teammates) | 1 | 26785 | selector |
@@ -1176,6 +1177,20 @@ Blocks **1** card.
 
 - **Deflecting Swat** (rank 75) — `deflecting_swat`
   - You may choose new targets for target spell or ability.
+
+</details>
+
+## target-opponent-or-planeswalker
+
+Blocks **1** card.
+
+- **(selector)** one target spec spanning players and permanents whose player half and permanent half carry separate filters: the player half restricted to opponents, the permanent half any planeswalker on the battlefield regardless of controller ("target opponent or planeswalker", 115.4)
+  <br>Why the existing vocabulary won't do: kind "any" applies one selector to both halves: _player_allowed reads its `controller` clause for the seat and resolve_pool/matches read the same `controller` for the object, so controller "opponent" + types [Planeswalker] wrongly excludes your own planeswalkers, and omitting controller wrongly lets you target yourself. `any_of` branches are ANDed with the top-level controller and are not consulted by the player half; two separate targets would target twice and need both legal.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Defiance** (rank 7525) — `collective_defiance`
+  - • Collective Defiance deals 3 damage to target opponent or planeswalker.
 
 </details>
 
