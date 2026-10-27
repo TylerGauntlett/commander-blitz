@@ -128,6 +128,7 @@ from .vocabulary import (  # noqa: F401
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
     KNOWN_TYPES,
+    LIBRARY_TOP_CAST_FILTER_KEYS,
     MANA_AMOUNT_FORBIDDEN,
     MANA_RIDER_OPS,
     NOT_A_CAST_TIME_COST,
@@ -2995,11 +2996,26 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f'naming what it protects -- e.g. {{"attached": true}} for '
             f"Assault Suit's equipped creature"
         )
-    if model.effect == "cast_from_library_top" and not model.pay_life_instead:
+    if model.effect == "cast_from_library_top" and not (
+        model.pay_life_instead or model.affects_spells is not None
+    ):
+        # Bolas's Citadel's price or Thundermane Dragon's filter. Neither is
+        # every spell in the deck castable off the top at its printed cost: a
+        # different and much stronger card, and one that would look entirely
+        # normal with either half forgotten.
         raise DslError(
-            f"{where}: cast_from_library_top needs 'pay_life_instead' -- "
-            f"the permission without its price is a different card"
+            f"{where}: cast_from_library_top needs 'pay_life_instead' or an "
+            f"'affects_spells' filter -- the permission without its price or its "
+            f"filter is a different card"
         )
+    if model.cast_gains_keywords and model.effect != "cast_from_library_top":
+        raise DslError(
+            f"{where}: 'cast_gains_keywords' is the rider on a spell cast through "
+            f"a cast_from_library_top permission; nothing reads it on {model.effect!r}"
+        )
+    for k in model.cast_gains_keywords:
+        if k not in KNOWN_KEYWORDS:
+            raise DslError(f"{where}.cast_gains_keywords: unknown keyword {k!r}")
     if model.effect == "cast_from_graveyard" and "graveyard" in model.active_zones:
         # "You may cast **this card** from your graveyard as long as you control
         # a Zombie" -- Gravecrawler. The card's own permission, read off it by
@@ -3298,6 +3314,27 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             raise DslError(
                 f"{where}: spell_cost_increase is priced by its 'cost', not by an "
                 f"'amount' -- an 'amount' here would be read by nothing"
+            )
+    elif model.effect == "cast_from_library_top" and model.affects_spells is not None:
+        # "You may cast **creature spells with power 4 or greater** from the top
+        # of your library" -- Thundermane Dragon. Matched against the top card
+        # by `player_statics.library_top_cast_permissions`; `controller` is
+        # refused because `affects_player` already names the caster, and an
+        # empty filter would read as every spell -- the unpriced permission the
+        # guard above refuses.
+        if not model.affects_spells:
+            raise DslError(f"{where}.affects_spells: an empty filter would reach every spell")
+        unknown = set(model.affects_spells) - LIBRARY_TOP_CAST_FILTER_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: the top card of a library has a printed "
+                f"face and no board state, and `affects_player` already names the "
+                f"caster; unsupported keys {sorted(unknown)}"
+            )
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: cast_from_library_top filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
             )
     elif model.affects_spells is not None:
         raise DslError(
@@ -4496,7 +4533,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # card did not write.
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect == "cast_from_library_top":
-        static["pay_life_instead"] = True
+        if model.pay_life_instead:
+            static["pay_life_instead"] = True
+        if model.cast_gains_keywords:
+            static["cast_gains_keywords"] = list(model.cast_gains_keywords)
     if model.effect == "cast_from_graveyard":
         # Carried onto the compiled mapping rather than left on the model, for
         # `grant_ability`'s reason a few lines down: the mapping is all

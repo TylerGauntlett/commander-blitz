@@ -208,6 +208,55 @@ own included, since activating is not casting. The filter takes the spell keys
 `cant_cast_spells` takes (no `controller`: `affects_player` is the payer), and an
 empty filter is a load error rather than an Orrery.
 
+### `cast_from_library_top` — casting off the top of your library
+
+```jsonc
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "pay_life_instead": true }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "affects_spells": { "types": ["Creature"], "power": { "op": ">=", "value": 4 } },
+  "cast_gains_keywords": ["haste"] }
+```
+
+Bolas's Citadel: *"You may … cast spells from the top of your library. If you
+cast a spell this way, pay life equal to its mana value rather than pay its mana
+cost."* Thundermane Dragon: *"You may cast creature spells with power 4 or
+greater from the top of your library. If you cast a creature spell this way, it
+gains haste until end of turn."* One permission over the one hidden zone a spell
+may be cast from — the top card and nothing below it — read by
+`player_statics.library_top_cast_permissions` whenever `casting._cast_actions`
+builds the lines.
+
+**It needs a price or a filter.** `pay_life_instead` is the Citadel's swap: the
+mana half is free, `Game._cast` charges the life, and the line is
+`Action.from_library_top`, offered only while the player has that much life
+(118.4). Without it the card is offered every line it would have in hand —
+`_cast_options`, at its printed cost, kicker and additional costs and a
+Dracogenesis free line included, hand-only alternatives still closed by their
+own zone checks — and it needs no flag, because the top card is in no other
+zone. The loader refuses the permission with neither: every spell in the deck
+off the top at its printed cost is Future Sight's line, not either of these.
+
+**`affects_spells` is matched against the object.** `SPELL_FILTER_KEYS` without
+`controller`, plus `power` and `toughness` as comparisons
+(`LIBRARY_TOP_CAST_FILTER_KEYS`). Those two are the card's values where it sits,
+its own characteristic-defining abilities applied
+(`characteristics.card_in_exile_characteristics`, 604.3): a `*/*` counting your
+creatures is a number in a library too. A noncreature has no power and never
+passes the clause.
+
+**`cast_gains_keywords` is the rider**, "it gains haste until end of turn". It is
+staged on the spell after `push_spell` in `GameObject.mana_granted_keywords` —
+Arena of Glory's field, carried across the reset onto the battlefield and
+nowhere else — and granted until end of turn as the permanent enters. Read off
+the lane the action took: a creature cast off the top through a Citadel beside
+the Dragon was not cast "this way" and gains nothing, and a board with both
+offers both prices (601.2b). Refused on every other static.
+
+`tests/unit/casting/test_cast_from_library_top.py` pins the Citadel;
+`test_cast_from_library_top_filter.py` pins the filter, the CDA, the printed
+price, the rider and its wearing off, and the two lanes side by side.
+
 ### `free_cast_permission` — Dracogenesis' standing free cast
 
 ```jsonc
@@ -944,7 +993,8 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "play_lands_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "cast_from_graveyard", "affects_player": "you" }
 { "kind": "static", "effect": "play_lands_from_library_top", "affects_player": "you" }
-{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you" }
+{ "kind": "static", "effect": "cast_from_library_top", "affects_player": "you",
+  "pay_life_instead": true }
 { "kind": "static", "effect": "free_cast_permission", "affects_player": "you",
   "affects_spells": { "subtypes": ["Dragon"] } }
 { "kind": "static", "effect": "grant_warp", "affects_player": "you",

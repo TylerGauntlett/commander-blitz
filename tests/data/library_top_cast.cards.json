@@ -1,5 +1,5 @@
 {
-  "_comment": "A card that exists only for the cast-off-the-top test (tests/unit/casting/test_cast_from_library_top.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_citadel` is Bolas's Citadel's middle line: cast spells off the top of your library, paying life equal to mana value instead of mana.",
+  "_comment": "Cards that exist only for the cast-off-the-top tests (tests/unit/casting/test_cast_from_library_top.py and test_cast_from_library_top_filter.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_citadel` is Bolas's Citadel's middle line: cast spells off the top of your library, paying life equal to mana value instead of mana. `t_thundermane` is Thundermane Dragon's: creature spells with power 4 or greater off the top at their printed cost, gaining haste until end of turn.",
   "cards": [
     {
       "id": "t_citadel",
@@ -22,6 +22,25 @@
           "text": "You may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
           "effect": "play_lands_from_library_top",
           "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_thundermane",
+      "name": "Test Thundermane",
+      "oracle_text": "You may cast creature spells with power 4 or greater from the top of your library. If you cast a creature spell this way, it gains haste until end of turn.",
+      "mana_cost": "{3}{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You may cast creature spells with power 4 or greater from the top of your library. If you cast a creature spell this way, it gains haste until end of turn.",
+          "effect": "cast_from_library_top",
+          "affects_player": "you",
+          "affects_spells": {"types": ["Creature"], "power": {"op": ">=", "value": 4}},
+          "cast_gains_keywords": ["haste"]
         }
       ]
     }

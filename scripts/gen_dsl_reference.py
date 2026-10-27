@@ -714,7 +714,9 @@ STATICS: dict[str, Entry] = {
     "cast_from_graveyard": ("The player may cast matching spells from their graveyard; with "
                             "`active_zones: [\"graveyard\"]`, the card may cast itself from there.",
                             H_CASTING_FROM_GY),
-    "cast_from_library_top": ("The player may cast matching spells from the top of their library.",
+    "cast_from_library_top": ("The player may cast spells from the top of their library: for life "
+                              "with `pay_life_instead`, or matching `affects_spells` at the printed "
+                              "cost, granting `cast_gains_keywords` to what is cast that way.",
                               None),
     "cast_only_at_sorcery_speed": ("The player may cast matching spells only at sorcery speed.", None),
     "crew_power_bonus": ("Matching creatures crew as though their power were N greater.",

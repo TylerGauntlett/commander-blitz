@@ -30,7 +30,7 @@ from .player_statics import (
     graveyard_cast_allows,
     graveyard_cast_arrival_ok,
     graveyard_cast_permissions,
-    library_top_cast_permission,
+    library_top_cast_permissions,
     own_graveyard_cast_permission,
     player_cant_cast_spells,
     player_casts_as_though_flash,
@@ -100,32 +100,45 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     # card says and the only part of a library anybody is entitled to see.
     # Lands are the neighbouring `play_lands_from_library_top` permission and
     # are offered by `_land_actions`, so this covers only what that one cannot.
-    top_permission = library_top_cast_permission(state, pid)
-    if top_permission is not None and state.players[pid].library:
-        oid = state.players[pid].library[0]
+    #
+    # Thundermane Dragon's "you may cast creature spells with power 4 or greater
+    # from the top of your library" is the same zone at the printed price, so
+    # its lines are every line the card would have in hand -- `_cast_options`,
+    # whose hand-only alternatives already ask the zone and stay closed here.
+    # They need no flag: the source oid is the top card, which is in no other
+    # zone, and `Game._cast` reads the rider off the same permissions. A board
+    # holding both permanents offers both prices side by side, and the player
+    # picks (601.2b).
+    library = state.players[pid].library
+    top_permissions = library_top_cast_permissions(state, pid, library[0]) if library else []
+    if top_permissions:
+        oid = library[0]
         card = state.card(oid)
-        # 118.4: a player may pay life down to exactly 0, so the test is on
-        # having that much and not on surviving it. A line offered and then
-        # unpayable would be an action the engine could not honour.
-        affordable = state.players[pid].life >= card.mana_value
-        if not card.is_land and affordable and _timing_ok(state, pid, card, sorcery_speed):
-            out.extend(
-                _cast_variant(
-                    state,
-                    pid,
-                    oid,
-                    card,
-                    enumerate_target_tuples(
+        if not card.is_land and _timing_ok(state, pid, card, sorcery_speed):
+            # 118.4: a player may pay life down to exactly 0, so the test is on
+            # having that much and not on surviving it. A line offered and then
+            # unpayable would be an action the engine could not honour.
+            affordable = state.players[pid].life >= card.mana_value
+            if affordable and any(static.get("pay_life_instead") for _, static in top_permissions):
+                out.extend(
+                    _cast_variant(
                         state,
                         pid,
-                        card.targets,
                         oid,
-                        defer=deferred_target_spec(state, card, card.targets),
-                    ),
-                    extra_generic=0,
-                    from_library_top=True,
+                        card,
+                        enumerate_target_tuples(
+                            state,
+                            pid,
+                            card.targets,
+                            oid,
+                            defer=deferred_target_spec(state, card, card.targets),
+                        ),
+                        extra_generic=0,
+                        from_library_top=True,
+                    )
                 )
-            )
+            if any(not static.get("pay_life_instead") for _, static in top_permissions):
+                out.extend(_cast_options(state, pid, oid, card, extra_generic=0))
 
     # Adventure (715.3d): the card is in exile having gone on one, and its
     # *front* face may be cast from there. A fourth zone a card may be cast

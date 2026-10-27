@@ -204,6 +204,21 @@
    "Planeswalker",
    "Sorcery"
   ],
+  "LIBRARY_TOP_CAST_FILTER_KEYS": [
+   "any_types",
+   "colors",
+   "keywords",
+   "mana_cost",
+   "min_colors",
+   "name",
+   "not_keywords",
+   "not_types",
+   "power",
+   "subtypes",
+   "supertypes",
+   "toughness",
+   "types"
+  ],
   "MANA_AMOUNT_FORBIDDEN": [
    "binding",
    "loop_value",

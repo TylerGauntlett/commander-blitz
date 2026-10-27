@@ -681,9 +681,16 @@ class AbilityModel(BaseModel):
     #: express: that one lowers a mana cost by an amount and cannot swap the
     #: payment to a different resource entirely.
     #:
-    #: Required on that static, because the permission without its price is
-    #: every spell in the deck castable off the top at its printed cost.
+    #: That static needs this or an `affects_spells` filter, because the
+    #: permission with neither is every spell in the deck castable off the top
+    #: at its printed cost.
     pay_life_instead: bool = False
+    #: "If you cast a creature spell this way, **it gains haste until end of
+    #: turn**" -- Thundermane Dragon, on a `cast_from_library_top` static. The
+    #: keywords the permanent a spell cast through that permission becomes has
+    #: until end of turn, staged on the spell the way a `mana_grant`'s are.
+    #: Refused on every other static.
+    cast_gains_keywords: list[str] = Field(default_factory=list)
     power: Any = None
     toughness: Any = None
     keywords: list[str] = Field(default_factory=list)

@@ -900,6 +900,18 @@ FREE_CAST_FILTER_KEYS = SPELL_FILTER_KEYS | {"from_zone"}
 #: word existed and would walk past it -- a silent over-grant.
 WARP_GRANT_FILTER_KEYS = SPELL_FILTER_KEYS | {"any_of"}
 
+#: What a ``cast_from_library_top`` static's ``affects_spells`` filter may use.
+#:
+#: `SPELL_FILTER_KEYS` without `controller` -- `affects_player` already names
+#: the caster -- and with ``power`` and ``toughness``: "You may cast creature
+#: spells **with power 4 or greater** from the top of your library" (Thundermane
+#: Dragon), a comparison in `walk._check_pt_keys`' shape. Only this filter takes
+#: them, because only this reader matches an *object* rather than a card face:
+#: `player_statics.library_top_cast_permissions` measures the top card where it
+#: sits, its characteristic-defining abilities applied (604.3), and a `*/*`
+#: answered off the printed face would be a 0 in every zone.
+LIBRARY_TOP_CAST_FILTER_KEYS = (SPELL_FILTER_KEYS - {"controller"}) | {"power", "toughness"}
+
 #: Keys a *static* ability's filter may use.  Deliberately smaller than the full
 #: selector language: static filters are matched against printed characteristics
 #: so that no static can depend on another static's output.

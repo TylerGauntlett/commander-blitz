@@ -499,7 +499,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_win_the_game` | yes |  | The player can't win the game. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_as_though_flash` | yes |  | The player may cast matching spells as though they had flash. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_from_graveyard` | yes |  | The player may cast matching spells from their graveyard; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
-| `cast_from_library_top` | yes |  | The player may cast matching spells from the top of their library. | [Static abilities](card-dsl.md#static-abilities) |
+| `cast_from_library_top` | yes |  | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Static abilities](card-dsl.md#static-abilities) |
 | `cast_only_at_sorcery_speed` | yes |  | The player may cast matching spells only at sorcery speed. | [Static abilities](card-dsl.md#static-abilities) |
 | `crew_power_bonus` |  | yes | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `damage_life_floor` | yes |  | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
@@ -573,7 +573,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `cant_win_the_game` | The player can't win the game. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_as_though_flash` | The player may cast matching spells as though they had flash. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_from_graveyard` | The player may cast matching spells from their graveyard; with `active_zones: ["graveyard"]`, the card may cast itself from there. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
-| `cast_from_library_top` | The player may cast matching spells from the top of their library. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `cast_from_library_top` | The player may cast spells from the top of their library: for life with `pay_life_instead`, or matching `affects_spells` at the printed cost, granting `cast_gains_keywords` to what is cast that way. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `cast_only_at_sorcery_speed` | The player may cast matching spells only at sorcery speed. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `damage_life_floor` | Damage can't reduce the player's life below N. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
 | `double_land_mana` | Lands the player taps for mana add twice as much. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
