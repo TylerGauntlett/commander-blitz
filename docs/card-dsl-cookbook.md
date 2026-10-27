@@ -6157,6 +6157,26 @@ beside protection. Prevented damage was never dealt — no mark, no loyalty lost
 no lifelink, no `DAMAGE_DEALT` — and each instance fires `DAMAGE_PREVENTED` with
 `reason: "permanent_shield"`.
 
+## Fog — combat damage prevented by its source
+
+```jsonc
+// Arachnogenesis: "Prevent all combat damage that would be dealt this turn by
+// non-Spider creatures."
+{ "op": "prevent_combat_damage", "duration": "this_turn",
+  "by": { "types": ["Creature"], "not_subtypes": ["Spider"] } }
+```
+
+Keyed to the creature **dealing** the damage, which neither shield above can
+say: `prevent_damage` shields a seat and stops burn as well, and
+`prevent_damage_permanent` shields objects chosen at resolution. `by` is an
+effect-side selector matched against the dealer's current characteristics each
+time combat damage would be dealt (615.1), so a creature that enters later in
+the turn is covered and the Spiders the same card made still deal theirs.
+Omitted, every source is fogged — Fog itself. It installs a `CombatFog` on
+`GameState.combat_fogs`, read by both damage primitives and cleared at cleanup;
+noncombat damage is never touched. `duration` is required (`this_turn`), and the
+loader refuses an `amount` and a `by` naming a target, binding, count or zone.
+
 ## Prevent all but N of that damage
 
 ```jsonc

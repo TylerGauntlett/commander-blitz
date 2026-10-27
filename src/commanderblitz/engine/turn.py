@@ -42,6 +42,7 @@ from .temp_effects import (
     clear_attack_restrictions,
     clear_block_prohibitions,
     clear_cast_locks,
+    clear_combat_fogs,
     clear_damage_shields,
     clear_flash_permissions,
     clear_goad,
@@ -795,6 +796,8 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # continuous while its source stands on the battlefield and would therefore
     # fog every future turn as well.
     clear_damage_shields(state, "this_turn")
+    # "Prevent all combat damage that would be dealt this turn" (Arachnogenesis).
+    clear_combat_fogs(state, "this_turn")
     # "Prevent all damage that would be dealt to him **this turn**." (Gideon
     # Jura.) The permanent-scoped counterpart, on the same clock.
     clear_permanent_shields(state, "this_turn")

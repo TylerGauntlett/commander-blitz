@@ -32,6 +32,7 @@ from commanderblitz.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CAST_LOCK_DURATIONS,
+    COMBAT_FOG_DURATIONS,
     CONTROL_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
@@ -1523,6 +1524,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: prevent_damage_permanent prevents ALL the damage and "
                 f"takes no 'amount'"
             )
+    if op == "prevent_combat_damage":
+        if str(effect.get("duration")) not in COMBAT_FOG_DURATIONS:
+            raise DslError(
+                f"{where}: prevent_combat_damage needs a 'duration' "
+                f"(implemented: {sorted(COMBAT_FOG_DURATIONS)}; got {effect.get('duration')!r})"
+            )
+        if "amount" in effect:
+            raise DslError(
+                f"{where}: prevent_combat_damage prevents ALL of it and takes no 'amount'"
+            )
+        by = effect.get("by")
+        if by is not None:
+            # A selector over the creature dealing the damage, asked as the
+            # damage would be dealt -- so about the battlefield, with no target,
+            # binding or count, none of which exists at that moment.
+            if not isinstance(by, Mapping) or not by:
+                raise DslError(f"{where}.by: a non-empty filter over the damage's source")
+            validate_selector(by, f"{where}.by")
+            asked_now = {"target", "binding", "count", "zone", "optional", "as"} & set(by)
+            if asked_now:
+                raise DslError(
+                    f"{where}.by: names the creature dealing the damage when it is "
+                    f"dealt; {sorted(asked_now)} mean nothing there"
+                )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))
         if duration not in ("this_turn", "next_combat"):

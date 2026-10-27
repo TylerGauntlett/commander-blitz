@@ -484,6 +484,42 @@ class DamageShield:
         }
 
 
+@dataclass(frozen=True)
+class CombatFog:
+    """"Prevent all combat damage that would be dealt this turn [by non-Spider
+    creatures]." -- Arachnogenesis, and every Fog that names no recipient.
+
+    A prevention keyed to the damage's **source**, not to who is hit:
+    :class:`DamageShield` is keyed to a seat and stops burn as well, and
+    :class:`PermanentShield` is written onto objects chosen at resolution, so a
+    creature that enters later in the turn -- or stops being a Spider -- would
+    be judged by the board the spell saw. So this lives on the table
+    (:attr:`GameState.combat_fogs`) and ``by`` is matched against the source
+    creature's **current** characteristics each time combat damage would be
+    dealt (615.1), by `temp_effects.combat_fogged`.
+    """
+
+    #: A selector over the creature dealing the damage, or ``None`` for every
+    #: source. Its ``controller`` is read against :attr:`controller`.
+    by: Mapping[str, Any] | None
+    #: Who controlled the spell or ability, for ``by``'s "you"/"opponent".
+    controller: int
+    duration: str = "this_turn"
+    #: The spell or permanent that installed it, for the log.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "by": dict(self.by) if self.by is not None else None,
+            "controller": self.controller,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
+#: The one clock a :class:`CombatFog` runs on.
+COMBAT_FOG_DURATIONS = ("this_turn",)
+
 #: The two clocks a :class:`PermanentShield` can run on.  Both are printed:
 #: "prevent all damage that would be dealt to him **this turn**" (Gideon Jura,
 #: Gideon, Champion of Justice) and "**until your next turn**, prevent all damage

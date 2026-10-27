@@ -41,7 +41,7 @@ from .player_statics import (
 )
 from .state import new_object
 from .structs import CONTROL_DURATIONS, TempEffect
-from .temp_effects import life_floor, permanent_shielded, shielded
+from .temp_effects import combat_fogged, life_floor, permanent_shielded, shielded
 from .triggers import fire
 from .zones import move_object
 
@@ -459,6 +459,20 @@ def damage_player(
             reason="permanent_shield",
         )
         return 0
+    # "Prevent all combat damage that would be dealt this turn by non-Spider
+    # creatures" (Arachnogenesis): keyed to the dealer, beside its shield.
+    if is_combat and combat_fogged(state, source_oid):
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=amount,
+            to="player",
+            reason="fog",
+        )
+        return 0
     # The player-side half of the doubling, placed for `damage_permanent`'s
     # stated reasons: after the two preventions, which were never dealt, and
     # before the infect branch, which changes where the number lands rather
@@ -667,8 +681,10 @@ def damage_permanent(
     # that would be dealt to him this turn" (Gideon Jura) on the recipient, and
     # "…target permanent would deal" (Gideon of the Trials) on the dealer. Both
     # answer the whole event however big it is, so they sit beside it.
-    if permanent_shielded(state, oid, by=False) or permanent_shielded(
-        state, source_oid, by=True
+    if (
+        permanent_shielded(state, oid, by=False)
+        or permanent_shielded(state, source_oid, by=True)
+        or (is_combat and combat_fogged(state, source_oid))
     ):
         fire(
             state,

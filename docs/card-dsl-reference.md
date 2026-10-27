@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 144 |
+| [Effect ops](#effect-ops) | 145 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 54 |
@@ -147,6 +147,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
 | `lock_life_total` | Life & damage |  | A player's life total can't change for a duration. | ["Your life total can't change"](card-dsl-cookbook.md#your-life-total-cant-change) |
 | `lose_life` | Life & damage | yes | A player loses N life; `as` records how much. | [Effect ops](card-dsl.md#effect-ops) |
+| `prevent_combat_damage` | Life & damage |  | Prevent combat damage this turn, optionally only from sources matching `by`. | [Fog — combat damage prevented by its source](card-dsl-cookbook.md#fog--combat-damage-prevented-by-its-source) |
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn. | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
 | `prevent_damage_permanent` | Life & damage |  | Prevent damage dealt to or by a permanent for a duration. | [Preventing all damage to or by a permanent, for a while](card-dsl-cookbook.md#preventing-all-damage-to-or-by-a-permanent-for-a-while) |
 | `become_monarch` | Players |  | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
