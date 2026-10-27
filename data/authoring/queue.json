@@ -131482,12 +131482,12 @@
     },
     "Hungering Hydra": {
       "edhrec_rank": 3532,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Hungering Hydra",
-      "reason": "+1/+1 counters is 20, expected 29",
+      "reason": "",
       "scryfall_id": "cce0561d-252a-499f-bfa0-9de59e4ea5ba",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hungering Puppetbeast": {
@@ -298762,12 +298762,12 @@
     },
     "Unstoppable Slasher": {
       "edhrec_rank": 1595,
-      "gate": "template",
+      "gate": null,
       "name": "Unstoppable Slasher",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, they lose half their life, rounded",
+      "reason": "",
       "scryfall_id": "0a30a301-8e87-46e7-89aa-cd55b1a14420",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unsubstantiate": {

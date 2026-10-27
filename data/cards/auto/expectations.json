@@ -5747,6 +5747,14 @@
   "hundroog": {
     "zone": "battlefield"
   },
+  "hungering_hydra": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "hunter_s_insight": {
     "hand_size": {
       "0": 1
@@ -12714,6 +12722,10 @@
     "zone": "battlefield"
   },
   "unnatural_growth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "unstoppable_slasher": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
