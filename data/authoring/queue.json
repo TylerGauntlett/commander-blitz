@@ -51582,12 +51582,12 @@
     },
     "Conduit of Worlds": {
       "edhrec_rank": 551,
-      "gate": "template",
+      "gate": null,
       "name": "Conduit of Worlds",
-      "reason": "no template for: You may play lands from your graveyard",
+      "reason": "",
       "scryfall_id": "45ddd129-c975-4937-87cf-b6846e96a379",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cone of Cold": {

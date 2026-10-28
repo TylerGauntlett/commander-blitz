@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**93 cards** blocked by **77** capabilities.
+**92 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,8 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cant-cast-spells-this-turn](#cant-cast-spells-this-turn) | 1 | 551 | op |
-| [cast-from-graveyard-on-resolution](#cast-from-graveyard-on-resolution) | 1 | 551 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
@@ -500,34 +498,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cant-cast-spells-this-turn
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect that, once the player has cast the chosen card, forbids that player from casting any further spells for the rest of the turn (a timed, player-wide cant_cast_spells with duration this_turn, applied only if the optional cast happened)
-  <br>Why the existing vocabulary won't do: cant_cast_spells exists only as a static that lasts while its permanent does, not as an op with a duration; cant_cast_spells_from_zones is an op but restricts zones, not all spells; the packet notes say 'more than one spell each turn' is still a gap
-
-<details><summary>Cards waiting on this</summary>
-
-- **Conduit of Worlds** (rank 551) — `conduit_of_worlds`
-  - {T}: Choose target nonland permanent card in your graveyard. If you haven't cast a spell this turn, you may cast that card. If you do, you can't cast additional spells this turn. Activate only as a sorcery.
-
-</details>
-
-## cast-from-graveyard-on-resolution
-
-Blocks **1** card.
-
-- **(op)** an effect that lets the controller cast a targeted card from their graveyard during resolution of an ability, paying its mana cost, with a binding reporting whether it was cast so a following clause can depend on 'if you do'
-  <br>Why the existing vocabulary won't do: cast_from_hand takes zones but has no documented 'if you do' result binding; grant_playable/grant_graveyard_cast grant a lasting permission rather than a cast during resolution, so the lockout could not be tied to the cast
-
-<details><summary>Cards waiting on this</summary>
-
-- **Conduit of Worlds** (rank 551) — `conduit_of_worlds`
-  - {T}: Choose target nonland permanent card in your graveyard. If you haven't cast a spell this turn, you may cast that card. If you do, you can't cast additional spells this turn. Activate only as a sorcery.
 
 </details>
 
