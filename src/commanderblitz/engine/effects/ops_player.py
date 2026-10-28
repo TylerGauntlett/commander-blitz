@@ -27,7 +27,7 @@ from typing import Any
 from ..errors import DslError
 from ..primitives import become_monarch, give_emblem
 from ..sba import declare_loss, declare_win
-from ..structs import CAST_LOCK_DURATIONS
+from ..structs import CAST_LOCK_DURATIONS, CASTABLE_ZONES
 from ..temp_effects import grant_flash_permission, lock_casting_zones
 from .context import EffectContext
 from .registry import register
@@ -57,17 +57,6 @@ def op_become_monarch(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in select_players(ctx, spec.get("player", "you")):
         become_monarch(ctx.state, pid, source=ctx.source_oid)
     yield from ()
-
-
-#: The zones a `cant_cast_spells_from_zones` can shut, and the set
-#: ``except_zones`` is subtracted from.
-#:
-#: Every zone there is, including the stack and the battlefield, because both
-#: are places a spell is cast from here: a prepared permanent offers a cast
-#: from the battlefield, and `ops_stack.op_cast_copy` casts a copy sitting on
-#: the stack. "Anywhere other than their hands" means anywhere, and a list that
-#: quietly omitted a zone would be a lock with a door left open.
-CASTABLE_ZONES = ("library", "hand", "battlefield", "graveyard", "exile", "stack", "command")
 
 
 def shut_cast_zones(zones: Any = None, except_zones: Any = None) -> list[str]:
@@ -138,6 +127,44 @@ def op_cant_cast_spells_from_zones(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.controller,
         select_players(ctx, spec.get("player", "each_opponent")),
         zones,
+        duration,
+        source=ctx.source_oid,
+    )
+
+
+@register("cant_cast_spells")
+def op_cant_cast_spells(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "If you do, you can't cast additional spells this turn." -- Conduit of
+    Worlds.
+
+    The **timed, one-shot** form of the `cant_cast_spells` static: a player-wide,
+    total casting prohibition installed by a resolving ability rather than
+    carried by a permanent. The static cannot say it -- it lasts exactly as long
+    as its permanent and has no clock -- and `cant_cast_spells_from_zones` is the
+    zone-filtered lock: a "can't cast spells" written as that op would leave the
+    cast of a copy (707.12) open, because a copy has no zone to compare.
+
+    So it is the same `structs.CastLock` row with **every** zone in
+    `CASTABLE_ZONES` shut, which `player_statics.player_cant_cast_spells` reads
+    as total. Every cast road already asks one of those two readers, and the row
+    shares the timed table's clock and its cleanup.
+
+    ``player`` is who can't cast and ``duration`` how long; both are required,
+    because the two printed shapes differ in both ("**you** can't cast
+    additional spells **this turn**", "**your opponents** can't cast spells
+    **this turn**") and a default would silently pick one of them for the other.
+    The clock is the resolving controller, as it is for the zone lock. A spell
+    already on the stack is unaffected: the lock stops casting, not spells.
+    """
+
+    duration = str(spec["duration"])
+    if duration not in CAST_LOCK_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown cant_cast_spells duration {duration!r}")
+    lock_casting_zones(
+        ctx.state,
+        ctx.controller,
+        select_players(ctx, spec["player"]),
+        CASTABLE_ZONES,
         duration,
         source=ctx.source_oid,
     )

@@ -15,6 +15,7 @@ from . import sagas
 from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
+    damage_into_counters,
     player_protected_from,
     prevented_damage,
     prevents_all_damage,
@@ -35,6 +36,7 @@ from .player_statics import (
     mill_multiplier,
     player_cant_gain_life,
     player_counter_replacements,
+    prevented_player_damage,
     printed_token_matches,
     static_cast_locked_zones,
     token_creation_replacements,
@@ -474,6 +476,28 @@ def damage_player(
             reason="fog",
         )
         return 0
+    # "If a creature would deal damage to you, prevent 1 of that damage"
+    # (Orbs of Warding, Heart-Shaped Herb): absorb over a seat (615.1). The
+    # player-side twin of `damage_permanent`'s absorb, and placed where that
+    # one is -- after the all-or-nothing preventions, which have already taken
+    # the whole event, and before the doubling, the order the protected player
+    # would choose (616.1): prevent 1 of 3 then double is 4, double then
+    # prevent is 5. What is prevented was never dealt, so nothing below sees it.
+    if (absorbed := prevented_player_damage(state, pid, source_oid, is_combat=is_combat)) > 0:
+        blocked = min(absorbed, amount)
+        amount -= blocked
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=blocked,
+            to="player",
+            reason="prevent_damage",
+        )
+        if amount <= 0:
+            return 0
     # The player-side half of the doubling, placed for `damage_permanent`'s
     # stated reasons: after the two preventions, which were never dealt, and
     # before the infect branch, which changes where the number lands rather
@@ -648,6 +672,36 @@ def damage_permanent(
         return 0
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
+        return 0
+    # "If equipped creature would be dealt damage, prevent that damage and put
+    # that many +1/+1 counters on it" (Panther Habit). One replacement (615):
+    # the damage is never dealt -- no mark, no deathtouch, no lifelink, no
+    # ledger, no `DAMAGE_DEALT` -- and the counters arrive inside the same
+    # event, so a lethal hit leaves a bigger creature rather than a dead one
+    # waiting on a trigger.
+    #
+    # **First of every prevention, and after the doubling**, both for 616.1:
+    # the damaged permanent's controller orders the replacements, and the
+    # loader allows only +1/+1 counters here, so the order that controller
+    # would choose is always the one that turns the most damage into counters
+    # -- this shield ahead of protection, a total shield, absorb, a shield
+    # counter or a cap (each of which would leave fewer or none), and a
+    # `replace_damage` doubling applied before it rather than after.
+    if (into := damage_into_counters(state, oid, is_combat=is_combat)) is not None:
+        shield_source, kind = into
+        amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            to="permanent",
+            reason="prevent_into_counters",
+        )
+        if amount > 0:
+            add_counters(state, oid, kind, amount, source=shield_source.oid)
         return 0
     # Protection prevents the damage entirely -- so nothing is marked, no
     # deathtouch is recorded, and the source's lifelink gains nothing, which is

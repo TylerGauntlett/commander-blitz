@@ -37,6 +37,10 @@ RECORDING_OPS = frozenset(
         #: What was beheld -- the chosen permanent or the revealed hand card.
         #: See `ops_cards.op_behold`.
         "behold",
+        #: The cards actually **cast** -- Conduit of Worlds' "if you do". Not
+        #: the cards offered: a declined offer and a card with no payable line
+        #: are not in it. See `ops_cards.op_cast_card`.
+        "cast_card",
         #: The one recorder whose binding is a **card name** -- a string, read
         #: back only by a selector's ``{"name": {"binding": …}}``. Tamiyo,
         #: Collector of Tales. See `ops_control.op_choose_card_name`.

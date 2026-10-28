@@ -1,0 +1,55 @@
+{
+  "_comment": "Cards that exist only for the finality-counter test (tests/unit/counters/test_finality_counter.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_fabricator_like` is Shuri's Fabricator's second line with nothing else on the body; `t_artifact_this_dies` is an artifact creature that says when it dies.",
+  "cards": [
+    {
+      "id": "t_fabricator_like",
+      "name": "Test Fabricator",
+      "oracle_text": "{6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)",
+          "cost": { "mana": "{6}", "tap": true },
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": { "zone": "graveyard", "controller": "you", "types": ["Artifact"] }
+            }
+          ],
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "objects": { "target": "t1" },
+              "destination": "battlefield",
+              "controller": "you",
+              "counters": { "finality": 1 }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_artifact_this_dies",
+      "name": "Test Artifact This Dies",
+      "oracle_text": "When this creature dies, you gain 1 life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Construct"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, you gain 1 life.",
+          "trigger": { "event": "dies", "source": "self" },
+          "effects": [{ "op": "gain_life", "player": "you", "amount": { "const": 1 } }]
+        }
+      ]
+    }
+  ]
+}

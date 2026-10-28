@@ -135,6 +135,7 @@ H_STATIC_MAGNITUDE = '"+1/+1 for each charge counter on this artifact"'
 H_RECORDING = 'Recording what an op consumed or produced — "this way", "the token"'
 H_MONARCH = "The monarch"
 H_GIFT = "Gift — a promise made to one opponent, for nothing"
+H_BATCHED = '"Whenever **one or more** …" — `batched`'
 H_SPREE = 'Spree — "choose **one or more** additional costs"'
 H_TIERED = "Tiered, and reading back which price was paid"
 H_DREDGE = "Dredge, madness and miracle — replacements that stop to ask"
@@ -151,6 +152,7 @@ H_CASTING_FROM_GY = "Casting from the graveyard"
 H_UNTAP_NONE = "Not untapping at all"
 H_LANDWALK = "Landwalk, and global attack prohibitions"
 H_CANT_CAST_ZONES = '"Can\'t cast spells from anywhere other than their hands"'
+H_CAST_CARD = '"You may cast that card" — a paid cast during resolution'
 H_FLOOR = "Damage can't take you below 1"
 H_CANT_COUNTER = '"This spell can\'t be countered"'
 H_CHOOSE_PERMANENTS = "`choose_permanents` — marking without acting"
@@ -210,6 +212,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                              "Casting out of every graveyard, until end of turn"),
     "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost.",
                        None),
+    "cast_card": ("Cards", "Cast a named card during resolution, paying its mana cost; `as` records what was cast.",
+                  H_CAST_CARD),
     "return_to_origin": ("Cards", "Return an exiled card to the zone it came from.",
                          '"…until this permanent leaves the battlefield" — giving it back'),
     "return_to_command_zone": ("Cards", "Return a commander from wherever it is to the command zone.",
@@ -363,6 +367,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                'Emblems — "Target opponent gets an emblem with …"'),
     "cant_cast_spells_from_zones": ("Players", "A player can't cast spells from the listed zones.",
                                     H_CANT_CAST_ZONES),
+    "cant_cast_spells": ("Players", "A player can't cast spells for a duration (the timed form of the static).",
+                         H_CAST_CARD),
     "lose_game": ("Players", "A player loses the game.", '"That player loses the game"'),
     # ---- Mana ------------------------------------------------------------
     "add_mana": ("Mana", "Add mana to a player's pool.", "Mana abilities"),
@@ -546,6 +552,8 @@ VALUES: dict[str, Entry] = {
                           "Which combat phase of the turn this is"),
     "commander_color_identity": ("Colors in your commander's color identity.",
                                  'Commander-identity mana — "any color in your commander\'s color identity"'),
+    "commander_casts_this_game": ("Times the player has cast their commanders from the command zone this game (903.8's tally).",
+                                  "Copying a spell for each commander cast"),
     "const": ("A literal number.", None),
     "count": ("How many objects a selector finds.", None),
     "counters_had": ("Counters of a kind (or \"any\", every kind) the permanent that just left had.", None),
@@ -651,6 +659,7 @@ STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
     "exists_derived": ("A permanent with these current characteristics exists (cant_attack, cant_block only).",
                        None),
     "is_attached": ("The source is attached to something.", None),
+    "is_monstrous": ("The source is monstrous (701.37b).", H_MONSTROSITY),
     "top_of_library": ("The top card of a library matches a filter.",
                        '"The top card of your library is black"'),
 }
@@ -658,7 +667,8 @@ STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
 TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "ability_activated": ("An ability is activated.", None),
     "attacks": ("A creature attacks.", None),
-    "attacks_unblocked": ("An attacking creature goes unblocked.", None),
+    "attacks_unblocked": ("An attacking creature goes unblocked; `batched` fires once per block declaration.",
+                          H_BATCHED),
     "becomes_blocked": ("An attacking creature becomes blocked.", None),
     "becomes_level": ("A Class reaches a level.", '"When this Class becomes level N"'),
     "becomes_monarch": ("A player becomes the monarch.", H_MONARCH),
@@ -732,7 +742,8 @@ STATICS: dict[str, Entry] = {
     "cant_activate_abilities": ("The player can't activate matching abilities.", None),
     "cant_attack": ("Matching creatures can't attack.", H_LANDWALK),
     "cant_attack_alone": ("Matching creatures can't attack alone.", "Can't attack or block **alone**"),
-    "cant_attack_you": ("Matching creatures can't attack you or your planeswalkers.",
+    "cant_attack_you": ("Matching creatures can't attack you or your planeswalkers "
+                        "(`player_only`: you alone).",
                         "Forbidding an attack on you rather than pricing it"),
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
     "cant_block_alone": ("Matching creatures can't block alone.", "Can't attack or block **alone**"),
@@ -802,7 +813,8 @@ STATICS: dict[str, Entry] = {
     "play_lands_from_library_top": ("The player may play lands from the top of their library.", None),
     "prevent_all_but": ("Prevent all but N of each instance of damage to matching permanents.",
                         "Prevent all but N of that damage"),
-    "prevent_damage": ("Prevent damage dealt to or by matching permanents.", None),
+    "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer.",
+                       "Absorb, which is not protection with a number"),
     "protection": ("Matching permanents have protection from a quality.", "Protection"),
     "replace_counters": ("Counters put on matching permanents are replaced (doubled, redirected).",
                          "Counters replaced on the way in"),
@@ -972,8 +984,9 @@ RIDER_KEYS: dict[str, Entry] = {
 DELAYED_TRIGGER: dict[str, Entry] = {
     "event": ("The trigger event to watch.", None),
     "controller": ("Whose action must it be.", None),
-    "condition": ("An intervening if.", None),
-    "subject": ("Scope the watch to one chosen object.", "A delayed trigger scoped to one chosen object"),
+    "condition": ("An intervening if, checked on arming and on resolution.", None),
+    "subject": ("Scope the watch to one chosen object; a watch on its own departure looks back (603.10a).",
+                "A delayed trigger scoped to one chosen object"),
     "recipient": ("The permanent being hit, for damage events.", "`recipient` — the permanent being hit"),
 }
 

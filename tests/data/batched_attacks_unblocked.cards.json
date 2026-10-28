@@ -1,0 +1,58 @@
+{
+  "_comment": "Cards that exist only for the batched attacks-unblocked trigger test (tests/unit/combat/test_batched_attacks_unblocked.py). Never part of a deck list. `t_coveted_jewel` is Coveted Jewel's last ability, with the 'one or more' batching; `t_greedy_jewel` is the same trigger WITHOUT `batched`, and is the counterfactual that pays out once per creature.",
+  "cards": [
+    {
+      "id": "t_coveted_jewel",
+      "name": "Test Coveted Jewel",
+      "oracle_text": "Whenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it.",
+      "mana_cost": "{6}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it.",
+          "trigger": {
+            "event": "attacks_unblocked",
+            "controller": "opponent",
+            "filter": {"attacking_player": "you"},
+            "batched": true
+          },
+          "effects": [
+            {"op": "draw", "player": {"binding": "event_player"}, "amount": {"const": 3}},
+            {
+              "op": "gain_control",
+              "player": {"binding": "event_player"},
+              "objects": {"zone": "battlefield", "self_only": true}
+            },
+            {"op": "untap", "objects": {"zone": "battlefield", "self_only": true}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_greedy_jewel",
+      "name": "Test Greedy Jewel",
+      "oracle_text": "Whenever a creature an opponent controls attacks you and isn't blocked, that player draws three cards.",
+      "mana_cost": "{6}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls attacks you and isn't blocked, that player draws three cards.",
+          "trigger": {
+            "event": "attacks_unblocked",
+            "controller": "opponent",
+            "filter": {"attacking_player": "you"}
+          },
+          "effects": [
+            {"op": "draw", "player": {"binding": "event_player"}, "amount": {"const": 3}}
+          ]
+        }
+      ]
+    }
+  ]
+}

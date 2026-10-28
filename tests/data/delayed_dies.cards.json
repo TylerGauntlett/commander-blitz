@@ -1,0 +1,129 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_delayed_dies_trigger.py. t_ddies_throne is Fight for the Throne: a counter, a fight, then a delayed subscription scoped to the creature it fought, watching that creature DIE, behind an intervening-if. t_ddies_mark is the same scoped dies subscription with no fight and no condition, so the look-back is the only thing under test; t_ddies_farewell watches the chosen creature leave the battlefield by any route. The two opposing bears are interchangeable so the scope is the only thing separating them.",
+  "cards": [
+    {
+      "id": "t_ddies_throne",
+      "name": "Test Fight for the Throne",
+      "oracle_text": "Put a +1/+1 counter on target creature you control. Then it fights target creature an opponent controls. When the creature an opponent controls dies this turn, if you control your commander, you become the monarch.",
+      "mana_cost": "{1}{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}
+        },
+        {
+          "id": "t2",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [
+        {"op": "add_counters", "objects": {"target": "t1"}, "counter": "+1/+1", "amount": {"const": 1}},
+        {"op": "fight", "objects": {"target": "t1"}, "other": {"target": "t2"}},
+        {
+          "op": "delayed_trigger",
+          "text": "When the creature an opponent controls dies this turn, if you control your commander, you become the monarch.",
+          "trigger": {
+            "event": "dies",
+            "controller": "any",
+            "subject": {"target": "t2"},
+            "condition": {"exists": {"controller": "you", "owner": "you", "is_commander": true}}
+          },
+          "effects": [{"op": "become_monarch", "player": "you"}]
+        }
+      ]
+    },
+    {
+      "id": "t_ddies_mark",
+      "name": "Test Marked for Death",
+      "oracle_text": "Choose target creature an opponent controls. When that creature dies this turn, you gain 3 life.",
+      "mana_cost": "{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "When that creature dies this turn, you gain 3 life.",
+          "trigger": {"event": "dies", "controller": "any", "subject": {"target": "t1"}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+        }
+      ]
+    },
+    {
+      "id": "t_ddies_farewell",
+      "name": "Test Fond Farewell",
+      "oracle_text": "Choose target creature an opponent controls. When that creature leaves the battlefield this turn, you gain 3 life.",
+      "mana_cost": "{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "delayed_trigger",
+          "text": "When that creature leaves the battlefield this turn, you gain 3 life.",
+          "trigger": {"event": "leaves_battlefield", "controller": "any", "subject": {"target": "t1"}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 3}}]
+        }
+      ]
+    },
+    {
+      "id": "t_ddies_fighter",
+      "name": "Test Throne Fighter",
+      "oracle_text": "",
+      "mana_cost": "{2}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 3,
+      "toughness": 3
+    },
+    {
+      "id": "t_ddies_victim",
+      "name": "Test Doomed Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_ddies_bystander",
+      "name": "Test Bystander Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}

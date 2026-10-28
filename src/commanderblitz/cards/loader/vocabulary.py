@@ -376,7 +376,10 @@ STATIC_EFFECTS = frozenset(
         # Absorb (702.63a): "If a source would deal damage to this creature,
         # prevent N of that damage." Parameterised on N, so a static and not a
         # keyword -- and *not* protection, which prevents all of it and three
-        # other things besides. Read by `damage_permanent` alone.
+        # other things besides. Read by `damage_permanent`; with
+        # `affects_player` it is the same N over a seat -- "if a creature would
+        # deal damage to you, prevent 1 of that damage" (Orbs of Warding) --
+        # narrowed by `damage_source` and read by `damage_player`.
         "prevent_damage",
         # "This creature crews Vehicles as though its power were 2 greater." --
         # Hotshot Mechanic, and the Pilot token Shorikai, Reckoner Bankbuster
@@ -1281,6 +1284,12 @@ STATIC_CONDITION_HEADS = (
     # the `attached` *filter* key, which points the other way -- at the
     # permanent this one is attached to.
     "is_attached",
+    # "As long as this creature is monstrous, it has hexproof and
+    # indestructible" (Fleecemane Lion). `GameObject.monstrous` is a field only
+    # the `monstrosity` op writes (bumping `char_version`) and only a zone
+    # change clears, so it is a pipeline input like a counter. Not `has_flag`:
+    # monstrous is deliberately its own field, outside `flags`.
+    "is_monstrous",
     # "As long as the top card of your library is black". A pipeline *input*
     # for the same reason a zone count is -- nothing in the characteristics
     # pipeline can change what is on top of a library -- but a strictly

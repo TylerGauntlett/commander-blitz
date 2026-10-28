@@ -1303,6 +1303,7 @@ Anywhere a number is expected -- the leaf list is
                     "objects": { "types": ["Creature"] } } }
 { "cards_in_hand": "each_opponent" }
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
+{ "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
@@ -1546,6 +1547,35 @@ one wall, an Inkling is not a legal attacker at all, and a creature *compelled*
 to attack owes nothing it cannot legally do. `affects` is required at load time —
 `_matches` reads a missing filter as "matches nothing", so a wall without one
 loads clean, prints on the card and stops nobody.
+
+**`player_only: true`** is the sentence that names only "you":
+
+```jsonc
+// Queen Mother Ramonda
+{ "kind": "static",
+  "text": "As long as you're the monarch, creatures with power 2 or less can't attack you.",
+  "effect": "cant_attack_you",
+  "player_only": true,
+  "affects": { "controller": "any", "types": ["Creature"],
+               "power": { "op": "<=", "value": 2 } },
+  "condition": { "is_monarch": "you" } }
+```
+
+The wall then stands in front of the seat alone, and the controller's
+planeswalkers and battles stay attackable (506.2: attacking a permanent is not
+attacking its controller). Without the key the same line also closes every
+walker and battle — a strictly stronger card that looks normal on screen. It is
+the opposite default from `attack_tax`'s `or_planeswalkers` because each effect
+defaults to the sentence it was built for: Propaganda names only the player,
+Combat Calligrapher names the walkers too. Refused on any static but
+`cant_attack_you`.
+
+`affects` reads the attacker **as it now is** — current power, types and
+subtypes after every layer — because a prohibition on declaring attackers is no
+layer (613). "Creatures with power 2 or less" is checked when the attack is
+declared, so an anthem lifts a 2/2 over Ramonda's wall and a shrink drops a 6/6
+under it. The `condition` is an ordinary static condition, read live: the wall
+falls the moment the crown moves.
 
 ### Which creatures attacked this turn, and how many
 
@@ -2004,6 +2034,37 @@ as printed while doing nothing.
 A target that is gone by resolution installs no subscription at all. 608.2b took
 it, so there is no "that creature" to watch, and watching everything instead
 would be a strictly better card.
+
+#### A watch on the subject's own departure
+
+```jsonc
+// Fight for the Throne — "When the creature an opponent controls dies this
+// turn, if you control your commander, you become the monarch."
+{ "op": "delayed_trigger",
+  "trigger": { "event": "dies", "controller": "any",
+               "subject": { "target": "t2" },
+               "condition": { "exists": { "controller": "you", "owner": "you",
+                                          "is_commander": true } } },
+  "effects": [ { "op": "become_monarch", "player": "you" } ] }
+```
+
+A scoped subscription is released as its subject leaves the battlefield (400.7):
+what comes back is a new object. When the event *is* that departure — `dies`,
+`creature_dies`, `leaves_battlefield` or `sacrificed` (`triggers.LOOK_BACK_EVENTS`)
+— the ability looks back in time (603.10a) and hears it: `zones.move_object`
+releases such a subscription only after the leave events have gone out. It hears
+that one departure and no later one, so the default `this_turn` duration already
+fires at most once, and a creature reanimated and killed again is a new object
+that does not fire it. A subject exiled or bounced instead of dying fires no
+`dies` and is simply released. Every other scoped subscription is released before
+the leave events, as above.
+
+`controller` is `"any"` here because the subject already says whose creature it
+is: the dies event is read after the move, when the creature's controller has
+been reset to its owner, so `"opponent"` would be a question about the owner.
+`condition` is the intervening-if (603.4), asked as the event arms the ability
+and again by `triggers.run_armed_delays` as it resolves — which is what keeps
+the crown off a player whose commander left in the same batch of deaths.
 
 #### `recipient` — the permanent being hit
 
@@ -3856,6 +3917,17 @@ controller, so it fires on an attack at the walker. Printed dethrone is the
 for the cards that print the sentence with another effect (Preacher of the
 Schism, Undercover Butler).
 
+`defending: "monarch"` is "whenever equipped creature attacks **the monarch**"
+(The Spear of Bashenga), also legal on `attacks` only. It asks the same two
+questions with the crown in place of the life totals: the creature attacked a
+player and not a planeswalker or battle (506.2), and that player is
+`GameState.monarch` as the creature attacks. Part of the event, so the crown
+moving before resolution does not undo the trigger. "That player" is the
+event's defender, so a target restricted to them is `"controller": {"binding":
+"defender"}` in its selector. The near miss is `condition: {"is_monarch":
+{"binding": "defender"}}` with `recheck: false`, which fires on an attack at the
+monarch's planeswalker because `defender` names the walker's controller.
+
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"
@@ -4567,7 +4639,10 @@ which is the whole of the distinction between being tapped and becoming tapped.
 and they are a pair rather than two features: both are decided when the block
 declaration closes, and "isn't blocked" is not an event that happens but the
 absence of one, which only becomes a fact once the declaration is over. Flanking,
-rampage, bushido and frenzy.
+rampage, bushido and frenzy. Every event of one declaration carries the same
+`batch`, so `batched` on `attacks_unblocked` is "whenever **one or more**
+creatures … aren't blocked" (Coveted Jewel, see
+[the cookbook](card-dsl-cookbook.md#whenever-one-or-more---batched)).
 
 `blocks` cannot stand in for either. It fires once per *blocker* and is about
 the blocker, so an attacker blocked by three creatures sees three unrelated
@@ -4990,6 +5065,7 @@ Each node names **exactly one** form:
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
+| `{"is_monstrous": true}` | whether the source is monstrous — [monstrosity](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |

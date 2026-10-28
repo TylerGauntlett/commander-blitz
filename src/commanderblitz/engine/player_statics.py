@@ -29,6 +29,7 @@ from .characteristics import (
 from .enums import Step, Zone
 from .mana import ManaCost, parse_mana_production
 from .objects import GameObject
+from .structs import CASTABLE_ZONES
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -807,12 +808,14 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
-def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool:
+def attack_defender_forbidden(
+    state: GameState, oid: int, defender: int, *, permanent: int | None = None
+) -> bool:
     """May this creature **not** attack ``defender``, or a planeswalker they control?
 
     Combat Calligrapher -- "Inklings can't attack you or planeswalkers you
     control." A prohibition that is a *continuous ability of a permanent*,
-    scoped to one seat and filtered on the attacking creature's printed
+    scoped to one seat and filtered on the attacking creature's
     characteristics. None of the three near misses is that shape.
 
     Written as `attack_tax`'s twin, with the price taken out: `affects` says
@@ -837,6 +840,17 @@ def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool
     inferred. A planeswalker's controller **is** the defending player (506.2)
     and `combat.legal_permanent_defenders` passes it, so the one seat test
     below covers the walker as well as the chair, exactly as goad's does.
+
+    ``player_only`` on the static takes the walkers back out, for the sentence
+    that names only "you" -- Queen Mother Ramonda's "creatures with power 2 or
+    less can't attack you". ``permanent`` is the planeswalker or battle being
+    attacked, ``None`` for an attack on the player, and such a static is
+    consulted only for the latter (506.2, 508.1).
+
+    The filter reads the attacker **as it now is** (``derived``): a restriction
+    on declaring attackers is no layer (613), and "creatures with power 2 or
+    less" is a fact about the creature at declaration -- an anthem lifts a 2/2
+    over the wall, a shrink drops a 4/4 under it.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -848,7 +862,9 @@ def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool
         # `attack_tax` already draws, and the whole shape of the family.
         if source_obj.controller != defender:
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        if permanent is not None and static.get("player_only"):
+            continue
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
             return True
     return False
 
@@ -1572,6 +1588,11 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
+#: Every zone a spell can be cast from. A `CastLock` that shuts all of them is
+#: total, and `player_cant_cast_spells` answers it as the prohibition it is.
+_SHUTS_EVERY_ZONE = frozenset(CASTABLE_ZONES)
+
+
 def player_cant_cast_spells(
     state: GameState, pid: int, card: CardDef | None = None, *, x: int = 0
 ) -> bool:
@@ -1617,6 +1638,16 @@ def player_cant_cast_spells(
         # "You can't cast Serra Avenger during your first, second, or third
         # turns of the game." A "can't" on the card rather than a static, asked
         # here so every cast path that asks about a lock asks about this.
+        return True
+    if any(
+        pid in lock.affects and set(lock.zones) >= _SHUTS_EVERY_ZONE for lock in state.cast_locks
+    ):
+        # "If you do, you can't cast additional spells this turn" -- Conduit of
+        # Worlds. The timed, one-shot form of this static: a `CastLock` row
+        # that shuts every zone, written by the `cant_cast_spells` op. Read here
+        # rather than left to `cast_locked_zones` because a zone lock has one
+        # road it cannot see -- casting a copy (707.12), which has no zone to
+        # compare -- and "can't cast spells" stops that cast as well.
         return True
     for obj, static in _active_player_statics(state, "cant_cast_spells"):
         if not _reaches_player(obj, static, pid):
@@ -2369,8 +2400,10 @@ def _matches_damage_source(
     obj: GameObject,
     source_obj: GameObject,
     dealer: Mapping[str, Any],
+    *,
+    derived: bool = False,
 ) -> bool:
-    """Does ``obj`` answer a `replace_damage` static's ``damage_source``?
+    """Does ``obj`` answer a damage static's ``damage_source``?
 
     `_matches` everywhere else, with one widening: a filter naming **only**
     ``controller`` is "a source you control" and is answered off the dealer's
@@ -2394,6 +2427,12 @@ def _matches_damage_source(
 
     An **empty** filter is not this -- ``{}`` falls through to `_matches`,
     where the default ``controller: "you"`` makes it "a permanent you control".
+
+    ``derived`` is `_matches`' own: the characteristics the dealer has *now*,
+    after every layer. `replace_damage` reads the printed face;
+    `prevented_player_damage` reads the derived one, because "if a creature
+    would deal damage to you" asks about a creature-land that is animated and
+    not about one that is not.
     """
     if set(dealer) == {"controller"}:
         who = str(dealer.get("controller") or "you")
@@ -2402,7 +2441,7 @@ def _matches_damage_source(
         if who == "opponent":
             return obj.controller != source_obj.controller
         return True
-    return _matches(state, obj, source_obj, dealer)
+    return _matches(state, obj, source_obj, dealer, derived=derived)
 
 
 def damage_multiplier(
@@ -2510,6 +2549,49 @@ def damage_cap(
         value = max(0, _static_value(state, static.get("amount"), source_obj))
         cap = value if cap is None else min(cap, value)
     return cap
+
+
+def prevented_player_damage(
+    state: GameState, pid: int, source_oid: int | None, *, is_combat: bool = False
+) -> int:
+    """How much of one damage event to the **player** ``pid`` is prevented.
+
+    "If a source an opponent controls would deal damage to you, prevent 1 of
+    that damage" (Heart-Shaped Herb); "if a creature would deal damage to you,
+    prevent 1 of that damage" (Orbs of Warding). 615.1: a static prevention
+    shield that subtracts N from **each** event and lets the rest through --
+    the seat-side reading of the `prevent_damage` static's absorb, which
+    `characteristics.prevented_damage` answers for a permanent.
+
+    Summed over every `prevent_damage` static whose ``affects_player`` names
+    ``pid`` and whose optional ``damage_source`` names the dealer, so two
+    Herbs prevent 2. ``damage_source`` reads the dealer's **derived**
+    characteristics (see `_matches_damage_source`); a controller-only filter
+    -- the Herb's "a source an opponent controls" -- reaches a burn spell on
+    the stack as well as a permanent. Damage with no source matches no
+    ``damage_source``. A ``prevent_all`` static never reaches here: the
+    loader refuses it beside ``affects_player``. Read by
+    `primitives.damage_player` alone.
+    """
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_damage":
+            continue
+        if static.get("affects_player") is None or static.get("prevent_all"):
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        dealer = static.get("damage_source")
+        if dealer is not None:
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or not _matches_damage_source(
+                state, obj, source_obj, dealer, derived=True
+            ):
+                continue
+        total += max(0, _static_value(state, static.get("amount"), source_obj))
+    return total
 
 
 def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:
