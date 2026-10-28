@@ -1293,6 +1293,29 @@
       "is_token": true
     },
     {
+      "id": "insect_2_1_w_flying",
+      "name": "Insect Token",
+      "oracle_text": "2/1 white Insect creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Insect"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "jace_planeswalker_u",
       "name": "Jace",
       "oracle_text": "−1: Surveil 1.\n−3: Draw a card.",

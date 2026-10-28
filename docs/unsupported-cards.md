@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**101 cards** blocked by **91** capabilities.
+**100 cards** blocked by **89** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,9 +53,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
 | [gingerbrute-token](#gingerbrute-token) | 1 | 28865 | token |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
-| [impending](#impending) | 1 | 4255 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [insect-2-1-w-flying](#insect-2-1-w-flying) | 1 | 4255 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -818,21 +816,6 @@ Blocks **1** card.
 
 </details>
 
-## impending
-
-Blocks **1** card.
-
-- **(cost)** an alternative cost (Impending N—cost) that, when paid, makes the permanent enter with N time counters, makes it not a creature while it has a time counter on it, and adds an end-step trigger removing a time counter from it
-  <br>Why the existing vocabulary won't do: alternative_cost only swaps the payment; there is no condition key reporting that a specific alternative cost was paid to gate enters-with-counters, and no static that removes the Creature type only while time counters remain (set_types is unconditional on printed characteristics)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Overlord of the Mistmoors** (rank 4255) — `overlord_of_the_mistmoors`
-  - Impending 4—{2}{W}{W} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)
-  - Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.
-
-</details>
-
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -844,21 +827,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## insect-2-1-w-flying
-
-Blocks **1** card.
-
-- **(token)** a 2/1 white Insect creature token with flying
-  <br>Why the existing vocabulary won't do: the only Insect in token_ids is insect_1_1_g, a 1/1 green Insect
-
-<details><summary>Cards waiting on this</summary>
-
-- **Overlord of the Mistmoors** (rank 4255) — `overlord_of_the_mistmoors`
-  - Impending 4—{2}{W}{W} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)
-  - Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.
 
 </details>
 

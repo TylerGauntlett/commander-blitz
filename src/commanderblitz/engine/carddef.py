@@ -1438,6 +1438,11 @@ class CardDef:
     splice_onto: str = "Arcane"
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
+    #: Impending: ``(cost, time counters)``, or ``None`` (702.176a). The cost is
+    #: an alternative one offered from hand beside the printed line; the
+    #: counters, the type change and the end-step tick are the rule's -- see
+    #: `loader._implied_replacements` and `characteristics._compute`.
+    impending: tuple[ManaCost, int] | None = None
 
     @property
     def cast_time_modes(self) -> Mapping[str, Any] | None:

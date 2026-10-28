@@ -51,6 +51,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Conditional and non-mana alternative costs** | `alternative_cost` is a full `Cost` plus optional condition: spectacle, Force of Will, Daze, Sephara's tap clause (302.6 restricts only the source's own {T}) |
 | **Casting from the graveyard** | `graveyard_cost` (flashback, jump-start, escape) with `graveyard_cast` for where the card ends, retrace by discarding a land, `cast_from_graveyard` readable inside `if`; the `cast_from_graveyard` static and the turn-long any-graveyard form (Yawgmoth's Will) read by `graveyard_cast_permissions`; the same static with `active_zones: ["graveyard"]` is a permanent card's own conditional permission (Gravecrawler), read by `own_graveyard_cast_permission` as the cast is offered (601.3) |
 | **Disturb and bestow** | Disturb is `graveyard_cost` plus `cast_transformed`, the back face shown from cast time and re-applied after the move (712.13a); bestow (702.103) is an alternative cost whose `BESTOW_TARGET` supplies "enchant creature", with `chars` making the permanent an Aura while `attached_to` is set and a creature when it is not (702.103e) |
+| **Impending** | 702.176a: `impending` is an alternative cost offered from hand (`Action.impending`); paid, an implied replacement gated on `{"impending": true}` puts the time counters on, `chars` drops `Creature` (and its subtypes) while `cast_impending` holds and a time counter remains, and the loader appends the end-step trigger that removes one; any arrival but its own resolution clears the stamp (400.7) |
 | **Emerge and offering** | One cast line per sacrificed creature reduced by its mana value, `emerge_subtype` read off derived characteristics |
 | **Convoke, improvise and delve** | 702.51, 702.126, 702.66: creatures tapped, artifacts tapped or cards exiled pay generic mana, one cast line asking which permanents or cards as it is paid ([ADR 0020](adr/0020-convoke-is-one-line.md)), tapped before the mana so a permanent cannot pay twice, netted into the same `extra` the commander tax uses |
 | **Overload** | 702.96a: the card writes both halves and branches on `overloaded`; the overload line is cast with no targets, so every target spec must be `optional` |
@@ -366,6 +367,7 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - An emblem or command-zone activated ability; refused at load, since nothing offers an activation from that zone.
 - A tax on an activated ability (no `ability_cost_increase`), and a `spell_cost_increase` sized by anything but a literal.
 - A warp cost with X, and airbend on a kicked or bestowed cast.
+- An impending cost with X, or offered from anywhere but the hand (evoke's zone gate).
 - Dice-roll triggers and the AFR d20 outcome tables, and a mill trigger: `EventType.DICE_ROLLED` and `EventType.MILL` have no `TRIGGER_EVENTS` name.
 - Granting extort to other creatures (Pontiff of Blight).
 - A chosen card name stored on a permanent for a later reader (Pithing Needle, Meddling Mage); `choose_card_name` binds for one resolution.

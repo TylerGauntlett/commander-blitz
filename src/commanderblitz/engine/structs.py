@@ -1023,6 +1023,11 @@ class StackItem:
     #: cast from exile on a later turn, and no warp card prints a sentence
     #: saying so. See `_place_after_resolution`.
     warped: bool = False
+    #: Cast for its **impending** cost (702.176a). `warped`'s kind of flag --
+    #: every rider is the rule's -- and read at the same moment: copied onto
+    #: the object as `cast_impending` just before the permanent enters, so the
+    #: enters-with-time-counters replacement can see it.
+    impending: bool = False
     #: Cast for its **bestow** cost, which makes it an Aura spell with enchant
     #: creature. Read on resolution to decide which target list the spell has:
     #: the printed card declares none, and "enchant creature" comes from the

@@ -8688,6 +8688,14 @@
   "overgrown_tomb": {
     "zone": "battlefield"
   },
+  "overlord_of_the_mistmoors": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "insect_2_1_w_flying"
+    },
+    "zone": "battlefield"
+  },
   "overprotect": {
     "granted": {
       "count": 1,

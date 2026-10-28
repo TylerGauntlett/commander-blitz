@@ -1538,6 +1538,15 @@ class CardModel(BaseModel):
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.
     suspend: dict[str, Any] | None = None
+    #: ``{"cost": "{2}{W}{W}", "counters": 4}`` -- "Impending 4—{2}{W}{W}"
+    #: (702.176a). Suspend's shape and ``warp``'s slot: an alternative mana cost
+    #: offered from hand, with every rider the *rule's*. Cast this way, the
+    #: permanent enters with that many time counters, isn't a creature while it
+    #: has one, and removes one at the beginning of its controller's end step.
+    #: The card prints none of that as a sentence of its own, so none of it is
+    #: written here: the loader supplies the replacement and the end-step
+    #: trigger, and `characteristics._compute` the type change.
+    impending: dict[str, Any] | None = None
     #: Who wrote this card.  ``""`` means a person did.  ``"auto"`` means
     #: ``commanderblitz.cards.authoring`` did, and it only got here by clearing the six
     #: gates in ``authoring/verify.py`` -- including one that casts it and checks

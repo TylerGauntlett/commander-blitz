@@ -817,3 +817,30 @@ class TestSharkTyphoonsSharkIsAnXXBlueFlier:
         fractal = pool.get("fractal_0_0_gu")
         assert not fractal.variable_pt
         assert sorted(fractal.colors) == ["G", "U"]
+
+
+class TestTheMistmoorsInsectsAreTwoOneWhiteFliers:
+    """Overlord of the Mistmoors: *"create two **2/1 white Insect** creature
+    tokens **with flying**"* (the catalog's Insect token row prints 2/1, white,
+    Flying).
+
+    `insect_1_1_g` is the pool's only other Insect, and it is wrong three ways
+    at once: half the power, the wrong colour and no evasion. Two of them on
+    every enter and every attack is a strictly weaker card than the printed one.
+    """
+
+    def test_it_is_a_two_one_white_insect_with_flying(self, pool):
+        token = pool.get("insect_2_1_w_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 1)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Insect"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_green_insect_is_still_a_separate_token(self, pool):
+        other = pool.get("insect_1_1_g")
+        assert (other.power, other.toughness) == (1, 1)
+        assert sorted(other.colors) == ["G"]
+        assert not other.keywords

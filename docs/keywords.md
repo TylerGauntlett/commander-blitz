@@ -281,6 +281,7 @@ This is the long tail, and where the build order comes from.
 | Hideaway | shipped | the `hideaway` op writes the `exiled_by` link and `revealed_to`; `play_exiled` is the permission, reading it back | `hideaway` |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
 | Imprint | free | `exile` with `until_leaves` writes the link; `{"zone": "exile", "controller": "any", "exiled_with": "self"}` reads it back | — |
+| Impending | shipped | card-level field — evoke's alternative cost from hand with every rider the rule's: an implied enters-with-time-counters replacement gated on the cost paid, `chars` dropping `Creature` while the stamp holds and a time counter remains, and a loader-appended end-step trigger removing one. The card writes only the cost and the count | `impending` |
 | Improvise | shipped | `pay_generic_with: "tap_artifacts"` — convoke's shape over artifacts, generic only as printed; which artifacts tap is asked as it is paid, before the mana | `pay_generic_with` |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
 | Infect † | shipped | `Keyword`, read by `damage_permanent` and `damage_player` -- wither's counters, plus poison to players | `infect` |

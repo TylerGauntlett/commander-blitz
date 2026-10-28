@@ -1316,6 +1316,10 @@ _STRIVE_LINE = re.compile(
     re.IGNORECASE,
 )
 
+#: "Impending 4—{2}{W}{W} (…)": the count, then the price after the em dash
+#: (or a hyphen, for text typed without one).
+_IMPENDING_LINE = re.compile(r"^impending (\d+)\s*[—-]\s*(\{.*)$", re.IGNORECASE)
+
 
 #: The two printed shapes of a card-level alternative cost (118.9), read off the
 #: self-reference-folded, lower-cased line: "[If <condition>, ]you may <payment>
@@ -1705,6 +1709,23 @@ def _covered(card: CardDef, line: str) -> bool:
     # closed and the line stays residual.
     if card.warp is not None and stripped.lower().startswith("warp "):
         return _declares_printed_cost(stripped[len("warp ") :], card.warp)
+
+    # "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost…)"
+    # -- warp's shape with a count beside the price, and claimed by the field
+    # for warp's reason: the price is no ability, and the counters, the type
+    # change and the end-step tick are the rule's. Here, ahead of the
+    # replacement claimant below, which would otherwise wave the line through
+    # on its reminder text's "enters with … counters" alone.
+    #
+    # Strict on both numbers: a card declaring four counters cannot claim a
+    # printed "Impending 5", nor `{1}{B}` a printed `{2}{B}`. A mismatch returns
+    # here rather than falling through, so the line stays residual -- and so
+    # does a printed impending line on a card without the field.
+    if (match := _IMPENDING_LINE.match(stripped)) is not None:
+        if card.impending is None:
+            return False
+        cost, counters = card.impending
+        return int(match.group(1)) == counters and _declares_printed_cost(match.group(2), cost)
 
     # "Morph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature
     # for {3}. Turn it face up any time for its morph cost.)" -- warp's shape

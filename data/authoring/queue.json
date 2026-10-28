@@ -196062,12 +196062,12 @@
     },
     "Overlord of the Mistmoors": {
       "edhrec_rank": 4255,
-      "gate": "template",
+      "gate": null,
       "name": "Overlord of the Mistmoors",
-      "reason": "no template for: Impending 4—{2}{W}{W}",
+      "reason": "",
       "scryfall_id": "1951ed76-16a1-4639-b824-08dfc3d6d098",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overmaster": {

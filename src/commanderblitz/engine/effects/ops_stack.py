@@ -243,6 +243,9 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # original. A copied Baleful Mastery cast for {1}{B} still hands an
         # opponent a card; without this the copy was the rider-free half.
         evoked=original.evoked,
+        # Impending, for the same 707.10 reason: a copy of an Overlord spell
+        # cast for its impending cost enters with the time counters too.
+        impending=original.impending,
         # And the gift promise, which is a 601.2b choice like the kicker: a
         # copy of a promised spell was promised too, and its refs were
         # declared under the promised target list, so `stack._resolve_spell`

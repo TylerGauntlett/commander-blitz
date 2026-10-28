@@ -63,6 +63,7 @@ from commanderblitz.engine.mana import (
     compile_restriction,
     parse_mana_production,
 )
+from commanderblitz.engine.objects import TIME_COUNTER
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.triggers import (
     ORDINAL_FILTER_KEYS,
@@ -457,7 +458,122 @@ def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
                 "condition": None,
             }
         )
+    if model.impending is not None:
+        # Impending (702.176a): "if you chose to pay this permanent's impending
+        # cost, it enters with N time counters on it". A replacement for the
+        # Saga's reason -- the Overlord is never seen on the battlefield without
+        # its counters, so it is never seen as a creature -- and gated on the
+        # cast stamp, so the printed cast and a reanimation enter with none.
+        out.append(
+            {
+                "event": "self_enters_with_counters",
+                "counter": TIME_COUNTER,
+                "amount": int(model.impending["counters"]),
+                "modify": {},
+                "condition": {"impending": True},
+            }
+        )
     return tuple(out)
+
+
+def _compile_impending(
+    model: CardModel, mana_cost: ManaCost, where: str
+) -> tuple[ManaCost, int] | None:
+    """A card's ``impending`` field as ``(cost, time counters)``, or ``None``.
+
+    The refusals are the silent failures. A non-creature has no creature type
+    for "isn't a creature" to take away, so it would load and only cost less;
+    zero counters is the same card entering as a creature at once; a price equal
+    to the printed one is one cast offered twice (evoke's invariant). And the
+    `impending` condition is the rule's to read: a card without the field that
+    asks it asks about a cost nothing could have paid.
+    """
+    if model.impending is None:
+        if _mentions_condition(model, "impending"):
+            raise DslError(f"{where}: reads the 'impending' condition but has no 'impending' cost")
+        return None
+    unknown = set(model.impending) - {"cost", "counters"}
+    if unknown:
+        raise DslError(f"{where}.impending: unsupported keys {sorted(unknown)}")
+    counters = model.impending.get("counters")
+    if isinstance(counters, bool) or not isinstance(counters, int) or counters < 1:
+        raise DslError(
+            f"{where}.impending: 'counters' must be a whole number of at least 1 -- "
+            f"with none the permanent enters a creature and the keyword does nothing"
+        )
+    if not model.impending.get("cost"):
+        raise DslError(f"{where}.impending: needs a 'cost' -- impending is a price")
+    cost = ManaCost.parse(model.impending["cost"])
+    if cost.x_count:
+        raise DslError(f"{where}: an impending cost with X is not implemented")
+    if CardType.CREATURE.value not in model.types:
+        raise DslError(
+            f"{where}: 'impending' is only on creature cards (702.176a) -- 'it isn't "
+            f"a creature' has nothing to take away from this one"
+        )
+    if cost.mana_value() == mana_cost.mana_value():
+        raise DslError(
+            f"{where}: impending {model.impending['cost']!r} costs the same as the printed "
+            f"cost -- the same cast offered twice, and nobody would take the second"
+        )
+    return cost, counters
+
+
+def _impending_tick(index: int, where: str) -> Ability:
+    """Impending's fourth ability (702.176a), which no card prints as a line.
+
+    "At the beginning of your end step, if this permanent's impending cost was
+    paid and it has a time counter on it, remove a time counter from it." A real
+    triggered ability rather than a turn-based tick like suspend's, because the
+    keyword *is* these abilities on the permanent: it uses the stack, the
+    intervening-if is asked as it triggers and again as it resolves, and a
+    permanent that has lost its abilities stops counting down.
+
+    Its ``text`` is the rule's sentence and no printed line's, so it claims
+    nothing at gate 3; the printed "Impending N—cost" line is the field's to
+    claim (`verify._covered`).
+    """
+    return _compile_ability(
+        AbilityModel.model_validate(
+            {
+                "kind": "triggered",
+                "text": (
+                    "At the beginning of your end step, if this permanent's impending "
+                    "cost was paid and it has a time counter on it, remove a time "
+                    "counter from it."
+                ),
+                "trigger": {
+                    "event": "end_step",
+                    "controller": "you",
+                    "condition": {
+                        "all": [
+                            {"impending": True},
+                            {
+                                "cmp": ">=",
+                                "left": {
+                                    "counters_on": {
+                                        "counter": TIME_COUNTER,
+                                        "objects": {"self_only": True},
+                                    }
+                                },
+                                "right": {"const": 1},
+                            },
+                        ]
+                    },
+                },
+                "effects": [
+                    {
+                        "op": "remove_counters",
+                        "counter": TIME_COUNTER,
+                        "amount": {"const": 1},
+                        "objects": {"self_only": True},
+                    }
+                ],
+            }
+        ),
+        index,
+        where,
+    )
 
 
 def _final_chapter(model: CardModel, abilities: tuple[Ability, ...], where: str) -> int | None:
@@ -801,8 +917,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # a card that refuses to load.
         validate_condition(replacement.condition, f"{where}.replacements[{i}].condition")
 
+    impending = _compile_impending(model, mana_cost, where)
     abilities = tuple(_compile_ability(a, i, where) for i, a in enumerate(model.abilities))
     _check_threshold_order(abilities, where)
+    if impending is not None:
+        # The end-step tick, after every printed ability so their indices are
+        # the printed order's and a threshold striation stays a suffix of the
+        # printed lines -- see `_impending_tick`.
+        abilities = (*abilities, _impending_tick(len(abilities), where))
     grantable = tuple(
         _compile_ability(a, i, f"{where}.grantable")
         for i, a in enumerate(model.grantable_abilities)
@@ -1773,6 +1895,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         graveyard_cast_exiles=model.graveyard_cast == "exile",
         ascend=model.ascend,
         suspend=suspend,
+        impending=impending,
     )
 
 

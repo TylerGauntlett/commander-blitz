@@ -21,6 +21,10 @@ from .structs import PermanentShield, TempEffect
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
 MINUS_ONE = "-1/-1"
+#: A **time counter**: what a suspended card in exile carries, and what an
+#: impending permanent enters with (702.176a). Named like the printed one so a
+#: UI that shows counters shows the right word.
+TIME_COUNTER = "time"
 #: A **shield counter** (122.1c): "If this permanent would be dealt damage or
 #: destroyed, remove a shield counter from it instead."
 #:
@@ -694,6 +698,16 @@ class GameObject:
     #: has landed, so a flag wiped on the way onto the battlefield would leave
     #: an ordinary creature attached to something.
     cast_bestowed: bool = False
+    #: Whether the spell this permanent resolved from was cast for its
+    #: **impending** cost (702.176a). Bestow's contract, and for its reason: it
+    #: is read on the battlefield -- by the enters-with-time-counters
+    #: replacement, by the end-step tick and by `characteristics._compute`,
+    #: which is where "isn't a creature while it has a time counter" lives -- so
+    #: it outlives the spell. Unlike bestow's it is cleared by
+    #: `zones._enter_battlefield` on any arrival that is not this object's own
+    #: resolution: a reanimated Overlord was not cast at all, and must not come
+    #: back thinking it was cast for its impending cost.
+    cast_impending: bool = False
     #: Whether this object is currently showing its **second castable face** --
     #: the Adventure half, the Aftermath half, one half of a split card.
     #: ``GameState.card_of`` reads it, exactly as it reads ``transformed``, so

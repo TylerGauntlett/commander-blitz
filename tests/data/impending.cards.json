@@ -1,0 +1,68 @@
+{
+  "_comment": "Cards that exist only for the impending test (tests/unit/keywords/test_impending.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_impending_overlord` is Overlord of the Mistmoors' two lines under a test name, so the keyword and the enters-or-attacks trigger it must not silence are pinned together. `t_impending_herald` is a free sorcery that puts a time counter on a creature you control, so a normally-cast Overlord can be handed one: impending reads the cost paid, not the counter alone.",
+  "cards": [
+    {
+      "id": "t_impending_overlord",
+      "name": "Test Impending Overlord",
+      "oracle_text": "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)\nWhenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.",
+      "mana_cost": "{4}{W}{W}",
+      "types": [
+        "Enchantment",
+        "Creature"
+      ],
+      "subtypes": [
+        "Avatar",
+        "Horror"
+      ],
+      "power": 6,
+      "toughness": 6,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "impending": {
+        "cost": "{2}{W}{W}",
+        "counters": 4
+      },
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "insect_2_1_w_flying",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self",
+            "controller": "you"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "insect_2_1_w_flying",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

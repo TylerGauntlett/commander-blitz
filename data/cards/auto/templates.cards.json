@@ -97539,6 +97539,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "insect_2_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "token": "insect_2_1_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "overlord_of_the_mistmoors",
+      "impending": {
+        "cost": "{2}{W}{W}",
+        "counters": 4
+      },
+      "mana_cost": "{5}{W}{W}",
+      "name": "Overlord of the Mistmoors",
+      "oracle_text": "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)\nWhenever this permanent enters or attacks, create two 2/1 white Insect creature tokens with flying.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Avatar",
+        "Horror"
+      ],
+      "toughness": 6,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

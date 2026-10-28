@@ -491,6 +491,8 @@ class Game:
             # and this charge being made -- at which point a re-derived price
             # would be `None` and the spell would be charged its printed cost.
             cost = ManaCost.parse(action.warp)
+        elif action.impending and card.impending is not None:
+            cost = card.impending[0]
         elif action.bestowed and card.bestow is not None:
             cost = card.bestow
         elif action.mutated and card.mutate is not None:
@@ -909,6 +911,7 @@ class Game:
             gift_to=action.gift_to,
             evoked=action.evoked,
             warped=action.warp is not None,
+            impending=action.impending,
             flashback=action.flashback,
             overloaded=action.overloaded,
             cost_option=action.additional_choice,

@@ -14,7 +14,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 55 |
-| [Conditions](#conditions) | 30 |
+| [Conditions](#conditions) | 31 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
 | [Static effects](#static-effects) | 82 |
@@ -22,7 +22,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Grantable statics](#grantable-statics) | 38 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
-| [Card-level costs](#card-level-costs) | 29 |
+| [Card-level costs](#card-level-costs) | 30 |
 | [Keywords](#keywords) | 40 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
@@ -365,6 +365,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `has_city_s_blessing` | The player has the city's blessing (ascend). | [Ascend](card-dsl-cookbook.md#ascend) |
 | `has_flag` | The source carries a word written by `set_flag`. | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `has_turn_flag` | The source carries a word written by `set_turn_flag` this turn. | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
+| `impending` | The permanent was cast for its impending cost (the rule's own reads). | [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down) |
 | `is_active_player` | It is the given player's turn ("during their turn"). | ["During their turn" — whose turn a trigger means](card-dsl-cookbook.md#during-their-turn--whose-turn-a-trigger-means) |
 | `is_monarch` | The given player is the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `is_your_turn` | It is the controller's turn. | [Conditions](card-dsl.md#conditions) |
@@ -729,6 +730,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `flashback` | Flashback cost. | [Flashback](card-dsl-cookbook.md#flashback) |
 | `foretell` | Foretell cost. | [Foretell](card-dsl-cookbook.md#foretell) |
 | `gift` | The gift promised (a noun phrase). | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |
+| `impending` | Impending N and its cost. | [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down) |
 | `kicker` | Kicker cost. | [Kicker](card-dsl-cookbook.md#kicker) |
 | `madness` | Madness cost. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `morph` | Morph cost. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |

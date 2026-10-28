@@ -2972,6 +2972,50 @@ Two things then fall out for free:
 Bestow is **not** a second castable face. A second face is two spells; bestow is
 one spell that lands as two different permanents.
 
+## Impending — a creature that is not one until it counts down
+
+```jsonc
+{ "id": "overlord_of_the_mistmoors", "types": ["Enchantment", "Creature"],
+  "mana_cost": "{4}{W}{W}", "impending": { "cost": "{2}{W}{W}", "counters": 4 } }
+```
+
+> Impending 4—{2}{W}{W} *(If you cast this spell for its impending cost, it
+> enters with four time counters and isn't a creature until the last is
+> removed. At the beginning of your end step, remove a time counter from it.)*
+
+702.176a makes the keyword four abilities, and the card writes none of them:
+the field is the price and the count, and the loader, legality and the
+characteristic layer supply the rest.
+
+- **The price** is evoke's slot: a second cast line from hand, `Action.impending`,
+  charged at `cost` in place of the printed cost. Mana value is unchanged.
+- **The counters** are an implied `self_enters_with_counters` replacement
+  (`loader._implied_replacements`), gated on `{"impending": true}`. That
+  condition reads `cast_impending`, which `stack._resolve_spell` writes just
+  before the permanent enters and `zones._enter_battlefield` clears on every
+  other arrival — a reanimated or flickered Overlord was never cast, and enters
+  a creature with no counters.
+- **"Isn't a creature"** is in `characteristics._compute`, beside bestow and for
+  its reason: `cast_impending` and the time counters are pipeline inputs, so the
+  type change cannot come to depend on another static (ADR 0001). The creature
+  types go with the card type, as under `set_types`; the printed P/T stays and
+  matters again the moment the last counter is gone.
+- **The tick** is a real triggered ability the loader appends after the printed
+  ones (`loader._impending_tick`): "at the beginning of your end step, if this
+  permanent's impending cost was paid and it has a time counter on it, remove a
+  time counter from it". It uses the stack and is lost with the permanent's
+  other abilities, which a turn-based tick like suspend's would not be.
+
+Everything else the card prints still works, because the permanent is still on
+the battlefield: "whenever this permanent enters or attacks" fires on the
+impending arrival, and the attack half waits until it is a creature again.
+
+The loader refuses impending on a non-creature (there is no creature type to
+take away), with fewer than one counter, with an X, or at the printed price, and
+an `impending` condition on a card without the field. The printed line is
+claimed at gate 3 by the field, strictly: the count and the cost must both be
+the printed ones.
+
 ## Fuse — the case where the answer is *both* faces
 
 ```jsonc

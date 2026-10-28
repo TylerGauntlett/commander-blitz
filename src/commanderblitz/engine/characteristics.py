@@ -89,7 +89,7 @@ from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin, printed_cost_is
-from .objects import MINUS_ONE, PLUS_ONE, GameObject
+from .objects import MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
@@ -437,6 +437,28 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         subtypes.add("Aura")
         # Its 0/0 is `_base_pt`'s, under the identical condition, so a static
         # filter reads the same non-creature size this line does.
+
+    # Impending (702.176a): "as long as this permanent's impending cost was paid
+    # and it has a time counter on it, it's not a creature". A layer-4 type
+    # change, placed beside bestow's and for its reason: the rule makes it a
+    # static ability of the permanent itself, timestamped with its arrival, so
+    # an animation or a `set_types` that began later layers on top of the
+    # non-creature exactly as it would on a printed enchantment.
+    #
+    # Both halves of the condition are pipeline **inputs** -- `cast_impending`
+    # is a cast stamp and `counters` is the object's own board state, which ADR
+    # 0001 lets a filter read -- so nothing here can come to depend on another
+    # static's output. The creature types go with the card type, as they do
+    # under `set_types` (205.1b, 613.1d): an impending Overlord is a bare
+    # Enchantment until it is a creature again. The printed P/T stays: a
+    # non-creature's size is read by nothing, and the last time counter coming
+    # off is all it takes to be a 6/6 again.
+    #
+    # Ahead of the statics for the layer order too: the effect is applied in
+    # layer 4, so an ability-removing static (layer 6) does not undo it.
+    if obj.cast_impending and obj.on_battlefield and obj.counter(TIME_COUNTER) > 0:
+        types.discard("Creature")
+        subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
