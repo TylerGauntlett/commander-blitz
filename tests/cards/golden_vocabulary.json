@@ -392,7 +392,8 @@
    "is_attached",
    "top_of_library",
    "is_monarch",
-   "exists_derived"
+   "exists_derived",
+   "has_flag"
   ],
   "STATIC_CONDITION_OPS": [
    "!=",

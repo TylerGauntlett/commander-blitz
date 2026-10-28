@@ -155379,6 +155379,112 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "flag": "mardu",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Mardu"
+                },
+                {
+                  "effects": [
+                    {
+                      "flag": "jeskai",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Jeskai"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose Mardu or Jeskai.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you"
+          },
+          "cause_events": [
+            "attacks"
+          ],
+          "condition": {
+            "has_flag": "mardu"
+          },
+          "effect": "double_triggers",
+          "kind": "static",
+          "text": "• Mardu — If a creature attacking causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "goblin",
+              "op": "create_token",
+              "token": "goblin_1_1_r"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "lifelink",
+                "haste"
+              ],
+              "objects": {
+                "binding": "goblin"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "• Jeskai — At the beginning of your upkeep, create a 1/1 red Goblin creature token. It gains lifelink and haste until end of turn.",
+          "trigger": {
+            "condition": {
+              "has_flag": "jeskai"
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "windcrag_siege",
+      "mana_cost": "{1}{R}{W}",
+      "name": "Windcrag Siege",
+      "oracle_text": "As this enchantment enters, choose Mardu or Jeskai.\n• Mardu — If a creature attacking causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.\n• Jeskai — At the beginning of your upkeep, create a 1/1 red Goblin creature token. It gains lifelink and haste until end of turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

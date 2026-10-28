@@ -176,6 +176,9 @@ def op_set_flag(ctx: EffectContext, spec: Mapping[str, Any]):
         obj = ctx.state.objects.get(oid)
         if obj is not None and obj.on_battlefield:
             obj.flags.add(flag)
+    # A static's `has_flag` condition reads the word, and `chars` is cached
+    # per `char_version`.
+    ctx.state.bump_chars()
     yield from ()
 
 

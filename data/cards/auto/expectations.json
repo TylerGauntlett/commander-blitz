@@ -13863,6 +13863,9 @@
   "windbrisk_heights": {
     "zone": "battlefield"
   },
+  "windcrag_siege": {
+    "zone": "battlefield"
+  },
   "windfall": {
     "battlefield_count": 32,
     "graveyard_size": {

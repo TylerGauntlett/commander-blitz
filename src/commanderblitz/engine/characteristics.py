@@ -1373,6 +1373,7 @@ def _condition_met(
     ``exists``/``cmp`` over ``{"count": filter}``, matched on printed
                       characteristics and, off the battlefield, on zone contents
     ``is_your_turn``  whose turn it is
+    ``has_flag``      a word `set_flag` wrote on the static's own source
     ``is_monarch``    who holds the crown -- the only leaf that may name the
                       ``affected`` permanent's controller (`AFFECTED_CONTROLLER`)
     """
@@ -1408,6 +1409,14 @@ def _condition_met(
         )
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "has_flag" in cond:
+        # A Siege's "as this enters, choose Mardu or Jeskai" switching on the
+        # chosen mode's static. `flags` is written only by `set_flag` (which
+        # bumps `char_version`) and cleared only by a zone change, so it is a
+        # pipeline *input* as counters are, and reading it keeps ADR 0001's
+        # fixed order acyclic. Not a copiable value (707.2), so a copy of the
+        # source has made no choice and has no mode on.
+        return str(cond["has_flag"]) in source.flags
     if "is_attached" in cond:
         # "Attached permanents with reconfigure aren't creatures" (702.151d) --
         # a `set_types` static switched by this. `GameObject.attached_to` is a

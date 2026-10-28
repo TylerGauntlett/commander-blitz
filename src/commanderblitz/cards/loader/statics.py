@@ -311,6 +311,12 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "has_flag":
+        # Read by exact string off the source's `flags`, so an empty or
+        # non-string flag would switch the static off for ever.
+        flag = condition["has_flag"]
+        if not isinstance(flag, str) or not flag:
+            raise DslError(f"{where}.has_flag: must be a non-empty flag name")
     elif head == "is_attached":
         # Not defaulted: `{"is_attached": false}` is the other half of
         # reconfigure ("it is a creature while unattached"), and a bare

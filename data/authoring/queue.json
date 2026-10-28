@@ -316092,12 +316092,12 @@
     },
     "Windcrag Siege": {
       "edhrec_rank": 1368,
-      "gate": "template",
+      "gate": null,
       "name": "Windcrag Siege",
-      "reason": "no template for: As this enchantment enters, choose Mardu or Jeskai",
+      "reason": "",
       "scryfall_id": "b264f6ca-8a64-4f00-8d5b-47660b61716c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Windfall": {

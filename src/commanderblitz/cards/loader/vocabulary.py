@@ -1281,6 +1281,13 @@ STATIC_CONDITION_HEADS = (
     # -- not a pipeline input, so admitted only on the rule-modifying statics
     # in `STATIC_DERIVED_CONDITION_EFFECTS`, read outside the pipeline.
     "exists_derived",
+    # "As this enters, choose Mardu or Jeskai. • Mardu — <static>" (Windcrag
+    # Siege). The word `set_flag` wrote on the static's own source. A pipeline
+    # *input* exactly as a counter is: `GameObject.flags` is object state that
+    # only `set_flag` writes and only a zone change clears, and nothing in the
+    # characteristics pipeline reads or writes it, so no static can come to
+    # depend on another static's output through it.
+    "has_flag",
 )
 
 #: The static effects whose condition may read *derived* characteristics

@@ -4923,9 +4923,20 @@ Each node names **exactly one** form:
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
+| `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
 | `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack` and `cant_block` only (below) |
+
+`has_flag` is how "As this enchantment enters, choose Mardu or Jeskai" switches
+a **static** mode on. The choice is a `self_enters` trigger whose `choose_mode`
+runs `set_flag` on `self_only`, exactly as for a triggered mode (Outpost Siege);
+the static mode then carries `{"has_flag": "mardu"}`. Windcrag Siege's Mardu
+mode is a `double_triggers` with `cause_events: ["attacks"]` under it. The flag
+is object state that only `set_flag` writes and only a zone change clears, so it
+is a pipeline input like a counter. It is not a copiable value (707.2), so a
+copy of the Siege has chosen nothing. A counter is the near miss, and a wrong one:
+proliferate and counter removal would see it.
 
 A condition works on a [player-wide static](card-dsl-cookbook.md#player-wide-statics) too — the
 `affects_player` effects go through the same `_static_active`, from

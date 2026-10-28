@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**97 cards** blocked by **86** capabilities.
+**96 cards** blocked by **85** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -86,7 +86,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-condition-has-flag](#static-condition-has-flag) | 1 | 1368 | static_effect |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -1292,20 +1291,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## static-condition-has-flag
-
-Blocks **1** card.
-
-- **(static_effect)** a static ability's `condition` that asks whether its own source carries a flag (`{"has_flag": "mardu"}`), so a Siege's "as this enters, choose X or Y" choice -- recorded with choose_mode + set_flag on self -- can switch a static mode (here a double_triggers with cause_events ["attacks"]) on only when that mode was chosen
-  <br>Why the existing vocabulary won't do: has_flag exists only in trigger/effect condition_keys (which is how Outpost Siege gates its triggered modes); static_condition_keys has counters, exists, cmp, is_your_turn etc. but no has_flag, and no static_filter_key reads flags, so the Mardu double_triggers static would be on regardless of the choice. Faking the choice with a counter would be visible to proliferate and counter removal, so is not exact
-
-<details><summary>Cards waiting on this</summary>
-
-- **Windcrag Siege** (rank 1368) — `windcrag_siege`
-  - • Mardu — If a creature attacking causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time
 
 </details>
 
