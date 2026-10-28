@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**98 cards** blocked by **82** capabilities.
+**95 cards** blocked by **78** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -45,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-trigger-this-combat](#delayed-trigger-this-combat) | 1 | 21583 | engine |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -76,7 +74,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
-| [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -94,7 +91,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
 ## combat-only-permanent-shield
@@ -313,24 +309,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## divided-damage
-
-Blocks **2** cards.
-
-- **(decision)** a spell-level damage effect that divides a computed total among any number of target creatures as the caster chooses, with the division announced on casting (601.2d) and each target assigned at least 1
-  <br>Why the existing vocabulary won't do: The damage op carries amount/objects/target but no division option, so it would deal the full X to every target; distribute_counters is the only dividing op, it places counters rather than damage, and the notes restrict it to activated abilities with a printed amount
-- **(decision)** damage divided as the caster chooses among a variable-size target spec (601.2d): the division is announced while the spell is being cast, at the same time targets are chosen, each chosen target must be assigned at least 1, and the assignments must total the printed amount -- which is what caps 'any number of target creatures' at four here. Concretely a `divided: true` flag on the `damage` op paired with the target spec it consumes, a decision asked during casting that records an amount per chosen ref, and a resolution path in `op_damage` that deals each ref its own recorded share (and deals nothing to a ref that has since become illegal, rather than redistributing).
-  <br>Why the existing vocabulary won't do: `op_damage` (src/commanderblitz/engine/effects/ops_life.py) evaluates one `amount` and deals that full amount to every object in the pool, so `{"op": "damage", "amount": {"const": 4}, "objects": {"target": "t1"}}` over an `"any"`-count spec is 4 damage to *each* target -- unbounded damage from a six-mana instant, not 4 total. The target machinery is not the gap: `TargetSpec.count` already accepts `"any"` (src/commanderblitz/engine/carddef.py) for 'any number of target creatures'. Nothing in `ops`, `value_keys` or `selector_keys` can split one amount across a chosen set: `for_each` iterates a pool but re-runs the same fixed amount per member, `x_value` fixes a single number rather than a vector of them, and no `divide`/`division` concept exists anywhere in src (a grep for it finds only combat damage *assignment order*, 510.1c/banding, which is a different rule and carries no player-chosen split of a spell's damage). Splitting the op into four fixed `damage` ops with four fixed targets would be a different card -- it would forbid 4-to-one and 3/1 and force exactly four legal targets to exist.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Pyrokinesis** (rank 5389) — `pyrokinesis`
-  - Pyrokinesis deals 4 damage divided as you choose among any number of target creatures.
-- **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
-  - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
 
 </details>
 
@@ -693,21 +671,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## dragon-4-4-r-flying
-
-Blocks **1** card.
-
-- **(token)** a 4/4 red Dragon creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has dragon_5_5_r_flying (5/5) only; a 5/5 is not the printed 4/4
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
-  - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
-  - III — Create a 4/4 red Dragon creature token with flying.
 
 </details>
 
@@ -1148,21 +1111,6 @@ Blocks **1** card.
 
 </details>
 
-## read-ahead
-
-Blocks **1** card.
-
-- **(keyword)** Read ahead on a Saga (714.3a/702.155): as the Saga enters, its controller chooses a number from 1 to its final chapter and it enters with that many lore counters; chapter abilities whose chapter number is below the chosen number do not trigger from that initial placement (only the chosen chapter triggers), and normal lore-counter addition and sacrifice-after-final-chapter apply thereafter
-  <br>Why the existing vocabulary won't do: The `chapter` ability kind and `chapter` trigger event cover ordinary Sagas that enter with one lore counter, but `keywords` has no read_ahead, no card-level key chooses the starting lore count, and `enters_with_additional_counters` is a fixed static amount with no player choice and no suppression of skipped chapter triggers
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
-  - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
-  - III — Create a 4/4 red Dragon creature token with flying.
-
-</details>
-
 ## remove-subtype
 
 Blocks **1** card.
@@ -1401,20 +1349,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## value-locked-on-cast
-
-Blocks **1** card.
-
-- **(value)** a value computed as the spell is cast and fixed for resolution: the greatest power among creatures you control at cast time (needed anyway because the division of X is announced on casting)
-  <br>Why the existing vocabulary won't do: extreme_value / max over power can read the greatest power, but only at resolution; nothing in value_keys snapshots a board characteristic at cast time, and snapshot works on targets, not on the caster's board when the spell was cast
-
-<details><summary>Cards waiting on this</summary>
-
-- **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
-  - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
 
 </details>
 

@@ -3147,6 +3147,10 @@
     "artist": "Alexander Mokhov",
     "scryfall_id": "112f8478-bd89-4a14-9721-8ab750613129"
   },
+  "dragon_4_4_r_flying": {
+    "artist": "Alex Konstad",
+    "scryfall_id": "4fbb6ef8-cf45-476b-8985-36023b6884ee"
+  },
   "dragon_5_5_r_flying": {
     "artist": "Alex Konstad",
     "scryfall_id": "4fbb6ef8-cf45-476b-8985-36023b6884ee"
@@ -7762,6 +7766,10 @@
     "artist": "Rovina Cai",
     "scryfall_id": "27927100-2587-4e05-9957-eb183d46c1f0"
   },
+  "monstrous_onslaught": {
+    "artist": "Slawomir Maniak",
+    "scryfall_id": "99ae5d53-3485-4773-850f-61d30293280f"
+  },
   "monument_to_endurance": {
     "artist": "Victor Sales",
     "scryfall_id": "c66cbdac-1d15-40f5-b76f-6f21b917abbc"
@@ -9223,6 +9231,10 @@
   "pyroblast": {
     "artist": "MSCHF",
     "scryfall_id": "1972062d-a534-4245-b332-907e1881aeb6"
+  },
+  "pyrokinesis": {
+    "artist": "MSCHF",
+    "scryfall_id": "1e2cb993-9148-4c0b-ad71-58617a212235"
   },
   "pyromancer_s_goggles": {
     "artist": "Kevin Sidharta",
@@ -12276,6 +12288,10 @@
   "the_eagles_are_coming": {
     "artist": "Zezhou Chen",
     "scryfall_id": "0bda1b62-47fc-42c2-a841-ccad8ea0db48"
+  },
+  "the_elder_dragon_war": {
+    "artist": "Filip Burburan",
+    "scryfall_id": "670bfb28-1ac7-468d-ba38-728e3f688085"
   },
   "the_emperor_of_palamecia_the_lord_master_of_hell": {
     "artist": "Heonhwa",

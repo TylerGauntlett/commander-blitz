@@ -244,6 +244,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Proliferate** | 701.27a: one `ask_targets` decision (purpose `proliferate`) over every permanent with a counter and every player with poison or energy, not targeting |
 | **Moving and doubling counters** | `move_counters` (graft, modular) clamped to the source; `double_counters` puts the extra on through `add_counters` so counter replacements apply (122.1) |
 | **Distributing counters** | `distribute_counters` on an activated ability, the division announced at activation (601.2d, 602.2b) and stored on the stack item, an illegal target's share lost (608.2b) |
+| **Dividing damage** | `damage` with `divided` on a spell: the amount read and divided as the spell is cast (601.2d), stored on the stack item, an illegal target's share lost (608.2b); "any number" of targets capped at the amount (`engine.division`) |
 | **Counters on an arrival** | `counters` on `put_onto_battlefield` and `return_from_graveyard` (placed after the move), `counters` / `counters_if` on `look_at_top` (one placement with the arrival, 122.6); `replace_counters` applies before `counter_placed` fires or a Saga reads its lore (714.2c) |
 | **Counters that can't be put on** | The `cant_have_counters` static (101.2): a placement of the named kind onto a matching permanent does not happen, asked before every counter replacement in `add_counters`, `zones._entering_counters` and `costs.can_pay` (a cost that would put one on can't be paid) |
 | **Removing counters as a cost** | `remove_counters_from_among` over several permanents, any kinds, asked one counter at a time (602.2b) |
@@ -286,7 +287,7 @@ under [Simplified](#simplified); what is missing outright is under
 | Area | Detail |
 |---|---|
 | **Planeswalkers** | Starting loyalty as a `self_enters_with_counters` replacement, loyalty abilities once per permanent per turn at sorcery timing (606.3), damage removing loyalty, death at zero (704.5i), attackable (506.2); `activate_loyalty_as_though_instant` lifts the timing half of 606.3 only; `extra_loyalty_activation` adds to the per-turn limit; `cost.loyalty_x` for −X |
-| **Sagas** | 714: the three reminder-line rules live in `engine/sagas.py` — the lore counter as an enters replacement (714.2b), the tick as a turn-based action in the precombat main (714.2d), chapters as `AbilityKind.CHAPTER` firing on the count reaching the number (714.2c), the sacrifice as a state-based action after the last chapter leaves the stack (704.5s, `final_chapter`) |
+| **Sagas** | 714: the three reminder-line rules live in `engine/sagas.py` — the lore counter as an enters replacement (714.2b), the tick as a turn-based action in the precombat main (714.2d), chapters as `AbilityKind.CHAPTER` firing on the count reaching the number (714.2c), the sacrifice as a state-based action after the last chapter leaves the stack (704.5s, `final_chapter`); read ahead (702.155) as a chapter chosen on arrival by `zones.offer_read_ahead`, the chosen number replacing the 714.2b counter and the chapters below it skipped |
 | **Battles** | 310: `engine/battles.py` compiles `defense` into counters (310.4), being attacked is 506.2's third defender kind, damage removes defense (310.6), zero defense is 704.5x and not destruction; a missing `defense` is a load error |
 | **Classes: levels and level-gated abilities** | 716: `GameObject.class_level`, level lines compiled to the activated ability 716.2a spells out (`become_level`, `Ability.becomes_level`), `"level": N` on an ability meaning present only at that level or higher (716.2b, `AbilityKind.LATENT` keeping indices), the `becomes_level` trigger (716.4), not copiable (707.2) |
 
@@ -368,7 +369,7 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - Attacking with creatures you do not control (508.1a); `combat.can_attack` requires the active player's own.
 - A copy effect applied to a permanent already on the battlefield by anything other than `become_copy` (707); a copy of a copy does not inherit the first copy's exception (707.9b).
 - Battle protectors (310.7, 506.2b) and casting a defeated Siege's back face; a battle here is attacked by its controller's opponents.
-- Read ahead (702.155) and double-lore effects on Sagas.
+- Double-lore effects on Sagas.
 - Saddle (702.171); a Pilot that also saddles is not defined.
 - Station variants: stationing with toughness (Tapestry Warden), Spacecraft becoming artifact creatures at their number, and a `threshold` on anything but an activated ability.
 - Typecycling (702.29) in the template tier; the cycling template reads plain cycling only.
@@ -380,7 +381,7 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - Dice-roll triggers and the AFR d20 outcome tables, and a mill trigger: `EventType.DICE_ROLLED` and `EventType.MILL` have no `TRIGGER_EVENTS` name.
 - Granting extort to other creatures (Pontiff of Blight).
 - A chosen card name stored on a permanent for a later reader (Pithing Needle, Meddling Mage); `choose_card_name` binds for one resolution.
-- `distribute_counters` on a spell or a triggered ability, and dividing damage among targets.
+- `distribute_counters` on a spell or a triggered ability; dividing damage among players or any target, or on an ability.
 - 508.4's unspecified "tapped and attacking" with no player named.
 - Timed forms with no home yet: a delayed trigger scoped to the extra turn an effect created (Final Fortune), "skip your next turn" for ordinary turns, the turn-long "can't be regenerated this turn", and "no maximum hand size until your next turn" (Enter the Infinite).
 - Per-turn cast caps (Deafening Silence) and the ability half of Grand Abolisher; `affects` beside `cant_cast_spells` is refused.

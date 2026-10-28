@@ -468,6 +468,16 @@ class HeuristicAgent:
 
             pool = [a for a in choices if ours(a)] or choices
             return max(pool, key=lambda a: self._creature_value(state, a))
+        if purpose == "divide_damage":
+            # Another point of a divided burn spell (Pyrokinesis): distribute's
+            # question turned round -- on an opponent's best creature, never
+            # one of ours while one of theirs is a target.
+            def theirs(a: Action) -> bool:
+                oid = _target_oid(a)
+                return oid in state.objects and state.objects[oid].controller != seat
+
+            pool = [a for a in choices if theirs(a)] or choices
+            return max(pool, key=lambda a: self._creature_value(state, a))
         return choices[0]
 
     def _junk(self, strategy: Strategy, state: GameState, seat: int, action: Action) -> float:

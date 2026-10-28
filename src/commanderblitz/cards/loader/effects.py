@@ -645,6 +645,17 @@ def _validate_delayed_trigger(effect: Mapping[str, Any], where: str) -> None:
     _refuse_targets_inside_a_delay(effect.get("effects") or (), f"{where}.effects")
 
 
+def _reads_announced_x(node: Any) -> bool:
+    """Does this value expression read the X announced as the spell was cast?"""
+    if node == "x":
+        return True
+    if isinstance(node, Mapping):
+        return "x" in node or any(_reads_announced_x(v) for v in node.values())
+    if isinstance(node, (list, tuple)):
+        return any(_reads_announced_x(v) for v in node)
+    return False
+
+
 def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
@@ -2932,6 +2943,30 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'excess_to' needs a single 'target' -- a pool of objects has "
                 f"no one controller for the excess to reach"
+            )
+    if op == "damage" and "divided" in effect:
+        # "…deals 4 damage divided as you choose among any number of target
+        # creatures" (601.2d). `divided` names the one target spec whose objects
+        # share the amount, and is the whole of who is dealt damage: a second
+        # recipient beside it would take the full amount, which no printed card
+        # says. Where the op may sit is `loader._check_division_homes`'s.
+        if not isinstance(effect["divided"], str) or not effect["divided"]:
+            raise DslError(
+                f"{where}.divided: the id of the target spec whose objects share the "
+                f"damage, e.g. 't1'"
+            )
+        others = sorted({"objects", "player", "target", "defender_of"} & set(effect))
+        if others:
+            raise DslError(
+                f"{where}: divided damage goes only to the targets 'divided' names; "
+                f"drop {others}"
+            )
+        if _reads_announced_x(effect.get("amount")):
+            # "Any number of targets" is declared before X is announced on this
+            # engine's cast line, so a division of X could be asked over more
+            # targets than X -- refused rather than half-honoured.
+            raise DslError(
+                f"{where}: a divided amount may not read the announced X"
             )
 
     if op == "cast_from_hand":

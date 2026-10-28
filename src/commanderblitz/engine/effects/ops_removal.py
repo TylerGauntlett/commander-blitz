@@ -19,6 +19,7 @@ from ..zones import (
     link_exiled,
     move_object,
     offer_enters_replacement,
+    offer_read_ahead,
     offer_riot_choice,
     sacrifice,
 )
@@ -588,6 +589,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # you control have riot" is about any arrival, not only a cast one --
         # see `zones.offer_riot_choice`.
         yield from offer_riot_choice(ctx.state, oid, controller)
+        yield from offer_read_ahead(ctx.state, oid, controller)
         # `cause` travels into the enters-the-battlefield event, so an ability
         # that puts permanents down can name itself here and then refuse to
         # trigger on its own output -- see `TriggerSpec.not_cause`.

@@ -546,6 +546,29 @@
       "is_token": true
     },
     {
+      "id": "dragon_4_4_r_flying",
+      "name": "Dragon Token",
+      "oracle_text": "4/4 red Dragon creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "dragon_5_5_r_flying",
       "name": "Dragon Token",
       "oracle_text": "5/5 red Dragon creature token with flying.",

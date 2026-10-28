@@ -1,0 +1,64 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_divided_damage.py. t_dd_burn is Pyrokinesis's sentence on a plain instant: 4 damage divided among any number of target creatures. t_dd_onslaught is Monstrous Onslaught's: X is the greatest power among creatures you control, read as the spell is cast. t_dd_ogre is a vanilla 4/4 to give that X a number, and t_dd_wall a 0/6 that survives every share so the damage marked on it can be read.",
+  "cards": [
+    {
+      "id": "t_dd_burn",
+      "name": "Test Divided Burn",
+      "oracle_text": "Test Divided Burn deals 4 damage divided as you choose among any number of target creatures.",
+      "mana_cost": "{1}{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": "any",
+         "selector": {"types": ["Creature"], "controller": "any"}}
+      ],
+      "spell_effects": [
+        {"op": "damage", "amount": {"const": 4}, "divided": "t1"}
+      ]
+    },
+    {
+      "id": "t_dd_onslaught",
+      "name": "Test Divided Onslaught",
+      "oracle_text": "Test Divided Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.",
+      "mana_cost": "{1}{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": "any",
+         "selector": {"types": ["Creature"], "controller": "any"}}
+      ],
+      "spell_effects": [
+        {"op": "damage", "divided": "t1",
+         "amount": {"extreme_value": {"of": "power", "pick": "greatest",
+                                      "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}}}}
+      ]
+    },
+    {
+      "id": "t_dd_ogre",
+      "name": "Test Divided Ogre",
+      "oracle_text": "",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "power": 4,
+      "toughness": 4,
+      "colors": ["R"],
+      "color_identity": ["R"]
+    },
+    {
+      "id": "t_dd_wall",
+      "name": "Test Divided Wall",
+      "oracle_text": "Defender",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Wall"],
+      "keywords": ["defender"],
+      "power": 0,
+      "toughness": 6,
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

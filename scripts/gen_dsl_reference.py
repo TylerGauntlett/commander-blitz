@@ -336,7 +336,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "gain_life": ("Life & damage", "A player gains N life.", None),
     "lose_life": ("Life & damage", "A player loses N life; `as` records how much.", None),
     "damage": ("Life & damage", "A source deals N damage to objects or players; `excess_to` spills over; "
-               "`defender_of` hits what a creature is attacking.",
+               "`defender_of` hits what a creature is attacking; `divided` splits it among a target spec "
+               "as the spell is cast.",
                "`damage`'s `excess_to`"),
     "fight": ("Life & damage", "Two creatures fight.", H_FIGHT),
     "add_poison": ("Life & damage", "A player gets N poison counters.", None),
@@ -1024,6 +1025,7 @@ KEYWORDS: dict[str, Entry] = {
     "phasing": ("Phasing.", 'Phasing — "does not exist", said by not being in a list'),
     "plainswalk": ("Plainswalk.", H_LANDWALK),
     "reach": ("Reach.", None),
+    "read_ahead": ("Read ahead; a Saga's starting chapter, chosen as it enters.", "Read ahead"),
     "riot": ("Riot.", "Riot"),
     "shadow": ("Shadow.", "Fear, intimidate, horsemanship, shadow and nonbasic landwalk"),
     "shroud": ("Shroud.", "Shroud, which is the third member of that family"),
