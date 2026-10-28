@@ -1302,6 +1302,7 @@ Anywhere a number is expected -- the leaf list is
 { "min_count_of": { "player": "each_opponent",  // "…EACH opponent controls more"
                     "objects": { "types": ["Creature"] } } }
 { "cards_in_hand": "each_opponent" }
+{ "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
@@ -1338,6 +1339,13 @@ Anywhere a number is expected -- the leaf list is
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 { "half": { "of": a, "round": "up" } }          // "round up"; "down" is the other
 ```
+
+`player_count` counts the seats a player spec names, never anything about
+them: "where X is the number of opponents you have" (Dack Fayden, Helping Hand)
+is `{"player_count": "each_opponent"}`. Only players still in the game are
+counted, because a player who has left is nobody's opponent (800.4a). It is
+effect-side only; no static prints a headcount. The near miss is
+`{"count": …}`, which counts objects and cannot reach a player.
 
 `half` is the one division in the language, and it takes its rounding direction
 as a **required** key: 107.1a makes the card say which way a fraction goes, and

@@ -21,6 +21,7 @@ forms::
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
     {"max_poison_of": "each_opponent"}  the most poison counters on one of them
     {"unspent_mana_count": "you"}     the mana in those players' pools
+    {"player_count": "each_opponent"}  how many players the spec names
     {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
         "each_opponent"}                this turn, where the plain tally sums
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
@@ -84,6 +85,13 @@ VALUE_KEYS = frozenset(
         # `max_poison_of`'s reason: the same count arrives as an "as long as"
         # on one card and a resolving comparison on the next.
         "unspent_mana_count",
+        # "…where X is **the number of opponents you have**" (Dack Fayden,
+        # Helping Hand). How many seats a player spec resolves to, which no
+        # other leaf reads: every player value above measures something *about*
+        # the players (life, poison, cards, mana) and sums or extremes it, and
+        # `count` counts objects. Only players still in the game are counted
+        # (800.4a): a seat that has left is nobody's opponent.
+        "player_count",
         # "…if you have at least 15 life more than **your starting life
         # total**" -- Angel of Destiny; Righteous Valkyrie asks the same of 7.
         # Rule 103.4: the number the seat began the game with, recorded on
@@ -489,6 +497,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "unspent_mana_count" in expr:
         pids = _players(ctx, expr["unspent_mana_count"])
         return sum(ctx.state.players[p].mana_pool.total() for p in pids)
+    if "player_count" in expr:
+        pids = _players(ctx, expr["player_count"])
+        return len({p for p in pids if ctx.state.is_alive(p)})
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
         return sum(len(ctx.state.players[p].hand) for p in pids)
@@ -1254,6 +1265,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.max_poison_of: needs a player spec, e.g. 'each_opponent' "
                 f"(whose poison counters), got {who!r}"
+            )
+    if "player_count" in expr:
+        who = expr["player_count"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.player_count: needs a player spec, e.g. 'each_opponent' "
+                f"(how many opponents you have), got {who!r}"
             )
     if "unspent_mana_count" in expr:
         who = expr["unspent_mana_count"]

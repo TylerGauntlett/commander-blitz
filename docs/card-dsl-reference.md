@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 148 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 56 |
+| [Values](#values) | 57 |
 | [Conditions](#conditions) | 31 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
@@ -331,6 +331,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `minus` | a - b. | [Value expressions](card-dsl.md#value-expressions) |
 | `most_sharing_a_name` | The largest group in a pool sharing one name. | [Value expressions](card-dsl.md#value-expressions) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
+| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"). | [Value expressions](card-dsl.md#value-expressions) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
 | `resolutions_this_turn` | Times this ability has resolved this turn. | [Value expressions](card-dsl.md#value-expressions) |
