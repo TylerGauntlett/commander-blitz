@@ -109652,12 +109652,12 @@
     },
     "Ginger, Queen of Sweets": {
       "edhrec_rank": 28865,
-      "gate": "template",
+      "gate": null,
       "name": "Ginger, Queen of Sweets",
-      "reason": "no template for: When Ginger enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "321e0ec3-e2d7-4bd8-98df-8fec88e365c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gingerbread Cabin": {

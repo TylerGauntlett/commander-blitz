@@ -3652,6 +3652,28 @@ eliminating a player moves everybody else's "next turn". `sba` drops the entries
 of a seat that has left, for the reason it drops that seat's block prohibitions:
 a player who never untaps again never clears them.
 
+**`except_blockers` is the exemption** — "can't be blocked this turn except by
+creatures with haste" (the Gingerbrute token Ginger, Queen of Sweets makes):
+
+```jsonc
+// Gingerbrute: "{1}: This token can't be blocked this turn except by creatures with haste."
+{ "op": "unblockable", "objects": { "self_only": true }, "duration": "this_turn",
+  "except_blockers": { "keywords": ["haste"] } }
+```
+
+It is a static filter on the would-be blocker (the `static_filter_keys`, plus
+`any_of` for "artifact creatures and/or red creatures"), and a blocker that
+matches it may block. It is the `blockers` filter of `block_restriction` with the
+sense inverted and a clock added, and it is read the same way: off the
+blocker's *derived* characteristics when blockers are declared, so a creature
+that gained haste after the ability resolved may block. `controller` is implied
+`any` and the loader refuses `controller`, `owner`, `self_only` and
+`exclude_self` — the filter says what the blocker is, never whose. It refuses an
+empty filter too, which would exempt everybody. Never drop the key from a card
+that prints the exception: the plain op refuses every blocker, a strictly better
+card. Two entries on one attacker are two restrictions, and a blocker must clear
+both.
+
 It lives on the table (`GameState.unblockables`, a list of
 `structs.Unblockable`) beside `block_prohibitions`, and is read by
 `combat.unblockable` inside `can_block`. The two predicates never consult each

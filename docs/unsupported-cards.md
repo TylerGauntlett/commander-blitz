@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**96 cards** blocked by **85** capabilities.
+**95 cards** blocked by **83** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,7 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
-| [gingerbrute-token](#gingerbrute-token) | 1 | 28865 | token |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -95,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [unblockable-except](#unblockable-except) | 1 | 28865 | op |
 | [unspent-mana-count](#unspent-mana-count) | 1 | 24391 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
@@ -756,20 +754,6 @@ Blocks **1** card.
 
 </details>
 
-## gingerbrute-token
-
-Blocks **1** card.
-
-- **(token)** a Gingerbrute token: a colorless 1/1 Food Golem artifact creature token with haste and mana cost {1} ("This token's mana cost is {1}"), "{1}: This token can't be blocked this turn except by creatures with haste." and "{2}, {T}, Sacrifice this token: You gain 3 life." -- a Tier 0 entry once unblockable_except exists, and not before: its first ability is the missing op
-  <br>Why the existing vocabulary won't do: food_token is a noncreature Food artifact and gnome_1_1_c a vanilla artifact creature; neither is a hasty Food Golem with these two abilities
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ginger, Queen of Sweets** (rank 28865) — `ginger_queen_of_sweets`
-  - At the beginning of each upkeep, if you're the monarch, create a Gingerbrute token. (It's a {1} 1/1 Food Golem artifact creature with haste, "{1}: This token can't be blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice this token: You gain 3 life.")
-
-</details>
-
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -1418,20 +1402,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## unblockable-except
-
-Blocks **1** card.
-
-- **(op)** a one-shot, turn-scoped evasion for the Gingerbrute token's "{1}: This token can't be blocked this turn except by creatures with haste." -- the `unblockable` op (or a sibling) with a blocker exemption filter, here `{"keywords": ["haste"]}`, read from the blocker's derived characteristics in `combat.can_block` and ending at cleanup.
-  <br>Why the existing vocabulary won't do: `unblockable` stops every block, which is strictly better than printed; the `block_restriction` static ("can't be blocked except by ...") lasts as long as its permanent and its `condition` vocabulary (static conditions) cannot read `has_turn_flag`, so a `set_turn_flag` activation cannot switch it on for one turn; `grant_ability` cannot carry a static (characteristics._battlefield_statics never reads granted abilities); no keyword means "can't be blocked except by creatures with haste" (horsemanship and shadow are the nearest exemption-shaped evasions)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ginger, Queen of Sweets** (rank 28865) — `ginger_queen_of_sweets`
-  - At the beginning of each upkeep, if you're the monarch, create a Gingerbrute token. (It's a {1} 1/1 Food Golem artifact creature with haste, "{1}: This token can't be blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice this token: You gain 3 life.")
 
 </details>
 

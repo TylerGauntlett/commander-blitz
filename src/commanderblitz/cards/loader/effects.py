@@ -69,6 +69,7 @@ from .vocabulary import (
     KNOWN_TYPES,
     PLAYER_TARGET_KINDS,
     PLURAL_PLAYER_SPEC_NAMES,
+    STATIC_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
     refuse_numbered_grant,
 )
@@ -1483,6 +1484,45 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown unblockable duration {effect['duration']!r} "
                 f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
             )
+        # "…except by creatures with haste": a filter on the *blocker*, matched
+        # by `combat.unblockable` the way `block_restriction`'s `blockers` is,
+        # so it speaks that static filter language and no other. An empty one
+        # would exempt every blocker -- a line that does nothing -- and a key
+        # the static matcher does not read would be ignored, exempting blockers
+        # the printed line does not; both are refused rather than loaded.
+        if "except_blockers" in effect:
+            exempt = effect["except_blockers"]
+            if not isinstance(exempt, Mapping) or not exempt:
+                raise DslError(
+                    f"{where}: unblockable 'except_blockers' is a non-empty static "
+                    f"filter on the blocker, got {exempt!r}"
+                )
+            # "…except by artifact creatures and/or red creatures" is a union,
+            # `any_of`, whose branches are checked as the filter itself is.
+            branches = exempt.get("any_of")
+            if branches is not None and (
+                not isinstance(branches, list)
+                or not branches
+                or not all(isinstance(b, Mapping) and b for b in branches)
+            ):
+                raise DslError(
+                    f"{where}: unblockable 'except_blockers.any_of' is a non-empty "
+                    f"list of non-empty filters, got {branches!r}"
+                )
+            parts = [{k: v for k, v in exempt.items() if k != "any_of"}, *(branches or [])]
+            for part in parts:
+                unknown = set(part) - STATIC_FILTER_KEYS
+                if unknown:
+                    raise DslError(
+                        f"{where}: unblockable 'except_blockers' may only use static "
+                        f"filter keys; unsupported keys {sorted(unknown)}"
+                    )
+                refused = {"self_only", "exclude_self", "controller", "owner"} & set(part)
+                if refused:
+                    raise DslError(
+                        f"{where}: unblockable 'except_blockers' describes what the "
+                        f"blocker is, not whose it is; drop {sorted(refused)}"
+                    )
     if op == "cant_sacrifice":
         # `objects` is required and there is no wildcard shorthand, for the
         # reason `unblockable`'s is and harder: an absent `objects` read as

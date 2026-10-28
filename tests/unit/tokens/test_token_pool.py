@@ -844,3 +844,45 @@ class TestTheMistmoorsInsectsAreTwoOneWhiteFliers:
         assert (other.power, other.toughness) == (1, 1)
         assert sorted(other.colors) == ["G"]
         assert not other.keywords
+
+
+class TestGingersGingerbruteIsAHastyFoodGolem:
+    """Ginger, Queen of Sweets: *"create a **Gingerbrute** token. (It's a {1}
+    1/1 Food Golem artifact creature with haste, "{1}: This token can't be
+    blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice
+    this token: You gain 3 life.")"*
+
+    The near misses are `gnome_1_1_c`, the pool's other colorless 1/1 artifact
+    creature (vanilla, no haste, no Food to sacrifice), and `food_token`, which
+    has the life line but is no creature. The evasion line is `unblockable`
+    with `except_blockers`, never the plain op: without the exemption the token
+    would be blockable by nothing. Stored, like every token, with no mana cost.
+    """
+
+    def test_it_is_a_one_one_colorless_food_golem_with_haste(self, pool):
+        token = pool.get("gingerbrute_1_1_c")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Gingerbrute"
+        assert (token.power, token.toughness) == (1, 1)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert sorted(token.subtypes) == ["Food", "Golem"]
+        assert list(token.keywords) == ["haste"]
+
+    def test_it_has_exactly_the_two_printed_abilities(self, pool):
+        token = pool.get("gingerbrute_1_1_c")
+        evade, food = token.abilities
+        assert [e["op"] for e in evade.effects] == ["unblockable"]
+        assert evade.effects[0]["except_blockers"] == {"keywords": ["haste"]}
+        assert evade.effects[0]["duration"] == "this_turn"
+        assert [e["op"] for e in food.effects] == ["gain_life"]
+        assert food.cost.tap and food.cost.sacrifice
+
+    def test_the_gnome_and_the_food_are_still_separate_tokens(self, pool):
+        gnome, food = pool.get("gnome_1_1_c"), pool.get("food_token")
+        assert not gnome.keywords and not gnome.abilities
+        assert not food.is_creature
+
+    def test_the_name_does_not_answer_for_a_card(self, pool):
+        card = pool.by_name("Gingerbrute")
+        assert card is None or not card.is_token

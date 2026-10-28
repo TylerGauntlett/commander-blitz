@@ -420,6 +420,15 @@ class Unblockable:
     #: lifetime: Rogue's Passage may be destroyed in response and the creature it
     #: targeted is still unblockable for the turn.
     source: int | None = None
+    #: "…can't be blocked this turn **except by creatures with haste**"
+    #: (Gingerbrute). A static-filter mapping the would-be blocker must match to
+    #: be exempt, read off its derived characteristics when blockers are
+    #: declared -- the one-turn twin of `block_restriction`'s ``blockers``, with
+    #: the sense inverted: that names who *may not* block, this who *may*.
+    #: ``None`` is the plain sentence, every blocker refused. Compared but not
+    #: hashed, because a mapping is not hashable and equality is all the
+    #: primitive's deduplication asks of it.
+    except_blockers: Mapping[str, Any] | None = field(default=None, hash=False)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -427,6 +436,9 @@ class Unblockable:
             "duration": self.duration,
             "player": self.player,
             "source": self.source,
+            "except_blockers": (
+                dict(self.except_blockers) if self.except_blockers is not None else None
+            ),
         }
 
 

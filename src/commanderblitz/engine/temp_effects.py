@@ -495,6 +495,7 @@ def make_unblockable(
     duration: str = "this_turn",
     player: int | None = None,
     source: int | None = None,
+    except_blockers: Mapping[str, Any] | None = None,
 ) -> bool:
     """ ""Can't be blocked" for ``duration``, on the creatures named.
 
@@ -513,6 +514,11 @@ def make_unblockable(
     :func:`forbid_block` refuses it: nothing would ever clear it, so a printed
     one-turn evasion would silently become a permanent one.
 
+    ``except_blockers`` is the exemption of "can't be blocked this turn except
+    by creatures with haste": a static filter the blocker must match, asked by
+    `combat.unblockable` against the blocker as it is when blocks are declared.
+    ``None`` refuses every blocker.
+
     Returns whether anything was recorded.  Deduplicated on the whole entry --
     two copies of "can't be blocked" say nothing a single one does not.
     """
@@ -524,7 +530,13 @@ def make_unblockable(
         return False
     if duration == "until_your_next_turn" and player is None:
         return False
-    entry = Unblockable(objects=oids, duration=duration, player=player, source=source)
+    entry = Unblockable(
+        objects=oids,
+        duration=duration,
+        player=player,
+        source=source,
+        except_blockers=dict(except_blockers) if except_blockers is not None else None,
+    )
     if entry in state.unblockables:
         return False
     state.unblockables.append(entry)

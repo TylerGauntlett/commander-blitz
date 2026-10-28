@@ -53082,6 +53082,87 @@
         {
           "effects": [
             {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Ginger enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice Ginger: You gain 6 life."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "gingerbrute_1_1_c"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each upkeep, if you're the monarch, create a Gingerbrute token.",
+          "trigger": {
+            "condition": {
+              "is_monarch": "you"
+            },
+            "controller": "any",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "ginger_queen_of_sweets",
+      "mana_cost": "{6}",
+      "name": "Ginger, Queen of Sweets",
+      "oracle_text": "When Ginger enters, you become the monarch.\n{2}, {T}, Sacrifice Ginger: You gain 6 life.\nAt the beginning of each upkeep, if you're the monarch, create a Gingerbrute token. (It's a {1} 1/1 Food Golem artifact creature with haste, \"{1}: This token can't be blocked this turn except by creatures with haste,\" and \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Food",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "meld"
             }
           ],

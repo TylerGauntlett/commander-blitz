@@ -1058,6 +1058,73 @@
       "is_token": true
     },
     {
+      "id": "gingerbrute_1_1_c",
+      "name": "Gingerbrute",
+      "oracle_text": "Haste\n{1}: This token can't be blocked this turn except by creatures with haste.\n{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Food",
+        "Golem"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "haste"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: This token can't be blocked this turn except by creatures with haste.",
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "op": "unblockable",
+              "objects": {
+                "self_only": true
+              },
+              "duration": "this_turn",
+              "except_blockers": {
+                "keywords": [
+                  "haste"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "hero_1_1_c",
       "name": "Hero Token",
       "oracle_text": "",

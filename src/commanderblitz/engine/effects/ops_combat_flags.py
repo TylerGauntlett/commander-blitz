@@ -666,6 +666,14 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     ``duration`` is required and the two words are not interchangeable:
     ``this_turn`` ends at cleanup, ``until_your_next_turn`` in the granting
     player's own untap step.
+
+    ``except_blockers`` is "…except by creatures with haste" (Gingerbrute): a
+    static filter, ``{"keywords": ["haste"]}``, that a would-be blocker matching
+    is exempt from the restriction. It is read off the blocker as it is when
+    blocks are declared (`combat.unblockable`), not when this resolves, so a
+    creature that gains haste afterwards may still block. Absent, every blocker
+    is refused -- which is why it may never be dropped from a card that prints
+    the exception: the creature would be strictly harder to block than printed.
     """
 
     duration = str(spec.get("duration", "this_turn"))
@@ -676,7 +684,14 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
         for oid in resolve_pool(ctx, spec.get("objects") or {})
         if (obj := ctx.state.objects.get(oid)) is not None and obj.on_battlefield
     ]
-    make_unblockable(ctx.state, oids, duration, player=ctx.controller, source=ctx.source_oid)
+    make_unblockable(
+        ctx.state,
+        oids,
+        duration,
+        player=ctx.controller,
+        source=ctx.source_oid,
+        except_blockers=spec.get("except_blockers"),
+    )
     yield from ()
 
 

@@ -609,7 +609,11 @@ def resolve(card: CardDef, index: CardIndex) -> IndexEntry | None:
             hit = index.lookup(token_key(card), token=True, joined=True)
             if hit is not None:
                 return hit
-        for key in (token_key(card), card.name, strip_token_suffix(card.name)):
+        # A named token that shares its name with a real card is stored by
+        # Scryfall with the suffix put back ("Gingerbrute Token" beside the
+        # Gingerbrute card), so the bare name finds no token row.
+        keys = (token_key(card), card.name, strip_token_suffix(card.name), f"{card.name} Token")
+        for key in keys:
             hit = index.lookup(key, token=True)
             if hit is not None:
                 return hit
