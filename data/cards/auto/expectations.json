@@ -3865,6 +3865,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "everett_k_ross_hapless_attache": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "exalted_flamer_of_tzeentch": {
     "battlefield_count": 33,
     "life": {
@@ -5660,6 +5667,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "helm_of_the_host": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "helpful_hunter": {
     "hand_size": {
       "0": 2
@@ -6088,6 +6099,16 @@
   },
   "infernal_idol": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "ingenious_smith": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "inkmoth_nexus": {
@@ -6563,6 +6584,10 @@
     "zone": "battlefield"
   },
   "kher_keep": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kimoyo_beads": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7189,6 +7214,14 @@
     },
     "zone": "battlefield"
   },
+  "loyal_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "loyal_retainers": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "loyal_warhound": {
     "zone": "battlefield"
   },
@@ -7742,6 +7775,14 @@
   },
   "metropolis_reformer": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "midnight_angel_armor": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "soldier_1_1_w"
+    },
     "zone": "battlefield"
   },
   "midnight_assassin": {

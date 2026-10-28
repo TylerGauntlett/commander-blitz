@@ -87272,12 +87272,12 @@
     },
     "Everett K. Ross, Hapless Attaché": {
       "edhrec_rank": 16539,
-      "gate": "template",
+      "gate": null,
       "name": "Everett K. Ross, Hapless Attaché",
-      "reason": "no template for: Commander creatures you control get +1/+1 and have lifelink",
+      "reason": "",
       "scryfall_id": "86d45201-7a94-4903-9e89-90f2be7a2f5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Everflame Eidolon": {
@@ -125962,12 +125962,12 @@
     },
     "Helm of the Host": {
       "edhrec_rank": 394,
-      "gate": "template",
+      "gate": null,
       "name": "Helm of the Host",
-      "reason": "no template for: At the beginning of combat on your turn, create a token that's a copy of equipped creature",
+      "reason": "",
       "scryfall_id": "70ffc71f-328d-421d-926b-6f2e45ffb812",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Helmut Zemo, Mastermind": {
@@ -136772,12 +136772,12 @@
     },
     "Ingenious Smith": {
       "edhrec_rank": 13367,
-      "gate": "template",
+      "gate": null,
       "name": "Ingenious Smith",
-      "reason": "no template for: When this creature enters, look at the top four cards of your library. You may reveal an a",
+      "reason": "",
       "scryfall_id": "2962e4d3-3f01-47d4-abe3-75658700c132",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ingenious Thief": {
@@ -148882,12 +148882,12 @@
     },
     "Kimoyo Beads": {
       "edhrec_rank": 17700,
-      "gate": "template",
+      "gate": null,
       "name": "Kimoyo Beads",
-      "reason": "no template for: At the beginning of your end step, choose one that hasn't been chosen —",
+      "reason": "",
       "scryfall_id": "1138096a-0d7c-461b-af83-3c90f681722d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kin-Tree Invocation": {
@@ -162342,12 +162342,12 @@
     },
     "Loyal Guardian": {
       "edhrec_rank": 2956,
-      "gate": "template",
+      "gate": null,
       "name": "Loyal Guardian",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, put a",
+      "reason": "",
       "scryfall_id": "6d81eda0-2520-4531-815a-8dea27306776",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Gyrfalcon": {
@@ -162382,12 +162382,12 @@
     },
     "Loyal Retainers": {
       "edhrec_rank": 10246,
-      "gate": "template",
+      "gate": null,
       "name": "Loyal Retainers",
-      "reason": "no template for: Sacrifice this creature: Return target legendary creature card from your graveyard to the ",
+      "reason": "",
       "scryfall_id": "3092e715-36cf-4b41-95c1-cf271646db39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Sentry": {
@@ -172182,12 +172182,12 @@
     },
     "Metalwork Colossus": {
       "edhrec_rank": 1697,
-      "gate": "template",
+      "gate": "compile",
       "name": "Metalwork Colossus",
-      "reason": "no template for: This spell costs {X} less to cast, where X is the total mana value of noncreature artifact",
+      "reason": "metalwork_colossus.abilities[0]: an activated ability outside the battlefield needs a cost or an unconditional effect that removes its source from that zone (got 'Sacrifice'); otherwise it can be activated repeatedly without ever leaving",
       "scryfall_id": "82d868c2-aa72-4141-b508-9ff13c76ec4b",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Metalworker": {
@@ -172672,12 +172672,12 @@
     },
     "Midnight Angel Armor": {
       "edhrec_rank": 19523,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Angel Armor",
-      "reason": "no template for: When this Equipment enters, create a 1/1 white Soldier creature token, then attach this Eq",
+      "reason": "",
       "scryfall_id": "5b5b87ba-c6cc-4f25-a5c9-22464a41de65",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Midnight Arsonist": {
