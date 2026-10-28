@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**96 cards** blocked by **80** capabilities.
+**95 cards** blocked by **79** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
-| [delayed-dies-trigger](#delayed-dies-trigger) | 1 | 16765 | trigger_event |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
@@ -633,20 +632,6 @@ Blocks **1** card.
 
 - **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
   - {T}: Destroy target creature that dealt damage to you this turn.
-
-</details>
-
-## delayed-dies-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a delayed triggered ability created by a resolving spell that watches one specific targeted object (t2) and fires when THAT object dies this turn (once), with an intervening-if (exists a commander you control) checked on fire, then become_monarch for the spell's controller
-  <br>Why the existing vocabulary won't do: delayed_trigger accepts trigger.subject and the loader allows event 'dies' with it (OBJECT_SUBJECT_TRIGGERS), but zones._release_delayed_subject strikes the departing permanent out of every subscription's subject_oids when it leaves the battlefield -- before the dies event is emitted -- so a subscription scoped to the creature that dies is dropped before it can ever match; the card would load and silently never make you monarch. `subject` is also absent from the packet's trigger_keys, and no trigger/condition key compares the dying object against a target. An unscoped creature_dies delayed trigger with controller 'opponent' would fire on any opponent creature dying, which is a different card. Needs the release to keep subscriptions whose event is dies/leaves_battlefield for the leaving object's own zone-change event (or match on last-known oid at emit time), plus a once-only duration
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fight for the Throne** (rank 16765) — `fight_for_the_throne`
-  - When the creature an opponent controls dies this turn, if you control your commander, you become the monarch.
 
 </details>
 

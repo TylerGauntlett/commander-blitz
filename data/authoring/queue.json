@@ -94762,12 +94762,12 @@
     },
     "Fight for the Throne": {
       "edhrec_rank": 16765,
-      "gate": "template",
+      "gate": null,
       "name": "Fight for the Throne",
-      "reason": "no template for: Put a +1/+1 counter on target creature you control. Then it fights target creature an oppo",
+      "reason": "",
       "scryfall_id": "0bb2ba5f-dd4f-4d40-894c-85d9edd00c84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fight or Flight": {

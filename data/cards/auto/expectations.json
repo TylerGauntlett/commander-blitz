@@ -4254,6 +4254,9 @@
     },
     "zone": "graveyard"
   },
+  "fight_for_the_throne": {
+    "zone": "graveyard"
+  },
   "fighting_drake": {
     "zone": "battlefield"
   },

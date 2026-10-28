@@ -46425,6 +46425,93 @@
     },
     {
       "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "fight_for_the_throne",
+      "mana_cost": "{1}{G}",
+      "name": "Fight for the Throne",
+      "oracle_text": "Put a +1/+1 counter on target creature you control. Then it fights target creature an opponent controls. When the creature an opponent controls dies this turn, if you control your commander, you become the monarch.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "fight",
+          "other": {
+            "target": "t2"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "When the creature an opponent controls dies this turn, if you control your commander, you become the monarch.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "owner": "you"
+              }
+            },
+            "controller": "any",
+            "event": "dies",
+            "subject": {
+              "target": "t2"
+            }
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
