@@ -9429,6 +9429,51 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "op": "amass",
+              "subtype": "Zombie"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, amass Zombies 1",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "aven_eternal",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Aven Eternal",
+      "oracle_text": "Flying\nWhen this creature enters, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Bird",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 3
               },
               "op": "gain_life",
@@ -36608,6 +36653,47 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dread_charge",
+      "mana_cost": "{3}{B}",
+      "name": "Dread Charge",
+      "oracle_text": "Black creatures you control can't be blocked this turn except by black creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "except_blockers": {
+            "colors": [
+              "B"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "objects": {
+            "colors": [
+              "B"
+            ],
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "unblockable"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -37532,6 +37618,49 @@
         "Treefolk"
       ],
       "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "amass",
+              "subtype": "Orc"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, amass Orcs 2. (Put two +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dunland_crebain",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Dunland Crebain",
+      "oracle_text": "Flying\nWhen this creature enters, amass Orcs 2. (Put two +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Horror"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -41888,6 +42017,62 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "amass",
+              "subtype": "Zombie"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, amass Zombies 2. (Put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "subtypes": [
+              "Zombie"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Zombie tokens you control have flying."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "eternal_skylord",
+      "mana_cost": "{4}{U}",
+      "name": "Eternal Skylord",
+      "oracle_text": "When this creature enters, amass Zombies 2. (Put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)\nZombie tokens you control have flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -49715,6 +49900,125 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "flag": "jeskai",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Jeskai"
+                },
+                {
+                  "effects": [
+                    {
+                      "flag": "temur",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Temur"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose Jeskai or Temur.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "• Jeskai — Whenever one or more creatures you control deal combat damage to a player, draw a card.",
+          "trigger": {
+            "condition": {
+              "has_flag": "jeskai"
+            },
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "has_flag": "temur"
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "• Temur — Creatures you control get +1/+0 and have trample and haste.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "has_flag": "temur"
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "• Temur — Creatures you control get +1/+0 and have trample and haste."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "frostcliff_siege",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Frostcliff Siege",
+      "oracle_text": "As this enchantment enters, choose Jeskai or Temur.\n• Jeskai — Whenever one or more creatures you control deal combat damage to a player, draw a card.\n• Temur — Creatures you control get +1/+0 and have trample and haste.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -53705,6 +54009,112 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "flag": "temur",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Temur"
+                },
+                {
+                  "effects": [
+                    {
+                      "flag": "sultai",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_flag"
+                    }
+                  ],
+                  "label": "Sultai"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose Temur or Sultai.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "• Temur — Whenever you cast an instant or sorcery spell, target player mills four cards.",
+          "trigger": {
+            "condition": {
+              "has_flag": "temur"
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "affects_player": "you",
+          "condition": {
+            "has_flag": "sultai"
+          },
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "• Sultai — You may play lands from your graveyard."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "glacierwood_siege",
+      "mana_cost": "{1}{G}{U}",
+      "name": "Glacierwood Siege",
+      "oracle_text": "As this enchantment enters, choose Temur or Sultai.\n• Temur — Whenever you cast an instant or sorcery spell, target player mills four cards.\n• Sultai — You may play lands from your graveyard.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -54008,6 +54418,65 @@
               "amount": {
                 "const": 1
               },
+              "op": "amass",
+              "subtype": "Zombie"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "subtypes": [
+              "Zombie"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof",
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Zombie tokens you control have hexproof and menace."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "gleaming_overseer",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Gleaming Overseer",
+      "oracle_text": "When this creature enters, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)\nZombie tokens you control have hexproof and menace.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Wizard"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "controller": "you",
               "op": "create_token",
               "token": "treasure_token"
@@ -54129,6 +54598,80 @@
         "Horror"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "mana_value_of": {
+                    "target": "t1"
+                  }
+                },
+                "right": {
+                  "unspent_mana_count": "you"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "destroy"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Destroy target artifact if its mana value is equal to the amount of unspent mana you have."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "glissa_sunseeker",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{G}{G}",
+      "name": "Glissa Sunseeker",
+      "oracle_text": "First strike\n{T}: Destroy target artifact if its mana value is equal to the amount of unspent mana you have.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -58130,6 +58673,50 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "amass",
+              "subtype": "Zombie"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "grim_initiate",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{R}",
+      "name": "Grim Initiate",
+      "oracle_text": "First strike\nWhen this creature dies, amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Warrior"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -61475,6 +62062,47 @@
           "effects": [
             {
               "amount": {
+                "const": 2
+              },
+              "op": "amass",
+              "subtype": "Zombie"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, amass Zombies 2. (Put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "herald_of_the_dreadhorde",
+      "mana_cost": "{3}{B}",
+      "name": "Herald of the Dreadhorde",
+      "oracle_text": "When this creature dies, amass Zombies 2. (Put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Warrior"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "counter": "+1/+1",
@@ -63508,6 +64136,26 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "mana_becomes_colorless",
+          "kind": "static",
+          "text": "If you would lose unspent mana, that mana becomes colorless instead."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "horizon_stone",
+      "mana_cost": "{5}",
+      "name": "Horizon Stone",
+      "oracle_text": "If you would lose unspent mana, that mana becomes colorless instead.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -66970,6 +67618,40 @@
       ]
     },
     {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "invade_the_city",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Invade the City",
+      "oracle_text": "Amass Zombies X, where X is the number of instant and sorcery cards in your graveyard. (Put X +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "controller": "you",
+              "zone": "graveyard"
+            }
+          },
+          "op": "amass",
+          "subtype": "Zombie"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -69520,6 +70202,55 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "except_blockers": {
+                "subtypes": [
+                  "Wall"
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}, {T}: Target creature can't be blocked this turn except by Walls."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "joven_s_tools",
+      "mana_cost": "{6}",
+      "name": "Joven's Tools",
+      "oracle_text": "{4}, {T}: Target creature can't be blocked this turn except by Walls.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -97882,6 +98613,293 @@
           "effects": [
             {
               "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "any_of": [
+                  {
+                    "not_subtypes": [
+                      "Avatar"
+                    ],
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Planeswalker"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, mill four cards, then you may return a non-Avatar creature card or a planeswalker card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "any_of": [
+                  {
+                    "not_subtypes": [
+                      "Avatar"
+                    ],
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Planeswalker"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, mill four cards, then you may return a non-Avatar creature card or a planeswalker card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "overlord_of_the_balemurk",
+      "impending": {
+        "cost": "{1}{B}",
+        "counters": 5
+      },
+      "mana_cost": "{3}{B}{B}",
+      "name": "Overlord of the Balemurk",
+      "oracle_text": "Impending 5—{1}{B} (If you cast this spell for its impending cost, it enters with five time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)\nWhenever this permanent enters or attacks, mill four cards, then you may return a non-Avatar creature card or a planeswalker card from your graveyard to your hand.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar",
+        "Horror"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this permanent enters or attacks, it deals 4 damage to any target.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this permanent enters or attacks, it deals 4 damage to any target.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "overlord_of_the_boilerbilges",
+      "impending": {
+        "cost": "{2}{R}{R}",
+        "counters": 4
+      },
+      "mana_cost": "{4}{R}{R}",
+      "name": "Overlord of the Boilerbilges",
+      "oracle_text": "Impending 4—{2}{R}{R} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)\nWhenever this permanent enters or attacks, it deals 4 damage to any target.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar",
+        "Horror"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, draw two cards, then discard a card.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "discard",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this permanent enters or attacks, draw two cards, then discard a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "overlord_of_the_floodpits",
+      "impending": {
+        "cost": "{1}{U}{U}",
+        "counters": 4
+      },
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{U}",
+      "name": "Overlord of the Floodpits",
+      "oracle_text": "Impending 4—{1}{U}{U} (If you cast this spell for its impending cost, it enters with four time counters and isn't a creature until the last is removed. At the beginning of your end step, remove a time counter from it.)\nFlying\nWhenever this permanent enters or attacks, draw two cards, then discard a card.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar",
+        "Horror"
+      ],
+      "toughness": 3,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 2
               },
               "op": "create_token",
@@ -107480,6 +108498,31 @@
           },
           "op": "gain_life",
           "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "relentless_advance",
+      "mana_cost": "{3}{U}",
+      "name": "Relentless Advance",
+      "oracle_text": "Amass Zombies 3. (Put three +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "amass",
+          "subtype": "Zombie"
         }
       ],
       "types": [
@@ -141770,6 +142813,54 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{R}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "except_blockers": {
+                "keywords": [
+                  "defender"
+                ]
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "{R}: This creature can't be blocked this turn except by creatures with defender."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "tin_street_dodger",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{R}",
+      "name": "Tin Street Dodger",
+      "oracle_text": "Haste\n{R}: This creature can't be blocked this turn except by creatures with defender.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Rogue"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -148246,6 +149337,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{0}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "except_blockers": {
+                "subtypes": [
+                  "Wall"
+                ]
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice this creature at the beginning of the next end step."
+            }
+          ],
+          "kind": "activated",
+          "text": "{0}: This creature can't be blocked this turn except by Walls. Sacrifice this creature at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "varchild_s_crusader",
+      "mana_cost": "{3}{R}",
+      "name": "Varchild's Crusader",
+      "oracle_text": "{0}: This creature can't be blocked this turn except by Walls. Sacrifice this creature at the beginning of the next end step.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -152880,6 +154029,66 @@
       "source": "auto",
       "subtypes": [
         "Crocodile"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Orc",
+              "Goblin"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Other Orcs and Goblins you control have menace."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "amass",
+              "subtype": "Orc"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, amass Orcs 2. (Put two +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "warg_rider",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{4}{B}",
+      "name": "Warg Rider",
+      "oracle_text": "Menace\nOther Orcs and Goblins you control have menace.\nAt the beginning of combat on your turn, amass Orcs 2. (Put two +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Warrior"
       ],
       "toughness": 3,
       "types": [

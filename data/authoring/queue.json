@@ -17352,12 +17352,12 @@
     },
     "Aven Eternal": {
       "edhrec_rank": 17350,
-      "gate": "template",
+      "gate": null,
       "name": "Aven Eternal",
-      "reason": "no template for: When this creature enters, amass Zombies 1",
+      "reason": "",
       "scryfall_id": "fe479484-a827-4d3c-8e35-e905e4f6664a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aven Farseer": {
@@ -74322,12 +74322,12 @@
     },
     "Dread Charge": {
       "edhrec_rank": 28811,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Charge",
-      "reason": "no template for: Black creatures you control can't be blocked this turn except by black creatures",
+      "reason": "",
       "scryfall_id": "ed0ca934-6989-415b-8816-7c66d22b4707",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread Defiler": {
@@ -76922,12 +76922,12 @@
     },
     "Dunland Crebain": {
       "edhrec_rank": 9316,
-      "gate": "template",
+      "gate": null,
       "name": "Dunland Crebain",
-      "reason": "no template for: When this creature enters, amass Orcs 2",
+      "reason": "",
       "scryfall_id": "e47b5e64-6f0c-4951-9ddb-f4773836d465",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duplicant": {
@@ -86612,12 +86612,12 @@
     },
     "Eternal Skylord": {
       "edhrec_rank": 4622,
-      "gate": "template",
+      "gate": null,
       "name": "Eternal Skylord",
-      "reason": "no template for: When this creature enters, amass Zombies 2",
+      "reason": "",
       "scryfall_id": "ab5b3aba-8542-4157-b6b6-265611a2a52f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eternal Student": {
@@ -102792,12 +102792,12 @@
     },
     "Frostcliff Siege": {
       "edhrec_rank": 1690,
-      "gate": "template",
+      "gate": null,
       "name": "Frostcliff Siege",
-      "reason": "no template for: As this enchantment enters, choose Jeskai or Temur",
+      "reason": "",
       "scryfall_id": "74e9e539-1ec6-4f8f-a854-65ca7cca9b96",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frostfist Strider": {
@@ -110092,12 +110092,12 @@
     },
     "Glacierwood Siege": {
       "edhrec_rank": 5292,
-      "gate": "template",
+      "gate": null,
       "name": "Glacierwood Siege",
-      "reason": "no template for: As this enchantment enters, choose Temur or Sultai",
+      "reason": "",
       "scryfall_id": "83293ff4-0841-4f5e-8d59-1ae29a62c890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glade Gnarr": {
@@ -110542,12 +110542,12 @@
     },
     "Gleaming Overseer": {
       "edhrec_rank": 2866,
-      "gate": "template",
+      "gate": null,
       "name": "Gleaming Overseer",
-      "reason": "no template for: When this creature enters, amass Zombies 1",
+      "reason": "",
       "scryfall_id": "6369ff49-0b82-4722-b04f-ca5f529d1e82",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gleaming Splendor": {
@@ -111032,12 +111032,12 @@
     },
     "Glissa Sunseeker": {
       "edhrec_rank": 15960,
-      "gate": "template",
+      "gate": null,
       "name": "Glissa Sunseeker",
-      "reason": "no template for: {T}: Destroy target artifact if its mana value is equal to the amount of unspent mana you ",
+      "reason": "",
       "scryfall_id": "ba320b49-5f1a-4487-8d75-504c534cf522",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glissa Sunslayer": {
@@ -118212,12 +118212,12 @@
     },
     "Grim Initiate": {
       "edhrec_rank": 16212,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Initiate",
-      "reason": "no template for: When this creature dies, amass Zombies 1",
+      "reason": "",
       "scryfall_id": "29b6ec9d-3861-48bf-a198-dc7efba5d89c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Javelineer": {
@@ -126302,12 +126302,12 @@
     },
     "Herald of the Dreadhorde": {
       "edhrec_rank": 18797,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of the Dreadhorde",
-      "reason": "no template for: When this creature dies, amass Zombies 2",
+      "reason": "",
       "scryfall_id": "d7ae9cb7-a3af-4224-89a5-a72f4d09dacf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of the Fair": {
@@ -129872,12 +129872,12 @@
     },
     "Horizon Stone": {
       "edhrec_rank": 4071,
-      "gate": "template",
+      "gate": null,
       "name": "Horizon Stone",
-      "reason": "no template for: If you would lose unspent mana, that mana becomes colorless instead",
+      "reason": "",
       "scryfall_id": "6affd9c6-f7ab-488e-85fa-2a3a48383414",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Horizon of Progress": {
@@ -138572,12 +138572,12 @@
     },
     "Invade the City": {
       "edhrec_rank": 14105,
-      "gate": "template",
+      "gate": null,
       "name": "Invade the City",
-      "reason": "no template for: Amass Zombies X, where X is the number of instant and sorcery cards in your graveyard",
+      "reason": "",
       "scryfall_id": "90f422c7-622a-42d2-bfaa-df6fdbf45789",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Invader Parasite": {
@@ -144002,12 +144002,12 @@
     },
     "Joven's Tools": {
       "edhrec_rank": 28351,
-      "gate": "template",
+      "gate": null,
       "name": "Joven's Tools",
-      "reason": "no template for: {4}, {T}: Target creature can't be blocked this turn except by Walls",
+      "reason": "",
       "scryfall_id": "91c7aa8e-5873-4e18-8adb-1523c01d4e86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jovial Evil": {
@@ -196022,32 +196022,32 @@
     },
     "Overlord of the Balemurk": {
       "edhrec_rank": 2225,
-      "gate": "template",
+      "gate": null,
       "name": "Overlord of the Balemurk",
-      "reason": "no template for: Impending 5—{1}{B}",
+      "reason": "",
       "scryfall_id": "49993a18-f733-4d1f-b629-12fc45cbb327",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overlord of the Boilerbilges": {
       "edhrec_rank": 4542,
-      "gate": "template",
+      "gate": null,
       "name": "Overlord of the Boilerbilges",
-      "reason": "no template for: Impending 4—{2}{R}{R}",
+      "reason": "",
       "scryfall_id": "0e8c085e-db0e-45a8-96d0-80b480361771",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overlord of the Floodpits": {
       "edhrec_rank": 2915,
-      "gate": "template",
+      "gate": null,
       "name": "Overlord of the Floodpits",
-      "reason": "no template for: Impending 4—{1}{U}{U}",
+      "reason": "",
       "scryfall_id": "3194a6f4-f994-494c-aa29-1de8af48a3f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Overlord of the Hauntwoods": {
@@ -219622,12 +219622,12 @@
     },
     "Relentless Advance": {
       "edhrec_rank": 21202,
-      "gate": "template",
+      "gate": null,
       "name": "Relentless Advance",
-      "reason": "no template for: Amass Zombies 3",
+      "reason": "",
       "scryfall_id": "4258e242-91c6-4b30-86ec-7759705aa97c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relentless Assault": {
@@ -287732,12 +287732,12 @@
     },
     "Tin Street Dodger": {
       "edhrec_rank": 11732,
-      "gate": "template",
+      "gate": null,
       "name": "Tin Street Dodger",
-      "reason": "no template for: {R}: This creature can't be blocked this turn except by creatures with defender",
+      "reason": "",
       "scryfall_id": "82be3087-0dcb-4236-90a6-b6d4ab4c0bc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tin Street Gossip": {
@@ -301352,12 +301352,12 @@
     },
     "Varchild's Crusader": {
       "edhrec_rank": 30653,
-      "gate": "template",
+      "gate": null,
       "name": "Varchild's Crusader",
-      "reason": "no template for: {0}: This creature can't be blocked this turn except by Walls. Sacrifice this creature at ",
+      "reason": "",
       "scryfall_id": "b5ade7ad-ce32-4296-8cec-20bd79c7b16a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Varchild's War-Riders": {
@@ -310842,12 +310842,12 @@
     },
     "Warg Rider": {
       "edhrec_rank": 6903,
-      "gate": "template",
+      "gate": null,
       "name": "Warg Rider",
-      "reason": "no template for: Other Orcs and Goblins you control have menace",
+      "reason": "",
       "scryfall_id": "18cc2bc6-12bb-4795-b2b2-9d414823b773",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Warg Tactics": {
