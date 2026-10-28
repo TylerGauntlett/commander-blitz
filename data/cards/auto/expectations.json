@@ -10484,6 +10484,10 @@
       "graveyard"
     ]
   },
+  "serra_s_emissary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "serra_s_sanctum": {
     "zone": "battlefield"
   },

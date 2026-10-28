@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**93 cards** blocked by **80** capabilities.
+**92 cards** blocked by **77** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [choose-card-type](#choose-card-type) | 1 | 2680 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -69,11 +68,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [permanent-goad](#permanent-goad) | 1 | 29052 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
-| [player-protection](#player-protection) | 1 | 2680 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
-| [protection-from-chosen-type](#protection-from-chosen-type) | 1 | 2680 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
@@ -500,21 +497,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## choose-card-type
-
-Blocks **1** card.
-
-- **(op)** choose_type with of: "card_type" offering every card type (Artifact, Battle, Creature, Enchantment, Instant, Kindred, Land, Planeswalker, Sorcery), stored in chosen_card_type
-  <br>Why the existing vocabulary won't do: choose_type's 'of' only offers creature_type or permanent_type; permanent_type leaves out Instant, Sorcery and Kindred, which are legal answers and the commonest choices for this card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serra's Emissary** (rank 2680) — `serra_s_emissary`
-  - As this creature enters, choose a card type.
-  - You and creatures you control have protection from the chosen card type.
 
 </details>
 
@@ -1044,21 +1026,6 @@ Blocks **1** card.
 
 </details>
 
-## player-protection
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static granting the controller ("You have protection from ...") protection from a card type: damage from sources of that type is prevented and the player can't be targeted or enchanted by them
-  <br>Why the existing vocabulary won't do: protection only affects objects; player_hexproof covers untargetability only, not damage prevention or a quality filter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serra's Emissary** (rank 2680) — `serra_s_emissary`
-  - As this creature enters, choose a card type.
-  - You and creatures you control have protection from the chosen card type.
-
-</details>
-
 ## players-dealt-combat-damage-by-subtype
 
 Blocks **1** card.
@@ -1098,21 +1065,6 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
-
-</details>
-
-## protection-from-chosen-type
-
-Blocks **1** card.
-
-- **(static_effect)** a protection static whose from_types can be the binding {"chosen_card_type_of": "self"}, read off the source's chosen card type
-  <br>Why the existing vocabulary won't do: the protection static's from_types accepts only literal type names checked against KNOWN_TYPES; chosen_card_type_of is read only in selector 'types', not in from_types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Serra's Emissary** (rank 2680) — `serra_s_emissary`
-  - As this creature enters, choose a card type.
-  - You and creatures you control have protection from the chosen card type.
 
 </details>
 

@@ -117089,6 +117089,74 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "of": "card_type",
+              "op": "choose_type",
+              "prompt": "Choose a card type"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this creature enters, choose a card type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "protection",
+          "from_types": [
+            {
+              "chosen_card_type_of": "self"
+            }
+          ],
+          "kind": "static",
+          "text": "You and creatures you control have protection from the chosen card type."
+        },
+        {
+          "affects_player": "you",
+          "effect": "player_protection",
+          "from_types": [
+            {
+              "chosen_card_type_of": "self"
+            }
+          ],
+          "kind": "static",
+          "text": "You and creatures you control have protection from the chosen card type."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "serra_s_emissary",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}{W}{W}",
+      "name": "Serra's Emissary",
+      "oracle_text": "Flying\nAs this creature enters, choose a card type.\nYou and creatures you control have protection from the chosen card type.",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

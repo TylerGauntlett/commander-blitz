@@ -241062,12 +241062,12 @@
     },
     "Serra's Emissary": {
       "edhrec_rank": 2680,
-      "gate": "template",
+      "gate": null,
       "name": "Serra's Emissary",
-      "reason": "no template for: As this creature enters, choose a card type",
+      "reason": "",
       "scryfall_id": "8de657fb-e68e-4400-9a12-60aaaa075fc4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Serra's Guardian": {
