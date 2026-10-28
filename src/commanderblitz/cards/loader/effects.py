@@ -18,6 +18,7 @@ from commanderblitz.engine.effects.ops_cards import (
     LOOK_STEP_KEYS,
     SEARCHABLE,
 )
+from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
 from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
 from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from commanderblitz.engine.effects.values import (
@@ -1958,6 +1959,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "amass":
+        # "Amass Orcs 2" prints both halves. A missing N would amass one, and a
+        # missing or misspelled subtype has no token to create -- an Orc card
+        # quietly making Zombies is a different card in every tribal deck.
+        if "amount" not in effect:
+            raise DslError(f"{where}: amass needs an 'amount', the N of 'Amass Zombies N'")
+        if effect.get("subtype") not in AMASS_TOKENS:
+            raise DslError(
+                f"{where}: amass needs a 'subtype', one of {sorted(AMASS_TOKENS)}, "
+                f"got {effect.get('subtype')!r}"
+            )
     if op == "empower" and "amount" not in effect:
         # "Empower Jace N" always prints its N. Defaulted, a card missing the
         # key would load and empower by one -- Mindseeker Oculus putting one

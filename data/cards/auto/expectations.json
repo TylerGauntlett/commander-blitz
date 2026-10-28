@@ -3328,6 +3328,9 @@
   "dread_statuary": {
     "zone": "battlefield"
   },
+  "dreadhorde_invasion": {
+    "zone": "battlefield"
+  },
   "dreamroot_cascade": {
     "zone": "battlefield"
   },

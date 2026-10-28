@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**104 cards** blocked by **94** capabilities.
+**103 cards** blocked by **93** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
-| [amass](#amass) | 1 | 1481 | op, token |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [batched-token-created](#batched-token-created) | 1 | 3172 | trigger_event |
@@ -441,22 +440,6 @@ Blocks **1** card.
 
 - **Hulk's Thunderclap** (rank 20956) — `hulk_s_thunderclap`
   - Target creature you control deals damage equal to its power to another target creature. If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment.
-
-</details>
-
-## amass
-
-Blocks **1** card.
-
-- **(op)** an amass op taking a creature type and N: if you control no Army, create a 0/0 black <Type> Army creature token; then choose an Army you control, put N +1/+1 counters on it, and it permanently gains the named creature type
-  <br>Why the existing vocabulary won't do: There is no amass op, and composing it from if/exists + create_token + choose_permanents + add_counters + add_subtype fails because no 0/0 black Zombie Army creature token exists in token_ids (only zombie_2_2_b and zombie_knight_2_2_b_menace)
-- **(token)** a 0/0 black Zombie Army creature token
-  <br>Why the existing vocabulary won't do: token_ids has no Army token; zombie_2_2_b is a 2/2 without the Army subtype
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dreadhorde Invasion** (rank 1481) — `dreadhorde_invasion`
-  - At the beginning of your upkeep, you lose 1 life and amass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)
 
 </details>
 

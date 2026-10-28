@@ -3219,6 +3219,10 @@
     "artist": "Wayne Reynolds",
     "scryfall_id": "a5134828-5876-4d17-b0bb-f7e80e54c100"
   },
+  "dreadhorde_invasion": {
+    "artist": "Stanton Feng",
+    "scryfall_id": "9bbfad2d-a3b5-4119-aea4-0793b7a9da88"
+  },
   "dreamroot_cascade": {
     "artist": "Piotr Dura",
     "scryfall_id": "bb911ec9-4354-46af-8750-6920555eb1e7"
@@ -4747,6 +4751,10 @@
   "goblin_1_1_r": {
     "artist": "Paolo Parente",
     "scryfall_id": "0c7f299e-4774-4e8b-bb0e-db27d57d2621"
+  },
+  "goblin_army_0_0_b": {
+    "artist": "Stanislav Sherbakov",
+    "scryfall_id": "0045408d-4ab9-48bf-84aa-c6d827682090"
   },
   "goblin_assailant": {
     "artist": "Anton Solovianchyk",
@@ -8354,6 +8362,10 @@
     "artist": "Dany Orizio",
     "scryfall_id": "5fbe52a3-f85e-4b3a-a345-413b64d69c49"
   },
+  "orc_army_0_0_b": {
+    "artist": "Veli Nystr\u00f6m",
+    "scryfall_id": "2f8b43e8-dd89-452e-b572-8559e19fdea2"
+  },
   "order_of_the_sacred_bell": {
     "artist": "Carl Critchlow",
     "scryfall_id": "310500b2-8539-441e-af89-81ddfa8ef080"
@@ -10746,6 +10758,10 @@
   "slippery_karst": {
     "artist": "Stephen Daniele",
     "scryfall_id": "c41073e8-01cc-4d19-acb5-caaf2861bc6a"
+  },
+  "sliver_army_0_0_b": {
+    "artist": "Maxime Minard",
+    "scryfall_id": "b9821f26-04b4-460b-880e-5052122b21ae"
   },
   "sliver_construct": {
     "artist": "Mathias Kollros",
@@ -13945,6 +13961,10 @@
   "zombie_2_2_b": {
     "artist": "Anna Steinbauer",
     "scryfall_id": "f7a49477-b7b5-4f0e-885f-e1d2b580c52e"
+  },
+  "zombie_army_0_0_b": {
+    "artist": "David Astruga",
+    "scryfall_id": "14474e29-27a4-475a-9d2c-eb1d6c146421"
   },
   "zombie_goliath": {
     "artist": "E. M. Gist",

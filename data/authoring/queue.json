@@ -74592,12 +74592,12 @@
     },
     "Dreadhorde Invasion": {
       "edhrec_rank": 1481,
-      "gate": "template",
+      "gate": null,
       "name": "Dreadhorde Invasion",
-      "reason": "no template for: At the beginning of your upkeep, you lose 1 life and amass Zombies 1",
+      "reason": "",
       "scryfall_id": "ccd2fc83-7fbe-45c4-a5f3-18a105ce6f09",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dreadhorde Twins": {

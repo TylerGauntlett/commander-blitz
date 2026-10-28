@@ -226,6 +226,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "add_counters": ("Board", "Put N counters of a kind on permanents or players.", None),
     "empower": ("Board", "Empower Jace N: N loyalty on a Jace token you control, creating one first if none.",
                 '`empower` — "Empower Jace N"'),
+    "amass": ("Board", "Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too.",
+              '`amass` — "Amass Zombies N"'),
     "remove_counters": ("Board", "Remove N counters of a kind.", None),
     "tap": ("Board", "Tap permanents.", None),
     "untap": ("Board", "Untap permanents.", "Untapping on somebody else's turn"),

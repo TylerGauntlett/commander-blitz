@@ -700,3 +700,42 @@ class TestEmpowersJaceIsABlueZeroLoyaltyPlaneswalker:
     def test_it_is_the_only_planeswalker_token(self, pool):
         tokens = [c.id for c in pool if c.is_token and "Planeswalker" in c.types]
         assert tokens == ["jace_planeswalker_u"]
+
+
+class TestAmassArmiesAreZeroZeroBlackArmies:
+    """Amass [subtype] N (701.47a): *"…create a 0/0 black [subtype] Army
+    creature token"* (Dreadhorde Invasion amasses Zombies; the catalog's tfrc,
+    tltr, thob and tcmm rows are the Zombie, Orc, Goblin and Sliver Armies).
+
+    The pool's other 0/0 black creature token is the Phyrexian Germ, and the
+    other black Zombies are 2/2s. Neither stands in: a printed size would make
+    every amass worth that much more, and `op_amass` finds the Army it grows by
+    its Army subtype.
+    """
+
+    ARMIES = {
+        "Zombie": "zombie_army_0_0_b",
+        "Orc": "orc_army_0_0_b",
+        "Goblin": "goblin_army_0_0_b",
+        "Sliver": "sliver_army_0_0_b",
+    }
+
+    @pytest.mark.parametrize("subtype", sorted(ARMIES))
+    def test_each_is_a_zero_zero_black_army_of_its_subtype(self, pool, subtype):
+        army = pool.get(self.ARMIES[subtype])
+        assert army is not None and army.is_token
+        assert (army.power, army.toughness) == (0, 0)
+        assert sorted(army.colors) == ["B"]
+        assert list(army.types) == ["Creature"]
+        assert sorted(army.subtypes) == sorted([subtype, "Army"])
+        assert not army.keywords and not army.abilities
+
+    def test_the_op_names_exactly_these(self):
+        from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
+
+        assert AMASS_TOKENS == self.ARMIES
+
+    def test_the_germ_is_still_a_separate_token(self, pool):
+        germ = pool.get("germ_0_0_b")
+        assert germ is not None
+        assert "Army" not in germ.subtypes

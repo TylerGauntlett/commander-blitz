@@ -1,5 +1,5 @@
 {
-  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list. Hand-written, and edited only under /extend-dsl (its Tier 0, a gap record with kind 'token'). Three are created by no shipped card and stay as test fixtures: knight_2_2_w_vigilance (the near miss tests/unit/tokens/test_token_pool.py and tests/cards/test_authoring.py contrast with knight_2_2_w and samurai_2_2_w_vigilance), kraken_8_8_u (the 8/8 in tests/unit/triggers/test_once_each_turn_trigger.py and test_atraxa_tokens.py) and vampire_1_1_bw (made by a test-pool card in tests/data/testing.cards.json, and by test_sba_and_commander.py).",
+  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list. Hand-written, and edited only under /extend-dsl (its Tier 0, a gap record with kind 'token'). Three are created by no shipped card and stay as test fixtures: knight_2_2_w_vigilance (the near miss tests/unit/tokens/test_token_pool.py and tests/cards/test_authoring.py contrast with knight_2_2_w and samurai_2_2_w_vigilance), kraken_8_8_u (the 8/8 in tests/unit/triggers/test_once_each_turn_trigger.py and test_atraxa_tokens.py) and vampire_1_1_bw (made by a test-pool card in tests/data/testing.cards.json, and by test_sba_and_commander.py). The four 0/0 black Army tokens are named by no create_token: the amass op picks one by its subtype (ops_counters.AMASS_TOKENS).",
   "cards": [
     {
       "id": "angel_3_3_w_flying",
@@ -945,6 +945,90 @@
       "subtypes": [
         "Phyrexian",
         "Germ"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "goblin_army_0_0_b",
+      "name": "Goblin Army Token",
+      "oracle_text": "0/0 black Goblin Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin",
+        "Army"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "orc_army_0_0_b",
+      "name": "Orc Army Token",
+      "oracle_text": "0/0 black Orc Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Orc",
+        "Army"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "sliver_army_0_0_b",
+      "name": "Sliver Army Token",
+      "oracle_text": "0/0 black Sliver Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sliver",
+        "Army"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "zombie_army_0_0_b",
+      "name": "Zombie Army Token",
+      "oracle_text": "0/0 black Zombie Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie",
+        "Army"
       ],
       "power": 0,
       "toughness": 0,

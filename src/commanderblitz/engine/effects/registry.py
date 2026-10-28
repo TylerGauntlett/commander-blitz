@@ -31,6 +31,9 @@ RECORDING_OPS = frozenset(
         #: accumulating semantics -- "airbend all other creatures" is one pool
         #: a later line may need to name.
         "airbend",
+        #: The amassed Army, a list of zero or one oids -- "the
+        #: amassed Army's power". See `ops_counters.op_amass`.
+        "amass",
         #: What was beheld -- the chosen permanent or the revealed hand card.
         #: See `ops_cards.op_behold`.
         "behold",

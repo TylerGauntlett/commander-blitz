@@ -9,7 +9,7 @@ from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
 )
-from commanderblitz.engine.effects.ops_counters import EMPOWER_TOKEN
+from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS, EMPOWER_TOKEN
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.mana import ManaCost, parse_mana_production
 
@@ -279,6 +279,10 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                 # The op names its token itself, so a pool without the Jace
                 # fails here rather than the first time a card empowers.
                 check(card, EMPOWER_TOKEN, "empower")
+            if effect.get("op") == "amass":
+                # Likewise the Army token its subtype names (the effects guard
+                # has already refused a subtype with none).
+                check(card, AMASS_TOKENS[str(effect.get("subtype"))], "amass")
         for ability in card.abilities:
             static = ability.static or {}
             for token_id in static.get("create_instead", ()):

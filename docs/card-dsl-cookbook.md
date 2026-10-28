@@ -1785,6 +1785,34 @@ beside the one you already control. The loader refuses an `empower` without
 `amount`, and `validate_token_references` refuses a pool without the Jace
 token.
 
+### `amass` — "Amass Zombies N"
+
+Rule 701.47a: "If you don't control an Army creature, create a 0/0 black
+[subtype] Army creature token. Choose an Army creature you control. Put N +1/+1
+counters on that creature. If it isn't a [subtype], it becomes a [subtype] in
+addition to its other types." Dreadhorde Invasion amasses Zombies; the Lord of
+the Rings cards amass Orcs and Goblins.
+
+```jsonc
+{"op": "amass", "subtype": "Zombie", "amount": {"const": 1}, "as": "army"}
+```
+
+`subtype` is the singular creature type and picks the token from
+`AMASS_TOKENS` in `effects/ops_counters.py` (Zombie, Orc, Goblin, Sliver, one
+0/0 black `<subtype>_army_0_0_b` each); the loader refuses an `amass` without
+`amount` or with a subtype that has no token. `amount` is any value expression,
+below zero reads as zero. It is `empower`'s shape with a creature: the token is
+created only when you control no Army *creature* (a token or not, read off the
+characteristics), the counters go on **one** Army the amassing player picks,
+and both happen in one effect, so the 0/0 never meets 704.5f before its
+counters land (only "amass 0", or the second token of a doubled creation, dies).
+The chosen Army then gains the subtype for as long as it stays on the
+battlefield: an Orc Army that amasses Zombies is an Orc Zombie Army. `as`
+records the amassed Army, zero or one oids, for "the amassed Army's power".
+
+Not `create_token` then `add_counters`: that pair makes a fresh Army every time
+and never adds the subtype.
+
 ## Battles
 
 ```jsonc

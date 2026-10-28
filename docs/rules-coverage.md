@@ -130,6 +130,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Extort and demonstrate** | Extort (702.101) written out by `templates.extort_ability`; demonstrate as `copy_spell` with a `controller` player spec and `choose_player` binding one seat, each copy's controller answering `new_targets` (115.7b) |
 | **Compleated** | 702.150a: `GameObject.cast_phyrexian_life` removes two loyalty per symbol in `zones._enter_battlefield`, on that arrival only |
 | **Empower** | The `empower` op: loyalty counters on one Jace token you control, the blue 0-loyalty Jace planeswalker token (`EMPOWER_TOKEN`) created first only when you control none, both in one effect so 704.5i looks only afterwards |
+| **Amass** | The `amass` op (701.47): +1/+1 counters on one Army creature you control, the 0/0 black Army token of the named subtype (`AMASS_TOKENS`) created first only when you control none, both in one effect so 704.5f looks only afterwards; the Army gains the subtype permanently and `as` records it ("the amassed Army") |
 
 ### Triggers
 

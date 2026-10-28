@@ -6,12 +6,14 @@ import dataclasses
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import chars
 from ..effects.ops_stack import put_copy_on_stack
 from ..enums import Zone
 from ..errors import DslError
 from ..player_statics import player_cant_cast_while_resolving
 from ..primitives import (
     add_counters,
+    add_subtypes,
     attach,
     change_control,
     create_token,
@@ -90,6 +92,65 @@ def op_empower(ctx: EffectContext, spec: Mapping[str, Any]):
     picked = yield from pick_from_pool(ctx, pool, {"count": 1}, "Empower which Jace?")
     for oid in picked:
         add_counters(ctx.state, oid, "loyalty", amount, source=ctx.source_oid)
+
+
+#: The token "amass [subtype] N" creates when you control no Army creature,
+#: one per subtype a printed card amasses: the catalog's 0/0 black
+#: "[subtype] Army" token rows (tfrc, tltr, thob, tcmm). The keys are the
+#: values the op's ``subtype`` takes, and the loader refuses any other.
+AMASS_TOKENS = {
+    "Zombie": "zombie_army_0_0_b",
+    "Orc": "orc_army_0_0_b",
+    "Goblin": "goblin_army_0_0_b",
+    "Sliver": "sliver_army_0_0_b",
+}
+
+#: "An Army creature you control" -- read off the characteristics, so any
+#: creature with the Army subtype counts, token or not.
+_ARMY_CREATURES = {
+    "zone": "battlefield",
+    "controller": "you",
+    "types": ["Creature"],
+    "subtypes": ["Army"],
+}
+
+
+@register("amass")
+def op_amass(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Amass [subtype] N." -- rule 701.47a: *If you don't control an Army
+    creature, create a 0/0 black [subtype] Army creature token. Choose an Army
+    creature you control. Put N +1/+1 counters on that creature. If it isn't a
+    [subtype], it becomes a [subtype] in addition to its other types.*
+
+    `empower`'s shape with a creature: the token is created only when you
+    control no Army creature, the counters go on **one** Army, chosen by the
+    amassing player when there is more than one (a doubled creation leaves the
+    other at 0/0 for 704.5f), and both halves happen inside the same effect so
+    the new 0/0 is never looked at by a state-based action before its counters
+    land ("amass 0" still creates it, and it then dies).
+
+    The subtype is a parameter because the printed word changes: Zombie (War
+    of the Spark, whose "amass N" Oracle now reads "amass Zombies N"), Orc,
+    Goblin, Sliver. It picks the token and is the type the chosen Army gains,
+    written onto the object for as long as it stays on the battlefield --
+    an Orc Army that later amasses Zombies is an Orc Zombie Army.
+
+    ``as`` records the amassed Army ("the amassed Army's power"),
+    a list of zero or one oids.
+    """
+    subtype = str(spec["subtype"])
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    pool = resolve_pool(ctx, _ARMY_CREATURES)
+    if not pool:
+        create_token(ctx.state, AMASS_TOKENS[subtype], ctx.controller, source=ctx.source_oid)
+        pool = resolve_pool(ctx, _ARMY_CREATURES)
+    picked = yield from pick_from_pool(ctx, pool, {"count": 1}, "Amass onto which Army?")
+    for oid in picked:
+        add_counters(ctx.state, oid, "+1/+1", amount, source=ctx.source_oid)
+        if subtype not in chars(ctx.state, oid).subtypes:
+            add_subtypes(ctx.state, oid, [subtype], source=ctx.source_oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = list(picked)
 
 
 @register("distribute_counters")
