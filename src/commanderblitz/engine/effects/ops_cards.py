@@ -1680,6 +1680,16 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     Optional by construction: `ask_objects` with a minimum of zero is the "you
     may", so no `may` wrapper is needed and declining costs no second question.
     A player with nothing matching is not asked at all.
+
+    ``objects`` replaces the zone walk with a named pool, and ``per_owner``
+    splits that pool into one choice per owner -- The Ur-Sphinx: "each player
+    mills that many cards. **For each player, you may cast a card that player
+    milled this way** without paying its mana cost." The pool is the `mill`
+    binding narrowed to `zone: "graveyard"`, so a card that left its owner's
+    graveyard since is no longer on offer; the caster controls the spell and
+    its owner keeps it (108.3), which is `push_spell` taking the card out of
+    the owner's list. One question per owner, in the pool's own order, because
+    "a card" with no "for each player" would be one cast in total.
     """
 
     selector = spec.get("selector") or {}
@@ -1691,15 +1701,27 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     # is exactly "cards you own in exile". Defaults to the hand, so every card
     # written before this reads as it did.
     zones = [str(z) for z in spec.get("zones", ("hand",))]
+    named = spec.get("objects")
     for pid in select_players(ctx, spec.get("player", "you")):
         if player_cant_cast_while_resolving(ctx.state, pid):
             # Voice of Victory: nothing to offer a player who cannot cast.
             continue
         player = ctx.state.players[pid]
+        if named is not None:
+            # A named pool: each card is tested in the zone it is actually in,
+            # which may be another player's graveyard.
+            offered = [
+                (oid, ctx.state.objects[oid].zone.value)
+                for oid in resolve_pool(ctx, named)
+                if oid in ctx.state.objects
+            ]
+        else:
+            offered = [
+                (oid, zone) for zone in zones for oid in list(player.zone_list(Zone(zone)))
+            ]
         pool = [
             oid
-            for zone in zones
-            for oid in list(player.zone_list(Zone(zone)))
+            for oid, zone in offered
             # A land is not a spell and is never cast (305.9) -- it is *played*,
             # and only during your main phase with the stack empty. Excluded
             # here rather than left to each card's selector, because every
@@ -1716,11 +1738,18 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             )
             and _matches_in_zone(ctx, oid, selector, zone)
         ]
-        if not pool:
-            continue
-        picked = yield from ask_objects(ctx, prompt, pool, 0, 1, pid, "cast_from_hand")
-        if picked:
-            cast_for_free(ctx.state, pid, picked[0])
+        if spec.get("per_owner"):
+            owners: list[int] = []
+            for oid in pool:
+                if ctx.state.objects[oid].owner not in owners:
+                    owners.append(ctx.state.objects[oid].owner)
+            groups = [[o for o in pool if ctx.state.objects[o].owner == own] for own in owners]
+        else:
+            groups = [pool] if pool else []
+        for group in groups:
+            picked = yield from ask_objects(ctx, prompt, group, 0, 1, pid, "cast_from_hand")
+            if picked:
+                cast_for_free(ctx.state, pid, picked[0])
 
 
 @register("hideaway")

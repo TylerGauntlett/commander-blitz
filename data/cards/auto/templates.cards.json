@@ -139372,6 +139372,98 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "battlefield",
+            "command"
+          ],
+          "affects_spells": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Sphinx"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Eminence — As long as The Ur-Sphinx is in the command zone or on the battlefield, other Sphinx spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "binding": "attackers",
+                  "subtypes": [
+                    "Sphinx"
+                  ]
+                }
+              },
+              "as": "milled",
+              "op": "mill",
+              "player": "each_player"
+            },
+            {
+              "objects": {
+                "binding": "milled",
+                "zone": "graveyard"
+              },
+              "op": "cast_from_hand",
+              "per_owner": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more Sphinxes you control attack, each player mills that many cards. For each player, you may cast a card that player milled this way without paying its mana cost.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "subtypes": [
+                  "Sphinx"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "the_ur_sphinx",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{6}{W}{U}{B}",
+      "name": "The Ur-Sphinx",
+      "oracle_text": "Eminence — As long as The Ur-Sphinx is in the command zone or on the battlefield, other Sphinx spells you cast cost {1} less to cast.\nFlying\nWhenever one or more Sphinxes you control attack, each player mills that many cards. For each player, you may cast a card that player milled this way without paying its mana cost.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Sphinx",
+        "Avatar"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 10,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "count": 1,

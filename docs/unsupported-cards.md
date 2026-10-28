@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**95 cards** blocked by **83** capabilities.
+**94 cards** blocked by **82** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -31,7 +31,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cast-milled-cards-free](#cast-milled-cards-free) | 1 | 23890 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type](#choose-card-type) | 1 | 2680 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -487,20 +486,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cast-milled-cards-free
-
-Blocks **1** card.
-
-- **(op)** an op that, for each player, lets you cast one card from among the cards that player milled this way (a mill `as` binding, cards in another player's graveyard) without paying its mana cost
-  <br>Why the existing vocabulary won't do: cast_from_hand casts free but builds its pool only from the caster's own zone lists, so it can never reach a card in an opponent's graveyard, and it offers one card total rather than one per player; play_exiled and look_at_top's cast_free read exile and the library top, not graveyards; grant_graveyard_cast and grant_playable charge the printed cost. The 'that many' count of attacking Sphinxes from a batched attack trigger is also unconfirmed
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Ur-Sphinx** (rank 23890) — `the_ur_sphinx`
-  - Whenever one or more Sphinxes you control attack, each player mills that many cards. For each player, you may cast a card that player milled this way without paying its mana cost.
 
 </details>
 

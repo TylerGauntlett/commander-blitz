@@ -12303,6 +12303,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_ur_sphinx": {
+    "zone": "battlefield"
+  },
   "the_vision": {
     "zone": "battlefield"
   },

@@ -282742,12 +282742,12 @@
     },
     "The Ur-Sphinx": {
       "edhrec_rank": 23890,
-      "gate": "template",
+      "gate": null,
       "name": "The Ur-Sphinx",
-      "reason": "no template for: Eminence — As long as is in the command zone or on the battlefield, other Sphinx spells yo",
+      "reason": "",
       "scryfall_id": "2395b07a-d237-4e48-9723-b9a50e9fffc2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Valeyard": {

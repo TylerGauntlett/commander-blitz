@@ -2918,6 +2918,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: cast_from_hand's 'zones' is a non-empty list drawn "
                     f"from {list(allowed)}, got {zones!r}"
                 )
+        if "objects" in effect:
+            # The Ur-Sphinx: a named pool (the cards milled this way) instead of
+            # the caster's own zones. The two are different pools, so writing
+            # both would leave one of them silently ignored.
+            if "zones" in effect:
+                raise DslError(f"{where}: cast_from_hand takes 'objects' or 'zones', not both")
+            if not isinstance(effect["objects"], Mapping):
+                raise DslError(f"{where}: cast_from_hand's 'objects' must be a selector mapping")
+            validate_selector(effect["objects"], f"{where}.objects")
+        if "per_owner" in effect:
+            # "For each player, … a card that player milled" splits a named
+            # pool; over the caster's own zones every card has one owner and
+            # the key would say nothing.
+            if not isinstance(effect["per_owner"], bool):
+                raise DslError(f"{where}: cast_from_hand's 'per_owner' must be a boolean")
+            if effect["per_owner"] and "objects" not in effect:
+                raise DslError(f"{where}: cast_from_hand's 'per_owner' needs 'objects'")
 
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no

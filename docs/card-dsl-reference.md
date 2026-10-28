@@ -46,7 +46,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 |---|---|---|---|---|
 | `behold` | Cards | yes | Choose a matching permanent you control or reveal a matching card from hand; `effects` is "if you do". | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `cascade` | Cards |  | Cascade: exile from the top until a cheaper nonland, cast it free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
-| `cast_from_hand` | Cards |  | Cast a spell from hand (or listed zones) without paying its mana cost. | [Effect ops](card-dsl.md#effect-ops) |
+| `cast_from_hand` | Cards |  | Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost. | [Effect ops](card-dsl.md#effect-ops) |
 | `clash` | Cards |  | Clash with an opponent; the winner is bound for a later `if`. | [Clash](card-dsl-cookbook.md#clash) |
 | `connive` | Cards |  | Connive: draw, discard, +1/+1 counter if a nonland was discarded. | [Connive](card-dsl-cookbook.md#connive) |
 | `discard` | Cards | yes | A player discards N cards, chosen or at random; `as` records them. | [discard: up_to and as](card-dsl.md#discard-up_to-and-as) |

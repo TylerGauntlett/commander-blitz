@@ -120,6 +120,26 @@ exile is kept per owner, so "cards you own in exile" needs no filter. A card an
 opponent owns is never offered. The loader takes `hand`, `graveyard` and
 `exile`, each at most once. The library top is `look_at_top`'s `cast_free`.
 
+`objects` replaces the caster's zones with a named pool, and `per_owner` asks
+once per owner of a card in it. The Ur-Sphinx's "each player mills that many
+cards. For each player, you may cast a card that player milled this way without
+paying its mana cost":
+
+```jsonc
+{ "op": "mill", "player": "each_player",
+  "amount": { "count": { "binding": "attackers", "subtypes": ["Sphinx"] } },
+  "as": "milled" },
+{ "op": "cast_from_hand",
+  "objects": { "binding": "milled", "zone": "graveyard" },
+  "per_owner": true }
+```
+
+`zone: "graveyard"` is what makes it "milled this way": a milled card that has
+since left its owner's graveyard is not offered, and neither is one that was
+already there. The caster controls the spell; its owner keeps the card. Without
+`per_owner` the pool is one choice. The loader refuses `objects` beside `zones`,
+and `per_owner` without `objects`.
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
