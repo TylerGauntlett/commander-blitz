@@ -39,7 +39,7 @@ from .costs import (
 from .effects.conditions import evaluate
 from .effects.context import EffectContext
 from .enums import ActionKind, DecisionKind, Step, Zone
-from .mana import ManaCost, format_symbols, max_affordable_x
+from .mana import OTHER_PAYMENT, ManaCost, format_symbols, max_affordable_x
 from .player_statics import (
     player_cant_activate,
     player_doubles_mana_from,
@@ -303,7 +303,7 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
         if not _timing_ok(state, pid, card, sorcery_speed):
             continue
         cost, counters = card.suspend
-        if not can_pay_mana(state, pid, cost):
+        if not can_pay_mana(state, pid, cost, purpose=OTHER_PAYMENT):
             continue
         out.append(
             Action(
@@ -324,7 +324,9 @@ def _suspend_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Ac
             card = state.card(oid)
             if card.foretell is None:
                 continue
-            if not can_pay_mana(state, pid, ManaCost.parse(suspend_mod.FORETELL_COST)):
+            if not can_pay_mana(
+                state, pid, ManaCost.parse(suspend_mod.FORETELL_COST), purpose=OTHER_PAYMENT
+            ):
                 continue
             out.append(
                 Action(
@@ -672,7 +674,7 @@ def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:
     else:
         # 701.34c: only a creature card may be turned face up this way.
         return []
-    if not can_pay(state, pid, Cost(mana=cost), obj.oid):
+    if not can_pay(state, pid, Cost(mana=cost), obj.oid, purpose=OTHER_PAYMENT):
         return []
     return [
         Action(

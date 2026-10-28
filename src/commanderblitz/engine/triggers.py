@@ -361,7 +361,17 @@ STATE_TRIGGER = "state"
 #: `token_created` takes it from `primitives.create_token`, read once per call:
 #: every token one creation makes, the extra ones a `replace_token_creation`
 #: doubler adds and the ones it substitutes, is one batch (603.2c).
-BATCHED_EVENTS = frozenset({"permanent_enters", "leaves_graveyard", "token_created"})
+#:
+#: `attacks_unblocked` takes it from `combat.finish_blockers`: every attacker
+#: left unblocked when one block declaration closes is one batch (509.1h), so
+#: Coveted Jewel's "whenever one or more creatures an opponent controls attack
+#: you and aren't blocked" draws three and changes hands once, not once per
+#: creature. Whom they attack is the trigger's `filter` -- `attacking_player:
+#: "you"` excludes a creature sent at your planeswalker (506.2) -- and the
+#: filter is asked before the batch is spent.
+BATCHED_EVENTS = frozenset(
+    {"permanent_enters", "leaves_graveyard", "token_created", "attacks_unblocked"}
+)
 
 #: Triggers whose subject is an object rather than a player.
 OBJECT_SUBJECT_TRIGGERS = frozenset(
@@ -521,6 +531,26 @@ def _half_matches(dsl_event: str, event: GameEvent) -> bool:
 #: already walks -- so it is found by declaring `active_zones: ["graveyard"]`
 #: like any other graveyard trigger.
 LEAVE_TRIGGERS = frozenset({"dies", "creature_dies", "leaves_battlefield"})
+
+#: The events that are about an object **leaving the battlefield**, announced
+#: once it already has (603.10a). A delayed ability scoped to an object and
+#: watching one of these -- "when **the creature an opponent controls** dies this
+#: turn" (Fight for the Throne) -- has to look back in time and hear its subject's
+#: own departure, which 400.7 would otherwise have released it from first. See
+#: `delayed_watches_departure` and `zones._release_delayed_subject`.
+LOOK_BACK_EVENTS = frozenset(
+    {EventType.DIES, EventType.LEAVES_BATTLEFIELD, EventType.SACRIFICED}
+)
+
+
+def delayed_watches_departure(delayed: DelayedTrigger) -> bool:
+    """Whether a delayed ability's event is its subject leaving the battlefield.
+
+    Read off the event the DSL name maps to rather than off the name, so the
+    sugar (`creature_dies`) is the same answer as what it is sugar for.
+    """
+    spec = delayed.trigger
+    return spec is not None and TRIGGER_EVENTS.get(spec.event) in LOOK_BACK_EVENTS
 
 
 def fire(
@@ -822,6 +852,25 @@ def run_armed_delays(state: GameState) -> Generator[Any, list[int]]:
 
     while state.armed_delays:
         delayed = state.armed_delays.pop(0)
+        spec = delayed.trigger
+        if (
+            spec is not None
+            and spec.condition is not None
+            and not evaluate_condition(
+                state,
+                spec.condition,
+                controller=delayed.controller,
+                source=delayed.source_oid,
+                bindings=delayed.bindings,
+            )
+        ):
+            # 603.4: an intervening-if is asked again as the ability resolves,
+            # and a delayed one is a triggered ability like any other. "When
+            # that creature dies this turn, **if you control your commander**"
+            # (Fight for the Throne) is armed by the first death of a
+            # state-based-action batch, and the commander can be a later one
+            # in the same batch -- gone by the time this runs.
+            continue
         ctx = EffectContext(
             state=state,
             controller=delayed.controller,
@@ -1515,13 +1564,21 @@ def _defender_matches(
     names its controller as ``defender`` but carries ``attacked_permanent``,
     and attacked the permanent (506.2) -- and that player's life is at least
     every other living player's (`GameState.has_most_life`).
+
+    ``monarch`` is "attacks **the monarch**" (The Spear of Bashenga): the same
+    player-not-permanent test, then that player holds the crown
+    (`GameState.monarch`, 721) as the creature attacks. Part of the event for
+    the reason ``most_life`` is -- the sentence has no "if" -- so the crown
+    changing hands before the ability resolves does not undo the trigger.
     """
     defender = event.data.get("defender")
     if defender is None:
         return False
-    if clause == "most_life":
+    if clause in ("most_life", "monarch"):
         if event.data.get("attacked_permanent") is not None:
             return False
+        if clause == "monarch":
+            return state.monarch is not None and state.monarch == int(defender)
         return state.has_most_life(int(defender))
     if clause == "you":
         return int(defender) == obj.controller

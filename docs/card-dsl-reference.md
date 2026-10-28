@@ -10,10 +10,10 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 149 |
+| [Effect ops](#effect-ops) | 151 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 57 |
+| [Values](#values) | 58 |
 | [Conditions](#conditions) | 31 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
@@ -28,7 +28,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
-| [Static conditions](#static-conditions) | 13 |
+| [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 15 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -46,6 +46,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 |---|---|---|---|---|
 | `behold` | Cards | yes | Choose a matching permanent you control or reveal a matching card from hand; `effects` is "if you do". | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
 | `cascade` | Cards |  | Cascade: exile from the top until a cheaper nonland, cast it free. | [Cascade, ripple and reveal_until — walking a library](card-dsl-cookbook.md#cascade-ripple-and-reveal_until--walking-a-library) |
+| `cast_card` | Cards | yes | Cast a named card during resolution, paying its mana cost; `as` records what was cast. | ["You may cast that card" — a paid cast during resolution](card-dsl-cookbook.md#you-may-cast-that-card--a-paid-cast-during-resolution) |
 | `cast_from_hand` | Cards |  | Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost. | [Effect ops](card-dsl.md#effect-ops) |
 | `clash` | Cards |  | Clash with an opponent; the winner is bound for a later `if`. | [Clash](card-dsl-cookbook.md#clash) |
 | `connive` | Cards |  | Connive: draw, discard, +1/+1 counter if a nonland was discarded. | [Connive](card-dsl-cookbook.md#connive) |
@@ -155,6 +156,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn. | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
 | `prevent_damage_permanent` | Life & damage |  | Prevent damage dealt to or by a permanent for a duration. | [Preventing all damage to or by a permanent, for a while](card-dsl-cookbook.md#preventing-all-damage-to-or-by-a-permanent-for-a-while) |
 | `become_monarch` | Players |  | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
+| `cant_cast_spells` | Players |  | A player can't cast spells for a duration (the timed form of the static). | ["You may cast that card" — a paid cast during resolution](card-dsl-cookbook.md#you-may-cast-that-card--a-paid-cast-during-resolution) |
 | `cant_cast_spells_from_zones` | Players |  | A player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |
 | `emblem` | Players |  | A player gets an emblem with the given abilities. | [Emblems — "Target opponent gets an emblem with …"](card-dsl-cookbook.md#emblems--target-opponent-gets-an-emblem-with-) |
 | `extra_loyalty_activation` | Players |  | A player may activate loyalty abilities an extra time this turn. | [Effect ops](card-dsl.md#effect-ops) |
@@ -300,6 +302,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `cards_to_graveyard_this_turn` | Cards put into any graveyard this turn (gravestorm). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `colors_of_mana_spent` | Colors of mana spent to cast this (sunburst, converge). | [Counting the mana that was actually spent](card-dsl.md#counting-the-mana-that-was-actually-spent) |
 | `combats_this_turn` | Which combat phase of the turn this is. | [Which combat phase of the turn this is](card-dsl.md#which-combat-phase-of-the-turn-this-is) |
+| `commander_casts_this_game` | Times the player has cast their commanders from the command zone this game (903.8's tally). | [Copying a spell for each commander cast](card-dsl-cookbook.md#copying-a-spell-for-each-commander-cast) |
 | `commander_color_identity` | Colors in your commander's color identity. | [Commander-identity mana — "any color in your commander's color identity"](card-dsl-cookbook.md#commander-identity-mana--any-color-in-your-commanders-color-identity) |
 | `const` | A literal number. | [Value expressions](card-dsl.md#value-expressions) |
 | `count` | How many objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
@@ -393,7 +396,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 |---|---|---|---|
 | `ability_activated` | `ability_activated` | An ability is activated. | [Triggers](card-dsl.md#triggers) |
 | `attacks` | `attacks` | A creature attacks. | [Triggers](card-dsl.md#triggers) |
-| `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked. | [Triggers](card-dsl.md#triggers) |
+| `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked; `batched` fires once per block declaration. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `becomes_blocked` | `became_blocked` | An attacking creature becomes blocked. | [Triggers](card-dsl.md#triggers) |
 | `becomes_level` | `became_level` | A Class reaches a level. | ["When this Class becomes level N"](card-dsl-cookbook.md#when-this-class-becomes-level-n) |
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
@@ -499,7 +502,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_activate_abilities` | yes |  | The player can't activate matching abilities. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_attack` |  | yes | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` |  | yes | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
-| `cant_attack_you` |  | yes | Matching creatures can't attack you or your planeswalkers. | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
+| `cant_attack_you` |  | yes | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` |  | yes | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` |  | yes | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_cast_spells` | yes |  | The player can't cast matching spells. | [Static abilities](card-dsl.md#static-abilities) |
@@ -543,7 +546,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `player_hexproof` | yes |  | The player has hexproof: opponents' spells and abilities can't target them. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `player_protection` | yes |  | The player has protection from a quality: damage, targeting and enchanting by it. | [Protection](card-dsl-cookbook.md#protection) |
 | `prevent_all_but` |  | yes | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
-| `prevent_damage` |  | yes | Prevent damage dealt to or by matching permanents. | [Static abilities](card-dsl.md#static-abilities) |
+| `prevent_damage` |  | yes | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` |  | yes | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` |  | yes | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
 | `replace_damage` |  | yes | Damage dealt by or to matching permanents is multiplied or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
@@ -638,7 +641,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `cant_attack` | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
-| `cant_attack_you` | Matching creatures can't attack you or your planeswalkers. | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
+| `cant_attack_you` | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_have_counters` | Matching permanents can't have counters of the kind put on them. | [cant_have_counters — a placement that doesn't happen](card-dsl-cookbook.md#cant_have_counters--a-placement-that-doesnt-happen) |
@@ -651,7 +654,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `imprint_characteristics` | This creature has the power, toughness and creature types of the last creature card exiled with it. | [imprint_characteristics — Duplicant's size from a card in exile](card-dsl-cookbook.md#imprint_characteristics--duplicants-size-from-a-card-in-exile) |
 | `lose_keyword` | Matching permanents lose keywords and can't have or gain them. | [lose_keyword — the other kind of removal, at the other end of the pipeline](card-dsl-cookbook.md#lose_keyword--the-other-kind-of-removal-at-the-other-end-of-the-pipeline) |
 | `prevent_all_but` | Prevent all but N of each instance of damage to matching permanents. | [Prevent all but N of that damage](card-dsl-cookbook.md#prevent-all-but-n-of-that-damage) |
-| `prevent_damage` | Prevent damage dealt to or by matching permanents. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
+| `prevent_damage` | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
 | `replace_damage` | Damage dealt by or to matching permanents is multiplied or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
@@ -901,6 +904,7 @@ What a static's "as long as …" `condition` may ask. Defined under ["As long as
 | `has_flag` | The source carries a word written by `set_flag`. | ["If this creature hasn't been exerted this turn"](card-dsl-cookbook.md#if-this-creature-hasnt-been-exerted-this-turn) |
 | `is_attached` | The source is attached to something. | ["As long as…"](card-dsl.md#as-long-as) |
 | `is_monarch` | The given player is the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
+| `is_monstrous` | The source is monstrous (701.37b). | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `is_your_turn` | It is the controller's turn. | ["As long as…"](card-dsl.md#as-long-as) |
 | `not` | The condition does not hold. | ["As long as…"](card-dsl.md#as-long-as) |
 | `top_of_library` | The top card of a library matches a filter. | ["The top card of your library is black"](card-dsl.md#the-top-card-of-your-library-is-black) |
@@ -974,11 +978,11 @@ What a `delayed_trigger`'s `trigger` object may carry. Defined under [delayed_tr
 
 | Name | Description | Defined in |
 |---|---|---|
-| `condition` | An intervening if. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
+| `condition` | An intervening if, checked on arming and on resolution. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `controller` | Whose action must it be. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `event` | The trigger event to watch. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `recipient` | The permanent being hit, for damage events. | [recipient — the permanent being hit](card-dsl.md#recipient--the-permanent-being-hit) |
-| `subject` | Scope the watch to one chosen object. | [A delayed trigger scoped to one chosen object](card-dsl.md#a-delayed-trigger-scoped-to-one-chosen-object) |
+| `subject` | Scope the watch to one chosen object; a watch on its own departure looks back (603.10a). | [A delayed trigger scoped to one chosen object](card-dsl.md#a-delayed-trigger-scoped-to-one-chosen-object) |
 
 ## Card-level face keys
 

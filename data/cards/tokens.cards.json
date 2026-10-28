@@ -1081,6 +1081,26 @@
       "is_token": true
     },
     {
+      "id": "goat_0_1_w",
+      "name": "Goat Token",
+      "oracle_text": "0/1 white Goat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goat"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "gingerbrute_1_1_c",
       "name": "Gingerbrute",
       "oracle_text": "Haste\n{1}: This token can't be blocked this turn except by creatures with haste.\n{2}, {T}, Sacrifice this token: You gain 3 life.",
@@ -2065,6 +2085,29 @@
       "is_token": true
     },
     {
+      "id": "rhino_4_4_g_trample",
+      "name": "Rhino Token",
+      "oracle_text": "4/4 green Rhino creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rhino"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "trample"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "rogue_2_2_b",
       "name": "Rogue Token",
       "oracle_text": "2/2 black Rogue creature token.",
@@ -2722,6 +2765,48 @@
         "B"
       ],
       "is_token": true
+    },
+    {
+      "id": "vibranium_token",
+      "name": "Vibranium",
+      "oracle_text": "Indestructible\n{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vibranium"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "indestructible"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": {
+            "cast": [
+              [
+                "artifact"
+              ]
+            ],
+            "activate": "any",
+            "other": "any"
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "warrior_1_1_w",

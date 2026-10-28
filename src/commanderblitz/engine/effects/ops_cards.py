@@ -6,6 +6,7 @@ from collections.abc import Mapping
 from typing import Any
 
 from .. import replacements
+from ..carddef import Cost
 from ..characteristics import chars
 from ..enums import Zone
 from ..enums import Zone as _Zone
@@ -1758,6 +1759,179 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
             picked = yield from ask_objects(ctx, prompt, group, 0, 1, pid, "cast_from_hand")
             if picked:
                 cast_for_free(ctx.state, pid, picked[0])
+
+
+def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int):
+    """ "You may cast that card", in the middle of a resolution, at its price.
+
+    Returns whether the card reached the stack. The paid sibling of
+    `_offer_free_cast`: still a real cast (601.2) -- it uses the stack, it can
+    be countered, its cast triggers fire and it counts toward the turn's spells
+    -- and the price is the card's **mana cost** with every adjustment the
+    ordinary cast line applies to it: `cost_reduction` (which nets in the
+    taxes, Kasmina's included), the restricted mana the spell may spend
+    (`spell_purpose`), Phyrexian pips bought with life, and an announced X
+    (601.2b) under the floor a mana-value lock sets. Steps in 601.2's order:
+    the "may" is the proposal, then the targets (601.2c) -- asked, not taken
+    first-legal, because each offered tuple is priced with its own discount --
+    then X, then the payment.
+
+    Offered only when some line is payable (118.4), so a yes is never a
+    question whose answer does nothing. A land is never cast (305.9), and the
+    three locks every resolution-time cast asks -- a total prohibition, a
+    sorcery-timing lock (101.2) and a zone lock -- refuse it before the
+    question.
+
+    **The printed mana cost only.** No kicker, alternative cost or optional
+    additional cost is offered, and a card whose additional cost is mandatory
+    is not offered at all rather than cast without it. Madness and miracle
+    (`replacements._offer_cast`) make the same narrowing, and it is narrower
+    than 601.2b, never cheaper.
+    """
+    # Local: `costs` and `targeting` import the effect layer.
+    from ..cost_reduction import cost_reduction
+    from ..costs import can_pay_mana, mana_sources, pay, spell_purpose, zone_of
+    from ..mana import max_affordable_x
+    from ..player_statics import cast_lock_min_x
+    from ..primitives import cast_locked_zones
+    from ..stack import free_cast_modes, push_spell
+    from ..targeting import describe_ref, enumerate_target_tuples
+    from .context import ask_mode, ask_targets, ask_x
+
+    state = ctx.state
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    card = state.card_of(obj)
+    if card.is_land:
+        return False
+    if card.additional_cost is not None and not card.additional_optional:
+        return False
+    if card.additional_cost_options:
+        return False
+    if zone_of(state, oid) in cast_locked_zones(state, pid):
+        return False
+    if player_cant_cast_while_resolving(state, pid, card):
+        return False
+    min_x = cast_lock_min_x(state, pid, card)
+    if min_x is None:
+        return False
+
+    cost = card.mana_cost
+    purpose = spell_purpose(card)
+
+    def extra_for(targets) -> int:
+        return -cost_reduction(state, pid, card, targets)
+
+    def ceiling(extra: int) -> int:
+        """The largest payable X, or -1 when nothing is payable at all."""
+        if not cost.x_count:
+            return 0 if can_pay_mana(state, pid, cost, extra_generic=extra, purpose=purpose) else -1
+        return max_affordable_x(
+            cost,
+            state.players[pid].mana_pool.spendable(purpose),
+            mana_sources(state, pid, purpose=purpose),
+            extra_generic=extra,
+        )
+
+    tuples = [
+        t
+        for t in enumerate_target_tuples(
+            state, pid, card.targets, oid, size_cap=1 if card.strive is not None else None
+        )
+        if ceiling(extra_for(t)) >= min_x
+    ]
+    if not tuples:
+        return False
+    if not (yield from ask_yes_no(ctx, f"Cast {card.name}, paying its mana cost?", pid)):
+        return False
+    targets = tuples[0]
+    if len(tuples) > 1 and all(len(t) == 1 for t in tuples):
+        # One target -- an Aura's "enchant creature", which is every printed
+        # permanent spell that targets: the objects themselves, so the client
+        # can point at them.
+        chosen = yield from ask_targets(
+            ctx,
+            f"Choose a target for {card.name}",
+            [(describe_ref(state, t[0]), t[0]) for t in tuples],
+            1,
+            1,
+            pid,
+        )
+        targets = (chosen[0],)
+    elif len(tuples) > 1:
+        labels = [
+            ", ".join(describe_ref(state, ref) for ref in t) or "no target" for t in tuples
+        ]
+        picked = yield from ask_mode(
+            ctx, f"Choose targets for {card.name}", labels, pid, purpose="target"
+        )
+        targets = tuples[picked[0]]
+    extra = extra_for(targets)
+    x = 0
+    if cost.x_count:
+        x = yield from ask_x(
+            ctx,
+            f"Choose X for {card.name}",
+            ceiling(extra),
+            pid,
+            per_point=cost.x_count,
+            min_x=min_x,
+        )
+    modes, mode_refs = free_cast_modes(state, pid, card, oid)
+    paid = yield from pay(
+        state,
+        pid,
+        Cost(mana=cost),
+        None,
+        x=x,
+        extra_generic=extra,
+        purpose=purpose,
+        record_colors_on=oid,
+    )
+    if not paid:  # pragma: no cover - the offer proved this payable
+        return False
+    item = push_spell(state, oid, pid, tuple(targets) + mode_refs, x=x, modes=modes)
+    fire(
+        state,
+        EventType.SPELL_CAST,
+        player=pid,
+        source=oid,
+        oid=oid,
+        spell_oid=oid,
+        sid=item.sid,
+        card=card.id,
+    )
+    return True
+
+
+@register("cast_card")
+def op_cast_card(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Choose target nonland permanent card in your graveyard. If you haven't
+    cast a spell this turn, **you may cast that card**." -- Conduit of Worlds.
+
+    A cast made **during the resolution** of an ability (608.2g, 601.2), at the
+    card's own price -- `_cast_paying_mana_cost` above. Every other "you may
+    cast" op is free: `cast_from_hand`, `play_exiled`, cascade, discover and
+    `look_at_top`'s `cast_free` all go through `suspend.cast_for_free`, and a
+    free Conduit would be a strictly better card. `grant_playable` and
+    `grant_graveyard_cast` are the other near miss: they leave a *permission*
+    to cast later, in a priority window, so a sentence that depends on the cast
+    ("if you do") would have nothing to read as the ability resolves.
+
+    ``objects`` is the pool -- a target, a binding or a selector -- and each
+    card in it is offered as its own "you may". The caster is the resolving
+    controller. ``as`` records the cards actually **cast**, which is what "if
+    you do" reads: ``{"exists": {"binding": …}}``. A declined offer, a card
+    with no payable line and a card a lock refuses all leave it empty.
+    """
+
+    cast: list[int] = []
+    for oid in resolve_pool(ctx, spec.get("objects")):
+        if (yield from _cast_paying_mana_cost(ctx, ctx.controller, oid)):
+            cast.append(oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = cast
 
 
 @register("hideaway")

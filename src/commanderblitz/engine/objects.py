@@ -43,6 +43,11 @@ SHIELD = "shield"
 #: permanent would become untapped, one is removed instead and it stays tapped.
 #: Read by `primitives.untap_or_stun`, which every untap goes through.
 STUN = "stun"
+#: A finality counter (122.1g): if a permanent with one on it would be put into
+#: a graveyard from the battlefield, it is exiled instead. Not spent -- one is
+#: as good as several. Read by `zones.move_object`, which every departure goes
+#: through, so destruction, sacrifice and 0 toughness are all covered.
+FINALITY = "finality"
 
 
 @dataclass

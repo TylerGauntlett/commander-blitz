@@ -21,9 +21,10 @@ from .effects.selectors import resolve_pool
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
-from .objects import GameObject
+from .mana import OTHER_PAYMENT
+from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
-from .triggers import fire
+from .triggers import delayed_watches_departure, fire
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -205,6 +206,23 @@ def move_object(
         to_zone = Zone(obj.dies_to)
         target_player = owner
 
+    # "If a permanent with a finality counter on it would be put into a
+    # graveyard from the battlefield, exile it instead" (122.1g) -- Shuri's
+    # Fabricator. On the counter rather than the card, so it works on whatever
+    # carries one and `move_counters` and `proliferate` need nothing. The
+    # counter is read, never spent: one is as good as five. Gated like
+    # `dies_to` -- battlefield to graveyard -- and for the same reason placed
+    # after the commander replacement, which leaves nothing here to replace.
+    # `_dies_replacement` defers to it as the affected player's own (616.1).
+    if (
+        from_zone is Zone.BATTLEFIELD
+        and to_zone is Zone.GRAVEYARD
+        and obj.counter(FINALITY) > 0
+    ):
+        to_zone = Zone.EXILE
+        target_player = owner
+        cause = cause or "graveyard_replaced"
+
     # "…or **if it would leave the battlefield**" -- unearth. The whole
     # departure and not just the death: bounced, exiled, shuffled away, sent to
     # the command zone. After `dies_to` so the wider clause wins when a card
@@ -291,7 +309,9 @@ def move_object(
 
     if was_on_battlefield:
         _detach_all(state, oid)
-        _release_delayed_subject(state, oid)
+        # Every subscription but the ones waiting for this very departure; those
+        # are released below, once it has been announced (603.10a).
+        _release_delayed_subject(state, oid, look_back=True)
 
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
@@ -429,6 +449,10 @@ def move_object(
                 had_power=had_power,
                 had_toughness=had_toughness,
             )
+        # The departure has been heard, so a subscription waiting for it has
+        # had its one chance: the object that comes back is a new one (400.7)
+        # and its next death is not the one the delayed ability was about.
+        _release_delayed_subject(state, oid, look_back=False)
 
     # "…and create a 2/2 black Zombie creature token": the rest of the
     # replacement event, performed once the card is in exile. Under the
@@ -591,7 +615,7 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
     # the source from the pool for 601.2a's reason, and the same exclusion is
     # the right one here for 614's -- the object being replaced is the one on
     # its way to the battlefield, not fodder sitting in a hand.
-    if not can_pay(state, controller, cost, oid):
+    if not can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
         return
     ctx = EffectContext(
         state=state, controller=controller, source_oid=oid, source_name=card.name
@@ -599,7 +623,7 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
     prompt = f"Pay {card.name}'s cost to have it enter?"
     if not (yield from ask_yes_no(ctx, prompt, controller)):
         return
-    if (yield from pay(state, controller, cost, oid)):
+    if (yield from pay(state, controller, cost, oid, purpose=OTHER_PAYMENT)):
         obj.enters_replacement_paid = True
 
 
@@ -624,7 +648,7 @@ def enters_cost_offer(state: GameState, oid: int, controller: int, card=None):
         if not node:
             continue
         cost = Cost(**node) if not isinstance(node, Cost) else node
-        if can_pay(state, controller, cost, oid):
+        if can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
             return replacement, cost
     return None
 
@@ -670,7 +694,7 @@ def offer_enters_costs(
         if not node:
             continue
         cost = Cost(**node) if not isinstance(node, Cost) else node
-        if not can_pay(state, controller, cost, oid):
+        if not can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
             continue
         if decided is False:
             continue
@@ -681,7 +705,7 @@ def offer_enters_costs(
             prompt = enters_cost_prompt(replacement, cost, card.name)
             if not (yield from ask_yes_no(ctx, prompt, controller)):
                 continue
-        if (yield from pay(state, controller, cost, oid)):
+        if (yield from pay(state, controller, cost, oid, purpose=OTHER_PAYMENT)):
             obj.enters_cost_paid = True
 
 
@@ -1119,8 +1143,8 @@ def _dies_replacement(
     filter language every static speaks.
 
     **The affected player's own replacements come first** (616.1). A creature
-    under `dies_to` or `leaves_to`, or one a `replace_graveyard` would also
-    exile, belongs to a player who would apply that one and leave nothing dying
+    under `dies_to` or `leaves_to`, one carrying a finality counter (122.1g),
+    or one a `replace_graveyard` would also exile, belongs to a player who would apply that one and leave nothing dying
     for Kalitas to make a Zombie from, so this does not apply to it. That is the
     choice the engine makes for them without asking, as it does for the
     commander replacement.
@@ -1131,7 +1155,7 @@ def _dies_replacement(
     death -- the event is no longer a death once one has (614.5) -- and the
     first in battlefield order is the one taken.
     """
-    if obj.dies_to or obj.leaves_to:
+    if obj.dies_to or obj.leaves_to or obj.counter(FINALITY) > 0:
         return None
     # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches
@@ -1845,7 +1869,7 @@ def snapshot(state: GameState, oid: int) -> dict[str, Any]:
     }
 
 
-def _release_delayed_subject(state: GameState, oid: int) -> None:
+def _release_delayed_subject(state: GameState, oid: int, *, look_back: bool) -> None:
     """Strike a departing permanent out of every delayed ability watching it.
 
     "Whenever **that creature** deals combat damage" names an *object*, and a
@@ -1857,12 +1881,30 @@ def _release_delayed_subject(state: GameState, oid: int) -> None:
 
     A subscription whose last subject has left is dropped outright: an empty
     scope would otherwise read as "no scope", which is every creature.
+
+    Called twice per departure, either side of the leave events. With
+    ``look_back`` the call is the first one, and it **spares** a subscription
+    whose event is its subject's own departure -- "when **the creature an
+    opponent controls** dies this turn" (Fight for the Throne). That ability
+    triggers on the object leaving, and 603.10a has the game look back in time
+    for it; released here it would be gone before the dies event it exists to
+    hear, and the card would load and never fire. The second call, after the
+    events, strikes those too, so only the departure that was watched is ever
+    heard. A subscription about anything else -- "whenever that creature deals
+    combat damage" -- is released at the first call as before, so nothing else
+    outlives its subject.
+
+    The leave events are collected as they fire: `triggers.entering_together`,
+    the only thing that holds events back, wraps moves *onto* the battlefield.
     """
     if not state.delayed_triggers:
         return
 
     kept = []
     for delayed in state.delayed_triggers:
+        if look_back and delayed_watches_departure(delayed):
+            kept.append(delayed)
+            continue
         # The permanent being hit is released the same way as the one hitting:
         # a Vraska that died and was recast is a new Vraska, and the old +1's
         # subscription is not hers.

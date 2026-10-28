@@ -54,7 +54,7 @@ from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
 from .legality import _targets_read_x
-from .mana import ManaCost, max_affordable_x
+from .mana import OTHER_PAYMENT, ManaCost, max_affordable_x
 from .objects import PLUS_ONE
 from .player import PlayerState
 from .player_statics import (
@@ -271,7 +271,7 @@ class Game:
         # that value *is* the answer. An attack tax is mana-only (the loader
         # refuses any other component), and `pay_mana` solves and taps without
         # asking, so this never suspends mid-declaration.
-        gen = pay(self.state, obj.controller, cost, None)
+        gen = pay(self.state, obj.controller, cost, None, purpose=OTHER_PAYMENT)
         try:
             gen.send(None)
         except StopIteration as done:
@@ -1361,7 +1361,8 @@ class Game:
         state = self.state
         card = state.card_of(obj)
         cost = card.morph if card.morph is not None else card.mana_cost
-        ok = yield from pay(state, pid, Cost(mana=cost), obj.oid)
+        # A special action (116.2b), so neither a cast nor an activation.
+        ok = yield from pay(state, pid, Cost(mana=cost), obj.oid, purpose=OTHER_PAYMENT)
         if not ok:  # pragma: no cover - legality already proved payability
             return
         obj.face_down = False

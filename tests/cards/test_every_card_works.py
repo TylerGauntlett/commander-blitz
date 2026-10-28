@@ -25,7 +25,7 @@ from commanderblitz.cards.registry import CardRegistry
 from commanderblitz.engine.actions import PendingDecision
 from commanderblitz.engine.carddef import CardDef
 from commanderblitz.engine.characteristics import chars
-from commanderblitz.engine.enums import ActionKind, DecisionKind, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.events import EventType
 from commanderblitz.engine.game import Game
 from commanderblitz.engine.objects import PLUS_ONE
@@ -380,6 +380,7 @@ class TestActivatedAbilities:
             _provide_the_target(game, registry, oid, ability)
             for other in game.state.battlefield:
                 game.state.objects[other].entered_turn = 0
+            _reach_the_step(game, ability)
             game.state.bump_chars()
             game._advance()
             _provide_the_attacker(game, registry, ability)
@@ -838,7 +839,27 @@ def _satisfy_an_exists(game: Game, registry, selector: dict) -> None:
     if match is None:
         return
     fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
+    # T'Chaka, Venerable King: "Activate only if you control your commander."
+    # The sandbox has no commander, so the flag is set only when the selector
+    # asks for one, the way `_provide_the_target` does for Commander's Plate.
+    if selector.get("is_commander"):
+        fodder.is_commander = True
     game.state.battlefield.append(fodder.oid)
+
+
+def _reach_the_step(game: Game, ability) -> None:
+    """Start the sandbox in a step the ability may be activated in.
+
+    Scourglass: "Activate only during your upkeep." The sandbox opens in the
+    precombat main phase, where the restriction correctly refuses the ability,
+    and the auto-pass then walks past every later step without ever reaching an
+    upkeep. Moved only when the ability names steps and the current one is not
+    among them, so every other card keeps the main phase it was measured in.
+    """
+    steps = getattr(ability, "activate_steps", ())
+    if not steps or game.state.step.name.lower() in steps:
+        return
+    game.state.step = Step[steps[0].upper()]
 
 
 def _make_permanents_enter(game: Game, registry, left: dict, count: int) -> None:
@@ -1080,6 +1101,9 @@ def _stock_the_graveyard(game: Game, registry, spec) -> None:
     shape = (selector.get("any_of") or [selector])[0]
     types = {str(t) for t in shape.get("types") or []}
     subtypes = {str(s) for s in shape.get("subtypes") or []}
+    # Loyal Retainers returns target **legendary** creature card, and the first
+    # creature card by id is not one.
+    supertypes = {str(s) for s in shape.get("supertypes") or []}
     match = next(
         (
             c
@@ -1088,6 +1112,7 @@ def _stock_the_graveyard(game: Game, registry, spec) -> None:
             and c.front_face is None
             and types <= set(c.types)
             and (not subtypes or subtypes & set(c.subtypes))
+            and supertypes <= set(c.supertypes)
         ),
         None,
     )

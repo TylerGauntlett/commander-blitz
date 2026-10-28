@@ -20,7 +20,7 @@ from .costs import can_pay
 from .effects.context import EffectContext, ask_objects
 from .enums import LANDWALK_SUBTYPE, Keyword
 from .events import EventType
-from .mana import ManaCost
+from .mana import OTHER_PAYMENT, ManaCost
 from .player_statics import (
     any_defender_attack_prohibition,
     attack_alone_forbidden,
@@ -178,7 +178,7 @@ def combat_tax_payable(state: GameState, oid: int, cost) -> bool:
     # `source_oid=None`: the creature is not being tapped or sacrificed for
     # this, it is only the thing being priced -- passing it would let a `tap`
     # in the cost tap the attacker.
-    return can_pay(state, obj.controller, cost, None)
+    return can_pay(state, obj.controller, cost, None, purpose=OTHER_PAYMENT)
 
 
 def block_taxed(state: GameState, oid: int) -> bool:
@@ -425,8 +425,9 @@ def _attack_prohibited(
     # split, because the split would be a per-type prohibition list built for a
     # card that does not exist, and the over-reading is in the safe direction --
     # a battle that cannot be attacked is inert, where one that could be
-    # attacked around a printed prohibition is a rules error.
-    return attack_defender_forbidden(state, oid, defender)
+    # attacked around a printed prohibition is a rules error. A `player_only`
+    # wall ("can't attack you", Queen Mother Ramonda) reaches neither.
+    return attack_defender_forbidden(state, oid, defender, permanent=permanent)
 
 
 def required_attack_walkers(state: GameState, oid: int) -> set[int]:
@@ -1377,6 +1378,14 @@ def finish_blockers(state: GameState) -> None:
     #
     # Outside the `if combat.blockers` guard on purpose: the unblocked half is
     # the case where that guard is false, and frenzy is printed for exactly it.
+    #
+    # One `batch` for the whole declaration, because every attacker becomes
+    # blocked or stays unblocked at the same instant (509.1h). It is what a
+    # `batched` "whenever one or more creatures … attack you and aren't
+    # blocked" (Coveted Jewel) groups by: one firing however many got through,
+    # and a second combat is a second batch. See `triggers.BATCHED_EVENTS`.
+    state.event_batch += 1
+    batch = state.event_batch
     for attacker_oid in sorted(combat.attackers):
         if attacker_oid in combat.removed:
             continue
@@ -1396,6 +1405,7 @@ def finish_blockers(state: GameState) -> None:
             # so the count is the number and the card does the arithmetic.
             blockers=len(blocking_it),
             defender=combat.attackers[attacker_oid],
+            batch=batch,
         )
 
 

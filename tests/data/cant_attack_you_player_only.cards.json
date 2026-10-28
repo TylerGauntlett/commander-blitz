@@ -1,0 +1,88 @@
+{
+  "_comment": "Cards that exist only for the player-only attack prohibition test (tests/unit/combat/test_cant_attack_you_player_only.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_ramonda_wall` is Queen Mother Ramonda's second line exactly as printed: a `cant_attack_you` static with `player_only`, a current-power ceiling and the monarch condition. `t_ramonda_walkers` is the near miss -- the same line without `player_only`, which also walls off its controller's planeswalkers and battles -- and is asserted against as the counterfactual.",
+  "cards": [
+    {
+      "id": "t_ramonda_wall",
+      "name": "Test Queen Mother",
+      "oracle_text": "As long as you're the monarch, creatures with power 2 or less can't attack you.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you're the monarch, creatures with power 2 or less can't attack you.",
+          "effect": "cant_attack_you",
+          "player_only": true,
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "power": {
+              "op": "<=",
+              "value": 2
+            }
+          },
+          "condition": {
+            "is_monarch": "you"
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ramonda_walkers",
+      "name": "Test Queen Mother Overreach",
+      "oracle_text": "As long as you're the monarch, creatures with power 2 or less can't attack you or planeswalkers you control.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "power": 2,
+      "toughness": 4,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as you're the monarch, creatures with power 2 or less can't attack you or planeswalkers you control.",
+          "effect": "cant_attack_you",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "power": {
+              "op": "<=",
+              "value": 2
+            }
+          },
+          "condition": {
+            "is_monarch": "you"
+          }
+        }
+      ]
+    }
+  ]
+}

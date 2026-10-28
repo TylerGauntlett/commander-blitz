@@ -210,6 +210,7 @@ def resolve_mana_restriction(ability: Ability, obj: Any) -> ManaRestriction | No
     return ManaRestriction(
         cast=_resolve_groups(restriction.cast, chosen),
         activate=_resolve_groups(restriction.activate, chosen),
+        other=restriction.other,
     )
 
 

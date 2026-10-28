@@ -1,0 +1,89 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_prevent_damage_into_counters.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_pc_habit is Panther Habit -- a prevent_damage total shield on the equipped creature that puts that many +1/+1 counters on it -- plus its equip. t_pc_bear is a creature to wear it, t_pc_warded a red-protected creature so the habit can be ordered against protection, and t_pc_ogre a red 3/3 to deal the damage.",
+  "cards": [
+    {
+      "id": "t_pc_habit",
+      "name": "Test Panther Habit",
+      "oracle_text": "If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 counters on it.\nEquip {2}",
+      "mana_cost": "{1}{G}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 counters on it.",
+          "effect": "prevent_damage",
+          "prevent_all": true,
+          "counter": "+1/+1",
+          "affects": {"attached": true}
+        },
+        {
+          "kind": "activated",
+          "text": "Equip {2}",
+          "sorcery_speed_only": true,
+          "cost": {"mana": "{2}"},
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": ["Creature"]
+              }
+            }
+          ],
+          "effects": [{"op": "attach", "objects": {"target": "equip_target"}}]
+        }
+      ]
+    },
+    {
+      "id": "t_pc_bear",
+      "name": "Test Habit Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_pc_warded",
+      "name": "Test Habit Warded",
+      "oracle_text": "Protection from red",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Soldier"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Protection from red",
+          "effect": "protection",
+          "from_colors": ["R"],
+          "affects": {"self_only": true}
+        }
+      ]
+    },
+    {
+      "id": "t_pc_ogre",
+      "name": "Test Habit Ogre",
+      "oracle_text": "",
+      "mana_cost": "{2}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Ogre"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 3,
+      "toughness": 3
+    }
+  ]
+}

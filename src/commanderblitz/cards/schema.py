@@ -362,8 +362,9 @@ class TriggerModel(BaseModel):
     #: For ``attacks``: whom the creature is attacking.  ``controller`` says
     #: whose creature is swinging, which is a different question -- "attacks you"
     #: needs this one. ``most_life`` is dethrone's "attacks the player with the
-    #: most life or tied for most life", and is legal on ``attacks`` only.
-    defending: Literal["you", "opponent", "any", "most_life"] | None = None
+    #: most life or tied for most life", and ``monarch`` is "attacks the
+    #: monarch" (The Spear of Bashenga); both are legal on ``attacks`` only.
+    defending: Literal["you", "opponent", "any", "most_life", "monarch"] | None = None
     #: "…if it wasn't put onto the battlefield with this ability."  Names the
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
     #: puts permanents onto the battlefield avoids triggering on its own output.
@@ -537,6 +538,11 @@ class AbilityModel(BaseModel):
     #: Omen Hawker), which names no type at all. The loader refuses it on both
     #: halves at once and refuses it bare, where it would read as the ``cast``
     #: half and quietly make ordinary mana.
+    #:
+    #: A third key, ``"other"``, takes only ``"any"``: a restriction worded as a
+    #: prohibition ("can't be spent to cast a nonartifact spell", the Vibranium
+    #: token) still pays a ward price, a tax or a special action. Omitted, as on
+    #: every "spend this mana only to …" card, those payments are refused.
     mana_restriction: (
         str
         | list[str | dict[str, Any] | list[str | dict[str, Any]]]
@@ -841,6 +847,13 @@ class AbilityModel(BaseModel):
     #: player and attacking a planeswalker is not attacking its controller
     #: (506.2).
     or_planeswalkers: bool = False
+    #: ``cant_attack_you``: the wall stands in front of the static's controller
+    #: **only**, not their planeswalkers or battles -- Queen Mother Ramonda's
+    #: "creatures with power 2 or less can't attack you". Off by default,
+    #: because the effect's first sentence (Combat Calligrapher) says "you or
+    #: planeswalkers you control" out loud; a sentence naming only "you" is
+    #: 506.2's reading, under which attacking a walker is not attacking you.
+    player_only: bool = False
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no
@@ -875,9 +888,12 @@ class AbilityModel(BaseModel):
     #: `token_multiplier`'s reason: 1 replaces damage with itself and 0 is a
     #: prevention, which is `prevent_damage`'s sentence and a different card.
     damage_multiplier: int | None = None
-    #: `replace_damage`: a filter on the permanent **dealing** the damage --
-    #: "if **equipped creature** would deal combat damage". Omitted is any
-    #: source, which is Furnace of Rath's "if a source would deal damage".
+    #: `replace_damage` and `prevent_damage`: a filter on the **dealer** --
+    #: "if **equipped creature** would deal combat damage", "if **a creature**
+    #: would deal damage to you" (Orbs of Warding). Omitted is any source, which
+    #: is Furnace of Rath's "if a source would deal damage". On `prevent_damage`
+    #: it is read for damage to a player only, so it needs `affects_player` and
+    #: no `affects`.
     damage_source: dict[str, Any] | None = None
     #: `replace_damage` and `prevent_damage`: only combat damage. The Flail says
     #: "combat damage" and Furnace of Rath does not, and the difference is a
@@ -891,7 +907,9 @@ class AbilityModel(BaseModel):
     #: `counter` on `TriggerModel`, which is a different model and a different
     #: question ("whenever a +1/+1 counter is put on this creature").
     #: Also the kind `enters_with_additional_counters` adds and the kind
-    #: `cant_have_counters` forbids, where it is required.
+    #: `cant_have_counters` forbids, where it is required, and on a
+    #: `prevent_damage` total shield the kind it puts "that many" of for the
+    #: damage it prevents (Panther Habit; ``+1/+1`` only).
     counter: str | None = None
     #: `replace_counters`: only counters an **effect** puts on. Doubling
     #: Season's "if **an effect** would put one or more counters…" -- and a

@@ -25,6 +25,8 @@ forms::
     {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
         "each_opponent"}                this turn, where the plain tally sums
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
+    {"commander_casts_this_game":     casts of their commanders from the
+        "you"}                          command zone this game (903.8's tally)
     {"max_count_of": {"player": …,    how many objects the player with the most
                       "objects": …}}    of them has -- one player at a time
     {"sum": [a, b, ...]}              arithmetic
@@ -38,7 +40,7 @@ from typing import Any
 from ..characteristics import _matches_printed, chars, min_count, min_life
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
-from ..objects import PLUS_ONE, SHIELD, STUN
+from ..objects import FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
 from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
 
@@ -164,6 +166,13 @@ VALUE_KEYS = frozenset(
         #: "Another" is the card's own `> 1`, since this spell is already
         #: recorded by the time its effects run.
         "spells_cast_this_game",
+        #: "…copy it for each time you've cast your commander from the command
+        #: zone this game" -- Hatut Zeraze Strike Force. The tally rule 903.8
+        #: already keeps for commander tax (`Player.commander_tax`), summed
+        #: over the player's commanders. `spells_cast_this_game` is the near
+        #: miss: it counts every cast from every zone, so a commander cast from
+        #: hand or graveyard and every other spell would inflate it.
+        "commander_casts_this_game",
         # "…if it's the first combat phase of the turn" (Genji Glove). A value
         # rather than a boolean head, so the ordinary `cmp` says it: the printed
         # clause is `== 1`, and "the second combat" or "a later combat" fall out
@@ -667,6 +676,30 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                 if cast_id in registry and _matches_printed(registry.get(cast_id), filt):
                     total += 1
         return total
+    if "commander_casts_this_game" in expr:
+        # "…copy it for each time you've cast your commander from the command
+        # zone this game" -- Hatut Zeraze Strike Force.
+        #
+        # Rule 903.8 already makes the engine count exactly this: commander tax
+        # is {2} "for each previous time the player casting it has cast it from
+        # the command zone that game", and `Game` bumps
+        # `Player.commander_tax[oid]` once per such cast. Only a commander's
+        # owner may cast it from the command zone (903.8), so the owner's tally
+        # is "you've cast". Summed over `commanders_of`, because "your
+        # commander" with partners means either of them, and keyed by the
+        # commander rather than read off every tax entry so nothing that is not
+        # the player's commander could ever count.
+        #
+        # A commander put onto the battlefield by an effect, or cast from any
+        # other zone, was not cast from the command zone and is not counted --
+        # the same answer the tax gives. A cast in progress has already been
+        # tallied by the time a cast trigger resolves, so a commander that
+        # carries this text counts its own cast.
+        total = 0
+        for p in _players(ctx, expr["commander_casts_this_game"]):
+            tax = ctx.state.players[p].commander_tax
+            total += sum(tax.get(oid, 0) for oid in ctx.state.commanders_of(p))
+        return total
     if "cards_to_graveyard_this_turn" in expr:
         # Every graveyard, so it takes no player spec: gravestorm counts cards
         # put into *a* graveyard, not into yours.
@@ -978,6 +1011,15 @@ def validate_counter_kind(kind: Any, where: str) -> None:
             f"{where}: write the stun counter as {STUN!r}, not {kind!r}. A stun "
             f"counter replaces untapping (122.1d) and the lookup is exact"
         )
+    if normalised != kind and normalised == FINALITY:
+        # Read by `zones.move_object` (122.1g), which compares the kind exactly;
+        # `"Finality"` would leave the returned permanent free to die and be
+        # returned again, which is the loop the counter exists to close.
+        raise DslError(
+            f"{where}: write the finality counter as {FINALITY!r}, not {kind!r}. A "
+            f"finality counter exiles a permanent that would go to a graveyard "
+            f"(122.1g) and the lookup is exact"
+        )
     if normalised != kind and normalised in KEYWORD_COUNTERS:
         raise DslError(
             f"{where}: write a keyword counter as the exact keyword name -- "
@@ -1265,6 +1307,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.max_poison_of: needs a player spec, e.g. 'each_opponent' "
                 f"(whose poison counters), got {who!r}"
+            )
+    if "commander_casts_this_game" in expr:
+        who = expr["commander_casts_this_game"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
+                f"(whose commanders' casts from the command zone), got {who!r}"
             )
     if "player_count" in expr:
         who = expr["player_count"]

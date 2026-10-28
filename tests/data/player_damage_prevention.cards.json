@@ -1,0 +1,39 @@
+{
+  "_comment": "Cards that exist only for the player-wide absorb test (tests/unit/damage/test_player_damage_prevention.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_heart_herb` is Heart-Shaped Herb's line (a controller-only `damage_source`, which reaches a spell on the stack) and `t_orbs_of_warding` is the second line of Orbs of Warding (a `types` filter, read on the dealer's current characteristics).",
+  "cards": [
+    {
+      "id": "t_heart_herb",
+      "name": "Test Heart Herb",
+      "oracle_text": "If a source an opponent controls would deal damage to you, prevent 1 of that damage.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a source an opponent controls would deal damage to you, prevent 1 of that damage.",
+          "effect": "prevent_damage",
+          "amount": 1,
+          "affects_player": "you",
+          "damage_source": {"controller": "opponent"}
+        }
+      ]
+    },
+    {
+      "id": "t_orbs_of_warding",
+      "name": "Test Orbs of Warding",
+      "oracle_text": "If a creature would deal damage to you, prevent 1 of that damage.",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If a creature would deal damage to you, prevent 1 of that damage.",
+          "effect": "prevent_damage",
+          "amount": 1,
+          "affects_player": "you",
+          "damage_source": {"controller": "any", "types": ["Creature"]}
+        }
+      ]
+    }
+  ]
+}
