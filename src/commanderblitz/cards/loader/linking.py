@@ -247,6 +247,10 @@ def token_references(card: CardDef) -> set[str]:
             # The op names its token itself; the bundle's `references` then
             # carries the Incubator's back face along with it.
             out.add(INCUBATOR_TOKEN)
+        if effect.get("op") == "empower":
+            out.add(EMPOWER_TOKEN)
+        if effect.get("op") == "amass" and str(effect.get("subtype")) in AMASS_TOKENS:
+            out.add(AMASS_TOKENS[str(effect.get("subtype"))])
     for ability in card.abilities:
         static = ability.static or {}
         out.update(str(token_id) for token_id in static.get("create_instead", ()))
