@@ -48,6 +48,7 @@ from .costs import (
     pay,
     spell_purpose,
 )
+from .division import divided_damage, division_amount, division_caps
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
 from .effects.modes import modal_bounds, mode_labels
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -688,6 +689,11 @@ class Game:
         # above because 601.2b announces X first, which is the whole reason this
         # is the one computed count a spell's targets may carry.
         x_refs = yield from self._ask_x_targets(pid, card, oid, x)
+        # 601.2d: "deals 4 damage divided as you choose" is divided now, over
+        # the targets just declared and before the cost is paid.
+        division = yield from self._ask_damage_division(
+            pid, card, oid, modes, targets + x_refs + mode_refs
+        )
 
         ok = yield from pay(
             state,
@@ -933,6 +939,8 @@ class Game:
             # `StackItem.modes_answered`.
             modes_answered=card.cast_time_modes is not None,
         )
+        if division:
+            item.bindings["distribution"] = division
         if cast_gains:
             # Staged on the spell for the permanent it becomes, in the field
             # Arena of Glory's mana stages its haste in: `move_object` carries
@@ -1191,20 +1199,55 @@ class Game:
                 continue
             amount = spec.get("amount", 1)
             total = int(amount["const"] if isinstance(amount, Mapping) else amount)
-            shares = dict.fromkeys(oids, 1)
             kind = str(spec.get("counter", "+1/+1"))
-            for left in range(total - len(oids), 0, -1):
-                picked = yield from ask_objects(
-                    ctx,
-                    f"Distribute: put another {kind} counter on which target? ({left} left)",
-                    oids,
-                    1,
-                    1,
-                    pid,
-                    "distribute",
-                )
-                shares[picked[0] if picked else oids[0]] += 1
-            out[target_id] = [[oid, n] for oid, n in shares.items()]
+            out[target_id] = yield from _divide(
+                ctx,
+                pid,
+                oids,
+                total,
+                lambda left, kind=kind: (
+                    f"Distribute: put another {kind} counter on which target? ({left} left)"
+                ),
+                "distribute",
+            )
+        return out
+
+    def _ask_damage_division(
+        self, pid: int, card, oid: int, modes, targets
+    ) -> Generator[Any, list[int], dict[str, list[list[int]]]]:
+        """Divide each divided damage effect's amount among its declared targets.
+
+        601.2d, on the cast line: `_ask_distribution`'s walk -- every target
+        dealt at least one, the rest placed one at a time, nothing asked when
+        the split is forced -- over the amount `engine.division` reads now, as
+        the spell is cast. Tagged ``divide_damage`` rather than ``distribute``,
+        because which target deserves another point of damage is the opposite
+        question to which deserves another +1/+1 counter.
+
+        Returns the same ``{target_id: [[oid, n], ...]}`` shape, for the stack
+        item's ``bindings["distribution"]``.
+        """
+        wanted = divided_damage(card)
+        if not wanted:
+            return {}
+        state = self.state
+        declared = declared_by_spec(card.specs_for_modes(modes), targets)
+        ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
+        out: dict[str, list[list[int]]] = {}
+        for effect in wanted:
+            target_id = str(effect["divided"])
+            oids = [r.id for r in declared.get(target_id, ()) if r.kind == "object"]
+            if not oids:
+                continue
+            total = division_amount(state, pid, oid, effect)
+            out[target_id] = yield from _divide(
+                ctx,
+                pid,
+                oids,
+                total,
+                lambda left: f"Divide {card.name}: 1 more damage to which target? ({left} left)",
+                "divide_damage",
+            )
         return out
 
     def _ask_pay_generic(
@@ -1568,6 +1611,11 @@ class Game:
         ]
         count = target_count(state, pid, spec, oid)
         ceiling = len(options) if count == "any" else min(int(count), len(options))
+        # Divided damage gives every target at least one (601.2d), so there are
+        # never more targets than damage -- see `engine.division`.
+        cap = division_caps(state, pid, oid, card).get(spec.id)
+        if cap is not None:
+            ceiling = min(ceiling, cap)
         picked = yield from ask_targets(
             ctx, f"Targets for {card.name}", options, 0, ceiling, pid
         )
@@ -2166,3 +2214,17 @@ def _deal_deck(state: GameState, pid: int, deck: DeckList, registry: CardRegistr
         player.library.append(obj.oid)
 
     state.rng.shuffle(player.library)
+
+
+def _divide(ctx: EffectContext, pid: int, oids, total: int, prompt, purpose: str):
+    """601.2d's division: one each, then the rest one at a time.
+
+    Reaches every legal division and asks nothing when the split is forced --
+    as many targets as there is to divide, or a single target. ``prompt`` is
+    given how many are left to place. Returns ``[[oid, n], ...]``.
+    """
+    shares = dict.fromkeys(oids, 1)
+    for left in range(total - len(oids), 0, -1):
+        picked = yield from ask_objects(ctx, prompt(left), list(oids), 1, 1, pid, purpose)
+        shares[picked[0] if picked else oids[0]] += 1
+    return [[oid, n] for oid, n in shares.items()]

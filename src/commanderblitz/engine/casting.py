@@ -17,6 +17,7 @@ from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost, TargetSpec
 from .characteristics import _battlefield_statics, chars
 from .cost_reduction import cost_reduction, variant_reduction
 from .costs import can_pay, commander_cost, life_cost, mana_sources, spell_purpose, zone_of
+from .division import divided_damage, fits_division
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext
 from .effects.selectors import resolve_pool
@@ -1542,6 +1543,12 @@ def _cast_variant(
     # flashed-back spell than to a fresh one.
     if not modal_cast_ok(state, pid, card, oid):
         return []
+    # 601.2d: divided damage gives each of its targets at least one, so a line
+    # naming more targets than there is damage cannot be divided and is not a
+    # cast. Here for `modal_cast_ok`'s reason: every offered cast passes through.
+    if divided_damage(card):
+        specs = card.targets_for(gift_promised=gift_to is not None)
+        tuples = [t for t in tuples if fits_division(state, pid, oid, card, specs, t)]
     # "Your opponents can't cast **noncreature** spells" -- Narset
     # Transcendent's emblem. The filtered half of `player_cant_cast_spells`,
     # asked here because this is the one function every offered cast passes

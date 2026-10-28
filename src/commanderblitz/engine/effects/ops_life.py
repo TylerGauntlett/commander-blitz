@@ -255,7 +255,17 @@ def op_damage(ctx: EffectContext, spec: Mapping[str, Any]):
 
     ``objects`` and ``player`` are independent: a card that reads "deal 3 damage
     to target creature and 3 damage to its controller" declares both.
+
+    ``divided`` names a target spec whose objects **share** the amount -- "4
+    damage divided as you choose among any number of target creatures". The
+    split was announced as the spell was cast (601.2d, `Game._ask_damage_division`)
+    and travels as ``bindings["distribution"]``, so the amount is not read again
+    here: each still-legal target is dealt its share, and one made illegal in
+    response takes its share with it rather than passing it on (608.2b).
     """
+    if "divided" in spec:
+        _damage_divided(ctx, str(spec["divided"]))
+        return
     amount = evaluate_value(ctx, spec.get("amount", 1))
     if amount <= 0:
         return
@@ -386,6 +396,26 @@ def _damage_what_it_attacks(
             damage_player(state, combat.attackers[oid], amount, dealer)
         elif "Planeswalker" in chars(state, permanent).types:
             damage_permanent(state, permanent, amount, dealer)
+
+
+def _damage_divided(ctx: EffectContext, target_id: str) -> None:
+    """Each target its announced share, and nothing for one that left (608.2b).
+
+    A copy of the spell carries the same bindings, so it keeps the division
+    (707.10). No announcement with targets declared is a spell cast some way
+    that skipped 601.2d, and inventing a split now would be a different card.
+    """
+    legal = set(ctx.target_oids(target_id))
+    division = (ctx.bindings.get("distribution") or {}).get(target_id)
+    if division is None:
+        if ctx.target_refs(target_id):
+            raise DslError(
+                f"divided damage for {target_id!r} resolved without an announced division"
+            )
+        return
+    for oid, share in division:
+        if int(oid) in legal and int(share) > 0:
+            damage_permanent(ctx.state, int(oid), int(share), ctx.source_oid)
 
 
 def _damage_with_excess(ctx: EffectContext, oid: int, amount: int, excess_to: str) -> None:
