@@ -143122,12 +143122,12 @@
     },
     "Jhoira, Weatherlight Corsair": {
       "edhrec_rank": 29257,
-      "gate": "template",
+      "gate": null,
       "name": "Jhoira, Weatherlight Corsair",
-      "reason": "no template for: Whenever Jhoira enters or attacks, target opponent reveals cards from the top of their lib",
+      "reason": "",
       "scryfall_id": "116dc6fb-cfa4-4bc6-b897-95dd0ee0a642",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jhovall Queen": {

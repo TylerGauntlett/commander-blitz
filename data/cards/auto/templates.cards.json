@@ -68712,6 +68712,170 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "stolen",
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Saga"
+                    ]
+                  }
+                ],
+                "any_types": [
+                  "Artifact",
+                  "Battle",
+                  "Creature",
+                  "Enchantment",
+                  "Land",
+                  "Planeswalker"
+                ]
+              },
+              "op": "reveal_until",
+              "player": {
+                "target": "t1"
+              },
+              "rest_to_bottom": true
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "stolen"
+                  }
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever Jhoira enters or attacks, target opponent reveals cards from the top of their library until they reveal a historic permanent card. You put that card onto the battlefield under your control and lose life equal to that permanent's mana value. That player puts the rest of the revealed cards on the bottom of their library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "stolen",
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Saga"
+                    ]
+                  }
+                ],
+                "any_types": [
+                  "Artifact",
+                  "Battle",
+                  "Creature",
+                  "Enchantment",
+                  "Land",
+                  "Planeswalker"
+                ]
+              },
+              "op": "reveal_until",
+              "player": {
+                "target": "t1"
+              },
+              "rest_to_bottom": true
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "stolen"
+                  }
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Whenever Jhoira enters or attacks, target opponent reveals cards from the top of their library until they reveal a historic permanent card. You put that card onto the battlefield under your control and lose life equal to that permanent's mana value. That player puts the rest of the revealed cards on the bottom of their library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "jhoira_weatherlight_corsair",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Jhoira, Weatherlight Corsair",
+      "oracle_text": "Whenever Jhoira enters or attacks, target opponent reveals cards from the top of their library until they reveal a historic permanent card. You put that card onto the battlefield under your control and lose life equal to that permanent's mana value. That player puts the rest of the revealed cards on the bottom of their library in a random order. (Artifacts, legendaries, and Sagas are historic.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Pirate"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],

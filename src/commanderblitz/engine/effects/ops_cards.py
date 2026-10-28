@@ -569,6 +569,7 @@ def _move_found(
     spec: Mapping[str, Any],
     tapped: bool,
     cause: str,
+    controller: int | None = None,
 ) -> None:
     """Send the cards a library lookup turned up to their destination.
 
@@ -581,6 +582,11 @@ def _move_found(
     Read per card and in order, first match winning, with ``destination`` as the
     fallthrough. The branches match on the **printed** face, which is what they
     are asking about and also all there is: the card is still in the library.
+
+    ``controller`` is who a card put onto the battlefield enters under, and
+    defaults to ``pid``, the seat whose library was searched. Jhoira,
+    Weatherlight Corsair scans an *opponent's* library and puts the hit down
+    "under your control", which is the one case where the two differ.
     """
     for oid in picked:
         destination, tapped = _destination_for(ctx, oid, spec, destination, tapped)
@@ -590,7 +596,7 @@ def _move_found(
             # `controller: "you"` clause on landfall reads the owner.
             obj = ctx.state.objects.get(oid)
             if obj is not None:
-                obj.controller = pid
+                obj.controller = pid if controller is None else controller
         move_object(
             ctx.state,
             oid,
@@ -2058,7 +2064,17 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
     ``rest_to_bottom``.
 
     ``as`` records the matches that moved, as a list -- "put those creature
-    cards onto the battlefield … they're goaded" names them afterwards.
+    cards onto the battlefield … they're goaded" names them afterwards, and
+    ``{"mana_value_of": {"objects": {"binding": …}}}`` reads "that permanent's
+    mana value" (zero when the scan found nothing).
+
+    ``controller: "you"`` is "target opponent reveals cards … **you** put that
+    card onto the battlefield under your control" -- Jhoira, Weatherlight
+    Corsair. Without it a match enters under the seat whose library was
+    scanned, which is every card that reveals from its own library; the rest
+    still goes to the bottom of *that* library, because it is that player's.
+    The spelling `put_onto_battlefield` and `return_from_graveyard` use, and the
+    loader admits it only beside the battlefield.
     """
     selector = spec.get("objects") or spec.get("selector") or {}
     destination = DESTINATIONS[str(spec.get("destination", "hand"))]
@@ -2106,7 +2122,14 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
         if hits:
             with entering_together(ctx.state):
                 _move_found(
-                    ctx, hits, pid, destination, spec, bool(spec.get("tapped")), "reveal_until"
+                    ctx,
+                    hits,
+                    pid,
+                    destination,
+                    spec,
+                    bool(spec.get("tapped")),
+                    "reveal_until",
+                    controller=ctx.controller if spec.get("controller") == "you" else None,
                 )
         if binding:
             ctx.bindings[str(binding)].extend(hits)

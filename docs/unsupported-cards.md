@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**106 cards** blocked by **96** capabilities.
+**105 cards** blocked by **95** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -89,7 +89,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
-| [reveal-until-steal](#reveal-until-steal) | 1 | 29257 | op |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -1345,20 +1344,6 @@ Blocks **1** card.
 
 - **Scolding Administrator** (rank 18369) — `scolding_administrator`
   - Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.
-
-</details>
-
-## reveal-until-steal
-
-Blocks **1** card.
-
-- **(op)** reveal_until on another player's library that puts the found card onto the battlefield under YOUR control (not the library owner's) and binds it with `as`, so a following lose_life can read its mana value (mana_value_of the binding)
-  <br>Why the existing vocabulary won't do: reveal_until's options carry no `controller` or `as`: _move_found sets the moved card's controller to the player whose library was scanned, so with player={target: t1} the historic card would enter under the opponent's control, and nothing binds the hit for 'lose life equal to that permanent's mana value'; routing through exile+link then put_onto_battlefield would add an exile step the card does not have
-
-<details><summary>Cards waiting on this</summary>
-
-- **Jhoira, Weatherlight Corsair** (rank 29257) — `jhoira_weatherlight_corsair`
-  - Whenever Jhoira enters or attacks, target opponent reveals cards from the top of their library until they reveal a historic permanent card. You put that card onto the battlefield under your control and lose life equal to that permanent's mana value. That player puts the rest of the revealed cards on the bottom of their library in a random order
 
 </details>
 

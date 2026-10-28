@@ -1258,6 +1258,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: reveal_until 'tapped' is a boolean and needs "
                 f"destination 'battlefield'"
             )
+        # "You put that card onto the battlefield **under your control**."
+        # The only value is "you": every other seat a match could enter under is
+        # the scanned library's, which is the default. Anywhere but the
+        # battlefield a card has no controller to set, so the key would say
+        # nothing.
+        if "controller" in effect and (
+            effect["controller"] != "you" or destination != "battlefield"
+        ):
+            raise DslError(
+                f"{where}: reveal_until 'controller' is \"you\" and needs "
+                f"destination 'battlefield'"
+            )
     # Same argument as look_at_top, and the printed keyword is *named* for the
     # number -- "hideaway 4". Defaulted it would look at one card, and the
     # ability that later plays it would still work, so nothing downstream would

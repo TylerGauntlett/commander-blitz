@@ -11047,6 +11047,34 @@ forward.
 that names them afterwards ("put those creature cards onto the battlefield …
 they're goaded").
 
+### "Under your control" — another player's library, `controller`
+
+```jsonc
+// Jhoira, Weatherlight Corsair -- "target opponent reveals cards from the top of
+// their library until they reveal a historic permanent card. You put that card
+// onto the battlefield under your control and lose life equal to that
+// permanent's mana value. That player puts the rest of the revealed cards on the
+// bottom of their library in a random order."
+{ "op": "reveal_until", "player": { "target": "t1" },
+  "objects": { "any_types": ["Artifact", "Battle", "Creature", "Enchantment", "Land", "Planeswalker"],
+               "any_of": [ { "types": ["Artifact"] }, { "supertypes": ["Legendary"] },
+                           { "subtypes": ["Saga"] } ] },
+  "destination": "battlefield", "controller": "you", "as": "stolen" },
+{ "op": "lose_life", "amount": { "mana_value_of": { "objects": { "binding": "stolen" } } } }
+```
+
+`player` names whose library is walked, and "the rest" always goes back to that
+library. A match put onto the battlefield enters under the same seat unless
+`controller: "you"` says it is the resolving ability's controller's — the
+spelling `put_onto_battlefield` and `return_from_graveyard` use. The loader
+admits only `"you"` and only beside `destination: "battlefield"`. Leaving it off
+Jhoira loads and hands the opponent their own historic card for free.
+
+"That permanent's mana value" reads the `as` binding through
+`mana_value_of`'s `objects` form; the bare `{"binding": …}` form reads a single
+oid or snapshot and gives 0 for a list. A scan that finds nothing binds the
+empty list, so the loss is zero.
+
 ## Discover — cascade's walk, N or less, cast or hand
 
 ```jsonc

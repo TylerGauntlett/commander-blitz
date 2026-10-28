@@ -6206,6 +6206,16 @@
   "jhessian_lookout": {
     "zone": "battlefield"
   },
+  "jhoira_weatherlight_corsair": {
+    "library_size": {
+      "1": 20
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "jhovall_queen": {
     "zone": "battlefield"
   },
