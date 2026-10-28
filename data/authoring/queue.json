@@ -228352,12 +228352,12 @@
     },
     "Royal Talon Fighter Jet": {
       "edhrec_rank": 15920,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Royal Talon Fighter Jet",
-      "reason": "+1/+1 counters is 20, expected 28; soldier_1_1_w tokens is 0, expected 28; your battlefield is 33, expected 61",
+      "reason": "",
       "scryfall_id": "d1b9cb33-5a24-4bfe-9939-2cdf4c8aecfd",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Royal Treatment": {
@@ -285692,12 +285692,12 @@
     },
     "Throne of the High City": {
       "edhrec_rank": 4409,
-      "gate": "template",
+      "gate": null,
       "name": "Throne of the High City",
-      "reason": "no template for: {4}, {T}, Sacrifice this land: You become the monarch",
+      "reason": "",
       "scryfall_id": "6aac7a6d-90c7-4fe7-b6d3-f63a7170ee96",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Throttle": {
@@ -301242,12 +301242,12 @@
     },
     "Vanquish the Horde": {
       "edhrec_rank": 816,
-      "gate": "template",
+      "gate": null,
       "name": "Vanquish the Horde",
-      "reason": "no template for: This spell costs {1} less to cast for each creature on the battlefield",
+      "reason": "",
       "scryfall_id": "b571a870-15fe-4a21-8e29-86bddb8389fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vanquish the Weak": {
@@ -304202,12 +304202,12 @@
     },
     "Vibranium Strike Gauntlets": {
       "edhrec_rank": 13835,
-      "gate": "template",
+      "gate": null,
       "name": "Vibranium Strike Gauntlets",
-      "reason": "no template for: When this Equipment enters, attach it to target creature you control",
+      "reason": "",
       "scryfall_id": "2b47e8b0-471c-4429-8273-d114fdf95e13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vibrant Cityscape": {
@@ -308722,12 +308722,12 @@
     },
     "Wakanda Forever!": {
       "edhrec_rank": 19394,
-      "gate": "template",
+      "gate": null,
       "name": "Wakanda Forever!",
-      "reason": "no template for: Reveal the top six cards of your library. You may put a permanent card from among them ont",
+      "reason": "",
       "scryfall_id": "8b893d46-25f0-4c6a-b9a3-ff25277be918",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wakandan Drone Flock": {
@@ -314332,12 +314332,12 @@
     },
     "Whispersilk Cloak": {
       "edhrec_rank": 332,
-      "gate": "template",
+      "gate": null,
       "name": "Whispersilk Cloak",
-      "reason": "no template for: Equipped creature can't be blocked and has shroud",
+      "reason": "",
       "scryfall_id": "a3f31ac4-09ca-4712-a311-50d28824bfad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whispersteel Dagger": {
@@ -323602,12 +323602,12 @@
     },
     "Zuri, Warrior of Wakanda": {
       "edhrec_rank": 18717,
-      "gate": "template",
+      "gate": null,
       "name": "Zuri, Warrior of Wakanda",
-      "reason": "no template for: Whenever you cast an artifact spell with mana value 4 or greater, put a +1/+1 counter on e",
+      "reason": "",
       "scryfall_id": "b8225b51-d5a4-4b46-9a10-b581362b6a11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zurzoth, Chaos Rider": {

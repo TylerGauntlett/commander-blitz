@@ -113946,6 +113946,119 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle enters or attacks, create a number of 1/1 white Soldier creature tokens equal to the number of +1/+1 counters on it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "soldier_1_1_w"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle enters or attacks, create a number of 1/1 white Soldier creature tokens equal to the number of +1/+1 counters on it.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "royal_talon_fighter_jet",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{X}{W}{W}",
+      "name": "Royal Talon Fighter Jet",
+      "oracle_text": "Flying\nThis Vehicle enters with X +1/+1 counters on it.\nWhenever this Vehicle enters or attacks, create a number of 1/1 white Soldier creature tokens equal to the number of +1/+1 counters on it.\nCrew 2",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -144116,6 +144229,51 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}, Sacrifice this land: You become the monarch."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "throne_of_the_high_city",
+      "name": "Throne of the High City",
+      "oracle_text": "{T}: Add {C}.\n{4}, {T}, Sacrifice this land: You become the monarch.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -151251,6 +151409,44 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "any",
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "vanquish_the_horde",
+      "mana_cost": "{6}{W}{W}",
+      "name": "Vanquish the Horde",
+      "oracle_text": "This spell costs {1} less to cast for each creature on the battlefield.\nDestroy all creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -153022,6 +153218,139 @@
       "mana_cost": "{1}",
       "name": "Vibranium Energy Daggers",
       "oracle_text": "Indestructible (Effects that say \"destroy\" don't destroy this Equipment.)\nEquipped creature gets +2/+2.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Equipment enters, attach it to target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 3
+          },
+          "text": "Equipped creature gets +3/+0 and has trample and \"Whenever this creature deals combat damage to a player, draw a card.\"",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +3/+0 and has trample and \"Whenever this creature deals combat damage to a player, draw a card.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +3/+0 and has trample and \"Whenever this creature deals combat damage to a player, draw a card.\""
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "vibranium_strike_gauntlets",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{4}",
+      "name": "Vibranium Strike Gauntlets",
+      "oracle_text": "Flash\nWhen this Equipment enters, attach it to target creature you control.\nEquipped creature gets +3/+0 and has trample and \"Whenever this creature deals combat damage to a player, draw a card.\"\nEquip {3}",
       "source": "auto",
       "subtypes": [
         "Equipment"
@@ -155180,6 +155509,68 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "wakanda_forever",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Wakanda Forever!",
+      "oracle_text": "Reveal the top six cards of your library. You may put a permanent card from among them onto the battlefield with an indestructible counter on it. You may put a permanent card from among them into your hand. Put the rest into your graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 6
+          },
+          "as": "wakanda_battlefield",
+          "counters": {
+            "indestructible": 1
+          },
+          "destination": "battlefield",
+          "objects": {
+            "count": 1,
+            "not_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "optional": true
+          },
+          "op": "look_at_top"
+        },
+        {
+          "amount": {
+            "minus": [
+              {
+                "const": 6
+              },
+              {
+                "count": {
+                  "binding": "wakanda_battlefield"
+                }
+              }
+            ]
+          },
+          "destination": "hand",
+          "objects": {
+            "count": 1,
+            "not_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "optional": true
+          },
+          "op": "look_at_top",
+          "rest_to": "graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -157898,6 +158289,75 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Equipped creature can't be blocked and has shroud"
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "shroud"
+          ],
+          "kind": "static",
+          "text": "Equipped creature can't be blocked and has shroud"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "whispersilk_cloak",
+      "mana_cost": "{3}",
+      "name": "Whispersilk Cloak",
+      "oracle_text": "Equipped creature can't be blocked and has shroud. (It can't be the target of spells or abilities.)\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -163011,6 +163471,73 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an artifact spell with mana value 4 or greater, put a +1/+1 counter on each creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              },
+              "types": [
+                "Artifact"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "zuri_warrior_of_wakanda",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "Zuri, Warrior of Wakanda",
+      "oracle_text": "Trample\nWhenever you cast an artifact spell with mana value 4 or greater, put a +1/+1 counter on each creature you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

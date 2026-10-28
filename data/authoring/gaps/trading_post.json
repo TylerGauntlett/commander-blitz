@@ -1,0 +1,18 @@
+{
+  "card_id": "trading_post",
+  "name": "Trading Post",
+  "oracle_text": "{1}, {T}, Discard a card: You gain 4 life.\n{1}, {T}, Pay 1 life: Create a 0/1 white Goat creature token.\n{1}, {T}, Sacrifice a creature: Return target artifact card from your graveyard to your hand.\n{1}, {T}, Sacrifice an artifact: Draw a card.",
+  "blocked_sentences": [
+    "{1}, {T}, Pay 1 life: Create a 0/1 white Goat creature token."
+  ],
+  "needs": [
+    {
+      "capability": "goat_token",
+      "kind": "token",
+      "what": "a 0/1 white Goat creature token with no abilities",
+      "why_existing_wont_do": "token_ids is closed and has no Goat; the nearest 0/1 tokens are plant_0_1_g (green Plant) and kobolds_of_kher_keep_0_1_r (red Kobold), which differ in color and creature type. The other three lines (discard cost + gain_life, sacrifice-creature cost + return_from_graveyard of a targeted artifact card, sacrifice-artifact cost + draw) are expressible with existing cost keys and ops."
+    }
+  ],
+  "closest_existing": ["plant_0_1_g", "kobolds_of_kher_keep_0_1_r"],
+  "confidence": "high"
+}

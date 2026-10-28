@@ -10208,6 +10208,14 @@
   "royal_falcon": {
     "zone": "battlefield"
   },
+  "royal_talon_fighter_jet": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "rubble_slinger": {
     "zone": "battlefield"
   },
@@ -12706,6 +12714,10 @@
       "0": 2
     }
   },
+  "throne_of_the_high_city": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "through_the_forest_gate": {
     "battlefield_count": 51,
     "library_size": {
@@ -13378,6 +13390,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "vanquish_the_horde": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "vanquisher_s_axe": {
     "zone": "battlefield"
   },
@@ -13527,6 +13544,16 @@
     "zone": "battlefield"
   },
   "vibranium_energy_daggers": {
+    "zone": "battlefield"
+  },
+  "vibranium_strike_gauntlets": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample"
+      ]
+    },
     "zone": "battlefield"
   },
   "vibrant_cityscape": {
@@ -13730,6 +13757,12 @@
   },
   "vulshok_morningstar": {
     "zone": "battlefield"
+  },
+  "wakanda_forever": {
+    "library_size": {
+      "0": 34
+    },
+    "zone": "graveyard"
   },
   "wakandan_drone_flock": {
     "zone": "battlefield"
@@ -14013,6 +14046,10 @@
     "zone": "battlefield"
   },
   "whisperer_of_the_wilds": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "whispersilk_cloak": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14494,6 +14531,10 @@
         "hexproof"
       ]
     },
+    "zone": "battlefield"
+  },
+  "zuri_warrior_of_wakanda": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   }
 }
