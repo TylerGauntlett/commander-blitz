@@ -30761,6 +30761,54 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "effect": "cant_lose_the_game",
+          "kind": "static",
+          "text": "You can't lose the game and your opponents can't win the game."
+        },
+        {
+          "affects_player": "opponent",
+          "effect": "cant_win_the_game",
+          "kind": "static",
+          "text": "You can't lose the game and your opponents can't win the game."
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "counter": "-1/-1",
+          "effect": "cant_have_counters",
+          "kind": "static",
+          "text": "Creatures you control can't have -1/-1 counters put on them."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "darksteel_angel",
+      "keywords": [
+        "flying",
+        "indestructible"
+      ],
+      "mana_cost": "{9}",
+      "name": "Darksteel Angel",
+      "oracle_text": "Flying, indestructible\nYou can't lose the game and your opponents can't win the game.\nCreatures you control can't have -1/-1 counters put on them.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Angel"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

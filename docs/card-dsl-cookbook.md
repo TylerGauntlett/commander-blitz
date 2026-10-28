@@ -1716,6 +1716,33 @@ attributed to his widened `{B}` pips first, since those are not Phyrexian
 symbols. The loader refuses the keyword on a card with no `loyalty` or no
 Phyrexian symbol in its cost.
 
+### `cant_have_counters` — a placement that doesn't happen
+
+"Creatures you control can't have -1/-1 counters put on them." — Darksteel
+Angel, Melira, Sylvok Outcast
+
+```jsonc
+{"kind": "static",
+ "text": "Creatures you control can't have -1/-1 counters put on them.",
+ "effect": "cant_have_counters",
+ "affects": {"controller": "you", "types": ["Creature"]},
+ "counter": "-1/-1"}
+```
+
+A prohibition (101.2), asked by `player_statics.counters_prohibited` before any
+counter replacement: a placement of that kind onto a matching permanent puts
+nothing on, fires no `counter_placed`, and is not one Hardened Scales or
+Doubling Season modifies. It is read at the three places a counter can be put
+on a permanent — `primitives.add_counters` (effects, wither and infect damage,
+proliferate, `double_counters`, a paid cost), `zones._entering_counters`
+(every "enters with", so a persisted or undying creature returns with no
+counter) and `costs.can_pay`, which refuses a `put_counters` cost or a +N
+loyalty cost that would put a forbidden counter on, so that ability can't be
+activated (Melira's ruling). Infect damage to a player is poison, not a
+counter on a permanent, and is untouched. `affects` and `counter` are both
+required. **Not** `replace_counters` with `counter_multiplier: 0`, which the
+loader refuses because a prevention is a different sentence.
+
 ### `enters_with_additional_counters` — a static about other arrivals
 
 "Each planeswalker you control enters with an additional loyalty counter on

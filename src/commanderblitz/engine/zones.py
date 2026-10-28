@@ -22,7 +22,7 @@ from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
-from .player_statics import counter_placement_replacements
+from .player_statics import counter_placement_replacements, counters_prohibited
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -1202,6 +1202,10 @@ def _entering_counters(
 
     effects: list[_EnteringEffect] = [("add", n) for n in adds if n > 0]
     if not effects:
+        return 0
+    if counters_prohibited(state, obj.oid, kind):
+        # "Can't have -1/-1 counters put on them": the permanent enters without
+        # them -- a persisted creature comes back with no counter at all.
         return 0
     effects += [
         (

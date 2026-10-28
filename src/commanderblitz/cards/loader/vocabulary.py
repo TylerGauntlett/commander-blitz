@@ -168,6 +168,15 @@ STATIC_EFFECTS = frozenset(
         # printed card touches only the arrival.  Takes `affects`, `counter`
         # and `amount`.
         "enters_with_additional_counters",
+        # Darksteel Angel, Melira, Sylvok Outcast: "Creatures you control can't
+        # have -1/-1 counters put on them."  A prohibition, not a
+        # `replace_counters` with a multiplier of 0 (refused there as a
+        # different sentence): asked before every replacement by
+        # `player_statics.counters_prohibited`, from `primitives.add_counters`,
+        # `zones._entering_counters` and `costs.can_pay`, so effects, wither and
+        # infect damage, "enters with" counters and costs all find nothing put
+        # on.  Takes `affects` and `counter`, both required.
+        "cant_have_counters",
         # Winter Orb: "As long as this artifact is untapped, players can't
         # untap more than one land during their untap steps."  A **count**,
         # which is the whole difference from `skip_untap_step` next door: that

@@ -61412,12 +61412,12 @@
     },
     "Darksteel Angel": {
       "edhrec_rank": 24328,
-      "gate": "template",
+      "gate": null,
       "name": "Darksteel Angel",
-      "reason": "no template for: You can't lose the game and your opponents can't win the game",
+      "reason": "",
       "scryfall_id": "0c33024e-9473-4d5b-8433-9898380282c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Darksteel Axe": {

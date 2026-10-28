@@ -26,6 +26,7 @@ from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, STUN, GameObject
 from .player_statics import (
     counter_placement_replacements,
+    counters_prohibited,
     damage_cap,
     damage_multiplier,
     life_gain_addend,
@@ -1122,6 +1123,11 @@ def add_counters(
         # that really arrived, and a Saga chapter comparison below has to see
         # the same total the board does. Only on the way up -- "would be put on"
         # is nothing to do with counters coming off.
+        if counters_prohibited(state, oid, kind):
+            # "Can't have -1/-1 counters put on them" (Darksteel Angel): the
+            # placement does not happen, so no replacement modifies it, no
+            # `counter_placed` fires and nothing is written.
+            return 0
         if by is None:
             by = _putter(state, source, obj.controller)
         amount = _replaced_counter_amount(

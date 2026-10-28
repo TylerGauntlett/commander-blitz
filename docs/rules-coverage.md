@@ -238,6 +238,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Moving and doubling counters** | `move_counters` (graft, modular) clamped to the source; `double_counters` puts the extra on through `add_counters` so counter replacements apply (122.1) |
 | **Distributing counters** | `distribute_counters` on an activated ability, the division announced at activation (601.2d, 602.2b) and stored on the stack item, an illegal target's share lost (608.2b) |
 | **Counters on an arrival** | `counters` on `put_onto_battlefield` and `return_from_graveyard` (placed after the move), `counters` / `counters_if` on `look_at_top` (one placement with the arrival, 122.6); `replace_counters` applies before `counter_placed` fires or a Saga reads its lore (714.2c) |
+| **Counters that can't be put on** | The `cant_have_counters` static (101.2): a placement of the named kind onto a matching permanent does not happen, asked before every counter replacement in `add_counters`, `zones._entering_counters` and `costs.can_pay` (a cost that would put one on can't be paid) |
 | **Removing counters as a cost** | `remove_counters_from_among` over several permanents, any kinds, asked one counter at a time (602.2b) |
 
 ### Ledgers and history

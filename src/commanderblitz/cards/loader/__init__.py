@@ -4506,6 +4506,24 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"quantity; it takes 'affects' and an optional 'condition'"
             )
 
+    if model.effect == "cant_have_counters":
+        # Darksteel Angel: "Creatures you control can't have -1/-1 counters put
+        # on them." Both halves are the printed clause: no filter would shield
+        # every permanent on the table, and no kind would forbid every counter
+        # -- loyalty and lore included -- which no printed card says.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: cant_have_counters needs 'affects' naming the "
+                f"permanents that can't have the counters -- Darksteel Angel says "
+                f"creatures you control"
+            )
+        if model.counter is None:
+            raise DslError(
+                f"{where}: cant_have_counters needs 'counter', the kind that "
+                f"can't be put on (\"-1/-1\")"
+            )
+        _check_counter_kind(model.counter, f"{where}.counter")
+
     if model.effect == "enters_with_additional_counters":
         # Oath of Gideon: "Each planeswalker you control enters with an
         # additional loyalty counter on it." All three are the printed clause,

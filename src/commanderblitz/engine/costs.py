@@ -42,6 +42,7 @@ from .mana import (
 )
 from .player_statics import (
     ability_cost_reduction,
+    counters_prohibited,
     mana_added_on_tap,
     player_cant_activate,
     player_doubles_mana_from,
@@ -1304,6 +1305,17 @@ def can_pay(
     # counter needs a permanent (122.1), and one whose source has left is not.
     if cost.put_counters is not None and (
         source_oid is None or source_oid not in state.battlefield
+    ):
+        return False
+    # A cost that would put on a counter the permanent can't have (Darksteel
+    # Angel, Melira) can't be paid: the placement would not happen, and a cost
+    # is paid only by doing all of it (601.2h).
+    if cost.put_counters is not None and counters_prohibited(
+        state, source_oid, str(cost.put_counters["counter"])
+    ):
+        return False
+    if cost.loyalty is not None and cost.loyalty > 0 and source_oid is not None and (
+        counters_prohibited(state, source_oid, "loyalty")
     ):
         return False
     if cost.loyalty is not None and cost.loyalty < 0:

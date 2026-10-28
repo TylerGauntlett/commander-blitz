@@ -17,9 +17,9 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 31 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
-| [Static effects](#static-effects) | 82 |
+| [Static effects](#static-effects) | 83 |
 | [Player-wide statics](#player-wide-statics) | 41 |
-| [Grantable statics](#grantable-statics) | 38 |
+| [Grantable statics](#grantable-statics) | 39 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 30 |
@@ -502,6 +502,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_cast_spells` | yes |  | The player can't cast matching spells. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_cast_spells_from_zones` | yes |  | The player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |
 | `cant_gain_life` | yes |  | The player can't gain life. | ["Your opponents can't gain life"](card-dsl-cookbook.md#your-opponents-cant-gain-life) |
+| `cant_have_counters` |  | yes | Matching permanents can't have counters of the kind put on them. | [cant_have_counters — a placement that doesn't happen](card-dsl-cookbook.md#cant_have_counters--a-placement-that-doesnt-happen) |
 | `cant_lose_the_game` | yes |  | The player can't lose the game. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_sacrifice` |  | yes | Matching permanents can't be sacrificed. | [Forbidding a sacrifice, continuously](card-dsl.md#forbidding-a-sacrifice-continuously) |
 | `cant_search_library` | yes |  | The player can't search libraries. | ["Can't cause their controller to search their library"](card-dsl-cookbook.md#cant-cause-their-controller-to-search-their-library) |
@@ -633,6 +634,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `cant_attack_you` | Matching creatures can't attack you or your planeswalkers. | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
+| `cant_have_counters` | Matching permanents can't have counters of the kind put on them. | [cant_have_counters — a placement that doesn't happen](card-dsl-cookbook.md#cant_have_counters--a-placement-that-doesnt-happen) |
 | `cant_sacrifice` | Matching permanents can't be sacrificed. | [Forbidding a sacrifice, continuously](card-dsl.md#forbidding-a-sacrifice-continuously) |
 | `crew_power_bonus` | Matching creatures crew as though their power were N greater. | [Crews Vehicles as though its power were N greater](card-dsl.md#crews-vehicles-as-though-its-power-were-n-greater) |
 | `double_triggers` | Matching permanents' triggered abilities trigger an additional time. | [double_triggers, and its two axes](card-dsl.md#double_triggers-and-its-two-axes) |

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**100 cards** blocked by **89** capabilities.
+**99 cards** blocked by **88** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-token-created](#batched-token-created) | 1 | 3172 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
-| [cant-have-counters](#cant-have-counters) | 1 | 24328 | static_effect |
 | [cast-milled-cards-free](#cast-milled-cards-free) | 1 | 23890 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type](#choose-card-type) | 1 | 2680 | op |
@@ -507,20 +506,6 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
-
-</details>
-
-## cant-have-counters
-
-Blocks **1** card.
-
-- **(static_effect)** a static effect that stops counters of a named kind (here -1/-1) from being put on permanents matching an affects filter (creatures you control), covering effects, costs, wither/infect damage and enters-with counters alike
-  <br>Why the existing vocabulary won't do: replace_counters only scales a placement (counter_multiplier is refused below 2 and counter_addend adds), so there is no way to reduce a placement to zero; prevent_damage and the cant_* statics do not touch counters
-
-<details><summary>Cards waiting on this</summary>
-
-- **Darksteel Angel** (rank 24328) — `darksteel_angel`
-  - Creatures you control can't have -1/-1 counters put on them.
 
 </details>
 

@@ -733,6 +733,8 @@ STATICS: dict[str, Entry] = {
     "cant_cast_spells_from_zones": ("The player can't cast spells from the listed zones.",
                                     H_CANT_CAST_ZONES),
     "cant_gain_life": ("The player can't gain life.", '"Your opponents can\'t gain life"'),
+    "cant_have_counters": ("Matching permanents can't have counters of the kind put on them.",
+                           "`cant_have_counters` — a placement that doesn't happen"),
     "cant_lose_the_game": ("The player can't lose the game.", None),
     "cant_sacrifice": ("Matching permanents can't be sacrificed.", "Forbidding a sacrifice, continuously"),
     "cant_search_library": ("The player can't search libraries.",
