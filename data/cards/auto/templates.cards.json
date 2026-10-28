@@ -119731,6 +119731,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "exile",
+              "face_down": true,
+              "link": true,
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "any_of": [
+                      {
+                        "not_types": [
+                          "Land"
+                        ],
+                        "subtypes": [
+                          "Hero"
+                        ]
+                      },
+                      {
+                        "not_types": [
+                          "Creature",
+                          "Land"
+                        ]
+                      }
+                    ],
+                    "controller": "any",
+                    "count": 1,
+                    "exiled_with": "self",
+                    "zone": "exile"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast a Hero or noncreature spell exiled with Scarlet Witch without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Scarlet Witch deals combat damage to a player, look at the top two cards of your library, then exile them face down. Then you may cast a Hero or noncreature spell from among cards exiled with Scarlet Witch without paying its mana cost.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "scarlet_witch_chaotic_avenger",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{R}",
+      "name": "Scarlet Witch, Chaotic Avenger",
+      "oracle_text": "Flying\nWhenever Scarlet Witch deals combat damage to a player, look at the top two cards of your library, then exile them face down. Then you may cast a Hero or noncreature spell from among cards exiled with Scarlet Witch without paying its mana cost.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Warlock",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -124378,6 +124465,79 @@
         "Ally"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Hero"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample"
+          ],
+          "kind": "static",
+          "text": "Other Heroes you control have trample."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "blockers"
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Hero you control becomes blocked, put a +1/+1 counter on that Hero for each creature blocking it.",
+          "trigger": {
+            "event": "becomes_blocked",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Hero"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "she_hulk_wallbreaker",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "She-Hulk, Wallbreaker",
+      "oracle_text": "Trample\nOther Heroes you control have trample.\nWhenever a Hero you control becomes blocked, put a +1/+1 counter on that Hero for each creature blocking it.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Gamma",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -131883,6 +132043,67 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "spectator_seating",
+      "name": "Spectator Seating",
+      "oracle_text": "This land enters tapped unless you have two or more opponents.\n{T}: Add {R} or {W}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "player_count": "each_opponent"
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -131957,6 +132178,101 @@
       "subtypes": [
         "Spirit",
         "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "speed_evade",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{1}"
+              },
+              "player": "you",
+              "prompt": "Pay {1} to make target creature with haste unblockable except by creatures with haste?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, you may pay {1}.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "this_turn",
+              "except_blockers": {
+                "keywords": [
+                  "haste"
+                ]
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "id": "speed_evade",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "keywords": [
+                  "haste"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, target creature with haste can't be blocked this turn except by creatures with haste."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "speed_young_avenger",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Speed, Young Avenger",
+      "oracle_text": "Haste\nWhenever you cast a noncreature spell, you may pay {1}. When you do, target creature with haste can't be blocked this turn except by creatures with haste.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
       ],
       "toughness": 2,
       "types": [
@@ -146743,6 +147059,103 @@
           "event": "self_enters_tapped"
         }
       ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "hexproof"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "subtypes": [
+                  "Hero"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When The Wasp enters, target Hero gains hexproof until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever The Wasp attacks, tap target creature defending player controls.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "the_wasp_winsome_avenger",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "The Wasp, Winsome Avenger",
+      "oracle_text": "Flash\nFlying\nWhen The Wasp enters, target Hero gains hexproof until end of turn.\nWhenever The Wasp attacks, tap target creature defending player controls.",
+      "power": 2,
       "source": "auto",
       "subtypes": [
         "Human",

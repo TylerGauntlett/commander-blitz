@@ -10598,6 +10598,10 @@
   "scampering_surveyor": {
     "zone": "battlefield"
   },
+  "scarlet_witch_chaotic_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "scarlet_witch_wanda_maximoff": {
     "zone": "battlefield"
   },
@@ -11001,6 +11005,10 @@
     "zone": "battlefield"
   },
   "shatterskull_recruit": {
+    "zone": "battlefield"
+  },
+  "she_hulk_wallbreaker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sheltered_thicket": {
@@ -11680,6 +11688,10 @@
     },
     "zone": "battlefield"
   },
+  "spectator_seating": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spectral_flight": {
     "zone": [
       "battlefield",
@@ -11687,6 +11699,10 @@
     ]
   },
   "spectral_rider": {
+    "zone": "battlefield"
+  },
+  "speed_young_avenger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sphinx_mindbreaker": {
@@ -12795,6 +12811,16 @@
     "zone": "battlefield"
   },
   "the_wasp_janet_van_dyne": {
+    "zone": "battlefield"
+  },
+  "the_wasp_winsome_avenger": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
     "zone": "battlefield"
   },
   "the_whizzer_classic_speedster": {

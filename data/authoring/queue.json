@@ -234982,12 +234982,12 @@
     },
     "Scarlet Witch, Chaotic Avenger": {
       "edhrec_rank": 13463,
-      "gate": "template",
+      "gate": null,
       "name": "Scarlet Witch, Chaotic Avenger",
-      "reason": "no template for: Whenever Scarlet Witch deals combat damage to a player, look at the top two cards of your ",
+      "reason": "",
       "scryfall_id": "00242e12-a957-4cb2-9d26-e1124e614e72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scarlet Witch, Wanda Maximoff": {
@@ -243412,12 +243412,12 @@
     },
     "She-Hulk, Wallbreaker": {
       "edhrec_rank": 13342,
-      "gate": "template",
+      "gate": null,
       "name": "She-Hulk, Wallbreaker",
-      "reason": "no template for: Other Heroes you control have trample",
+      "reason": "",
       "scryfall_id": "8c57fb16-f4a3-437c-be27-d1c00a2be01e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shed Weakness": {
@@ -257462,12 +257462,12 @@
     },
     "Spectator Seating": {
       "edhrec_rank": 171,
-      "gate": "template",
+      "gate": null,
       "name": "Spectator Seating",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "404f23f0-e14d-4179-bdbc-e08ee840fdb6",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Specter of Mortality": {
@@ -257802,12 +257802,12 @@
     },
     "Speed, Young Avenger": {
       "edhrec_rank": 20424,
-      "gate": "template",
+      "gate": null,
       "name": "Speed, Young Avenger",
-      "reason": "no template for: Whenever you cast a noncreature spell, you may pay {1}. When you do, target creature with ",
+      "reason": "",
       "scryfall_id": "7224b9cc-6a88-4aea-a7ab-ab64e0e25451",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Speedball, New Warrior": {
@@ -282882,12 +282882,12 @@
     },
     "The Wasp, Winsome Avenger": {
       "edhrec_rank": 16164,
-      "gate": "template",
+      "gate": null,
       "name": "The Wasp, Winsome Avenger",
-      "reason": "no template for: When The Wasp enters, target Hero gains hexproof until end of turn",
+      "reason": "",
       "scryfall_id": "ce5fb436-fcc6-426f-a33b-a8ba904df0ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Watcher in the Water": {

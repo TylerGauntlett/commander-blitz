@@ -1,0 +1,18 @@
+{
+  "card_id": "shang_chi_and_the_ten_rings",
+  "name": "Shang-Chi and the Ten Rings",
+  "oracle_text": "First strike\nWhenever you draw a card, put a +1/+1 counter on Shang-Chi.\nWhen the tenth +1/+1 counter is put on Shang-Chi, you draw five cards and gain 5 life.",
+  "blocked_sentences": [
+    "When the tenth +1/+1 counter is put on Shang-Chi, you draw five cards and gain 5 life."
+  ],
+  "needs": [
+    {
+      "capability": "nth_counter_placed_trigger",
+      "kind": "trigger_event",
+      "what": "a counter_placed trigger that fires exactly once when a placement of the given kind on this permanent carries its count across N (before < N <= before + amount), e.g. trigger {event: counter_placed, source: self, counter: \"+1/+1\", nth: 10}; the event payload would need the pre-placement count, the way add_counters already reads `before` for Saga chapters",
+      "why_existing_wont_do": "counter_placed fires on every placement and its payload carries only the amount, not the count before it; `nth` on a trigger is defined only for draw and spell_cast ordinals; a `counters_on >= 10` condition fires again on every later counter (and an intervening-if recheck would misread it); the `state` trigger fires on the count holding, not on the tenth counter arriving; `chapter` handles the crossing logic but only for lore counters on Sagas"
+    }
+  ],
+  "closest_existing": ["counter_placed", "chapter", "state"],
+  "confidence": "high"
+}
