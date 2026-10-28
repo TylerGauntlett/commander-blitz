@@ -2633,10 +2633,11 @@ copy carries one seat and no battles, so the battle half would never fire), and
 refuses `defending` on this event without it, since the unsplit batch names no
 one seat to compare.
 
-`batched: true` is **not** the repair for any of this and is a no-op on every
-combat-damage event: `_queue` keys the batch off `event.data["batch"]`, which
-neither `damage_player` nor `_fire_damage_batch` writes. The batching here is
-structural -- one event per damaging player per step -- and needs no flag.
+`batched: true` is **not** the repair for any of this, and the loader refuses
+it on every combat-damage event: `_queue` keys the batch off
+`event.data["batch"]`, which neither `damage_player` nor `_fire_damage_batch`
+writes. The batching here is structural -- one event per damaging player per
+step -- and needs no flag.
 
 ## Soulbond — a relationship that is not attachment
 
@@ -7802,6 +7803,31 @@ departure trigger can do.
 creating a token and putting it onto the battlefield one act — but it also fires
 for a token that left and returned, and reads the entering permanent's controller
 rather than the creator's.
+
+## "Whenever **one or more** …" — `batched`
+
+"Whenever you create one or more creature tokens, put a story counter on this
+artifact." (Staff of the Storyteller)
+
+```jsonc
+"trigger": {"event": "token_created", "controller": "you",
+            "filter": {"types": ["Creature"]}, "batched": true}
+```
+
+The event still fires once per object; `batched` makes the *ability* queue once
+per simultaneous group (603.2c), keyed by the `batch` the event carries and by
+the permanent and ability, so two Staffs each get a counter. The `filter` is
+matched first, so a creation of a Treasure and a Spirit queues it once and a
+lone Treasure not at all. A later, separate group fires it again, which is what
+sets it apart from `max_per_turn: 1`.
+
+What one group is depends on the event, and `triggers.BATCHED_EVENTS` lists
+the events that carry one: `permanent_enters` and `leaves_graveyard` group by
+the effect op or cost payment that moved the objects, and `token_created` by
+the `primitives.create_token` call, so every token one creation makes is one
+group, including the extra ones a `replace_token_creation` doubler adds or the
+ones it substitutes. Two `create_token` ops are two groups. The loader refuses
+`batched` on any other event, where nothing would group it.
 
 ## "Enters with a counter on it **for each** …"
 

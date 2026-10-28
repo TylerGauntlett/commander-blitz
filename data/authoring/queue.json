@@ -262112,12 +262112,12 @@
     },
     "Staff of the Storyteller": {
       "edhrec_rank": 3172,
-      "gate": "template",
+      "gate": null,
       "name": "Staff of the Storyteller",
-      "reason": "no template for: When this artifact enters, create a 1/1 white Spirit creature token with flying",
+      "reason": "",
       "scryfall_id": "67083aca-b077-4b12-8218-876e22476f85",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Staff of the Sun Magus": {

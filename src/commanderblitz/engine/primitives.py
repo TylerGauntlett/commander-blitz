@@ -1359,6 +1359,12 @@ def create_token(
     plan = _token_creation_plan(state, def_id, controller, count)
     if plan is None:
         plan = [(def_id, count, False)]
+    # "Whenever you create **one or more** creature tokens" (Staff of the
+    # Storyteller) fires once per creation, and every token this call makes --
+    # doubled or substituted -- is that one creation (603.2c). Read once,
+    # before any token moves, so nothing a token's arrival runs can split the
+    # group. See `triggers.BATCHED_EVENTS`.
+    batch = state.event_batch
     made: list[int] = []
     for token_id, token_count, substituted in plan:
         for _ in range(max(0, token_count)):
@@ -1401,6 +1407,7 @@ def create_token(
                 player=controller,
                 source=obj.oid,
                 card=token_id,
+                batch=batch,
             )
             made.append(obj.oid)
     return made

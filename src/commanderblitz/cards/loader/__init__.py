@@ -66,6 +66,7 @@ from commanderblitz.engine.mana import (
 from commanderblitz.engine.objects import TIME_COUNTER
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.triggers import (
+    BATCHED_EVENTS,
     ORDINAL_FILTER_KEYS,
     STATE_TRIGGER,
     TRIGGER_EVENTS,
@@ -2531,6 +2532,20 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"(allowed: {sorted(ORDINAL_FILTER_KEYS)})"
             )
 
+        if (
+            model.trigger.batched
+            and model.trigger.event != STATE_TRIGGER
+            and model.trigger.event not in BATCHED_EVENTS
+        ):
+            # "One or more" groups events by the batch they carry, and only
+            # these events carry one: anywhere else `_queue` queues per event,
+            # so the card would load and count every object it was printed to
+            # count once.
+            raise DslError(
+                f"{where}: 'batched' groups the events of one simultaneous "
+                f"batch and only {sorted(BATCHED_EVENTS)} carry one, "
+                f"not {model.trigger.event!r}"
+            )
         if model.trigger.or_battle and model.trigger.event != "creatures_deal_combat_damage":
             # "…or battle" is a disjunction inside one printed sentence, and the
             # sentence is `creatures_deal_combat_damage`'s. On any other event

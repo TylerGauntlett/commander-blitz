@@ -11383,6 +11383,18 @@
   "squirrelanoids": {
     "zone": "battlefield"
   },
+  "staff_of_the_storyteller": {
+    "battlefield_count": 34,
+    "counters": {
+      "amount": 1,
+      "kind": "story"
+    },
+    "tokens": {
+      "count": 1,
+      "id": "spirit_1_1_w_flying"
+    },
+    "zone": "battlefield"
+  },
   "staff_of_titania": {
     "battlefield_count": 33,
     "zone": "battlefield"

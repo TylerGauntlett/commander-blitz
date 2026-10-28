@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**98 cards** blocked by **87** capabilities.
+**97 cards** blocked by **86** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [batched-token-created](#batched-token-created) | 1 | 3172 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-milled-cards-free](#cast-milled-cards-free) | 1 | 23890 | op |
@@ -462,20 +461,6 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
-
-</details>
-
-## batched-token-created
-
-Blocks **1** card.
-
-- **(trigger_event)** a token_created trigger honouring `batched: true`, so "whenever you create one or more creature tokens" fires once per simultaneous creation rather than once per token
-  <br>Why the existing vocabulary won't do: token_created with a Creature filter exists, but primitives.create_token fires TOKEN_CREATED without the `batch` field that triggers._queue reads, so `batched` is silently ignored and making three tokens at once would add three counters; batched permanent_enters with is_token is the documented near miss (reads the entering permanent's controller, not the creator)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Staff of the Storyteller** (rank 3172) — `staff_of_the_storyteller`
-  - Whenever you create one or more creature tokens, put a story counter on this artifact.
 
 </details>
 

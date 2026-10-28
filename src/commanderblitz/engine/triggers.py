@@ -352,6 +352,17 @@ TRIGGER_EVENTS: dict[str, str] = {
 #: The DSL name of a state trigger -- see the `TRIGGER_EVENTS` row.
 STATE_TRIGGER = "state"
 
+#: The events whose payload carries the ``batch`` that `_queue` groups a
+#: ``batched`` ("whenever **one or more** ...") trigger by -- each the
+#: `state.event_batch` its simultaneous group was made in. On any other event
+#: `_queue` finds no batch and queues per event, so the loader refuses the flag
+#: there rather than load a "one or more" that counts every object.
+#:
+#: `token_created` takes it from `primitives.create_token`, read once per call:
+#: every token one creation makes, the extra ones a `replace_token_creation`
+#: doubler adds and the ones it substitutes, is one batch (603.2c).
+BATCHED_EVENTS = frozenset({"permanent_enters", "leaves_graveyard", "token_created"})
+
 #: Triggers whose subject is an object rather than a player.
 OBJECT_SUBJECT_TRIGGERS = frozenset(
     {
