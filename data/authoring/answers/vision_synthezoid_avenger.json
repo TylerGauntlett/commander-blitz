@@ -1,0 +1,48 @@
+{
+  "card": {
+    "id": "vision_synthezoid_avenger",
+    "name": "Vision, Synthezoid Avenger",
+    "oracle_text": "Flying\nWhenever a player casts a spell, if it isn't that player's turn, choose one —\n• Put a +1/+1 counter on Vision.\n• Vision phases out. (Treat him and anything attached to him as though they don't exist until your next turn.)",
+    "mana_cost": "{4}",
+    "supertypes": ["Legendary"],
+    "types": ["Artifact", "Creature"],
+    "subtypes": ["Robot", "Hero"],
+    "power": 3,
+    "toughness": 3,
+    "colors": [],
+    "color_identity": [],
+    "keywords": ["flying"],
+    "abilities": [
+      {
+        "kind": "triggered",
+        "text": "Whenever a player casts a spell, if it isn't that player's turn, choose one —\n• Put a +1/+1 counter on Vision.\n• Vision phases out.",
+        "trigger": {
+          "event": "spell_cast",
+          "controller": "any",
+          "condition": {"not": {"is_active_player": {"binding": "event_player"}}}
+        },
+        "effects": [
+          {
+            "op": "choose_mode",
+            "count": 1,
+            "modes": [
+              {
+                "label": "Put a +1/+1 counter on Vision.",
+                "effects": [
+                  {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"self_only": true}}
+                ]
+              },
+              {
+                "label": "Vision phases out.",
+                "effects": [
+                  {"op": "phase_out", "objects": {"self_only": true}}
+                ]
+              }
+            ]
+          }
+        ]
+      }
+    ]
+  },
+  "expectation": {"zone": "battlefield", "battlefield_count": 33}
+}

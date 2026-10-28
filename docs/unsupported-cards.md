@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **84** capabilities.
+**100 cards** blocked by **85** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,6 +38,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-placed-counters](#copy-placed-counters) | 1 | 15263 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [damage-addend](#damage-addend) | 1 | 15539 | static_effect |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [damage-redirection](#damage-redirection) | 1 | 15560 | replacement |
 | [dealt-damage-batched](#dealt-damage-batched) | 1 | 17089 | trigger_event |
@@ -595,6 +596,20 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+
+</details>
+
+## damage-addend
+
+Blocks **1** card.
+
+- **(static_effect)** an additive damage replacement on the replace_damage static: a `damage_addend` (N) beside or instead of `damage_multiplier`, so "it deals that much damage plus N instead" (Torbran, Thor) adds N to each damage event whose dealer matches `damage_source` (here controller you, exclude_self) and whose recipient is an opponent or a permanent an opponent controls (`affects_player: opponent` + `affects: {controller: opponent}`), with 616.1 ordering against multipliers left to the affected player/controller
+  <br>Why the existing vocabulary won't do: replace_damage only carries damage_multiplier, which the loader requires and refuses below 2, and player_statics folds every replace_damage into a single product; there is no addend the way replace_life_gain has gain_addend, so "plus 1" cannot be said
+
+<details><summary>Cards waiting on this</summary>
+
+- **Thor, Asgard's Avenger** (rank 15539) — `thor_asgard_s_avenger`
+  - If another source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 1 instead.
 
 </details>
 

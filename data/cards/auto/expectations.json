@@ -13350,6 +13350,10 @@
     },
     "zone": "graveyard"
   },
+  "unclaimed_territory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "undead_augur": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14079,6 +14083,10 @@
   "war_elephant": {
     "zone": "battlefield"
   },
+  "war_machine_avenging_arsenal": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "war_mammoth": {
     "zone": "battlefield"
   },
@@ -14229,6 +14237,15 @@
   "well_of_lost_dreams": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "west_coast_expansion": {
+    "hand_size": {
+      "0": 21
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
   },
   "wetland_sambar": {
     "zone": "battlefield"
@@ -14475,6 +14492,10 @@
     "zone": "battlefield"
   },
   "winter_soldier_bucky_barnes": {
+    "zone": "battlefield"
+  },
+  "winter_soldier_reborn_avenger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wirewood_elf": {

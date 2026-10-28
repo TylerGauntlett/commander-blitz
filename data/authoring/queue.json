@@ -296742,12 +296742,12 @@
     },
     "Unclaimed Territory": {
       "edhrec_rank": 245,
-      "gate": "template",
+      "gate": null,
       "name": "Unclaimed Territory",
-      "reason": "no template for: As this land enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "d3782952-3839-4a94-95bc-716611d3ece6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uncle Iroh": {
@@ -305822,12 +305822,12 @@
     },
     "Vision, Synthezoid Avenger": {
       "edhrec_rank": 17180,
-      "gate": "template",
+      "gate": "residual",
       "name": "Vision, Synthezoid Avenger",
-      "reason": "no template for: Whenever a player casts a spell, if it isn't that player's turn, choose one —",
+      "reason": "printed text not represented: • Vision phases out",
       "scryfall_id": "f7007b77-84ec-4391-b279-8c188dd569d0",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Visionary Augmenter": {
@@ -310362,12 +310362,12 @@
     },
     "War Machine, Avenging Arsenal": {
       "edhrec_rank": 13383,
-      "gate": "template",
+      "gate": null,
       "name": "War Machine, Avenging Arsenal",
-      "reason": "no template for: Whenever War Machine attacks, attacking modified creatures you control gain double strike ",
+      "reason": "",
       "scryfall_id": "411210d1-02ae-404c-98d6-f1aa6ae2a484",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "War Machine, James Rhodes": {
@@ -313552,12 +313552,12 @@
     },
     "West Coast Expansion": {
       "edhrec_rank": 16458,
-      "gate": "template",
+      "gate": null,
       "name": "West Coast Expansion",
-      "reason": "no template for: Draw X cards. If X is 5 or more, you may cast a Hero spell from your hand without paying i",
+      "reason": "",
       "scryfall_id": "41533f78-4a4e-424a-9612-a8bdb2a14b4b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "West Wind Avatar": {
@@ -316812,12 +316812,12 @@
     },
     "Winter Soldier, Reborn Avenger": {
       "edhrec_rank": 14446,
-      "gate": "template",
+      "gate": null,
       "name": "Winter Soldier, Reborn Avenger",
-      "reason": "no template for: Whenever Winter Soldier attacks, return target creature card with mana value less than or ",
+      "reason": "",
       "scryfall_id": "75ae41f8-5968-49de-ae6d-9f9523aecba5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winter's Chill": {
