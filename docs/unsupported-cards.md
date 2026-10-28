@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**92 cards** blocked by **77** capabilities.
+**91 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [distribute-control-among-opponents](#distribute-control-among-opponents) | 1 | 29052 | op |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
@@ -65,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [permanent-goad](#permanent-goad) | 1 | 29052 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
@@ -600,21 +598,6 @@ Blocks **1** card.
 
 </details>
 
-## distribute-control-among-opponents
-
-Blocks **1** card.
-
-- **(op)** for each of a set of permanents, choose a different opponent, and each opponent gains control (permanently) of the permanent chosen for them
-  <br>Why the existing vocabulary won't do: gain_control gives a whole selector to one player and rotate_control passes in a seat direction; nothing pairs each object with a distinct chosen opponent
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
-  - They're goaded for the rest of the game.
-  - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
-
-</details>
-
 ## dragon-4-4-r-flying
 
 Blocks **1** card.
@@ -980,21 +963,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## permanent-goad
-
-Blocks **1** card.
-
-- **(op)** a goad that never expires: a `duration: "permanent"` ("for the rest of the game") option on the goad op, so the goaded_by mark is not cleared at the goader's next untap step
-  <br>Why the existing vocabulary won't do: goad takes only objects and player, and goad_creature's mark is cleared in turn._untap_step when the goading player untaps, so it lasts only until your next turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dack Fayden, Helping Hand** (rank 29052) — `dack_fayden_helping_hand`
-  - They're goaded for the rest of the game.
-  - For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.
 
 </details>
 

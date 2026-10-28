@@ -2739,6 +2739,17 @@
   "cystbearer": {
     "zone": "battlefield"
   },
+  "dack_fayden_helping_hand": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "dack_s_duplicate": {
     "granted": {
       "count": 1,

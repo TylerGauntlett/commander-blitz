@@ -271,6 +271,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "distribute_counters": ("Board", "Distribute N counters among targets as the player chooses.",
                             "Distributing counters among targets"),
     "detain": ("Board", "Detain permanents until your next turn.", None),
+    "distribute_control_among_opponents": ("Board", "For each permanent, choose a different opponent; each gains control of theirs.",
+                                           "Each opponent gains control of the one chosen for them"),
     "gain_control": ("Board", "Gain control of permanents, for a duration or for good.",
                      H_GAIN_CONTROL),
     "rotate_control": ("Board", "Pass permanents around the table to the left or right.",

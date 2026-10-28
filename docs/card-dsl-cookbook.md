@@ -10004,6 +10004,42 @@ answer takes from). A table where both directions name the same neighbour — a
 duel — is not asked. `direction: "left" | "right"` fixes the answer; any other
 spelling, or a missing `objects`, is a load error.
 
+### Each opponent gains control of the one chosen for them
+
+```jsonc
+// Dack Fayden, Helping Hand — "When Dack Fayden enters, reveal cards from the
+// top of your library until you reveal X creature cards, where X is the number
+// of opponents you have. Put those creature cards onto the battlefield, then
+// shuffle. They're goaded for the rest of the game. For each of those
+// permanents, choose a different opponent. Each opponent gains control of the
+// permanent for which they were chosen."
+{ "op": "reveal_until", "objects": { "types": ["Creature"] },
+  "amount": { "player_count": "each_opponent" },
+  "destination": "battlefield", "shuffle_rest": true, "as": "revealed" },
+{ "op": "goad", "objects": { "binding": "revealed" }, "duration": "permanent" },
+{ "op": "distribute_control_among_opponents", "objects": { "binding": "revealed" } }
+```
+
+`distribute_control_among_opponents` pairs each permanent in `objects` with a
+**different** opponent and gives it to them, permanently. The controller makes
+every choice: one `CHOOSE_PLAYER` per permanent, in pool order, over the
+opponents not yet chosen, so every pairing is reachable. The last question is not asked when one seat is left.
+With fewer permanents than opponents, the opponents never chosen get nothing;
+with more, a permanent left over once every opponent has one has no different
+opponent and stays put (609.3). Every choice is made before any control moves,
+and each move is a `change_control`, so the 302.6 and 506.4 rows above apply.
+`objects` is required.
+
+`gain_control` is the near miss. It gives a whole pool to one player, so a
+`for_each` around it can hand every permanent to the same opponent and has no
+way to say "a different one". `rotate_control` passes boards around the table
+and chooses nothing.
+
+The order of Dack's three ops is the card. The goad comes first, while his
+controller still controls the creatures. A [permanent goad](#goad) records the
+mark even then, so each opponent's new creature must attack a player other than
+Dack's controller for the rest of the game.
+
 ### Exchanging control
 
 ```jsonc

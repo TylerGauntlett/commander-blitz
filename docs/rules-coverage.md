@@ -271,7 +271,7 @@ under [Simplified](#simplified); what is missing outright is under
 | Area | Detail |
 |---|---|
 | **Gaining control** | `gain_control` with `permanent` or `until_end_of_turn`: `controller` plus summoning sickness (302.6), removal from combat (506.4) and owner-bound zone destinations (400.3), the `control_changed` event; the handback is a `TempEffect(kind="control")` re-entering `change_control` the other way |
-| **Exchanging and rotating control** | `exchange_control` with `first` and `second`, one act (701.12a), nothing happening unless both resolve to one permanent each with different controllers (701.12b); `rotate_control` reads every controller before any moves, skipping eliminated seats (Aminatou) |
+| **Exchanging and rotating control** | `exchange_control` with `first` and `second`, one act (701.12a), nothing happening unless both resolve to one permanent each with different controllers (701.12b); `rotate_control` reads every controller before any moves, skipping eliminated seats (Aminatou); `distribute_control_among_opponents` pairs each permanent with a different opponent chosen by the controller, every choice before any move (Dack Fayden, Helping Hand) |
 | **Join forces** | `may`'s `pay` with a `player` spec asked one unit at a time per seat in turn order, the total bound under `as` |
 
 ### Planeswalkers, sagas, battles, classes

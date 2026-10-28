@@ -30310,6 +30310,71 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": "each_opponent"
+              },
+              "as": "revealed",
+              "destination": "battlefield",
+              "objects": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "reveal_until",
+              "player": "you",
+              "shuffle_rest": true
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "binding": "revealed"
+              },
+              "op": "goad"
+            },
+            {
+              "objects": {
+                "binding": "revealed"
+              },
+              "op": "distribute_control_among_opponents"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have. Put those creature cards onto the battlefield, then shuffle. They're goaded for the rest of the game. For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "dack_fayden_helping_hand",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Dack Fayden, Helping Hand",
+      "oracle_text": "When Dack Fayden enters, reveal cards from the top of your library until you reveal X creature cards, where X is the number of opponents you have. Put those creature cards onto the battlefield, then shuffle. They're goaded for the rest of the game. For each of those permanents, choose a different opponent. Each opponent gains control of the permanent for which they were chosen.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "U"

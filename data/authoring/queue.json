@@ -59832,12 +59832,12 @@
     },
     "Dack Fayden, Helping Hand": {
       "edhrec_rank": 29052,
-      "gate": "template",
+      "gate": null,
       "name": "Dack Fayden, Helping Hand",
-      "reason": "no template for: When Dack Fayden enters, reveal cards from the top of your library until you reveal X crea",
+      "reason": "",
       "scryfall_id": "77a1ef5a-9ebf-4e23-97c6-39ff744c84da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dack's Duplicate": {

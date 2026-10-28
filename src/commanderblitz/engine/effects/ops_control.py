@@ -597,6 +597,62 @@ def op_rotate_control(ctx: EffectContext, spec: Mapping[str, Any]):
             change_control(state, oid, receiver[was], source=ctx.source_oid)
 
 
+@register("distribute_control_among_opponents")
+def op_distribute_control_among_opponents(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "For each of those permanents, choose a different opponent. Each opponent
+    gains control of the permanent for which they were chosen." Dack Fayden,
+    Helping Hand.
+
+    A pairing, which neither existing control op can say: `gain_control` gives
+    a whole pool to one player, so `for_each` around it hands every permanent
+    to the same opponent or loops with no way to say "a *different* one"; and
+    `rotate_control` passes boards one seat round the table, with no choice of
+    who gets what.
+
+    **No new `DecisionKind`.** One `ask_player` per permanent, asked of the
+    controller (who makes every choice the sentence names) over the opponents
+    not yet chosen. Asked in turn, that reaches every pairing: each permanent's
+    question names the seats still free, and with fewer permanents than
+    opponents the seats never picked are the opponents who get nothing. The
+    last question is forced when one seat is left, `ask_player`'s own
+    short-circuit. Once every opponent has been chosen, a further permanent
+    has no different opponent to go to and stays where it is (609.3: do as
+    much as possible).
+
+    Every choice is made **before** any control moves, then each permanent
+    passes through `change_control` -- permanently, the printed line has no
+    duration -- so each is summoning sick for its new controller (302.6) and
+    leaves combat (506.4). A permanent that left the battlefield in the
+    meantime is skipped, and is not asked about.
+
+    ``objects`` names the permanents, in the order asked -- Dack's is
+    ``{"binding": …}`` over what `reveal_until` put onto the battlefield.
+    """
+    state = ctx.state
+    pool = [
+        oid
+        for oid in resolve_pool(ctx, spec.get("objects"))
+        if (obj := state.objects.get(oid)) is not None and obj.on_battlefield
+    ]
+    free = list(ctx.opponents())
+    pairs: list[tuple[int, int]] = []
+    for oid in pool:
+        if not free:
+            break
+        chosen = yield from ask_player(
+            ctx,
+            f"Choose the opponent who gains control of {ctx.name_of(oid)}",
+            free,
+            ctx.controller,
+        )
+        if chosen is None:
+            break
+        free.remove(chosen)
+        pairs.append((oid, chosen))
+    for oid, pid in pairs:
+        change_control(state, oid, pid, source=ctx.source_oid)
+
+
 def _creature_types(ctx: EffectContext) -> frozenset[str]:
     """Every creature subtype the card pool actually contains.
 

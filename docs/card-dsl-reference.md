@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 148 |
+| [Effect ops](#effect-ops) | 149 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 57 |
@@ -90,6 +90,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
 | `destroy` | Board |  | Destroy permanents; `no_regenerate` forbids regeneration. | [Effect ops](card-dsl.md#effect-ops) |
 | `detain` | Board |  | Detain permanents until your next turn. | [Effect ops](card-dsl.md#effect-ops) |
+| `distribute_control_among_opponents` | Board |  | For each permanent, choose a different opponent; each gains control of theirs. | [Each opponent gains control of the one chosen for them](card-dsl-cookbook.md#each-opponent-gains-control-of-the-one-chosen-for-them) |
 | `distribute_counters` | Board |  | Distribute N counters among targets as the player chooses. | [Distributing counters among targets](card-dsl.md#distributing-counters-among-targets) |
 | `double_counters` | Board |  | Double the counters of a kind on a permanent. | [Doubling the counters on a permanent](card-dsl.md#doubling-the-counters-on-a-permanent) |
 | `empower` | Board |  | Empower Jace N: N loyalty on a Jace token you control, creating one first if none. | [empower — "Empower Jace N"](card-dsl-cookbook.md#empower--empower-jace-n) |

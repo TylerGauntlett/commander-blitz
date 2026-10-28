@@ -1957,6 +1957,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: rotate_control direction is 'left' or 'right', not {effect['direction']!r}"
             )
+    # Dack Fayden's split. Without a pool the op hands out nothing and the
+    # card reads as a gift that never arrives.
+    if op == "distribute_control_among_opponents" and "objects" not in effect:
+        raise DslError(
+            f"{where}: distribute_control_among_opponents needs 'objects' -- "
+            f"the permanents handed out, one to each chosen opponent"
+        )
     if op == "exchange_control":
         # 701.12: two permanents, each named. Without either half the op does
         # nothing at all, which reads like the card and is not it.
