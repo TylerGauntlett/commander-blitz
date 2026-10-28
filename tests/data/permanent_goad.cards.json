@@ -1,0 +1,21 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_permanent_goad.py. t_pg_goader is Taunt from the Rampart's first sentence with Dack Fayden, Helping Hand's clock: goad all creatures your opponents control for the rest of the game.",
+  "cards": [
+    {
+      "id": "t_pg_goader",
+      "name": "Test Lasting Goader",
+      "oracle_text": "Goad all creatures your opponents control. They're goaded for the rest of the game.",
+      "mana_cost": "{2}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [
+        {
+          "op": "goad",
+          "objects": { "zone": "battlefield", "controller": "opponent", "types": ["Creature"] },
+          "duration": "permanent"
+        }
+      ]
+    }
+  ]
+}

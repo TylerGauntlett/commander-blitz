@@ -253,7 +253,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "must_block": ("Board", "Creatures block this turn if able.", None),
     "cant_attack_player": ("Board", "Creatures can't attack a player (or only their walkers of a subtype) until a duration ends.",
                            '"That player can\'t attack you"'),
-    "goad": ("Board", "Goad creatures until your next turn.", "Goad"),
+    "goad": ("Board", "Goad creatures until your next turn, or for the rest of the game.", "Goad"),
     "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",
                         "Reselecting an attack — `redirect_attack`"),
     "cant_block": ("Board", "Creatures can't block this turn.",

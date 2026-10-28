@@ -1394,15 +1394,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # guard, for detain's reason.
         if not effect.get("objects"):
             raise DslError(f"{where}: goad needs 'objects' naming the creatures goaded")
-        # No `duration` key at all, and that is the point of the op rather than an
-        # omission: 701.38a has exactly one clock ("until your next turn") and it
-        # is keyed to the goading *player*, not to a turn number. Accepting a
-        # duration would invite `this_turn` -- which is `must_attack`, a strictly
-        # weaker card that looks identical in a one-turn test.
-        if "duration" in effect:
+        # One `duration` only, and its absence is the default rather than an
+        # omission: 701.38a's clock ("until your next turn") is keyed to the
+        # goading *player*, not to a turn number. The one other printed clock is
+        # "for the rest of the game" (Dack Fayden, Helping Hand), `permanent`.
+        # Accepting any other duration would invite `this_turn` -- which is
+        # `must_attack`, a strictly weaker card that looks identical in a
+        # one-turn test.
+        if "duration" in effect and effect["duration"] != "permanent":
             raise DslError(
-                f"{where}: goad takes no 'duration' -- it lasts until the goading "
-                f"player's next turn (701.38a), which is a player and not a number. "
+                f"{where}: goad takes no 'duration' but 'permanent' (\"for the rest "
+                f"of the game\") -- otherwise it lasts until the goading player's "
+                f"next turn (701.38a), which is a player and not a number. "
                 f"Use must_attack for a one-combat requirement"
             )
         # The goader defaults to the effect's controller, which is every printed

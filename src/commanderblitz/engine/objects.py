@@ -842,6 +842,13 @@ class GameObject:
     #: combat until the goader untaps. This is read live in
     #: `combat.attack_required` and never spent.
     goaded_by: set[int] = field(default_factory=set)
+    #: The goaders in :attr:`goaded_by` whose goad lasts "for the rest of the
+    #: game" (Dack Fayden, Helping Hand) -- always a subset of it. Everything
+    #: goad *means* is read off `goaded_by`; this says only which marks the
+    #: goader's untap step must leave alone (`temp_effects.clear_goad`). Both
+    #: still end when the goader leaves the game (800.4a) or the creature
+    #: leaves the battlefield (400.7).
+    goaded_permanently_by: set[int] = field(default_factory=set)
     #: "Prevent all damage that would be dealt to him this turn" (Gideon Jura)
     #: and "until your next turn, prevent all damage target permanent would
     #: deal" (Gideon of the Trials) -- see :class:`structs.PermanentShield`.
@@ -1072,6 +1079,7 @@ class GameObject:
         # no longer the creature anybody goaded -- blink your own goaded
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
+        self.goaded_permanently_by = set()
         # And no longer the permanent a prevention shield was aimed at.
         self.damage_shields = []
         # Nor the planeswalker anybody was told to attack.
@@ -1250,6 +1258,7 @@ class GameObject:
             # Sorted rather than the set itself, so the snapshot is JSON and is
             # comparable between two runs of the same game.
             "goaded_by": sorted(self.goaded_by),
+            "goaded_permanently_by": sorted(self.goaded_permanently_by),
             "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,

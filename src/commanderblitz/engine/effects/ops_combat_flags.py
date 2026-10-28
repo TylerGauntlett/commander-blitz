@@ -456,13 +456,22 @@ def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
     ``player`` is the goader and defaults to the effect's controller, which is
     every printed goad -- it is spelled out only so a "goaded by target
     opponent" line has somewhere to say it.
+
+    ``duration: "permanent"`` is "they're goaded **for the rest of the game**"
+    (Dack Fayden, Helping Hand), the one other clock a printed goad has: the
+    goader's untap step leaves the mark alone, and the goader leaving the game
+    still ends it (800.4a). The mark is the goader's whoever controls the
+    creature, so a creature goaded this way and then handed to an opponent
+    must attack a player other than the goader -- which is why Dack's goad
+    comes before his control change and must be written in that order.
     """
     goaders = _players(ctx, spec["player"]) if "player" in spec else [ctx.controller]
+    permanent = spec.get("duration") == "permanent"
     for oid in resolve_pool(ctx, spec.get("objects") or {}):
         for player in goaders:
             # Battlefield and liveness are checked in the primitive, which is
             # also what makes a creature that left in response get nothing.
-            goad_creature(ctx.state, oid, player)
+            goad_creature(ctx.state, oid, player, permanent=permanent)
     yield from ()
 
 

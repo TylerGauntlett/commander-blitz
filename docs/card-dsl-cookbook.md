@@ -4001,10 +4001,30 @@ same creature: each clock runs from its own untap step, and the creature must
 attack around both — so a creature goaded by every other player is free to
 attack any of them, which is the "if able" escape doing its job.
 
-There is deliberately **no `duration` key**, and the loader refuses one. 701.38a
-has exactly one clock and it is a player; accepting a duration would invite
-`this_turn`, which is `must_attack` — a strictly weaker card that looks identical
-in a one-combat test. `objects` is required for detain's reason: a goad with no
+Goad has **two clocks**, and `duration` takes only the second. Omitted, it is
+701.38a's "until your next turn", keyed to a player. `"permanent"` is "they're
+goaded **for the rest of the game**" (Dack Fayden, Helping Hand): the mark is
+also written into `GameObject.goaded_permanently_by`, and `temp_effects.clear_goad`
+leaves it alone at the goader's untap step. The loader refuses any other value,
+because `this_turn` would be `must_attack` — a strictly weaker card that looks
+identical in a one-combat test.
+
+```jsonc
+// Dack Fayden, Helping Hand -- "They're goaded for the rest of the game."
+{ "op": "goad", "objects": { "binding": "revealed" }, "duration": "permanent" }
+```
+
+A permanent goad is the goader's **whoever controls the creature**. It is
+recorded even on a creature the goader controls, which a timed goad refuses as
+vacuous: Dack puts the creatures onto the battlefield under his controller, goads
+them, and hands them to opponents on the next line, so the goad must come first for the creatures to arrive goaded by him. Two
+things still end it. The creature leaving the battlefield makes a new object
+(400.7). The goader leaving the game ends what that player did (800.4a): `sba`
+calls `clear_goad` with `leaving`, and a mark kept would compel the creature
+every combat while pointing its restriction at a seat `alive()` never offers.
+(Dack's own revealed creatures are exiled with him anyway, since he owns them.)
+
+`objects` is required for detain's reason: a goad with no
 selector goads nobody and the card would resolve saying nothing. `player` is the
 goader and defaults to the effect's controller, which is every printed goad.
 

@@ -115,7 +115,7 @@ def clear_attack_restrictions(state: GameState, duration: str) -> None:
     state.attack_restrictions = [r for r in state.attack_restrictions if r.duration != duration]
 
 
-def goad_creature(state: GameState, oid: int, player: int) -> bool:
+def goad_creature(state: GameState, oid: int, player: int, *, permanent: bool = False) -> bool:
     """ "Goad that creature" (701.38a) -- ``player`` is the one it must attack around.
 
     One rules-relevant thing, said in one word: the creature is written down as
@@ -147,12 +147,28 @@ def goad_creature(state: GameState, oid: int, player: int) -> bool:
       own controller, so "attacks a player other than you" would be vacuous and
       the compulsion would be a one-sided Bident with no author. (Goading a
       creature you do not control is the normal case and is not this.)
+
+    ``permanent`` is "they're goaded **for the rest of the game**" (Dack
+    Fayden, Helping Hand): the mark is also written into
+    ``goaded_permanently_by``, which `clear_goad` spares at the goader's untap
+    step. It drops the third refusal, because a goad with no clock outlives
+    the current control of the creature -- Dack goads creatures he has just
+    put onto the battlefield under his own controller and gives them away on
+    the next line, and the mark has to be his when they arrive at an opponent.
+    A timed goad on a creature already goaded becomes permanent; a timed goad
+    on a permanently goaded one changes nothing.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return False
     if not state.is_alive(player):
         return False
+    if permanent:
+        if player in obj.goaded_permanently_by:
+            return False
+        obj.goaded_by.add(player)
+        obj.goaded_permanently_by.add(player)
+        return True
     if obj.controller == player:
         return False
     if player in obj.goaded_by:
@@ -161,7 +177,7 @@ def goad_creature(state: GameState, oid: int, player: int) -> bool:
     return True
 
 
-def clear_goad(state: GameState, player: int) -> None:
+def clear_goad(state: GameState, player: int, *, leaving: bool = False) -> None:
     """Drop every goad ``player`` placed -- goad's wearing-off.
 
     Called from `turn._untap_step`, in the same breath as detain and the
@@ -172,9 +188,18 @@ def clear_goad(state: GameState, player: int) -> None:
     Note what this does *not* do: a creature goaded by two players loses one mark
     here and keeps the other. That is why the field is a set and why the clear-up
     takes a player rather than emptying it.
+
+    A goad "for the rest of the game" (``goaded_permanently_by``) survives the
+    untap step. It does not survive ``leaving``, the call `sba` makes when the
+    goader leaves the game: 800.4a ends what that player's effects did, and a
+    mark nobody could ever clear would compel the creature every combat while
+    pointing its target restriction at a seat `alive()` never offers again.
     """
     for obj in state.objects.values():
+        if not leaving and player in obj.goaded_permanently_by:
+            continue
         obj.goaded_by.discard(player)
+        obj.goaded_permanently_by.discard(player)
 
 
 def forbid_block(
