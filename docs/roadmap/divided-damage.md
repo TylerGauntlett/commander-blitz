@@ -6,7 +6,7 @@ effort: M
 impact: medium
 why: Monstrous Onslaught in Tramplesaurus Rex and Pyrokinesis wait on it, and every divided-damage spell after them
 depends_on: []
-status: proposed
+status: in_progress
 ---
 
 ## Today

@@ -170,6 +170,8 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d).
+
 **Ready now, best first:**
 
 1. [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) — L, high
@@ -272,14 +274,13 @@ same list, and `/extend-roadmap` starts at the top of it.
 98. [Outcomes as data](#outcomes-as-data) — M, medium
 99. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 100. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-101. [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d) — M, medium
-102. [Replays and sharing](#replays-and-sharing) — M, medium
-103. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-104. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-105. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-106. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-107. [Archidekt import](#archidekt-import) — S, low
-108. [Sound](#sound) — S, low
+101. [Replays and sharing](#replays-and-sharing) — M, medium
+102. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+103. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+104. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+105. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+106. [Archidekt import](#archidekt-import) — S, low
+107. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -512,7 +513,7 @@ six gates.
 
 ### Damage divided among targets on a spell (601.2d)
 
-Effort **M** · Impact **medium**, Monstrous Onslaught in Tramplesaurus Rex and Pyrokinesis wait on it, and every divided-damage spell after them · Depends on nothing.
+Effort **M** · Impact **medium**, Monstrous Onslaught in Tramplesaurus Rex and Pyrokinesis wait on it, and every divided-damage spell after them · Depends on nothing · **In progress**.
 
 #### Today
 
