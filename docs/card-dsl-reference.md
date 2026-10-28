@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 30 |
-| [Keywords](#keywords) | 40 |
+| [Keywords](#keywords) | 41 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -789,6 +789,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `phasing` | Phasing. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `plainswalk` | Plainswalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `reach` | Reach. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `read_ahead` | Read ahead; a Saga's starting chapter, chosen as it enters. | [Read ahead](card-dsl-cookbook.md#read-ahead) |
 | `riot` | Riot. | [Riot](card-dsl-cookbook.md#riot) |
 | `shadow` | Shadow. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |
 | `shroud` | Shroud. | [Shroud, which is the third member of that family](card-dsl-cookbook.md#shroud-which-is-the-third-member-of-that-family) |

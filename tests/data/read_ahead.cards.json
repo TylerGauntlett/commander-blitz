@@ -1,0 +1,97 @@
+{
+  "_comment": "Shapes for tests/unit/keywords/test_read_ahead.py. t_read_ahead_saga is t_saga with read ahead printed on it: I draws, II gains 2 life, III makes a Human Soldier, so which chapters triggered reads straight off the hand, the life total and the battlefield. t_read_ahead_raise returns an enchantment card from your graveyard to the battlefield -- the arrival that was never cast, which 702.155a asks the same question of.",
+  "cards": [
+    {
+      "id": "t_read_ahead_saga",
+      "name": "Test Read Ahead Saga",
+      "oracle_text": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — Draw a card.\nII — You gain 2 life.\nIII — Create a 1/1 white Human Soldier creature token.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Saga"
+      ],
+      "keywords": [
+        "read_ahead"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "chapter",
+          "chapter": 1,
+          "text": "I — Draw a card.",
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "chapter",
+          "chapter": 2,
+          "text": "II — You gain 2 life.",
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        },
+        {
+          "kind": "chapter",
+          "chapter": 3,
+          "text": "III — Create a 1/1 white Human Soldier creature token.",
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "human_soldier_1_1_w",
+              "controller": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_read_ahead_raise",
+      "name": "Test Read Ahead Return",
+      "oracle_text": "Return target enchantment card from your graveyard to the battlefield.",
+      "mana_cost": "{1}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "return_from_graveyard",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "you",
+            "types": [
+              "Enchantment"
+            ],
+            "count": 1
+          },
+          "destination": "battlefield",
+          "controller": "you"
+        }
+      ]
+    }
+  ]
+}

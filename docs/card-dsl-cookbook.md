@@ -1559,6 +1559,33 @@ unrepresentable rather than unimplemented. An *authored* Saga cannot use the sam
 hole — its printed chapter lines would go unclaimed and the residual gate would
 reject it.
 
+### Read ahead
+
+```jsonc
+// The Elder Dragon War -- "Read ahead (Choose a chapter and start with that
+// many lore counters. …)"
+{"subtypes": ["Saga"], "keywords": ["read_ahead"], "abilities": [ /* chapters */ ]}
+```
+
+A `Keyword`, and the only thing the card says about it; the parenthetical is
+stripped like any Saga's. 702.155: as the Saga enters, its controller chooses a
+chapter, it enters with that many lore counters, and the chapters below the
+chosen one do not trigger.
+
+| piece | where |
+|---|---|
+| the choice | `zones.offer_read_ahead`, one `CHOOSE_MODE` tagged `read_ahead` with an option per chapter, asked a moment before the move on every arrival path riot is asked on — so a cast Saga is asked as it resolves, and a returned one is asked too |
+| the counters | the chosen number replaces the 714.2b counter's amount in `zones._enter_battlefield`: one placement, so Doubling Season doubles the chosen number |
+| the skipped chapters | `sagas.entered` compares from the chosen chapter less one, not from zero; a count doubled past the choice still triggers what it reaches |
+
+The first option is chapter I, the printed default, and it is what a seat with
+no opinion takes: the authoring verifier and the CPU strategies need nothing new.
+A Saga that arrives where nobody can be asked — a token copy — enters at
+chapter I.
+
+`enters_with_additional_counters` is the near miss: a fixed amount nobody
+chooses, and every chapter it passes would trigger.
+
 ## Classes
 
 ```jsonc

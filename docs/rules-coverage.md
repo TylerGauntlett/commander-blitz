@@ -279,7 +279,7 @@ under [Simplified](#simplified); what is missing outright is under
 | Area | Detail |
 |---|---|
 | **Planeswalkers** | Starting loyalty as a `self_enters_with_counters` replacement, loyalty abilities once per permanent per turn at sorcery timing (606.3), damage removing loyalty, death at zero (704.5i), attackable (506.2); `activate_loyalty_as_though_instant` lifts the timing half of 606.3 only; `extra_loyalty_activation` adds to the per-turn limit; `cost.loyalty_x` for −X |
-| **Sagas** | 714: the three reminder-line rules live in `engine/sagas.py` — the lore counter as an enters replacement (714.2b), the tick as a turn-based action in the precombat main (714.2d), chapters as `AbilityKind.CHAPTER` firing on the count reaching the number (714.2c), the sacrifice as a state-based action after the last chapter leaves the stack (704.5s, `final_chapter`) |
+| **Sagas** | 714: the three reminder-line rules live in `engine/sagas.py` — the lore counter as an enters replacement (714.2b), the tick as a turn-based action in the precombat main (714.2d), chapters as `AbilityKind.CHAPTER` firing on the count reaching the number (714.2c), the sacrifice as a state-based action after the last chapter leaves the stack (704.5s, `final_chapter`); read ahead (702.155) as a chapter chosen on arrival by `zones.offer_read_ahead`, the chosen number replacing the 714.2b counter and the chapters below it skipped |
 | **Battles** | 310: `engine/battles.py` compiles `defense` into counters (310.4), being attacked is 506.2's third defender kind, damage removes defense (310.6), zero defense is 704.5x and not destruction; a missing `defense` is a load error |
 | **Classes: levels and level-gated abilities** | 716: `GameObject.class_level`, level lines compiled to the activated ability 716.2a spells out (`become_level`, `Ability.becomes_level`), `"level": N` on an ability meaning present only at that level or higher (716.2b, `AbilityKind.LATENT` keeping indices), the `becomes_level` trigger (716.4), not copiable (707.2) |
 
@@ -361,7 +361,7 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - Attacking with creatures you do not control (508.1a); `combat.can_attack` requires the active player's own.
 - A copy effect applied to a permanent already on the battlefield by anything other than `become_copy` (707); a copy of a copy does not inherit the first copy's exception (707.9b).
 - Battle protectors (310.7, 506.2b) and casting a defeated Siege's back face; a battle here is attacked by its controller's opponents.
-- Read ahead (702.155) and double-lore effects on Sagas.
+- Double-lore effects on Sagas.
 - Saddle (702.171); a Pilot that also saddles is not defined.
 - Station variants: stationing with toughness (Tapestry Warden), Spacecraft becoming artifact creatures at their number, and a `threshold` on anything but an activated ability.
 - Typecycling (702.29) in the template tier; the cycling template reads plain cycling only.

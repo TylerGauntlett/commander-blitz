@@ -21,7 +21,13 @@ from ..stack import pull_spell_off_stack
 from ..structs import GraveyardCastGrant
 from ..suspend import cast_for_free
 from ..triggers import entering_together, fire
-from ..zones import link_exiled, move_object, offer_enters_replacement, offer_riot_choice
+from ..zones import (
+    link_exiled,
+    move_object,
+    offer_enters_replacement,
+    offer_read_ahead,
+    offer_riot_choice,
+)
 from . import execute
 from .behold import announce_beheld, behold_count, behold_pool
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
@@ -1071,6 +1077,7 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
             # back is a new object, so a blinked creature under a Rhythm of the
             # Wild picks again.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
+            yield from offer_read_ahead(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -1154,6 +1161,7 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             # arrival, so a reanimated creature is asked exactly as a cast one
             # is -- see `zones.offer_riot_choice`.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
+            yield from offer_read_ahead(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,

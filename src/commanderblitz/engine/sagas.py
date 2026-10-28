@@ -28,7 +28,9 @@ The four pieces, and where each one had to go:
     rather than a `self_enters` trigger: 614.1c-style, the permanent is never
     seen without it, so every other enters trigger on the board looks at a Saga
     that already has its first lore counter, and chapter I is on the stack
-    beside them rather than a whole round of priority later.
+    beside them rather than a whole round of priority later. A Saga with read
+    ahead (702.155) enters with the number its controller chose instead, asked
+    by `zones.offer_read_ahead` on the same arrival paths riot is.
 
 The chapter trigger (714.2c)
     :func:`chapters_reached`, called from the two places lore counters can
@@ -144,7 +146,7 @@ def chapters_reached(state: GameState, oid: int, before: int, after: int) -> Non
         )
 
 
-def entered(state: GameState, obj: GameObject) -> None:
+def entered(state: GameState, obj: GameObject, skipped: int = 0) -> None:
     """Chapter I, off the lore counter the Saga entered with (714.2b).
 
     Called by `zones._enter_battlefield` right after the ETB event, because the
@@ -158,10 +160,15 @@ def entered(state: GameState, obj: GameObject) -> None:
     After the ETB event rather than before it, so a Saga's own chapter I queues
     behind whatever else that permanent entering woke up -- the order the rules
     give, since both are triggers put on the stack from the same event window.
+
+    ``skipped`` is read ahead's (702.155): "chapter abilities whose chapter
+    number is less than the chosen number don't trigger." So the count is from
+    the chosen chapter less one, not from zero, and the chosen chapter -- and
+    any above it that a Doubling Season's extra counters reach -- triggers.
     """
     if state.card_of(obj).final_chapter is None:
         return
-    chapters_reached(state, obj.oid, 0, obj.counter(LORE))
+    chapters_reached(state, obj.oid, skipped, obj.counter(LORE))
 
 
 def turn_based_lore(state: GameState) -> None:

@@ -847,6 +847,73 @@ def offer_riot_choice(state: GameState, oid: int, controller: int):
     obj.riot_choice = RIOT_HASTE if chosen and chosen[0] == 1 else RIOT_COUNTER
 
 
+_ROMAN = ("I", "II", "III", "IV", "V", "VI", "VII", "VIII", "IX", "X")
+
+
+def read_ahead_labels(card: CardDef) -> list[str]:
+    """One option per chapter, "Chapter II: Discard any number of cards…".
+
+    Numbered here rather than taken whole from the printed line, because one
+    printed line can carry two chapters ("I, II — …") and two options with the
+    same label are one option to whoever is reading them.
+    """
+    assert card.final_chapter is not None
+    text = {
+        ability.chapter: ability.text.split("—", 1)[-1].strip()
+        for ability in card.abilities
+        if ability.chapter is not None
+    }
+    labels = []
+    for number in range(1, card.final_chapter + 1):
+        numeral = _ROMAN[number - 1] if number <= len(_ROMAN) else str(number)
+        body = text.get(number)
+        labels.append(f"Chapter {numeral}: {body}" if body else f"Chapter {numeral}")
+    return labels
+
+
+def offer_read_ahead(state: GameState, oid: int, controller: int):
+    """Read ahead (702.155): "Choose a chapter and start with that many lore
+    counters."
+
+    Riot's shape and riot's call sites, for riot's reason: 702.155a makes the
+    choice **as the Saga enters**, so it is part of the arrival rather than a
+    trigger after it, and `move_object` cannot stop to ask. Asked a moment
+    early, with nobody receiving priority in between, which is the argument
+    `offer_enters_costs` makes. So a Saga cast from hand is asked as it
+    resolves, not when it is cast, and one reanimated or blinked is asked
+    the same question on the same route.
+
+    One `CHOOSE_MODE` with an option per chapter, tagged ``read_ahead``. The
+    first option is chapter I, the printed default of every Saga without the
+    keyword, and it is what a seat with no opinion takes -- the authoring
+    verifier and the CPU strategies need no new reading of the board.
+
+    The answer is left on `obj.read_ahead_chapter` for `_enter_battlefield`.
+    """
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    # No chapters, nothing to start on: the keyword on anything but a Saga is a
+    # word with nothing to do, as riot is on a noncreature.
+    if card.final_chapter is None:
+        return
+    if not keyword_as_it_enters(state, oid, Keyword.READ_AHEAD.value):
+        return
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    chosen = yield from ask_mode(
+        ctx,
+        f"{card.name} reads ahead: start on which chapter?",
+        read_ahead_labels(card),
+        controller,
+        purpose="read_ahead",
+    )
+    obj.read_ahead_chapter = chosen[0] + 1 if chosen else 1
+
+
 def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
     """"Creatures your opponents control enter tapped." Authority of the Consuls.
 
@@ -1351,6 +1418,10 @@ def _enter_battlefield(
     # The same one-arrival answer, from `offer_enters_copy` a moment ago.
     copy_on_arrival = obj.enters_copy_of
     obj.enters_copy_of = None
+    # And the chapter `offer_read_ahead` was told, for the lore counter below
+    # and for `sagas.entered` at the end.
+    read_ahead = obj.read_ahead_chapter
+    obj.read_ahead_chapter = None
     _apply_board_enters_tapped(state, obj)
     for replacement in card.replacements:
         event = replacement.get("event")
@@ -1448,6 +1519,12 @@ def _enter_battlefield(
             if counters:
                 for kind, amount in counters.items():
                     entering.setdefault(str(kind), []).append(evaluate_value(ctx, amount))
+            elif replacement.get("counter") == sagas.LORE and read_ahead is not None:
+                # Read ahead (702.155a): the Saga "enters with the chosen number
+                # of lore counters", which is the 714.2b counter's amount and not
+                # an addition to it -- one placement, so Doubling Season doubles
+                # the chosen number rather than the one.
+                entering.setdefault(sagas.LORE, []).append(read_ahead)
             else:
                 entering.setdefault(str(replacement.get("counter", "+1/+1")), []).append(
                     evaluate_value(ctx, replacement.get("amount", 1))
@@ -1550,8 +1627,9 @@ def _enter_battlefield(
     # writes to the object directly -- its COUNTER_PLACED is the one just fired,
     # which reaches no chapter comparison -- so unlike every other route to a
     # lore counter there is no `add_counters` call to reach the chapter
-    # comparison through, and this is the one place that says so.
-    sagas.entered(state, obj)
+    # comparison through, and this is the one place that says so. A Saga that
+    # read ahead skipped every chapter below the one chosen (702.155).
+    sagas.entered(state, obj, skipped=(read_ahead or 1) - 1)
 
 
 # ----------------------------------------------------------------------

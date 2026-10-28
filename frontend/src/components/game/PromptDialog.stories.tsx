@@ -148,6 +148,36 @@ export const ChooseMode: Story = {
   play: submits("choose_mode", "Return target creature to its owner's hand", "a1-choose"),
 };
 
+/** Read ahead: which chapter a Saga starts on, one option per chapter. */
+export const ReadAhead: Story = {
+  args: { state: scenarios.readAhead().state, actions: scenarios.readAhead().actions },
+  play: submits(
+    "choose_mode",
+    "Chapter III: Create a 4/4 red Dragon creature token with flying.",
+    "a2-choose",
+  ),
+};
+
+/** And on a handheld, where three long chapter lines have to clear the floors. */
+export const ReadAheadHandheld: Story = {
+  args: { state: scenarios.readAhead().state, actions: scenarios.readAhead().actions },
+  globals: { viewport: { value: "deck" }, input: "pad" },
+  tags: ["handheld"],
+  parameters: { commanderblitz: { mount: "screen", motion: "real" } },
+  beforeEach: () => {
+    noteInput("pad");
+    return resetInputMode;
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const dialog = await canvas.findByTestId("prompt-dialog");
+    await settled(dialog);
+    expect(dialog.dataset.decisionKind).toBe("choose_mode");
+    expectUniqueActionIds(canvasElement);
+    expectHandheldFloors(canvasElement);
+  },
+};
+
 /**
  * Pointing at a player.
  *

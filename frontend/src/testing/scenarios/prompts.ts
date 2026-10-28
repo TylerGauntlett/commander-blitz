@@ -178,6 +178,39 @@ export function chooseMode(): Scenario {
 }
 
 /**
+ * Read ahead: The Elder Dragon War asks which chapter it starts on.
+ *
+ * An ordinary `choose_mode` with one option per chapter, tagged `read_ahead`,
+ * asked as the Saga resolves (`zones.offer_read_ahead`). The labels are the
+ * chapters' own text, so they are long -- the case the handheld floors care
+ * about.
+ */
+export function readAhead(): Scenario {
+  const chapters = [
+    "Chapter I: This Saga deals 2 damage to each creature and each opponent.",
+    "Chapter II: Discard any number of cards, then draw that many cards.",
+    "Chapter III: Create a 4/4 red Dragon creature token with flying.",
+  ];
+  const state = gameView({
+    players: [you({ hand: [] }), opponent(1, "AI 1")],
+    pending: pending({
+      kind: "choose_mode",
+      prompt: "The Elder Dragon War reads ahead: start on which chapter?",
+      options: chapters.map((label, i) => decisionOption({ label, value: i })),
+      context: { purpose: "read_ahead", source_name: "The Elder Dragon War" },
+    }),
+  });
+
+  return {
+    state,
+    actions: chapters.map((label, i) =>
+      action({ id: `a${i}-choose`, kind: "choose", label, base_label: label, choice: i }),
+    ),
+    events: [],
+  };
+}
+
+/**
  * Herald's Horn: choose a creature type, from every type in the pool.
  *
  * The real list, lifted out of `data/cards/` rather than invented -- 199 of

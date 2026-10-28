@@ -320,6 +320,7 @@ This is the long tail, and where the build order comes from.
 | Provoke | free | `attacks` trigger, then `untap` and the `must_block` op — the block-requirement mirror of `must_attack` | `must_block` |
 | Prowl | free | `alternative_cost` with a `{"combat_damage_by": [...]}` condition, off a seventh ledger tally | — |
 | Rampage | free | `becomes_blocked` trigger, then `pump` by `times` of N and `blockers` minus one | — |
+| Read ahead | shipped | `Keyword`, read by `zones.offer_read_ahead` a moment before the move, riot's shape on a Saga: one `CHOOSE_MODE` with an option per chapter, the chosen number replacing the single 714.2b lore counter, and `sagas.entered` counting from the chapter below it so skipped chapters do not trigger | `read_ahead` |
 | Rebound | shipped | card-level field: the exile rider on resolution, then suspend's free cast at your next upkeep | `rebound` |
 | Recover | free | `creature_dies` trigger, `may` with `pay`, `return_from_graveyard` on yes and `exile` in the `else` | — |
 | Reinforce | free | activated from hand with a `discard_self` cost, then `add_counters` — the cycling shape | — |
