@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**105 cards** blocked by **95** capabilities.
+**104 cards** blocked by **94** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -70,7 +70,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
-| [morph](#morph) | 1 | 7104 | engine |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -1066,20 +1065,6 @@ Blocks **1** card.
 - **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
   - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
   - Living metal (During your turn, this Vehicle is also a creature.)
-
-</details>
-
-## morph
-
-Blocks **1** card.
-
-- **(engine)** a residual-gate claimant in authoring/verify.py `_covered` that accepts a printed 'Morph <cost>' (or 'Megamorph <cost>') line when the card's card-level `morph` field equals that printed cost, dropping the reminder text, the way the kicker/multikicker claimants do
-  <br>Why the existing vocabulary won't do: The card-level `morph` field exists in the schema, loader and casting (face-down cast for MORPH_COST), but `_covered` has no branch for it and 'Morph' is not a keyword `lift_keywords` lifts, so a correctly declared `morph: "{3}{R}{R}{R}"` is rejected as 'printed text not represented: Morph {3}{R}{R}{R}'; claiming the line with an ability's text would mislabel an ability that does not implement it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Akroma, Angel of Fury** (rank 7104) — `akroma_angel_of_fury`
-  - Morph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)
 
 </details>
 

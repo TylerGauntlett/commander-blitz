@@ -944,6 +944,7 @@ RIDER_KEYS: dict[str, Entry] = {
     "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
                               "Narrowing when a spell may be cast"),
     "toxic": ("Toxic N: the N, beside `toxic` in `keywords`.", "Toxic N"),
+    "morph_counter": ("Megamorph: turns face up with a +1/+1 counter, beside `morph`.", H_MORPH),
 }
 
 DELAYED_TRIGGER: dict[str, Entry] = {

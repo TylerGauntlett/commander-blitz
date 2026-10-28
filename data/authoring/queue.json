@@ -5412,12 +5412,12 @@
     },
     "Akroma, Angel of Fury": {
       "edhrec_rank": 7104,
-      "gate": "template",
+      "gate": null,
       "name": "Akroma, Angel of Fury",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "2a81f0b5-5116-4946-89fc-18479bf85305",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Akroma, Angel of Wrath": {

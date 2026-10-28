@@ -256,3 +256,91 @@ class TestTheLoaderGuards:
     def test_megamorph_needs_a_morph_cost(self):
         with pytest.raises(DslError, match="needs a 'morph' cost"):
             compile_card(self._card(morph_counter=True))
+
+
+class TestThePrintedMorphLineIsClaimed:
+    """The residual gate claims "Morph {cost}" from the field, strictly.
+
+    The mechanic was entirely built -- the loader parses `morph`, `casting`
+    offers the face-down cast for {3}, `legality` the turn-up for the morph cost
+    -- but "morph" is not in `KNOWN_KEYWORDS` and no ability carries the line,
+    so a correctly declared card failed gate 3 with `residual_text` returning
+    exactly "Morph {3}{R}{R}{R}". Akroma, Angel of Fury is the witness.
+
+    Strict like warp's and bestow's claimants: the whole line is the price, so
+    the printed cost must be the declared one; and the printed word must agree
+    with `morph_counter` (702.109a), or the card turns up a different size.
+    """
+
+    REMINDER = (
+        " (You may cast this card face down as a 2/2 creature for {3}. "
+        "Turn it face up any time for its morph cost.)"
+    )
+
+    def _card(self, **extra):
+        base = {
+            "id": "t_morph_residual",
+            "name": "Morph Residual",
+            "mana_cost": "{5}{R}{R}{R}",
+            "oracle_text": "Flying\nMorph {3}{R}{R}{R}" + self.REMINDER,
+            "types": ["Creature"],
+            "power": 6,
+            "toughness": 6,
+            "keywords": ["flying"],
+            "morph": "{3}{R}{R}{R}",
+        }
+        base.update(extra)
+        return compile_card(CardModel.model_validate(base))
+
+    def test_the_printed_morph_line_is_claimed(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card()
+        assert residual_text(card, card.oracle_text) == ""
+
+    def test_a_card_without_morph_leaves_the_line_residual(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card(morph=None)
+        assert "Morph {3}{R}{R}{R}" in residual_text(card, card.oracle_text)
+
+    def test_a_cheaper_declared_cost_cannot_claim_a_dearer_printed_one(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card(morph="{R}")
+        assert "Morph {3}{R}{R}{R}" in residual_text(card, card.oracle_text)
+
+    def test_a_non_mana_morph_cost_stays_residual(self):
+        """"Morph—Reveal a white card" does not parse, so it fails closed."""
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card(oracle_text="Flying\nMorph—Reveal a white card in your hand.")
+        assert "Morph—Reveal" in residual_text(card, card.oracle_text)
+
+    def test_megamorph_is_claimed_only_with_the_counter(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        printed = "Flying\nMegamorph {3}{R}{R}{R}" + self.REMINDER
+        mega = self._card(oracle_text=printed, morph_counter=True)
+        assert residual_text(mega, mega.oracle_text) == ""
+
+        plain = self._card(oracle_text=printed)
+        assert "Megamorph" in residual_text(plain, plain.oracle_text)
+
+    def test_a_printed_morph_cannot_be_claimed_by_a_megamorph(self):
+        """The counter is a bigger card than the printed one."""
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card(morph_counter=True)
+        assert "Morph {3}{R}{R}{R}" in residual_text(card, card.oracle_text)
+
+
+class TestThePacketAdvertisesMorph:
+    def test_morph_and_its_megamorph_rider_are_advertised(self):
+        from commanderblitz.cards.authoring.packet import (
+            CARD_LEVEL_COST_KEYS,
+            CARD_LEVEL_RIDER_KEYS,
+        )
+
+        assert "morph" in CARD_LEVEL_COST_KEYS
+        assert "morph_counter" in CARD_LEVEL_RIDER_KEYS

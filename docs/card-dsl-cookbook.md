@@ -3012,6 +3012,13 @@ ordinary card in an ordinary graveyard, not a free spell waiting in exile.
 { "op": "manifest", "player": "you", "amount": { "const": 1 } }
 ```
 
+The printed "Morph {cost}" line is claimed by the field, not by an ability:
+the residual gate accepts it only when the printed cost parses to the declared
+`morph`, and only under the word `morph_counter` says — "Megamorph" needs the
+counter, "Morph" must not have it. A non-mana morph cost ("Morph—Reveal a white
+card") does not parse and stays residual. Disguise is not this field: it also
+grants ward {2} while face down, which the shell does not model.
+
 Two choke points carry it: `card_of` is a single choke point, and `chars` is the
 single place derived characteristics are decided.
 

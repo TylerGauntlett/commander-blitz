@@ -178,6 +178,7 @@ CARD_LEVEL_RIDER_KEYS = (
     "melds_into",  # what the pair becomes
     "cant_cast_first_turns",  # "You can't cast this during your first N turns of the game"
     "toxic",  # int; "Toxic N" -- the N, beside "toxic" in keywords
+    "morph_counter",  # bool; megamorph -- turns face up with a +1/+1 counter, beside `morph`
 )
 
 

@@ -1706,6 +1706,24 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.warp is not None and stripped.lower().startswith("warp "):
         return _declares_printed_cost(stripped[len("warp ") :], card.warp)
 
+    # "Morph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature
+    # for {3}. Turn it face up any time for its morph cost.)" -- warp's shape
+    # once more, and the same hole: the loader parses `morph`, `casting` offers
+    # the face-down cast for {3} and `legality` the turn-up for the morph cost,
+    # but "morph" is not in `KNOWN_KEYWORDS` and no ability carries the line, so
+    # Akroma, Angel of Fury failed gate 3 on exactly this line.
+    #
+    # Strict like warp's claimant and for its reason: the printed cost must be
+    # the declared one. And the word must match `morph_counter`: a printed
+    # "Megamorph" needs the counter (702.109a) and a printed "Morph" must not
+    # have it, or the card turns up a different size than it prints. A morph
+    # cost that is not mana ("Morph—Reveal a white card") will not parse and
+    # stays residual.
+    if card.morph is not None:
+        word = "megamorph " if card.morph_counter else "morph "
+        if stripped.lower().startswith(word):
+            return _declares_printed_cost(stripped[len(word) :], card.morph)
+
     # "As an additional cost to cast this spell, sacrifice a creature" is the
     # same shape again: a card-level `Cost` charged by `_cast_variant`, with no
     # ability that could honestly claim it. This did not surface while the only

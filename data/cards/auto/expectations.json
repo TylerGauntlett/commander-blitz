@@ -171,6 +171,10 @@
   "akrasan_squire": {
     "zone": "battlefield"
   },
+  "akroma_angel_of_fury": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "akroma_s_will": {
     "battlefield_count": 32,
     "granted": {
