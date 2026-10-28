@@ -1,0 +1,33 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_is_monstrous.py. t_monstrous_lion is Fleecemane Lion as printed: Monstrosity 1 and a self grant_keyword static gated on is_monstrous.",
+  "cards": [
+    {
+      "id": "t_monstrous_lion",
+      "name": "Test Monstrous Lion",
+      "oracle_text": "{3}{G}{W}: Monstrosity 1. (If this creature isn't monstrous, put a +1/+1 counter on it and it becomes monstrous.)\nAs long as this creature is monstrous, it has hexproof and indestructible.",
+      "mana_cost": "{G}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Cat"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["G", "W"],
+      "color_identity": ["G", "W"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{3}{G}{W}: Monstrosity 1.",
+          "cost": {"mana": "{3}{G}{W}"},
+          "effects": [{"op": "monstrosity", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "static",
+          "text": "As long as this creature is monstrous, it has hexproof and indestructible.",
+          "effect": "grant_keyword",
+          "affects": {"self_only": true},
+          "keywords": ["hexproof", "indestructible"],
+          "condition": {"is_monstrous": true}
+        }
+      ]
+    }
+  ]
+}

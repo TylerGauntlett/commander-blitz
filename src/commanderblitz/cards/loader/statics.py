@@ -324,6 +324,11 @@ def _validate_static_condition(condition: Any, where: str) -> None:
         # truthiness test would read a typo'd string as `true`.
         if not isinstance(condition["is_attached"], bool):
             raise DslError(f"{where}.is_attached: must be true or false")
+    elif head == "is_monstrous":
+        # Not defaulted, on `is_attached`'s terms: a typo'd string read for
+        # truthiness would switch the static on before monstrosity ever ran.
+        if not isinstance(condition["is_monstrous"], bool):
+            raise DslError(f"{where}.is_monstrous: must be true or false")
     elif head == "top_of_library":
         spec = condition["top_of_library"]
         if not isinstance(spec, Mapping):

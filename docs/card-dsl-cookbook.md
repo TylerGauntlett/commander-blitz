@@ -8082,6 +8082,21 @@ Puts the counters on and sets a one-way `monstrous` flag. The flag *is* the
 mechanic: without it the ability is a repeatable pump and the
 `becomes_monstrous` trigger fires every time instead of once.
 
+"As long as this creature is monstrous, it has hexproof and indestructible"
+(Fleecemane Lion) is a self static gated on the `is_monstrous` static condition:
+
+```jsonc
+{ "kind": "static", "effect": "grant_keyword", "affects": { "self_only": true },
+  "keywords": ["hexproof", "indestructible"], "condition": { "is_monstrous": true } }
+```
+
+It reads the source's `monstrous` field, which only `monstrosity` writes and
+only a zone change clears, so it is a pipeline input like a counter and the
+grant is on the moment the ability resolves. The loader refuses anything but a
+boolean. Two near misses, both wrong: `{"counters": …}` on +1/+1 — that counter
+can come from anywhere and be removed, while being monstrous survives both
+(701.37b) — and `has_flag`, which reads `flags`, where monstrous does not live.
+
 ```jsonc
 { "op": "freeze", "objects": { "target": "t1" } }
 ```

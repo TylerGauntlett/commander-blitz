@@ -1374,6 +1374,7 @@ def _condition_met(
                       characteristics and, off the battlefield, on zone contents
     ``is_your_turn``  whose turn it is
     ``has_flag``      a word `set_flag` wrote on the static's own source
+    ``is_monstrous``  whether the static's own source is monstrous (701.37b)
     ``is_monarch``    who holds the crown -- the only leaf that may name the
                       ``affected`` permanent's controller (`AFFECTED_CONTROLLER`)
     """
@@ -1434,6 +1435,15 @@ def _condition_met(
         # rules and the state-based actions both call attached.
         attached = source.attached_to is not None or source.attached_to_player is not None
         return attached == bool(cond["is_attached"])
+    if "is_monstrous" in cond:
+        # "As long as this creature is monstrous, it has hexproof and
+        # indestructible" (Fleecemane Lion). `GameObject.monstrous` is written
+        # only by the `monstrosity` op, which bumps `char_version`, and cleared
+        # only by a zone change (400.7), so it is a pipeline *input* exactly as
+        # a counter is. Not the +1/+1 counter it arrives with: that counter can
+        # come from anywhere and be removed, and being monstrous survives both
+        # (701.37b). Not a copiable value (707.2), so a copy is not monstrous.
+        return source.monstrous == bool(cond["is_monstrous"])
     if "has_city_s_blessing" in cond:
         # Player state, so a pipeline *input* exactly as a zone count is:
         # nothing in the fixed-order characteristics pipeline can change whether

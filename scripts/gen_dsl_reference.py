@@ -651,6 +651,7 @@ STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
     "exists_derived": ("A permanent with these current characteristics exists (cant_attack, cant_block only).",
                        None),
     "is_attached": ("The source is attached to something.", None),
+    "is_monstrous": ("The source is monstrous (701.37b).", H_MONSTROSITY),
     "top_of_library": ("The top card of a library matches a filter.",
                        '"The top card of your library is black"'),
 }

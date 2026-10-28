@@ -1284,6 +1284,12 @@ STATIC_CONDITION_HEADS = (
     # the `attached` *filter* key, which points the other way -- at the
     # permanent this one is attached to.
     "is_attached",
+    # "As long as this creature is monstrous, it has hexproof and
+    # indestructible" (Fleecemane Lion). `GameObject.monstrous` is a field only
+    # the `monstrosity` op writes (bumping `char_version`) and only a zone
+    # change clears, so it is a pipeline input like a counter. Not `has_flag`:
+    # monstrous is deliberately its own field, outside `flags`.
+    "is_monstrous",
     # "As long as the top card of your library is black". A pipeline *input*
     # for the same reason a zone count is -- nothing in the characteristics
     # pipeline can change what is on top of a library -- but a strictly

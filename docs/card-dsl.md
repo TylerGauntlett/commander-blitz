@@ -4992,6 +4992,7 @@ Each node names **exactly one** form:
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
+| `{"is_monstrous": true}` | whether the source is monstrous — [monstrosity](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
