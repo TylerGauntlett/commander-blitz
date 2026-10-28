@@ -1058,6 +1058,26 @@
       "is_token": true
     },
     {
+      "id": "goat_0_1_w",
+      "name": "Goat Token",
+      "oracle_text": "0/1 white Goat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goat"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "gingerbrute_1_1_c",
       "name": "Gingerbrute",
       "oracle_text": "Haste\n{1}: This token can't be blocked this turn except by creatures with haste.\n{2}, {T}, Sacrifice this token: You gain 3 life.",

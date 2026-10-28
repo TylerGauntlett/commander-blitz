@@ -290682,12 +290682,12 @@
     },
     "Trading Post": {
       "edhrec_rank": 2115,
-      "gate": "template",
+      "gate": null,
       "name": "Trading Post",
-      "reason": "no template for: {1}, {T}, Discard a card: You gain 4 life",
+      "reason": "",
       "scryfall_id": "03499a72-e865-46ff-bcb2-75e53e4b600e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tragedy Feaster": {

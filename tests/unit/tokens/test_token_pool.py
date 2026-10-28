@@ -926,3 +926,28 @@ class TestVibraniumIsAnIndestructibleArtifactWithRestrictedMana:
         assert not treasure.keywords
         assert treasure.abilities[0].cost.sacrifice
         assert treasure.abilities[0].mana_restriction is None
+
+
+class TestTradingPostsGoatIsAZeroOneWhite:
+    """Trading Post: *"{1}, {T}, Pay 1 life: Create a 0/1 white Goat creature
+    token."*
+
+    The pool's other 0/1 tokens are `plant_0_1_g` and
+    `kobolds_of_kher_keep_0_1_r`: the right size, the wrong colour and the wrong
+    creature type, both of which a card can read.
+    """
+
+    def test_it_is_a_zero_one_white_goat(self, pool):
+        token = pool.get("goat_0_1_w")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Goat"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_plant_is_still_a_separate_token(self, pool):
+        plant = pool.get("plant_0_1_g")
+        assert (plant.power, plant.toughness) == (0, 1)
+        assert sorted(plant.colors) == ["G"]
+        assert "Goat" not in plant.subtypes

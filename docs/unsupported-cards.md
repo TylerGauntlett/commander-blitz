@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**104 cards** blocked by **87** capabilities.
+**103 cards** blocked by **86** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -56,7 +56,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [finality-counter](#finality-counter) | 1 | 15997 | replacement |
 | [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
-| [goat-token](#goat-token) | 1 | 2115 | token |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -860,20 +859,6 @@ Blocks **1** card.
 
 - **Stilt-Man, Towering Terror** (rank 18564) — `stilt_man_towering_terror`
   - Whenever one or more Villains you control deal combat damage to a player, gain control of target noncreature, nonland permanent that player controls until the end of your next turn. It gains "This permanent can't be sacrificed" until the end of your next turn.
-
-</details>
-
-## goat-token
-
-Blocks **1** card.
-
-- **(token)** a 0/1 white Goat creature token with no abilities
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Goat; the nearest 0/1 tokens are plant_0_1_g (green Plant) and kobolds_of_kher_keep_0_1_r (red Kobold), which differ in color and creature type. The other three lines (discard cost + gain_life, sacrifice-creature cost + return_from_graveyard of a targeted artifact card, sacrifice-artifact cost + draw) are expressible with existing cost keys and ops.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Trading Post** (rank 2115) — `trading_post`
-  - {1}, {T}, Pay 1 life: Create a 0/1 white Goat creature token.
 
 </details>
 
