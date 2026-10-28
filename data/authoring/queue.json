@@ -283872,12 +283872,12 @@
     },
     "Thor, Asgard's Avenger": {
       "edhrec_rank": 15539,
-      "gate": "template",
+      "gate": null,
       "name": "Thor, Asgard's Avenger",
-      "reason": "no template for: If another source you control would deal damage to an opponent or a permanent an opponent ",
+      "reason": "",
       "scryfall_id": "00fa6bb3-e769-4a0e-9ee6-42eea85a237b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thor, God of Thunder": {

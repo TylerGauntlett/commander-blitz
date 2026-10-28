@@ -29,7 +29,6 @@ from .player_statics import (
     counter_placement_replacements,
     counters_prohibited,
     damage_cap,
-    damage_multiplier,
     life_gain_addend,
     life_gain_multiplier,
     life_loss_multiplier,
@@ -38,6 +37,7 @@ from .player_statics import (
     player_counter_replacements,
     prevented_player_damage,
     printed_token_matches,
+    replaced_damage,
     static_cast_locked_zones,
     token_creation_replacements,
     untap_held,
@@ -507,8 +507,8 @@ def damage_player(
     # "if a source you control would deal damage to **an opponent**" names a
     # player the way `affects` names a permanent, and without it the recipient
     # side of the static was all-or-nothing here.
-    amount *= damage_multiplier(
-        state, source_oid, None, target_pid=pid, is_combat=is_combat
+    amount = replaced_damage(
+        state, amount, source_oid, None, target_pid=pid, is_combat=is_combat
     )
     # "Prevent all but 1 of that damage" (Ajani Steadfast's emblem). **After**
     # the doubling, which is the order the protected player would pick (616.1):
@@ -686,10 +686,13 @@ def damage_permanent(
     # would choose is always the one that turns the most damage into counters
     # -- this shield ahead of protection, a total shield, absorb, a shield
     # counter or a cap (each of which would leave fewer or none), and a
-    # `replace_damage` doubling applied before it rather than after.
+    # `replace_damage` doubling applied before it rather than after, with any
+    # addend ahead of the doubling for the same reason.
     if (into := damage_into_counters(state, oid, is_combat=is_combat)) is not None:
         shield_source, kind = into
-        amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
+        amount = replaced_damage(
+            state, amount, source_oid, oid, is_combat=is_combat, addends_first=True
+        )
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -815,8 +818,10 @@ def damage_permanent(
         return 0
     # "If equipped creature would deal combat damage, it deals **double** that
     # damage instead" -- Inquisitor's Flail, Furnace of Rath, Fiery
-    # Emancipation. A replacement, so everything below reads the multiplied
-    # number: deathtouch marks on it, lifelink gains it, the ledger records it,
+    # Emancipation -- or "that much damage **plus 1**" (Thor, Asgard's
+    # Avenger), which `replaced_damage` applies after every multiplier (616.1,
+    # the order the damaged permanent's controller picks). A replacement, so
+    # everything below reads the replaced number: deathtouch marks on it, lifelink gains it, the ledger records it,
     # `DAMAGE_DEALT` carries it, and a withering source puts that many -1/-1
     # counters on. A trigger that dealt the extra damage afterwards would be a
     # second event -- two DAMAGE_DEALTs, two lifelink gains, and a creature
@@ -831,7 +836,7 @@ def damage_permanent(
     # makes twenty lines up. And it is before the planeswalker and wither
     # branches because each of those is a *different place to put the damage*
     # rather than a change to how much of it there is.
-    amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
+    amount = replaced_damage(state, amount, source_oid, oid, is_combat=is_combat)
     # "…or a planeswalker you control, prevent all but 1 of that damage." After
     # the doubling for the reason given in `damage_player`.
     amount = _apply_damage_cap(state, amount, source_oid, oid, obj.controller)

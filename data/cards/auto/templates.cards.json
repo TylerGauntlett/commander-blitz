@@ -147576,6 +147576,51 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "opponent"
+          },
+          "affects_player": "opponent",
+          "damage_addend": 1,
+          "damage_source": {
+            "controller": "you",
+            "exclude_self": true
+          },
+          "effect": "replace_damage",
+          "kind": "static",
+          "text": "If another source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 1 instead."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "thor_asgard_s_avenger",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Thor, Asgard's Avenger",
+      "oracle_text": "Flying\nIf another source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 1 instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "God",
+        "Warrior",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

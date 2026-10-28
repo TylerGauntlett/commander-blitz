@@ -770,6 +770,15 @@ def reference() -> dict:
             " that much life plus 1 instead\" is the same static with"
             " `gain_addend: 1` in place of `gain_multiplier` (one or the other,"
             " never both).",
+            "\"It deals that much damage plus 1 instead\" is the static"
+            " `replace_damage` with `damage_addend: 1` in place of"
+            " `damage_multiplier` (one or the other, never both), filtered as"
+            " the doubler is: \"another source you control\" is"
+            " `damage_source: {\"controller\": \"you\", \"exclude_self\": true}`"
+            " (any zone, burn spells included), \"to an opponent or a permanent"
+            " an opponent controls\" is `affects_player: \"opponent\"` with"
+            " `affects: {\"controller\": \"opponent\"}`. NOT a damage trigger"
+            " dealing 1 more.",
             "\"If you gained life this turn\" is the value"
             " `{\"life_gained_this_turn\": \"you\"}` compared `>` against"
             " `{\"const\": 0}` -- on a trigger, as its `condition` (an"

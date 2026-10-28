@@ -2439,7 +2439,32 @@ card's own owner's copy of that zone.
 // Fiery Emancipation: the same dealer, no recipient named
 { "effect": "replace_damage", "damage_multiplier": 3,
   "damage_source": { "controller": "you" } }
+
+// Thor, Asgard's Avenger: "if ANOTHER source you control would deal damage to
+//  an opponent or a permanent an opponent controls, it deals that much damage
+//  plus 1 instead"
+{ "effect": "replace_damage", "damage_addend": 1,
+  "damage_source": { "controller": "you", "exclude_self": true },
+  "affects_player": "opponent",
+  "affects": { "controller": "opponent" } }
 ```
+
+**Two axes, one per static.** `damage_multiplier` is "double that damage" (2 or
+more) and `damage_addend` is "that much damage plus N" (1 or more); the loader
+requires exactly one, as `replace_life_gain` requires one of `gain_multiplier`
+and `gain_addend`. Several statics multiply and add independently, each applied
+once to the event (614.5), so two Thors add 2. The near miss for the addend is a
+"whenever a source you control deals damage" trigger dealing 1 more: that is a
+second damage event on the stack, not a bigger one.
+
+**Against a doubler the order shows.** 616.1 lets the affected player — the one
+being dealt the damage, or the damaged permanent's controller — choose, and
+under Furnace of Rath and Thor a 3 is 3×2+1 = 7 or (3+1)×2 = 8. The damage
+primitives cannot ask, so `player_statics.replaced_damage` applies every
+multiplier before every addend, the smaller hit and the one the affected player
+picks. Damage a `prevent_damage` shield turns into +1/+1 counters is the
+exception: there the permanent's controller wants the larger number, and the
+addends go first.
 
 The other multiplier replacements — `replace_life_gain`, `replace_life_loss`,
 `replace_draw`, `replace_mill`, `replace_token_creation` — are life and card
@@ -2492,9 +2517,11 @@ battlefield by construction, so the widening is keyed on the filter's shape
 rather than a new key: a `damage_source` naming **only** `controller` is
 answered off the dealer's controller in whatever zone it stands, and the moment
 a card names a type, an attachment or any other characteristic it is describing
-a permanent and gets the permanent reading. The Flail's "another **creature**"
-and the Tyrant's "a **source** you control" are different sentences, and the
-filters say so. An *empty* `damage_source` is not the widened shape — `{}` keeps
+a permanent and gets the permanent reading. `exclude_self` beside `controller`
+keeps the widened reading — Thor's "**another** source you control" is still a
+source in any zone, and only the static's own permanent is left out. The Flail's
+"another **creature**" and the Tyrant's "a **source** you control" are different
+sentences, and the filters say so. An *empty* `damage_source` is not the widened shape — `{}` keeps
 the default `controller: "you"` and so means "a permanent you control".
 
 Read in `primitives.damage_permanent` and `primitives.damage_player`, the two
@@ -2509,8 +2536,10 @@ planeswalker branches, each of which is a different *place to put* the damage
 rather than a change to how much there is. 616.1's ordering of a prevention
 against a doubling is not asked; doubling last means "prevent the next 3" answers
 3 of the printed damage, the order the damaged object's controller would have
-chosen — the judgement the shield counter already makes. Several compound by
-multiplication, so between two of these the unasked order cannot show.
+chosen — the judgement the shield counter already makes. Several multipliers
+compound by multiplication, so between two of them the unasked order cannot
+show; against an addend it can, and the paragraph above says which order is
+taken.
 
 ### Distributing counters among targets
 

@@ -549,7 +549,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `prevent_damage` |  | yes | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` |  | yes | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` |  | yes | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
-| `replace_damage` |  | yes | Damage dealt by or to matching permanents is multiplied or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
+| `replace_damage` |  | yes | Damage dealt by or to matching permanents is multiplied, increased by N or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
 | `replace_dies` |  | yes | If a matching permanent would die, exile it instead, optionally creating tokens. | ["If a nontoken creature an opponent controls would die, instead exile that card"](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) |
 | `replace_draw` | yes |  | If the player would draw a card, draw more instead. | ["If you would draw a card, draw two cards instead"](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) |
 | `replace_empty_draw` | yes |  | If the player would draw from an empty library, something else happens. | [Static abilities](card-dsl.md#static-abilities) |
@@ -657,7 +657,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `prevent_damage` | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
-| `replace_damage` | Damage dealt by or to matching permanents is multiplied or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
+| `replace_damage` | Damage dealt by or to matching permanents is multiplied, increased by N or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
 | `replace_dies` | If a matching permanent would die, exile it instead, optionally creating tokens. | ["If a nontoken creature an opponent controls would die, instead exile that card"](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) |
 | `replace_graveyard` | If a matching card would go to a graveyard, it goes elsewhere. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `set_colors` | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |

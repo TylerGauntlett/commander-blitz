@@ -817,7 +817,7 @@ STATICS: dict[str, Entry] = {
     "protection": ("Matching permanents have protection from a quality.", "Protection"),
     "replace_counters": ("Counters put on matching permanents are replaced (doubled, redirected).",
                          "Counters replaced on the way in"),
-    "replace_damage": ("Damage dealt by or to matching permanents is multiplied or redirected.",
+    "replace_damage": ("Damage dealt by or to matching permanents is multiplied, increased by N or redirected.",
                        "Damage multiplied on the way out"),
     "replace_dies": ("If a matching permanent would die, exile it instead, optionally creating tokens.",
                      '"If a nontoken creature an opponent controls would die, instead exile that card"'),

@@ -888,6 +888,13 @@ class AbilityModel(BaseModel):
     #: `token_multiplier`'s reason: 1 replaces damage with itself and 0 is a
     #: prevention, which is `prevent_damage`'s sentence and a different card.
     damage_multiplier: int | None = None
+    #: `replace_damage`: what is added to damage instead. Thor, Asgard's
+    #: Avenger's "it deals that much damage **plus 1** instead" is ``1``. The
+    #: other axis of the same static, as ``gain_addend`` is of
+    #: ``replace_life_gain``: a static uses exactly one of ``damage_multiplier``
+    #: and ``damage_addend``, and the addend is refused below 1 because 0
+    #: replaces damage with itself.
+    damage_addend: int | None = None
     #: `replace_damage` and `prevent_damage`: a filter on the **dealer** --
     #: "if **equipped creature** would deal combat damage", "if **a creature**
     #: would deal damage to you" (Orbs of Warding). Omitted is any source, which
