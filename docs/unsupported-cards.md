@@ -10,18 +10,20 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**92 cards** blocked by **75** capabilities.
+**108 cards** blocked by **88** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [vibranium-token](#vibranium-token) | 5 | 15131 | token |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
+| [player-damage-prevention](#player-damage-prevention) | 2 | 13000 | static_effect |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -29,15 +31,22 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attacks-the-monarch](#attacks-the-monarch) | 1 | 19022 | trigger_event |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [batched-attacks-unblocked](#batched-attacks-unblocked) | 1 | 1274 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [cant-attack-you-player-only](#cant-attack-you-player-only) | 1 | 20590 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cant-cast-spells-this-turn](#cant-cast-spells-this-turn) | 1 | 551 | op |
+| [cast-from-graveyard-on-resolution](#cast-from-graveyard-on-resolution) | 1 | 551 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [commander-cast-count](#commander-cast-count) | 1 | 19568 | value |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
+| [delayed-dies-trigger](#delayed-dies-trigger) | 1 | 16765 | trigger_event |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
@@ -46,7 +55,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [finality-counter](#finality-counter) | 1 | 15997 | replacement |
 | [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
+| [goat-token](#goat-token) | 1 | 2115 | token |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -59,6 +70,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
+| [monstrous-condition](#monstrous-condition) | 1 | 8641 | static_effect |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -66,14 +78,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
-| [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
+| [prevent-damage-into-counters](#prevent-damage-into-counters) | 1 | 13733 | replacement |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
+| [rhino-4-4-g-trample](#rhino-4-4-g-trample) | 1 | 19755 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -253,6 +266,37 @@ Blocks **8** cards.
 
 </details>
 
+## vibranium-token
+
+Blocks **5** cards.
+
+- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell." (a mana ability with mana_restriction to artifact spells)
+  <br>Why the existing vocabulary won't do: token_ids has no Vibranium token; the nearest colorless artifact tokens (treasure_token, clue_token, food_token) have different abilities and no indestructible. The rest of the card is expressible: the intervening-if is a trigger condition cmp of max_count_of opponent lands against lands_you_control, create_token takes tapped: true, and the sacrifice line is a sacrifice self cost with grant_keyword indestructible over supertypes [Legendary] you control.
+- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell."
+  <br>Why the existing vocabulary won't do: No Vibranium entry in token_ids (the closest colorless artifact tokens are treasure_token and clue_token, which are different); create_token only accepts ids from that closed list
+- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell." (mana ability carrying mana_restriction to artifact spells)
+  <br>Why the existing vocabulary won't do: token_ids has no Vibranium token; the nearest colorless artifact tokens (treasure_token, clue_token, food_token) have different abilities and no indestructible. The triggers (self_enters, attacks with source self) and create_token with tapped: true are otherwise available, and the second line is expressible as a spell_cast trigger filtered to Artifact with mana_value >= 4 adding two +1/+1 counters to self
+- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell." (a mana ability with mana_restriction to artifact spells)
+  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Vibranium entry; the nearest colorless mana-making artifact token is treasure_token, which sacrifices itself, makes any color, has no restriction and lacks indestructible
+- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell."
+  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Vibranium token; the nearest colorless mana artifacts (treasure_token, eldrazi_spawn_0_1_c) sacrifice themselves, lack indestructible and carry no mana restriction. The rest of the card (trample, the enters-or-attacks trigger via self_enters and attacks, the {2} pump, Crew 2 as tap_permanents total_power 2) is expressible once the token exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Great Mound** (rank 15131) — `the_great_mound`
+  - {3}, {T}: Create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
+- **Vibranium Mining Mech** (rank 15660) — `vibranium_mining_mech`
+  - Whenever this Vehicle enters or attacks, create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
+- **Shuri's Fabricator** (rank 15997) — `shuri_s_fabricator`
+  - When this artifact enters, create two tapped Vibranium tokens. (They're artifacts with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
+  - {6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)
+- **T'Challa, the Black Panther** (rank 16838) — `t_challa_the_black_panther`
+  - Whenever T'Challa enters or attacks, create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
+- **Dora Milaje Elite** (rank 17736) — `dora_milaje_elite`
+  - When this creature enters, if an opponent controls more lands than you, create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
+
+</details>
+
 ## cast-as-though-flash
 
 Blocks **2** cards.
@@ -343,6 +387,24 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
+
+</details>
+
+## player-damage-prevention
+
+Blocks **2** cards.
+
+- **(static_effect)** a static prevention shield on a player: each time a source matching a dealer filter (here controller: opponent, read off the dealer's controller in any zone) would deal damage to the seat named by affects_player (you), prevent N of that damage (N = 1), per source and per damage event
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' static (amount / prevent_all) is read only by characteristics.prevented_damage and prevents_all_damage, which answer damage to a permanent via 'affects' and never to a player, and it cannot carry 'damage_source' (the loader allows that key only on replace_damage). 'prevent_all_but' caps damage to a player but has no dealer filter and caps rather than subtracting. 'replace_damage' takes damage_source and affects_player but only multiplies by 2 or more. The 'prevent_damage' op is a one-shot with a duration, not a lasting static.
+- **(static_effect)** a player-wide static that prevents N of each damage event dealt to a seat (affects_player: you), narrowed by a damage_source filter on the dealer (types: [Creature]) -- absorb N for a player, keyed on the source's printed characteristics
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' static reads only 'affects' (permanents) via characteristics.prevented_damage and never applies to damage dealt to a player, and takes no damage_source; 'prevent_all_but' reaches a seat but caps damage at N rather than subtracting N, and has no dealer filter; 'damage_source' is accepted only on 'replace_damage', whose damage_multiplier must be 2 or more
+
+<details><summary>Cards waiting on this</summary>
+
+- **Orbs of Warding** (rank 13000) — `orbs_of_warding`
+  - If a creature would deal damage to you, prevent 1 of that damage.
+- **Heart-Shaped Herb** (rank 17897) — `heart_shaped_herb`
+  - If a source an opponent controls would deal damage to you, prevent 1 of that damage
 
 </details>
 
@@ -458,6 +520,20 @@ Blocks **1** card.
 
 </details>
 
+## attacks-the-monarch
+
+Blocks **1** card.
+
+- **(trigger_event)** a `defending: "monarch"` clause on the `attacks` trigger, matching only when the creature was declared attacking the monarch PLAYER (not a planeswalker or battle that player controls/protects), mirroring how `defending: "most_life"` (dethrone) rejects events carrying `attacked_permanent`
+  <br>Why the existing vocabulary won't do: The nearest spelling is `attacks` with `filter: {attached: true}`, `condition: {is_monarch: {binding: defender}}` and `recheck: false` (as M'Baku, Jabari Chieftain does), but `defender` is the planeswalker's/battle's controller on an attack against a permanent, and neither `condition_keys` nor any binding can read `attacked_permanent`, so the card would also destroy a permanent whenever the equipped creature attacks a planeswalker the monarch controls -- a different card. `_defender_matches` only knows `you`, `opponent` and `most_life`.
+
+<details><summary>Cards waiting on this</summary>
+
+- **The Spear of Bashenga** (rank 19022) — `the_spear_of_bashenga`
+  - Whenever equipped creature attacks the monarch, destroy target tapped nonland permanent that player controls.
+
+</details>
+
 ## basic-land-type-mana
 
 Blocks **1** card.
@@ -469,6 +545,20 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
+
+</details>
+
+## batched-attacks-unblocked
+
+Blocks **1** card.
+
+- **(trigger_event)** a 'one or more' form of attacks_unblocked: the ATTACKED_UNBLOCKED events emitted together after blockers are declared (combat.py, 509.1h) share one batch id, so a trigger with batched: true, controller: opponent and defending: you fires once per defending-player batch, binding the attacking player as 'that player' for draw and gain_control
+  <br>Why the existing vocabulary won't do: attacks_unblocked exists but is not in triggers.BATCHED_EVENTS, so the loader refuses `batched` on it and the trigger would queue once per unblocked creature -- two unblocked attackers would draw six cards and run gain_control twice. creatures_attack_player is batched per defending player but fires at declaration, before blocks, so it cannot ask 'aren't blocked'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Coveted Jewel** (rank 1274) — `coveted_jewel`
+  - Whenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it.
 
 </details>
 
@@ -487,6 +577,20 @@ Blocks **1** card.
 
 </details>
 
+## cant-attack-you-player-only
+
+Blocks **1** card.
+
+- **(static_effect)** a continuous static that forbids creatures matching its `affects` filter from attacking the source's controller (the player only), while still letting them attack planeswalkers that player controls (506.2) -- e.g. an `or_planeswalkers: false` switch on `cant_attack_you`, mirroring how `attack_tax` only reaches planeswalkers with `or_planeswalkers`
+  <br>Why the existing vocabulary won't do: The `cant_attack_you` static is the right shape (affects filter {controller: any, types: [Creature], power <= 2}, condition {is_monarch: you}) but `player_statics.attack_defender_forbidden` always extends the wall to planeswalkers the controller has, by design for Combat Calligrapher's "you or planeswalkers you control"; Ramonda names only "you", so using it would wrongly forbid attacks on her controller's planeswalkers. The `cant_attack_player` op is a timed one-shot with no creature filter, and `cant_attack` names no defender at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Queen Mother Ramonda** (rank 20590) — `queen_mother_ramonda`
+  - As long as you're the monarch, creatures with power 2 or less can't attack you.
+
+</details>
+
 ## cant-be-countered
 
 Blocks **1** card.
@@ -498,6 +602,34 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
+
+</details>
+
+## cant-cast-spells-this-turn
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect that, once the player has cast the chosen card, forbids that player from casting any further spells for the rest of the turn (a timed, player-wide cant_cast_spells with duration this_turn, applied only if the optional cast happened)
+  <br>Why the existing vocabulary won't do: cant_cast_spells exists only as a static that lasts while its permanent does, not as an op with a duration; cant_cast_spells_from_zones is an op but restricts zones, not all spells; the packet notes say 'more than one spell each turn' is still a gap
+
+<details><summary>Cards waiting on this</summary>
+
+- **Conduit of Worlds** (rank 551) — `conduit_of_worlds`
+  - {T}: Choose target nonland permanent card in your graveyard. If you haven't cast a spell this turn, you may cast that card. If you do, you can't cast additional spells this turn. Activate only as a sorcery.
+
+</details>
+
+## cast-from-graveyard-on-resolution
+
+Blocks **1** card.
+
+- **(op)** an effect that lets the controller cast a targeted card from their graveyard during resolution of an ability, paying its mana cost, with a binding reporting whether it was cast so a following clause can depend on 'if you do'
+  <br>Why the existing vocabulary won't do: cast_from_hand takes zones but has no documented 'if you do' result binding; grant_playable/grant_graveyard_cast grant a lasting permission rather than a cast during resolution, so the lockout could not be tied to the cast
+
+<details><summary>Cards waiting on this</summary>
+
+- **Conduit of Worlds** (rank 551) — `conduit_of_worlds`
+  - {T}: Choose target nonland permanent card in your graveyard. If you haven't cast a spell this turn, you may cast that card. If you do, you can't cast additional spells this turn. Activate only as a sorcery.
 
 </details>
 
@@ -514,6 +646,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## commander-cast-count
+
+Blocks **1** card.
+
+- **(value)** a value counting how many times you have cast your commander(s) from the command zone this game (the number Player.commander_tax already tallies, summed over your commanders), usable as copy_spell's amount on a self-cast trigger
+  <br>Why the existing vocabulary won't do: value_keys has spells_cast_this_game and greatest_commander_mana_value but nothing that reads command-zone casts; the engine keeps the tally in Player.commander_tax only for cost computation and no value leaf exposes it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hatut Zeraze Strike Force** (rank 19568) — `hatut_zeraze_strike_force`
+  - When you cast this spell, copy it for each time you've cast your commander from the command zone this game.
 
 </details>
 
@@ -586,6 +732,20 @@ Blocks **1** card.
 
 - **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
   - {T}: Destroy target creature that dealt damage to you this turn.
+
+</details>
+
+## delayed-dies-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a delayed triggered ability created by a resolving spell that watches one specific targeted object (t2) and fires when THAT object dies this turn (once), with an intervening-if (exists a commander you control) checked on fire, then become_monarch for the spell's controller
+  <br>Why the existing vocabulary won't do: delayed_trigger accepts trigger.subject and the loader allows event 'dies' with it (OBJECT_SUBJECT_TRIGGERS), but zones._release_delayed_subject strikes the departing permanent out of every subscription's subject_oids when it leaves the battlefield -- before the dies event is emitted -- so a subscription scoped to the creature that dies is dropped before it can ever match; the card would load and silently never make you monarch. `subject` is also absent from the packet's trigger_keys, and no trigger/condition key compares the dying object against a target. An unscoped creature_dies delayed trigger with controller 'opponent' would fire on any opponent creature dying, which is a different card. Needs the release to keep subscriptions whose event is dies/leaves_battlefield for the leaving object's own zone-change event (or match on last-known oid at emit time), plus a once-only duration
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fight for the Throne** (rank 16765) — `fight_for_the_throne`
+  - When the creature an opponent controls dies this turn, if you control your commander, you become the monarch.
 
 </details>
 
@@ -707,6 +867,21 @@ Blocks **1** card.
 
 </details>
 
+## finality-counter
+
+Blocks **1** card.
+
+- **(replacement)** the finality counter: a permanent with a finality counter on it that would be put into a graveyard from the battlefield is exiled instead, so return_from_graveyard with counters: {finality: 1} carries the replacement
+  <br>Why the existing vocabulary won't do: return_from_graveyard accepts counters, but nothing in the engine gives a 'finality' counter any meaning (no reference anywhere in src); replace_deaths/replace_leaves_battlefield are one-shot ops keyed on objects at resolution, not a counter-driven replacement that persists on the permanent and covers any route to the graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shuri's Fabricator** (rank 15997) — `shuri_s_fabricator`
+  - When this artifact enters, create two tapped Vibranium tokens. (They're artifacts with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
+  - {6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)
+
+</details>
+
 ## gain-control-until-end-of-your-next-turn
 
 Blocks **1** card.
@@ -718,6 +893,20 @@ Blocks **1** card.
 
 - **Stilt-Man, Towering Terror** (rank 18564) — `stilt_man_towering_terror`
   - Whenever one or more Villains you control deal combat damage to a player, gain control of target noncreature, nonland permanent that player controls until the end of your next turn. It gains "This permanent can't be sacrificed" until the end of your next turn.
+
+</details>
+
+## goat-token
+
+Blocks **1** card.
+
+- **(token)** a 0/1 white Goat creature token with no abilities
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Goat; the nearest 0/1 tokens are plant_0_1_g (green Plant) and kobolds_of_kher_keep_0_1_r (red Kobold), which differ in color and creature type. The other three lines (discard cost + gain_life, sacrifice-creature cost + return_from_graveyard of a targeted artifact card, sacrifice-artifact cost + draw) are expressible with existing cost keys and ops.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Trading Post** (rank 2115) — `trading_post`
+  - {1}, {T}, Pay 1 life: Create a 0/1 white Goat creature token.
 
 </details>
 
@@ -892,6 +1081,20 @@ Blocks **1** card.
 
 </details>
 
+## monstrous-condition
+
+Blocks **1** card.
+
+- **(static_effect)** a static-condition leaf (e.g. {"monstrous": true}) reading GameObject.monstrous on the static's own source, so a grant_keyword static can switch on "as long as this creature is monstrous"
+  <br>Why the existing vocabulary won't do: The monstrosity op sets GameObject.monstrous, a dedicated field deliberately not folded into `flags`, so the static condition `has_flag` cannot see it; `counters` (+1/+1 >= 1) is wrong because counters can come from elsewhere or be removed; a becomes_monstrous trigger doing set_flag is an unprinted trigger that uses the stack, leaving a window where the creature is monstrous without hexproof/indestructible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fleecemane Lion** (rank 8641) — `fleecemane_lion`
+  - As long as this creature is monstrous, it has hexproof and indestructible.
+
+</details>
+
 ## more-than-meets-the-eye
 
 Blocks **1** card.
@@ -999,20 +1202,6 @@ Blocks **1** card.
 
 </details>
 
-## player-damage-prevention
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static that prevents N of each damage event dealt to a seat (affects_player: you), narrowed by a damage_source filter on the dealer (types: [Creature]) -- absorb N for a player, keyed on the source's printed characteristics
-  <br>Why the existing vocabulary won't do: The 'prevent_damage' static reads only 'affects' (permanents) via characteristics.prevented_damage and never applies to damage dealt to a player, and takes no damage_source; 'prevent_all_but' reaches a seat but caps damage at N rather than subtracting N, and has no dealer filter; 'damage_source' is accepted only on 'replace_damage', whose damage_multiplier must be 2 or more
-
-<details><summary>Cards waiting on this</summary>
-
-- **Orbs of Warding** (rank 13000) — `orbs_of_warding`
-  - If a creature would deal damage to you, prevent 1 of that damage.
-
-</details>
-
 ## players-dealt-combat-damage-by-subtype
 
 Blocks **1** card.
@@ -1038,6 +1227,20 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
+
+</details>
+
+## prevent-damage-into-counters
+
+Blocks **1** card.
+
+- **(replacement)** a static replacement on the permanents a filter names (here `affects: {attached: true}`) that prevents all damage that would be dealt to each of them and, as part of the same replacement (no trigger, no stack), puts that many counters of a named kind (+1/+1) on the creature that would have been dealt the damage -- e.g. a `prevent_damage` static option `counters_instead: {"counter": "+1/+1"}`
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static prevents damage to the affected permanents but carries nothing that does anything with the prevented amount; `replace_damage` is only a multiplier; and the `damage_prevented` trigger event is scoped to the player half (Selfless Squire, damage dealt to you), exposes no value for the prevented amount, and would in any case be a triggered ability using the stack rather than the printed replacement, so the counters would arrive late (on the stack, respondable, after state-based actions) instead of as the damage event is replaced
+
+<details><summary>Cards waiting on this</summary>
+
+- **Panther Habit** (rank 13733) — `panther_habit`
+  - If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 counters on it.
 
 </details>
 
@@ -1109,6 +1312,20 @@ Blocks **1** card.
 
 - **Scolding Administrator** (rank 18369) — `scolding_administrator`
   - Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.
+
+</details>
+
+## rhino-4-4-g-trample
+
+Blocks **1** card.
+
+- **(token)** a 4/4 green Rhino creature token with trample
+  <br>Why the existing vocabulary won't do: token_ids is closed and has no Rhino; the nearest 4/4 green tokens (beast_4_4_g, phyrexian_beast_4_4_g) are the wrong creature type and lack trample. The trigger itself is expressible (an `attacks` trigger filtered on is_commander + controller you, with an intervening-if `exists` over artifacts you control with mana_value >= 4), so the token is the only missing piece.
+
+<details><summary>Cards waiting on this</summary>
+
+- **W'Kabi, Shield of the Nation** (rank 19755) — `w_kabi_shield_of_the_nation`
+  - Whenever you attack with your commander, if you control an artifact with mana value 4 or greater, create a 4/4 green Rhino creature token with trample.
 
 </details>
 

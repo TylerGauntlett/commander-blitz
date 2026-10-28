@@ -7,12 +7,16 @@
   ],
   "needs": [
     {
-      "capability": "prevent_damage_to_player_from_source",
+      "capability": "player-damage-prevention",
       "kind": "static_effect",
       "what": "a static prevention shield on a player: each time a source matching a dealer filter (here controller: opponent, read off the dealer's controller in any zone) would deal damage to the seat named by affects_player (you), prevent N of that damage (N = 1), per source and per damage event",
       "why_existing_wont_do": "The 'prevent_damage' static (amount / prevent_all) is read only by characteristics.prevented_damage and prevents_all_damage, which answer damage to a permanent via 'affects' and never to a player, and it cannot carry 'damage_source' (the loader allows that key only on replace_damage). 'prevent_all_but' caps damage to a player but has no dealer filter and caps rather than subtracting. 'replace_damage' takes damage_source and affects_player but only multiplies by 2 or more. The 'prevent_damage' op is a one-shot with a duration, not a lasting static."
     }
   ],
-  "closest_existing": ["prevent_damage", "prevent_all_but", "replace_damage"],
+  "closest_existing": [
+    "prevent_damage",
+    "prevent_all_but",
+    "replace_damage"
+  ],
   "confidence": "high"
 }
