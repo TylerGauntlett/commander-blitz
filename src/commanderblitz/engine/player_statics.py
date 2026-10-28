@@ -724,6 +724,28 @@ def retained_mana_by_player(state: GameState) -> dict[int, frozenset[str]]:
     return {pid: frozenset(symbols) for pid, symbols in kept.items()}
 
 
+def colorless_instead_players(state: GameState) -> frozenset[int]:
+    """The seats whose unspent mana becomes colorless instead of being lost.
+
+    Kruphix, God of Horizons, Horizon Stone and Omnath, Locus of the Void: "If
+    you would lose unspent mana, that mana becomes colorless instead." A
+    replacement (614.1a) on the emptying 500.4 and 106.4 describe, read by
+    `GameState.empty_all_mana_pools` beside :func:`retained_mana_by_player` and
+    from one battlefield walk for that function's reason.
+
+    The difference from `mana_retention` is the colour, and it matters: kept
+    red mana still pays {R}, and converted mana pays only generic costs and {C}.
+    The two compose -- a pip `mana_retention` keeps is never lost, so it is
+    never converted.
+    """
+    seats: set[int] = set()
+    for obj, static in _active_player_statics(state, "mana_becomes_colorless"):
+        for player in state.players:
+            if _reaches_player(obj, static, player.pid):
+                seats.add(player.pid)
+    return frozenset(seats)
+
+
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
     """Whether any ``skip_draw_step`` static stops this player's turn-based draw.
 

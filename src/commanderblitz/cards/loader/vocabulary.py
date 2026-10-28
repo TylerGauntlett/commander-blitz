@@ -344,6 +344,13 @@ STATIC_EFFECTS = frozenset(
         # mana symbols kept; read by `player_statics.retained_mana_by_player`
         # where every pool empties as a step ends (500.4), and nowhere else.
         "mana_retention",
+        # "If you would lose unspent mana, that mana becomes colorless
+        # instead." Kruphix, God of Horizons, Horizon Stone, Omnath, Locus of
+        # the Void. Player-wide for `mana_retention`'s reason and read at the
+        # same place, `player_statics.colorless_instead_players`: the mana is
+        # kept as {C} rather than in its own colours, so it is a separate
+        # effect and not a `colors` value of that one.
+        "mana_becomes_colorless",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -762,6 +769,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
         "mana_retention",
+        "mana_becomes_colorless",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",

@@ -782,6 +782,8 @@ STATICS: dict[str, Entry] = {
                      "`lose_keyword` — the other kind of removal, at the other end of the pipeline"),
     "mana_retention": ("The player doesn't lose unspent mana of the listed symbols as steps and phases end.",
                        "Player-wide statics"),
+    "mana_becomes_colorless": ("Unspent mana the player would lose becomes colorless instead.",
+                               "Player-wide statics"),
     "no_hand_limit": ("The player has no maximum hand size.", None),
     "player_hexproof": ("The player has hexproof: opponents' spells and abilities can't target them.",
                         "Player-wide statics"),

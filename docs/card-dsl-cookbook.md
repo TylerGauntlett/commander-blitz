@@ -1019,6 +1019,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
 { "kind": "static", "effect": "mana_retention", "affects_player": "you", "colors": ["R"] }
+{ "kind": "static", "effect": "mana_becomes_colorless", "affects_player": "you" }
 { "kind": "static", "effect": "damage_life_floor", "affects_player": "you", "amount": 1 }
 ```
 
@@ -1054,9 +1055,22 @@ included, so the mana crosses into later turns for as long as the permanent stay
 and the first boundary after it leaves empties the pool. It is a fact about the
 player, unlike `add_mana`'s `persists_until_end_of_turn`, which rides on the mana
 one ability made and still runs out at end of turn (Tanuki Transplanter). "Lose
-all unspent mana" (Mana Short) clears the pool without asking it. The "becomes
-colorless instead" sentence (Kruphix, Horizon Stone) is a replacement that
-changes the mana and is not this static.
+all unspent mana" (Mana Short) clears the pool without asking it.
+
+`mana_becomes_colorless` is the other half of that family: Kruphix, God of
+Horizons, Horizon Stone and Omnath, Locus of the Void's "If you would lose unspent
+mana, that mana becomes colorless instead". It takes `affects_player` and an
+optional `condition` and nothing else — no `colors`, because it reaches every
+type of mana. The two differ in what the kept mana can pay for: `mana_retention`
+keeps red as red, so it still pays {R}; this one is a replacement (614.1a) that
+leaves every mana the boundary would have taken in the pool as {C}, so it pays
+generic costs and {C} only, and an author reaching for `mana_retention` with all
+six symbols has written the strictly better card. The same boundary reads both
+(`player_statics.colorless_instead_players` beside `retained_mana_by_player`),
+and they compose: a symbol `mana_retention` keeps, or a Tanuki pip still inside
+its turn, is not lost and so keeps its colour. Either way the pip is kept whole,
+so a "spend this mana only to…" restriction or a Cavern rider on it still
+applies. The loader refuses `colors`, `affects` and `amount` on it.
 
 `double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
 permanents' triggers fire an additional time. Read by `triggers.collect`, which

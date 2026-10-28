@@ -1,0 +1,34 @@
+{
+  "_comment": "Shapes for tests/unit/mana/test_mana_becomes_colorless.py. t_colorless_stone is Horizon Stone's line on an artifact; t_colorless_two is a {2} sorcery, which converted mana still pays; the {R}{R} sorcery t_retain_rr from mana_retention.cards.json is what it no longer pays.",
+  "cards": [
+    {
+      "id": "t_colorless_stone",
+      "name": "Test Colorless Stone",
+      "oracle_text": "If you would lose unspent mana, that mana becomes colorless instead.",
+      "mana_cost": "{5}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If you would lose unspent mana, that mana becomes colorless instead.",
+          "effect": "mana_becomes_colorless",
+          "affects_player": "you"
+        }
+      ]
+    },
+    {
+      "id": "t_colorless_two",
+      "name": "Test Generic Sorcery",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{2}",
+      "types": ["Sorcery"],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {"op": "draw", "player": "you", "amount": {"const": 1}}
+      ]
+    }
+  ]
+}

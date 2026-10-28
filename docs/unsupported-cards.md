@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**94 cards** blocked by **82** capabilities.
+**94 cards** blocked by **81** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -57,7 +57,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
-| [mana-becomes-colorless](#mana-becomes-colorless) | 1 | 24391 | static_effect |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
@@ -868,21 +867,6 @@ Blocks **1** card.
 
 </details>
 
-## mana-becomes-colorless
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static (Kruphix, Omnath, Locus of the Void) that, when the controller's mana pool would empty between steps and phases, keeps every unspent mana but converts each one to {C}
-  <br>Why the existing vocabulary won't do: `mana_retention` keeps the mana in its original colors (Leyline Tyrant / Upwelling), and the packet notes say outright that 'that mana becomes colorless instead' is not it and is still a gap
-
-<details><summary>Cards waiting on this</summary>
-
-- **Omnath, Locus of the Void** (rank 24391) — `omnath_locus_of_the_void`
-  - Omnath gets +1/+1 for each unspent mana you have.
-  - If you would lose unspent mana, that mana becomes colorless instead.
-
-</details>
-
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -1401,7 +1385,6 @@ Blocks **1** card.
 
 - **Omnath, Locus of the Void** (rank 24391) — `omnath_locus_of_the_void`
   - Omnath gets +1/+1 for each unspent mana you have.
-  - If you would lose unspent mana, that mana becomes colorless instead.
 
 </details>
 

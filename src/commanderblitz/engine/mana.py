@@ -822,6 +822,7 @@ class ManaPool:
         self,
         keep_for_turn: int | None = None,
         keep_symbols: frozenset[str] = frozenset(),
+        colorless_instead: bool = False,
     ) -> int:
         """Empty the pool, returning how much mana was lost.
 
@@ -837,25 +838,43 @@ class ManaPool:
         because the end of a turn is only the last step ending (500.4). Empty,
         the default, is every caller that means "lose all unspent mana" (Mana
         Short), which no retention effect stops.
+
+        ``colorless_instead`` is Kruphix's and Omnath, Locus of the Void's "if
+        you would lose unspent mana, that mana becomes colorless instead", read
+        off `mana_becomes_colorless` statics by the same caller. A replacement
+        rather than an exception: every pip the two spares above would not have
+        kept stays in the pool as {C}, its own `Pip` moved across unchanged so
+        a restriction or rider it carried still applies -- `keep_symbols`
+        keeps a pip whole, and so does this. The kept pips keep their colour;
+        only what would have been lost changes, and nothing is lost.
         """
-        if keep_for_turn is None and not keep_symbols:
+        if keep_for_turn is None and not keep_symbols and not colorless_instead:
             lost = sum(self.amounts)
             self.amounts = _zeros()
             self.tags = [[] for _ in range(N_SYMBOLS)]
             return lost
         lost = 0
+        recoloured: list[Pip] = []
         for i, pips in enumerate(self.tags):
             if SYMBOLS[i] in keep_symbols:
                 continue
-            kept = [
-                pip
-                for pip in pips
-                if keep_for_turn is not None
-                and pip.persists_through_turn == keep_for_turn
-            ]
-            lost += len(pips) - len(kept)
+            kept: list[Pip] = []
+            for pip in pips:
+                if (
+                    keep_for_turn is not None
+                    and pip.persists_through_turn == keep_for_turn
+                ):
+                    kept.append(pip)
+                elif colorless_instead:
+                    recoloured.append(pip)
+                else:
+                    lost += 1
             self.tags[i] = kept
             self.amounts[i] = len(kept)
+        if recoloured:
+            colorless = SYMBOL_INDEX["C"]
+            self.tags[colorless].extend(recoloured)
+            self.amounts[colorless] = len(self.tags[colorless])
         return lost
 
     def copy(self) -> ManaPool:

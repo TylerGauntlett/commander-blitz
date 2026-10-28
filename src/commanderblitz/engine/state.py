@@ -12,7 +12,7 @@ from .enums import STEP_PHASE, Phase, Step, Zone
 from .events import EventType, GameEvent
 from .objects import GameObject
 from .player import PlayerState
-from .player_statics import retained_mana_by_player
+from .player_statics import colorless_instead_players, retained_mana_by_player
 from .rng import Rng
 from .structs import (
     AttackRestriction,
@@ -955,12 +955,17 @@ class GameState:
         ``keep_for_turn`` is the current turn at an ordinary step or phase
         boundary and ``None`` at the end of the turn, which is where "until end
         of turn" runs out. A `mana_retention` static (Leyline Tyrant) spares its
-        symbols at every boundary, the end of the turn included.
+        symbols at every boundary, the end of the turn included, and a
+        `mana_becomes_colorless` static (Kruphix) turns whatever would still be
+        lost into {C} instead.
         """
         retained = retained_mana_by_player(self)
+        colorless = colorless_instead_players(self)
         for p in self.players:
             lost = p.mana_pool.clear(
-                keep_for_turn, retained.get(p.pid, frozenset())
+                keep_for_turn,
+                retained.get(p.pid, frozenset()),
+                colorless_instead=p.pid in colorless,
             )
             if lost:
                 self.emit("mana_emptied", player=p.pid, amount=lost)

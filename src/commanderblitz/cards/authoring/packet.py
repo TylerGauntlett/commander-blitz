@@ -751,8 +751,11 @@ def reference() -> dict:
             " `affects_player: \"any\"` with all six symbols (`C` included)."
             " The mana is kept across turns while the permanent stays. It is"
             " NOT `persists_until_end_of_turn`, which is one ability's mana"
-            " until end of turn, and NOT \"that mana becomes colorless"
-            " instead\" (Kruphix), which is still a gap.",
+            " until end of turn. \"If you would lose unspent mana, that mana"
+            " becomes colorless instead\" (Kruphix, Horizon Stone) is the"
+            " different player-wide static `mana_becomes_colorless` with"
+            " `affects_player: \"you\"` and no `colors`: the mana is kept as"
+            " {C}, not in its colours.",
             "\"You may pay any amount of {R}. When you do, it deals that much"
             " damage to any target\" is `may` with `pay: {\"mana\": \"{R}\"}` and"
             " `any_amount: {\"as\": \"paid\"}`, its `effects` a"

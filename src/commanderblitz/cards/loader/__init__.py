@@ -4699,6 +4699,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"and no 'affects' or 'amount'"
             )
 
+    if model.effect == "mana_becomes_colorless" and (
+        model.affects is not None or model.amount is not None or model.colors is not None
+    ):
+        # "If you would lose unspent mana, that mana becomes colorless
+        # instead." Every type of mana, so there is no symbol list to name: a
+        # `colors` here is an attempt at `mana_retention`, which keeps the
+        # colour this static takes away, and nothing would read it.
+        raise DslError(
+            f"{where}: mana_becomes_colorless turns all of the named players' "
+            f"unspent mana colorless; it takes 'affects_player' and an optional "
+            f"'condition', and no 'affects', 'amount' or 'colors' (keeping the "
+            f"colours is mana_retention)"
+        )
+
     if model.effect == "grant_ability" and model.ability is None:
         raise DslError(
             f"{where}: grant_ability needs 'ability' -- the index into this "

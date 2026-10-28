@@ -3,16 +3,9 @@
   "name": "Omnath, Locus of the Void",
   "oracle_text": "Omnath gets +1/+1 for each unspent mana you have.\nIf you would lose unspent mana, that mana becomes colorless instead.\nLandfall — Whenever a land you control enters, add {C}{C}.",
   "blocked_sentences": [
-    "Omnath gets +1/+1 for each unspent mana you have.",
-    "If you would lose unspent mana, that mana becomes colorless instead."
+    "Omnath gets +1/+1 for each unspent mana you have."
   ],
   "needs": [
-    {
-      "capability": "mana_becomes_colorless",
-      "kind": "static_effect",
-      "what": "a player-wide static (Kruphix, Omnath, Locus of the Void) that, when the controller's mana pool would empty between steps and phases, keeps every unspent mana but converts each one to {C}",
-      "why_existing_wont_do": "`mana_retention` keeps the mana in its original colors (Leyline Tyrant / Upwelling), and the packet notes say outright that 'that mana becomes colorless instead' is not it and is still a gap"
-    },
     {
       "capability": "unspent_mana_count",
       "kind": "value",
@@ -21,7 +14,6 @@
     }
   ],
   "closest_existing": [
-    "mana_retention",
     "buff"
   ],
   "confidence": "high"
