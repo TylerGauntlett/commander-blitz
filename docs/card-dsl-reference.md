@@ -975,11 +975,11 @@ What a `delayed_trigger`'s `trigger` object may carry. Defined under [delayed_tr
 
 | Name | Description | Defined in |
 |---|---|---|
-| `condition` | An intervening if. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
+| `condition` | An intervening if, checked on arming and on resolution. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `controller` | Whose action must it be. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `event` | The trigger event to watch. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `recipient` | The permanent being hit, for damage events. | [recipient — the permanent being hit](card-dsl.md#recipient--the-permanent-being-hit) |
-| `subject` | Scope the watch to one chosen object. | [A delayed trigger scoped to one chosen object](card-dsl.md#a-delayed-trigger-scoped-to-one-chosen-object) |
+| `subject` | Scope the watch to one chosen object; a watch on its own departure looks back (603.10a). | [A delayed trigger scoped to one chosen object](card-dsl.md#a-delayed-trigger-scoped-to-one-chosen-object) |
 
 ## Card-level face keys
 

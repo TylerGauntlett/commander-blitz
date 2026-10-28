@@ -2035,6 +2035,37 @@ A target that is gone by resolution installs no subscription at all. 608.2b took
 it, so there is no "that creature" to watch, and watching everything instead
 would be a strictly better card.
 
+#### A watch on the subject's own departure
+
+```jsonc
+// Fight for the Throne — "When the creature an opponent controls dies this
+// turn, if you control your commander, you become the monarch."
+{ "op": "delayed_trigger",
+  "trigger": { "event": "dies", "controller": "any",
+               "subject": { "target": "t2" },
+               "condition": { "exists": { "controller": "you", "owner": "you",
+                                          "is_commander": true } } },
+  "effects": [ { "op": "become_monarch", "player": "you" } ] }
+```
+
+A scoped subscription is released as its subject leaves the battlefield (400.7):
+what comes back is a new object. When the event *is* that departure — `dies`,
+`creature_dies`, `leaves_battlefield` or `sacrificed` (`triggers.LOOK_BACK_EVENTS`)
+— the ability looks back in time (603.10a) and hears it: `zones.move_object`
+releases such a subscription only after the leave events have gone out. It hears
+that one departure and no later one, so the default `this_turn` duration already
+fires at most once, and a creature reanimated and killed again is a new object
+that does not fire it. A subject exiled or bounced instead of dying fires no
+`dies` and is simply released. Every other scoped subscription is released before
+the leave events, as above.
+
+`controller` is `"any"` here because the subject already says whose creature it
+is: the dies event is read after the move, when the creature's controller has
+been reset to its owner, so `"opponent"` would be a question about the owner.
+`condition` is the intervening-if (603.4), asked as the event arms the ability
+and again by `triggers.run_armed_delays` as it resolves — which is what keeps
+the crown off a player whose commander left in the same batch of deaths.
+
 #### `recipient` — the permanent being hit
 
 ```jsonc

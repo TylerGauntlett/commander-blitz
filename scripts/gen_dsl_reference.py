@@ -978,8 +978,9 @@ RIDER_KEYS: dict[str, Entry] = {
 DELAYED_TRIGGER: dict[str, Entry] = {
     "event": ("The trigger event to watch.", None),
     "controller": ("Whose action must it be.", None),
-    "condition": ("An intervening if.", None),
-    "subject": ("Scope the watch to one chosen object.", "A delayed trigger scoped to one chosen object"),
+    "condition": ("An intervening if, checked on arming and on resolution.", None),
+    "subject": ("Scope the watch to one chosen object; a watch on its own departure looks back (603.10a).",
+                "A delayed trigger scoped to one chosen object"),
     "recipient": ("The permanent being hit, for damage events.", "`recipient` — the permanent being hit"),
 }
 

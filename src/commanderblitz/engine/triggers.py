@@ -532,6 +532,26 @@ def _half_matches(dsl_event: str, event: GameEvent) -> bool:
 #: like any other graveyard trigger.
 LEAVE_TRIGGERS = frozenset({"dies", "creature_dies", "leaves_battlefield"})
 
+#: The events that are about an object **leaving the battlefield**, announced
+#: once it already has (603.10a). A delayed ability scoped to an object and
+#: watching one of these -- "when **the creature an opponent controls** dies this
+#: turn" (Fight for the Throne) -- has to look back in time and hear its subject's
+#: own departure, which 400.7 would otherwise have released it from first. See
+#: `delayed_watches_departure` and `zones._release_delayed_subject`.
+LOOK_BACK_EVENTS = frozenset(
+    {EventType.DIES, EventType.LEAVES_BATTLEFIELD, EventType.SACRIFICED}
+)
+
+
+def delayed_watches_departure(delayed: DelayedTrigger) -> bool:
+    """Whether a delayed ability's event is its subject leaving the battlefield.
+
+    Read off the event the DSL name maps to rather than off the name, so the
+    sugar (`creature_dies`) is the same answer as what it is sugar for.
+    """
+    spec = delayed.trigger
+    return spec is not None and TRIGGER_EVENTS.get(spec.event) in LOOK_BACK_EVENTS
+
 
 def fire(
     state: GameState,
@@ -832,6 +852,25 @@ def run_armed_delays(state: GameState) -> Generator[Any, list[int]]:
 
     while state.armed_delays:
         delayed = state.armed_delays.pop(0)
+        spec = delayed.trigger
+        if (
+            spec is not None
+            and spec.condition is not None
+            and not evaluate_condition(
+                state,
+                spec.condition,
+                controller=delayed.controller,
+                source=delayed.source_oid,
+                bindings=delayed.bindings,
+            )
+        ):
+            # 603.4: an intervening-if is asked again as the ability resolves,
+            # and a delayed one is a triggered ability like any other. "When
+            # that creature dies this turn, **if you control your commander**"
+            # (Fight for the Throne) is armed by the first death of a
+            # state-based-action batch, and the commander can be a later one
+            # in the same batch -- gone by the time this runs.
+            continue
         ctx = EffectContext(
             state=state,
             controller=delayed.controller,
