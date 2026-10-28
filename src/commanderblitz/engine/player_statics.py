@@ -29,6 +29,7 @@ from .characteristics import (
 from .enums import Step, Zone
 from .mana import ManaCost, parse_mana_production
 from .objects import GameObject
+from .structs import CASTABLE_ZONES
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -1587,6 +1588,11 @@ def _player_static(state: GameState, pid: int, effect: str) -> bool:
     )
 
 
+#: Every zone a spell can be cast from. A `CastLock` that shuts all of them is
+#: total, and `player_cant_cast_spells` answers it as the prohibition it is.
+_SHUTS_EVERY_ZONE = frozenset(CASTABLE_ZONES)
+
+
 def player_cant_cast_spells(
     state: GameState, pid: int, card: CardDef | None = None, *, x: int = 0
 ) -> bool:
@@ -1632,6 +1638,16 @@ def player_cant_cast_spells(
         # "You can't cast Serra Avenger during your first, second, or third
         # turns of the game." A "can't" on the card rather than a static, asked
         # here so every cast path that asks about a lock asks about this.
+        return True
+    if any(
+        pid in lock.affects and set(lock.zones) >= _SHUTS_EVERY_ZONE for lock in state.cast_locks
+    ):
+        # "If you do, you can't cast additional spells this turn" -- Conduit of
+        # Worlds. The timed, one-shot form of this static: a `CastLock` row
+        # that shuts every zone, written by the `cant_cast_spells` op. Read here
+        # rather than left to `cast_locked_zones` because a zone lock has one
+        # road it cannot see -- casting a copy (707.12), which has no zone to
+        # compare -- and "can't cast spells" stops that cast as well.
         return True
     for obj, static in _active_player_statics(state, "cant_cast_spells"):
         if not _reaches_player(obj, static, pid):

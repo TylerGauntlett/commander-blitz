@@ -10517,6 +10517,64 @@ Three rules details, none of them optional:
 `random`; `tests/unit/engine/test_determinism_hygiene.py` scans for the latter and
 `tests/unit/casting/test_free_cast_from_window.py` pins the former from the outside.
 
+## "You may cast that card" — a paid cast during resolution
+
+Conduit of Worlds — *"{T}: Choose target nonland permanent card in your
+graveyard. If you haven't cast a spell this turn, you may cast that card. If you
+do, you can't cast additional spells this turn. Activate only as a sorcery."*
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": "=", "left": { "spells_cast_this_turn": "you" },
+                 "right": { "const": 0 } },
+  "then": [
+    { "op": "cast_card", "objects": { "target": "t1" }, "as": "cast" },
+    { "op": "if", "condition": { "exists": { "binding": "cast" } },
+      "then": [ { "op": "cant_cast_spells", "player": "you",
+                  "duration": "this_turn" } ] } ] }
+```
+
+**`cast_card`** casts each card in `objects` (a target, a binding or a selector)
+while the ability resolves (608.2g), as its own "you may", **paying its mana
+cost**. It is a real cast (601.2): the card goes on the stack, its cast triggers
+fire, and it counts toward `spells_cast_this_turn`. The price is the card's mana
+cost with the adjustments the ordinary cast line makes: cost reductions and
+taxes (`cost_reduction`), restricted mana (`spell_purpose`), Phyrexian pips
+paid with life, and X announced under a mana-value lock's floor. Targets are
+asked: one-target spells such as Auras get a target pick, and anything else
+gets a choice among the legal tuples. The offer is made only when some line
+can be paid (118.4). A land is never offered (305.9). The three resolution-time
+locks refuse it before the question: a total prohibition, sorcery timing, and
+a zone lock. `as` records the cards actually **cast**, which is what "if you
+do" reads, so a declined offer leaves it empty.
+
+Only the printed mana cost is offered. No kicker, alternative cost or optional
+additional cost is offered. A card whose additional cost is mandatory, or that
+has `additional_cost_options`, is not offered at all. That makes the cast
+narrower than 601.2b, never cheaper. `objects` is required, and `free`,
+`selector`, `zones` and `per_owner` are refused, because those keys belong to
+the free casts.
+
+| near miss | why it is not this |
+|---|---|
+| `cast_from_hand`, `play_exiled`, `cascade`, `look_at_top`'s `cast_free` | free: they go through `suspend.cast_for_free`, and a free Conduit is a strictly better card |
+| `grant_playable`, `grant_graveyard_cast` | leave a *permission* to cast later in a priority window; "if you do" has nothing to read while the ability resolves |
+
+**`cant_cast_spells`** is the timed, one-shot form of the `cant_cast_spells`
+static: a player-wide, **total** prohibition. `player` (who is locked) and
+`duration` (`"this_turn"` or `"until_your_next_turn"`, from
+`structs.CAST_LOCK_DURATIONS`) are both required, because "you … this turn" and
+"your opponents … this turn" (Silence) differ in both. The op writes a
+`structs.CastLock` that shuts every zone in `structs.CASTABLE_ZONES`, and
+`player_statics.player_cant_cast_spells` reads such a row as total. That read is
+what covers the one road a zone lock leaves open: casting a copy (707.12), which
+has no zone to compare. A `zones` or `except_zones` key is refused, because a
+zone-filtered lock is `cant_cast_spells_from_zones`. The clock and the cleanup
+are the timed table's own. A spell already on the stack is untouched, so the
+card Conduit just cast still resolves.
+
+Pinned in `tests/unit/casting/test_cast_card.py`.
+
 ## Addendum — the phase a spell was cast in
 
 ```jsonc

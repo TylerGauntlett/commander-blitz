@@ -152,6 +152,7 @@ H_CASTING_FROM_GY = "Casting from the graveyard"
 H_UNTAP_NONE = "Not untapping at all"
 H_LANDWALK = "Landwalk, and global attack prohibitions"
 H_CANT_CAST_ZONES = '"Can\'t cast spells from anywhere other than their hands"'
+H_CAST_CARD = '"You may cast that card" — a paid cast during resolution'
 H_FLOOR = "Damage can't take you below 1"
 H_CANT_COUNTER = '"This spell can\'t be countered"'
 H_CHOOSE_PERMANENTS = "`choose_permanents` — marking without acting"
@@ -211,6 +212,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                              "Casting out of every graveyard, until end of turn"),
     "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost.",
                        None),
+    "cast_card": ("Cards", "Cast a named card during resolution, paying its mana cost; `as` records what was cast.",
+                  H_CAST_CARD),
     "return_to_origin": ("Cards", "Return an exiled card to the zone it came from.",
                          '"…until this permanent leaves the battlefield" — giving it back'),
     "return_to_command_zone": ("Cards", "Return a commander from wherever it is to the command zone.",
@@ -363,6 +366,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                'Emblems — "Target opponent gets an emblem with …"'),
     "cant_cast_spells_from_zones": ("Players", "A player can't cast spells from the listed zones.",
                                     H_CANT_CAST_ZONES),
+    "cant_cast_spells": ("Players", "A player can't cast spells for a duration (the timed form of the static).",
+                         H_CAST_CARD),
     "lose_game": ("Players", "A player loses the game.", '"That player loses the game"'),
     # ---- Mana ------------------------------------------------------------
     "add_mana": ("Mana", "Add mana to a player's pool.", "Mana abilities"),
