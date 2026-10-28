@@ -305822,12 +305822,12 @@
     },
     "Vision, Synthezoid Avenger": {
       "edhrec_rank": 17180,
-      "gate": "residual",
+      "gate": null,
       "name": "Vision, Synthezoid Avenger",
-      "reason": "printed text not represented: • Vision phases out",
+      "reason": "",
       "scryfall_id": "f7007b77-84ec-4391-b279-8c188dd569d0",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Visionary Augmenter": {
