@@ -608,6 +608,18 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
+    if model.variable_pt and not (
+        model.is_token
+        and CardType.CREATURE.value in model.types
+        and (model.power, model.toughness) == (0, 0)
+    ):
+        # The X/X token's size is the creating effect's, so its definition says
+        # nothing about it: written 0/0, the base `create_token`'s ``power`` and
+        # ``toughness`` replace. Anywhere else the flag would mark a size that
+        # nothing ever sets.
+        raise DslError(
+            f"{where}: 'variable_pt' marks an X/X creature token, written 0/0"
+        )
 
     # The same sentence for a battle (310.3), and refused rather than defaulted
     # for a sharper reason: a battle that enters with no defense counters is
@@ -1706,6 +1718,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         emblems=emblems,
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
+        variable_pt=model.variable_pt,
         back_face=model.back_face,
         second_face=model.second_face,
         second_face_zone=model.second_face_zone,

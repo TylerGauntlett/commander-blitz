@@ -1142,6 +1142,13 @@ class CardModel(BaseModel):
     #: emblem is its own object in the command zone and has nothing else.
     emblems: list[EmblemModel] = Field(default_factory=list)
     is_token: bool = False
+    #: A token printed **X/X** (`*/*` on its token card): one whose base power
+    #: and toughness the creating effect fixes as it is created -- "create an
+    #: X/X blue Shark creature token with flying" (Shark Typhoon). Written
+    #: 0/0, and created only by a `create_token` carrying a ``power`` and
+    #: ``toughness`` pair, which the loader requires of it and refuses to every
+    #: other token: a printed 0/0 Fractal given X counters is a different card.
+    variable_pt: bool = False
     #: The id of this card's **back face**, for a transforming double-faced
     #: card. The back face is an ordinary card entry in the same pool, marked
     #: with no mana cost -- it is never cast, never shuffled into a deck, and

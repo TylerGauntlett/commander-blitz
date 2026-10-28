@@ -1139,7 +1139,14 @@ class Game:
             # `fire`, not `emit`: emit only writes the log, and a cycle event
             # nothing listens to is the silent no-op this whole run exists to
             # add a listener for.
-            triggers.fire(state, EventType.CYCLED, player=pid, source=oid, card=card.id)
+            #
+            # ``x`` is the X paid in a cycling cost with one -- Shark Typhoon's
+            # "Cycling {X}{1}{U}", whose "When you cycle this card, create an
+            # X/X…" reads that number. The card was never cast, so its own
+            # `cast_x` is 0; the event is the only place the payment survives.
+            triggers.fire(
+                state, EventType.CYCLED, player=pid, source=oid, card=card.id, x=x
+            )
 
     def _ask_distribution(
         self,

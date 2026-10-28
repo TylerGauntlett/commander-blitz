@@ -1959,6 +1959,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "create_token" and ("power" in effect) != ("toughness" in effect):
+        # "Create an X/X …" prints both numbers. One alone would leave the
+        # other at the X/X token's written 0, and a 3/0 Shark dies to 704.5f
+        # the moment it is made. Which tokens take the pair at all is
+        # `linking.validate_token_references`' check, since only it sees the pool.
+        raise DslError(
+            f"{where}: create_token's 'power' and 'toughness' go together -- "
+            f"an X/X token prints both"
+        )
     if op == "amass":
         # "Amass Orcs 2" prints both halves. A missing N would amass one, and a
         # missing or misspelled subtype has no token to create -- an Orc card

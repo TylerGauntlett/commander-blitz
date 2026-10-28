@@ -7175,6 +7175,41 @@ graveyards. "Most recently" is `GameObject.attached_timestamp`, stamped by every
 there earlier. Being put into the graveyard is not destruction, so a Wicked Role
 replaced this way still drains.
 
+## An X/X token — "create an X/X blue Shark creature token"
+
+Shark Typhoon. `create_token`'s `power` and `toughness` are value expressions,
+evaluated once as the op runs, that become the token's **base** size — the
+copiable values its creating effect sets (111.4, 707.2):
+
+```jsonc
+// "Whenever you cast a noncreature spell, create an X/X … where X is that spell's mana value."
+{ "op": "create_token", "token": "shark_x_x_u_flying",
+  "power":     { "mana_value_of": { "binding": "subject" } },
+  "toughness": { "mana_value_of": { "binding": "subject" } } }
+// "Cycling {X}{1}{U}" … "When you cycle this card, create an X/X …"
+{ "op": "create_token", "token": "shark_x_x_u_flying",
+  "power": { "x": true }, "toughness": { "x": true } }
+```
+
+The token is written **0/0 with `"variable_pt": true`** in `tokens.cards.json`,
+the way its token card prints `*/*`. The loader holds both directions: the pair
+is refused on a token without the flag, a flagged token is refused without the
+pair (it would arrive 0/0 and die), one half alone is refused, and a
+`create_instead` or `and_create` cannot name a flagged token, since a
+replacement names its token by id alone. The flag itself needs a 0/0 creature
+token.
+
+The near misses are each a different card. A 0/0 given X +1/+1 counters (the
+Fractal shape) is what proliferate, -1/-1 counters and "creatures with counters"
+see; a `set_pt` is a layer 7b effect with a duration. The base size sits under
+both, so counters and anthems land on top of it, a copy of the token is the same
+size, and a token-doubling replacement's extra tokens are too.
+
+The two X readers: `mana_value_of` a spell **on the stack** counts the X it was
+cast with (202.3e), so Secure the Wastes for X = 3 makes a 4/4; and a `cycle`
+trigger's `{"x": true}` is the X paid in the cycling cost, which the event
+carries because a card cycled from hand was never cast.
+
 ## Making a token that is already attacking
 
 ```jsonc
@@ -8125,7 +8160,9 @@ The object model already *is* a copy model: identity is `def_id` pointing at a
 `CardDef`, and `is_token` is a separate flag — so a token copy is a token whose
 `def_id` is the original's. That is not a shortcut. A copy copies the **printed
 card**, so the counters, damage and Auras piled onto the original are exactly
-what must not come with it.
+what must not come with it. A token's copiable values also include what its
+creating effect set (707.2) — an X/X Shark's size, an eternalized token's 4/4 —
+so a copy of one carries those, with its own `except` on top.
 
 Unlike `create_token` it names no token id, so nothing has to be pre-declared and
 `validate_token_references` does not apply: what is being copied is only known

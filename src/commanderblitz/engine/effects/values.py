@@ -864,7 +864,19 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
         # report the printed cost's mana value.
         if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
             return 0
-        return ctx.state.card_of(obj).mana_value
+        card = ctx.state.card_of(obj)
+        # 202.3e: a spell on the stack counts the X it was cast with, so
+        # "that spell's mana value" (Shark Typhoon) is 6 for a Fireball cast
+        # with X = 5. Everywhere else X is 0 and this is the printed number.
+        spell_x = next(
+            (
+                item.x
+                for item in ctx.state.stack
+                if item.kind == "spell" and item.oid == oid
+            ),
+            0,
+        )
+        return card.mana_value + spell_x * card.mana_cost.x_count
     c = chars(ctx.state, oid)
     return c.power if which == "power" else c.toughness
 

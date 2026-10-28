@@ -117523,6 +117523,97 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "create_token",
+              "power": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              },
+              "token": "shark_x_x_u_flying",
+              "toughness": {
+                "mana_value_of": {
+                  "binding": "subject"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create an X/X blue Shark creature token with flying, where X is that spell's mana value.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{X}{1}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {X}{1}{U} ({X}{1}{U}, Discard this card: Draw a card.)"
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "op": "create_token",
+              "power": {
+                "x": true
+              },
+              "token": "shark_x_x_u_flying",
+              "toughness": {
+                "x": true
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When you cycle this card, create an X/X blue Shark creature token with flying.",
+          "trigger": {
+            "event": "cycle",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "shark_typhoon",
+      "mana_cost": "{5}{U}",
+      "name": "Shark Typhoon",
+      "oracle_text": "Whenever you cast a noncreature spell, create an X/X blue Shark creature token with flying, where X is that spell's mana value.\nCycling {X}{1}{U} ({X}{1}{U}, Discard this card: Draw a card.)\nWhen you cycle this card, create an X/X blue Shark creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}{G}{U}"
           },

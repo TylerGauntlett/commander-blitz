@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**102 cards** blocked by **92** capabilities.
+**101 cards** blocked by **91** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -104,7 +104,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unblockable-except](#unblockable-except) | 1 | 28865 | op |
 | [unspent-mana-count](#unspent-mana-count) | 1 | 24391 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
-| [variable-pt-token](#variable-pt-token) | 1 | 1242 | token |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
 ## combat-only-permanent-shield
@@ -1554,21 +1553,6 @@ Blocks **1** card.
 
 - **Monstrous Onslaught** (rank 13841) — `monstrous_onslaught`
   - Monstrous Onslaught deals X damage divided as you choose among any number of target creatures, where X is the greatest power among creatures you control as you cast this spell.
-
-</details>
-
-## variable-pt-token
-
-Blocks **1** card.
-
-- **(token)** an X/X blue Shark creature token with flying whose base power and toughness are set to a value fixed at creation (the cast spell's mana value, or the X paid for cycling)
-  <br>Why the existing vocabulary won't do: token_ids has no Shark token, and create_token carries only amount/as/attached_to/attacking/controller/player/tapped/token -- no power or toughness value; the 0/0 tokens (fractal_0_0_gu) are the wrong type and colour, and 0/0 plus +1/+1 counters is not a base X/X
-
-<details><summary>Cards waiting on this</summary>
-
-- **Shark Typhoon** (rank 1242) — `shark_typhoon`
-  - Whenever you cast a noncreature spell, create an X/X blue Shark creature token with flying, where X is that spell's mana value.
-  - When you cycle this card, create an X/X blue Shark creature token with flying.
 
 </details>
 

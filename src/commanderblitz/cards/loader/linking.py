@@ -288,6 +288,22 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
         for effect in _walk_effects(card):
             if effect.get("op") == "create_token":
                 check(card, str(effect.get("token")), "create_token")
+                sized = cards[str(effect.get("token"))].variable_pt
+                if sized != ("power" in effect):
+                    # Both directions. A pair on a printed-size token repaints
+                    # the size the creating card did not print (a 0/0 Fractal
+                    # that is given X counters is not an X/X), and an X/X token
+                    # made without one is a 0/0 that 704.5f bins on arrival.
+                    raise DslError(
+                        f"{card.id}: create_token {effect.get('token')!r} "
+                        + (
+                            "is an X/X token and needs the 'power' and 'toughness' "
+                            "its creating effect fixes"
+                            if sized
+                            else "has a printed size; 'power' and 'toughness' are "
+                            "only for an X/X token (variable_pt)"
+                        )
+                    )
                 if "attached_to" in effect and not cards[str(effect.get("token"))].is_aura:
                     # Only an Aura is attached by `op_create_token`; anything
                     # else would be created and hang on nothing.
@@ -307,10 +323,16 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                 check(card, INCUBATOR_TOKEN, "incubate")
         for ability in card.abilities:
             static = ability.static or {}
-            for token_id in static.get("create_instead", ()):
-                check(card, str(token_id), "create_instead")
-            for token_id in static.get("and_create", ()):
-                check(card, str(token_id), "and_create")
+            for key in ("create_instead", "and_create"):
+                for token_id in static.get(key, ()):
+                    check(card, str(token_id), key)
+                    if cards[str(token_id)].variable_pt:
+                        # A replacement names its token by id alone, so an
+                        # X/X one would arrive the 0/0 it is written as.
+                        raise DslError(
+                            f"{card.id}: {key} names {token_id!r}, an X/X token "
+                            f"whose size only a create_token can fix"
+                        )
 
 
 def _walk_effects(card: CardDef):

@@ -4079,7 +4079,7 @@ played:
 
 | leaf | what it gives |
 |---|---|
-| `mana_value_of` | the **printed** cost — unmoved by reductions, alternative costs, free casts |
+| `mana_value_of` | the **printed** cost — unmoved by reductions, alternative costs, free casts; a spell on the stack adds the X it was cast with (202.3e) |
 | `additional_paid` | only the overpayment *above* the mana cost — 0 for a plainly qualifying {3}{R} |
 | `colors_of_mana_spent`, `mana_symbols` | colour and printed symbols, not an amount |
 

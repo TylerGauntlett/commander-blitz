@@ -10537,6 +10537,10 @@
     },
     "zone": "battlefield"
   },
+  "shark_typhoon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sharktocrab": {
     "battlefield_count": 33,
     "zone": "battlefield"

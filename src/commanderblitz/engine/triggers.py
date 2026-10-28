@@ -1473,6 +1473,11 @@ EVENT_BINDING_KEYS = (
     # `power_had` / `toughness_had` value keys.
     "had_power",
     "had_toughness",
+    # The X paid for the ability whose event this is, written over the `x`
+    # `event_bindings` reads off the permanent. Only `cycle` carries it: "When
+    # you cycle this card, create an X/X…" (Shark Typhoon) means the X in the
+    # cycling cost, and a card cycled from hand has no `cast_x` to read.
+    "x",
 )
 
 

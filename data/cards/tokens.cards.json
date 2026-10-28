@@ -2089,6 +2089,30 @@
       ]
     },
     {
+      "id": "shark_x_x_u_flying",
+      "name": "Shark Token",
+      "oracle_text": "X/X blue Shark creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shark"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
       "id": "soldier_1_1_c",
       "name": "Soldier Token",
       "oracle_text": "1/1 colorless Soldier artifact creature token.",

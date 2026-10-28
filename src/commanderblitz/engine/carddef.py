@@ -1192,6 +1192,8 @@ class CardDef:
     emblems: tuple[CardDef, ...] = ()
     type_line: str = ""
     is_token: bool = False
+    #: An X/X token whose size its creating effect sets; see the card model.
+    variable_pt: bool = False
     #: The id of this card's back face -- a transforming double-faced card.
     #: The two faces are two ``CardDef``s and one ``GameObject``: ``transformed``
     #: on the object decides which one ``GameState.card_of`` returns, so every

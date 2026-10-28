@@ -242992,12 +242992,12 @@
     },
     "Shark Typhoon": {
       "edhrec_rank": 1242,
-      "gate": "template",
+      "gate": null,
       "name": "Shark Typhoon",
-      "reason": "no template for: Whenever you cast a noncreature spell, create an X/X blue Shark creature token with flying",
+      "reason": "",
       "scryfall_id": "2b2accb1-d77b-4633-9d0c-b972d9c014bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sharkey, Tyrant of the Shire": {

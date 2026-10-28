@@ -789,3 +789,31 @@ class TestIncubatesIncubatorIsADoubleFacedToken:
         germ = pool.get("germ_0_0_b")
         assert (mite.power, mite.toughness) == (1, 1) and mite.keywords
         assert sorted(germ.colors) == ["B"]
+
+
+class TestSharkTyphoonsSharkIsAnXXBlueFlier:
+    """Shark Typhoon: *"…create an **X/X blue Shark** creature token **with
+    flying**"* (the catalog's Shark token row prints `*/*`, blue, Flying).
+
+    Written 0/0 with `variable_pt`, because its size is the creating effect's
+    (see `tests/unit/tokens/test_variable_pt_token.py`). The pool's other 0/0
+    blue creature token is the green-and-blue Fractal, and its blue fliers are
+    printed sizes; none stands in. A Fractal is a 0/0 that is *given* counters,
+    so it carries no flag.
+    """
+
+    def test_it_is_an_x_x_blue_shark_with_flying(self, pool):
+        shark = pool.get("shark_x_x_u_flying")
+        assert shark is not None and shark.is_token and shark.is_creature
+        assert shark.variable_pt
+        assert (shark.power, shark.toughness) == (0, 0)
+        assert sorted(shark.colors) == ["U"]
+        assert list(shark.types) == ["Creature"]
+        assert list(shark.subtypes) == ["Shark"]
+        assert list(shark.keywords) == ["flying"]
+        assert not shark.abilities
+
+    def test_the_fractal_is_still_a_printed_zero_zero(self, pool):
+        fractal = pool.get("fractal_0_0_gu")
+        assert not fractal.variable_pt
+        assert sorted(fractal.colors) == ["G", "U"]
