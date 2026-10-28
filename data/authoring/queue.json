@@ -39382,12 +39382,12 @@
     },
     "Captain America, Team Leader": {
       "edhrec_rank": 13543,
-      "gate": "template",
+      "gate": null,
       "name": "Captain America, Team Leader",
-      "reason": "no template for: Whenever another Hero you control enters, it gains vigilance and haste until end of turn. ",
+      "reason": "",
       "scryfall_id": "61a51b67-d941-4e07-9c12-ffe583cb65d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain America, Unbowed": {
@@ -69332,12 +69332,12 @@
     },
     "Director Nick Fury": {
       "edhrec_rank": 13945,
-      "gate": "template",
+      "gate": null,
       "name": "Director Nick Fury",
-      "reason": "no template for: Hero spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "7b7e00b4-d2f5-4c89-8a1b-e22b7bba111b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diregraf Captain": {
@@ -70002,12 +70002,12 @@
     },
     "Dismantling Wave": {
       "edhrec_rank": 4267,
-      "gate": "template",
+      "gate": null,
       "name": "Dismantling Wave",
-      "reason": "no template for: For each opponent, destroy up to one target artifact or enchantment that player controls",
+      "reason": "",
       "scryfall_id": "39e7bb05-96df-4e76-90a6-3f3625b7965a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dismember": {
@@ -90382,12 +90382,12 @@
     },
     "Falcon and Redwing": {
       "edhrec_rank": 13450,
-      "gate": "template",
+      "gate": null,
       "name": "Falcon and Redwing",
-      "reason": "no template for: Whenever deal combat damage to a player, create that many 1/1 white Bird creature tokens w",
+      "reason": "",
       "scryfall_id": "a2f3d58c-ad5c-4d1a-bda6-fbc55635e946",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Falcon's Wing Harness": {

@@ -1885,6 +1885,10 @@
   "capital_guard": {
     "zone": "battlefield"
   },
+  "captain_america_team_leader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "captain_of_the_watch": {
     "battlefield_count": 36,
     "tokens": {
@@ -3206,6 +3210,10 @@
       "graveyard"
     ]
   },
+  "director_nick_fury": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "diregraf_colossus": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3217,6 +3225,10 @@
     "life": {
       "0": 41
     }
+  },
+  "dismantling_wave": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "dismember": {
     "zone": "graveyard"
@@ -4056,6 +4068,10 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "falcon_and_redwing": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "falkenrath_pit_fighter": {
     "battlefield_count": 33,

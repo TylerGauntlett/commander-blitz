@@ -1,0 +1,18 @@
+{
+  "card_id": "captain_mar_vell_space_born",
+  "name": "Captain Mar-Vell, Space-Born",
+  "oracle_text": "Flying, vigilance\nCosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells as though they had flash.",
+  "blocked_sentences": [
+    "Cosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells as though they had flash."
+  ],
+  "needs": [
+    {
+      "capability": "static_spells_cast_this_turn",
+      "kind": "value",
+      "what": "the per-turn spell-cast ledger readable from a static ability's condition: `spells_cast_this_turn` (scoped to opponents) in `static_value_keys`, so a `cast_as_though_flash` static with affects_player \"you\" can carry condition `cmp` {spells_cast_this_turn: opponent} > 0 and switch on the moment any opponent casts a spell this turn",
+      "why_existing_wont_do": "The `cast_as_though_flash` static already expresses the permission, but its `condition` may only use `static_condition_keys`/`static_value_keys`; `spells_cast_this_turn` is in `value_keys` (effects and triggers) and absent from `static_value_keys`, and no `has_turn_flag` style key exists for statics. A `spell_cast` trigger setting a flag would be an unprinted ability and would miss spells cast before this permanent entered"
+    }
+  ],
+  "closest_existing": ["cast_as_though_flash", "spells_cast_this_turn"],
+  "confidence": "high"
+}

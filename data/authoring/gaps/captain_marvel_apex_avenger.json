@@ -1,0 +1,18 @@
+{
+  "card_id": "captain_marvel_apex_avenger",
+  "name": "Captain Marvel, Apex Avenger",
+  "oracle_text": "Flying, double strike, indestructible\nWhenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on Captain Marvel.",
+  "blocked_sentences": [
+    "Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on Captain Marvel."
+  ],
+  "needs": [
+    {
+      "capability": "copy_placed_counters",
+      "kind": "value",
+      "what": "a counter_placed trigger that exposes the triggering placement's counter kind and amount to its effects, so an add_counters on the source can put 'the same number and kind of counters' (any kind, not one fixed kind) that were just put on the other creature",
+      "why_existing_wont_do": "counter_placed with put_by: you and a filter (types Creature, exclude_self, not_subtypes Kree) can detect the event, but its `counter` trigger key fixes ONE kind, and op_add_counters reads `counter` as a fixed string; no value_key reads the event's placed amount or kind, so the trigger cannot mirror an arbitrary kind and number"
+    }
+  ],
+  "closest_existing": ["counter_placed", "add_counters", "move_counters"],
+  "confidence": "high"
+}
