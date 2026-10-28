@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**97 cards** blocked by **81** capabilities.
+**96 cards** blocked by **80** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -36,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-cast-spells-this-turn](#cant-cast-spells-this-turn) | 1 | 551 | op |
 | [cast-from-graveyard-on-resolution](#cast-from-graveyard-on-resolution) | 1 | 551 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [commander-cast-count](#commander-cast-count) | 1 | 19568 | value |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -562,20 +561,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## commander-cast-count
-
-Blocks **1** card.
-
-- **(value)** a value counting how many times you have cast your commander(s) from the command zone this game (the number Player.commander_tax already tallies, summed over your commanders), usable as copy_spell's amount on a self-cast trigger
-  <br>Why the existing vocabulary won't do: value_keys has spells_cast_this_game and greatest_commander_mana_value but nothing that reads command-zone casts; the engine keeps the tally in Player.commander_tax only for cost computation and no value leaf exposes it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hatut Zeraze Strike Force** (rank 19568) — `hatut_zeraze_strike_force`
-  - When you cast this spell, copy it for each time you've cast your commander from the command zone this game.
 
 </details>
 

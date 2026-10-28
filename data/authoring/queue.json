@@ -123372,12 +123372,12 @@
     },
     "Hatut Zeraze Strike Force": {
       "edhrec_rank": 19568,
-      "gate": "template",
+      "gate": null,
       "name": "Hatut Zeraze Strike Force",
-      "reason": "no template for: When you cast this spell, copy it for each time you've cast your commander from the comman",
+      "reason": "",
       "scryfall_id": "a4efb52c-5f09-4219-a0d8-2a425c2bf890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Haughty Djinn": {

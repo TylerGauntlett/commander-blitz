@@ -5579,6 +5579,11 @@
     },
     "zone": "graveyard"
   },
+  "hatut_zeraze_strike_force": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "haunted_cloak": {
     "zone": "battlefield"
   },
