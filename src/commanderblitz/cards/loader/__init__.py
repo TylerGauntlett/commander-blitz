@@ -4725,14 +4725,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         qualities.append("outside commander identity")
     if model.from_colorless:
         qualities.append("colorless")
-    if model.effect == "protection":
+    if model.effect in ("protection", "player_protection"):
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
-        # exists to stop.
+        # exists to stop. The seat-side static spells its qualities with the
+        # same keys, so it meets the same checks.
         if not qualities:
             raise DslError(
-                f"{where}: protection needs from_types/from_subtypes/from_colors/"
+                f"{where}: {model.effect} needs from_types/from_subtypes/from_colors/"
                 f"from_colorless/from_colors_outside_commander_identity"
+            )
+        if model.effect == "player_protection" and model.affects is not None:
+            # "You have protection" names a seat. An `affects` beside it would
+            # load clean and be read by nothing -- the creature half of
+            # "you and creatures you control" is its own `protection` static.
+            raise DslError(
+                f"{where}: player_protection names players with 'affects_player'; "
+                f"protection for permanents is a separate 'protection' static"
             )
         _refuse_protection_sentinels(model.from_subtypes, where)
         if model.from_colors_outside_commander_identity and model.from_colors:
@@ -4768,7 +4777,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     elif qualities:
         raise DslError(
             f"{where}: from_types/from_subtypes/from_colors/from_colorless/"
-            f"from_colors_outside_commander_identity need effect 'protection'"
+            f"from_colors_outside_commander_identity need effect 'protection' "
+            f"or 'player_protection'"
         )
 
     _validate_static_condition(model.condition, f"{where}.condition")

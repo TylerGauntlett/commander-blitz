@@ -1454,12 +1454,14 @@ def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
     taking either could not tell them apart, and the failure would be an Aura
     silently enchanting an unrelated permanent.
 
-    The two restrictions `attach` enforces have no counterpart here, and both
-    absences are rules rather than omissions. 301.5c is about a permanent
-    attaching to *itself*, which a seat cannot be. And protection is a property
-    of objects and players alike, but the enchant restriction it blocks is
-    "can't be enchanted by" -- a player has no protection in any card the engine
-    can be handed, and inventing one here would be a rule nothing asked for.
+    Of the two restrictions `attach` enforces, one has no counterpart here:
+    301.5c is about a permanent attaching to *itself*, which a seat cannot be.
+    The other does. A player with protection can't be enchanted by an Aura with
+    that quality (702.16c) -- "you have protection from enchantments" on
+    Serra's Emissary -- so an Aura put onto a protected seat without being cast
+    is refused, exactly as `attach` refuses a protected permanent. A cast one
+    never gets this far: it targets the seat (303.4a) and the target check
+    stops it first.
 
     Liveness is checked, unlike `attach`'s battlefield test, and it is the same
     check: a player who has lost the game is no more a legal host than a
@@ -1472,6 +1474,8 @@ def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
     """
     aura = state.objects.get(aura_oid)
     if aura is None or not aura.on_battlefield or not state.is_alive(player):
+        return False
+    if player_protected_from(state, player, aura_oid):
         return False
     aura.attached_to_player = player
     aura.attached_to = None

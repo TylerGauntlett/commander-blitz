@@ -247,6 +247,13 @@ STATIC_EFFECTS = frozenset(
         # on a player: protection also prevents damage and stops everyone
         # targeting, the player's own spells included.
         "player_hexproof",
+        # "You have protection from the chosen card type." (Serra's Emissary)
+        # -- 702.16, the static twin of the timed `PlayerProtection` Teferi's
+        # Protection installs, and read through the same
+        # `characteristics.player_protection_from`, so damage, targeting and
+        # "can't be enchanted" all see it. Its qualities are the `protection`
+        # static's keys.
+        "player_protection",
         # "Skip your draw step." Necropotence, and the fourteen other cards that
         # print exactly this sentence. Player-wide for `no_hand_limit`'s reason,
         # and read by `turn._draw_step`, which is the only place a turn-based
@@ -802,6 +809,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cant_win_the_game",
         "damage_life_floor",
         "player_hexproof",
+        "player_protection",
     }
 )
 

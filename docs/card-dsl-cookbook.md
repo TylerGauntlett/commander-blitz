@@ -4377,6 +4377,28 @@ and a source that has chosen nothing protects from nothing. It may sit beside
 literal types. A near-miss leaf is refused at load time, and so is the entry on a
 granted static, whose source would be the recipient, which has chosen nothing.
 
+**A player with protection.** "**You** and creatures you control have protection
+from the chosen card type" is two statics: the `protection` above for the
+creatures, and a player-wide `player_protection` for the seat, which spells its
+qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`,
+`from_colorless`, `from_colors_outside_commander_identity`, the chosen leaf
+included):
+
+```jsonc
+{ "kind": "static", "effect": "player_protection", "affects_player": "you",
+  "from_types": [ { "chosen_card_type_of": "self" } ] }
+```
+
+It feeds `characteristics.player_protection_from`, the reader Teferi's
+Protection's timed `PlayerProtection` already fills, so the three rules that
+apply to a protected seat see both: damage from a source with the quality is
+prevented (`damage_player`), the seat can't be targeted by such a source — by
+anyone, its controller included — and an Aura with the quality can't enchant it
+(`attach_to_player`; a cast one is stopped by the target check). It needs
+`affects_player` and a quality, refuses `affects` (the creatures are the other
+static's job), and cannot be granted. The near miss is `player_hexproof`, which
+stops only opponents and prevents no damage.
+
 ### Absorb, which is not protection with a number
 
 ```jsonc

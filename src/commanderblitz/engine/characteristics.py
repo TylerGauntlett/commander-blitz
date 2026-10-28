@@ -2522,6 +2522,34 @@ def commander_color_identity(state: GameState, pid: int) -> frozenset[str]:
     return frozenset(colors & COLOR_LETTERS)
 
 
+def _static_protection_qualities(
+    state: GameState, source_obj: GameObject, static: Mapping[str, Any]
+) -> set[str]:
+    """The qualities one protection static names, flattened.
+
+    Shared by the object-side `protection` static and the seat-side
+    `player_protection` static, which spell their qualities with the same keys:
+    "you and creatures you control have protection from the chosen card type"
+    (Serra's Emissary) is one quality reaching two kinds of thing, and two
+    readers of the keys would be two places for "from colorless" to drift.
+    """
+    out: set[str] = set()
+    # "Protection from the chosen card type" is read off the static's own
+    # source at the moment a rule asks, so it follows a later choice and
+    # matches nothing before one is made.
+    out.update(resolve_chosen_card_type_list(static.get("from_types"), source_obj))
+    out.update(static.get("from_subtypes", ()))
+    out.update(static.get("from_colors", ()))
+    if static.get("from_colorless"):
+        out.add(PROTECTION_COLORLESS)
+    if static.get("from_colors_outside_commander_identity"):
+        # "Your commander" is the static's controller's -- the Plate's, not
+        # the equipped creature's, and it follows the Equipment when it
+        # changes hands. Asked at read time for that reason.
+        out.update(COLOR_LETTERS - commander_color_identity(state, source_obj.controller))
+    return out
+
+
 def protection_from(state: GameState, oid: int) -> frozenset[str]:
     """The qualities this permanent has protection from.
 
@@ -2543,19 +2571,7 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        # "Protection from the chosen card type" is read off the static's own
-        # source at the moment a rule asks, so it follows a later choice and
-        # matches nothing before one is made.
-        out.update(resolve_chosen_card_type_list(static.get("from_types"), source_obj))
-        out.update(static.get("from_subtypes", ()))
-        out.update(static.get("from_colors", ()))
-        if static.get("from_colorless"):
-            out.add(PROTECTION_COLORLESS)
-        if static.get("from_colors_outside_commander_identity"):
-            # "Your commander" is the static's controller's -- the Plate's, not
-            # the equipped creature's, and it follows the Equipment when it
-            # changes hands. Asked at read time for that reason.
-            out.update(COLOR_LETTERS - commander_color_identity(state, source_obj.controller))
+        out |= _static_protection_qualities(state, source_obj, static)
     # "Creatures you control gain protection from each color until end of turn"
     # -- Akroma's Will. Granted protection is one `TempEffect` per quality, so it
     # joins the printed statics' qualities in the same flat set, and the four
@@ -2741,18 +2757,33 @@ def player_protection_from(state: GameState, pid: int) -> frozenset[str]:
 
     The seat-side twin of :func:`protection_from`, and it returns the same flat
     set of strings so the rules that read protection ask one kind of question.
-    Its entries come from `GameState.player_protections` rather than from
-    `_battlefield_statics`: no static can name a seat, and the effect outlives
-    whatever installed it.
+    Two sources feed it, and every reader sees both without knowing which:
 
-    Only two rules read this, against the four that read the object side. A
-    player cannot be blocked, and the "can't be enchanted" half is reached
-    through targeting -- an Aura that enchants a player targets it as it is cast
-    (303.4a), so the target check already refuses it.
+    * `GameState.player_protections` -- the timed grant (Teferi's Protection,
+      The One Ring), which outlives whatever installed it.
+    * the `player_protection` static -- "**you** have protection from the
+      chosen card type" (Serra's Emissary), a player-wide static walked by
+      `player_statics._active_player_statics` like every other one, so its
+      "as long as" condition is honoured, and spelling its qualities with the
+      object-side static's keys.
+
+    Three rules read this, against the four that read the object side: damage
+    (`primitives.damage_player`), targeting (`targeting._player_allowed`), and
+    "can't be enchanted" (`primitives.attach_to_player`, for an Aura put onto
+    a seat without being cast -- one that is cast targets the seat as it is
+    cast, 303.4a, so the target check refuses it first). A player cannot be
+    blocked.
     """
-    if not state.player_protections:
-        return frozenset()
-    return frozenset(entry.quality for entry in state.player_protections if entry.player == pid)
+    # Imported here: `player_statics` is built on this module, and the walk
+    # belongs to it -- a second walk of player-wide statics here would be the
+    # copy that forgets the `condition` gate.
+    from .player_statics import _active_player_statics, _reaches_player
+
+    out = {entry.quality for entry in state.player_protections if entry.player == pid}
+    for source_obj, static in _active_player_statics(state, "player_protection"):
+        if _reaches_player(source_obj, static, pid):
+            out |= _static_protection_qualities(state, source_obj, static)
+    return frozenset(out)
 
 
 def player_protected_from(state: GameState, pid: int, source_oid: int | None) -> bool:
