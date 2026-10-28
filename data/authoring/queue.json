@@ -280502,12 +280502,12 @@
     },
     "The Elder Dragon War": {
       "edhrec_rank": 9305,
-      "gate": "template",
+      "gate": null,
       "name": "The Elder Dragon War",
-      "reason": "no template for: I — This Saga deals 2 damage to each creature and each opponent",
+      "reason": "",
       "scryfall_id": "0c52c7d4-a350-4518-8c9a-72cf7b14603d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Elderspell": {

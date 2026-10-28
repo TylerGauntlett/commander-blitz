@@ -139469,6 +139469,91 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — This Saga deals 2 damage to each creature and each opponent."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": "you"
+              },
+              "as": "pitched",
+              "op": "discard",
+              "player": "you",
+              "up_to": true
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "pitched"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Discard any number of cards, then draw that many cards."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "dragon_4_4_r_flying"
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Create a 4/4 red Dragon creature token with flying."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "the_elder_dragon_war",
+      "keywords": [
+        "read_ahead"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "The Elder Dragon War",
+      "oracle_text": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — This Saga deals 2 damage to each creature and each opponent.\nII — Discard any number of cards, then draw that many cards.\nIII — Create a 4/4 red Dragon creature token with flying.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
