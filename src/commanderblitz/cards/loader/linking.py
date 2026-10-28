@@ -9,7 +9,11 @@ from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
 )
-from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS, EMPOWER_TOKEN
+from commanderblitz.engine.effects.ops_counters import (
+    AMASS_TOKENS,
+    EMPOWER_TOKEN,
+    INCUBATOR_TOKEN,
+)
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.mana import ManaCost, parse_mana_production
 
@@ -239,6 +243,10 @@ def token_references(card: CardDef) -> set[str]:
     for effect in _walk_effects(card):
         if effect.get("op") == "create_token":
             out.add(str(effect.get("token")))
+        if effect.get("op") == "incubate":
+            # The op names its token itself; the bundle's `references` then
+            # carries the Incubator's back face along with it.
+            out.add(INCUBATOR_TOKEN)
     for ability in card.abilities:
         static = ability.static or {}
         out.update(str(token_id) for token_id in static.get("create_instead", ()))
@@ -263,6 +271,14 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
             raise DslError(f"{card.id}: {where} references unknown card {token_id!r}")
         if not token.is_token:
             raise DslError(f"{card.id}: {token_id!r} is not marked as a token")
+        if token.front_face is not None:
+            # The Incubator's Phyrexian is a token face, never a token of its
+            # own: it is reached by transforming the front, and created
+            # directly it would be a 0/0 artifact creature no card prints.
+            raise DslError(
+                f"{card.id}: {where} names {token_id!r}, the back face of "
+                f"{token.front_face!r}; create the front face"
+            )
 
     for card in cards.values():
         for effect in _walk_effects(card):
@@ -283,6 +299,8 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                 # Likewise the Army token its subtype names (the effects guard
                 # has already refused a subtype with none).
                 check(card, AMASS_TOKENS[str(effect.get("subtype"))], "amass")
+            if effect.get("op") == "incubate":
+                check(card, INCUBATOR_TOKEN, "incubate")
         for ability in card.abilities:
             static = ability.static or {}
             for token_id in static.get("create_instead", ()):

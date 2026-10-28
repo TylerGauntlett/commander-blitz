@@ -5769,6 +5769,10 @@
     "artist": "Daniel Ljunggren",
     "scryfall_id": "400bbab4-4ecf-4875-b356-1164d3a29092"
   },
+  "incubator_token": {
+    "artist": "Johann Bodin",
+    "scryfall_id": "7b7f2e3a-ec43-4408-affd-a09338566ce3"
+  },
   "incurable_ogre": {
     "artist": "Carl Critchlow",
     "scryfall_id": "5ad3381e-ae2f-40cf-8a7b-62375e9f453e"
@@ -8627,6 +8631,11 @@
     "artist": "Izzy",
     "scryfall_id": "9a3f57e6-b66a-495f-8b5c-3378a07e9f64"
   },
+  "phyrexian_0_0_c_artifact": {
+    "artist": "Johann Bodin",
+    "back": true,
+    "scryfall_id": "7b7f2e3a-ec43-4408-affd-a09338566ce3"
+  },
   "phyrexian_arena": {
     "artist": "Svetlin Velinov",
     "scryfall_id": "e6db1ad2-ed85-4084-976e-da1933f4d008"
@@ -11438,6 +11447,10 @@
   "sundown_pass": {
     "artist": "Piotr Dura",
     "scryfall_id": "ac70c9ae-5115-46db-9ef8-05c475c88154"
+  },
+  "sunfall": {
+    "artist": "Kasia 'Kafis' Zieli\u0144ska",
+    "scryfall_id": "a560b9a7-4c00-4c0c-b63d-774d3f6b9aa9"
   },
   "sungrace_pegasus": {
     "artist": "Phill Simmer",

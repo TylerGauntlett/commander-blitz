@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**103 cards** blocked by **93** capabilities.
+**102 cards** blocked by **92** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -55,7 +55,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impending](#impending) | 1 | 4255 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
-| [incubate](#incubate) | 1 | 3908 | token |
 | [insect-2-1-w-flying](#insect-2-1-w-flying) | 1 | 4255 | token |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -846,20 +845,6 @@ Blocks **1** card.
 
 - **Ragavan, Nimble Pilferer** (rank 271) — `ragavan_nimble_pilferer`
   - Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.
-
-</details>
-
-## incubate
-
-Blocks **1** card.
-
-- **(token)** a double-faced Incubator artifact token (front: colorless Incubator artifact with "{2}: Transform this token."; back: 0/0 colorless Phyrexian artifact creature) created with X +1/+1 counters, where X is the number of creatures the preceding exile actually moved
-  <br>Why the existing vocabulary won't do: token_ids has no Incubator token (the only Phyrexian token is phyrexian_beast_4_4_g), and create_token has no way to make a transforming token or place counters on it as it is created; exile has an `as` binding but no value key reads the count of objects it moved
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sunfall** (rank 3908) — `sunfall`
-  - Exile all creatures. Incubate X, where X is the number of creatures exiled this way
 
 </details>
 

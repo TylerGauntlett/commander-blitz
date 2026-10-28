@@ -153,6 +153,52 @@ def op_amass(ctx: EffectContext, spec: Mapping[str, Any]):
         ctx.bindings[str(name)] = list(picked)
 
 
+#: The token "incubate N" creates: the catalog's double-faced Incubator //
+#: Phyrexian token row (tfrc). The front is a colorless Incubator artifact with
+#: "{2}: Transform this artifact."; its `back_face` is the 0/0 colorless
+#: Phyrexian artifact creature it transforms into.
+INCUBATOR_TOKEN = "incubator_token"
+
+
+@register("incubate")
+def op_incubate(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "Incubate N." -- rule 701.53a: *Create an Incubator token with N +1/+1
+    counters on it and "{2}: Transform this artifact." It transforms into a 0/0
+    Phyrexian artifact creature.*
+
+    The counters are on the token as it is created (`create_token`'s
+    ``enters_with``), so they are one placement with every other "enters with"
+    (122.6), and the counter replacements look at the Incubator as it is:
+    an artifact, not a creature. Doubling Season ("a permanent you control")
+    makes incubate 3 two Incubators with six each; Hardened Scales ("a
+    creature you control") does nothing to it. Not `create_token` then
+    `add_counters`, which places them on a token already on the battlefield --
+    a second event that "whenever a token enters" sees without them, and that
+    an `add_counters` on "the token" would have to name by binding.
+
+    The token is a transforming double-faced token, so turning it over is the
+    ordinary `transform` op on its own activated ability; the counters stay on
+    the permanent, and the back face is a 0/0 that is N/N with them. Incubate
+    0 still creates the Incubator (an artifact, not a creature, so nothing
+    dies), and transforming it then makes a 0/0 that 704.5f bins.
+
+    ``amount`` is any value expression, below zero read as zero (107.1b):
+    Sunfall's "the number of creatures exiled this way" is
+    ``{"count": {"binding": ...}}`` over the `exile` op's ``as``. ``as``
+    records the Incubators made.
+    """
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    made = create_token(
+        ctx.state,
+        INCUBATOR_TOKEN,
+        ctx.controller,
+        source=ctx.source_oid,
+        enters_with={"+1/+1": amount} if amount else None,
+    )
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = list(made)
+
+
 @register("distribute_counters")
 def op_distribute_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Distribute three +1/+1 counters among up to three target creatures."

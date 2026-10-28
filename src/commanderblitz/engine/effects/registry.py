@@ -74,6 +74,9 @@ RECORDING_OPS = frozenset(
         #: not. See `ops_cards.op_exile_until`.
         "exile_until",
         "gain_control",
+        #: The Incubators made, `create_token`'s record. See
+        #: `ops_counters.op_incubate`.
+        "incubate",
         "join_forces",
         #: The cards a bounded look off the top actually **took** -- "exile the
         #: top card of your library face down. Put **that card** into your hand

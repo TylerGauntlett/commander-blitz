@@ -1,5 +1,5 @@
 {
-  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list. Hand-written, and edited only under /extend-dsl (its Tier 0, a gap record with kind 'token'). Three are created by no shipped card and stay as test fixtures: knight_2_2_w_vigilance (the near miss tests/unit/tokens/test_token_pool.py and tests/cards/test_authoring.py contrast with knight_2_2_w and samurai_2_2_w_vigilance), kraken_8_8_u (the 8/8 in tests/unit/triggers/test_once_each_turn_trigger.py and test_atraxa_tokens.py) and vampire_1_1_bw (made by a test-pool card in tests/data/testing.cards.json, and by test_sba_and_commander.py). The four 0/0 black Army tokens are named by no create_token: the amass op picks one by its subtype (ops_counters.AMASS_TOKENS).",
+  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list. Hand-written, and edited only under /extend-dsl (its Tier 0, a gap record with kind 'token'). Three are created by no shipped card and stay as test fixtures: knight_2_2_w_vigilance (the near miss tests/unit/tokens/test_token_pool.py and tests/cards/test_authoring.py contrast with knight_2_2_w and samurai_2_2_w_vigilance), kraken_8_8_u (the 8/8 in tests/unit/triggers/test_once_each_turn_trigger.py and test_atraxa_tokens.py) and vampire_1_1_bw (made by a test-pool card in tests/data/testing.cards.json, and by test_sba_and_commander.py). The four 0/0 black Army tokens are named by no create_token: the amass op picks one by its subtype (ops_counters.AMASS_TOKENS). incubator_token is named only by the incubate op (ops_counters.INCUBATOR_TOKEN), and phyrexian_0_0_c_artifact is its back face, reached by transforming it and never created on its own.",
   "cards": [
     {
       "id": "angel_3_3_w_flying",
@@ -1201,6 +1201,52 @@
           ]
         }
       ]
+    },
+    {
+      "id": "incubator_token",
+      "name": "Incubator",
+      "oracle_text": "{2}: Transform this artifact.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Incubator"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "back_face": "phyrexian_0_0_c_artifact",
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: Transform this artifact.",
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "op": "transform"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phyrexian_0_0_c_artifact",
+      "name": "Phyrexian Token",
+      "oracle_text": "0/0 colorless Phyrexian artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
     },
     {
       "id": "inkling_2_1_wb_flying",

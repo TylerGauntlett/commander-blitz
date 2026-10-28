@@ -11663,6 +11663,15 @@
   "sundown_pass": {
     "zone": "battlefield"
   },
+  "sunfall": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 1,
+      "id": "incubator_token"
+    },
+    "zone": "graveyard"
+  },
   "sungrace_pegasus": {
     "zone": "battlefield"
   },

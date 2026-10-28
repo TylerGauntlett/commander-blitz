@@ -228,6 +228,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 '`empower` — "Empower Jace N"'),
     "amass": ("Board", "Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too.",
               '`amass` — "Amass Zombies N"'),
+    "incubate": ("Board", "Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature.",
+                 '`incubate` — "Incubate N"'),
     "remove_counters": ("Board", "Remove N counters of a kind.", None),
     "tap": ("Board", "Tap permanents.", None),
     "untap": ("Board", "Untap permanents.", "Untapping on somebody else's turn"),

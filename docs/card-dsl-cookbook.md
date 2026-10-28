@@ -1813,6 +1813,32 @@ records the amassed Army, zero or one oids, for "the amassed Army's power".
 Not `create_token` then `add_counters`: that pair makes a fresh Army every time
 and never adds the subtype.
 
+### `incubate` — "Incubate N"
+
+Rule 701.53a: "Create an Incubator token with N +1/+1 counters on it and '{2}:
+Transform this artifact.' It transforms into a 0/0 Phyrexian artifact
+creature." Sunfall incubates X, the number of creatures it exiled.
+
+```jsonc
+{"op": "exile", "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all"}, "as": "exiled"},
+{"op": "incubate", "amount": {"count": {"binding": "exiled"}}}
+```
+
+The op names its token itself, `INCUBATOR_TOKEN` in `effects/ops_counters.py`:
+`incubator_token`, a colorless Incubator artifact whose `back_face` is
+`phyrexian_0_0_c_artifact`, the 0/0 colorless Phyrexian artifact creature. The
+front's "{2}: Transform this artifact." is an ordinary activated `transform`,
+and the counters stay on the permanent as it turns over. `amount` is required
+by the loader and is any value expression, below zero read as zero; incubate 0
+still creates the Incubator. The counters are on the token as it is created
+(`create_token`'s `enters_with`, one placement under 122.6), so counter
+replacements see an artifact: Doubling Season applies, Hardened Scales ("a
+creature you control") does not. `as` records the Incubators made.
+
+Not `create_token` then `add_counters`, which places the counters on a token
+already on the battlefield. And never `create_token` naming the back face:
+linking refuses a token that is some other token's back face.
+
 ## Battles
 
 ```jsonc

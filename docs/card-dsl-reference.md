@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 147 |
+| [Effect ops](#effect-ops) | 148 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 55 |
@@ -102,6 +102,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `goad` | Board |  | Goad creatures until your next turn. | [Goad](card-dsl-cookbook.md#goad) |
 | `grant_ability` | Board |  | Give permanents one of the card's `grantable_abilities`. | [Granting an ability](card-dsl-cookbook.md#granting-an-ability) |
 | `haunt` | Board |  | Exile the source haunting a creature. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
+| `incubate` | Board | yes | Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature. | [incubate — "Incubate N"](card-dsl-cookbook.md#incubate--incubate-n) |
 | `lock_abilities` | Board |  | Its activated abilities can't be activated this turn. | ["Its activated abilities can't be activated this turn"](card-dsl-cookbook.md#its-activated-abilities-cant-be-activated-this-turn) |
 | `manifest` | Board |  | Manifest the top card of a library face down as a 2/2. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `meld` | Board |  | Meld the source with its named partner into one permanent. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |

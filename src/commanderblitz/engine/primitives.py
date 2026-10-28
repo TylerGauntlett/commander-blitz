@@ -8,7 +8,7 @@ that is the effect layer's job.
 from __future__ import annotations
 
 import dataclasses
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
@@ -1314,6 +1314,7 @@ def create_token(
     attacking: int | None = None,
     overrides: dict[str, Any] | None = None,
     source: int | None = None,
+    enters_with: Mapping[str, int] | None = None,
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -1342,6 +1343,12 @@ def create_token(
     is recorded in its `created_tokens` -- "tokens created with this creature"
     (Faerie Artisans). A substituted token is recorded too: it is still the
     token that effect created.
+
+    ``enters_with`` is "create an Incubator token **with N +1/+1 counters on
+    it**" (incubate, 701.53a): counters each token is created with, handed to
+    `move_object` so they are one placement with any other "enters with"
+    (122.6) and every counter replacement that applies to the token as it
+    arrives sees them -- the token is never on the battlefield without them.
     """
     plan = _token_creation_plan(state, def_id, controller, count)
     if plan is None:
@@ -1368,7 +1375,14 @@ def create_token(
             # ETB triggers and enters-tapped replacements run through the normal
             # path.
             state.players[controller].exile.append(obj.oid)
-            move_object(state, obj.oid, Zone.BATTLEFIELD, tapped=tapped, cause="token")
+            move_object(
+                state,
+                obj.oid,
+                Zone.BATTLEFIELD,
+                tapped=tapped,
+                cause="token",
+                enters_with=enters_with,
+            )
             if attacking is not None and state.combat is not None:
                 state.combat.attackers[obj.oid] = attacking
             # `fire`, not `emit`: the event has always been recorded in the log

@@ -131,6 +131,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Compleated** | 702.150a: `GameObject.cast_phyrexian_life` removes two loyalty per symbol in `zones._enter_battlefield`, on that arrival only |
 | **Empower** | The `empower` op: loyalty counters on one Jace token you control, the blue 0-loyalty Jace planeswalker token (`EMPOWER_TOKEN`) created first only when you control none, both in one effect so 704.5i looks only afterwards |
 | **Amass** | The `amass` op (701.47): +1/+1 counters on one Army creature you control, the 0/0 black Army token of the named subtype (`AMASS_TOKENS`) created first only when you control none, both in one effect so 704.5f looks only afterwards; the Army gains the subtype permanently and `as` records it ("the amassed Army") |
+| **Incubate** | The `incubate` op (701.53): the double-faced Incubator artifact token (`INCUBATOR_TOKEN`, back face a 0/0 colorless Phyrexian artifact creature) created with N +1/+1 counters as one placement (122.6), so only an artifact-applicable counter replacement modifies them; "{2}: Transform this artifact" is the ordinary `transform` |
 
 ### Triggers
 

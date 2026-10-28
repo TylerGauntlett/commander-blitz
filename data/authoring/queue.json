@@ -269632,12 +269632,12 @@
     },
     "Sunfall": {
       "edhrec_rank": 3908,
-      "gate": "template",
+      "gate": null,
       "name": "Sunfall",
-      "reason": "no template for: Exile all creatures. Incubate X, where X is the number of creatures exiled this way",
+      "reason": "",
       "scryfall_id": "32e29c7d-ed4b-4eff-b3c2-d99e5b63ef8d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunfire Balm": {

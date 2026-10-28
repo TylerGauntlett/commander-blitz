@@ -130411,6 +130411,43 @@
       "colors": [
         "W"
       ],
+      "id": "sunfall",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Sunfall",
+      "oracle_text": "Exile all creatures. Incubate X, where X is the number of creatures exiled this way. (Create an Incubator token with X +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "exiled"
+            }
+          },
+          "op": "incubate"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "sungrace_pegasus",
       "keywords": [
         "flying",

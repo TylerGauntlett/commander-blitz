@@ -739,3 +739,53 @@ class TestAmassArmiesAreZeroZeroBlackArmies:
         germ = pool.get("germ_0_0_b")
         assert germ is not None
         assert "Army" not in germ.subtypes
+
+
+class TestIncubatesIncubatorIsADoubleFacedToken:
+    """Incubate N (701.53a): *"Create an Incubator token with N +1/+1 counters
+    on it and '{2}: Transform this artifact.' It transforms into a 0/0
+    Phyrexian artifact creature."* (Sunfall; the catalog's tfrc Incubator //
+    Phyrexian row.)
+
+    The pool's other colorless Phyrexian artifact creature is the 1/1 Mite with
+    toxic, and its other 0/0 Phyrexian is the black Germ. Neither stands in for
+    the back face: a printed size or colour would make every incubate a
+    different card, and the back is only ever reached by transforming the
+    front, which is why linking refuses a `create_token` that names it.
+    """
+
+    def test_the_front_is_a_colorless_incubator_artifact(self, pool):
+        front = pool.get("incubator_token")
+        assert front is not None and front.is_token
+        assert list(front.types) == ["Artifact"]
+        assert list(front.subtypes) == ["Incubator"]
+        assert not front.colors
+        assert (front.power, front.toughness) == (None, None)
+        [ability] = front.abilities
+        assert ability.text == "{2}: Transform this artifact."
+        assert ability.cost.mana.text == "{2}"
+        assert ability.effects == ({"op": "transform"},)
+
+    def test_the_back_is_a_zero_zero_colorless_phyrexian_artifact_creature(self, pool):
+        back = pool.get("phyrexian_0_0_c_artifact")
+        assert back is not None and back.is_token
+        assert sorted(back.types) == ["Artifact", "Creature"]
+        assert list(back.subtypes) == ["Phyrexian"]
+        assert (back.power, back.toughness) == (0, 0)
+        assert not back.colors
+        assert not back.keywords and not back.abilities
+
+    def test_the_faces_are_linked(self, pool):
+        assert pool.get("incubator_token").back_face == "phyrexian_0_0_c_artifact"
+        assert pool.get("phyrexian_0_0_c_artifact").front_face == "incubator_token"
+
+    def test_the_op_names_the_front(self):
+        from commanderblitz.engine.effects.ops_counters import INCUBATOR_TOKEN
+
+        assert INCUBATOR_TOKEN == "incubator_token"
+
+    def test_the_mite_and_the_germ_are_still_separate_tokens(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        germ = pool.get("germ_0_0_b")
+        assert (mite.power, mite.toughness) == (1, 1) and mite.keywords
+        assert sorted(germ.colors) == ["B"]
