@@ -73827,6 +73827,99 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "frogs_exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "controller_of": "each"
+                  }
+                }
+              ],
+              "objects": {
+                "binding": "frogs_exiled",
+                "zone": "exile"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "mana_value": {
+                  "op": ">=",
+                  "value": 3
+                },
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When King Solomon's Frogs enters, if you cast it, for each opponent, exile up to one target permanent that player controls with mana value 3 or greater. For each permanent exiled this way, its controller draws a card.",
+          "trigger": {
+            "condition": {
+              "was_cast": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "mana": "{3}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, {T}, Exile King Solomon's Frogs: You become the monarch."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "king_solomon_s_frogs",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "King Solomon's Frogs",
+      "oracle_text": "Flash\nWhen King Solomon's Frogs enters, if you cast it, for each opponent, exile up to one target permanent that player controls with mana value 3 or greater. For each permanent exiled this way, its controller draws a card.\n{3}, {T}, Exile King Solomon's Frogs: You become the monarch.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -81777,6 +81870,103 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, if there is no monarch, target opponent becomes the monarch.",
+          "trigger": {
+            "condition": {
+              "no_monarch": true
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            },
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature attacks one of your opponents, if that player is the monarch, that creature gets +1/+1 and gains trample until end of turn.",
+          "trigger": {
+            "condition": {
+              "is_monarch": {
+                "binding": "defender"
+              }
+            },
+            "controller": "any",
+            "defending": "opponent",
+            "event": "attacks",
+            "filter": {
+              "attacking_player": "opponent"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "m_baku_jabari_chieftain",
+      "mana_cost": "{1}{G}{G}",
+      "name": "M'Baku, Jabari Chieftain",
+      "oracle_text": "At the beginning of your end step, if there is no monarch, target opponent becomes the monarch.\nWhenever a creature attacks one of your opponents, if that player is the monarch, that creature gets +1/+1 and gains trample until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -86205,6 +86395,65 @@
         "Sliver"
       ],
       "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 2,
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice two artifacts: Return this card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "cost_reduction": {
+        "total_mana_value": {
+          "controller": "you",
+          "not_types": [
+            "Creature"
+          ],
+          "types": [
+            "Artifact"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "metalwork_colossus",
+      "mana_cost": "{11}",
+      "name": "Metalwork Colossus",
+      "oracle_text": "This spell costs {X} less to cast, where X is the total mana value of noncreature artifacts you control.\nSacrifice two artifacts: Return this card from your graveyard to your hand.",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 10,
       "types": [
         "Artifact",
         "Creature"
@@ -91531,6 +91780,92 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment",
+                  "Land",
+                  "Planeswalker",
+                  "Battle"
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to": "hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this Vehicle deals combat damage to a player, look at the top card of your library. If it's a permanent card, you may put it onto the battlefield. If you don't put it onto the battlefield, put it into your hand.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 5
+              },
+              "toughness": {
+                "const": 7
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "n_yami_class_mother_ship",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "haste"
+      ],
+      "mana_cost": "{6}",
+      "name": "N'Yami-Class Mother Ship",
+      "oracle_text": "Flying, vigilance, haste\nWhenever this Vehicle deals combat damage to a player, look at the top card of your library. If it's a permanent card, you may put it onto the battlefield. If you don't put it onto the battlefield, put it into your hand.\nCrew 3",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 7,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "amount": {
@@ -91644,6 +91979,99 @@
         "Cleric"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever your commander enters, you become the monarch.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "is_commander": true,
+              "owner": "you"
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Vehicle"
+                    ]
+                  }
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Put two +1/+1 counters on target creature or Vehicle. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "nakia_wakandan_operative",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Nakia, Wakandan Operative",
+      "oracle_text": "Reach\nWhenever your commander enters, you become the monarch.\n{2}, {T}: Put two +1/+1 counters on target creature or Vehicle. Activate only as a sorcery.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -100509,6 +100937,38 @@
         "Myr"
       ],
       "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [],
+      "colors": [],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Artifact"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "panther_robot",
+      "keywords": [
+        "reach",
+        "trample"
+      ],
+      "mana_cost": "{10}",
+      "name": "Panther Robot",
+      "oracle_text": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nReach, trample",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Robot"
+      ],
+      "toughness": 8,
       "types": [
         "Artifact",
         "Creature"
