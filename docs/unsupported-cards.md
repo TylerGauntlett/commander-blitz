@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**91 cards** blocked by **74** capabilities.
+**93 cards** blocked by **77** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,6 +29,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attacked-you-last-turn-condition](#attacked-you-last-turn-condition) | 1 | 17207 | value |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -39,6 +40,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
+| [destroyed-this-way-count](#destroyed-this-way-count) | 1 | 17207 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
@@ -83,6 +85,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
+| [times-tapped-this-turn](#times-tapped-this-turn) | 1 | 9590 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -457,6 +460,21 @@ Blocks **1** card.
 
 </details>
 
+## attacked-you-last-turn-condition
+
+Blocks **1** card.
+
+- **(value)** a condition (usable in a cost_reduction's `condition`) that is true when any player attacked you (declared an attacker against you) during that player's most recent turn, requiring a per-player record of whom they attacked on their last turn that persists across turns
+  <br>Why the existing vocabulary won't do: cost_reduction with `amount` needs a condition, but condition_keys has nothing about past turns; the value `attacked_this_turn` and selector `attacked_this_turn` only see the current turn, and a sorcery cast in your main phase is never in the attacker's turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Avenge** (rank 17207) — `avenge`
+  - This spell costs {2} less to cast if a player attacked you during their last turn.
+  - You gain 1 life for each creature destroyed this way.
+
+</details>
+
 ## basic-land-type-mana
 
 Blocks **1** card.
@@ -599,6 +617,21 @@ Blocks **1** card.
 
 - **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
   - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
+
+</details>
+
+## destroyed-this-way-count
+
+Blocks **1** card.
+
+- **(value)** `as` on the `destroy` op binding the objects it actually destroyed, so a later `gain_life` amount can count them (indestructible or regenerated creatures excluded)
+  <br>Why the existing vocabulary won't do: destroy takes only `objects` and `no_regeneration`; a `snapshot` or `count` of creatures before the destroy would also count indestructible creatures and regeneration-saved ones, gaining too much life
+
+<details><summary>Cards waiting on this</summary>
+
+- **Avenge** (rank 17207) — `avenge`
+  - This spell costs {2} less to cast if a player attacked you during their last turn.
+  - You gain 1 life for each creature destroyed this way.
 
 </details>
 
@@ -1237,6 +1270,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## times-tapped-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-permanent count of how many times that permanent has become tapped this turn, kept by the engine for every permanent from the start of the turn (not by the card), readable in a becomes_tapped trigger's intervening-if condition on the triggering creature, so the condition is a cmp of that count == 1 alongside is_your_turn, and the effect untaps the triggering creature
+  <br>Why the existing vocabulary won't do: becomes_tapped plus condition is_your_turn covers the trigger, but nothing reads the tap history of the creature. trigger max_per_turn caps the source permanent, not each tapped creature. A set_turn_flag/has_turn_flag pair written by this trigger only remembers taps Captain America itself saw, so a creature tapped earlier in the turn (e.g. a mana creature tapped to cast Captain America) would be wrongly untapped on its second tap. No value_key counts taps per object
+
+<details><summary>Cards waiting on this</summary>
+
+- **Captain America, Living Legend** (rank 9590) — `captain_america_living_legend`
+  - Whenever a creature you control becomes tapped during your turn, if it's the first time that creature has become tapped this turn, untap it.
 
 </details>
 

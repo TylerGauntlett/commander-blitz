@@ -528,6 +528,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ant_man_elusive_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "anurid_murkdiver": {
     "zone": "battlefield"
   },
@@ -946,6 +950,14 @@
       "0": 41
     }
   },
+  "avengers_quinjet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "avengers_tower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "avian_changeling": {
     "zone": "battlefield"
   },
@@ -1268,6 +1280,10 @@
     "zone": "battlefield"
   },
   "black_market_connections": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "black_widow_agile_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

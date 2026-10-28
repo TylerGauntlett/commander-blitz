@@ -9832,12 +9832,12 @@
     },
     "Ant-Man, Elusive Avenger": {
       "edhrec_rank": 14638,
-      "gate": "template",
+      "gate": null,
       "name": "Ant-Man, Elusive Avenger",
-      "reason": "no template for: Ant-Man can't be blocked by creatures with greater power",
+      "reason": "",
       "scryfall_id": "18e2b0a4-0ed3-48e6-8334-198a19e54bff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ant-Man, Reformed Rogue": {
@@ -17742,22 +17742,22 @@
     },
     "Avengers Quinjet": {
       "edhrec_rank": 15768,
-      "gate": "template",
+      "gate": null,
       "name": "Avengers Quinjet",
-      "reason": "no template for: Whenever this Vehicle enters or attacks, choose one —",
+      "reason": "",
       "scryfall_id": "8f2e0e76-f8e9-4914-bdd8-474dc4667efb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avengers Tower": {
       "edhrec_rank": 9188,
-      "gate": "template",
+      "gate": null,
       "name": "Avengers Tower",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a Hero spell or to activate a",
+      "reason": "",
       "scryfall_id": "1292713f-1462-438f-a3a2-1f69ece99668",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avengers: Under Siege": {
@@ -25772,12 +25772,12 @@
     },
     "Black Widow, Agile Avenger": {
       "edhrec_rank": 10571,
-      "gate": "template",
+      "gate": null,
       "name": "Black Widow, Agile Avenger",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, put a +1/+1 counter on Black Widow",
+      "reason": "",
       "scryfall_id": "0b165b56-ad86-4d8c-91e2-1464b2ac5c6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Widow, Daring Operative": {

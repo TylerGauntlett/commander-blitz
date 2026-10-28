@@ -5525,6 +5525,65 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "skulk"
+          ],
+          "kind": "static",
+          "text": "Ant-Man can't be blocked by creatures with greater power."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Ant-Man deals combat damage to a player, create that many Treasure tokens.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "ant_man_elusive_avenger",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Ant-Man, Elusive Avenger",
+      "oracle_text": "Ant-Man can't be blocked by creatures with greater power.\nWhenever Ant-Man deals combat damage to a player, create that many Treasure tokens.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -9756,6 +9815,353 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "subtypes": [
+                            "Hero"
+                          ],
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "hand"
+                        }
+                      },
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": "controller",
+                            "controller": "you",
+                            "count": 1,
+                            "subtypes": [
+                              "Hero"
+                            ],
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "hand"
+                          },
+                          "op": "put_onto_battlefield"
+                        }
+                      ],
+                      "op": "may",
+                      "prompt": "Put a Hero creature card from your hand onto the battlefield?"
+                    }
+                  ],
+                  "label": "You may put a Hero creature card from your hand onto the battlefield."
+                },
+                {
+                  "effects": [
+                    {
+                      "destination": "hand",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "return_from_graveyard"
+                    }
+                  ],
+                  "label": "Return target Hero creature card from your graveyard to your hand."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "mode": 1,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Hero"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this Vehicle enters or attacks, choose one —\n• You may put a Hero creature card from your hand onto the battlefield.\n• Return target Hero creature card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "subtypes": [
+                            "Hero"
+                          ],
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "hand"
+                        }
+                      },
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": "controller",
+                            "controller": "you",
+                            "count": 1,
+                            "subtypes": [
+                              "Hero"
+                            ],
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "hand"
+                          },
+                          "op": "put_onto_battlefield"
+                        }
+                      ],
+                      "op": "may",
+                      "prompt": "Put a Hero creature card from your hand onto the battlefield?"
+                    }
+                  ],
+                  "label": "You may put a Hero creature card from your hand onto the battlefield."
+                },
+                {
+                  "effects": [
+                    {
+                      "destination": "hand",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "return_from_graveyard"
+                    }
+                  ],
+                  "label": "Return target Hero creature card from your graveyard to your hand."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "mode": 1,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Hero"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this Vehicle enters or attacks, choose one —\n• You may put a Hero creature card from your hand onto the battlefield.\n• Return target Hero creature card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 3,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 4
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 3"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "avengers_quinjet",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}",
+      "name": "Avengers Quinjet",
+      "oracle_text": "Flying\nWhenever this Vehicle enters or attacks, choose one —\n• You may put a Hero creature card from your hand onto the battlefield.\n• Return target Hero creature card from your graveyard to your hand.\nCrew 3",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              [
+                "Hero"
+              ]
+            ],
+            "cast": [
+              [
+                "Hero"
+              ]
+            ]
+          },
+          "text": "{T}: Add one mana of any color. Spend this mana only to cast a Hero spell or to activate an ability of a Hero source."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  "Hero"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Look at the top three cards of your library. You may reveal a Hero card from among them and put it into your hand. Put the rest on the bottom of your library in any order."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "avengers_tower",
+      "name": "Avengers Tower",
+      "oracle_text": "{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a Hero spell or to activate an ability of a Hero source.\n{4}, {T}: Look at the top three cards of your library. You may reveal a Hero card from among them and put it into your hand. Put the rest on the bottom of your library in any order.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -13297,6 +13703,67 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws their second card each turn, put a +1/+1 counter on Black Widow and you draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "black_widow_agile_avenger",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{1}{R}{W}",
+      "name": "Black Widow, Agile Avenger",
+      "oracle_text": "Menace\nWhenever an opponent draws their second card each turn, put a +1/+1 counter on Black Widow and you draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Spy",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
