@@ -9553,6 +9553,13 @@
       "graveyard"
     ]
   },
+  "professor_hulk": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "promising_vein": {
     "zone": "battlefield"
   },
@@ -9697,6 +9704,10 @@
   "quicksilver_pietro_maximoff": {
     "zone": "battlefield"
   },
+  "quicksilver_speedster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "quilled_slagwurm": {
     "zone": "battlefield"
   },
@@ -9760,6 +9771,13 @@
   },
   "rainbow_vale": {
     "zone": "battlefield"
+  },
+  "raise_the_palisade": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
   },
   "rakdos_guildgate": {
     "zone": "battlefield"
@@ -9958,6 +9976,10 @@
     },
     "zone": "graveyard"
   },
+  "relic_of_legends": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "relic_sloth": {
     "zone": "battlefield"
   },
@@ -9990,6 +10012,13 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "rescue_pepper_potts": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
   },
   "rescue_retriever": {
     "battlefield_count": 33,
@@ -10194,6 +10223,9 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "rip_apart": {
+    "zone": "graveyard"
   },
   "rip_clan_crasher": {
     "zone": "battlefield"

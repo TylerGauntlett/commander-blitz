@@ -208102,12 +208102,12 @@
     },
     "Professor Hulk": {
       "edhrec_rank": 12104,
-      "gate": "template",
+      "gate": null,
       "name": "Professor Hulk",
-      "reason": "no template for: Whenever deals combat damage to a player, draw that many cards",
+      "reason": "",
       "scryfall_id": "010aea2b-dd25-4ac2-9b3f-cd3b18740d06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Professor Onyx": {
@@ -212052,12 +212052,12 @@
     },
     "Quicksilver, Speedster": {
       "edhrec_rank": 17781,
-      "gate": "template",
+      "gate": null,
       "name": "Quicksilver, Speedster",
-      "reason": "no template for: As long as Quicksilver is tapped, you may cast spells as though they had flash",
+      "reason": "",
       "scryfall_id": "5a454bad-c137-4d7c-9fcc-928c0c1798f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quicksmith Genius": {
@@ -213772,12 +213772,12 @@
     },
     "Raise the Palisade": {
       "edhrec_rank": 994,
-      "gate": "template",
+      "gate": null,
       "name": "Raise the Palisade",
-      "reason": "no template for: Choose a creature type. Return all creatures that aren't of the chosen type to their owner",
+      "reason": "",
       "scryfall_id": "2a7b9598-9234-4621-90e4-f578f2f84983",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Raise the Past": {
@@ -219882,12 +219882,12 @@
     },
     "Relic of Legends": {
       "edhrec_rank": 547,
-      "gate": "template",
+      "gate": null,
       "name": "Relic of Legends",
-      "reason": "no template for: Tap an untapped legendary creature you control: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "89691cda-e38b-4f53-bee6-4c234186e6ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relic of Progenitus": {
@@ -221042,12 +221042,12 @@
     },
     "Rescue, Pepper Potts": {
       "edhrec_rank": 16791,
-      "gate": "template",
+      "gate": null,
       "name": "Rescue, Pepper Potts",
-      "reason": "no template for: When Rescue enters, return up to one other target artifact or creature you control to its ",
+      "reason": "",
       "scryfall_id": "476f75a4-a4e0-4d09-9756-f1001ebabc84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rescuer Chwinga": {
@@ -224442,12 +224442,12 @@
     },
     "Rip Apart": {
       "edhrec_rank": 2523,
-      "gate": "template",
+      "gate": null,
       "name": "Rip Apart",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "b4964c78-b9ca-43c2-bcaa-bf75d92b9065",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rip, Spawn Hunter": {
