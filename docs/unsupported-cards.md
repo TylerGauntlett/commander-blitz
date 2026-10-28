@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**89 cards** blocked by **72** capabilities.
+**88 cards** blocked by **70** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -69,7 +68,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
-| [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -596,21 +594,6 @@ Blocks **1** card.
 
 </details>
 
-## dragon-4-4-r-flying
-
-Blocks **1** card.
-
-- **(token)** a 4/4 red Dragon creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has dragon_5_5_r_flying (5/5) only; a 5/5 is not the printed 4/4
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
-  - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
-  - III — Create a 4/4 red Dragon creature token with flying.
-
-</details>
-
 ## escalate-non-mana
 
 Blocks **1** card.
@@ -1031,21 +1014,6 @@ Blocks **1** card.
 
 - **Gourmand's Talent** (rank 5861) — `gourmand_s_talent`
   - Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.
-
-</details>
-
-## read-ahead
-
-Blocks **1** card.
-
-- **(keyword)** Read ahead on a Saga (714.3a/702.155): as the Saga enters, its controller chooses a number from 1 to its final chapter and it enters with that many lore counters; chapter abilities whose chapter number is below the chosen number do not trigger from that initial placement (only the chosen chapter triggers), and normal lore-counter addition and sacrifice-after-final-chapter apply thereafter
-  <br>Why the existing vocabulary won't do: The `chapter` ability kind and `chapter` trigger event cover ordinary Sagas that enter with one lore counter, but `keywords` has no read_ahead, no card-level key chooses the starting lore count, and `enters_with_additional_counters` is a fixed static amount with no player choice and no suppression of skipped chapter triggers
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Elder Dragon War** (rank 9305) — `the_elder_dragon_war`
-  - Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)
-  - III — Create a 4/4 red Dragon creature token with flying.
 
 </details>
 

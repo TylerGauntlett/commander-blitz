@@ -277,6 +277,16 @@ class Keyword(str, Enum):
     #: which is why it is **not** in `INERT_KEYWORDS`: it does something, and it
     #: does it during a zone change rather than on the board.
     RIOT = "riot"
+    #: Read ahead (702.155): "As this Saga enters, choose a chapter and start
+    #: with that many lore counters.  Skipped chapters don't trigger."  Riot's
+    #: shape on a Saga -- a choice made as part of the arrival, read at exactly
+    #: one point, `zones.offer_read_ahead`, called beside `offer_riot_choice`
+    #: by every arrival path that can stop to ask.  A `Keyword` rather than a
+    #: card-level field because it is printed as one and reads as one: a
+    #: characteristic the permanent keeps once the choice is spent.  Not in
+    #: `INERT_KEYWORDS` for riot's reason: it does something, during a zone
+    #: change rather than on the board.
+    READ_AHEAD = "read_ahead"
     #: Exalted (702.83).  "Whenever a creature you control attacks alone, that
     #: creature gets +1/+1 until end of turn."  A `Keyword` rather than a
     #: printed triggered ability because the printing that needs it --

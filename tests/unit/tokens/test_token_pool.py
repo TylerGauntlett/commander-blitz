@@ -591,6 +591,30 @@ class TestUtvaraHellkitesDragonIsASixSix:
         assert (other.power, other.toughness) == (5, 5)
 
 
+class TestTheElderDragonWarsDragonIsAFourFour:
+    """The Elder Dragon War, chapter III: *"Create a **4/4** red Dragon creature
+    token with flying."*
+
+    `dragon_5_5_r_flying` is the same near miss one size the other way: the
+    printed chapter makes a smaller Dragon than the 5/5, and a Saga that read
+    ahead straight to chapter III would hand over the bigger one on turn three.
+    """
+
+    def test_it_is_a_four_four_red_dragon_with_flying(self, pool):
+        token = pool.get("dragon_4_4_r_flying")
+        assert token is not None
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Dragon"]
+        assert list(token.keywords) == ["flying"]
+        assert token.is_creature and token.is_token
+
+    def test_the_five_five_dragon_is_still_a_separate_token(self, pool):
+        other = pool.get("dragon_5_5_r_flying")
+        assert other is not None
+        assert (other.power, other.toughness) == (5, 5)
+
+
 class TestTheSpiderIsAOneTwoWithReach:
     """Arasta of the Endless Web and Arachnogenesis: *"create a 1/2 green
     Spider creature token with reach."*

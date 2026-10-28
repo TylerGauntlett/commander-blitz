@@ -43,6 +43,7 @@ from .zones import (
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
+    offer_read_ahead,
     offer_riot_choice,
 )
 
@@ -1052,6 +1053,7 @@ def _place_after_resolution(
         # is where most riot creatures arrive. Last of the four: the copy offer
         # above decides what is arriving, and riot asks about a creature.
         yield from offer_riot_choice(state, obj.oid, controller)
+        yield from offer_read_ahead(state, obj.oid, controller)
     # A resolving spell's arrival is its own simultaneous event, not part of
     # whichever op last bumped the counter -- a token an ability made while this
     # spell waited is an Angel Giada's "already control" must count.

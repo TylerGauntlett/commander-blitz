@@ -86,6 +86,7 @@ from .zones import (
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
+    offer_read_ahead,
     offer_riot_choice,
 )
 from .zones import sacrifice as sacrifice_object
@@ -363,6 +364,7 @@ class Game:
         # with the choice. Last of the four, because the copy above decides
         # what the arriving permanent is and riot asks about a creature.
         yield from offer_riot_choice(state, oid, pid)
+        yield from offer_read_ahead(state, oid, pid)
         # Its own simultaneous event, as a resolving spell's arrival is.
         state.event_batch += 1
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
