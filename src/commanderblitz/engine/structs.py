@@ -1471,6 +1471,17 @@ class TurnLedger:
     #: battlefield: an oid survives the zone change but the object does not
     #: (400.7), and a flickered Angel back from exile attacked nobody.
     players_attacked_by: dict[int, set[int]] = field(default_factory=dict)
+    #: Which **players** each player attacked this turn: attacking seat -> the
+    #: seats they declared an attacker against. The seat-level twin of
+    #: `players_attacked_by`, and the half `GameState.attacked_last_turn` is
+    #: handed at cleanup -- "if a player attacked you during their last turn"
+    #: (Avenge, O-Kagachi) is a question about seats, asked turns later.
+    #:
+    #: Not derivable from `players_attacked_by`, which forgets a creature that
+    #: has left the battlefield: a player whose only attacker died in combat
+    #: still attacked you. Seats only, for the same 506.2 reason -- an attack
+    #: on a planeswalker or a battle is not an attack on its controller.
+    seats_attacked: dict[int, set[int]] = field(default_factory=dict)
     #: How many times each creature has **attacked** this turn: attacker oid ->
     #: the number of ATTACKS events it has been the subject of. "Whenever this
     #: creature attacks **for the first time each turn**" (Scourge of the
@@ -1748,6 +1759,7 @@ class TurnLedger:
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
         self.players_attacked_by.clear()
+        self.seats_attacked.clear()
         self.attacks_by_creature.clear()
         self.players_dealt_combat_damage_by.clear()
         self.damage_taken.clear()

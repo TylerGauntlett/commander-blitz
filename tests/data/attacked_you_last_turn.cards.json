@@ -1,0 +1,21 @@
+{
+  "_comment": "Shapes for tests/unit/ledger/test_attacked_you_last_turn.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_aylt_wrath is Avenge's first sentence on a sorcery that does nothing else, priced {4}{W}{W} so a discount of two is the difference between four lands and six. The bear, the walker and the bolt come from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_aylt_wrath",
+      "name": "Test Avenging Discount",
+      "oracle_text": "This spell costs {2} less to cast if a player attacked you during their last turn.\nYou gain 1 life.",
+      "mana_cost": "{4}{W}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "cost_reduction": {
+        "amount": 2,
+        "condition": {"attacked_you_last_turn": "each_player"}
+      },
+      "spell_effects": [
+        {"op": "gain_life", "player": "you", "amount": {"const": 1}}
+      ]
+    }
+  ]
+}

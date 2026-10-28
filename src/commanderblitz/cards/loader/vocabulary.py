@@ -1256,6 +1256,9 @@ COST_CONDITION_HEADS = frozenset(
         "is_monarch",
         "no_monarch",
         "combat_damage_by",
+        # Avenge. Player state kept across turns by the cleanup step, so it
+        # needs nothing on the stack and reads the same offered and charged.
+        "attacked_you_last_turn",
         # Both read the reduction's own source, which is a real object at
         # pricing time: the permanent whose ability is being activated, or the
         # card in the graveyard being cast.

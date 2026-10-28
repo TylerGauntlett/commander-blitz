@@ -31,6 +31,7 @@
   "COST_CONDITION_HEADS": [
    "all",
    "any",
+   "attacked_you_last_turn",
    "cmp",
    "combat_damage_by",
    "exists",

@@ -611,6 +611,8 @@ VALUES: dict[str, Entry] = {
 CONDITIONS: dict[str, Entry] = {
     "all": ("Every listed condition holds.", None),
     "any": ("At least one listed condition holds.", None),
+    "attacked_you_last_turn": ("One of these players attacked you (not your planeswalker or battle) during their last completed turn.",
+                               None),
     "cast_during": ("The phase this spell was cast in (addendum).",
                     "Addendum — the phase a spell was cast in"),
     "cast_from_graveyard": ("This spell was cast from a graveyard.", None),

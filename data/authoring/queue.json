@@ -17682,12 +17682,12 @@
     },
     "Avenge": {
       "edhrec_rank": 17207,
-      "gate": "template",
+      "gate": null,
       "name": "Avenge",
-      "reason": "no template for: This spell costs {2} less to cast if a player attacked you during their last turn",
+      "reason": "",
       "scryfall_id": "8b385779-bc6b-4f67-8724-d8ae136d1436",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avenger en-Dal": {

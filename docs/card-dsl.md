@@ -3743,6 +3743,7 @@ The form list is
 { "zone_is": "battlefield" }
 { "is_your_turn": true }
 { "combat_damage_by": ["Faerie", "Rogue"] }   // prowl
+{ "attacked_you_last_turn": "each_player" }   // "if a player attacked you during their last turn"
 { "has_city_s_blessing": "you" }              // ascend
 { "is_monarch": "you" }                       // the monarch (721)
 { "no_monarch": true }                        // …and the vacancy, which is not its negation
@@ -3781,6 +3782,27 @@ home that never attacked, false after the one that connected traded in combat.
 Read off **derived** subtypes at the moment the damage lands, so a changeling
 and a creature granted the type both count. Combat damage only, and cleared at
 cleanup with the rest of the ledger.
+
+`attacked_you_last_turn` is Avenge's "costs {2} less to cast **if a player
+attacked you during their last turn**". It takes a player spec naming who might
+have attacked — `"each_player"` for "a player", `"each_opponent"` for "an
+opponent", a binding for O-Kagachi's "that player" — and is true when any of
+them declared an attacker against the condition's controller during their own
+most recent completed turn. "You" is the player: an attacker sent at your
+planeswalker or battle attacked that permanent (506.2) and does not count, and
+neither does an attack on somebody else. Each of a player's turns replaces their
+record, so an attack two turns of theirs ago is forgotten once they take a quiet
+one; while their turn is in progress their last turn is still the previous one.
+An attacker that died in combat still attacked. The loader refuses `true` (it
+reads like the sentence and names nobody) and an unknown player name. A cost
+reduction may use it, because the record is kept on the state across turns —
+`GameState.attacked_last_turn`, written by the cleanup step from
+`TurnLedger.seats_attacked` before the ledger is cleared.
+
+The near misses are the per-turn ones: the `attacked_this_turn` value and
+selector key, and `exists` over creatures attacking you (Heroic Return's "if a
+creature is attacking you"). All of them see only the turn in progress, and a
+sorcery cast in your own main phase is never inside the attacker's turn.
 
 `has_flag` and `has_turn_flag` are the same question with two lifetimes, and
 they are two keys over two stores rather than one key with a duration — see

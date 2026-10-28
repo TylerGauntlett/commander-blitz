@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **83** capabilities.
+**98 cards** blocked by **82** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attacked-you-last-turn-condition](#attacked-you-last-turn-condition) | 1 | 17207 | value |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -463,21 +462,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attacked-you-last-turn-condition
-
-Blocks **1** card.
-
-- **(value)** a condition (usable in a cost_reduction's `condition`) that is true when any player attacked you (declared an attacker against you) during that player's most recent turn, requiring a per-player record of whom they attacked on their last turn that persists across turns
-  <br>Why the existing vocabulary won't do: cost_reduction with `amount` needs a condition, but condition_keys has nothing about past turns; the value `attacked_this_turn` and selector `attacked_this_turn` only see the current turn, and a sorcery cast in your main phase is never in the attacker's turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Avenge** (rank 17207) — `avenge`
-  - This spell costs {2} less to cast if a player attacked you during their last turn.
-  - You gain 1 life for each creature destroyed this way.
 
 </details>
 

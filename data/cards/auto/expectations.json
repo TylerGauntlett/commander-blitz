@@ -945,6 +945,14 @@
   "aven_squire": {
     "zone": "battlefield"
   },
+  "avenge": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 44
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "avengers_hangar": {
     "life": {
       "0": 41

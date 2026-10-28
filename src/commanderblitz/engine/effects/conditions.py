@@ -113,6 +113,13 @@ CONDITION_KEYS = frozenset(
         # a Rogue". A list of creature subtypes, true when *any* of them dealt
         # combat damage to a player this turn.
         "combat_damage_by",
+        # "…if a player **attacked you during their last turn**" (Avenge,
+        # O-Kagachi). A player spec naming who might have attacked; true when
+        # any of them declared an attacker against the condition's controller
+        # during their own most recent completed turn. Read off
+        # `GameState.attacked_last_turn`, not the turn ledger, which only ever
+        # sees the turn in progress.
+        "attacked_you_last_turn",
         # Addendum: "if you cast this spell during your main phase". Reads the
         # step stamped on the object as it went on the stack, not the step the
         # game is in now -- see `_cast_during`.
@@ -312,6 +319,18 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         return ctx.source_oid is not None and ctx.state.turn_ledger.has_object_flag(
             ctx.source_oid, str(cond["has_turn_flag"])
         )
+    if "attacked_you_last_turn" in cond:
+        # Each named player's last completed turn, and only an attack on the
+        # seat (506.2): a creature sent at your planeswalker or battle attacked
+        # that permanent, not you. Nobody attacks themselves, so "a player"
+        # over `each_player` never counts your own turn.
+        you = ctx.controller
+        record = ctx.state.attacked_last_turn
+        return any(
+            you in record[p][1]
+            for p in select_players(ctx, cond["attacked_you_last_turn"])
+            if p != you and p in record
+        )
     if "has_city_s_blessing" in cond:
         pids = select_players(ctx, cond["has_city_s_blessing"])
         return any(ctx.state.players[p].has_city_s_blessing for p in pids)
@@ -493,6 +512,22 @@ def validate_condition(cond: Any, where: str) -> None:
             raise DslError(
                 f"{where}.is_monarch: must name one of {sorted(PLAYER_SPEC_NAMES)} "
                 f"or a target/binding, got {who!r}"
+            )
+    if "attacked_you_last_turn" in cond:
+        who = cond["attacked_you_last_turn"]
+        # `true` is the tempting miss: "a player attacked you" reads like a
+        # yes/no, but the leaf asks *which* players, and `select_players`
+        # refuses a bool only once a spell is being priced.
+        if isinstance(who, bool) or who is None:
+            raise DslError(
+                f"{where}.attacked_you_last_turn: needs a player spec -- "
+                f"'each_player' for 'a player', 'each_opponent' for 'an opponent', "
+                f"{{'binding': ...}} for 'that player' -- got {who!r}"
+            )
+        if isinstance(who, str) and who not in PLAYER_SPEC_NAMES:
+            raise DslError(
+                f"{where}.attacked_you_last_turn: must name one of "
+                f"{sorted(PLAYER_SPEC_NAMES)} or a target/binding, got {who!r}"
             )
     if "is_active_player" in cond:
         who = cond["is_active_player"]
