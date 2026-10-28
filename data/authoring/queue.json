@@ -54752,12 +54752,12 @@
     },
     "Coveted Jewel": {
       "edhrec_rank": 1274,
-      "gate": "template",
+      "gate": null,
       "name": "Coveted Jewel",
-      "reason": "no template for: Whenever one or more creatures an opponent controls attack you and aren't blocked, that pl",
+      "reason": "",
       "scryfall_id": "06a7ad3b-87d4-47f0-9450-facac00dfe97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coveted Peacock": {
@@ -97732,12 +97732,12 @@
     },
     "Fleecemane Lion": {
       "edhrec_rank": 8641,
-      "gate": "template",
+      "gate": null,
       "name": "Fleecemane Lion",
-      "reason": "no template for: {3}{G}{W}: Monstrosity 1",
+      "reason": "",
       "scryfall_id": "0afb3c64-c88a-417b-a1f7-2edea045cb14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fleet Swallower": {
@@ -124562,12 +124562,12 @@
     },
     "Heart-Shaped Herb": {
       "edhrec_rank": 17897,
-      "gate": "template",
+      "gate": null,
       "name": "Heart-Shaped Herb",
-      "reason": "no template for: If a source an opponent controls would deal damage to you, prevent 1 of that damage",
+      "reason": "",
       "scryfall_id": "1725b91a-bac4-4f91-b2b5-bb66086b54a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heartbeat of Spring": {
@@ -211582,12 +211582,12 @@
     },
     "Queen Mother Ramonda": {
       "edhrec_rank": 20590,
-      "gate": "template",
+      "gate": null,
       "name": "Queen Mother Ramonda",
-      "reason": "no template for: When enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "081cb05a-e6d6-46fe-8809-b537c0a49fa7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Queen of Ice // Rage of Winter": {
@@ -245902,12 +245902,12 @@
     },
     "Shuri's Fabricator": {
       "edhrec_rank": 15997,
-      "gate": "template",
+      "gate": null,
       "name": "Shuri's Fabricator",
-      "reason": "no template for: {6}, {T}: Return target artifact card from your graveyard to the battlefield with a finali",
+      "reason": "",
       "scryfall_id": "ace834f0-7f64-4716-8599-f96f674e61a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shuri, Vibranium Technologist": {

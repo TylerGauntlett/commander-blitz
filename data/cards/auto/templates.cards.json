@@ -28283,6 +28283,131 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, draw three cards.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}{W}{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}{U}{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}{B}{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}{R}{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}{G}{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add three mana of any one color."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "gain_control",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it.",
+          "trigger": {
+            "batched": true,
+            "controller": "opponent",
+            "event": "attacks_unblocked",
+            "filter": {
+              "attacking_player": "you"
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "coveted_jewel",
+      "mana_cost": "{6}",
+      "name": "Coveted Jewel",
+      "oracle_text": "When this artifact enters, draw three cards.\n{T}: Add three mana of any one color.\nWhenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -47674,6 +47799,61 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{3}{G}{W}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{G}{W}: Monstrosity 1."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "is_monstrous": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "hexproof",
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "As long as this creature is monstrous, it has hexproof and indestructible."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "fleecemane_lion",
+      "mana_cost": "{G}{W}",
+      "name": "Fleecemane Lion",
+      "oracle_text": "{3}{G}{W}: Monstrosity 1. (If this creature isn't monstrous, put a +1/+1 counter on it and it becomes monstrous.)\nAs long as this creature is monstrous, it has hexproof and indestructible.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Cat"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -61493,6 +61673,95 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "amount": {
+            "const": 1
+          },
+          "damage_source": {
+            "controller": "opponent"
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "text": "If a source an opponent controls would deal damage to you, prevent 1 of that damage."
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "herb_sacrificed",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "binding": "herb_sacrificed"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "counters": {
+                        "+1/+1": 3
+                      },
+                      "destination": "battlefield",
+                      "objects": {
+                        "binding": "herb_sacrificed",
+                        "zone": "graveyard"
+                      },
+                      "op": "return_from_graveyard"
+                    },
+                    {
+                      "op": "become_monarch",
+                      "player": "you"
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Sacrifice a creature?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this artifact: You may sacrifice a creature. If you do, return that card to the battlefield under its owner's control with three +1/+1 counters on it and you become the monarch."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "heart_shaped_herb",
+      "mana_cost": "{4}",
+      "name": "Heart-Shaped Herb",
+      "oracle_text": "If a source an opponent controls would deal damage to you, prevent 1 of that damage.\n{2}, {T}, Sacrifice this artifact: You may sacrifice a creature. If you do, return that card to the battlefield under its owner's control with three +1/+1 counters on it and you become the monarch.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -107237,6 +107506,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Queen Mother Ramonda enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "power": {
+              "op": "<=",
+              "value": 2
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "is_monarch": "you"
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "player_only": true,
+          "text": "As long as you're the monarch, creatures with power 2 or less can't attack you."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "queen_mother_ramonda",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Queen Mother Ramonda",
+      "oracle_text": "When Queen Mother Ramonda enters, you become the monarch.\nAs long as you're the monarch, creatures with power 2 or less can't attack you.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -123094,6 +123423,73 @@
       "subtypes": [
         "Equipment"
       ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "vibranium_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, create two tapped Vibranium tokens.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{6}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "counters": {
+                "finality": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Artifact"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "shuri_s_fabricator",
+      "mana_cost": "{4}",
+      "name": "Shuri's Fabricator",
+      "oracle_text": "When this artifact enters, create two tapped Vibranium tokens. (They're artifacts with indestructible and \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")\n{6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)",
+      "source": "auto",
       "types": [
         "Artifact"
       ]

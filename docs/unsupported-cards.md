@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**102 cards** blocked by **85** capabilities.
+**97 cards** blocked by **81** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,7 +22,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [player-damage-prevention](#player-damage-prevention) | 2 | 13000 | static_effect |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -32,9 +31,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attacks-the-monarch](#attacks-the-monarch) | 1 | 19022 | trigger_event |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [batched-attacks-unblocked](#batched-attacks-unblocked) | 1 | 1274 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
-| [cant-attack-you-player-only](#cant-attack-you-player-only) | 1 | 20590 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cant-cast-spells-this-turn](#cant-cast-spells-this-turn) | 1 | 551 | op |
 | [cast-from-graveyard-on-resolution](#cast-from-graveyard-on-resolution) | 1 | 551 | op |
@@ -54,7 +51,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [finality-counter](#finality-counter) | 1 | 15997 | replacement |
 | [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -68,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
-| [monstrous-condition](#monstrous-condition) | 1 | 8641 | static_effect |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -76,6 +71,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
+| [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-damage-into-counters](#prevent-damage-into-counters) | 1 | 13733 | replacement |
@@ -356,24 +352,6 @@ Blocks **2** cards.
 
 </details>
 
-## player-damage-prevention
-
-Blocks **2** cards.
-
-- **(static_effect)** a static prevention shield on a player: each time a source matching a dealer filter (here controller: opponent, read off the dealer's controller in any zone) would deal damage to the seat named by affects_player (you), prevent N of that damage (N = 1), per source and per damage event
-  <br>Why the existing vocabulary won't do: The 'prevent_damage' static (amount / prevent_all) is read only by characteristics.prevented_damage and prevents_all_damage, which answer damage to a permanent via 'affects' and never to a player, and it cannot carry 'damage_source' (the loader allows that key only on replace_damage). 'prevent_all_but' caps damage to a player but has no dealer filter and caps rather than subtracting. 'replace_damage' takes damage_source and affects_player but only multiplies by 2 or more. The 'prevent_damage' op is a one-shot with a duration, not a lasting static.
-- **(static_effect)** a player-wide static that prevents N of each damage event dealt to a seat (affects_player: you), narrowed by a damage_source filter on the dealer (types: [Creature]) -- absorb N for a player, keyed on the source's printed characteristics
-  <br>Why the existing vocabulary won't do: The 'prevent_damage' static reads only 'affects' (permanents) via characteristics.prevented_damage and never applies to damage dealt to a player, and takes no damage_source; 'prevent_all_but' reaches a seat but caps damage at N rather than subtracting N, and has no dealer filter; 'damage_source' is accepted only on 'replace_damage', whose damage_multiplier must be 2 or more
-
-<details><summary>Cards waiting on this</summary>
-
-- **Orbs of Warding** (rank 13000) — `orbs_of_warding`
-  - If a creature would deal damage to you, prevent 1 of that damage.
-- **Heart-Shaped Herb** (rank 17897) — `heart_shaped_herb`
-  - If a source an opponent controls would deal damage to you, prevent 1 of that damage
-
-</details>
-
 ## targeted-discard
 
 Blocks **2** cards.
@@ -514,20 +492,6 @@ Blocks **1** card.
 
 </details>
 
-## batched-attacks-unblocked
-
-Blocks **1** card.
-
-- **(trigger_event)** a 'one or more' form of attacks_unblocked: the ATTACKED_UNBLOCKED events emitted together after blockers are declared (combat.py, 509.1h) share one batch id, so a trigger with batched: true, controller: opponent and defending: you fires once per defending-player batch, binding the attacking player as 'that player' for draw and gain_control
-  <br>Why the existing vocabulary won't do: attacks_unblocked exists but is not in triggers.BATCHED_EVENTS, so the loader refuses `batched` on it and the trigger would queue once per unblocked creature -- two unblocked attackers would draw six cards and run gain_control twice. creatures_attack_player is batched per defending player but fires at declaration, before blocks, so it cannot ask 'aren't blocked'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Coveted Jewel** (rank 1274) — `coveted_jewel`
-  - Whenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it.
-
-</details>
-
 ## blocked-by-source
 
 Blocks **1** card.
@@ -540,20 +504,6 @@ Blocks **1** card.
 - **Goblin Snowman** (rank 21010) — `goblin_snowman`
   - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
   - {T}: This creature deals 1 damage to target creature it's blocking.
-
-</details>
-
-## cant-attack-you-player-only
-
-Blocks **1** card.
-
-- **(static_effect)** a continuous static that forbids creatures matching its `affects` filter from attacking the source's controller (the player only), while still letting them attack planeswalkers that player controls (506.2) -- e.g. an `or_planeswalkers: false` switch on `cant_attack_you`, mirroring how `attack_tax` only reaches planeswalkers with `or_planeswalkers`
-  <br>Why the existing vocabulary won't do: The `cant_attack_you` static is the right shape (affects filter {controller: any, types: [Creature], power <= 2}, condition {is_monarch: you}) but `player_statics.attack_defender_forbidden` always extends the wall to planeswalkers the controller has, by design for Combat Calligrapher's "you or planeswalkers you control"; Ramonda names only "you", so using it would wrongly forbid attacks on her controller's planeswalkers. The `cant_attack_player` op is a timed one-shot with no creature filter, and `cant_attack` names no defender at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Queen Mother Ramonda** (rank 20590) — `queen_mother_ramonda`
-  - As long as you're the monarch, creatures with power 2 or less can't attack you.
 
 </details>
 
@@ -833,20 +783,6 @@ Blocks **1** card.
 
 </details>
 
-## finality-counter
-
-Blocks **1** card.
-
-- **(replacement)** the finality counter: a permanent with a finality counter on it that would be put into a graveyard from the battlefield is exiled instead, so return_from_graveyard with counters: {finality: 1} carries the replacement
-  <br>Why the existing vocabulary won't do: return_from_graveyard accepts counters, but nothing in the engine gives a 'finality' counter any meaning (no reference anywhere in src); replace_deaths/replace_leaves_battlefield are one-shot ops keyed on objects at resolution, not a counter-driven replacement that persists on the permanent and covers any route to the graveyard
-
-<details><summary>Cards waiting on this</summary>
-
-- **Shuri's Fabricator** (rank 15997) — `shuri_s_fabricator`
-  - {6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)
-
-</details>
-
 ## gain-control-until-end-of-your-next-turn
 
 Blocks **1** card.
@@ -1032,20 +968,6 @@ Blocks **1** card.
 
 </details>
 
-## monstrous-condition
-
-Blocks **1** card.
-
-- **(static_effect)** a static-condition leaf (e.g. {"monstrous": true}) reading GameObject.monstrous on the static's own source, so a grant_keyword static can switch on "as long as this creature is monstrous"
-  <br>Why the existing vocabulary won't do: The monstrosity op sets GameObject.monstrous, a dedicated field deliberately not folded into `flags`, so the static condition `has_flag` cannot see it; `counters` (+1/+1 >= 1) is wrong because counters can come from elsewhere or be removed; a becomes_monstrous trigger doing set_flag is an unprinted trigger that uses the stack, leaving a window where the creature is monstrous without hexproof/indestructible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fleecemane Lion** (rank 8641) — `fleecemane_lion`
-  - As long as this creature is monstrous, it has hexproof and indestructible.
-
-</details>
-
 ## more-than-meets-the-eye
 
 Blocks **1** card.
@@ -1150,6 +1072,20 @@ Blocks **1** card.
 
 - **Spider-Man 2099** (rank 7924) — `spider_man_2099`
   - At the beginning of your end step, if you've played a land or cast a spell this turn from anywhere other than your hand, Spider-Man 2099 deals damage equal to his power to any target.
+
+</details>
+
+## player-damage-prevention
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static that prevents N of each damage event dealt to a seat (affects_player: you), narrowed by a damage_source filter on the dealer (types: [Creature]) -- absorb N for a player, keyed on the source's printed characteristics
+  <br>Why the existing vocabulary won't do: The 'prevent_damage' static reads only 'affects' (permanents) via characteristics.prevented_damage and never applies to damage dealt to a player, and takes no damage_source; 'prevent_all_but' reaches a seat but caps damage at N rather than subtracting N, and has no dealer filter; 'damage_source' is accepted only on 'replace_damage', whose damage_multiplier must be 2 or more
+
+<details><summary>Cards waiting on this</summary>
+
+- **Orbs of Warding** (rank 13000) — `orbs_of_warding`
+  - If a creature would deal damage to you, prevent 1 of that damage.
 
 </details>
 

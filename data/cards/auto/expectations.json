@@ -2544,6 +2544,16 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "coveted_jewel": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
+  },
   "cowl_prowler": {
     "zone": "battlefield"
   },
@@ -4382,6 +4392,10 @@
     },
     "zone": "graveyard"
   },
+  "fleecemane_lion": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fleet_swallower": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5622,6 +5636,10 @@
     "zone": "battlefield"
   },
   "healer_s_hawk": {
+    "zone": "battlefield"
+  },
+  "heart_shaped_herb": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hearthfire_hobgoblin": {
@@ -9543,6 +9561,10 @@
   "quaketusk_boar": {
     "zone": "battlefield"
   },
+  "queen_mother_ramonda": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "queen_s_bay_soldier": {
     "zone": "battlefield"
   },
@@ -10968,6 +10990,14 @@
     }
   },
   "shuko": {
+    "zone": "battlefield"
+  },
+  "shuri_s_fabricator": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "vibranium_token"
+    },
     "zone": "battlefield"
   },
   "shuri_the_black_panther": {
