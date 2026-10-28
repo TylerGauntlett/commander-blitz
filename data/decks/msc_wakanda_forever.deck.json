@@ -1,0 +1,756 @@
+{
+  "id": "msc_wakanda_forever",
+  "name": "Wakanda Forever",
+  "commanders": [
+    "t_challa_the_black_panther"
+  ],
+  "color_identity": [
+    "G",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "MSC",
+    "set_name": "Marvel Super Heroes Commander",
+    "date": "2026-06-26"
+  },
+  "notes": "Marvel Super Heroes Commander precon, card for card (https://mtgjson.com/api/v5/decks/WakandaForever_MSC.json).",
+  "tags": [
+    "Artifacts",
+    "Equipment",
+    "Monarch",
+    "Counters"
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 4,
+    "pilot": 3
+  },
+  "strategy": "T'Challa makes a tapped Vibranium token every time he enters or attacks, and every artifact spell of mana value 4 or more puts two +1/+1 counters on him, so the deck ramps on Sol Ring, Thran Dynamo, Gilded Lotus and the Vibranium tokens into big artifacts and suits him up. Hammer of Nazahn, the Spear of Bashenga, Vibranium Strike Gauntlets, Panther Habit, Whispersilk Cloak and Helm of the Host turn him into one threat aimed at the monarch, while Okoye, Queen Mother Ramonda, Palace Jailer and Throne of the High City take the crown, and Ramonda keeps small attackers off you while you hold it. Shuri draws off a wide artifact board, Metalwork Colossus comes down cheap behind it, and Vanquish the Horde, Generous Gift, Beast Within, Dispatch and Martial Coup answer the table.",
+  "signature": [
+    {
+      "card_id": "t_challa_the_black_panther",
+      "why": "Every attack makes a Vibranium token, and every big artifact spell is two +1/+1 counters on the commander."
+    },
+    {
+      "card_id": "okoye_mighty_and_adored",
+      "why": "Takes the crown on entry, and the creature she grows strikes twice with trample at the monarch."
+    },
+    {
+      "card_id": "hammer_of_nazahn",
+      "why": "Every Equipment that enters attaches for free, and the wearer is indestructible."
+    },
+    {
+      "card_id": "shuri_the_black_panther",
+      "why": "Lifelink, a card on every attack with three artifacts, and +2/+2 for the team with six."
+    }
+  ],
+  "archetype": "voltron",
+  "printings": {
+    "ancestral_communion": {
+      "scryfall_id": "ad4224f8-ee83-4833-99a1-71e3ecbe9718",
+      "artist": "Nereida",
+      "set_code": "msc",
+      "collector_number": "64"
+    },
+    "arcane_signet": {
+      "scryfall_id": "ec924d56-d1d9-4226-9e73-cfcc5ab4f708",
+      "artist": "Rafater",
+      "set_code": "msc",
+      "collector_number": "194"
+    },
+    "bast_panther_goddess": {
+      "scryfall_id": "c53a05f1-8e95-4a39-b2a3-a21d3d19b5b3",
+      "artist": "Leesha Hannigan",
+      "set_code": "msc",
+      "collector_number": "75"
+    },
+    "beast_within": {
+      "scryfall_id": "400b43aa-c1d2-4435-b863-061f43889422",
+      "artist": "Thomas Chamberlain-Keen",
+      "set_code": "msc",
+      "collector_number": "169"
+    },
+    "birds_of_paradise": {
+      "scryfall_id": "492c2f9a-51e7-4e0f-9899-23bf43ea988b",
+      "artist": "Kevin Sidharta",
+      "set_code": "msc",
+      "collector_number": "170"
+    },
+    "bountiful_promenade": {
+      "scryfall_id": "f0b11ba3-68ba-4067-af40-2a55e31b395e",
+      "artist": "Bastien Grivet",
+      "set_code": "msc",
+      "collector_number": "226"
+    },
+    "canopy_vista": {
+      "scryfall_id": "369e6485-fbc7-45f9-ac9d-2e26dd94f2d5",
+      "artist": "Anthony Devine",
+      "set_code": "msc",
+      "collector_number": "227"
+    },
+    "command_tower": {
+      "scryfall_id": "ef8ac50e-251b-411b-aee9-e5102843d1ed",
+      "artist": "Rockey Chen",
+      "set_code": "msc",
+      "collector_number": "236"
+    },
+    "conduit_of_worlds": {
+      "scryfall_id": "8380eb8d-d1c3-4f96-b3b9-54845188c1d1",
+      "artist": "Le Vuong",
+      "set_code": "msc",
+      "collector_number": "171"
+    },
+    "coveted_jewel": {
+      "scryfall_id": "06a7ad3b-87d4-47f0-9450-facac00dfe97",
+      "artist": "Eric Wilkerson",
+      "set_code": "msc",
+      "collector_number": "196"
+    },
+    "dispatch": {
+      "scryfall_id": "99d30a21-b003-4a17-a4c5-97811f230896",
+      "artist": "Aaron J. Riley",
+      "set_code": "msc",
+      "collector_number": "130"
+    },
+    "divine_visitation": {
+      "scryfall_id": "dabd95db-b4ca-446b-bb68-6f52cec9ed2a",
+      "artist": "Flavio Greco Paglia",
+      "set_code": "msc",
+      "collector_number": "131"
+    },
+    "dora_milaje_elite": {
+      "scryfall_id": "1d1e00e3-7f3c-4a49-859b-398283c38e61",
+      "artist": "Mateus Manhanini",
+      "set_code": "msc",
+      "collector_number": "12"
+    },
+    "everett_k_ross_hapless_attache": {
+      "scryfall_id": "dd33edfe-578f-4b24-bd27-5a965b6c14ad",
+      "artist": "Alexander Mokhov",
+      "set_code": "msc",
+      "collector_number": "13"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "c0318a48-30e4-4ef7-be3d-5e561c5ce428",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "msc",
+      "collector_number": "240"
+    },
+    "fight_for_the_throne": {
+      "scryfall_id": "6da747ef-4d8f-49a2-8682-52ab87e6ad6e",
+      "artist": "Le Vuong",
+      "set_code": "msc",
+      "collector_number": "65"
+    },
+    "fleecemane_lion": {
+      "scryfall_id": "13a8b618-6e8f-46cf-b456-dffa35831a67",
+      "artist": "Thomas Chamberlain-Keen",
+      "set_code": "msc",
+      "collector_number": "282"
+    },
+    "forest": {
+      "scryfall_id": "22463284-2478-4b1e-9a37-6dd2383266cf",
+      "artist": "Domenico Cava",
+      "set_code": "msh",
+      "collector_number": "295"
+    },
+    "fortified_village": {
+      "scryfall_id": "15f81ac6-a550-4782-a3a9-22d7fef1c206",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "245"
+    },
+    "generous_gift": {
+      "scryfall_id": "c3f9b454-97e9-4c77-b37a-e974221ae385",
+      "artist": "David Álvarez",
+      "set_code": "msc",
+      "collector_number": "133"
+    },
+    "gilded_lotus": {
+      "scryfall_id": "28e619e6-ecc1-49c3-8fa9-ce42becdb9ba",
+      "artist": "Domenico Cava",
+      "set_code": "msc",
+      "collector_number": "199"
+    },
+    "greater_good": {
+      "scryfall_id": "9dd8b16f-3dfd-4e04-a2e9-ec87d0e007c9",
+      "artist": "Eli Minaya",
+      "set_code": "msc",
+      "collector_number": "174"
+    },
+    "hammer_of_nazahn": {
+      "scryfall_id": "e1aae864-cad1-48b2-bb33-8c2dbb53f5ec",
+      "artist": "Kevin Sidharta",
+      "set_code": "msc",
+      "collector_number": "286"
+    },
+    "harmonize": {
+      "scryfall_id": "bd7138fb-6aa7-455e-b1f7-ca08d747277d",
+      "artist": "Aniekan Udofia",
+      "set_code": "msc",
+      "collector_number": "175"
+    },
+    "hatut_zeraze_strike_force": {
+      "scryfall_id": "d96a9ecd-86a3-49ae-851c-ce93b0dca6af",
+      "artist": "Toni Infante",
+      "set_code": "msc",
+      "collector_number": "15"
+    },
+    "heart_shaped_herb": {
+      "scryfall_id": "1725b91a-bac4-4f91-b2b5-bb66086b54a3",
+      "artist": "Andreia Ugrai",
+      "set_code": "msc",
+      "collector_number": "105"
+    },
+    "helm_of_the_host": {
+      "scryfall_id": "70ffc71f-328d-421d-926b-6f2e45ffb812",
+      "artist": "Eli Minaya",
+      "set_code": "msc",
+      "collector_number": "200"
+    },
+    "ingenious_smith": {
+      "scryfall_id": "2962e4d3-3f01-47d4-abe3-75658700c132",
+      "artist": "Michael Machira",
+      "set_code": "msc",
+      "collector_number": "135"
+    },
+    "kimoyo_beads": {
+      "scryfall_id": "1138096a-0d7c-461b-af83-3c90f681722d",
+      "artist": "Wero Gallo",
+      "set_code": "msc",
+      "collector_number": "109"
+    },
+    "king_solomon_s_frogs": {
+      "scryfall_id": "6908808f-e47e-4acb-a405-41b8018a5729",
+      "artist": "Michele Giorgi",
+      "set_code": "msc",
+      "collector_number": "20"
+    },
+    "loyal_guardian": {
+      "scryfall_id": "6d81eda0-2520-4531-815a-8dea27306776",
+      "artist": "Kevin Sidharta",
+      "set_code": "msc",
+      "collector_number": "176"
+    },
+    "loyal_retainers": {
+      "scryfall_id": "3092e715-36cf-4b41-95c1-cf271646db39",
+      "artist": "Tyler Walpole",
+      "set_code": "msc",
+      "collector_number": "136"
+    },
+    "m_baku_jabari_chieftain": {
+      "scryfall_id": "2e330643-5714-4724-a65c-0873ce9cc5a6",
+      "artist": "Lee Woo-chul",
+      "set_code": "msc",
+      "collector_number": "67"
+    },
+    "martial_coup": {
+      "scryfall_id": "a0660e74-6973-41d7-a20b-8d71fed1495a",
+      "artist": "Andreas Zafiratos",
+      "set_code": "msc",
+      "collector_number": "138"
+    },
+    "metalwork_colossus": {
+      "scryfall_id": "d7e2d686-1fbc-449a-9af4-f00a71ff7911",
+      "artist": "Josu Hernaiz",
+      "set_code": "msc",
+      "collector_number": "204"
+    },
+    "meteor_golem": {
+      "scryfall_id": "a1a1cfec-72ca-499b-b621-fa2d8502ea20",
+      "artist": "Domenico Cava",
+      "set_code": "msc",
+      "collector_number": "205"
+    },
+    "midnight_angel_armor": {
+      "scryfall_id": "5b5b87ba-c6cc-4f25-a5c9-22464a41de65",
+      "artist": "Mateus Manhanini",
+      "set_code": "msc",
+      "collector_number": "22"
+    },
+    "mind_s_eye": {
+      "scryfall_id": "708ad400-fa01-4473-aa9e-ba3db965b521",
+      "artist": "Michele Giorgi",
+      "set_code": "msc",
+      "collector_number": "288"
+    },
+    "n_yami_class_mother_ship": {
+      "scryfall_id": "3ae767c5-fc28-4d9f-9e5a-ee28735f4054",
+      "artist": "Kevin Sidharta",
+      "set_code": "msc",
+      "collector_number": "110"
+    },
+    "nakia_wakandan_operative": {
+      "scryfall_id": "6cd88c80-a445-4f88-95e3-e370620c90fc",
+      "artist": "Mateus Manhanini",
+      "set_code": "msc",
+      "collector_number": "69"
+    },
+    "nature_s_lore": {
+      "scryfall_id": "7afc4a15-5ff8-457a-aa62-803b2d78d912",
+      "artist": "Mateus Manhanini",
+      "set_code": "msc",
+      "collector_number": "177"
+    },
+    "okoye_mighty_and_adored": {
+      "scryfall_id": "18ee486e-dc25-4de7-a71f-f11fdf100176",
+      "artist": "Aniekan Udofia",
+      "set_code": "msc",
+      "collector_number": "89"
+    },
+    "overwhelming_stampede": {
+      "scryfall_id": "6996b9c4-e78c-4970-91c7-9025a0a4f670",
+      "artist": "Daniel Landerman",
+      "set_code": "msc",
+      "collector_number": "178"
+    },
+    "palace_jailer": {
+      "scryfall_id": "3a8c2a84-e0f2-4611-af3d-42f4578ad4e3",
+      "artist": "Bastien L. Deharme",
+      "set_code": "msc",
+      "collector_number": "140"
+    },
+    "panther_habit": {
+      "scryfall_id": "111f2e18-43b7-4a80-b53a-ed1cc14e500d",
+      "artist": "Smirtouille",
+      "set_code": "msc",
+      "collector_number": "112"
+    },
+    "panther_robot": {
+      "scryfall_id": "8bb7185d-fc07-4f2f-9762-aa7e7c287cba",
+      "artist": "Andreia Ugrai",
+      "set_code": "msc",
+      "collector_number": "113"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "836b8f52-10d2-4716-9f7b-38fb23bc68de",
+      "artist": "Ben Harvey",
+      "set_code": "msc",
+      "collector_number": "254"
+    },
+    "plains": {
+      "scryfall_id": "5f029c91-f20b-4aa5-a7d9-dd6ddef1c877",
+      "artist": "Domenico Cava",
+      "set_code": "msh",
+      "collector_number": "287"
+    },
+    "queen_mother_ramonda": {
+      "scryfall_id": "6b971f0b-42de-46bc-8e26-51eb5be447ec",
+      "artist": "Michael Machira",
+      "set_code": "msc",
+      "collector_number": "23"
+    },
+    "razorverge_thicket": {
+      "scryfall_id": "df1233de-4449-4c32-944b-e19bed666324",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "259"
+    },
+    "royal_talon_fighter_jet": {
+      "scryfall_id": "e94da91d-6c76-4909-91e3-2f8d97398654",
+      "artist": "Sean Vo",
+      "set_code": "msc",
+      "collector_number": "24"
+    },
+    "scattered_groves": {
+      "scryfall_id": "6bd38442-854d-43b1-a80c-9d841c3a304d",
+      "artist": "Josu Hernaiz",
+      "set_code": "msc",
+      "collector_number": "262"
+    },
+    "scavenger_grounds": {
+      "scryfall_id": "9fbe68ba-ffe5-4fe0-ac0a-0b3221e4f395",
+      "artist": "Bastien Grivet",
+      "set_code": "msc",
+      "collector_number": "263"
+    },
+    "scourglass": {
+      "scryfall_id": "bd961730-9e55-418e-904d-0443b1bf1114",
+      "artist": "Toni Infante",
+      "set_code": "msc",
+      "collector_number": "276"
+    },
+    "shuri_s_fabricator": {
+      "scryfall_id": "ace834f0-7f64-4716-8599-f96f674e61a1",
+      "artist": "L.A. Draws",
+      "set_code": "msc",
+      "collector_number": "114"
+    },
+    "shuri_the_black_panther": {
+      "scryfall_id": "bb9efb2e-3fe8-4f21-82c5-e089d835bdd5",
+      "artist": "L.A. Draws",
+      "set_code": "msc",
+      "collector_number": "95"
+    },
+    "sol_ring": {
+      "scryfall_id": "a739dd30-1fce-49db-99fb-15e346f4f2db",
+      "artist": "Randy Gallegos",
+      "set_code": "msc",
+      "collector_number": "214"
+    },
+    "solemn_simulacrum": {
+      "scryfall_id": "daafd816-f7c1-4630-9e5c-a1e5db570a35",
+      "artist": "Flavio Greco Paglia",
+      "set_code": "msc",
+      "collector_number": "215"
+    },
+    "storm_queen_of_wakanda": {
+      "scryfall_id": "0a61d843-2a7c-459c-9018-1ee4488c90a9",
+      "artist": "Pauline Voss",
+      "set_code": "msc",
+      "collector_number": "97"
+    },
+    "sungrass_prairie": {
+      "scryfall_id": "841f369e-6532-469c-8565-78094b33a3d9",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "270"
+    },
+    "sunpetal_grove": {
+      "scryfall_id": "e83092ee-4a90-4eac-915f-3fd01b7d9bd0",
+      "artist": "Rafater",
+      "set_code": "msc",
+      "collector_number": "272"
+    },
+    "sword_of_the_animist": {
+      "scryfall_id": "ff890d40-710d-4b28-b303-37f4b7adcf42",
+      "artist": "Domenico Cava",
+      "set_code": "msc",
+      "collector_number": "289"
+    },
+    "t_chaka_venerable_king": {
+      "scryfall_id": "28deeaf6-c32b-41f1-b94f-0ae303377ea0",
+      "artist": "L.A. Draws",
+      "set_code": "msc",
+      "collector_number": "98"
+    },
+    "t_challa_the_black_panther": {
+      "scryfall_id": "c1c8ad61-b7e1-446c-8b74-6e29371ea1d5",
+      "artist": "Eli Minaya",
+      "set_code": "msc",
+      "collector_number": "7"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "a81f924b-0527-4311-8120-9bfff71524f6",
+      "artist": "Arthur Yuan",
+      "set_code": "msc",
+      "collector_number": "273"
+    },
+    "the_great_mound": {
+      "scryfall_id": "11b3f96c-138e-431e-a1d6-5ebae4cb6b2f",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "120"
+    },
+    "the_spear_of_bashenga": {
+      "scryfall_id": "b8cc0703-f626-4d42-90bb-1a26e331a9de",
+      "artist": "Michael Machira",
+      "set_code": "msc",
+      "collector_number": "25"
+    },
+    "thran_dynamo": {
+      "scryfall_id": "873d52a8-f10e-4116-8511-bf63aeb2e413",
+      "artist": "Tyler Walpole",
+      "set_code": "msc",
+      "collector_number": "290"
+    },
+    "throne_of_the_high_city": {
+      "scryfall_id": "6aac7a6d-90c7-4fe7-b6d3-f63a7170ee96",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "274"
+    },
+    "trading_post": {
+      "scryfall_id": "03499a72-e865-46ff-bcb2-75e53e4b600e",
+      "artist": "L.A. Draws",
+      "set_code": "msc",
+      "collector_number": "224"
+    },
+    "valorous_stance": {
+      "scryfall_id": "f726d332-6961-403d-83f8-25c997f4dffc",
+      "artist": "Tyler Walpole",
+      "set_code": "msc",
+      "collector_number": "145"
+    },
+    "vanquish_the_horde": {
+      "scryfall_id": "f392782b-7464-4617-b421-6b5d0e2880fc",
+      "artist": "Nereida",
+      "set_code": "msc",
+      "collector_number": "146"
+    },
+    "vibranium_mining_mech": {
+      "scryfall_id": "2212e15b-5deb-4ab8-9f6f-7991e750e21a",
+      "artist": "Ivan Dedov",
+      "set_code": "msc",
+      "collector_number": "117"
+    },
+    "vibranium_strike_gauntlets": {
+      "scryfall_id": "2b47e8b0-471c-4429-8273-d114fdf95e13",
+      "artist": "Camille Alquier",
+      "set_code": "msc",
+      "collector_number": "118"
+    },
+    "w_kabi_shield_of_the_nation": {
+      "scryfall_id": "9fb292a4-cf71-4aeb-b92e-eab2e3177653",
+      "artist": "Ovidio Cartagena",
+      "set_code": "msc",
+      "collector_number": "70"
+    },
+    "wakanda_forever": {
+      "scryfall_id": "8b893d46-25f0-4c6a-b9a3-ff25277be918",
+      "artist": "Eli Minaya",
+      "set_code": "msc",
+      "collector_number": "71"
+    },
+    "whispersilk_cloak": {
+      "scryfall_id": "a3f31ac4-09ca-4712-a311-50d28824bfad",
+      "artist": "Josu Hernaiz",
+      "set_code": "msc",
+      "collector_number": "225"
+    },
+    "zuri_warrior_of_wakanda": {
+      "scryfall_id": "b8225b51-d5a4-4b46-9a10-b581362b6a11",
+      "artist": "Andreas Zafiratos",
+      "set_code": "msc",
+      "collector_number": "72"
+    }
+  },
+  "cards": [
+    {
+      "id": "ancestral_communion"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "bast_panther_goddess"
+    },
+    {
+      "id": "beast_within"
+    },
+    {
+      "id": "birds_of_paradise"
+    },
+    {
+      "id": "bountiful_promenade"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "conduit_of_worlds"
+    },
+    {
+      "id": "coveted_jewel"
+    },
+    {
+      "id": "dispatch"
+    },
+    {
+      "id": "divine_visitation"
+    },
+    {
+      "id": "dora_milaje_elite"
+    },
+    {
+      "id": "everett_k_ross_hapless_attache"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "fight_for_the_throne"
+    },
+    {
+      "id": "fleecemane_lion"
+    },
+    {
+      "id": "forest",
+      "qty": 12
+    },
+    {
+      "id": "fortified_village"
+    },
+    {
+      "id": "generous_gift"
+    },
+    {
+      "id": "gilded_lotus"
+    },
+    {
+      "id": "greater_good"
+    },
+    {
+      "id": "hammer_of_nazahn"
+    },
+    {
+      "id": "harmonize"
+    },
+    {
+      "id": "hatut_zeraze_strike_force"
+    },
+    {
+      "id": "heart_shaped_herb"
+    },
+    {
+      "id": "helm_of_the_host"
+    },
+    {
+      "id": "ingenious_smith"
+    },
+    {
+      "id": "kimoyo_beads"
+    },
+    {
+      "id": "king_solomon_s_frogs"
+    },
+    {
+      "id": "loyal_guardian"
+    },
+    {
+      "id": "loyal_retainers"
+    },
+    {
+      "id": "m_baku_jabari_chieftain"
+    },
+    {
+      "id": "martial_coup"
+    },
+    {
+      "id": "metalwork_colossus"
+    },
+    {
+      "id": "meteor_golem"
+    },
+    {
+      "id": "midnight_angel_armor"
+    },
+    {
+      "id": "mind_s_eye"
+    },
+    {
+      "id": "n_yami_class_mother_ship"
+    },
+    {
+      "id": "nakia_wakandan_operative"
+    },
+    {
+      "id": "nature_s_lore"
+    },
+    {
+      "id": "okoye_mighty_and_adored"
+    },
+    {
+      "id": "overwhelming_stampede"
+    },
+    {
+      "id": "palace_jailer"
+    },
+    {
+      "id": "panther_habit"
+    },
+    {
+      "id": "panther_robot"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "plains",
+      "qty": 12
+    },
+    {
+      "id": "queen_mother_ramonda"
+    },
+    {
+      "id": "razorverge_thicket"
+    },
+    {
+      "id": "royal_talon_fighter_jet"
+    },
+    {
+      "id": "scattered_groves"
+    },
+    {
+      "id": "scavenger_grounds"
+    },
+    {
+      "id": "scourglass"
+    },
+    {
+      "id": "shuri_s_fabricator"
+    },
+    {
+      "id": "shuri_the_black_panther"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "solemn_simulacrum"
+    },
+    {
+      "id": "storm_queen_of_wakanda"
+    },
+    {
+      "id": "sungrass_prairie"
+    },
+    {
+      "id": "sunpetal_grove"
+    },
+    {
+      "id": "sword_of_the_animist"
+    },
+    {
+      "id": "t_chaka_venerable_king"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "the_great_mound"
+    },
+    {
+      "id": "the_spear_of_bashenga"
+    },
+    {
+      "id": "thran_dynamo"
+    },
+    {
+      "id": "throne_of_the_high_city"
+    },
+    {
+      "id": "trading_post"
+    },
+    {
+      "id": "valorous_stance"
+    },
+    {
+      "id": "vanquish_the_horde"
+    },
+    {
+      "id": "vibranium_mining_mech"
+    },
+    {
+      "id": "vibranium_strike_gauntlets"
+    },
+    {
+      "id": "w_kabi_shield_of_the_nation"
+    },
+    {
+      "id": "wakanda_forever"
+    },
+    {
+      "id": "whispersilk_cloak"
+    },
+    {
+      "id": "zuri_warrior_of_wakanda"
+    }
+  ]
+}
