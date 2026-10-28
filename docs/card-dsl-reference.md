@@ -89,7 +89,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cast_copy` | Board |  | Cast a copy of an encoded or linked card without paying its cost. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_permanent` | Board | yes | Create a token copy of a permanent; `as` records the copies. | [Token copies](card-dsl-cookbook.md#token-copies) |
 | `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
-| `destroy` | Board |  | Destroy permanents; `no_regenerate` forbids regeneration. | [Effect ops](card-dsl.md#effect-ops) |
+| `destroy` | Board | yes | Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed. | [Effect ops](card-dsl.md#effect-ops) |
 | `detain` | Board |  | Detain permanents until your next turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `distribute_control_among_opponents` | Board |  | For each permanent, choose a different opponent; each gains control of theirs. | [Each opponent gains control of the one chosen for them](card-dsl-cookbook.md#each-opponent-gains-control-of-the-one-chosen-for-them) |
 | `distribute_counters` | Board |  | Distribute N counters among targets as the player chooses. | [Distributing counters among targets](card-dsl.md#distributing-counters-among-targets) |

@@ -1,0 +1,26 @@
+{
+  "_comment": "Shapes for tests/unit/effects/test_destroyed_this_way.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_dtw_avenge is Avenge's second half -- a destroy with `as`, read back by a gain_life count. The bear, the troll and the totem armor Aura come from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_dtw_avenge",
+      "name": "Test Avenging Wrath",
+      "oracle_text": "Destroy all creatures. You gain 1 life for each creature destroyed this way.",
+      "mana_cost": "{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all"},
+          "as": "destroyed"
+        },
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": {"count": {"binding": "destroyed"}}
+        }
+      ]
+    }
+  ]
+}

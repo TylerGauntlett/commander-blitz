@@ -219,7 +219,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "return_to_command_zone": ("Cards", "Return a commander from wherever it is to the command zone.",
                                '"Return it to the command zone" — `return_to_command_zone`'),
     # ---- Board -----------------------------------------------------------
-    "destroy": ("Board", "Destroy permanents; `no_regenerate` forbids regeneration.", None),
+    "destroy": ("Board", "Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed.", None),
     "exile": ("Board", "Exile objects; `link`/`playable` tie them to the source or a permission.",
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",

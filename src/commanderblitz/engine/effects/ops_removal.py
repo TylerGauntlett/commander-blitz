@@ -51,13 +51,30 @@ def op_destroy(ctx: EffectContext, spec: Mapping[str, Any]):
     Wrath of God and Rapid Hybridization all shipped as spells a Drudge
     Skeletons walks away from. It is a flag on the destruction rather than a
     mark on the victim -- see `zones.destroy` for why the difference matters.
+
+    ``as`` is "…for each creature **destroyed this way**" -- Avenge. It records
+    the objects that were actually destroyed, which is `zones.destroy`'s True:
+    an indestructible creature, one a regeneration shield or a shield counter
+    saved, and one whose totem armor took the hit were each *not* destroyed
+    (701.8, 701.15, 122.1c, 702.88a), so none of them is counted. That is why
+    the record is written **after** the move, where `exile` and `sacrifice`
+    write theirs before: those ops cannot fail on a permanent, this one can,
+    and the choice is not the answer. A creature whose death a replacement
+    sends to exile was still destroyed and is counted. Accumulates across a
+    loop, for `exile`'s reason.
     """
     no_regeneration = bool(spec.get("no_regeneration"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Destroy", "destroy")
+    destroyed: list[int] = []
     for oid in oids:
         # `by` is what makes the log and the exit animation able to say
         # "Destroyed by Vandalblast" rather than just "Destroyed".
-        destroy(ctx.state, oid, by=ctx.source_oid, no_regeneration=no_regeneration)
+        if destroy(ctx.state, oid, by=ctx.source_oid, no_regeneration=no_regeneration):
+            destroyed.append(oid)
+    if name := spec.get("as"):
+        previous = ctx.bindings.get(str(name))
+        earlier = list(previous) if isinstance(previous, list) else []
+        ctx.bindings[str(name)] = earlier + destroyed
 
 
 @register("replace_deaths")

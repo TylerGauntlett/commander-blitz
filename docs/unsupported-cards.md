@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **84** capabilities.
+**99 cards** blocked by **83** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -45,7 +45,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delayed-trigger-on-target-dies-move-counters](#delayed-trigger-on-target-dies-move-counters) | 1 | 15560 | op |
 | [delayed-trigger-this-combat](#delayed-trigger-this-combat) | 1 | 21583 | engine |
 | [delirium](#delirium) | 1 | 1799 | value |
-| [destroyed-this-way-count](#destroyed-this-way-count) | 1 | 17207 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [dragon-4-4-r-flying](#dragon-4-4-r-flying) | 1 | 9305 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
@@ -696,21 +695,6 @@ Blocks **1** card.
 
 - **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
   - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
-
-</details>
-
-## destroyed-this-way-count
-
-Blocks **1** card.
-
-- **(value)** `as` on the `destroy` op binding the objects it actually destroyed, so a later `gain_life` amount can count them (indestructible or regenerated creatures excluded)
-  <br>Why the existing vocabulary won't do: destroy takes only `objects` and `no_regeneration`; a `snapshot` or `count` of creatures before the destroy would also count indestructible creatures and regeneration-saved ones, gaining too much life
-
-<details><summary>Cards waiting on this</summary>
-
-- **Avenge** (rank 17207) — `avenge`
-  - This spell costs {2} less to cast if a player attacked you during their last turn.
-  - You gain 1 life for each creature destroyed this way.
 
 </details>
 

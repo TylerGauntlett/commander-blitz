@@ -818,7 +818,7 @@ fail differently — which is why one `as` covers both:
 number**" sayable at all. `count` defaults to `"all"`.
 
 The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`,
-`reveal`, `exile`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
+`reveal`, `exile`, `destroy`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
 `join_forces`, `roll_dice`, `search_library`, `search_zones`, `discard`, `mill`,
 `may`, `draw` and `lose_life`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
@@ -910,6 +910,16 @@ that was already yours. Written after the loop, like `create_token`'s and unlike
 in response — or one that was already yours, which `change_control` refuses as a
 no-op — is not one of "those creatures".
 
+`destroy`'s is "for each creature **destroyed this way**" (Avenge), and it is
+written after the moves for the same reason: it records the permanents that
+were actually destroyed, not the ones chosen. An indestructible creature, one a
+regeneration shield or a shield counter saved, and one whose totem armor took
+the hit were never destroyed (701.8a), so none of them is in it; one whose death
+a replacement sent to exile was destroyed and is. With `no_regeneration` a
+shielded creature is destroyed and counted. The near miss is a `count` or
+`snapshot` of the creatures ahead of the wrath, which gains a life for every
+survivor. The binding accumulates across a loop, as `exile`'s does.
+
 ```jsonc
 // Grey Host Reinforcements — "…equal to the number of creature cards exiled this way."
 { "op": "exile", "as": "exiled",
@@ -917,6 +927,12 @@ no-op — is not one of "those creatures".
 { "op": "add_counters", "counter": "+1/+1",
   "objects": { "zone": "battlefield", "self_only": true },
   "amount": { "count": { "binding": "exiled", "types": ["Creature"] } } }
+
+// Avenge — "Destroy all creatures. You gain 1 life for each creature destroyed this way."
+{ "op": "destroy", "as": "destroyed",
+  "objects": { "zone": "battlefield", "types": ["Creature"], "count": "all" } },
+{ "op": "gain_life", "player": "you",
+  "amount": { "count": { "binding": "destroyed" } } }
 
 // Flamerush Rider — "Exile the token …"
 { "op": "copy_permanent", "objects": { "target": "t1" },

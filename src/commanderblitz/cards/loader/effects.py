@@ -2390,8 +2390,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}")
         if op not in RECORDING_OPS:
             # And an `as` on an op that writes no binding fails exactly the same
-            # way while looking right on the page: "destroy the creatures, then
-            # draw a card for each destroyed this way" would load, resolve, and
+            # way while looking right on the page: "tap all creatures, then
+            # draw a card for each tapped this way" would load, resolve, and
             # draw nothing. Only these ops record, so only these may be asked
             # to -- the next op to grow one adds itself here.
             raise DslError(

@@ -331,7 +331,7 @@ class TestTheLoaderGuard:
         """It would read back as 0 and the card's second sentence would do nothing."""
         with pytest.raises(DslError, match="records no binding"):
             _validate_effect(
-                {"op": "destroy", "as": "killed", "objects": {"types": ["Creature"]}},
+                {"op": "tap", "as": "tapped", "objects": {"types": ["Creature"]}},
                 "test",
                 {},
             )
