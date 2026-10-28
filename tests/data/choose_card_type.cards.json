@@ -1,0 +1,77 @@
+{
+  "_comment": "Shapes for tests/unit/choices/test_choose_card_type.py. t_cct_recall chooses a CARD type and returns every card of it from your graveyard -- Creeping Renaissance over the nine types of 205.2a, so an instant and a sorcery can be the answer. t_cct_herald is Serra's Emissary's choice line on a vanilla creature: as it enters, choose a card type, stored on the permanent. The rest are graveyard fodder: an instant, a sorcery and a creature.",
+  "cards": [
+    {
+      "id": "t_cct_recall",
+      "name": "Test Card Type Recall",
+      "oracle_text": "Choose a card type. Return all cards of the chosen type from your graveyard to your hand.",
+      "mana_cost": "{3}{G}{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        { "op": "choose_type", "of": "card_type", "prompt": "Choose a card type" },
+        {
+          "op": "return_from_graveyard",
+          "destination": "hand",
+          "objects": {
+            "zone": "graveyard",
+            "controller": "you",
+            "count": "all",
+            "types": [{ "chosen_card_type_of": "self" }]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_cct_herald",
+      "name": "Test Card Type Herald",
+      "oracle_text": "As this creature enters, choose a card type.",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this creature enters, choose a card type.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "choose_type", "of": "card_type", "prompt": "Choose a card type" }]
+        }
+      ]
+    },
+    {
+      "id": "t_cct_bolt",
+      "name": "Test CCT Bolt",
+      "oracle_text": "",
+      "mana_cost": "{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"]
+    },
+    {
+      "id": "t_cct_ponder",
+      "name": "Test CCT Ponder",
+      "oracle_text": "",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"]
+    },
+    {
+      "id": "t_cct_bear",
+      "name": "Test CCT Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"]
+    }
+  ]
+}

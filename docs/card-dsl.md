@@ -2735,7 +2735,7 @@ answers it with the card in hand, on every cast path; on an opponent's turn a
 card with flash can still be cast. `GameState.turn` is the near miss: it counts
 the table's turns, and in a pod the game's third turn is somebody's first.
 
-### Choosing a permanent type, and reading it back
+### Choosing a permanent or card type, and reading it back
 
 ```jsonc
 // Creeping Renaissance
@@ -2752,13 +2752,13 @@ creature types its options come from `CardRegistry.creature_types()` and its
 answer lands in `GameObject.chosen_type`, whose one reader substitutes into a
 filter's `subtypes`.
 
-`of` is the axis — `creature_type` (the default) or `permanent_type` — and it is
-a parameter rather than a second op because the decision, the prompt, the storage
-and the read-back have the same shape on both. A near-miss word is a load error,
+`of` is the axis — `creature_type` (the default), `permanent_type` or
+`card_type` — and it is a parameter rather than a second op because the decision,
+the prompt, the storage and the read-back have the same shape on all three. A near-miss word is a load error,
 since it would fall through to the creature branch and offer Vampire on a card
 that prints "choose a permanent type".
 
-It writes a **separate slot**, `chosen_card_type`, read back by
+`permanent_type` and `card_type` write a **separate slot**, `chosen_card_type`, read back by
 `{"chosen_card_type_of": "self"}` in a selector's `types`. One field for both
 axes would make "of the chosen type" ambiguous at every reader, and the reader
 that guessed wrong would match nothing — silently. The leaf is refused outside
@@ -2772,6 +2772,14 @@ from the same index. Battle and Planeswalker are offered although neither is
 modelled: they are legal answers at a real table, and a list that quietly held
 four would make a card that offers the wrong choices rather than one that
 refuses.
+
+`card_type` offers the nine types of rule 205.2a in the same order
+(`CARD_TYPE_CHOICES`): the six permanent types plus Instant, Kindred and
+Sorcery — "as this enters, choose a card type" (Serra's Emissary), where an
+instant is a legal and common answer. A permanent type is a card type, so both
+axes share the slot and every reader of it reads either answer. Kindred is
+offered although no card in the engine carries it; naming it matches nothing,
+which is what it would match here.
 
 A source that has chosen nothing yet matches **nothing** — "all cards of the
 chosen type" before a type is chosen returns nothing, not the whole graveyard.

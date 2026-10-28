@@ -288,6 +288,36 @@ PERMANENT_TYPE_CHOICES: tuple[str, ...] = (
     "Planeswalker",
 )
 
+#: Every card type rule 205.2a lists, in its printed (alphabetical) order --
+#: "choose a **card** type" (Serra's Emissary), the wider axis beside
+#: `PERMANENT_TYPE_CHOICES`.
+#:
+#: Instant, Sorcery and Kindred are the three it adds, and they are the reason
+#: the axis exists: "protection from instants" is the commonest answer on the
+#: card that motivated it, and a list without them offers the wrong choices.
+#: Kindred is offered although no card in this engine is a Kindred card (the
+#: importer drops the word as noise): it is a legal answer at a real table, and
+#: naming it protects from exactly what it would protect from here -- nothing.
+CARD_TYPE_CHOICES: tuple[str, ...] = (
+    "Artifact",
+    "Battle",
+    "Creature",
+    "Enchantment",
+    "Instant",
+    "Kindred",
+    "Land",
+    "Planeswalker",
+    "Sorcery",
+)
+
+#: The fixed-list axes of `choose_type`: ``of`` -> (options, default prompt).
+#: Both write `GameObject.chosen_card_type`; only the creature-type axis is
+#: surveyed from the pool and writes `chosen_type`.
+_CARD_TYPE_AXES: dict[str, tuple[tuple[str, ...], str]] = {
+    "permanent_type": (PERMANENT_TYPE_CHOICES, "Choose a permanent type"),
+    "card_type": (CARD_TYPE_CHOICES, "Choose a card type"),
+}
+
 
 @register("choose_type")
 def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
@@ -317,9 +347,14 @@ def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
     # and `chosen_card_type` a card type; one field would make "of the chosen
     # type" ambiguous at every reader, and a reader that guessed wrong would
     # match nothing silently.
-    if str(spec.get("of", "creature_type")) == "permanent_type":
-        choices = list(PERMANENT_TYPE_CHOICES)
-        prompt = str(spec.get("prompt") or "Choose a permanent type")
+    #
+    # "Choose a **card** type" (Serra's Emissary) is the same again over the
+    # nine types of 205.2a, and writes the same slot: a permanent type *is* a
+    # card type, so every reader of `chosen_card_type` reads either answer.
+    axis = _CARD_TYPE_AXES.get(str(spec.get("of", "creature_type")))
+    if axis is not None:
+        choices = list(axis[0])
+        prompt = str(spec.get("prompt") or axis[1])
         picked = yield from ask_mode(ctx, prompt, choices, ctx.controller)
         if not picked:
             return

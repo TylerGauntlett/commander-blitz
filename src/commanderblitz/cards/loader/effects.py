@@ -2060,18 +2060,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             to = branch.get("to", "hand")
             if to not in DESTINATIONS:
                 raise DslError(f"{at}.to: unknown destination {to!r}")
-    # Two axes, one op: a creature type (the default) or a permanent type. A
-    # near-miss word here would fall through to the creature-type branch and ask
-    # the wrong question -- a card printing "choose a permanent type" that offers
-    # Vampire.
+    # Three axes, one op: a creature type (the default), a permanent type or a
+    # card type. A near-miss word here would fall through to the creature-type
+    # branch and ask the wrong question -- a card printing "choose a permanent
+    # type" that offers Vampire.
     if (
         op == "choose_type"
         and "of" in effect
-        and effect["of"] not in ("creature_type", "permanent_type")
+        and effect["of"] not in ("creature_type", "permanent_type", "card_type")
     ):
         raise DslError(
-            f"{where}: choose_type's 'of' is 'creature_type' or "
-            f"'permanent_type', not {effect['of']!r}"
+            f"{where}: choose_type's 'of' is 'creature_type', 'permanent_type' "
+            f"or 'card_type', not {effect['of']!r}"
         )
     if op == "fight":
         # Both halves, or it is not a fight. With one missing the op resolves to

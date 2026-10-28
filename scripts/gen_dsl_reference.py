@@ -396,7 +396,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "may": ("Control flow", "Optional effects, with an optional `pay`; `as` records who said yes.",
             "`may`'s `as`, and `except` on a player spec"),
     "choose_mode": ("Control flow", "Choose one or more modes and run them.", "Modal spells with a target"),
-    "choose_type": ("Control flow", "Choose a creature (or other) type, readable later.",
+    "choose_type": ("Control flow", "Choose a creature, permanent or card type (`of`), readable later.",
                     '"Choose a creature type"'),
     "choose_color": ("Control flow", "Choose a color, readable later.", '"Choose a color"'),
     "choose_card_name": ("Control flow", "Choose a card name; `as` records it.", '"Choose a card name"'),
