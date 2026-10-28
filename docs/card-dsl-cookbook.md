@@ -679,6 +679,31 @@ sometimes a mapping (`{"except": …}`). The id recorded is the face that was
 **cast** — a disturb cast turns the card over inside `push_spell`, and the half
 that was cast is the half the condition asks about.
 
+### Copying a spell for each commander cast
+
+```jsonc
+{ "kind": "triggered",
+  "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [ { "op": "copy_spell",
+                 "amount": { "commander_casts_this_game": "you" } } ] }
+```
+
+"When you cast this spell, copy it for each time you've cast your commander from
+the command zone this game." (Hatut Zeraze Strike Force.) The count is the one rule
+903.8 already keeps for commander tax: `Player.commander_tax` gains one per cast of
+a commander from the command zone, and `commander_casts_this_game` sums it over the
+player's commanders (`GameState.commanders_of`), so partners both count. It takes
+a player spec, validated at load time.
+
+A commander that came out any other way — put onto the battlefield by an effect,
+cast from hand or a graveyard — was not cast from the command zone and adds
+nothing, which is also what the tax says. The value is read when the trigger
+resolves; a commander carrying this text has already tallied its own cast by
+then. The near miss is `spells_cast_this_game`, which counts every spell from
+every zone. A copy of a permanent spell resolves as a token (706.10, via
+`put_copy_on_stack`), so the creature form needs nothing further.
+
 ### Casting out of every graveyard, until end of turn
 
 ```jsonc

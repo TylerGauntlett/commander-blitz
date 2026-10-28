@@ -546,6 +546,8 @@ VALUES: dict[str, Entry] = {
                           "Which combat phase of the turn this is"),
     "commander_color_identity": ("Colors in your commander's color identity.",
                                  'Commander-identity mana — "any color in your commander\'s color identity"'),
+    "commander_casts_this_game": ("Times the player has cast their commanders from the command zone this game (903.8's tally).",
+                                  "Copying a spell for each commander cast"),
     "const": ("A literal number.", None),
     "count": ("How many objects a selector finds.", None),
     "counters_had": ("Counters of a kind (or \"any\", every kind) the permanent that just left had.", None),

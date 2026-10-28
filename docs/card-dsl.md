@@ -1303,6 +1303,7 @@ Anywhere a number is expected -- the leaf list is
                     "objects": { "types": ["Creature"] } } }
 { "cards_in_hand": "each_opponent" }
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
+{ "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
