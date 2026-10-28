@@ -4348,6 +4348,10 @@
   "fire_sprites": {
     "zone": "battlefield"
   },
+  "firebird_blazing_ranger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "firemane_commando": {
     "battlefield_count": 33,
     "hand_size": {
@@ -4985,6 +4989,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "gift_of_immortality": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "gift_of_orzhova": {
     "zone": [
@@ -5648,6 +5656,10 @@
   "hawkeater_moth": {
     "zone": "battlefield"
   },
+  "hawkeye_avenging_archer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hawkeye_clint_barton": {
     "zone": "battlefield"
   },
@@ -5804,6 +5816,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hero_s_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hero_s_resolve": {
     "zone": [
       "battlefield",
@@ -5818,6 +5834,13 @@
         "indestructible"
       ]
     }
+  },
+  "heroic_return": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
   },
   "hexplate_golem": {
     "zone": "battlefield"

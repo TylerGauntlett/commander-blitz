@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**95 cards** blocked by **79** capabilities.
+**96 cards** blocked by **80** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-placed-counters](#copy-placed-counters) | 1 | 15263 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
+| [dealt-damage-batched](#dealt-damage-batched) | 1 | 17089 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [destroyed-this-way-count](#destroyed-this-way-count) | 1 | 17207 | value |
@@ -605,6 +606,20 @@ Blocks **1** card.
 - **Inkshield** (rank 806) — `inkshield`
   - Prevent all combat damage that would be dealt to you this turn.
   - For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.
+
+</details>
+
+## dealt-damage-batched
+
+Blocks **1** card.
+
+- **(trigger_event)** a 'this permanent is dealt damage' trigger that fires once per simultaneous damage event (e.g. one combat damage step, 510.2) with its `amount` binding the TOTAL damage dealt to it in that event across all sources, so 'for the first time each turn' plus 'put that many' counts every blocker's damage, not just the first source's
+  <br>Why the existing vocabulary won't do: `dealt_damage` with `source: self` fires one DAMAGE_DEALT per (source, recipient), so `max_per_turn: 1` keeps only the first source's event and `{binding: amount}` reads that one source's damage; a Hercules blocked by two creatures would get counters for one blocker only. `batched` keys on `event.data.batch`, which damage events do not carry, and would still bind only the first event's amount. `damage_taken_this_turn` sums damage to players, not to a permanent.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hercules, Olympian Hero** (rank 17089) — `hercules_olympian_hero`
+  - Whenever Hercules is dealt damage for the first time each turn, put that many +1/+1 counters on him. (He must survive the damage to get the counters.)
 
 </details>
 

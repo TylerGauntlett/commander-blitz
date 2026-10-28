@@ -95802,12 +95802,12 @@
     },
     "Firebird, Blazing Ranger": {
       "edhrec_rank": 17167,
-      "gate": "template",
+      "gate": null,
       "name": "Firebird, Blazing Ranger",
-      "reason": "no template for: Whenever Firebird attacks, other attacking creatures get +X/+0 until end of turn, where X ",
+      "reason": "",
       "scryfall_id": "11dc3b30-b130-4558-ab37-9c32792641ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fireblade Artist": {
@@ -109092,12 +109092,12 @@
     },
     "Gift of Immortality": {
       "edhrec_rank": 1936,
-      "gate": "template",
+      "gate": null,
       "name": "Gift of Immortality",
-      "reason": "no template for: When enchanted creature dies, return that card to the battlefield under its owner's contro",
+      "reason": "",
       "scryfall_id": "4ae22015-073a-4666-9e3b-15dcf61f50ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gift of Orzhova": {
@@ -123842,12 +123842,12 @@
     },
     "Hawkeye, Avenging Archer": {
       "edhrec_rank": 20138,
-      "gate": "template",
+      "gate": null,
       "name": "Hawkeye, Avenging Archer",
-      "reason": "no template for: Whenever a creature an opponent controls dies, if Hawkeye dealt damage to it this turn, dr",
+      "reason": "",
       "scryfall_id": "1f394a6f-3649-4464-939b-c183b2b01768",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hawkeye, Bowslinger": {
@@ -126722,12 +126722,12 @@
     },
     "Hero's Blade": {
       "edhrec_rank": 1879,
-      "gate": "template",
+      "gate": null,
       "name": "Hero's Blade",
-      "reason": "no template for: Whenever a legendary creature you control enters, you may attach this Equipment to it",
+      "reason": "",
       "scryfall_id": "6f2fa911-5735-4ee2-828f-59dea6927b20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hero's Demise": {
@@ -126892,12 +126892,12 @@
     },
     "Heroic Return": {
       "edhrec_rank": 18147,
-      "gate": "template",
+      "gate": null,
       "name": "Heroic Return",
-      "reason": "no template for: This spell costs {2} less to cast if a creature is attacking you",
+      "reason": "",
       "scryfall_id": "707e0b51-701b-4eb6-b721-19c21a3c4d90",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heroic Sacrifice": {
