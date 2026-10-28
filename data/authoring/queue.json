@@ -191922,12 +191922,12 @@
     },
     "Okoye, Mighty and Adored": {
       "edhrec_rank": 17924,
-      "gate": "template",
+      "gate": null,
       "name": "Okoye, Mighty and Adored",
-      "reason": "no template for: When Okoye enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "18ee486e-dc25-4de7-a71f-f11fdf100176",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Olag and Miau, New Friends": {
@@ -228352,12 +228352,12 @@
     },
     "Royal Talon Fighter Jet": {
       "edhrec_rank": 15920,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Royal Talon Fighter Jet",
-      "reason": "no template for: This Vehicle enters with X +1/+1 counters on it",
+      "reason": "+1/+1 counters is 20, expected 28; soldier_1_1_w tokens is 0, expected 28; your battlefield is 33, expected 61",
       "scryfall_id": "d1b9cb33-5a24-4bfe-9939-2cdf4c8aecfd",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Royal Treatment": {
@@ -236242,12 +236242,12 @@
     },
     "Scourglass": {
       "edhrec_rank": 11098,
-      "gate": "template",
+      "gate": null,
       "name": "Scourglass",
-      "reason": "no template for: {T}, Sacrifice this artifact: Destroy all permanents except for artifacts and lands. Activ",
+      "reason": "",
       "scryfall_id": "b2ec7f8e-e2c2-4898-bc61-f309f1842cb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scouring Sands": {
@@ -245932,12 +245932,12 @@
     },
     "Shuri, the Black Panther": {
       "edhrec_rank": 17927,
-      "gate": "template",
+      "gate": null,
       "name": "Shuri, the Black Panther",
-      "reason": "no template for: Whenever Shuri attacks, draw a card if you control three or more artifacts. Then if you co",
+      "reason": "",
       "scryfall_id": "1a0f7946-cc17-4f24-bec1-d0243af9b726",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shuriken": {
@@ -266092,12 +266092,12 @@
     },
     "Storm, Queen of Wakanda": {
       "edhrec_rank": 16850,
-      "gate": "template",
+      "gate": null,
       "name": "Storm, Queen of Wakanda",
-      "reason": "no template for: Whenever Storm attacks, until end of turn, another target attacking creature gains flying ",
+      "reason": "",
       "scryfall_id": "0a61d843-2a7c-459c-9018-1ee4488c90a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm, Shaker of Skies": {
@@ -272342,12 +272342,12 @@
     },
     "Sword of the Animist": {
       "edhrec_rank": 238,
-      "gate": "template",
+      "gate": null,
       "name": "Sword of the Animist",
-      "reason": "no template for: Whenever equipped creature attacks, you may search your library for a basic land card, put",
+      "reason": "",
       "scryfall_id": "450697f9-4584-4a4b-b52c-1766b2af7048",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sword of the Chosen": {
@@ -273402,12 +273402,12 @@
     },
     "T'Chaka, Venerable King": {
       "edhrec_rank": 21764,
-      "gate": "template",
+      "gate": null,
       "name": "T'Chaka, Venerable King",
-      "reason": "no template for: When T'Chaka enters, mill three cards, then you may put an artifact or land card from amon",
+      "reason": "",
       "scryfall_id": "28deeaf6-c32b-41f1-b94f-0ae303377ea0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "T'Challa, the Black Panther": {

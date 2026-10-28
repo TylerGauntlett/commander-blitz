@@ -97880,6 +97880,122 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Okoye enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "effects": [
+                {
+                  "keywords": [
+                    "double_strike",
+                    "trample"
+                  ],
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Whenever that creature attacks the monarch this turn, it gains double strike and trample until end of turn.",
+              "trigger": {
+                "condition": {
+                  "all": [
+                    {
+                      "is_monarch": {
+                        "binding": "defender"
+                      }
+                    },
+                    {
+                      "exists": {
+                        "attacking_player": "any",
+                        "binding": "subject"
+                      }
+                    }
+                  ]
+                },
+                "controller": "any",
+                "event": "attacks",
+                "subject": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, put a +1/+1 counter on target creature. Whenever that creature attacks the monarch this turn, it gains double strike and trample until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "okoye_mighty_and_adored",
+      "mana_cost": "{2}{G}{W}",
+      "name": "Okoye, Mighty and Adored",
+      "oracle_text": "When Okoye enters, you become the monarch.\nAt the beginning of combat on your turn, put a +1/+1 counter on target creature. Whenever that creature attacks the monarch this turn, it gains double strike and trample until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "W"
@@ -117057,6 +117173,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "activate_steps": [
+            "upkeep"
+          ],
+          "condition": {
+            "is_your_turn": true
+          },
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "not_types": [
+                  "Artifact",
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this artifact: Destroy all permanents except for artifacts and lands. Activate only during your upkeep."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "scourglass",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Scourglass",
+      "oracle_text": "{T}, Sacrifice this artifact: Destroy all permanents except for artifacts and lands. Activate only during your upkeep.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -122726,6 +122893,114 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  }
+                },
+                "right": {
+                  "const": 3
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  }
+                },
+                "right": {
+                  "const": 6
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 2
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Shuri attacks, draw a card if you control three or more artifacts. Then if you control six or more artifacts, creatures you control get +2/+2 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "shuri_the_black_panther",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{G}{W}",
+      "name": "Shuri, the Black Panther",
+      "oracle_text": "Lifelink\nWhenever Shuri attacks, draw a card if you control three or more artifacts. Then if you control six or more artifacts, creatures you control get +2/+2 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -131364,6 +131639,119 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Storm attacks, until end of turn, another target attacking creature gains flying and gets +X/+0, where X is Storm's power.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with flying attacks you, Storm deals damage equal to her power to that creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attacking_player": "you",
+              "keywords": [
+                "flying"
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "storm_queen_of_wakanda",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{G}{W}",
+      "name": "Storm, Queen of Wakanda",
+      "oracle_text": "Flying\nWhenever Storm attacks, until end of turn, another target attacking creature gains flying and gets +X/+0, where X is Storm's power.\nWhenever a creature with flying attacks you, Storm deals damage equal to her power to that creature.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Noble",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -134764,6 +135152,104 @@
           "effect": "buff",
           "kind": "static",
           "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for a basic land card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "sword_of_the_animist",
+      "mana_cost": "{2}",
+      "name": "Sword of the Animist",
+      "oracle_text": "Equipped creature gets +1/+1.\nWhenever equipped creature attacks, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
             "const": 2
           },
           "text": "Equipped creature gets +2/+0 and has first strike, vigilance, trample, and haste",
@@ -135364,6 +135850,93 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "as": "milled",
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "destination": "hand",
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Land"
+                ],
+                "binding": "milled",
+                "count": 1,
+                "optional": true
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When T'Chaka enters, mill three cards, then you may put an artifact or land card from among the milled cards into your hand.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "is_commander": true,
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}, Exile this card from your graveyard: You become the monarch. Activate only if you control your commander."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "t_chaka_venerable_king",
+      "mana_cost": "{G}{W}",
+      "name": "T'Chaka, Venerable King",
+      "oracle_text": "When T'Chaka enters, mill three cards, then you may put an artifact or land card from among the milled cards into your hand.\n{3}, Exile this card from your graveyard: You become the monarch. Activate only if you control your commander.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

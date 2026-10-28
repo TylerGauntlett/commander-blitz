@@ -8717,6 +8717,10 @@
     },
     "zone": "battlefield"
   },
+  "okoye_mighty_and_adored": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "old_ghastbark": {
     "zone": "battlefield"
   },
@@ -10464,6 +10468,11 @@
   "scourge_servant": {
     "zone": "battlefield"
   },
+  "scourglass": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "scouting_hawk": {
     "zone": "battlefield"
   },
@@ -10947,6 +10956,10 @@
     }
   },
   "shuko": {
+    "zone": "battlefield"
+  },
+  "shuri_the_black_panther": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "shuttle_crew": {
@@ -11763,6 +11776,10 @@
     },
     "zone": "battlefield"
   },
+  "storm_queen_of_wakanda": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stormcarved_coast": {
     "zone": "battlefield"
   },
@@ -12030,6 +12047,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sword_of_the_animist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sword_of_vengeance": {
     "zone": "battlefield"
   },
@@ -12083,6 +12107,12 @@
       "id": "zombie_2_2_b"
     },
     "zone": "graveyard"
+  },
+  "t_chaka_venerable_king": {
+    "library_size": {
+      "0": 37
+    },
+    "zone": "battlefield"
   },
   "taiga": {
     "zone": "battlefield"
