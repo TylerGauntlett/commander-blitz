@@ -282362,12 +282362,12 @@
     },
     "The Spear of Bashenga": {
       "edhrec_rank": 19022,
-      "gate": "template",
+      "gate": null,
       "name": "The Spear of Bashenga",
-      "reason": "no template for: When enters, if there is no monarch, you become the monarch",
+      "reason": "",
       "scryfall_id": "b8cc0703-f626-4d42-90bb-1a26e331a9de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Spear of Leonidas": {

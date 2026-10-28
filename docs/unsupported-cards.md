@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**95 cards** blocked by **79** capabilities.
+**94 cards** blocked by **78** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attacks-the-monarch](#attacks-the-monarch) | 1 | 19022 | trigger_event |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -459,20 +458,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attacks-the-monarch
-
-Blocks **1** card.
-
-- **(trigger_event)** a `defending: "monarch"` clause on the `attacks` trigger, matching only when the creature was declared attacking the monarch PLAYER (not a planeswalker or battle that player controls/protects), mirroring how `defending: "most_life"` (dethrone) rejects events carrying `attacked_permanent`
-  <br>Why the existing vocabulary won't do: The nearest spelling is `attacks` with `filter: {attached: true}`, `condition: {is_monarch: {binding: defender}}` and `recheck: false` (as M'Baku, Jabari Chieftain does), but `defender` is the planeswalker's/battle's controller on an attack against a permanent, and neither `condition_keys` nor any binding can read `attacked_permanent`, so the card would also destroy a permanent whenever the equipped creature attacks a planeswalker the monarch controls -- a different card. `_defender_matches` only knows `you`, `opponent` and `most_life`.
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Spear of Bashenga** (rank 19022) — `the_spear_of_bashenga`
-  - Whenever equipped creature attacks the monarch, destroy target tapped nonland permanent that player controls.
 
 </details>
 
