@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**95 cards** blocked by **78** capabilities.
+**94 cards** blocked by **77** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -87,7 +87,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
-| [times-tapped-this-turn](#times-tapped-this-turn) | 1 | 9590 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -1293,20 +1292,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## times-tapped-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-permanent count of how many times that permanent has become tapped this turn, kept by the engine for every permanent from the start of the turn (not by the card), readable in a becomes_tapped trigger's intervening-if condition on the triggering creature, so the condition is a cmp of that count == 1 alongside is_your_turn, and the effect untaps the triggering creature
-  <br>Why the existing vocabulary won't do: becomes_tapped plus condition is_your_turn covers the trigger, but nothing reads the tap history of the creature. trigger max_per_turn caps the source permanent, not each tapped creature. A set_turn_flag/has_turn_flag pair written by this trigger only remembers taps Captain America itself saw, so a creature tapped earlier in the turn (e.g. a mana creature tapped to cast Captain America) would be wrongly untapped on its second tap. No value_key counts taps per object
-
-<details><summary>Cards waiting on this</summary>
-
-- **Captain America, Living Legend** (rank 9590) — `captain_america_living_legend`
-  - Whenever a creature you control becomes tapped during your turn, if it's the first time that creature has become tapped this turn, untap it.
 
 </details>
 

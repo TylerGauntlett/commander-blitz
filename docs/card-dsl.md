@@ -2960,6 +2960,44 @@ printed clause is `== 1`, and "the second combat" needs no new vocabulary.
 often the ability fires, so a creature that sat out the first combat and attacked
 in a later one would still get its extra combat.
 
+### How many times a permanent has become tapped this turn
+
+```jsonc
+// Captain America, Living Legend: "Whenever a creature you control becomes
+// tapped during your turn, if it's the first time that creature has become
+// tapped this turn, untap it."
+"trigger": {
+  "event": "becomes_tapped", "controller": "you", "filter": { "types": ["Creature"] },
+  "condition": { "all": [
+    { "is_your_turn": true },
+    { "cmp": "==", "left": { "times_tapped_this_turn": { "binding": "subject" } },
+      "right": { "const": 1 } } ] } },
+"effects": [ { "op": "untap", "objects": { "binding": "subject" } } ]
+```
+
+`times_tapped_this_turn` is how many times **one object** has become tapped this
+turn, read off `TurnLedger.taps_by_permanent`. The engine folds every TAPPED
+event into it from the start of the turn, whether or not anything was watching,
+so a creature tapped for mana to cast the Captain has used its first time before
+the Captain arrived. TAPPED fires only from `tap_permanent`, which does nothing to
+a permanent that is already tapped, so the count is of times it *became* tapped;
+entering the battlefield tapped is not one. The tap that fires a `becomes_tapped`
+trigger is already counted when the trigger is checked, so "the first time" is
+`== 1`, and the recheck on resolution (603.4) fails if the creature was untapped
+and tapped again in response.
+
+It takes an object reference, not a selector: `{"binding": "subject"}` for the
+permanent a trigger bound, `{"self": true}`, or `{"target": id}`. The loader
+refuses anything else, `true` included, which reads like the sentence and names
+no object. A permanent that leaves the battlefield and comes back is a new object
+(400.7) and reads from 0; phasing out and changing control are the same object
+and keep their count.
+
+| | |
+|---|---|
+| `set_turn_flag` / `has_turn_flag` written by the trigger | Remembers only the taps this trigger saw, so a creature tapped before the Captain entered, or while its trigger was not armed, is untapped on its second tap |
+| `max_per_turn: 1` | Caps the *ability's* firings across every creature, so the second creature tapped in a turn is never untapped |
+
 ### Counting different values rather than objects
 
 `{"distinct": …}` is domain, coven and delirium, and they are one leaf rather

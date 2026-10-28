@@ -39342,12 +39342,12 @@
     },
     "Captain America, Living Legend": {
       "edhrec_rank": 9590,
-      "gate": "template",
+      "gate": null,
       "name": "Captain America, Living Legend",
-      "reason": "no template for: Whenever a creature you control becomes tapped during your turn, if it's the first time th",
+      "reason": "",
       "scryfall_id": "6516f292-469d-4092-b099-97c698f373cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain America, Skybound": {

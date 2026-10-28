@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 151 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 58 |
+| [Values](#values) | 59 |
 | [Conditions](#conditions) | 32 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
@@ -345,6 +345,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `starting_life_of` | The life total a player began with. | ["At least 7 life more than your starting life total"](card-dsl.md#at-least-7-life-more-than-your-starting-life-total) |
 | `sum` | a + b + …. | [Value expressions](card-dsl.md#value-expressions) |
 | `times` | a * b. | [Value expressions](card-dsl.md#value-expressions) |
+| `times_tapped_this_turn` | Times one object has become tapped this turn, counting every tap since the turn began. | [How many times a permanent has become tapped this turn](card-dsl.md#how-many-times-a-permanent-has-become-tapped-this-turn) |
 | `toughness_had` | The toughness the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `toughness_of` | An object's toughness. | [Value expressions](card-dsl.md#value-expressions) |
 | `unspent_mana_count` | The unspent mana in a spec's players' mana pools. | ["For each unspent mana you have"](card-dsl.md#for-each-unspent-mana-you-have) |

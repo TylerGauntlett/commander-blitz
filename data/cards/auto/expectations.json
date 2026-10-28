@@ -1893,6 +1893,10 @@
   "capital_guard": {
     "zone": "battlefield"
   },
+  "captain_america_living_legend": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "captain_america_team_leader": {
     "battlefield_count": 33,
     "zone": "battlefield"

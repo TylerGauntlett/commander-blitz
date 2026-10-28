@@ -20611,6 +20611,78 @@
         {
           "effects": [
             {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control becomes tapped during your turn, if it's the first time that creature has become tapped this turn, untap it.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "is_your_turn": true
+                },
+                {
+                  "cmp": "==",
+                  "left": {
+                    "times_tapped_this_turn": {
+                      "binding": "subject"
+                    }
+                  },
+                  "right": {
+                    "const": 1
+                  }
+                }
+              ]
+            },
+            "controller": "you",
+            "event": "becomes_tapped",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "captain_america_living_legend",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{U}",
+      "name": "Captain America, Living Legend",
+      "oracle_text": "Vigilance\nWhenever a creature you control becomes tapped during your turn, if it's the first time that creature has become tapped this turn, untap it.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "duration": "until_end_of_turn",
               "keywords": [
                 "vigilance",

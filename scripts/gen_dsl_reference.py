@@ -587,6 +587,8 @@ VALUES: dict[str, Entry] = {
     "min": ("The least of several values.", None),
     "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\").",
                      None),
+    "times_tapped_this_turn": ("Times one object has become tapped this turn, counting every tap since the turn began.",
+                               "How many times a permanent has become tapped this turn"),
     "unspent_mana_count": ("The unspent mana in a spec's players' mana pools.",
                            '"For each unspent mana you have"'),
     "min_count_of": ("The fewest objects any one player of a spec has.", H_PER_PLAYER),

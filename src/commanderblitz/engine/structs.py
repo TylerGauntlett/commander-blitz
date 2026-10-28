@@ -1497,6 +1497,21 @@ class TurnLedger:
     #: never attacked (508.4) and adds nothing; one that leaves the battlefield
     #: is a new object (400.7) and starts again from nought.
     attacks_by_creature: dict[int, int] = field(default_factory=dict)
+    #: How many times each permanent has **become tapped** this turn: oid ->
+    #: the number of TAPPED events it has been the subject of. "…if it's the
+    #: first time that creature has become tapped this turn, untap it"
+    #: (Captain America, Living Legend) asks about every tap since the turn
+    #: began, so the engine counts all of them, whatever was watching: a
+    #: creature tapped for mana to cast the Captain has been tapped once
+    #: already, and a flag written by the Captain's own trigger would miss it.
+    #:
+    #: Folded off TAPPED, which only `primitives.tap_permanent` fires and
+    #: never for a permanent that is already tapped, so "becomes" is the
+    #: primitive's reading. Entering the battlefield tapped is not becoming
+    #: tapped and adds nothing. One that leaves the battlefield is a new
+    #: object (400.7) and starts again from nought; phasing and a change of
+    #: control are the same object and keep their count.
+    taps_by_permanent: dict[int, int] = field(default_factory=dict)
     #: Which **players** each creature dealt **combat damage** to this turn:
     #: source oid -> the seats. "Destroy each nonland permanent with mana value X
     #: whose controller was dealt combat damage by this creature this turn" --
@@ -1761,6 +1776,7 @@ class TurnLedger:
         self.players_attacked_by.clear()
         self.seats_attacked.clear()
         self.attacks_by_creature.clear()
+        self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
         self.damage_taken.clear()
         self.life_lost.clear()

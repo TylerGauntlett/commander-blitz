@@ -825,6 +825,15 @@ class GameState:
                 counts = ledger.attacks_by_creature
                 counts[int(attacker)] = counts.get(int(attacker), 0) + 1
                 data["nth"] = counts[int(attacker)]
+        elif event.type == EventType.TAPPED:
+            # "…if it's the first time that creature has become tapped this
+            # turn" (Captain America, Living Legend). Every tap is counted,
+            # whether or not anything was watching, so a creature tapped for
+            # mana before the watcher arrived has already used its first time.
+            oid = data.get("oid")
+            if oid is not None:
+                taps = ledger.taps_by_permanent
+                taps[int(oid)] = taps.get(int(oid), 0) + 1
         elif event.type == EventType.ENTERS_BATTLEFIELD:
             # "…if another Human entered the battlefield under your control this
             # turn." Snapshotted here rather than counted, because the question
@@ -944,6 +953,7 @@ class GameState:
             if data.get("from") == Zone.BATTLEFIELD.value:
                 ledger.players_attacked_by.pop(data.get("oid"), None)
                 ledger.attacks_by_creature.pop(data.get("oid"), None)
+                ledger.taps_by_permanent.pop(data.get("oid"), None)
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # The departure half. Keyed by the graveyard's **owner** rather than

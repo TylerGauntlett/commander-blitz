@@ -178,6 +178,15 @@ VALUE_KEYS = frozenset(
         # clause is `== 1`, and "the second combat" or "a later combat" fall out
         # of the same leaf without new vocabulary.
         "combats_this_turn",
+        # "…if it's the **first time that creature has become tapped this
+        # turn**" (Captain America, Living Legend). How many times one object
+        # has become tapped this turn, read off `TurnLedger.taps_by_permanent`,
+        # which counts every tap from the start of the turn -- not just the
+        # ones some trigger saw. Takes an object reference, not a player spec:
+        # `{"binding": "subject"}` for the creature a `becomes_tapped` trigger
+        # bound, `{"self": true}`, or `{"target": …}`. The printed clause is a
+        # `cmp` `==` 1, which counts the tap that fired the trigger.
+        "times_tapped_this_turn",
         "cards_to_graveyard_this_turn",
         "cards_from_graveyard_this_turn",
         "extreme_value",
@@ -605,6 +614,12 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "loyalty_activations_this_turn" in expr:
         pids = _players(ctx, expr["loyalty_activations_this_turn"])
         return sum(ledger.loyalty_activations.get(p, 0) for p in pids)
+    if "times_tapped_this_turn" in expr:
+        # One object's taps, so a reference that names nobody -- a binding the
+        # event did not carry, a target that went away -- reads 0, and a
+        # permanent that left and came back reads from nought (400.7).
+        taps = ledger.taps_by_permanent
+        return sum(taps.get(oid, 0) for oid in _referenced_oids(ctx, expr["times_tapped_this_turn"]))
     if "combats_this_turn" in expr:
         # Counting the combat in progress, so during the first combat this is 1.
         # `GameState.combat_number` is the near miss and is monotonic for the
@@ -881,6 +896,42 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
     if isinstance(ref, int):
         return _from_oid(ctx, ref, which)
     raise DslError(f"unparsable characteristic reference {ref!r}")
+
+
+#: The object references ``times_tapped_this_turn`` takes: one object the
+#: context already has in hand. Not a selector, because the printed question is
+#: about *that* creature and a selector sums a pool.
+OBJECT_REF_KEYS = ("binding", "self", "target")
+
+
+def _referenced_oids(ctx: EffectContext, ref: Mapping[str, Any]) -> list[int]:
+    """The oids an object reference names: a bound oid, the source, a target."""
+    if "binding" in ref:
+        value = ctx.bindings.get(str(ref["binding"]))
+        return [value] if isinstance(value, int) and not isinstance(value, bool) else []
+    if "target" in ref:
+        return ctx.target_oids(str(ref["target"]))
+    return [ctx.source_oid] if ctx.source_oid is not None else []
+
+
+def validate_object_ref(ref: Any, where: str) -> None:
+    """Exactly one of `binding`, `self: true` or `target`, naming one object.
+
+    `true` is the tempting miss -- "the first time it has become tapped" reads
+    like a yes/no about the trigger -- and an empty or selector-shaped mapping
+    would silently read 0 for ever, a trigger that never fires.
+    """
+    if not isinstance(ref, Mapping) or len(ref) != 1 or next(iter(ref)) not in OBJECT_REF_KEYS:
+        raise DslError(
+            f"{where}: needs one object reference -- {{'binding': 'subject'}} for "
+            f"the creature a trigger bound, {{'self': true}}, or {{'target': id}} -- "
+            f"got {ref!r}"
+        )
+    key, value = next(iter(ref.items()))
+    if key == "self" and value is not True:
+        raise DslError(f"{where}.self: must be true, got {value!r}")
+    if key != "self" and (not isinstance(value, str) or not value):
+        raise DslError(f"{where}.{key}: must name a {key}, got {value!r}")
 
 
 def _paid_object_value(ctx: EffectContext, key: Any, which: str) -> int:
@@ -1292,6 +1343,8 @@ def validate_value(expr: Any, where: str) -> None:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "counters_on" in expr:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
+    if "times_tapped_this_turn" in expr:
+        validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
     if "attack_power_this_combat" in expr:
         who = expr["attack_power_this_combat"]
         if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
