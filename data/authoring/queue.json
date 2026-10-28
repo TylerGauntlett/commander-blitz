@@ -193842,12 +193842,12 @@
     },
     "Orbs of Warding": {
       "edhrec_rank": 13000,
-      "gate": "template",
+      "gate": null,
       "name": "Orbs of Warding",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "c33ba4e5-217f-47e3-a6ce-f935a70c7566",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orbweaver Kumo": {

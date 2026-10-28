@@ -8840,6 +8840,10 @@
   "orb_of_dreams": {
     "zone": "battlefield"
   },
+  "orbs_of_warding": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "order_of_the_sacred_bell": {
     "zone": "battlefield"
   },

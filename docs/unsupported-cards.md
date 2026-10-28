@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**92 cards** blocked by **75** capabilities.
+**91 cards** blocked by **74** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -66,7 +66,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
-| [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
@@ -996,20 +995,6 @@ Blocks **1** card.
 
 - **Spider-Man 2099** (rank 7924) — `spider_man_2099`
   - At the beginning of your end step, if you've played a land or cast a spell this turn from anywhere other than your hand, Spider-Man 2099 deals damage equal to his power to any target.
-
-</details>
-
-## player-damage-prevention
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static that prevents N of each damage event dealt to a seat (affects_player: you), narrowed by a damage_source filter on the dealer (types: [Creature]) -- absorb N for a player, keyed on the source's printed characteristics
-  <br>Why the existing vocabulary won't do: The 'prevent_damage' static reads only 'affects' (permanents) via characteristics.prevented_damage and never applies to damage dealt to a player, and takes no damage_source; 'prevent_all_but' reaches a seat but caps damage at N rather than subtracting N, and has no dealer filter; 'damage_source' is accepted only on 'replace_damage', whose damage_multiplier must be 2 or more
-
-<details><summary>Cards waiting on this</summary>
-
-- **Orbs of Warding** (rank 13000) — `orbs_of_warding`
-  - If a creature would deal damage to you, prevent 1 of that damage.
 
 </details>
 

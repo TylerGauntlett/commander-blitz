@@ -99542,6 +99542,39 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "player_hexproof",
+          "kind": "static",
+          "text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)"
+        },
+        {
+          "affects_player": "you",
+          "amount": 1,
+          "damage_source": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "prevent_damage",
+          "kind": "static",
+          "text": "If a creature would deal damage to you, prevent 1 of that damage."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "orbs_of_warding",
+      "mana_cost": "{5}",
+      "name": "Orbs of Warding",
+      "oracle_text": "You have hexproof. (You can't be the target of spells or abilities your opponents control.)\nIf a creature would deal damage to you, prevent 1 of that damage.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
