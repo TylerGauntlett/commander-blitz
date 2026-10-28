@@ -197482,12 +197482,12 @@
     },
     "Panther Habit": {
       "edhrec_rank": 13733,
-      "gate": "template",
+      "gate": null,
       "name": "Panther Habit",
-      "reason": "no template for: If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 co",
+      "reason": "",
       "scryfall_id": "111f2e18-43b7-4a80-b53a-ed1cc14e500d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Panther Pounce": {

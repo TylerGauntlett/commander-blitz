@@ -9018,6 +9018,10 @@
   "palladium_myr": {
     "zone": "battlefield"
   },
+  "panther_habit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "panther_robot": {
     "battlefield_count": 33,
     "zone": "battlefield"

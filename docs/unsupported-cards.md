@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**94 cards** blocked by **78** capabilities.
+**93 cards** blocked by **77** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -71,7 +71,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
-| [prevent-damage-into-counters](#prevent-damage-into-counters) | 1 | 13733 | replacement |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
@@ -1069,20 +1068,6 @@ Blocks **1** card.
 
 - **Jace Reawakened** (rank 7506) — `jace_reawakened`
   - +1: You may exile a nonland card with mana value 3 or less from your hand. If you do, it becomes plotted.
-
-</details>
-
-## prevent-damage-into-counters
-
-Blocks **1** card.
-
-- **(replacement)** a static replacement on the permanents a filter names (here `affects: {attached: true}`) that prevents all damage that would be dealt to each of them and, as part of the same replacement (no trigger, no stack), puts that many counters of a named kind (+1/+1) on the creature that would have been dealt the damage -- e.g. a `prevent_damage` static option `counters_instead: {"counter": "+1/+1"}`
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static prevents damage to the affected permanents but carries nothing that does anything with the prevented amount; `replace_damage` is only a multiplier; and the `damage_prevented` trigger event is scoped to the player half (Selfless Squire, damage dealt to you), exposes no value for the prevented amount, and would in any case be a triggered ability using the stack rather than the printed replacement, so the counters would arrive late (on the stack, respondable, after state-based actions) instead of as the damage event is replaced
-
-<details><summary>Cards waiting on this</summary>
-
-- **Panther Habit** (rank 13733) — `panther_habit`
-  - If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 counters on it.
 
 </details>
 

@@ -101581,6 +101581,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "counter": "+1/+1",
+          "effect": "prevent_damage",
+          "kind": "static",
+          "prevent_all": true,
+          "text": "If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 counters on it"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "panther_habit",
+      "mana_cost": "{4}",
+      "name": "Panther Habit",
+      "oracle_text": "If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 counters on it.\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "cost_reduction": {
