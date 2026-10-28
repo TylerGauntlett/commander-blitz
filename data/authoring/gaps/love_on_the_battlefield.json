@@ -1,0 +1,18 @@
+{
+  "card_id": "love_on_the_battlefield",
+  "name": "Love on the Battlefield",
+  "oracle_text": "Whenever you attack with exactly two creatures, those creatures gain first strike until end of turn, then draw a card. Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.",
+  "blocked_sentences": [
+    "Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "delayed_trigger_this_combat",
+      "kind": "engine",
+      "what": "a `this_combat` duration for the event-watching `delayed_trigger` op: a subscription created by a resolving attack trigger, scoped to the attacking creatures (the `attackers` binding, as `trigger.subject`), firing on each `deals_combat_damage_to_player` by one of them and putting a +1/+1 counter on that dealer (the event's `subject` binding), and struck off when the current combat phase ends rather than at cleanup",
+      "why_existing_wont_do": "`delayed_trigger` accepts only the durations in DELAYED_DURATIONS (this_turn, until_it_fires, once_this_turn, until_your_next_turn). `this_turn` (Tamiyo, Field Researcher's shape) would keep firing in an extra combat later in the turn, where the printed card gives no counter; `once_this_turn`/`until_it_fires` would stop after the first of the two creatures connects. `this_combat` exists only as an AttackRestriction duration. The packet's `trigger_keys` also do not list `subject`, so the scoping to \"either of those creatures\" is not in the advertised vocabulary either. The first sentence (you_attack with count of attackers == 2, grant_keyword first_strike on the attackers binding, draw) is expressible on its own."
+    }
+  ],
+  "closest_existing": ["delayed_trigger"],
+  "confidence": "high"
+}

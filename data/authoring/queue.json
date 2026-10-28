@@ -139902,12 +139902,12 @@
     },
     "Iron Man, Armored Avenger": {
       "edhrec_rank": 9577,
-      "gate": "schema",
+      "gate": null,
       "name": "Iron Man, Armored Avenger",
-      "reason": "1 validation error for CardModel",
+      "reason": "",
       "scryfall_id": "94af0633-59c6-4893-ab44-232d37573dde",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iron Man, Bleeding Edge": {
@@ -165482,12 +165482,12 @@
     },
     "Make Your Move": {
       "edhrec_rank": 6370,
-      "gate": "template",
+      "gate": null,
       "name": "Make Your Move",
-      "reason": "no template for: Destroy target artifact, enchantment, or creature with power 4 or greater",
+      "reason": "",
       "scryfall_id": "05fa34df-99b0-4121-b2f1-d41afe97b200",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Make Your Own Luck": {
@@ -172412,12 +172412,12 @@
     },
     "Methods of the Mighty": {
       "edhrec_rank": 16965,
-      "gate": "template",
+      "gate": null,
       "name": "Methods of the Mighty",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "b0a2eccc-afa7-453c-8d8e-df10e90f6e1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Meticulous Archive": {
@@ -198742,12 +198742,12 @@
     },
     "Patriot, Shield Wielder": {
       "edhrec_rank": 19533,
-      "gate": "template",
+      "gate": null,
       "name": "Patriot, Shield Wielder",
-      "reason": "no template for: {2}, {T}: Another target creature you control gets +2/+0 and gains hexproof until end of t",
+      "reason": "",
       "scryfall_id": "1467d7c9-00d8-43f1-b4e7-a279d2b10503",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Patriot, Young Avenger": {
@@ -201262,12 +201262,12 @@
     },
     "Photon, Mighty Marvel": {
       "edhrec_rank": 15761,
-      "gate": "template",
+      "gate": null,
       "name": "Photon, Mighty Marvel",
-      "reason": "no template for: Whenever Photon deals combat damage to a player, add that much mana of any one color. Unti",
+      "reason": "",
       "scryfall_id": "09e4d824-b01b-4bf8-8b08-3ba94657b580",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phthisis": {
@@ -204302,12 +204302,12 @@
     },
     "Plaza of Heroes": {
       "edhrec_rank": 499,
-      "gate": "template",
+      "gate": null,
       "name": "Plaza of Heroes",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a legendary spell",
+      "reason": "",
       "scryfall_id": "2375d88b-b49f-43b2-a4cd-bfa2c9faa879",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plea for Guidance": {

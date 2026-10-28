@@ -6306,6 +6306,10 @@
   "iron_giant": {
     "zone": "battlefield"
   },
+  "iron_man_armored_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "iron_myr": {
     "zone": "battlefield"
   },
@@ -7464,6 +7468,10 @@
     },
     "zone": "graveyard"
   },
+  "make_your_move": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "makindi_aeronaut": {
     "zone": "battlefield"
   },
@@ -7895,6 +7903,10 @@
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
+  },
+  "methods_of_the_mighty": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "meticulous_archive": {
     "zone": "battlefield"
@@ -9150,6 +9162,10 @@
   "path_of_ancestry": {
     "zone": "battlefield"
   },
+  "patriot_shield_wielder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "patron_of_the_vein": {
     "battlefield_count": 33,
     "counters": {
@@ -9242,6 +9258,10 @@
     "zone": "battlefield"
   },
   "phoenix_down": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "photon_mighty_marvel": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9350,6 +9370,10 @@
     "zone": "battlefield"
   },
   "plated_wurm": {
+    "zone": "battlefield"
+  },
+  "plaza_of_heroes": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "plover_knights": {
