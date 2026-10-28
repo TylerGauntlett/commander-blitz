@@ -38,7 +38,7 @@ from typing import Any
 from ..characteristics import _matches_printed, chars, min_count, min_life
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
-from ..objects import PLUS_ONE, SHIELD, STUN
+from ..objects import FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
 from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
 
@@ -977,6 +977,15 @@ def validate_counter_kind(kind: Any, where: str) -> None:
         raise DslError(
             f"{where}: write the stun counter as {STUN!r}, not {kind!r}. A stun "
             f"counter replaces untapping (122.1d) and the lookup is exact"
+        )
+    if normalised != kind and normalised == FINALITY:
+        # Read by `zones.move_object` (122.1g), which compares the kind exactly;
+        # `"Finality"` would leave the returned permanent free to die and be
+        # returned again, which is the loop the counter exists to close.
+        raise DslError(
+            f"{where}: write the finality counter as {FINALITY!r}, not {kind!r}. A "
+            f"finality counter exiles a permanent that would go to a graveyard "
+            f"(122.1g) and the lookup is exact"
         )
     if normalised != kind and normalised in KEYWORD_COUNTERS:
         raise DslError(

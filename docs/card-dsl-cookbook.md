@@ -8321,6 +8321,27 @@ is already untapped is not becoming untapped, so its counter waits. The spelling
 is exact and the loader refuses `"Stun"` and `"stun counter"`, as it refuses a
 near-miss shield counter.
 
+## Finality counters
+
+```jsonc
+// Shuri's Fabricator: "Return target artifact card from your graveyard to the
+// battlefield with a finality counter on it."
+{ "op": "return_from_graveyard", "objects": { "target": "t1" },
+  "destination": "battlefield", "controller": "you", "counters": { "finality": 1 } }
+```
+
+Rule 122.1g's kind: if a permanent with a finality counter on it would be put
+into a graveyard from the battlefield, it is exiled instead. `zones.move_object`
+reads it on every battlefield-to-graveyard move, so destruction, sacrifice and 0
+toughness are all covered, and the counter is never spent. It is a replacement,
+so the permanent does not die and no dies trigger fires; a bounce or a tuck is
+not a move to a graveyard and is untouched. It counts as the affected player's
+own replacement, so `replace_dies` (Kalitas) does not apply to it, and a
+commander still goes to the command zone. Any op that places counters can put
+one: `add_counters`, an enters-with, or `return_from_graveyard`'s `counters` map
+as above. The spelling is exact and the loader refuses `"Finality"` and
+`"finality counter"`, as it refuses a near-miss stun counter.
+
 ## Energy
 
 Energy (107.14) is a counter on a **player**, held in `PlayerState.energy`

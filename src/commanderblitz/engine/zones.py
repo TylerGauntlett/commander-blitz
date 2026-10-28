@@ -22,7 +22,7 @@ from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .mana import OTHER_PAYMENT
-from .objects import GameObject
+from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
 from .triggers import fire
 
@@ -205,6 +205,23 @@ def move_object(
     ):
         to_zone = Zone(obj.dies_to)
         target_player = owner
+
+    # "If a permanent with a finality counter on it would be put into a
+    # graveyard from the battlefield, exile it instead" (122.1g) -- Shuri's
+    # Fabricator. On the counter rather than the card, so it works on whatever
+    # carries one and `move_counters` and `proliferate` need nothing. The
+    # counter is read, never spent: one is as good as five. Gated like
+    # `dies_to` -- battlefield to graveyard -- and for the same reason placed
+    # after the commander replacement, which leaves nothing here to replace.
+    # `_dies_replacement` defers to it as the affected player's own (616.1).
+    if (
+        from_zone is Zone.BATTLEFIELD
+        and to_zone is Zone.GRAVEYARD
+        and obj.counter(FINALITY) > 0
+    ):
+        to_zone = Zone.EXILE
+        target_player = owner
+        cause = cause or "graveyard_replaced"
 
     # "…or **if it would leave the battlefield**" -- unearth. The whole
     # departure and not just the death: bounced, exiled, shuffled away, sent to
@@ -1053,8 +1070,8 @@ def _dies_replacement(
     filter language every static speaks.
 
     **The affected player's own replacements come first** (616.1). A creature
-    under `dies_to` or `leaves_to`, or one a `replace_graveyard` would also
-    exile, belongs to a player who would apply that one and leave nothing dying
+    under `dies_to` or `leaves_to`, one carrying a finality counter (122.1g),
+    or one a `replace_graveyard` would also exile, belongs to a player who would apply that one and leave nothing dying
     for Kalitas to make a Zombie from, so this does not apply to it. That is the
     choice the engine makes for them without asking, as it does for the
     commander replacement.
@@ -1065,7 +1082,7 @@ def _dies_replacement(
     death -- the event is no longer a death once one has (614.5) -- and the
     first in battlefield order is the one taken.
     """
-    if obj.dies_to or obj.leaves_to:
+    if obj.dies_to or obj.leaves_to or obj.counter(FINALITY) > 0:
         return None
     # Looked up per call: tests patch `characteristics._battlefield_statics`.
     from .characteristics import _battlefield_statics, _matches
