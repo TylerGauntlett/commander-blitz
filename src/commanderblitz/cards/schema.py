@@ -846,6 +846,13 @@ class AbilityModel(BaseModel):
     #: player and attacking a planeswalker is not attacking its controller
     #: (506.2).
     or_planeswalkers: bool = False
+    #: ``cant_attack_you``: the wall stands in front of the static's controller
+    #: **only**, not their planeswalkers or battles -- Queen Mother Ramonda's
+    #: "creatures with power 2 or less can't attack you". Off by default,
+    #: because the effect's first sentence (Combat Calligrapher) says "you or
+    #: planeswalkers you control" out loud; a sentence naming only "you" is
+    #: 506.2's reading, under which attacking a walker is not attacking you.
+    player_only: bool = False
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no

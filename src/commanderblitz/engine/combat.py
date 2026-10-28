@@ -425,8 +425,9 @@ def _attack_prohibited(
     # split, because the split would be a per-type prohibition list built for a
     # card that does not exist, and the over-reading is in the safe direction --
     # a battle that cannot be attacked is inert, where one that could be
-    # attacked around a printed prohibition is a rules error.
-    return attack_defender_forbidden(state, oid, defender)
+    # attacked around a printed prohibition is a rules error. A `player_only`
+    # wall ("can't attack you", Queen Mother Ramonda) reaches neither.
+    return attack_defender_forbidden(state, oid, defender, permanent=permanent)
 
 
 def required_attack_walkers(state: GameState, oid: int) -> set[int]:

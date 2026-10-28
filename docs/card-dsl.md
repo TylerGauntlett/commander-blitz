@@ -1547,6 +1547,35 @@ to attack owes nothing it cannot legally do. `affects` is required at load time 
 `_matches` reads a missing filter as "matches nothing", so a wall without one
 loads clean, prints on the card and stops nobody.
 
+**`player_only: true`** is the sentence that names only "you":
+
+```jsonc
+// Queen Mother Ramonda
+{ "kind": "static",
+  "text": "As long as you're the monarch, creatures with power 2 or less can't attack you.",
+  "effect": "cant_attack_you",
+  "player_only": true,
+  "affects": { "controller": "any", "types": ["Creature"],
+               "power": { "op": "<=", "value": 2 } },
+  "condition": { "is_monarch": "you" } }
+```
+
+The wall then stands in front of the seat alone, and the controller's
+planeswalkers and battles stay attackable (506.2: attacking a permanent is not
+attacking its controller). Without the key the same line also closes every
+walker and battle — a strictly stronger card that looks normal on screen. It is
+the opposite default from `attack_tax`'s `or_planeswalkers` because each effect
+defaults to the sentence it was built for: Propaganda names only the player,
+Combat Calligrapher names the walkers too. Refused on any static but
+`cant_attack_you`.
+
+`affects` reads the attacker **as it now is** — current power, types and
+subtypes after every layer — because a prohibition on declaring attackers is no
+layer (613). "Creatures with power 2 or less" is checked when the attack is
+declared, so an anthem lifts a 2/2 over Ramonda's wall and a shrink drops a 6/6
+under it. The `condition` is an ordinary static condition, read live: the wall
+falls the moment the crown moves.
+
 ### Which creatures attacked this turn, and how many
 
 Two spellings of one record, and neither is interchangeable with a near miss.

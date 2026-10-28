@@ -499,7 +499,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `cant_activate_abilities` | yes |  | The player can't activate matching abilities. | [Static abilities](card-dsl.md#static-abilities) |
 | `cant_attack` |  | yes | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` |  | yes | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
-| `cant_attack_you` |  | yes | Matching creatures can't attack you or your planeswalkers. | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
+| `cant_attack_you` |  | yes | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` |  | yes | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` |  | yes | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_cast_spells` | yes |  | The player can't cast matching spells. | [Static abilities](card-dsl.md#static-abilities) |
@@ -638,7 +638,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `cant_attack` | Matching creatures can't attack. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_attack_alone` | Matching creatures can't attack alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
-| `cant_attack_you` | Matching creatures can't attack you or your planeswalkers. | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
+| `cant_attack_you` | Matching creatures can't attack you or your planeswalkers (`player_only`: you alone). | [Forbidding an attack on you rather than pricing it](card-dsl.md#forbidding-an-attack-on-you-rather-than-pricing-it) |
 | `cant_block` | Matching creatures can't block. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `cant_block_alone` | Matching creatures can't block alone. | [Can't attack or block alone](card-dsl-cookbook.md#cant-attack-or-block-alone) |
 | `cant_have_counters` | Matching permanents can't have counters of the kind put on them. | [cant_have_counters — a placement that doesn't happen](card-dsl-cookbook.md#cant_have_counters--a-placement-that-doesnt-happen) |

@@ -807,12 +807,14 @@ def attack_forbidden(state: GameState, oid: int) -> bool:
     return False
 
 
-def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool:
+def attack_defender_forbidden(
+    state: GameState, oid: int, defender: int, *, permanent: int | None = None
+) -> bool:
     """May this creature **not** attack ``defender``, or a planeswalker they control?
 
     Combat Calligrapher -- "Inklings can't attack you or planeswalkers you
     control." A prohibition that is a *continuous ability of a permanent*,
-    scoped to one seat and filtered on the attacking creature's printed
+    scoped to one seat and filtered on the attacking creature's
     characteristics. None of the three near misses is that shape.
 
     Written as `attack_tax`'s twin, with the price taken out: `affects` says
@@ -837,6 +839,17 @@ def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool
     inferred. A planeswalker's controller **is** the defending player (506.2)
     and `combat.legal_permanent_defenders` passes it, so the one seat test
     below covers the walker as well as the chair, exactly as goad's does.
+
+    ``player_only`` on the static takes the walkers back out, for the sentence
+    that names only "you" -- Queen Mother Ramonda's "creatures with power 2 or
+    less can't attack you". ``permanent`` is the planeswalker or battle being
+    attacked, ``None`` for an attack on the player, and such a static is
+    consulted only for the latter (506.2, 508.1).
+
+    The filter reads the attacker **as it now is** (``derived``): a restriction
+    on declaring attackers is no layer (613), and "creatures with power 2 or
+    less" is a fact about the creature at declaration -- an anthem lifts a 2/2
+    over the wall, a shrink drops a 4/4 under it.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -848,7 +861,9 @@ def attack_defender_forbidden(state: GameState, oid: int, defender: int) -> bool
         # `attack_tax` already draws, and the whole shape of the family.
         if source_obj.controller != defender:
             continue
-        if _matches(state, obj, source_obj, static.get("affects")):
+        if permanent is not None and static.get("player_only"):
+            continue
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
             return True
     return False
 

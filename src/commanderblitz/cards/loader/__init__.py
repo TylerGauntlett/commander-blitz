@@ -4392,6 +4392,15 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'or_planeswalkers' only means anything on an attack_tax, "
             f"not on {model.effect!r}"
         )
+    if model.player_only and model.effect != "cant_attack_you":
+        # "...can't attack you" with the walkers left open is a clause of the
+        # wall and of nothing else; `attack_tax` already reaches only the
+        # player unless told otherwise, and on any other static the key would
+        # load, print and change nothing.
+        raise DslError(
+            f"{where}: 'player_only' only means anything on a cant_attack_you, "
+            f"not on {model.effect!r}"
+        )
 
     for field_name in ("power", "toughness", "amount"):
         value = getattr(model, field_name)
@@ -4932,6 +4941,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.or_planeswalkers:
         static["or_planeswalkers"] = True
+    if model.player_only:
+        static["player_only"] = True
     if model.effect in ("spell_cost_increase", "granted_alternative_cost"):
         # Pruned like the two above, so the mapping `player_statics.spell_life_tax`
         # and `player_statics.granted_alternative_cost` read carries nothing the

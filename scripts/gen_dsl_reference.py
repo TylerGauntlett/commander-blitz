@@ -733,7 +733,8 @@ STATICS: dict[str, Entry] = {
     "cant_activate_abilities": ("The player can't activate matching abilities.", None),
     "cant_attack": ("Matching creatures can't attack.", H_LANDWALK),
     "cant_attack_alone": ("Matching creatures can't attack alone.", "Can't attack or block **alone**"),
-    "cant_attack_you": ("Matching creatures can't attack you or your planeswalkers.",
+    "cant_attack_you": ("Matching creatures can't attack you or your planeswalkers "
+                        "(`player_only`: you alone).",
                         "Forbidding an attack on you rather than pricing it"),
     "cant_block": ("Matching creatures can't block.", H_LANDWALK),
     "cant_block_alone": ("Matching creatures can't block alone.", "Can't attack or block **alone**"),
