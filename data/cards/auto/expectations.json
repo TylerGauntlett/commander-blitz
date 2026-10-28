@@ -8304,6 +8304,10 @@
     },
     "zone": "graveyard"
   },
+  "niv_mizzet_ghost_counsel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "no_dachi": {
     "zone": "battlefield"
   },

@@ -10346,6 +10346,30 @@ silently *becomes* the card's real maximum.
 it would charge {0}), as is `x` without an `{X}`, without `as`, on any op but a
 `may` with a `pay`, and beside `repeat`, `pay.times` or `pay.mana_reduction`.
 
+### "You may pay that much life. If you do…"
+
+`pay_life` in a `pay` may be a value expression, and inside a `may` it is read
+as the `may` resolves, in that effect's context — so a trigger's bindings are in
+hand and "that much" is the life the trigger saw gained:
+
+```jsonc
+// Niv-Mizzet, Ghost Counsel: whenever you gain life, you may pay that much life.
+//                            If you do, draw that many cards.
+{ "op": "may", "pay": { "pay_life": { "binding": "amount" } },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "binding": "amount" } } ] }
+```
+
+The price is fixed to a whole number before the affordability check, so the
+check and the charge see one price. 119.4: more life than the player has is not
+offered and the `effects` do not run; paying down to exactly 0 is allowed, and a
+price of 0 is always paid. A life total that can't change refuses any price above
+0. Outside a `may` (an activated ability's cost, War Room) the expression has no
+bindings to read.
+
+The near miss is a `may` around `lose_life`: losing life is not paying it, so it
+is offered at any life total and to a player whose life can't change. `pay.times`
+scales only the mana half. A malformed expression is a load error.
+
 ### "You may pay any amount of {R}. When you do…"
 
 `any_amount` is the count of a `pay` that is **one coloured symbol** (or

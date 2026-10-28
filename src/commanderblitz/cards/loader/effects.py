@@ -886,6 +886,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(f"{where}: 'x' announces the {{X}} of 'pay', and its mana has none")
         if "x" in effect:
             _validate_pay_x(effect, where)
+        if isinstance(life := effect["pay"].get("pay_life"), dict):
+            # "You may pay that much life" -- Niv-Mizzet, Ghost Counsel. A value
+            # expression read when the `may` resolves, with the trigger's
+            # bindings in hand; validated here so a misspelt expression is a
+            # load error rather than a price of 0 and a free "if you do".
+            validate_value(life, f"{where}.pay.pay_life")
         if (times := effect["pay"].get("times")) is not None:
             # Cumulative upkeep's multiplier. It scales the *mana* half and
             # nothing else, so a `times` beside a cost with no mana would load

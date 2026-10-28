@@ -92464,6 +92464,88 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": {
+                  "binding": "amount"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life, you may pay that much life. If you do, draw that many cards.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Each opponent loses 1 life and you gain 1 life."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "niv_mizzet_ghost_counsel",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}{B}{B}",
+      "name": "Niv-Mizzet, Ghost Counsel",
+      "oracle_text": "Flying\nWhenever you gain life, you may pay that much life. If you do, draw that many cards.\n{T}: Each opponent loses 1 life and you gain 1 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

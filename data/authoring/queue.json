@@ -187912,12 +187912,12 @@
     },
     "Niv-Mizzet, Ghost Counsel": {
       "edhrec_rank": 24283,
-      "gate": "template",
+      "gate": null,
       "name": "Niv-Mizzet, Ghost Counsel",
-      "reason": "no template for: Whenever you gain life, you may pay that much life. If you do, draw that many cards",
+      "reason": "",
       "scryfall_id": "0ad0e168-ac5c-4e1b-83f2-0488067a58d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Niv-Mizzet, Guildpact": {

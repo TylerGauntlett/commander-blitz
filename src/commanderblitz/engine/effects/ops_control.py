@@ -80,6 +80,12 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     the effects (typically a ``reflexive_trigger``) to read. Paying none is not
     paying, so 0 is the no and is never offered after the yes. See
     :func:`_announce_amount`.
+
+    A ``pay_life`` value expression is "you may pay **that much** life. If you
+    do, draw that many cards" -- Niv-Mizzet, Ghost Counsel. It is read here, in
+    this effect's context, so ``{"binding": "amount"}`` is the life the trigger
+    saw gained, and fixed to an integer before the affordability check: 119.4
+    refuses more life than the player has, and 0 life is always payable.
     """
 
     players = select_players(ctx, spec.get("player", "you"))
@@ -102,8 +108,20 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
         yield from execute(ctx, spec.get("else") or [])
         return
 
+    life_spec = cost.pay_life if cost is not None and isinstance(cost.pay_life, Mapping) else None
+
     # The same guard `repeat` uses: one pathological board must not hang a game.
     for _ in range(100):
+        if cost is not None and life_spec is not None:
+            # "You may pay **that much** life" -- Niv-Mizzet, Ghost Counsel. A
+            # value-expression life price is read here, in the resolving
+            # effect's context, because that is where the trigger's bindings
+            # live: `costs.life_cost` builds a bare context of its own and would
+            # read `{"binding": "amount"}` as 0, a free draw. Fixed to an
+            # integer before `can_pay`, so the check and the charge see one
+            # price (118.4, 119.4: no more than you have; 0 is always paid).
+            # Inside the loop, so a `repeat` re-reads it each time.
+            cost = replace(cost, pay_life=max(0, int(evaluate_value(ctx, life_spec))))
         if cost is not None and not can_pay(ctx.state, chooser, cost, ctx.source_oid):
             yield from execute(ctx, spec.get("else") or [])
             return

@@ -695,7 +695,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `mana_reduction` | A reduction applied to this ability's mana cost. | [An activated ability that gets cheaper](card-dsl-cookbook.md#an-activated-ability-that-gets-cheaper) |
 | `mill` | Mill N cards off your own library. | [mill — a cost, and never an effect](card-dsl.md#mill--a-cost-and-never-an-effect) |
 | `pay_energy` | Pay N energy ({E}). | [Energy](card-dsl-cookbook.md#energy) |
-| `pay_life` | Pay N life. | [Costs](card-dsl.md#costs) |
+| `pay_life` | Pay N life, or a value expression (inside `may`, read with the effect's bindings). | ["You may pay that much life. If you do…"](card-dsl-cookbook.md#you-may-pay-that-much-life-if-you-do) |
 | `pay_life_x` | Pay X life, X announced. | [Costs](card-dsl.md#costs) |
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |

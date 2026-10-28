@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **88** capabilities.
+**98 cards** blocked by **87** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -70,7 +70,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [pay-life-variable](#pay-life-variable) | 1 | 24283 | cost |
 | [permanent-goad](#permanent-goad) | 1 | 29052 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-damage-prevention](#player-damage-prevention) | 1 | 13000 | static_effect |
@@ -1063,20 +1062,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## pay-life-variable
-
-Blocks **1** card.
-
-- **(cost)** a `may` whose `pay` is `pay_life` priced by a value expression read in the resolving effect's context, so it can read the trigger's `{"binding": "amount"}` (the life just gained) and charge exactly that much life as a payment, with the `effects` (draw that many) running only if it was paid
-  <br>Why the existing vocabulary won't do: `may.pay` accepts a `pay_life` value expression, but `costs` evaluates it in a fresh EffectContext with no trigger bindings, so `{"binding": "amount"}` reads nothing and the payment would be 0 life for a free draw; `pay.times` scales only mana, not life; and a `may` wrapping `lose_life` is not a payment (it ignores can't-pay-life effects such as lock_life_total and the affordability check of 119.4)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Niv-Mizzet, Ghost Counsel** (rank 24283) — `niv_mizzet_ghost_counsel`
-  - Whenever you gain life, you may pay that much life. If you do, draw that many cards.
 
 </details>
 
