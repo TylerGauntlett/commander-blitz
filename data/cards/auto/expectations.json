@@ -345,6 +345,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ancestral_communion": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
+  },
   "ancestral_recall": {
     "hand_size": {
       "0": 4
@@ -1091,6 +1100,10 @@
   "bassara_tower_archer": {
     "zone": "battlefield"
   },
+  "bast_panther_goddess": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bastion_enforcer": {
     "zone": "battlefield"
   },
@@ -1538,6 +1551,9 @@
     "zone": "battlefield"
   },
   "bountiful_landscape": {
+    "zone": "battlefield"
+  },
+  "bountiful_promenade": {
     "zone": "battlefield"
   },
   "bovine_intervention": {
@@ -3173,6 +3189,11 @@
     }
   },
   "dismember": {
+    "zone": "graveyard"
+  },
+  "dispatch": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
   "dispelling_exhale": {
@@ -5323,6 +5344,10 @@
     "zone": "battlefield"
   },
   "greater_basilisk": {
+    "zone": "battlefield"
+  },
+  "greater_good": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "greatsword": {

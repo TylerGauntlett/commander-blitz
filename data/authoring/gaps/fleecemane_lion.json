@@ -1,0 +1,18 @@
+{
+  "card_id": "fleecemane_lion",
+  "name": "Fleecemane Lion",
+  "oracle_text": "{3}{G}{W}: Monstrosity 1. (If this creature isn't monstrous, put a +1/+1 counter on it and it becomes monstrous.)\nAs long as this creature is monstrous, it has hexproof and indestructible.",
+  "blocked_sentences": [
+    "As long as this creature is monstrous, it has hexproof and indestructible."
+  ],
+  "needs": [
+    {
+      "capability": "monstrous_condition",
+      "kind": "static_effect",
+      "what": "a static-condition leaf (e.g. {\"monstrous\": true}) reading GameObject.monstrous on the static's own source, so a grant_keyword static can switch on \"as long as this creature is monstrous\"",
+      "why_existing_wont_do": "The monstrosity op sets GameObject.monstrous, a dedicated field deliberately not folded into `flags`, so the static condition `has_flag` cannot see it; `counters` (+1/+1 >= 1) is wrong because counters can come from elsewhere or be removed; a becomes_monstrous trigger doing set_flag is an unprinted trigger that uses the stack, leaving a window where the creature is monstrous without hexproof/indestructible"
+    }
+  ],
+  "closest_existing": ["has_flag", "monstrosity", "becomes_monstrous"],
+  "confidence": "high"
+}

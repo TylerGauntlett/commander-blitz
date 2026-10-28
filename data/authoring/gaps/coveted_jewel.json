@@ -1,0 +1,18 @@
+{
+  "card_id": "coveted_jewel",
+  "name": "Coveted Jewel",
+  "oracle_text": "When this artifact enters, draw three cards.\n{T}: Add three mana of any one color.\nWhenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it.",
+  "blocked_sentences": [
+    "Whenever one or more creatures an opponent controls attack you and aren't blocked, that player draws three cards and gains control of this artifact. Untap it."
+  ],
+  "needs": [
+    {
+      "capability": "batched_attacks_unblocked",
+      "kind": "trigger_event",
+      "what": "a 'one or more' form of attacks_unblocked: the ATTACKED_UNBLOCKED events emitted together after blockers are declared (combat.py, 509.1h) share one batch id, so a trigger with batched: true, controller: opponent and defending: you fires once per defending-player batch, binding the attacking player as 'that player' for draw and gain_control",
+      "why_existing_wont_do": "attacks_unblocked exists but is not in triggers.BATCHED_EVENTS, so the loader refuses `batched` on it and the trigger would queue once per unblocked creature -- two unblocked attackers would draw six cards and run gain_control twice. creatures_attack_player is batched per defending player but fires at declaration, before blocks, so it cannot ask 'aren't blocked'"
+    }
+  ],
+  "closest_existing": ["attacks_unblocked", "creatures_attack_player"],
+  "confidence": "high"
+}

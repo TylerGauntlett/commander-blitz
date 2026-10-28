@@ -7962,12 +7962,12 @@
     },
     "Ancestral Communion": {
       "edhrec_rank": 17715,
-      "gate": "template",
+      "gate": null,
       "name": "Ancestral Communion",
-      "reason": "no template for: When you cast this spell while you control your commander, copy this spell. You may choose",
+      "reason": "",
       "scryfall_id": "98bac891-0ba4-464c-9943-70b05838d134",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancestral Katana": {
@@ -21512,12 +21512,12 @@
     },
     "Bast, Panther Goddess": {
       "edhrec_rank": 15315,
-      "gate": "template",
+      "gate": null,
       "name": "Bast, Panther Goddess",
-      "reason": "no template for: Bast can't attack or block unless you control three or more creatures",
+      "reason": "",
       "scryfall_id": "331e122e-f2dd-4497-917b-a6111c9eceb9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bastion Enforcer": {
@@ -32502,12 +32502,12 @@
     },
     "Bountiful Promenade": {
       "edhrec_rank": 214,
-      "gate": "template",
+      "gate": null,
       "name": "Bountiful Promenade",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "91ede26e-8784-4631-b9e7-f8f97b2904ac",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bounty Agent": {
@@ -70102,12 +70102,12 @@
     },
     "Dispatch": {
       "edhrec_rank": 470,
-      "gate": "template",
+      "gate": null,
       "name": "Dispatch",
-      "reason": "no template for: Tap target creature",
+      "reason": "",
       "scryfall_id": "99d30a21-b003-4a17-a4c5-97811f230896",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dispel": {
@@ -117332,12 +117332,12 @@
     },
     "Greater Good": {
       "edhrec_rank": 644,
-      "gate": "template",
+      "gate": null,
       "name": "Greater Good",
-      "reason": "no template for: Sacrifice a creature: Draw cards equal to the sacrificed creature's power, then discard th",
+      "reason": "",
       "scryfall_id": "03445cdf-6c4e-4b93-b1c3-7bf3e3bafa33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greater Harvester": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "hatut_zeraze_strike_force",
+  "name": "Hatut Zeraze Strike Force",
+  "oracle_text": "When you cast this spell, copy it for each time you've cast your commander from the command zone this game.\nWhen this creature enters, destroy up to one target artifact or enchantment.",
+  "blocked_sentences": [
+    "When you cast this spell, copy it for each time you've cast your commander from the command zone this game."
+  ],
+  "needs": [
+    {
+      "capability": "commander_cast_count",
+      "kind": "value",
+      "what": "a value counting how many times you have cast your commander(s) from the command zone this game (the number Player.commander_tax already tallies, summed over your commanders), usable as copy_spell's amount on a self-cast trigger",
+      "why_existing_wont_do": "value_keys has spells_cast_this_game and greatest_commander_mana_value but nothing that reads command-zone casts; the engine keeps the tally in Player.commander_tax only for cost computation and no value leaf exposes it"
+    }
+  ],
+  "closest_existing": ["spells_cast_this_game", "copy_spell"],
+  "confidence": "high"
+}
