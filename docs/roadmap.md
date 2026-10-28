@@ -51,7 +51,6 @@ each heading; this table is generated from them.
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
 | [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) | S | high | Read ahead on Sagas (702.155) | 0 |
-| [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) | S | high | Damage divided among targets on a spell (601.2d) | 0 |
 | [Wakanda Forever (Marvel Super Heroes Commander)](#wakanda-forever-marvel-super-heroes-commander) | L | high | nothing | 0 |
 | [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) | L | high | nothing | 0 |
 | [Doom Prevails (Marvel Super Heroes Commander)](#doom-prevails-marvel-super-heroes-commander) | L | high | nothing | 0 |
@@ -153,7 +152,6 @@ each heading; this table is generated from them.
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
-| [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -169,8 +167,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d).
 
 **Ready now, best first:**
 
@@ -285,7 +281,6 @@ same list, and `/extend-roadmap` starts at the top of it.
 **Blocked, and by what:**
 
 - [Reign of Dragons (Foundations Commander)](#reign-of-dragons-foundations-commander) — [Read ahead on Sagas (702.155)](#read-ahead-on-sagas-702155)
-- [Tramplesaurus Rex (Foundations Commander)](#tramplesaurus-rex-foundations-commander) — [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -511,75 +506,6 @@ six gates.
   War only, titled `feat(cards):`; every other read-ahead Saga is left to the
   next `/author-cards` wave, so the review stays one mechanic.
 
-### Damage divided among targets on a spell (601.2d)
-
-Effort **M** · Impact **medium**, Monstrous Onslaught in Tramplesaurus Rex and Pyrokinesis wait on it, and every divided-damage spell after them · Depends on nothing · **In progress**.
-
-#### Today
-
-A spell cannot divide damage among its targets. The `damage` op in
-`engine/effects/ops_life.py` deals its full `amount` to every object its
-selector names, so "4 damage divided as you choose among any number of target
-creatures" would deal 4 to each. The one dividing op is `distribute_counters`
-in `engine/effects/ops_counters.py`, whose division is announced by
-`Game._ask_distribution` as an **activated** ability is put on the stack
-(601.2d via 602.2b) and carried as `bindings["distribution"]`; `Game._cast`
-asks nothing of the kind, and the loader keeps the op to activated abilities
-with a printed amount. [rules-coverage.md](rules-coverage.md) lists
-"dividing damage among targets" under "Not implemented".
-
-Two gap records name the capability, `divided_damage`:
-`data/authoring/gaps/monstrous_onslaught.json`, the last card the Tramplesaurus
-Rex precon lacks, and `data/authoring/gaps/pyrokinesis.json`. Monstrous
-Onslaught also needs its X, "the greatest power among creatures you control
-**as you cast this spell**", fixed at cast time: `extreme_value` reads the
-board only as the spell resolves.
-
-#### The change
-
-1. A `divided` key on the `damage` op (or a sibling op), naming one target spec
-   whose objects share the `amount`. `Game._cast` announces the division after
-   the targets and before payment (601.2d), through the same one-at-a-time
-   `ask_objects` walk `_ask_distribution` uses, every target taking at least one,
-   and records it on the stack item; resolution deals each still-legal target its
-   share and redistributes nothing (608.2b).
-2. A value fixed as the spell is cast, for an amount that 601.2d needs to know
-   before the division: the amount is evaluated at announcement and carried on
-   the stack item rather than re-read on resolution.
-3. The verifier's auto-answer handles the division without a new decision kind,
-   since it composes `ask_objects`.
-4. Harvest Monstrous Onslaught and Pyrokinesis through `/author-cards`, then
-   finish [precon-fdc-tramplesaurus-rex](precon-fdc-tramplesaurus-rex.md),
-   which depends on this item.
-
-It does not touch combat damage assignment (510.1c), which stays as it is.
-
-#### Gate
-
-A unit test under `tests/unit/damage/` that casts a divided-damage spell at two
-and three targets and asserts each target's damage, that every target was
-assigned at least one, that a target made illegal in response loses its share
-without the rest moving, and that the cast-time amount does not change when the
-board does before resolution; `tests/cards` with Monstrous Onslaught and
-Pyrokinesis through the six gates.
-
-#### Decisions
-
-- **One op or a key:** a `divided` key on the `damage` op, naming the target
-  spec whose objects share the `amount`. The effect is damage in every other
-  respect (lifelink, deathtouch, `damage_multiplier`, prevention), and a sibling
-  op would have to re-route all of it.
-- **How the cast-time amount is written:** a field on the divided damage that
-  says its amount is evaluated at announcement, not a general `as_cast` wrapper.
-  601.2d only needs the amount fixed where a division is announced, and a
-  general wrapper would open every value to cast-time reads no other card needs
-  yet.
-- **Scope of the pull request:** one pull request titled `feat(cards):` with the
-  capability, Monstrous Onslaught and Pyrokinesis, and the Tramplesaurus Rex
-  deck written once Monstrous Onslaught lands, so
-  [precon-fdc-tramplesaurus-rex](precon-fdc-tramplesaurus-rex.md) retires in the
-  same pull request. Combat damage assignment (510.1c) is not touched.
-
 ## Decks
 
 ### Reign of Dragons (Foundations Commander)
@@ -605,55 +531,6 @@ Reign of Dragons ships native, card for card, as one batch of
 2. One `/extend-dsl` run per capability the gap records name, in the order
    the most cards elsewhere in the catalog wait on it.
 3. Re-author until `--missing` is empty, then `--write-deck fdc_reign_of_dragons`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
-
-### Tramplesaurus Rex (Foundations Commander)
-
-Effort **S** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Damage divided among targets on a spell (601.2d)](#damage-divided-among-targets-on-a-spell-6012d).
-
-#### Today
-
-Tramplesaurus Rex, the Foundations Commander precon released 2026-10-02, is a
-coming-soon shell on the shelf: its row `fdc_tramplesaurus_rex` is in
-`data/decks/sources.json` and there is no `data/decks/fdc_tramplesaurus_rex.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing fdc_tramplesaurus_rex` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Tramplesaurus Rex ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck fdc_tramplesaurus_rex`, the
    dossier and the archetype, and the deck joins `PRECONS` in
    `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
 4. One `/author-cards` wave over the pending cards the new capabilities reach.
