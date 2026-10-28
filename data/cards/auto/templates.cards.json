@@ -155986,6 +155986,80 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "rhino_4_4_g_trample"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with your commander, if you control an artifact with mana value 4 or greater, create a 4/4 green Rhino creature token with trample.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "exists": {
+                    "binding": "attackers",
+                    "is_commander": true,
+                    "owner": "you"
+                  }
+                },
+                {
+                  "exists": {
+                    "controller": "you",
+                    "mana_value": {
+                      "op": ">=",
+                      "value": {
+                        "const": 4
+                      }
+                    },
+                    "types": [
+                      "Artifact"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              ]
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "w_kabi_shield_of_the_nation",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{G}",
+      "name": "W'Kabi, Shield of the Nation",
+      "oracle_text": "Vigilance\nWhenever you attack with your commander, if you control an artifact with mana value 4 or greater, create a 4/4 green Rhino creature token with trample.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

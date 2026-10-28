@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**103 cards** blocked by **86** capabilities.
+**102 cards** blocked by **85** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -84,7 +84,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [read-ahead](#read-ahead) | 1 | 9305 | keyword |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
-| [rhino-4-4-g-trample](#rhino-4-4-g-trample) | 1 | 19755 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -1264,20 +1263,6 @@ Blocks **1** card.
 
 - **Scolding Administrator** (rank 18369) — `scolding_administrator`
   - Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on this creature.
-
-</details>
-
-## rhino-4-4-g-trample
-
-Blocks **1** card.
-
-- **(token)** a 4/4 green Rhino creature token with trample
-  <br>Why the existing vocabulary won't do: token_ids is closed and has no Rhino; the nearest 4/4 green tokens (beast_4_4_g, phyrexian_beast_4_4_g) are the wrong creature type and lack trample. The trigger itself is expressible (an `attacks` trigger filtered on is_commander + controller you, with an intervening-if `exists` over artifacts you control with mana_value >= 4), so the token is the only missing piece.
-
-<details><summary>Cards waiting on this</summary>
-
-- **W'Kabi, Shield of the Nation** (rank 19755) — `w_kabi_shield_of_the_nation`
-  - Whenever you attack with your commander, if you control an artifact with mana value 4 or greater, create a 4/4 green Rhino creature token with trample.
 
 </details>
 

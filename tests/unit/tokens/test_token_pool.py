@@ -951,3 +951,28 @@ class TestTradingPostsGoatIsAZeroOneWhite:
         assert (plant.power, plant.toughness) == (0, 1)
         assert sorted(plant.colors) == ["G"]
         assert "Goat" not in plant.subtypes
+
+
+class TestWKabisRhinoIsAFourFourGreenTrampler:
+    """W'Kabi, Shield of the Nation: *"…create a 4/4 green Rhino creature token
+    with trample."*
+
+    `beast_4_4_g` and `phyrexian_beast_4_4_g` are the pool's other 4/4 green
+    tokens: the wrong creature type, and neither tramples.
+    """
+
+    def test_it_is_a_four_four_green_rhino_with_trample(self, pool):
+        token = pool.get("rhino_4_4_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Rhino"]
+        assert list(token.keywords) == ["trample"]
+        assert not token.abilities
+
+    def test_the_beast_is_still_a_separate_token(self, pool):
+        beast = pool.get("beast_4_4_g")
+        assert (beast.power, beast.toughness) == (4, 4)
+        assert not beast.keywords
+        assert "Rhino" not in beast.subtypes

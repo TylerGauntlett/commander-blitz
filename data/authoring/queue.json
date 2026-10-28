@@ -308662,12 +308662,12 @@
     },
     "W'Kabi, Shield of the Nation": {
       "edhrec_rank": 19755,
-      "gate": "template",
+      "gate": null,
       "name": "W'Kabi, Shield of the Nation",
-      "reason": "no template for: Whenever you attack with your commander, if you control an artifact with mana value 4 or g",
+      "reason": "",
       "scryfall_id": "9fb292a4-cf71-4aeb-b92e-eab2e3177653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wail of War": {

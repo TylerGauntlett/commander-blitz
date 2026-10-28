@@ -2062,6 +2062,29 @@
       "is_token": true
     },
     {
+      "id": "rhino_4_4_g_trample",
+      "name": "Rhino Token",
+      "oracle_text": "4/4 green Rhino creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rhino"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "keywords": [
+        "trample"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "rogue_2_2_b",
       "name": "Rogue Token",
       "oracle_text": "2/2 black Rogue creature token.",

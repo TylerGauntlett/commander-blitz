@@ -13782,6 +13782,10 @@
   "vulshok_morningstar": {
     "zone": "battlefield"
   },
+  "w_kabi_shield_of_the_nation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wakanda_forever": {
     "library_size": {
       "0": 34
