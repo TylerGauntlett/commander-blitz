@@ -4537,7 +4537,10 @@ which is the whole of the distinction between being tapped and becoming tapped.
 and they are a pair rather than two features: both are decided when the block
 declaration closes, and "isn't blocked" is not an event that happens but the
 absence of one, which only becomes a fact once the declaration is over. Flanking,
-rampage, bushido and frenzy.
+rampage, bushido and frenzy. Every event of one declaration carries the same
+`batch`, so `batched` on `attacks_unblocked` is "whenever **one or more**
+creatures … aren't blocked" (Coveted Jewel, see
+[the cookbook](card-dsl-cookbook.md#whenever-one-or-more---batched)).
 
 `blocks` cannot stand in for either. It fires once per *blocker* and is about
 the blocker, so an attacker blocked by three creatures sees three unrelated

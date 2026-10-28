@@ -361,7 +361,17 @@ STATE_TRIGGER = "state"
 #: `token_created` takes it from `primitives.create_token`, read once per call:
 #: every token one creation makes, the extra ones a `replace_token_creation`
 #: doubler adds and the ones it substitutes, is one batch (603.2c).
-BATCHED_EVENTS = frozenset({"permanent_enters", "leaves_graveyard", "token_created"})
+#:
+#: `attacks_unblocked` takes it from `combat.finish_blockers`: every attacker
+#: left unblocked when one block declaration closes is one batch (509.1h), so
+#: Coveted Jewel's "whenever one or more creatures an opponent controls attack
+#: you and aren't blocked" draws three and changes hands once, not once per
+#: creature. Whom they attack is the trigger's `filter` -- `attacking_player:
+#: "you"` excludes a creature sent at your planeswalker (506.2) -- and the
+#: filter is asked before the batch is spent.
+BATCHED_EVENTS = frozenset(
+    {"permanent_enters", "leaves_graveyard", "token_created", "attacks_unblocked"}
+)
 
 #: Triggers whose subject is an object rather than a player.
 OBJECT_SUBJECT_TRIGGERS = frozenset(

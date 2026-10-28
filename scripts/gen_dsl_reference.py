@@ -135,6 +135,7 @@ H_STATIC_MAGNITUDE = '"+1/+1 for each charge counter on this artifact"'
 H_RECORDING = 'Recording what an op consumed or produced — "this way", "the token"'
 H_MONARCH = "The monarch"
 H_GIFT = "Gift — a promise made to one opponent, for nothing"
+H_BATCHED = '"Whenever **one or more** …" — `batched`'
 H_SPREE = 'Spree — "choose **one or more** additional costs"'
 H_TIERED = "Tiered, and reading back which price was paid"
 H_DREDGE = "Dredge, madness and miracle — replacements that stop to ask"
@@ -657,7 +658,8 @@ STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
 TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "ability_activated": ("An ability is activated.", None),
     "attacks": ("A creature attacks.", None),
-    "attacks_unblocked": ("An attacking creature goes unblocked.", None),
+    "attacks_unblocked": ("An attacking creature goes unblocked; `batched` fires once per block declaration.",
+                          H_BATCHED),
     "becomes_blocked": ("An attacking creature becomes blocked.", None),
     "becomes_level": ("A Class reaches a level.", '"When this Class becomes level N"'),
     "becomes_monarch": ("A player becomes the monarch.", H_MONARCH),

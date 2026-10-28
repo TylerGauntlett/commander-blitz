@@ -7950,8 +7950,35 @@ the events that carry one: `permanent_enters` and `leaves_graveyard` group by
 the effect op or cost payment that moved the objects, and `token_created` by
 the `primitives.create_token` call, so every token one creation makes is one
 group, including the extra ones a `replace_token_creation` doubler adds or the
-ones it substitutes. Two `create_token` ops are two groups. The loader refuses
-`batched` on any other event, where nothing would group it.
+ones it substitutes. Two `create_token` ops are two groups. `attacks_unblocked`
+groups by the block declaration (`combat.finish_blockers`), since every attacker
+is blocked or unblocked at that one instant (509.1h); a second combat is a second
+group. The loader refuses `batched` on any other event, where nothing would group
+it.
+
+"Whenever one or more creatures an opponent controls attack you and aren't
+blocked, that player draws three cards and gains control of this artifact.
+Untap it." (Coveted Jewel)
+
+```jsonc
+"trigger": {"event": "attacks_unblocked", "controller": "opponent",
+            "filter": {"attacking_player": "you"}, "batched": true},
+"effects": [
+  {"op": "draw", "player": {"binding": "event_player"}, "amount": {"const": 3}},
+  {"op": "gain_control", "player": {"binding": "event_player"},
+   "objects": {"zone": "battlefield", "self_only": true}},
+  {"op": "untap", "objects": {"zone": "battlefield", "self_only": true}}
+]
+```
+
+`controller` reads the attacking creature's controller and `attacking_player:
+"you"` says it attacks *you*, not a planeswalker you control (506.2); both are
+asked of each creature before the group is spent, so a creature sent at your
+walker cannot use up the one firing. "That player" is `event_player`, the
+attacking creature's controller. `creatures_attack_player` with `defending:
+"you"` is the near miss: it is batched already but fires as attackers are
+declared, before anything has blocked, and its `defending` also counts your
+planeswalkers.
 
 ## "Enters with a counter on it **for each** …"
 

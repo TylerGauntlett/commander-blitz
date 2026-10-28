@@ -1377,6 +1377,14 @@ def finish_blockers(state: GameState) -> None:
     #
     # Outside the `if combat.blockers` guard on purpose: the unblocked half is
     # the case where that guard is false, and frenzy is printed for exactly it.
+    #
+    # One `batch` for the whole declaration, because every attacker becomes
+    # blocked or stays unblocked at the same instant (509.1h). It is what a
+    # `batched` "whenever one or more creatures … attack you and aren't
+    # blocked" (Coveted Jewel) groups by: one firing however many got through,
+    # and a second combat is a second batch. See `triggers.BATCHED_EVENTS`.
+    state.event_batch += 1
+    batch = state.event_batch
     for attacker_oid in sorted(combat.attackers):
         if attacker_oid in combat.removed:
             continue
@@ -1396,6 +1404,7 @@ def finish_blockers(state: GameState) -> None:
             # so the count is the number and the card does the arithmetic.
             blockers=len(blocking_it),
             defender=combat.attackers[attacker_oid],
+            batch=batch,
         )
 
 

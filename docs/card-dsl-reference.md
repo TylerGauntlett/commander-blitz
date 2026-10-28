@@ -393,7 +393,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 |---|---|---|---|
 | `ability_activated` | `ability_activated` | An ability is activated. | [Triggers](card-dsl.md#triggers) |
 | `attacks` | `attacks` | A creature attacks. | [Triggers](card-dsl.md#triggers) |
-| `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked. | [Triggers](card-dsl.md#triggers) |
+| `attacks_unblocked` | `attacked_unblocked` | An attacking creature goes unblocked; `batched` fires once per block declaration. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `becomes_blocked` | `became_blocked` | An attacking creature becomes blocked. | [Triggers](card-dsl.md#triggers) |
 | `becomes_level` | `became_level` | A Class reaches a level. | ["When this Class becomes level N"](card-dsl-cookbook.md#when-this-class-becomes-level-n) |
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
