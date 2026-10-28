@@ -620,6 +620,14 @@ export const DECISION_AUDIT: readonly DecisionRow[] = [
     today: ["dialog"],
     journeys: ["ChooseAMode"],
   },
+  {
+    kind: "choose_mode",
+    purpose: "read_ahead",
+    asks: "Which chapter the Saga starts on",
+    of: "labels",
+    today: ["dialog"],
+    journeys: ["ChooseAMode"],
+  },
 
   // ---------------------------------------------------------- the others
   {

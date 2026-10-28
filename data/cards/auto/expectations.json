@@ -12585,6 +12585,17 @@
     },
     "zone": "graveyard"
   },
+  "the_elder_dragon_war": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "life": {
+      "0": 40,
+      "1": 38
+    },
+    "zone": "battlefield"
+  },
   "the_emperor_of_palamecia_the_lord_master_of_hell": {
     "battlefield_count": 33,
     "zone": "battlefield"

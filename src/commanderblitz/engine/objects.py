@@ -333,6 +333,15 @@ class GameObject:
     #: Survives `reset_permanent_state` for `enters_cost_paid`'s reason: that
     #: reset runs during the very move this answer has to be read in.
     riot_choice: str | None = None
+    #: Read ahead (702.155): the chapter number this arrival's controller chose,
+    #: recorded by `zones.offer_read_ahead` just before the move and read -- and
+    #: cleared -- by `_enter_battlefield`, which puts that many lore counters on
+    #: in place of the one every Saga enters with, and tells `sagas.entered`
+    #: which chapters were skipped. ``None`` is "nobody was asked", which enters
+    #: the Saga at chapter I: a token, or an arrival on a route that cannot stop.
+    #:
+    #: Survives `reset_permanent_state` for `riot_choice`'s reason.
+    read_ahead_chapter: int | None = None
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.

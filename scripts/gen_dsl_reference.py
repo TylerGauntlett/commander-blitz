@@ -1022,6 +1022,7 @@ KEYWORDS: dict[str, Entry] = {
     "phasing": ("Phasing.", 'Phasing — "does not exist", said by not being in a list'),
     "plainswalk": ("Plainswalk.", H_LANDWALK),
     "reach": ("Reach.", None),
+    "read_ahead": ("Read ahead; a Saga's starting chapter, chosen as it enters.", "Read ahead"),
     "riot": ("Riot.", "Riot"),
     "shadow": ("Shadow.", "Fear, intimidate, horsemanship, shadow and nonbasic landwalk"),
     "shroud": ("Shroud.", "Shroud, which is the third member of that family"),
