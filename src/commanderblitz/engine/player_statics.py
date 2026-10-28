@@ -2384,8 +2384,10 @@ def _matches_damage_source(
     obj: GameObject,
     source_obj: GameObject,
     dealer: Mapping[str, Any],
+    *,
+    derived: bool = False,
 ) -> bool:
-    """Does ``obj`` answer a `replace_damage` static's ``damage_source``?
+    """Does ``obj`` answer a damage static's ``damage_source``?
 
     `_matches` everywhere else, with one widening: a filter naming **only**
     ``controller`` is "a source you control" and is answered off the dealer's
@@ -2409,6 +2411,12 @@ def _matches_damage_source(
 
     An **empty** filter is not this -- ``{}`` falls through to `_matches`,
     where the default ``controller: "you"`` makes it "a permanent you control".
+
+    ``derived`` is `_matches`' own: the characteristics the dealer has *now*,
+    after every layer. `replace_damage` reads the printed face;
+    `prevented_player_damage` reads the derived one, because "if a creature
+    would deal damage to you" asks about a creature-land that is animated and
+    not about one that is not.
     """
     if set(dealer) == {"controller"}:
         who = str(dealer.get("controller") or "you")
@@ -2417,7 +2425,7 @@ def _matches_damage_source(
         if who == "opponent":
             return obj.controller != source_obj.controller
         return True
-    return _matches(state, obj, source_obj, dealer)
+    return _matches(state, obj, source_obj, dealer, derived=derived)
 
 
 def damage_multiplier(
@@ -2525,6 +2533,49 @@ def damage_cap(
         value = max(0, _static_value(state, static.get("amount"), source_obj))
         cap = value if cap is None else min(cap, value)
     return cap
+
+
+def prevented_player_damage(
+    state: GameState, pid: int, source_oid: int | None, *, is_combat: bool = False
+) -> int:
+    """How much of one damage event to the **player** ``pid`` is prevented.
+
+    "If a source an opponent controls would deal damage to you, prevent 1 of
+    that damage" (Heart-Shaped Herb); "if a creature would deal damage to you,
+    prevent 1 of that damage" (Orbs of Warding). 615.1: a static prevention
+    shield that subtracts N from **each** event and lets the rest through --
+    the seat-side reading of the `prevent_damage` static's absorb, which
+    `characteristics.prevented_damage` answers for a permanent.
+
+    Summed over every `prevent_damage` static whose ``affects_player`` names
+    ``pid`` and whose optional ``damage_source`` names the dealer, so two
+    Herbs prevent 2. ``damage_source`` reads the dealer's **derived**
+    characteristics (see `_matches_damage_source`); a controller-only filter
+    -- the Herb's "a source an opponent controls" -- reaches a burn spell on
+    the stack as well as a permanent. Damage with no source matches no
+    ``damage_source``. A ``prevent_all`` static never reaches here: the
+    loader refuses it beside ``affects_player``. Read by
+    `primitives.damage_player` alone.
+    """
+    total = 0
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_damage":
+            continue
+        if static.get("affects_player") is None or static.get("prevent_all"):
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        dealer = static.get("damage_source")
+        if dealer is not None:
+            obj = state.objects.get(source_oid) if source_oid is not None else None
+            if obj is None or not _matches_damage_source(
+                state, obj, source_obj, dealer, derived=True
+            ):
+                continue
+        total += max(0, _static_value(state, static.get("amount"), source_obj))
+    return total
 
 
 def printed_token_matches(state: GameState, def_id: str, selector: Mapping[str, Any]) -> bool:

@@ -376,7 +376,10 @@ STATIC_EFFECTS = frozenset(
         # Absorb (702.63a): "If a source would deal damage to this creature,
         # prevent N of that damage." Parameterised on N, so a static and not a
         # keyword -- and *not* protection, which prevents all of it and three
-        # other things besides. Read by `damage_permanent` alone.
+        # other things besides. Read by `damage_permanent`; with
+        # `affects_player` it is the same N over a seat -- "if a creature would
+        # deal damage to you, prevent 1 of that damage" (Orbs of Warding) --
+        # narrowed by `damage_source` and read by `damage_player`.
         "prevent_damage",
         # "This creature crews Vehicles as though its power were 2 greater." --
         # Hotshot Mechanic, and the Pilot token Shorikai, Reckoner Bankbuster

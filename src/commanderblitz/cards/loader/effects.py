@@ -1571,7 +1571,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: the 'prevent_damage' op prevents ALL damage to a player "
                 f"for the turn and takes no 'amount' -- absorb N is the "
-                f"'prevent_damage' *static effect* on a permanent, and "
+                f"'prevent_damage' *static effect* (a permanent or a seat), and "
                 f'"prevent the next N damage" over a player is not implemented'
             )
         # Required for the reason `cant_block`'s is: a prevention read as lasting

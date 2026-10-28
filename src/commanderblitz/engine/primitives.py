@@ -35,6 +35,7 @@ from .player_statics import (
     mill_multiplier,
     player_cant_gain_life,
     player_counter_replacements,
+    prevented_player_damage,
     printed_token_matches,
     static_cast_locked_zones,
     token_creation_replacements,
@@ -474,6 +475,28 @@ def damage_player(
             reason="fog",
         )
         return 0
+    # "If a creature would deal damage to you, prevent 1 of that damage"
+    # (Orbs of Warding, Heart-Shaped Herb): absorb over a seat (615.1). The
+    # player-side twin of `damage_permanent`'s absorb, and placed where that
+    # one is -- after the all-or-nothing preventions, which have already taken
+    # the whole event, and before the doubling, the order the protected player
+    # would choose (616.1): prevent 1 of 3 then double is 4, double then
+    # prevent is 5. What is prevented was never dealt, so nothing below sees it.
+    if (absorbed := prevented_player_damage(state, pid, source_oid, is_combat=is_combat)) > 0:
+        blocked = min(absorbed, amount)
+        amount -= blocked
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=pid,
+            source=source_oid,
+            oid=None,
+            amount=blocked,
+            to="player",
+            reason="prevent_damage",
+        )
+        if amount <= 0:
+            return 0
     # The player-side half of the doubling, placed for `damage_permanent`'s
     # stated reasons: after the two preventions, which were never dealt, and
     # before the infect branch, which changes where the number lands rather

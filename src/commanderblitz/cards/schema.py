@@ -887,9 +887,12 @@ class AbilityModel(BaseModel):
     #: `token_multiplier`'s reason: 1 replaces damage with itself and 0 is a
     #: prevention, which is `prevent_damage`'s sentence and a different card.
     damage_multiplier: int | None = None
-    #: `replace_damage`: a filter on the permanent **dealing** the damage --
-    #: "if **equipped creature** would deal combat damage". Omitted is any
-    #: source, which is Furnace of Rath's "if a source would deal damage".
+    #: `replace_damage` and `prevent_damage`: a filter on the **dealer** --
+    #: "if **equipped creature** would deal combat damage", "if **a creature**
+    #: would deal damage to you" (Orbs of Warding). Omitted is any source, which
+    #: is Furnace of Rath's "if a source would deal damage". On `prevent_damage`
+    #: it is read for damage to a player only, so it needs `affects_player` and
+    #: no `affects`.
     damage_source: dict[str, Any] | None = None
     #: `replace_damage` and `prevent_damage`: only combat damage. The Flail says
     #: "combat damage" and Furnace of Rath does not, and the difference is a

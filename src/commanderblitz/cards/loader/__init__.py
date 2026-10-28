@@ -3179,6 +3179,38 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: 'prevent_damage' needs an 'amount' -- absorb N -- or "
                 f"'prevent_all' for 'prevent all damage'"
             )
+        # `affects_player` is the seat-side recipient: "if a creature would
+        # deal damage to **you**, prevent 1 of that damage" (Orbs of Warding).
+        # Absorb only. "Prevent all damage that would be dealt to you" is a
+        # different static no card here prints, and a flag nothing reads on the
+        # player half would be a printed line that does nothing.
+        if model.affects_player is not None and model.prevent_all:
+            raise DslError(
+                f"{where}: 'prevent_damage' over a player takes an 'amount' -- "
+                f"'prevent N of that damage' -- not 'prevent_all'"
+            )
+        if model.affects is None and model.affects_player is None:
+            raise DslError(
+                f"{where}: 'prevent_damage' needs 'affects' (permanents) and/or "
+                f"'affects_player' (a seat) -- whose damage is prevented"
+            )
+        # `damage_source` is the dealer -- "a source an opponent controls"
+        # (Heart-Shaped Herb), "a creature" (Orbs). Read on the player half
+        # alone, by `player_statics.prevented_player_damage`; beside `affects`
+        # it would narrow one half of the static and silently not the other.
+        if model.damage_source is not None:
+            if model.affects is not None or model.affects_player is None:
+                raise DslError(
+                    f"{where}: 'prevent_damage' reads 'damage_source' only for "
+                    f"damage to a player -- it needs 'affects_player' and no "
+                    f"'affects'"
+                )
+            unknown = set(model.damage_source) - STATIC_FILTER_KEYS
+            if unknown:
+                raise DslError(
+                    f"{where}.damage_source: static filters may only read printed "
+                    f"characteristics; unsupported keys {sorted(unknown)}"
+                )
     if model.prevent_all and model.effect != "prevent_damage":
         # A flag nothing reads is a printed line that does nothing.
         raise DslError(f"{where}: 'prevent_all' is read only by 'prevent_damage'")
@@ -3801,10 +3833,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.damage_source: static filters may only read printed "
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
-    elif model.damage_multiplier is not None or model.damage_source is not None:
+    elif model.damage_multiplier is not None or (
+        model.damage_source is not None and model.effect != "prevent_damage"
+    ):
         raise DslError(
             f"{where}: 'damage_multiplier'/'damage_source' only mean "
-            f"anything on a replace_damage static, not on {model.effect!r}"
+            f"anything on a replace_damage static ('damage_source' also on a "
+            f"prevent_damage static), not on {model.effect!r}"
         )
     elif model.combat_only and model.effect != "prevent_damage":
         # "Prevent all **combat** damage that would be dealt to this creature"
@@ -4250,6 +4285,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # planeswalker you control" -- so `affects` is one of two optional
         # recipient filters, checked in the `prevent_all_but` branch above.
         "prevent_all_but",
+        # Orbs of Warding's "…deal damage to **you**" names a seat and no
+        # permanent; the `prevent_damage` branch above requires one of the two.
+        "prevent_damage",
         # Rest in Peace names nothing at all -- "if **a card or token** would be
         # put into **a graveyard** from **anywhere**" -- so its filter is
         # genuinely optional and is the exception rather than the rule in this

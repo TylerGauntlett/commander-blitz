@@ -4475,6 +4475,36 @@ the damage ledger, and a `DAMAGE_DEALT` carrying the reduced number. Only what
 got through is damage, and it is ordinary damage: the excess from a deathtouch
 source still marks the victim.
 
+The same N over a **seat** is `affects_player` in place of `affects`, with the
+dealer named by `damage_source`:
+
+```jsonc
+// Orbs of Warding: if a creature would deal damage to you, prevent 1 of that damage.
+{ "kind": "static", "effect": "prevent_damage", "amount": 1,
+  "affects_player": "you",
+  "damage_source": { "controller": "any", "types": ["Creature"] } }
+// Heart-Shaped Herb: if a source an opponent controls would deal damage to you, …
+{ "kind": "static", "effect": "prevent_damage", "amount": 1,
+  "affects_player": "you", "damage_source": { "controller": "opponent" } }
+```
+
+Per event and never a pool, exactly as absorb is: every hit to the seat loses
+N, a hit of N or less is gone, and two shields add. `damage_source` is
+`replace_damage`'s dealer filter, read on the dealer's **current**
+characteristics (a crewed Vehicle is a creature, an uncrewed one is not), and a
+filter naming only `controller` reaches a spell on the stack, which is the
+Herb's "a source". Omitted, every source. `player_statics.prevented_player_damage`
+answers it and `primitives.damage_player` reads it after the all-or-nothing
+preventions and before the damage multiplier — the order the protected player
+would choose.
+
+The near misses: the `prevent_damage` *op* is a Fog for one turn; "prevent the
+next N damage" is a one-shot pool that drains and is not implemented;
+`prevent_all_but` caps each event at N, so a 1-damage ping lands under it and
+is prevented here. The loader requires `affects` or `affects_player`, refuses
+`prevent_all` beside `affects_player`, and refuses `damage_source` unless the
+static names a seat and no permanents — the permanent half does not read it.
+
 ### Shroud, which is the third member of that family
 
 `shroud` is an ordinary entry in `keywords`, so a card that prints it needs
@@ -6377,11 +6407,9 @@ Selfless Squire is both lines and needs both: the shield prevents, the event
 carries how much it ate, the trigger reads it back as `{"binding": "amount"}`.
 
 **The op is not the static of the same name.** `prevent_damage` the *static* is
-absorb N and is keyed to an **object** — `characteristics.prevented_damage`
-matches each entry's `affects` filter against a permanent, and
-`static_filter_keys` has no way to name a seat at all. It is also per source and
-per instance rather than "all damage this turn", and being a static it is
-continuous while its source stands on the battlefield — a Squire carrying one
+absorb N, keyed to a permanent through `affects` or to a seat through
+`affects_player`. It is per source and per instance rather than "all damage
+this turn", and being a static it is continuous while its source stands on the battlefield — a Squire carrying one
 would fog its controller every future turn, which is a Worship. Same relationship
 `cant_block` the op has with `cant_block` the static, and the same three
 inversions: the subject, the clock, and who owns it.
