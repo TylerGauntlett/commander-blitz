@@ -481,6 +481,35 @@ Rule 107.3 is why the two are separate questions rather than one: a Fireball cas
 for X=0 is still "a spell with {X} in its mana cost", and 202.3b scores that X as
 0 — so `mana_value` catches Fireball and Shock together or neither.
 
+#### A restriction worded as a prohibition — `other`
+
+```jsonc
+// The Vibranium token — "{T}: Add {C}. This mana can't be spent to cast a
+// nonartifact spell."
+"mana_restriction": { "cast": [["artifact"]], "activate": "any", "other": "any" }
+```
+
+"Spend this mana only to …" permits one thing and refuses the rest; "this mana
+can't be spent to …" refuses one thing and permits the rest. Mana is spent on
+more than spells and abilities: a ward price, an "unless that player pays", an
+attack or block tax, a resolving ability's "you may pay", an enters-the-battlefield
+price, and the special actions (suspend, foretell, turning a face-down creature
+up). Those payments pass `mana.OTHER_PAYMENT`, a purpose of kind `other`, and
+the `other` half answers them.
+
+`other` takes only `"any"` — no spell or source stands behind a tax, so there is
+nothing for a name to match. Omitted, as on every "spend this mana only to …"
+card, it means "never", which is what those cards print: Cryptic Trilobite's
+mana pays no ward.
+
+The near miss is Automated Artificer's shape, `{"cast": [["artifact"]],
+"activate": "any"}`. It reads the same at a glance and refuses the Vibranium's
+mana to Rhystic Study's tax and to every ward on the table — a weaker card than
+the printed one. A cast-time payment made apart from the main one (splice, a
+madness cast) still passes no purpose, which withholds restricted mana: right
+for this token whenever that spell is not an artifact, and an under-permit, never
+an over-permit, when it is.
+
 ### Restricted mana an *effect* made
 
 ```jsonc

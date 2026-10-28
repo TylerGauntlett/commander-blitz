@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**108 cards** blocked by **88** capabilities.
+**104 cards** blocked by **87** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [vibranium-token](#vibranium-token) | 5 | 15131 | token |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
@@ -263,37 +262,6 @@ Blocks **8** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## vibranium-token
-
-Blocks **5** cards.
-
-- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell." (a mana ability with mana_restriction to artifact spells)
-  <br>Why the existing vocabulary won't do: token_ids has no Vibranium token; the nearest colorless artifact tokens (treasure_token, clue_token, food_token) have different abilities and no indestructible. The rest of the card is expressible: the intervening-if is a trigger condition cmp of max_count_of opponent lands against lands_you_control, create_token takes tapped: true, and the sacrifice line is a sacrifice self cost with grant_keyword indestructible over supertypes [Legendary] you control.
-- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell."
-  <br>Why the existing vocabulary won't do: No Vibranium entry in token_ids (the closest colorless artifact tokens are treasure_token and clue_token, which are different); create_token only accepts ids from that closed list
-- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell." (mana ability carrying mana_restriction to artifact spells)
-  <br>Why the existing vocabulary won't do: token_ids has no Vibranium token; the nearest colorless artifact tokens (treasure_token, clue_token, food_token) have different abilities and no indestructible. The triggers (self_enters, attacks with source self) and create_token with tapped: true are otherwise available, and the second line is expressible as a spell_cast trigger filtered to Artifact with mana_value >= 4 adding two +1/+1 counters to self
-- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell." (a mana ability with mana_restriction to artifact spells)
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Vibranium entry; the nearest colorless mana-making artifact token is treasure_token, which sacrifices itself, makes any color, has no restriction and lacks indestructible
-- **(token)** a colorless Vibranium artifact token with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell."
-  <br>Why the existing vocabulary won't do: token_ids is a closed list with no Vibranium token; the nearest colorless mana artifacts (treasure_token, eldrazi_spawn_0_1_c) sacrifice themselves, lack indestructible and carry no mana restriction. The rest of the card (trample, the enters-or-attacks trigger via self_enters and attacks, the {2} pump, Crew 2 as tap_permanents total_power 2) is expressible once the token exists
-
-<details><summary>Cards waiting on this</summary>
-
-- **The Great Mound** (rank 15131) — `the_great_mound`
-  - {3}, {T}: Create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
-- **Vibranium Mining Mech** (rank 15660) — `vibranium_mining_mech`
-  - Whenever this Vehicle enters or attacks, create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
-- **Shuri's Fabricator** (rank 15997) — `shuri_s_fabricator`
-  - When this artifact enters, create two tapped Vibranium tokens. (They're artifacts with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
-  - {6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)
-- **T'Challa, the Black Panther** (rank 16838) — `t_challa_the_black_panther`
-  - Whenever T'Challa enters or attacks, create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
-- **Dora Milaje Elite** (rank 17736) — `dora_milaje_elite`
-  - When this creature enters, if an opponent controls more lands than you, create a tapped Vibranium token. (It's an artifact with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
 
 </details>
 
@@ -877,7 +845,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Shuri's Fabricator** (rank 15997) — `shuri_s_fabricator`
-  - When this artifact enters, create two tapped Vibranium tokens. (They're artifacts with indestructible and "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.")
   - {6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)
 
 </details>

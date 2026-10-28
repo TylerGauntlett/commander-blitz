@@ -8,7 +8,7 @@ from typing import TYPE_CHECKING, Any
 
 from ..carddef import Cost, TriggerSpec
 from ..costs import can_pay, mana_sources, pay
-from ..mana import max_affordable_times, max_affordable_x
+from ..mana import OTHER_PAYMENT, max_affordable_times, max_affordable_x
 from ..player_statics import forced_discard_or_sacrifice_barred
 from ..primitives import change_control
 from ..structs import DelayedTrigger
@@ -122,7 +122,12 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
             # price (118.4, 119.4: no more than you have; 0 is always paid).
             # Inside the loop, so a `repeat` re-reads it each time.
             cost = replace(cost, pay_life=max(0, int(evaluate_value(ctx, life_spec))))
-        if cost is not None and not can_pay(ctx.state, chooser, cost, ctx.source_oid):
+        # A resolving ability's price is neither a cast nor an activation, so
+        # restricted mana pays it only when its `other` half says so (ward and
+        # the Vibranium token, against "spend this only to cast" mana).
+        if cost is not None and not can_pay(
+            ctx.state, chooser, cost, ctx.source_oid, purpose=OTHER_PAYMENT
+        ):
             yield from execute(ctx, spec.get("else") or [])
             return
         if (
@@ -153,7 +158,9 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
                 return
             charged = replace(cost, mana=cost.mana.scaled(count))
         if charged is not None:
-            paid = yield from pay(ctx.state, chooser, charged, ctx.source_oid, x=x)
+            paid = yield from pay(
+                ctx.state, chooser, charged, ctx.source_oid, x=x, purpose=OTHER_PAYMENT
+            )
             if not paid:
                 # `can_pay` said yes a moment ago, so this is the board having
                 # changed underneath us. "If you do" is false, so the effects
@@ -214,8 +221,8 @@ def _announce_x(ctx: EffectContext, chooser: int, cost: Cost, x_spec: Mapping[st
     """
 
     printed = x_spec.get("max")
-    pool = ctx.state.players[chooser].mana_pool.spendable()
-    sources = mana_sources(ctx.state, chooser)
+    pool = ctx.state.players[chooser].mana_pool.spendable(OTHER_PAYMENT)
+    sources = mana_sources(ctx.state, chooser, purpose=OTHER_PAYMENT)
     if printed is None:
         ceiling = None
         affordable = max_affordable_x(cost.mana, pool, sources)
@@ -247,8 +254,8 @@ def _announce_amount(
     because mana abilities activated in between change the ceiling.
     """
 
-    pool = ctx.state.players[chooser].mana_pool.spendable()
-    sources = mana_sources(ctx.state, chooser)
+    pool = ctx.state.players[chooser].mana_pool.spendable(OTHER_PAYMENT)
+    sources = mana_sources(ctx.state, chooser, purpose=OTHER_PAYMENT)
     affordable = max_affordable_times(cost.mana, pool, sources)
     if affordable <= 0:
         return 0
@@ -869,11 +876,13 @@ def op_join_forces(ctx: EffectContext, spec: Mapping[str, Any]):
     total = 0
     for pid in ctx.state.turn_order(ctx.controller):
         for _ in range(MAX_JOIN_FORCES):
-            if unit is None or not can_pay(ctx.state, pid, unit, ctx.source_oid):
+            if unit is None or not can_pay(
+                ctx.state, pid, unit, ctx.source_oid, purpose=OTHER_PAYMENT
+            ):
                 break
             if not (yield from ask_yes_no(ctx, prompt, pid)):
                 break
-            paid = yield from pay(ctx.state, pid, unit, ctx.source_oid)
+            paid = yield from pay(ctx.state, pid, unit, ctx.source_oid, purpose=OTHER_PAYMENT)
             if not paid:
                 break
             total += 1

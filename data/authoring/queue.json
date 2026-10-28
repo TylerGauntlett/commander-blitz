@@ -72252,12 +72252,12 @@
     },
     "Dora Milaje Elite": {
       "edhrec_rank": 17736,
-      "gate": "template",
+      "gate": null,
       "name": "Dora Milaje Elite",
-      "reason": "no template for: Sacrifice this creature: Legendary permanents you control gain indestructible until end of",
+      "reason": "",
       "scryfall_id": "1d1e00e3-7f3c-4a49-859b-398283c38e61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doran, Besieged by Time": {
@@ -273412,12 +273412,12 @@
     },
     "T'Challa, the Black Panther": {
       "edhrec_rank": 16838,
-      "gate": "template",
+      "gate": null,
       "name": "T'Challa, the Black Panther",
-      "reason": "no template for: Whenever you cast an artifact spell with mana value 4 or greater, put two +1/+1 counters o",
+      "reason": "",
       "scryfall_id": "c1c8ad61-b7e1-446c-8b74-6e29371ea1d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "T'Pol, Vulcan Representative": {
@@ -281062,12 +281062,12 @@
     },
     "The Great Mound": {
       "edhrec_rank": 15131,
-      "gate": "template",
+      "gate": null,
       "name": "The Great Mound",
-      "reason": "no template for: {3}, {T}: Create a tapped Vibranium token",
+      "reason": "",
       "scryfall_id": "11b3f96c-138e-431e-a1d6-5ebae4cb6b2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Grey Havens": {
@@ -304192,12 +304192,12 @@
     },
     "Vibranium Mining Mech": {
       "edhrec_rank": 15660,
-      "gate": "template",
+      "gate": null,
       "name": "Vibranium Mining Mech",
-      "reason": "no template for: {2}: This Vehicle gets +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "2212e15b-5deb-4ab8-9f6f-7991e750e21a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vibranium Strike Gauntlets": {

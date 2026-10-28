@@ -3,16 +3,9 @@
   "name": "Shuri's Fabricator",
   "oracle_text": "When this artifact enters, create two tapped Vibranium tokens. (They're artifacts with indestructible and \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")\n{6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)",
   "blocked_sentences": [
-    "When this artifact enters, create two tapped Vibranium tokens. (They're artifacts with indestructible and \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")",
     "{6}, {T}: Return target artifact card from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery. (If a permanent with a finality counter on it would be put into a graveyard, exile it instead.)"
   ],
   "needs": [
-    {
-      "capability": "vibranium_token",
-      "kind": "token",
-      "what": "a colorless Vibranium artifact token with indestructible and \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\"",
-      "why_existing_wont_do": "No Vibranium entry in token_ids (the closest colorless artifact tokens are treasure_token and clue_token, which are different); create_token only accepts ids from that closed list"
-    },
     {
       "capability": "finality_counter",
       "kind": "replacement",
@@ -20,6 +13,9 @@
       "why_existing_wont_do": "return_from_graveyard accepts counters, but nothing in the engine gives a 'finality' counter any meaning (no reference anywhere in src); replace_deaths/replace_leaves_battlefield are one-shot ops keyed on objects at resolution, not a counter-driven replacement that persists on the permanent and covers any route to the graveyard"
     }
   ],
-  "closest_existing": ["return_from_graveyard", "replace_leaves_battlefield", "treasure_token"],
+  "closest_existing": [
+    "return_from_graveyard",
+    "replace_leaves_battlefield"
+  ],
   "confidence": "high"
 }

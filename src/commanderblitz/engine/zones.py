@@ -21,6 +21,7 @@ from .effects.selectors import resolve_pool
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
+from .mana import OTHER_PAYMENT
 from .objects import GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
 from .triggers import fire
@@ -591,7 +592,7 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
     # the source from the pool for 601.2a's reason, and the same exclusion is
     # the right one here for 614's -- the object being replaced is the one on
     # its way to the battlefield, not fodder sitting in a hand.
-    if not can_pay(state, controller, cost, oid):
+    if not can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
         return
     ctx = EffectContext(
         state=state, controller=controller, source_oid=oid, source_name=card.name
@@ -599,7 +600,7 @@ def offer_enters_replacement(state: GameState, oid: int, controller: int):
     prompt = f"Pay {card.name}'s cost to have it enter?"
     if not (yield from ask_yes_no(ctx, prompt, controller)):
         return
-    if (yield from pay(state, controller, cost, oid)):
+    if (yield from pay(state, controller, cost, oid, purpose=OTHER_PAYMENT)):
         obj.enters_replacement_paid = True
 
 
@@ -624,7 +625,7 @@ def enters_cost_offer(state: GameState, oid: int, controller: int, card=None):
         if not node:
             continue
         cost = Cost(**node) if not isinstance(node, Cost) else node
-        if can_pay(state, controller, cost, oid):
+        if can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
             return replacement, cost
     return None
 
@@ -670,7 +671,7 @@ def offer_enters_costs(
         if not node:
             continue
         cost = Cost(**node) if not isinstance(node, Cost) else node
-        if not can_pay(state, controller, cost, oid):
+        if not can_pay(state, controller, cost, oid, purpose=OTHER_PAYMENT):
             continue
         if decided is False:
             continue
@@ -681,7 +682,7 @@ def offer_enters_costs(
             prompt = enters_cost_prompt(replacement, cost, card.name)
             if not (yield from ask_yes_no(ctx, prompt, controller)):
                 continue
-        if (yield from pay(state, controller, cost, oid)):
+        if (yield from pay(state, controller, cost, oid, purpose=OTHER_PAYMENT)):
             obj.enters_cost_paid = True
 
 

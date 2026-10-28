@@ -537,6 +537,11 @@ class AbilityModel(BaseModel):
     #: Omen Hawker), which names no type at all. The loader refuses it on both
     #: halves at once and refuses it bare, where it would read as the ``cast``
     #: half and quietly make ordinary mana.
+    #:
+    #: A third key, ``"other"``, takes only ``"any"``: a restriction worded as a
+    #: prohibition ("can't be spent to cast a nonartifact spell", the Vibranium
+    #: token) still pays a ward price, a tax or a special action. Omitted, as on
+    #: every "spend this mana only to …" card, those payments are refused.
     mana_restriction: (
         str
         | list[str | dict[str, Any] | list[str | dict[str, Any]]]

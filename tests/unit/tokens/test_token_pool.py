@@ -886,3 +886,43 @@ class TestGingersGingerbruteIsAHastyFoodGolem:
     def test_the_name_does_not_answer_for_a_card(self, pool):
         card = pool.by_name("Gingerbrute")
         assert card is None or not card.is_token
+
+
+class TestVibraniumIsAnIndestructibleArtifactWithRestrictedMana:
+    """T'Challa, the Black Panther; Dora Milaje Elite; The Great Mound; Vibranium
+    Mining Mech; Shuri's Fabricator: *"create a tapped Vibranium token. (It's an
+    artifact with indestructible and "{T}: Add {C}. This mana can't be spent to
+    cast a nonartifact spell.")"*
+
+    `treasure_token` is the near miss: the pool's other colorless mana-making
+    artifact, but it sacrifices itself, makes any colour, carries no restriction
+    and is not indestructible. Every one of those differences is a different
+    card. The restriction is a prohibition, so its `other` half is the wildcard
+    -- see `tests/unit/mana/test_mana_restriction_other.py`.
+    """
+
+    def test_it_is_an_indestructible_colorless_vibranium_artifact(self, pool):
+        token = pool.get("vibranium_token")
+        assert token is not None and token.is_token
+        assert token.name == "Vibranium"
+        assert list(token.types) == ["Artifact"]
+        assert list(token.subtypes) == ["Vibranium"]
+        assert not token.colors
+        assert (token.power, token.toughness) == (None, None)
+        assert list(token.keywords) == ["indestructible"]
+
+    def test_it_taps_for_one_colorless_its_mana_barred_from_nonartifact_spells(self, pool):
+        [ability] = pool.get("vibranium_token").abilities
+        assert ability.is_mana_ability
+        assert ability.cost.tap and not ability.cost.sacrifice
+        assert ability.effects == ({"op": "add_mana", "mana": "{C}"},)
+        restriction = ability.mana_restriction
+        assert [g.required for g in restriction.cast] == [frozenset({"artifact"})]
+        assert [g.required for g in restriction.activate] == [frozenset()]
+        assert [g.required for g in restriction.other] == [frozenset()]
+
+    def test_the_treasure_is_still_a_separate_token(self, pool):
+        treasure = pool.get("treasure_token")
+        assert not treasure.keywords
+        assert treasure.abilities[0].cost.sacrifice
+        assert treasure.abilities[0].mana_restriction is None

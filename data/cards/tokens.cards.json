@@ -2701,6 +2701,48 @@
       "is_token": true
     },
     {
+      "id": "vibranium_token",
+      "name": "Vibranium",
+      "oracle_text": "Indestructible\n{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vibranium"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "keywords": [
+        "indestructible"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": {
+            "cast": [
+              [
+                "artifact"
+              ]
+            ],
+            "activate": "any",
+            "other": "any"
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "warrior_1_1_w",
       "name": "Warrior Token",
       "oracle_text": "",

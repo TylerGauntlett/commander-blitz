@@ -3243,6 +3243,10 @@
     },
     "zone": "battlefield"
   },
+  "dora_milaje_elite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dosan_s_oldest_chant": {
     "hand_size": {
       "0": 2
@@ -12122,6 +12126,14 @@
     },
     "zone": "battlefield"
   },
+  "t_challa_the_black_panther": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "vibranium_token"
+    },
+    "zone": "battlefield"
+  },
   "taiga": {
     "zone": "battlefield"
   },
@@ -12528,6 +12540,10 @@
     "zone": "battlefield"
   },
   "the_fabulous_frog_man": {
+    "zone": "battlefield"
+  },
+  "the_great_mound": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_irencrag": {
@@ -13544,6 +13560,10 @@
     "zone": "battlefield"
   },
   "vibranium_energy_daggers": {
+    "zone": "battlefield"
+  },
+  "vibranium_mining_mech": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "vibranium_strike_gauntlets": {

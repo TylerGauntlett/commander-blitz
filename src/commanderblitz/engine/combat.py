@@ -20,7 +20,7 @@ from .costs import can_pay
 from .effects.context import EffectContext, ask_objects
 from .enums import LANDWALK_SUBTYPE, Keyword
 from .events import EventType
-from .mana import ManaCost
+from .mana import OTHER_PAYMENT, ManaCost
 from .player_statics import (
     any_defender_attack_prohibition,
     attack_alone_forbidden,
@@ -178,7 +178,7 @@ def combat_tax_payable(state: GameState, oid: int, cost) -> bool:
     # `source_oid=None`: the creature is not being tapped or sacrificed for
     # this, it is only the thing being priced -- passing it would let a `tap`
     # in the cost tap the attacker.
-    return can_pay(state, obj.controller, cost, None)
+    return can_pay(state, obj.controller, cost, None, purpose=OTHER_PAYMENT)
 
 
 def block_taxed(state: GameState, oid: int) -> bool:
