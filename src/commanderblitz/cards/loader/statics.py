@@ -35,6 +35,7 @@ from .vocabulary import (
     STATIC_FILTER_KEYS,
     STATIC_LIFE_KEYS,
     STATIC_LIFE_PLAYERS,
+    STATIC_MANA_POOL_KEYS,
     STATIC_MONARCH_PLAYERS,
     STATIC_POISON_KEYS,
     STATIC_VALUE_KEYS,
@@ -477,7 +478,7 @@ def _validate_static_value(value: Any, where: str) -> None:
             f"{where}.mana_symbols",
             validate_objects=_validate_static_count_filter,
         )
-    for key in (STATIC_LIFE_KEYS | STATIC_POISON_KEYS) & set(value):
+    for key in (STATIC_LIFE_KEYS | STATIC_POISON_KEYS | STATIC_MANA_POOL_KEYS) & set(value):
         who = value[key]
         if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
             raise DslError(

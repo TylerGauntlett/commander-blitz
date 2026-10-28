@@ -574,6 +574,8 @@ VALUES: dict[str, Entry] = {
     "max_poison_of": ("The most poison counters on any one of a spec's players (corrupted).",
                       'Corrupted — "an opponent has three or more poison counters"'),
     "min": ("The least of several values.", None),
+    "unspent_mana_count": ("The unspent mana in a spec's players' mana pools.",
+                           '"For each unspent mana you have"'),
     "min_count_of": ("The fewest objects any one player of a spec has.", H_PER_PLAYER),
     "min_life_of": ("The lowest life total among a spec's players.", None),
     "minus": ("a - b.", None),

@@ -1606,6 +1606,16 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # and that funnel bumps `char_version` so the condition is re-read.
         pids = _static_players(state, source, expr["max_poison_of"])
         return max((state.players[p].poison for p in pids), default=0)
+    if "unspent_mana_count" in expr:
+        # Omnath, Locus of the Void: "+1/+1 for each unspent mana you have."
+        # Every mana in the pool, restricted pips included -- unspent is not
+        # "spendable on this". The pool is player state, a pipeline input on a
+        # poison count's terms: no layer writes it, and every funnel that does
+        # (`costs.pay_mana`, `costs.activate_mana_ability`, the `add_mana` ops,
+        # `GameState.empty_all_mana_pools`, a player leaving) bumps
+        # `char_version`, so the anthem is re-read as the pool moves.
+        pids = _static_players(state, source, expr["unspent_mana_count"])
+        return sum(state.players[p].mana_pool.total() for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

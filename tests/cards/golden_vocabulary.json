@@ -590,7 +590,8 @@
    "permanents_entered_this_turn",
    "starting_life_of",
    "sum",
-   "times"
+   "times",
+   "unspent_mana_count"
   ],
   "STATIC_ZONE_FILTER_KEYS": [
    "any_types",

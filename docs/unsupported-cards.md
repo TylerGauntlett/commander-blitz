@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**94 cards** blocked by **81** capabilities.
+**93 cards** blocked by **80** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -92,7 +92,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [unspent-mana-count](#unspent-mana-count) | 1 | 24391 | value |
 | [value-locked-on-cast](#value-locked-on-cast) | 1 | 13841 | value |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
@@ -1371,20 +1370,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## unspent-mana-count
-
-Blocks **1** card.
-
-- **(value)** a value (usable as a static `buff` amount) reading the total amount of unspent mana in the controller's mana pool, so 'gets +1/+1 for each unspent mana you have' tracks the pool continuously
-  <br>Why the existing vocabulary won't do: neither `value_keys` nor `static_value_keys` has anything that reads the mana pool; `mana_spent_of` and `colors_of_mana_spent` read mana spent on a spell, not mana still floating
-
-<details><summary>Cards waiting on this</summary>
-
-- **Omnath, Locus of the Void** (rank 24391) — `omnath_locus_of_the_void`
-  - Omnath gets +1/+1 for each unspent mana you have.
 
 </details>
 

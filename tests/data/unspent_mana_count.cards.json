@@ -1,0 +1,27 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_unspent_mana_count.py. t_unspent_grower is Omnath, Locus of the Void's first line on a 1/1 body, so the anthem is the only thing moving its size; t_unspent_rival is the same line on an opponent's creature, to show 'you' is its controller's pool.",
+  "cards": [
+    {
+      "id": "t_unspent_grower",
+      "name": "Test Unspent Grower",
+      "oracle_text": "This creature gets +1/+1 for each unspent mana you have.",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Elemental"],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature gets +1/+1 for each unspent mana you have.",
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"unspent_mana_count": "you"},
+          "toughness": {"unspent_mana_count": "you"}
+        }
+      ]
+    }
+  ]
+}

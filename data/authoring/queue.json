@@ -192552,12 +192552,12 @@
     },
     "Omnath, Locus of the Void": {
       "edhrec_rank": 24391,
-      "gate": "template",
+      "gate": null,
       "name": "Omnath, Locus of the Void",
-      "reason": "no template for: Omnath gets +1/+1 for each unspent mana you have",
+      "reason": "",
       "scryfall_id": "6183342b-7dce-49e1-a1c3-bdadbeeabbd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Omni-Changeling": {

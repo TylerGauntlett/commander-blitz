@@ -90,6 +90,9 @@ def _give_mana(ctx: EffectContext, spec: Mapping[str, Any], pid: int, produced) 
         # Treasure the mana came from.
         source_traits=mana_source_traits(ctx.state, ctx.source_oid),
     )
+    # A static reads the pool (`unspent_mana_count`), and `chars` caches per
+    # `char_version`.
+    ctx.state.bump_chars()
 
 
 @register("add_mana")
@@ -210,6 +213,7 @@ def op_add_mana_per(ctx: EffectContext, spec: Mapping[str, Any]):
             persists_through_turn=_persists_through(ctx, spec),
             source_traits=mana_source_traits(ctx.state, ctx.source_oid),
         )
+        ctx.state.bump_chars()  # `_give_mana`'s reason
         ctx.state.emit(
             EventType.MANA_ADDED,
             player=pid,

@@ -2040,6 +2040,10 @@ def pay_mana(
             )
         activate_mana_ability(state, oid, ability_index, pid, option_index)
     spent = player.mana_pool.spend(req, purpose)
+    # The pool is a static's input ("+1/+1 for each unspent mana you have",
+    # Omnath, Locus of the Void), and a payment from floating mana taps nothing
+    # that would bump for it.
+    state.bump_chars()
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
@@ -2179,6 +2183,9 @@ def activate_mana_ability(
             mana, source=source, source_traits=mana_source_traits(state, source)
         )
         state.emit(EventType.MANA_ADDED, player=pid, source=source, mana=format_symbols(mana))
+    # The pool grew, and it is a static's input (`unspent_mana_count`); the tap
+    # above bumps only when there was one to make.
+    state.bump_chars()
     if ability.mana_rider:
         _run_mana_rider(state, oid, pid, ability)
     if is_land and obj is not None:

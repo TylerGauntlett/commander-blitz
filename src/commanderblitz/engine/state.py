@@ -959,6 +959,10 @@ class GameState:
         `mana_becomes_colorless` static (Kruphix) turns whatever would still be
         lost into {C} instead.
         """
+        if not any(p.mana_pool.total() for p in self.players):
+            # Every boundary of almost every turn: nothing to empty, and no
+            # reason to walk the battlefield or drop the characteristics cache.
+            return
         retained = retained_mana_by_player(self)
         colorless = colorless_instead_players(self)
         for p in self.players:
@@ -969,6 +973,9 @@ class GameState:
             )
             if lost:
                 self.emit("mana_emptied", player=p.pid, amount=lost)
+        # A pool is a static's input (`unspent_mana_count`), and `chars` caches
+        # per `char_version` -- `primitives.add_poison`'s reason, for the pool.
+        self.bump_chars()
 
     def commanders_of(self, pid: int) -> list[int]:
         return list(self.players[pid].commanders)

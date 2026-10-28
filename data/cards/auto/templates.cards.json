@@ -96012,6 +96012,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "unspent_mana_count": "you"
+          },
+          "text": "Omnath gets +1/+1 for each unspent mana you have.",
+          "toughness": {
+            "unspent_mana_count": "you"
+          }
+        },
+        {
+          "affects_player": "you",
+          "effect": "mana_becomes_colorless",
+          "kind": "static",
+          "text": "If you would lose unspent mana, that mana becomes colorless instead."
+        },
+        {
+          "effects": [
+            {
+              "mana": "{C}{C}",
+              "op": "add_mana",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, add {C}{C}.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "omnath_locus_of_the_void",
+      "mana_cost": "{7}",
+      "name": "Omnath, Locus of the Void",
+      "oracle_text": "Omnath gets +1/+1 for each unspent mana you have.\nIf you would lose unspent mana, that mana becomes colorless instead.\nLandfall — Whenever a land you control enters, add {C}{C}.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

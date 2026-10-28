@@ -4779,6 +4779,7 @@ smaller than the effect-side `value_keys`:
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
+| `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -4938,7 +4939,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
@@ -5117,6 +5118,29 @@ writes one, and it bumps `char_version`, so a static re-reads the condition the
 moment a counter lands. `counters_on` is the near miss and cannot reach it: it
 counts counters on objects, and a player is not one. The leaf works in both
 languages; in a static it takes the life leaves' player specs.
+
+#### "For each unspent mana you have"
+
+`{"unspent_mana_count": spec}` is the total mana in the spec's players' pools,
+summed, every type and every pip — a pip carrying a "spend this mana only to…"
+restriction is still unspent mana, so it counts.
+
+```jsonc
+// Omnath, Locus of the Void -- "Omnath gets +1/+1 for each unspent mana you have."
+{ "kind": "static", "effect": "buff", "affects": { "self_only": true },
+  "power": { "unspent_mana_count": "you" },
+  "toughness": { "unspent_mana_count": "you" } }
+```
+
+The pool is player state, a pipeline input on a poison count's terms: only
+adding, spending and emptying mana write it, never a layer, so the anthem cannot
+come to depend on another static's output (ADR 0001). Each of those funnels —
+`costs.activate_mana_ability`, `costs.pay_mana`, the `add_mana` ops,
+`GameState.empty_all_mana_pools` and a player leaving — bumps `char_version`, so
+the size moves the moment the pool does. A test or a new funnel that writes
+`ManaPool` directly must bump too. The leaf works in both languages; in a static
+it takes the life leaves' player specs. `mana_spent_of` is the near miss and
+reads the other thing: mana already spent on a spell, not mana still floating.
 
 #### "At least 7 life more than your starting life total"
 

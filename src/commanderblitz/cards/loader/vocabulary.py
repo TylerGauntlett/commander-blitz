@@ -1379,6 +1379,12 @@ STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 #: and takes the same player specs.
 STATIC_POISON_KEYS = frozenset({"max_poison_of"})
 
+#: The mana-pool leaf -- Omnath, Locus of the Void's "+1/+1 for each unspent
+#: mana you have". The pool is player state like a poison count: only mana
+#: being added, spent or emptied writes it, never a layer, and each of those
+#: funnels bumps `char_version`. Takes the life leaves' player specs.
+STATIC_MANA_POOL_KEYS = frozenset({"unspent_mana_count"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1421,6 +1427,7 @@ STATIC_VALUE_KEYS = (
     )
     | STATIC_LIFE_KEYS
     | STATIC_POISON_KEYS
+    | STATIC_MANA_POOL_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 
