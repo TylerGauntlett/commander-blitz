@@ -244,6 +244,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Proliferate** | 701.27a: one `ask_targets` decision (purpose `proliferate`) over every permanent with a counter and every player with poison or energy, not targeting |
 | **Moving and doubling counters** | `move_counters` (graft, modular) clamped to the source; `double_counters` puts the extra on through `add_counters` so counter replacements apply (122.1) |
 | **Distributing counters** | `distribute_counters` on an activated ability, the division announced at activation (601.2d, 602.2b) and stored on the stack item, an illegal target's share lost (608.2b) |
+| **Dividing damage** | `damage` with `divided` on a spell: the amount read and divided as the spell is cast (601.2d), stored on the stack item, an illegal target's share lost (608.2b); "any number" of targets capped at the amount (`engine.division`) |
 | **Counters on an arrival** | `counters` on `put_onto_battlefield` and `return_from_graveyard` (placed after the move), `counters` / `counters_if` on `look_at_top` (one placement with the arrival, 122.6); `replace_counters` applies before `counter_placed` fires or a Saga reads its lore (714.2c) |
 | **Counters that can't be put on** | The `cant_have_counters` static (101.2): a placement of the named kind onto a matching permanent does not happen, asked before every counter replacement in `add_counters`, `zones._entering_counters` and `costs.can_pay` (a cost that would put one on can't be paid) |
 | **Removing counters as a cost** | `remove_counters_from_among` over several permanents, any kinds, asked one counter at a time (602.2b) |
@@ -379,7 +380,7 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - Dice-roll triggers and the AFR d20 outcome tables, and a mill trigger: `EventType.DICE_ROLLED` and `EventType.MILL` have no `TRIGGER_EVENTS` name.
 - Granting extort to other creatures (Pontiff of Blight).
 - A chosen card name stored on a permanent for a later reader (Pithing Needle, Meddling Mage); `choose_card_name` binds for one resolution.
-- `distribute_counters` on a spell or a triggered ability, and dividing damage among targets.
+- `distribute_counters` on a spell or a triggered ability; dividing damage among players or any target, or on an ability.
 - 508.4's unspecified "tapped and attacking" with no player named.
 - Timed forms with no home yet: a delayed trigger scoped to the extra turn an effect created (Final Fortune), "skip your next turn" for ordinary turns, the turn-long "can't be regenerated this turn", and "no maximum hand size until your next turn" (Enter the Infinite).
 - Per-turn cast caps (Deafening Silence) and the ability half of Grand Abolisher; `affects` beside `cant_cast_spells` is refused.

@@ -178472,12 +178472,12 @@
     },
     "Monstrous Onslaught": {
       "edhrec_rank": 13841,
-      "gate": "template",
+      "gate": null,
       "name": "Monstrous Onslaught",
-      "reason": "no template for: deals X damage divided as you choose among any number of target creatures, where X is the ",
+      "reason": "",
       "scryfall_id": "ffc27f7f-5dd4-4f1d-ba3f-a4b0400cdc72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Monstrous Rage": {
@@ -210902,12 +210902,12 @@
     },
     "Pyrokinesis": {
       "edhrec_rank": 5389,
-      "gate": "template",
+      "gate": null,
       "name": "Pyrokinesis",
-      "reason": "no template for: You may exile a red card from your hand rather than pay this spell's mana cost",
+      "reason": "",
       "scryfall_id": "c634d49a-a349-4153-b14d-0b9032589030",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pyromancer Ascension": {

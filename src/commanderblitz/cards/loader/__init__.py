@@ -700,6 +700,78 @@ def _check_distribution_homes(model: CardModel, where: str) -> None:
                 )
 
 
+def _check_division_homes(model: CardModel, where: str) -> None:
+    """``damage`` with ``divided`` only where its division can be announced.
+
+    601.2d announces the division as the spell is cast, over the targets just
+    declared, and `game.Game._cast` is where this engine asks it -- so divided
+    damage is accepted as a **top-level** effect of a **spell**, and refused on
+    an ability or nested in a branch, where there is no announcement to read and
+    dividing at resolution would let the split follow the responses.
+
+    The spec it names must be one the spell declares, and must target objects:
+    the division is asked one object at a time. Each target is dealt at least
+    one, so a fixed target count larger than a printed amount could be declared
+    in a way no division satisfies; "any number" is capped by the amount where
+    the targets are chosen (`engine.division`).
+    """
+
+    def divided(effect: Any) -> bool:
+        return (
+            isinstance(effect, Mapping)
+            and effect.get("op") == "damage"
+            and "divided" in effect
+        )
+
+    def refuse_in(tree: Any, at: str) -> None:
+        for spec in _walk_effect_specs(tree):
+            if divided(spec):
+                raise DslError(
+                    f"{at}: divided damage is only supported as a top-level effect of "
+                    f"a spell, where its division is announced on casting (601.2d)"
+                )
+
+    for i, ability in enumerate(model.abilities):
+        refuse_in(ability.effects, f"{where}.abilities[{i}]")
+    at = f"{where}.spell_effects"
+    for effect in model.spell_effects:
+        if not isinstance(effect, Mapping):
+            continue
+        refuse_in(
+            [e for key in ("then", "else", "effects") for e in effect.get(key) or ()]
+            + [
+                e
+                for mode in effect.get("modes") or ()
+                if isinstance(mode, Mapping)
+                for e in mode.get("effects") or ()
+            ],
+            at,
+        )
+        if not divided(effect):
+            continue
+        target_id = effect["divided"]
+        target = next((t for t in model.targets if t.id == target_id), None)
+        if target is None:
+            raise DslError(
+                f"{at}: divided damage names target {target_id!r}, which this spell "
+                f"does not declare"
+            )
+        if target.kind != "permanent":
+            raise DslError(
+                f"{at}: divided damage is divided among permanents; target "
+                f"{target_id!r} is {target.kind!r}"
+            )
+        amount = effect.get("amount")
+        if isinstance(amount, Mapping) and set(amount) == {"const"}:
+            amount = amount["const"]
+        if isinstance(amount, int) and isinstance(target.count, int) and target.count > amount:
+            raise DslError(
+                f"{at}: divided damage deals {amount}, so its target {target_id!r} may "
+                f"name at most {amount} objects (601.2d: each is dealt at least one); "
+                f"got count {target.count!r}"
+            )
+
+
 def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
@@ -801,6 +873,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
     _check_distribution_homes(model, where)
+    _check_division_homes(model, where)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.event == "self_enters_prepared" and model.prepared_face is None:

@@ -2540,6 +2540,36 @@ than there are counters. A spell's or a trigger's "distribute" is refused — th
 is no announcement to read, and asking at resolution would let the split follow
 the responses.
 
+### Dividing damage among targets
+
+```jsonc
+// Pyrokinesis -- "deals 4 damage divided as you choose among any number of target creatures"
+"targets": [ { "id": "t1", "kind": "permanent", "count": "any",
+               "selector": { "types": ["Creature"], "controller": "any" } } ],
+"spell_effects": [ { "op": "damage", "amount": { "const": 4 }, "divided": "t1" } ]
+```
+
+`divided` on `damage` names the target spec whose objects **share** the amount.
+601.2d: the division is announced **as the spell is cast**, after its targets and
+before its cost, each target dealt at least one. `game.Game._ask_damage_division`
+asks it with the walk distributing counters uses (purpose `divide_damage`) and it
+rides on the stack item as `bindings["distribution"]`; at resolution each
+still-legal target is dealt its share, and an illegal one's share is lost (608.2b).
+
+The amount is read **once, at the announcement**, because the split cannot be
+made before the number is known — so a computed amount is always the number as
+the spell was cast, which is what Monstrous Onslaught's "the greatest power among
+creatures you control **as you cast this spell**" prints (`extreme_value` over
+power). Nothing changes when the board does before resolution. `engine.division`
+caps "any number" of targets at the amount where they are chosen, and legality
+offers no line with more targets than damage.
+
+The loader accepts it only as a **top-level spell effect**, over a `permanent`
+spec the spell declares, with no other recipient (`objects`, `player`, `target`)
+beside it; a fixed target count larger than a printed amount, and an amount that
+reads the announced X, are refused. Dividing among players or "any target", and
+dividing on an ability, are not modelled.
+
 ### Doubling the counters on a permanent
 
 ```jsonc

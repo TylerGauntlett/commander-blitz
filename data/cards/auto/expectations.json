@@ -8025,6 +8025,9 @@
       "graveyard"
     ]
   },
+  "monstrous_onslaught": {
+    "zone": "graveyard"
+  },
   "monument_to_endurance": {
     "zone": "battlefield"
   },
@@ -9548,6 +9551,9 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "graveyard"
+  },
+  "pyrokinesis": {
     "zone": "graveyard"
   },
   "pyromancer_s_goggles": {
