@@ -2481,6 +2481,35 @@ def prevents_all_damage(state: GameState, oid: int, *, is_combat: bool = False) 
     )
 
 
+def damage_into_counters(
+    state: GameState, oid: int, *, is_combat: bool = False
+) -> tuple[GameObject, str] | None:
+    """The total shield that turns this permanent's damage into counters, if any.
+
+    "If equipped creature would be dealt damage, prevent that damage and put
+    that many +1/+1 counters on it" -- Panther Habit. A `prevent_damage` static
+    with ``prevent_all`` and a ``counter`` kind: one replacement (615) whose
+    one event both prevents the damage and puts the counters, so there is no
+    trigger and nothing on the stack between the two halves.
+
+    Returns the first such static's source and its counter kind, or ``None``.
+    *First* and not summed: once one of them has prevented all of the damage
+    there is none left for a second one to replace (616.1), so two Habits on
+    one creature put the counters once.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return None
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "prevent_damage" or not static.get("counter"):
+            continue
+        if static.get("combat_only") and not is_combat:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return source_obj, static["counter"]
+    return None
+
+
 def crew_power_bonus(state: GameState, oid: int) -> int:
     """How much greater this creature's power counts **while crewing** -- 702.122.
 

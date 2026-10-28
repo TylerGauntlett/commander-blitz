@@ -807,7 +807,7 @@ STATICS: dict[str, Entry] = {
     "play_lands_from_library_top": ("The player may play lands from the top of their library.", None),
     "prevent_all_but": ("Prevent all but N of each instance of damage to matching permanents.",
                         "Prevent all but N of that damage"),
-    "prevent_damage": ("Prevent N of each damage to matching permanents (absorb) or to a seat from a matching dealer, or all damage to matching permanents.",
+    "prevent_damage": ("Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer.",
                        "Absorb, which is not protection with a number"),
     "protection": ("Matching permanents have protection from a quality.", "Protection"),
     "replace_counters": ("Counters put on matching permanents are replaced (doubled, redirected).",

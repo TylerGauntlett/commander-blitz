@@ -15,6 +15,7 @@ from . import sagas
 from .battles import DEFENSE as BATTLE_DEFENSE
 from .characteristics import (
     chars,
+    damage_into_counters,
     player_protected_from,
     prevented_damage,
     prevents_all_damage,
@@ -671,6 +672,36 @@ def damage_permanent(
         return 0
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
+        return 0
+    # "If equipped creature would be dealt damage, prevent that damage and put
+    # that many +1/+1 counters on it" (Panther Habit). One replacement (615):
+    # the damage is never dealt -- no mark, no deathtouch, no lifelink, no
+    # ledger, no `DAMAGE_DEALT` -- and the counters arrive inside the same
+    # event, so a lethal hit leaves a bigger creature rather than a dead one
+    # waiting on a trigger.
+    #
+    # **First of every prevention, and after the doubling**, both for 616.1:
+    # the damaged permanent's controller orders the replacements, and the
+    # loader allows only +1/+1 counters here, so the order that controller
+    # would choose is always the one that turns the most damage into counters
+    # -- this shield ahead of protection, a total shield, absorb, a shield
+    # counter or a cap (each of which would leave fewer or none), and a
+    # `replace_damage` doubling applied before it rather than after.
+    if (into := damage_into_counters(state, oid, is_combat=is_combat)) is not None:
+        shield_source, kind = into
+        amount *= damage_multiplier(state, source_oid, oid, is_combat=is_combat)
+        fire(
+            state,
+            EventType.DAMAGE_PREVENTED,
+            player=obj.controller,
+            source=source_oid,
+            oid=oid,
+            amount=amount,
+            to="permanent",
+            reason="prevent_into_counters",
+        )
+        if amount > 0:
+            add_counters(state, oid, kind, amount, source=shield_source.oid)
         return 0
     # Protection prevents the damage entirely -- so nothing is marked, no
     # deathtouch is recorded, and the source's lifelink gains nothing, which is

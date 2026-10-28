@@ -3211,6 +3211,26 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.damage_source: static filters may only read printed "
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
+        if model.counter is not None:
+            # "Prevent that damage and put that many +1/+1 counters on it"
+            # (Panther Habit). Only on the total shield: absorb N prevents part
+            # of each instance, and "that many" of a partial prevention is a
+            # sentence no card prints. Only +1/+1, because the engine applies
+            # this replacement ahead of every other prevention and after any
+            # doubling (616.1, `primitives.damage_permanent`) -- the order the
+            # damaged creature's controller picks when the counters help them,
+            # and the wrong order for a kind that hurts.
+            if not model.prevent_all:
+                raise DslError(
+                    f"{where}: 'prevent_damage' turns damage into counters only "
+                    f"with 'prevent_all' -- \"prevent that damage and put that "
+                    f"many counters on it\" prevents all of it"
+                )
+            if model.counter != "+1/+1":
+                raise DslError(
+                    f"{where}: 'prevent_damage' puts only '+1/+1' counters for "
+                    f"the damage it prevents, not {model.counter!r}"
+                )
     if model.prevent_all and model.effect != "prevent_damage":
         # A flag nothing reads is a printed line that does nothing.
         raise DslError(f"{where}: 'prevent_all' is read only by 'prevent_damage'")

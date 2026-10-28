@@ -6510,6 +6510,39 @@ damage that was never dealt, so a Squire built on it grows only on the turns its
 own shield is down. `life_lost` fails the same way, and `damage_taken_this_turn`
 reads zero underneath a working shield by construction.
 
+## Damage prevented into counters
+
+```jsonc
+// Panther Habit: If equipped creature would be dealt damage, prevent that
+//                damage and put that many +1/+1 counters on it.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "counter": "+1/+1", "affects": { "attached": true } }
+```
+
+A total shield with a `counter` kind. One replacement (615): the damage is never
+dealt — no mark, no deathtouch, no lifelink, no `DAMAGE_DEALT` — and the
+counters are put on the damaged permanent inside the same event, so nothing goes
+on the stack and a lethal hit leaves a bigger creature. It fires
+`DAMAGE_PREVENTED` with `reason: "prevent_into_counters"` and the prevented
+amount, then places the counters through `primitives.add_counters`, so counter
+replacements (Hardened Scales) and prohibitions apply to them as to any other
+placement. Answered by `characteristics.damage_into_counters`; with two such
+shields on one permanent the first takes all the damage and the counters arrive
+once.
+
+`primitives.damage_permanent` applies it **before every other prevention and
+after any `replace_damage` doubling**. 616.1 lets the damaged permanent's
+controller order the replacements, and with +1/+1 counters that order always
+turns the most damage into counters: protection or another total shield first
+would leave none, and a Furnace of Rath first doubles them.
+
+The loader accepts `counter` on `prevent_damage` only beside `prevent_all` —
+"that many" of absorb N's partial prevention is no printed sentence — and only
+as `"+1/+1"`, since the ordering above is the wrong one for a kind that hurts.
+The near miss is the total shield plus a `damage_prevented` trigger that puts
+the counters: a second ability on the stack, respondable, and resolving after
+state-based actions.
+
 ## Preventing all damage to or by a **permanent**, for a while
 
 ```jsonc

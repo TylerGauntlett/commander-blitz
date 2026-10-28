@@ -907,7 +907,9 @@ class AbilityModel(BaseModel):
     #: `counter` on `TriggerModel`, which is a different model and a different
     #: question ("whenever a +1/+1 counter is put on this creature").
     #: Also the kind `enters_with_additional_counters` adds and the kind
-    #: `cant_have_counters` forbids, where it is required.
+    #: `cant_have_counters` forbids, where it is required, and on a
+    #: `prevent_damage` total shield the kind it puts "that many" of for the
+    #: damage it prevents (Panther Habit; ``+1/+1`` only).
     counter: str | None = None
     #: `replace_counters`: only counters an **effect** puts on. Doubling
     #: Season's "if **an effect** would put one or more counters…" -- and a
