@@ -4360,6 +4360,23 @@ whole colour set) and on any effect but `protection`. The +3/+3 is an ordinary
 `buff` static on `{"attached": true}`, and "Equip commander {3}" is an equip line
 whose target selector adds `"is_commander": true`.
 
+**Protection from the chosen card type.** Serra's Emissary — "As this creature
+enters, choose a card type. … creatures you control have protection from the
+chosen card type" — puts `{"chosen_card_type_of": "self"}` in `from_types`, after
+a `choose_type` with `"of": "card_type"` on its enters trigger:
+
+```jsonc
+{ "kind": "static", "effect": "protection",
+  "affects": { "controller": "you", "types": ["Creature"] },
+  "from_types": [ { "chosen_card_type_of": "self" } ] }
+```
+
+`protection_from` substitutes the source's `chosen_card_type` each time it is
+read (`characteristics.resolve_chosen_card_type_list`), so all four rules see it
+and a source that has chosen nothing protects from nothing. It may sit beside
+literal types. A near-miss leaf is refused at load time, and so is the entry on a
+granted static, whose source would be the recipient, which has chosen nothing.
+
 ### Absorb, which is not protection with a number
 
 ```jsonc

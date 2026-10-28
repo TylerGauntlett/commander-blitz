@@ -1879,6 +1879,34 @@ def resolve_chosen_color_list(entries: Any, source: GameObject | None) -> list[s
     return out
 
 
+def resolve_chosen_card_type_list(entries: Any, source: GameObject | None) -> list[str]:
+    """Literal card types, with ``{"chosen_card_type_of": "self"}`` substituted.
+
+    The card-type twin of :func:`resolve_chosen_color_list`, for the readers
+    whose ``from_types`` is a list of protection qualities rather than a
+    filter -- "protection from **the chosen card type**" (Serra's Emissary).
+    The choice is the source's `chosen_card_type`, written by `choose_type`'s
+    ``permanent_type`` and ``card_type`` axes and never by its creature-type
+    one, so a creature type can never leak in as a card type.
+
+    A source that has chosen nothing yet contributes **nothing**: protection
+    from the chosen card type before a type is named is protection from
+    nothing, which is the only reading in which the window between the
+    permanent arriving and its choice resolving grants nobody anything.
+    """
+    out: list[str] = []
+    for entry in entries or ():
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_card_type_of") != "self":
+            continue
+        chosen = source.chosen_card_type if source is not None else None
+        if chosen is not None:
+            out.append(chosen)
+    return out
+
+
 def resolve_chosen_colors(
     selector: Mapping[str, Any], source: GameObject | None
 ) -> Mapping[str, Any]:
@@ -2515,7 +2543,10 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        out.update(static.get("from_types", ()))
+        # "Protection from the chosen card type" is read off the static's own
+        # source at the moment a rule asks, so it follows a later choice and
+        # matches nothing before one is made.
+        out.update(resolve_chosen_card_type_list(static.get("from_types"), source_obj))
         out.update(static.get("from_subtypes", ()))
         out.update(static.get("from_colors", ()))
         if static.get("from_colorless"):

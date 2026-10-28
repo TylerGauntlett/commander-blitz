@@ -4745,6 +4745,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"colour set; do not also list 'from_colors'"
             )
         for t in model.from_types:
+            if isinstance(t, dict):
+                # "Protection from the chosen card type." The one dynamic
+                # entry, and a near miss is refused: unrefused it would resolve
+                # to nothing and protect from nothing for ever.
+                if t != {"chosen_card_type_of": "self"}:
+                    raise DslError(
+                        f'{where}: the only dynamic from_types entry is '
+                        f'{{"chosen_card_type_of": "self"}}, not {t!r}'
+                    )
+                continue
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown type {t!r} in from_types")
         for c in model.from_colors:

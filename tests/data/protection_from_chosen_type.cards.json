@@ -1,0 +1,26 @@
+{
+  "_comment": "Shapes for tests/unit/protection/test_protection_from_chosen_type.py. t_pct_warden is Serra's Emissary's creature half: creatures you control have protection from the card type it chose. The tests write the choice onto the permanent directly; the choice itself is test_choose_card_type.py's.",
+  "cards": [
+    {
+      "id": "t_pct_warden",
+      "name": "Test Chosen Type Warden",
+      "oracle_text": "Creatures you control have protection from the chosen card type.",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control have protection from the chosen card type.",
+          "effect": "protection",
+          "affects": { "controller": "you", "types": ["Creature"] },
+          "from_types": [{ "chosen_card_type_of": "self" }]
+        }
+      ]
+    }
+  ]
+}

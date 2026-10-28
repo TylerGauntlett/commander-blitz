@@ -792,7 +792,10 @@ class AbilityModel(BaseModel):
     #: The qualities a ``protection`` static protects from.  Three lists rather
     #: than one so the card file reads like the card: "protection from
     #: planeswalkers and from Wizards" is a type and a subtype, not two nouns.
-    from_types: list[str] = Field(default_factory=list)
+    #: A ``from_types`` entry may also be ``{"chosen_card_type_of": "self"}``
+    #: -- "protection from the chosen card type" (Serra's Emissary), read off
+    #: the source's `choose_type` answer when a rule asks.
+    from_types: list[str | dict[str, str]] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
     from_colors: list[str] = Field(default_factory=list)
     #: "Protection from each color that's not in your commander's color
