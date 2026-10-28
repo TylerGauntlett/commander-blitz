@@ -7962,12 +7962,12 @@
     },
     "Ancestral Communion": {
       "edhrec_rank": 17715,
-      "gate": "template",
+      "gate": null,
       "name": "Ancestral Communion",
-      "reason": "no template for: When you cast this spell while you control your commander, copy this spell. You may choose",
+      "reason": "",
       "scryfall_id": "98bac891-0ba4-464c-9943-70b05838d134",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ancestral Katana": {
@@ -21512,12 +21512,12 @@
     },
     "Bast, Panther Goddess": {
       "edhrec_rank": 15315,
-      "gate": "template",
+      "gate": null,
       "name": "Bast, Panther Goddess",
-      "reason": "no template for: Bast can't attack or block unless you control three or more creatures",
+      "reason": "",
       "scryfall_id": "331e122e-f2dd-4497-917b-a6111c9eceb9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bastion Enforcer": {
@@ -32502,12 +32502,12 @@
     },
     "Bountiful Promenade": {
       "edhrec_rank": 214,
-      "gate": "template",
+      "gate": null,
       "name": "Bountiful Promenade",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "91ede26e-8784-4631-b9e7-f8f97b2904ac",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bounty Agent": {
@@ -51582,12 +51582,12 @@
     },
     "Conduit of Worlds": {
       "edhrec_rank": 551,
-      "gate": "template",
+      "gate": null,
       "name": "Conduit of Worlds",
-      "reason": "no template for: You may play lands from your graveyard",
+      "reason": "",
       "scryfall_id": "45ddd129-c975-4937-87cf-b6846e96a379",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cone of Cold": {
@@ -54752,12 +54752,12 @@
     },
     "Coveted Jewel": {
       "edhrec_rank": 1274,
-      "gate": "template",
+      "gate": null,
       "name": "Coveted Jewel",
-      "reason": "no template for: Whenever one or more creatures an opponent controls attack you and aren't blocked, that pl",
+      "reason": "",
       "scryfall_id": "06a7ad3b-87d4-47f0-9450-facac00dfe97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coveted Peacock": {
@@ -70102,12 +70102,12 @@
     },
     "Dispatch": {
       "edhrec_rank": 470,
-      "gate": "template",
+      "gate": null,
       "name": "Dispatch",
-      "reason": "no template for: Tap target creature",
+      "reason": "",
       "scryfall_id": "99d30a21-b003-4a17-a4c5-97811f230896",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dispel": {
@@ -72252,12 +72252,12 @@
     },
     "Dora Milaje Elite": {
       "edhrec_rank": 17736,
-      "gate": "template",
+      "gate": null,
       "name": "Dora Milaje Elite",
-      "reason": "no template for: Sacrifice this creature: Legendary permanents you control gain indestructible until end of",
+      "reason": "",
       "scryfall_id": "1d1e00e3-7f3c-4a49-859b-398283c38e61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doran, Besieged by Time": {
@@ -87272,12 +87272,12 @@
     },
     "Everett K. Ross, Hapless Attaché": {
       "edhrec_rank": 16539,
-      "gate": "template",
+      "gate": null,
       "name": "Everett K. Ross, Hapless Attaché",
-      "reason": "no template for: Commander creatures you control get +1/+1 and have lifelink",
+      "reason": "",
       "scryfall_id": "86d45201-7a94-4903-9e89-90f2be7a2f5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Everflame Eidolon": {
@@ -94762,12 +94762,12 @@
     },
     "Fight for the Throne": {
       "edhrec_rank": 16765,
-      "gate": "template",
+      "gate": null,
       "name": "Fight for the Throne",
-      "reason": "no template for: Put a +1/+1 counter on target creature you control. Then it fights target creature an oppo",
+      "reason": "",
       "scryfall_id": "0bb2ba5f-dd4f-4d40-894c-85d9edd00c84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fight or Flight": {
@@ -97732,12 +97732,12 @@
     },
     "Fleecemane Lion": {
       "edhrec_rank": 8641,
-      "gate": "template",
+      "gate": null,
       "name": "Fleecemane Lion",
-      "reason": "no template for: {3}{G}{W}: Monstrosity 1",
+      "reason": "",
       "scryfall_id": "0afb3c64-c88a-417b-a1f7-2edea045cb14",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fleet Swallower": {
@@ -117332,12 +117332,12 @@
     },
     "Greater Good": {
       "edhrec_rank": 644,
-      "gate": "template",
+      "gate": null,
       "name": "Greater Good",
-      "reason": "no template for: Sacrifice a creature: Draw cards equal to the sacrificed creature's power, then discard th",
+      "reason": "",
       "scryfall_id": "03445cdf-6c4e-4b93-b1c3-7bf3e3bafa33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greater Harvester": {
@@ -123372,12 +123372,12 @@
     },
     "Hatut Zeraze Strike Force": {
       "edhrec_rank": 19568,
-      "gate": "template",
+      "gate": null,
       "name": "Hatut Zeraze Strike Force",
-      "reason": "no template for: When you cast this spell, copy it for each time you've cast your commander from the comman",
+      "reason": "",
       "scryfall_id": "a4efb52c-5f09-4219-a0d8-2a425c2bf890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Haughty Djinn": {
@@ -124562,12 +124562,12 @@
     },
     "Heart-Shaped Herb": {
       "edhrec_rank": 17897,
-      "gate": "template",
+      "gate": null,
       "name": "Heart-Shaped Herb",
-      "reason": "no template for: If a source an opponent controls would deal damage to you, prevent 1 of that damage",
+      "reason": "",
       "scryfall_id": "1725b91a-bac4-4f91-b2b5-bb66086b54a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heartbeat of Spring": {
@@ -125962,12 +125962,12 @@
     },
     "Helm of the Host": {
       "edhrec_rank": 394,
-      "gate": "template",
+      "gate": null,
       "name": "Helm of the Host",
-      "reason": "no template for: At the beginning of combat on your turn, create a token that's a copy of equipped creature",
+      "reason": "",
       "scryfall_id": "70ffc71f-328d-421d-926b-6f2e45ffb812",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Helmut Zemo, Mastermind": {
@@ -136772,12 +136772,12 @@
     },
     "Ingenious Smith": {
       "edhrec_rank": 13367,
-      "gate": "template",
+      "gate": null,
       "name": "Ingenious Smith",
-      "reason": "no template for: When this creature enters, look at the top four cards of your library. You may reveal an a",
+      "reason": "",
       "scryfall_id": "2962e4d3-3f01-47d4-abe3-75658700c132",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ingenious Thief": {
@@ -148882,12 +148882,12 @@
     },
     "Kimoyo Beads": {
       "edhrec_rank": 17700,
-      "gate": "template",
+      "gate": null,
       "name": "Kimoyo Beads",
-      "reason": "no template for: At the beginning of your end step, choose one that hasn't been chosen —",
+      "reason": "",
       "scryfall_id": "1138096a-0d7c-461b-af83-3c90f681722d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kin-Tree Invocation": {
@@ -149182,12 +149182,12 @@
     },
     "King Solomon's Frogs": {
       "edhrec_rank": 18088,
-      "gate": "template",
+      "gate": null,
       "name": "King Solomon's Frogs",
-      "reason": "no template for: When enters, if you cast it, for each opponent, exile up to one target permanent that play",
+      "reason": "",
       "scryfall_id": "6908808f-e47e-4acb-a405-41b8018a5729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "King Suleiman": {
@@ -162342,12 +162342,12 @@
     },
     "Loyal Guardian": {
       "edhrec_rank": 2956,
-      "gate": "template",
+      "gate": null,
       "name": "Loyal Guardian",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, put a",
+      "reason": "",
       "scryfall_id": "6d81eda0-2520-4531-815a-8dea27306776",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Gyrfalcon": {
@@ -162382,12 +162382,12 @@
     },
     "Loyal Retainers": {
       "edhrec_rank": 10246,
-      "gate": "template",
+      "gate": null,
       "name": "Loyal Retainers",
-      "reason": "no template for: Sacrifice this creature: Return target legendary creature card from your graveyard to the ",
+      "reason": "",
       "scryfall_id": "3092e715-36cf-4b41-95c1-cf271646db39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Sentry": {
@@ -163682,12 +163682,12 @@
     },
     "M'Baku, Jabari Chieftain": {
       "edhrec_rank": 21382,
-      "gate": "template",
+      "gate": null,
       "name": "M'Baku, Jabari Chieftain",
-      "reason": "no template for: At the beginning of your end step, if there is no monarch, target opponent becomes the mon",
+      "reason": "",
       "scryfall_id": "253fed75-a6c1-4b08-b6f4-63628e8d4548",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "M.O.D.O.K.": {
@@ -172182,12 +172182,12 @@
     },
     "Metalwork Colossus": {
       "edhrec_rank": 1697,
-      "gate": "template",
+      "gate": null,
       "name": "Metalwork Colossus",
-      "reason": "no template for: This spell costs {X} less to cast, where X is the total mana value of noncreature artifact",
+      "reason": "",
       "scryfall_id": "82d868c2-aa72-4141-b508-9ff13c76ec4b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Metalworker": {
@@ -172672,12 +172672,12 @@
     },
     "Midnight Angel Armor": {
       "edhrec_rank": 19523,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Angel Armor",
-      "reason": "no template for: When this Equipment enters, create a 1/1 white Soldier creature token, then attach this Eq",
+      "reason": "",
       "scryfall_id": "5b5b87ba-c6cc-4f25-a5c9-22464a41de65",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Midnight Arsonist": {
@@ -182652,12 +182652,12 @@
     },
     "N'Yami-Class Mother Ship": {
       "edhrec_rank": 14217,
-      "gate": "template",
+      "gate": null,
       "name": "N'Yami-Class Mother Ship",
-      "reason": "no template for: Whenever this Vehicle deals combat damage to a player, look at the top card of your librar",
+      "reason": "",
       "scryfall_id": "07460c76-984a-4222-a07a-78ebef8d5027",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Naban, Dean of Iteration": {
@@ -183042,12 +183042,12 @@
     },
     "Nakia, Wakandan Operative": {
       "edhrec_rank": 20903,
-      "gate": "template",
+      "gate": null,
       "name": "Nakia, Wakandan Operative",
-      "reason": "no template for: Whenever your commander enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "6cd88c80-a445-4f88-95e3-e370620c90fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Naktamun Lorespinner // Wheel of Fortune": {
@@ -191922,12 +191922,12 @@
     },
     "Okoye, Mighty and Adored": {
       "edhrec_rank": 17924,
-      "gate": "template",
+      "gate": null,
       "name": "Okoye, Mighty and Adored",
-      "reason": "no template for: When Okoye enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "18ee486e-dc25-4de7-a71f-f11fdf100176",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Olag and Miau, New Friends": {
@@ -193842,12 +193842,12 @@
     },
     "Orbs of Warding": {
       "edhrec_rank": 13000,
-      "gate": "template",
+      "gate": null,
       "name": "Orbs of Warding",
-      "reason": "no template for: You have hexproof",
+      "reason": "",
       "scryfall_id": "c33ba4e5-217f-47e3-a6ce-f935a70c7566",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orbweaver Kumo": {
@@ -197482,12 +197482,12 @@
     },
     "Panther Habit": {
       "edhrec_rank": 13733,
-      "gate": "template",
+      "gate": null,
       "name": "Panther Habit",
-      "reason": "no template for: If equipped creature would be dealt damage, prevent that damage and put that many +1/+1 co",
+      "reason": "",
       "scryfall_id": "111f2e18-43b7-4a80-b53a-ed1cc14e500d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Panther Pounce": {
@@ -197502,12 +197502,12 @@
     },
     "Panther Robot": {
       "edhrec_rank": 13448,
-      "gate": "template",
+      "gate": null,
       "name": "Panther Robot",
-      "reason": "no template for: Affinity for artifacts",
+      "reason": "",
       "scryfall_id": "7d84f081-73ee-422e-820a-6dacc4ef6465",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Panther Warriors": {
@@ -211582,12 +211582,12 @@
     },
     "Queen Mother Ramonda": {
       "edhrec_rank": 20590,
-      "gate": "template",
+      "gate": null,
       "name": "Queen Mother Ramonda",
-      "reason": "no template for: When enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "081cb05a-e6d6-46fe-8809-b537c0a49fa7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Queen of Ice // Rage of Winter": {
@@ -228352,12 +228352,12 @@
     },
     "Royal Talon Fighter Jet": {
       "edhrec_rank": 15920,
-      "gate": "template",
+      "gate": null,
       "name": "Royal Talon Fighter Jet",
-      "reason": "no template for: This Vehicle enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "d1b9cb33-5a24-4bfe-9939-2cdf4c8aecfd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Royal Treatment": {
@@ -236242,12 +236242,12 @@
     },
     "Scourglass": {
       "edhrec_rank": 11098,
-      "gate": "template",
+      "gate": null,
       "name": "Scourglass",
-      "reason": "no template for: {T}, Sacrifice this artifact: Destroy all permanents except for artifacts and lands. Activ",
+      "reason": "",
       "scryfall_id": "b2ec7f8e-e2c2-4898-bc61-f309f1842cb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scouring Sands": {
@@ -245902,12 +245902,12 @@
     },
     "Shuri's Fabricator": {
       "edhrec_rank": 15997,
-      "gate": "template",
+      "gate": null,
       "name": "Shuri's Fabricator",
-      "reason": "no template for: {6}, {T}: Return target artifact card from your graveyard to the battlefield with a finali",
+      "reason": "",
       "scryfall_id": "ace834f0-7f64-4716-8599-f96f674e61a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shuri, Vibranium Technologist": {
@@ -245932,12 +245932,12 @@
     },
     "Shuri, the Black Panther": {
       "edhrec_rank": 17927,
-      "gate": "template",
+      "gate": null,
       "name": "Shuri, the Black Panther",
-      "reason": "no template for: Whenever Shuri attacks, draw a card if you control three or more artifacts. Then if you co",
+      "reason": "",
       "scryfall_id": "1a0f7946-cc17-4f24-bec1-d0243af9b726",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shuriken": {
@@ -266092,12 +266092,12 @@
     },
     "Storm, Queen of Wakanda": {
       "edhrec_rank": 16850,
-      "gate": "template",
+      "gate": null,
       "name": "Storm, Queen of Wakanda",
-      "reason": "no template for: Whenever Storm attacks, until end of turn, another target attacking creature gains flying ",
+      "reason": "",
       "scryfall_id": "0a61d843-2a7c-459c-9018-1ee4488c90a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Storm, Shaker of Skies": {
@@ -272342,12 +272342,12 @@
     },
     "Sword of the Animist": {
       "edhrec_rank": 238,
-      "gate": "template",
+      "gate": null,
       "name": "Sword of the Animist",
-      "reason": "no template for: Whenever equipped creature attacks, you may search your library for a basic land card, put",
+      "reason": "",
       "scryfall_id": "450697f9-4584-4a4b-b52c-1766b2af7048",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sword of the Chosen": {
@@ -273402,22 +273402,22 @@
     },
     "T'Chaka, Venerable King": {
       "edhrec_rank": 21764,
-      "gate": "template",
+      "gate": null,
       "name": "T'Chaka, Venerable King",
-      "reason": "no template for: When T'Chaka enters, mill three cards, then you may put an artifact or land card from amon",
+      "reason": "",
       "scryfall_id": "28deeaf6-c32b-41f1-b94f-0ae303377ea0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "T'Challa, the Black Panther": {
       "edhrec_rank": 16838,
-      "gate": "template",
+      "gate": null,
       "name": "T'Challa, the Black Panther",
-      "reason": "no template for: Whenever you cast an artifact spell with mana value 4 or greater, put two +1/+1 counters o",
+      "reason": "",
       "scryfall_id": "c1c8ad61-b7e1-446c-8b74-6e29371ea1d5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "T'Pol, Vulcan Representative": {
@@ -281062,12 +281062,12 @@
     },
     "The Great Mound": {
       "edhrec_rank": 15131,
-      "gate": "template",
+      "gate": null,
       "name": "The Great Mound",
-      "reason": "no template for: {3}, {T}: Create a tapped Vibranium token",
+      "reason": "",
       "scryfall_id": "11b3f96c-138e-431e-a1d6-5ebae4cb6b2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Grey Havens": {
@@ -282362,12 +282362,12 @@
     },
     "The Spear of Bashenga": {
       "edhrec_rank": 19022,
-      "gate": "template",
+      "gate": null,
       "name": "The Spear of Bashenga",
-      "reason": "no template for: When enters, if there is no monarch, you become the monarch",
+      "reason": "",
       "scryfall_id": "b8cc0703-f626-4d42-90bb-1a26e331a9de",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Spear of Leonidas": {
@@ -285692,12 +285692,12 @@
     },
     "Throne of the High City": {
       "edhrec_rank": 4409,
-      "gate": "template",
+      "gate": null,
       "name": "Throne of the High City",
-      "reason": "no template for: {4}, {T}, Sacrifice this land: You become the monarch",
+      "reason": "",
       "scryfall_id": "6aac7a6d-90c7-4fe7-b6d3-f63a7170ee96",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Throttle": {
@@ -290682,12 +290682,12 @@
     },
     "Trading Post": {
       "edhrec_rank": 2115,
-      "gate": "template",
+      "gate": null,
       "name": "Trading Post",
-      "reason": "no template for: {1}, {T}, Discard a card: You gain 4 life",
+      "reason": "",
       "scryfall_id": "03499a72-e865-46ff-bcb2-75e53e4b600e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tragedy Feaster": {
@@ -301242,12 +301242,12 @@
     },
     "Vanquish the Horde": {
       "edhrec_rank": 816,
-      "gate": "template",
+      "gate": null,
       "name": "Vanquish the Horde",
-      "reason": "no template for: This spell costs {1} less to cast for each creature on the battlefield",
+      "reason": "",
       "scryfall_id": "b571a870-15fe-4a21-8e29-86bddb8389fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vanquish the Weak": {
@@ -304192,22 +304192,22 @@
     },
     "Vibranium Mining Mech": {
       "edhrec_rank": 15660,
-      "gate": "template",
+      "gate": null,
       "name": "Vibranium Mining Mech",
-      "reason": "no template for: {2}: This Vehicle gets +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "2212e15b-5deb-4ab8-9f6f-7991e750e21a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vibranium Strike Gauntlets": {
       "edhrec_rank": 13835,
-      "gate": "template",
+      "gate": null,
       "name": "Vibranium Strike Gauntlets",
-      "reason": "no template for: When this Equipment enters, attach it to target creature you control",
+      "reason": "",
       "scryfall_id": "2b47e8b0-471c-4429-8273-d114fdf95e13",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vibrant Cityscape": {
@@ -308662,12 +308662,12 @@
     },
     "W'Kabi, Shield of the Nation": {
       "edhrec_rank": 19755,
-      "gate": "template",
+      "gate": null,
       "name": "W'Kabi, Shield of the Nation",
-      "reason": "no template for: Whenever you attack with your commander, if you control an artifact with mana value 4 or g",
+      "reason": "",
       "scryfall_id": "9fb292a4-cf71-4aeb-b92e-eab2e3177653",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wail of War": {
@@ -308722,12 +308722,12 @@
     },
     "Wakanda Forever!": {
       "edhrec_rank": 19394,
-      "gate": "template",
+      "gate": null,
       "name": "Wakanda Forever!",
-      "reason": "no template for: Reveal the top six cards of your library. You may put a permanent card from among them ont",
+      "reason": "",
       "scryfall_id": "8b893d46-25f0-4c6a-b9a3-ff25277be918",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wakandan Drone Flock": {
@@ -314332,12 +314332,12 @@
     },
     "Whispersilk Cloak": {
       "edhrec_rank": 332,
-      "gate": "template",
+      "gate": null,
       "name": "Whispersilk Cloak",
-      "reason": "no template for: Equipped creature can't be blocked and has shroud",
+      "reason": "",
       "scryfall_id": "a3f31ac4-09ca-4712-a311-50d28824bfad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Whispersteel Dagger": {
@@ -323602,12 +323602,12 @@
     },
     "Zuri, Warrior of Wakanda": {
       "edhrec_rank": 18717,
-      "gate": "template",
+      "gate": null,
       "name": "Zuri, Warrior of Wakanda",
-      "reason": "no template for: Whenever you cast an artifact spell with mana value 4 or greater, put a +1/+1 counter on e",
+      "reason": "",
       "scryfall_id": "b8225b51-d5a4-4b46-9a10-b581362b6a11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zurzoth, Chaos Rider": {

@@ -1,0 +1,38 @@
+{
+  "_comment": "tests/unit/mana/test_mana_restriction_other.py: the near miss to the Vibranium token's restriction, kept as a live card.",
+  "cards": [
+    {
+      "id": "t_artificer_shape_mana",
+      "name": "Test Artificer Shape Mana",
+      "oracle_text": "{T}: Add {C}. Spend this mana only to activate an ability or cast an artifact spell.",
+      "mana_cost": "{1}",
+      "types": [
+        "Artifact"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}. Spend this mana only to activate an ability or cast an artifact spell.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "mana_restriction": {
+            "cast": [
+              [
+                "artifact"
+              ]
+            ],
+            "activate": "any"
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1055,6 +1055,15 @@ WILDCARD = "any"
 #: chosen type."
 CAST = "cast"
 ACTIVATE = "activate"
+#: Everything mana pays for that is neither of those: a ward or "unless that
+#: player pays" price, an attack or block tax, a "you may pay" on a resolving
+#: ability, an enters-the-battlefield price, and the special actions (suspend,
+#: foretell, turning a face-down creature up). A restriction worded as a
+#: prohibition -- "this mana **can't be spent to cast** a nonartifact spell"
+#: (the Vibranium token) -- forbids one kind of spell and nothing else, so it
+#: has to say yes to these too, and a purpose of ``None`` cannot carry that
+#: yes without also handing it to every count that has no payment in mind.
+OTHER = "other"
 
 
 @dataclass(frozen=True)
@@ -1087,6 +1096,12 @@ class SpendPurpose:
     #: this is a question about the symbols and not about `mana_value`, which
     #: scores X as 0 and cannot tell Fireball from Shock.
     x_in_mana_cost: bool | None = None
+
+
+#: The purpose of every :data:`OTHER` payment. It names nothing, because no
+#: spell is being cast and no source's ability activated: only a restriction
+#: whose `other` half is the wildcard says yes to it.
+OTHER_PAYMENT = SpendPurpose(kind=OTHER, names=frozenset())
 
 
 #: The comparison operators a restriction predicate may use, spelled exactly as
@@ -1194,6 +1209,12 @@ class ManaRestriction:
 
     cast: tuple[RestrictionGroup, ...] = ()
     activate: tuple[RestrictionGroup, ...] = ()
+    #: Payments that are neither a cast nor an activation -- see :data:`OTHER`.
+    #: Only ever empty ("never", every "spend this mana only to …" card) or the
+    #: one wildcard group (a prohibition such as "can't be spent to cast a
+    #: nonartifact spell", which leaves a ward price payable). There is no
+    #: spell or source to name, so nothing narrower is meaningful.
+    other: tuple[RestrictionGroup, ...] = ()
     #: Does any group name :data:`CHOSEN_TYPE`?  Derived here rather than stored
     #: by the loader so it cannot drift from the groups it describes, and
     #: computed once at load so `costs.resolve_mana_restriction` can return an
@@ -1223,6 +1244,8 @@ class ManaRestriction:
         )
 
     def groups(self, kind: str) -> tuple[RestrictionGroup, ...]:
+        if kind == OTHER:
+            return self.other
         return self.activate if kind == ACTIVATE else self.cast
 
 
@@ -1308,17 +1331,40 @@ def compile_restriction(spec: Any, where: str) -> ManaRestriction:
     permanent is on the battlefield. Spelled the same way `subtypes` filters
     already spell it (Vanquisher's Banner, Door of Destinies) rather than as a
     new key meaning the same thing.
+
+    A third key, ``"other"``, takes only ``"any"`` and is how a restriction
+    worded as a **prohibition** is written. "This mana can't be spent to cast a
+    nonartifact spell" (the Vibranium token) forbids one kind of spell and
+    nothing else, so it still pays a ward price, an attack tax or an ability's
+    "you may pay" -- every payment :data:`OTHER` names:
+
+    ```jsonc
+    "mana_restriction": {"cast": [["artifact"]], "activate": "any", "other": "any"}
+    ```
+
+    Omitted, as on every "spend this mana only to …" card, it means "never",
+    which is what those cards print: Cryptic Trilobite's mana pays no ward.
     """
     if isinstance(spec, Mapping):
-        unknown = sorted(set(spec) - {"cast", "activate"})
+        unknown = sorted(set(spec) - {"cast", "activate", OTHER})
         if unknown:
             raise DslError(
                 f"{where}: 'mana_restriction' names {unknown}; mana is only ever spent "
-                f"to 'cast' a spell or 'activate' an ability"
+                f"to 'cast' a spell, 'activate' an ability, or on an 'other' payment"
+            )
+        other = spec.get(OTHER)
+        if other is not None and other != WILDCARD:
+            # Neither a spell nor a source stands behind a ward price or an
+            # attack tax, so there is nothing for a name to match: a group here
+            # would be mana that silently never pays one.
+            raise DslError(
+                f"{where}.other: takes only {WILDCARD!r}; a payment that is neither "
+                f"a cast nor an activation has no types to name"
             )
         restriction = ManaRestriction(
             cast=_restriction_groups(spec.get("cast"), f"{where}.cast"),
             activate=_restriction_groups(spec.get("activate"), f"{where}.activate"),
+            other=_restriction_groups(other, f"{where}.other"),
         )
         if not restriction.cast and not restriction.activate:
             raise DslError(

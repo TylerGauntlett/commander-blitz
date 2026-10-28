@@ -36,6 +36,7 @@ PRECONS = {
     "fdc_keen_engineering",
     "fdc_wretched_ranks",
     "frc_multiverse_reforged",
+    "msc_wakanda_forever",
 }
 
 #: Every deck a player sees on the shelf.

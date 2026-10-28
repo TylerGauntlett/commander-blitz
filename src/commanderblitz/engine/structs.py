@@ -862,6 +862,22 @@ class LifeLock:
 CAST_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
 
 
+#: The zones a `CastLock` can shut, and the set ``except_zones`` is subtracted
+#: from.
+#:
+#: Every zone there is, including the stack and the battlefield, because both
+#: are places a spell is cast from here: a prepared permanent offers a cast
+#: from the battlefield, and `ops_stack.op_cast_copy` casts a copy sitting on
+#: the stack. "Anywhere other than their hands" means anywhere, and a list that
+#: quietly omitted a zone would be a lock with a door left open.
+#:
+#: A lock that shuts **all** of them is the total prohibition -- "you can't
+#: cast spells this turn" -- and `player_statics.player_cant_cast_spells` reads
+#: it as one, so the cast of a copy (707.12), which has no zone to compare, is
+#: refused too.
+CASTABLE_ZONES = ("library", "hand", "battlefield", "graveyard", "exile", "stack", "command")
+
+
 @dataclass(frozen=True)
 class CastLock:
     """"Until your next turn, your opponents can't cast spells from anywhere

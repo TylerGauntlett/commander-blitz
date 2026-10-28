@@ -1,0 +1,28 @@
+{
+  "_comment": "Shapes for tests/unit/commander/test_commander_casts_this_game.py. t_ccc_strike_force is Hatut Zeraze Strike Force's cast trigger on a one-mana body, so the copies can be counted as tokens on the battlefield.",
+  "cards": [
+    {
+      "id": "t_ccc_strike_force",
+      "name": "Test Commander Cast Strike Force",
+      "oracle_text": "When you cast this spell, copy it for each time you've cast your commander from the command zone this game.",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When you cast this spell, copy it for each time you've cast your commander from the command zone this game.",
+          "active_zones": ["stack"],
+          "trigger": {"event": "spell_cast", "source": "self", "controller": "you"},
+          "effects": [
+            {"op": "copy_spell", "amount": {"commander_casts_this_game": "you"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

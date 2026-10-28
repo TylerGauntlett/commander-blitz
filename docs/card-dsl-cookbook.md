@@ -481,6 +481,35 @@ Rule 107.3 is why the two are separate questions rather than one: a Fireball cas
 for X=0 is still "a spell with {X} in its mana cost", and 202.3b scores that X as
 0 — so `mana_value` catches Fireball and Shock together or neither.
 
+#### A restriction worded as a prohibition — `other`
+
+```jsonc
+// The Vibranium token — "{T}: Add {C}. This mana can't be spent to cast a
+// nonartifact spell."
+"mana_restriction": { "cast": [["artifact"]], "activate": "any", "other": "any" }
+```
+
+"Spend this mana only to …" permits one thing and refuses the rest; "this mana
+can't be spent to …" refuses one thing and permits the rest. Mana is spent on
+more than spells and abilities: a ward price, an "unless that player pays", an
+attack or block tax, a resolving ability's "you may pay", an enters-the-battlefield
+price, and the special actions (suspend, foretell, turning a face-down creature
+up). Those payments pass `mana.OTHER_PAYMENT`, a purpose of kind `other`, and
+the `other` half answers them.
+
+`other` takes only `"any"` — no spell or source stands behind a tax, so there is
+nothing for a name to match. Omitted, as on every "spend this mana only to …"
+card, it means "never", which is what those cards print: Cryptic Trilobite's
+mana pays no ward.
+
+The near miss is Automated Artificer's shape, `{"cast": [["artifact"]],
+"activate": "any"}`. It reads the same at a glance and refuses the Vibranium's
+mana to Rhystic Study's tax and to every ward on the table — a weaker card than
+the printed one. A cast-time payment made apart from the main one (splice, a
+madness cast) still passes no purpose, which withholds restricted mana: right
+for this token whenever that spell is not an artifact, and an under-permit, never
+an over-permit, when it is.
+
 ### Restricted mana an *effect* made
 
 ```jsonc
@@ -649,6 +678,31 @@ the presence of `filter`, not on the type, because a player spec is itself
 sometimes a mapping (`{"except": …}`). The id recorded is the face that was
 **cast** — a disturb cast turns the card over inside `push_spell`, and the half
 that was cast is the half the condition asks about.
+
+### Copying a spell for each commander cast
+
+```jsonc
+{ "kind": "triggered",
+  "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [ { "op": "copy_spell",
+                 "amount": { "commander_casts_this_game": "you" } } ] }
+```
+
+"When you cast this spell, copy it for each time you've cast your commander from
+the command zone this game." (Hatut Zeraze Strike Force.) The count is the one rule
+903.8 already keeps for commander tax: `Player.commander_tax` gains one per cast of
+a commander from the command zone, and `commander_casts_this_game` sums it over the
+player's commanders (`GameState.commanders_of`), so partners both count. It takes
+a player spec, validated at load time.
+
+A commander that came out any other way — put onto the battlefield by an effect,
+cast from hand or a graveyard — was not cast from the command zone and adds
+nothing, which is also what the tax says. The value is read when the trigger
+resolves; a commander carrying this text has already tallied its own cast by
+then. The near miss is `spells_cast_this_game`, which counts every spell from
+every zone. A copy of a permanent spell resolves as a token (706.10, via
+`put_copy_on_stack`), so the creature form needs nothing further.
 
 ### Casting out of every graveyard, until end of turn
 
@@ -4446,6 +4500,36 @@ the damage ledger, and a `DAMAGE_DEALT` carrying the reduced number. Only what
 got through is damage, and it is ordinary damage: the excess from a deathtouch
 source still marks the victim.
 
+The same N over a **seat** is `affects_player` in place of `affects`, with the
+dealer named by `damage_source`:
+
+```jsonc
+// Orbs of Warding: if a creature would deal damage to you, prevent 1 of that damage.
+{ "kind": "static", "effect": "prevent_damage", "amount": 1,
+  "affects_player": "you",
+  "damage_source": { "controller": "any", "types": ["Creature"] } }
+// Heart-Shaped Herb: if a source an opponent controls would deal damage to you, …
+{ "kind": "static", "effect": "prevent_damage", "amount": 1,
+  "affects_player": "you", "damage_source": { "controller": "opponent" } }
+```
+
+Per event and never a pool, exactly as absorb is: every hit to the seat loses
+N, a hit of N or less is gone, and two shields add. `damage_source` is
+`replace_damage`'s dealer filter, read on the dealer's **current**
+characteristics (a crewed Vehicle is a creature, an uncrewed one is not), and a
+filter naming only `controller` reaches a spell on the stack, which is the
+Herb's "a source". Omitted, every source. `player_statics.prevented_player_damage`
+answers it and `primitives.damage_player` reads it after the all-or-nothing
+preventions and before the damage multiplier — the order the protected player
+would choose.
+
+The near misses: the `prevent_damage` *op* is a Fog for one turn; "prevent the
+next N damage" is a one-shot pool that drains and is not implemented;
+`prevent_all_but` caps each event at N, so a 1-damage ping lands under it and
+is prevented here. The loader requires `affects` or `affects_player`, refuses
+`prevent_all` beside `affects_player`, and refuses `damage_source` unless the
+static names a seat and no permanents — the permanent half does not read it.
+
 ### Shroud, which is the third member of that family
 
 `shroud` is an ordinary entry in `keywords`, so a card that prints it needs
@@ -6348,11 +6432,9 @@ Selfless Squire is both lines and needs both: the shield prevents, the event
 carries how much it ate, the trigger reads it back as `{"binding": "amount"}`.
 
 **The op is not the static of the same name.** `prevent_damage` the *static* is
-absorb N and is keyed to an **object** — `characteristics.prevented_damage`
-matches each entry's `affects` filter against a permanent, and
-`static_filter_keys` has no way to name a seat at all. It is also per source and
-per instance rather than "all damage this turn", and being a static it is
-continuous while its source stands on the battlefield — a Squire carrying one
+absorb N, keyed to a permanent through `affects` or to a seat through
+`affects_player`. It is per source and per instance rather than "all damage
+this turn", and being a static it is continuous while its source stands on the battlefield — a Squire carrying one
 would fog its controller every future turn, which is a Worship. Same relationship
 `cant_block` the op has with `cant_block` the static, and the same three
 inversions: the subject, the clock, and who owns it.
@@ -6427,6 +6509,39 @@ take the player half without also paying out on a blocked absorb creature.
 damage that was never dealt, so a Squire built on it grows only on the turns its
 own shield is down. `life_lost` fails the same way, and `damage_taken_this_turn`
 reads zero underneath a working shield by construction.
+
+## Damage prevented into counters
+
+```jsonc
+// Panther Habit: If equipped creature would be dealt damage, prevent that
+//                damage and put that many +1/+1 counters on it.
+{ "kind": "static", "effect": "prevent_damage", "prevent_all": true,
+  "counter": "+1/+1", "affects": { "attached": true } }
+```
+
+A total shield with a `counter` kind. One replacement (615): the damage is never
+dealt — no mark, no deathtouch, no lifelink, no `DAMAGE_DEALT` — and the
+counters are put on the damaged permanent inside the same event, so nothing goes
+on the stack and a lethal hit leaves a bigger creature. It fires
+`DAMAGE_PREVENTED` with `reason: "prevent_into_counters"` and the prevented
+amount, then places the counters through `primitives.add_counters`, so counter
+replacements (Hardened Scales) and prohibitions apply to them as to any other
+placement. Answered by `characteristics.damage_into_counters`; with two such
+shields on one permanent the first takes all the damage and the counters arrive
+once.
+
+`primitives.damage_permanent` applies it **before every other prevention and
+after any `replace_damage` doubling**. 616.1 lets the damaged permanent's
+controller order the replacements, and with +1/+1 counters that order always
+turns the most damage into counters: protection or another total shield first
+would leave none, and a Furnace of Rath first doubles them.
+
+The loader accepts `counter` on `prevent_damage` only beside `prevent_all` —
+"that many" of absorb N's partial prevention is no printed sentence — and only
+as `"+1/+1"`, since the ordering above is the wrong one for a kind that hurts.
+The near miss is the total shield plus a `damage_prevented` trigger that puts
+the counters: a second ability on the stack, respondable, and resolving after
+state-based actions.
 
 ## Preventing all damage to or by a **permanent**, for a while
 
@@ -7921,8 +8036,35 @@ the events that carry one: `permanent_enters` and `leaves_graveyard` group by
 the effect op or cost payment that moved the objects, and `token_created` by
 the `primitives.create_token` call, so every token one creation makes is one
 group, including the extra ones a `replace_token_creation` doubler adds or the
-ones it substitutes. Two `create_token` ops are two groups. The loader refuses
-`batched` on any other event, where nothing would group it.
+ones it substitutes. Two `create_token` ops are two groups. `attacks_unblocked`
+groups by the block declaration (`combat.finish_blockers`), since every attacker
+is blocked or unblocked at that one instant (509.1h); a second combat is a second
+group. The loader refuses `batched` on any other event, where nothing would group
+it.
+
+"Whenever one or more creatures an opponent controls attack you and aren't
+blocked, that player draws three cards and gains control of this artifact.
+Untap it." (Coveted Jewel)
+
+```jsonc
+"trigger": {"event": "attacks_unblocked", "controller": "opponent",
+            "filter": {"attacking_player": "you"}, "batched": true},
+"effects": [
+  {"op": "draw", "player": {"binding": "event_player"}, "amount": {"const": 3}},
+  {"op": "gain_control", "player": {"binding": "event_player"},
+   "objects": {"zone": "battlefield", "self_only": true}},
+  {"op": "untap", "objects": {"zone": "battlefield", "self_only": true}}
+]
+```
+
+`controller` reads the attacking creature's controller and `attacking_player:
+"you"` says it attacks *you*, not a planeswalker you control (506.2); both are
+asked of each creature before the group is spent, so a creature sent at your
+walker cannot use up the one firing. "That player" is `event_player`, the
+attacking creature's controller. `creatures_attack_player` with `defending:
+"you"` is the near miss: it is batched already but fires as attackers are
+declared, before anything has blocked, and its `defending` also counts your
+planeswalkers.
 
 ## "Enters with a counter on it **for each** …"
 
@@ -7997,6 +8139,21 @@ different card, in three ways that a board can see:
 Puts the counters on and sets a one-way `monstrous` flag. The flag *is* the
 mechanic: without it the ability is a repeatable pump and the
 `becomes_monstrous` trigger fires every time instead of once.
+
+"As long as this creature is monstrous, it has hexproof and indestructible"
+(Fleecemane Lion) is a self static gated on the `is_monstrous` static condition:
+
+```jsonc
+{ "kind": "static", "effect": "grant_keyword", "affects": { "self_only": true },
+  "keywords": ["hexproof", "indestructible"], "condition": { "is_monstrous": true } }
+```
+
+It reads the source's `monstrous` field, which only `monstrosity` writes and
+only a zone change clears, so it is a pipeline input like a counter and the
+grant is on the moment the ability resolves. The loader refuses anything but a
+boolean. Two near misses, both wrong: `{"counters": …}` on +1/+1 — that counter
+can come from anywhere and be removed, while being monstrous survives both
+(701.37b) — and `has_flag`, which reads `flags`, where monstrous does not live.
 
 ```jsonc
 { "op": "freeze", "objects": { "target": "t1" } }
@@ -8264,6 +8421,27 @@ the cause does not matter, and one counter is spent per untap. A permanent that
 is already untapped is not becoming untapped, so its counter waits. The spelling
 is exact and the loader refuses `"Stun"` and `"stun counter"`, as it refuses a
 near-miss shield counter.
+
+## Finality counters
+
+```jsonc
+// Shuri's Fabricator: "Return target artifact card from your graveyard to the
+// battlefield with a finality counter on it."
+{ "op": "return_from_graveyard", "objects": { "target": "t1" },
+  "destination": "battlefield", "controller": "you", "counters": { "finality": 1 } }
+```
+
+Rule 122.1g's kind: if a permanent with a finality counter on it would be put
+into a graveyard from the battlefield, it is exiled instead. `zones.move_object`
+reads it on every battlefield-to-graveyard move, so destruction, sacrifice and 0
+toughness are all covered, and the counter is never spent. It is a replacement,
+so the permanent does not die and no dies trigger fires; a bounce or a tuck is
+not a move to a graveyard and is untouched. It counts as the affected player's
+own replacement, so `replace_dies` (Kalitas) does not apply to it, and a
+commander still goes to the command zone. Any op that places counters can put
+one: `add_counters`, an enters-with, or `return_from_graveyard`'s `counters` map
+as above. The spelling is exact and the loader refuses `"Finality"` and
+`"finality counter"`, as it refuses a near-miss stun counter.
 
 ## Energy
 
@@ -10338,6 +10516,64 @@ Three rules details, none of them optional:
 `rest_to_bottom` routes through `state.rng` like cascade's and ripple's, never
 `random`; `tests/unit/engine/test_determinism_hygiene.py` scans for the latter and
 `tests/unit/casting/test_free_cast_from_window.py` pins the former from the outside.
+
+## "You may cast that card" — a paid cast during resolution
+
+Conduit of Worlds — *"{T}: Choose target nonland permanent card in your
+graveyard. If you haven't cast a spell this turn, you may cast that card. If you
+do, you can't cast additional spells this turn. Activate only as a sorcery."*
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": "=", "left": { "spells_cast_this_turn": "you" },
+                 "right": { "const": 0 } },
+  "then": [
+    { "op": "cast_card", "objects": { "target": "t1" }, "as": "cast" },
+    { "op": "if", "condition": { "exists": { "binding": "cast" } },
+      "then": [ { "op": "cant_cast_spells", "player": "you",
+                  "duration": "this_turn" } ] } ] }
+```
+
+**`cast_card`** casts each card in `objects` (a target, a binding or a selector)
+while the ability resolves (608.2g), as its own "you may", **paying its mana
+cost**. It is a real cast (601.2): the card goes on the stack, its cast triggers
+fire, and it counts toward `spells_cast_this_turn`. The price is the card's mana
+cost with the adjustments the ordinary cast line makes: cost reductions and
+taxes (`cost_reduction`), restricted mana (`spell_purpose`), Phyrexian pips
+paid with life, and X announced under a mana-value lock's floor. Targets are
+asked: one-target spells such as Auras get a target pick, and anything else
+gets a choice among the legal tuples. The offer is made only when some line
+can be paid (118.4). A land is never offered (305.9). The three resolution-time
+locks refuse it before the question: a total prohibition, sorcery timing, and
+a zone lock. `as` records the cards actually **cast**, which is what "if you
+do" reads, so a declined offer leaves it empty.
+
+Only the printed mana cost is offered. No kicker, alternative cost or optional
+additional cost is offered. A card whose additional cost is mandatory, or that
+has `additional_cost_options`, is not offered at all. That makes the cast
+narrower than 601.2b, never cheaper. `objects` is required, and `free`,
+`selector`, `zones` and `per_owner` are refused, because those keys belong to
+the free casts.
+
+| near miss | why it is not this |
+|---|---|
+| `cast_from_hand`, `play_exiled`, `cascade`, `look_at_top`'s `cast_free` | free: they go through `suspend.cast_for_free`, and a free Conduit is a strictly better card |
+| `grant_playable`, `grant_graveyard_cast` | leave a *permission* to cast later in a priority window; "if you do" has nothing to read while the ability resolves |
+
+**`cant_cast_spells`** is the timed, one-shot form of the `cant_cast_spells`
+static: a player-wide, **total** prohibition. `player` (who is locked) and
+`duration` (`"this_turn"` or `"until_your_next_turn"`, from
+`structs.CAST_LOCK_DURATIONS`) are both required, because "you … this turn" and
+"your opponents … this turn" (Silence) differ in both. The op writes a
+`structs.CastLock` that shuts every zone in `structs.CASTABLE_ZONES`, and
+`player_statics.player_cant_cast_spells` reads such a row as total. That read is
+what covers the one road a zone lock leaves open: casting a copy (707.12), which
+has no zone to compare. A `zones` or `except_zones` key is refused, because a
+zone-filtered lock is `cant_cast_spells_from_zones`. The clock and the cleanup
+are the timed table's own. A spell already on the stack is untouched, so the
+card Conduit just cast still resolves.
+
+Pinned in `tests/unit/casting/test_cast_card.py`.
 
 ## Addendum — the phase a spell was cast in
 

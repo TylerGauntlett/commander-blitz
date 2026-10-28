@@ -1571,7 +1571,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: the 'prevent_damage' op prevents ALL damage to a player "
                 f"for the turn and takes no 'amount' -- absorb N is the "
-                f"'prevent_damage' *static effect* on a permanent, and "
+                f"'prevent_damage' *static effect* (a permanent or a seat), and "
                 f'"prevent the next N damage" over a player is not implemented'
             )
         # Required for the reason `cant_block`'s is: a prevention read as lasting
@@ -2842,6 +2842,41 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown cant_cast_spells_from_zones duration {duration!r} "
                 f"(implemented: {sorted(CAST_LOCK_DURATIONS)})"
             )
+    if op == "cant_cast_spells":
+        # Both required: the printed shapes differ in who and for how long
+        # ("you … this turn", "your opponents … this turn"), and a default would
+        # silently write one as the other -- a lock on the wrong seats.
+        if "player" not in effect or "duration" not in effect:
+            raise DslError(f"{where}: cant_cast_spells needs 'player' and 'duration'")
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        if str(effect["duration"]) not in CAST_LOCK_DURATIONS:
+            raise DslError(
+                f"{where}: unknown cant_cast_spells duration {effect['duration']!r} "
+                f"(implemented: {sorted(CAST_LOCK_DURATIONS)})"
+            )
+        if "zones" in effect or "except_zones" in effect:
+            # The lock is total. A zone list belongs to
+            # `cant_cast_spells_from_zones`, and here it would be ignored.
+            raise DslError(
+                f"{where}: cant_cast_spells is total -- a zone-filtered lock is "
+                f"cant_cast_spells_from_zones"
+            )
+    if op == "cast_card":
+        # "You may cast that card": the pool is the whole of what may be cast,
+        # and without one the op offers nothing while still printing its
+        # sentence.
+        if not isinstance(effect.get("objects"), Mapping):
+            raise DslError(f"{where}: cast_card needs an 'objects' selector naming the card")
+        validate_selector(effect["objects"], f"{where}.objects")
+        for key in ("free", "selector", "zones", "per_owner"):
+            if key in effect:
+                # The near misses' keys. `cast_card` charges the mana cost; a
+                # free cast is `cast_from_hand`, and a silently ignored `free`
+                # would be the opposite card.
+                raise DslError(
+                    f"{where}: cast_card takes no {key!r} -- it casts the 'objects' "
+                    f"pool at its mana cost (a free cast is cast_from_hand)"
+                )
     if op == "lock_life_total":
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)

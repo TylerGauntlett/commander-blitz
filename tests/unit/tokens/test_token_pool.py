@@ -886,3 +886,93 @@ class TestGingersGingerbruteIsAHastyFoodGolem:
     def test_the_name_does_not_answer_for_a_card(self, pool):
         card = pool.by_name("Gingerbrute")
         assert card is None or not card.is_token
+
+
+class TestVibraniumIsAnIndestructibleArtifactWithRestrictedMana:
+    """T'Challa, the Black Panther; Dora Milaje Elite; The Great Mound; Vibranium
+    Mining Mech; Shuri's Fabricator: *"create a tapped Vibranium token. (It's an
+    artifact with indestructible and "{T}: Add {C}. This mana can't be spent to
+    cast a nonartifact spell.")"*
+
+    `treasure_token` is the near miss: the pool's other colorless mana-making
+    artifact, but it sacrifices itself, makes any colour, carries no restriction
+    and is not indestructible. Every one of those differences is a different
+    card. The restriction is a prohibition, so its `other` half is the wildcard
+    -- see `tests/unit/mana/test_mana_restriction_other.py`.
+    """
+
+    def test_it_is_an_indestructible_colorless_vibranium_artifact(self, pool):
+        token = pool.get("vibranium_token")
+        assert token is not None and token.is_token
+        assert token.name == "Vibranium"
+        assert list(token.types) == ["Artifact"]
+        assert list(token.subtypes) == ["Vibranium"]
+        assert not token.colors
+        assert (token.power, token.toughness) == (None, None)
+        assert list(token.keywords) == ["indestructible"]
+
+    def test_it_taps_for_one_colorless_its_mana_barred_from_nonartifact_spells(self, pool):
+        [ability] = pool.get("vibranium_token").abilities
+        assert ability.is_mana_ability
+        assert ability.cost.tap and not ability.cost.sacrifice
+        assert ability.effects == ({"op": "add_mana", "mana": "{C}"},)
+        restriction = ability.mana_restriction
+        assert [g.required for g in restriction.cast] == [frozenset({"artifact"})]
+        assert [g.required for g in restriction.activate] == [frozenset()]
+        assert [g.required for g in restriction.other] == [frozenset()]
+
+    def test_the_treasure_is_still_a_separate_token(self, pool):
+        treasure = pool.get("treasure_token")
+        assert not treasure.keywords
+        assert treasure.abilities[0].cost.sacrifice
+        assert treasure.abilities[0].mana_restriction is None
+
+
+class TestTradingPostsGoatIsAZeroOneWhite:
+    """Trading Post: *"{1}, {T}, Pay 1 life: Create a 0/1 white Goat creature
+    token."*
+
+    The pool's other 0/1 tokens are `plant_0_1_g` and
+    `kobolds_of_kher_keep_0_1_r`: the right size, the wrong colour and the wrong
+    creature type, both of which a card can read.
+    """
+
+    def test_it_is_a_zero_one_white_goat(self, pool):
+        token = pool.get("goat_0_1_w")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Goat"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_plant_is_still_a_separate_token(self, pool):
+        plant = pool.get("plant_0_1_g")
+        assert (plant.power, plant.toughness) == (0, 1)
+        assert sorted(plant.colors) == ["G"]
+        assert "Goat" not in plant.subtypes
+
+
+class TestWKabisRhinoIsAFourFourGreenTrampler:
+    """W'Kabi, Shield of the Nation: *"…create a 4/4 green Rhino creature token
+    with trample."*
+
+    `beast_4_4_g` and `phyrexian_beast_4_4_g` are the pool's other 4/4 green
+    tokens: the wrong creature type, and neither tramples.
+    """
+
+    def test_it_is_a_four_four_green_rhino_with_trample(self, pool):
+        token = pool.get("rhino_4_4_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Rhino"]
+        assert list(token.keywords) == ["trample"]
+        assert not token.abilities
+
+    def test_the_beast_is_still_a_separate_token(self, pool):
+        beast = pool.get("beast_4_4_g")
+        assert (beast.power, beast.toughness) == (4, 4)
+        assert not beast.keywords
+        assert "Rhino" not in beast.subtypes

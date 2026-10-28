@@ -33,7 +33,7 @@ from .carddef import Cost
 from .costs import pay, zone_of
 from .enums import Zone
 from .events import EventType
-from .mana import ManaCost
+from .mana import OTHER_PAYMENT, ManaCost
 from .objects import TIME_COUNTER
 from .player_statics import player_cant_cast_while_resolving
 from .primitives import cast_locked_zones
@@ -53,7 +53,7 @@ def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[in
         return False
     cost, counters = card.suspend
 
-    ok = yield from pay(state, pid, Cost(mana=cost), None)
+    ok = yield from pay(state, pid, Cost(mana=cost), None, purpose=OTHER_PAYMENT)
     if not ok:  # pragma: no cover - legality already proved payability
         return False
 
@@ -90,7 +90,9 @@ def foretell_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[i
     if card.foretell is None:
         return False
 
-    ok = yield from pay(state, pid, Cost(mana=ManaCost.parse(FORETELL_COST)), None)
+    ok = yield from pay(
+        state, pid, Cost(mana=ManaCost.parse(FORETELL_COST)), None, purpose=OTHER_PAYMENT
+    )
     if not ok:  # pragma: no cover - legality already proved payability
         return False
 

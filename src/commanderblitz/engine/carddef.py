@@ -580,7 +580,9 @@ class TriggerSpec:
     #: one opponent swings at another.  ``you`` | ``opponent`` | ``any``, or
     #: ``most_life`` on ``attacks`` only: dethrone's "attacks **the player with
     #: the most life or tied for most life**" (702.105a), a player and not a
-    #: planeswalker or battle, asked as part of the event.
+    #: planeswalker or battle, asked as part of the event; or ``monarch`` on
+    #: ``attacks`` only, "attacks **the monarch**" (The Spear of Bashenga), the
+    #: same two questions with the crown in place of the life totals.
     defending: str | None = None
     #: A zone-change ``cause`` this trigger refuses to fire on -- the loop guard
     #: behind "if it wasn't put onto the battlefield with this ability".
