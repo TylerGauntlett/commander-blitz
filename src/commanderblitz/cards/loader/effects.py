@@ -18,6 +18,7 @@ from commanderblitz.engine.effects.ops_cards import (
     LOOK_STEP_KEYS,
     SEARCHABLE,
 )
+from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
 from commanderblitz.engine.effects.ops_player import CASTABLE_ZONES
 from commanderblitz.engine.effects.selectors import PLAYER_SPEC_NAMES, validate_selector
 from commanderblitz.engine.effects.values import (
@@ -68,7 +69,9 @@ from .vocabulary import (
     KNOWN_TYPES,
     PLAYER_TARGET_KINDS,
     PLURAL_PLAYER_SPEC_NAMES,
+    STATIC_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
+    refuse_numbered_grant,
 )
 from .walk import (
     _check_counter_kind,
@@ -884,6 +887,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(f"{where}: 'x' announces the {{X}} of 'pay', and its mana has none")
         if "x" in effect:
             _validate_pay_x(effect, where)
+        if isinstance(life := effect["pay"].get("pay_life"), dict):
+            # "You may pay that much life" -- Niv-Mizzet, Ghost Counsel. A value
+            # expression read when the `may` resolves, with the trigger's
+            # bindings in hand; validated here so a misspelt expression is a
+            # load error rather than a price of 0 and a free "if you do".
+            validate_value(life, f"{where}.pay.pay_life")
         if (times := effect["pay"].get("times")) is not None:
             # Cumulative upkeep's multiplier. It scales the *mana* half and
             # nothing else, so a `times` beside a cost with no mana would load
@@ -1229,13 +1238,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: reveal_until needs a non-empty 'objects' -- "
                 f"the selector is the card it stops at"
             )
-        # An `amount` would be read by nobody: the depth is the library's, not
-        # the card's, and a card that wrote one would believe it was bounded.
-        if "amount" in effect:
-            raise DslError(
-                f"{where}: reveal_until takes no 'amount' -- the scan is unbounded; "
-                f"use look_at_top for a bounded window"
-            )
+        # `amount` is how many *matches* end the scan ("until you reveal that
+        # many creature cards"), validated as a value with every other
+        # `amount`; the depth stays the library's.
+        # "Shuffle the rest into your library" and "put the rest on the bottom
+        # in a random order" are two different actions, and a card prints one.
+        if "shuffle_rest" in effect:
+            if not isinstance(effect["shuffle_rest"], bool):
+                raise DslError(f"{where}: reveal_until 'shuffle_rest' is a boolean")
+            if effect["shuffle_rest"] and effect.get("rest_to_bottom"):
+                raise DslError(
+                    f"{where}: reveal_until 'shuffle_rest' and 'rest_to_bottom' are "
+                    f"two dispositions of the rest; a card prints one"
+                )
         destination = str(effect.get("destination", "hand"))
         if destination not in DESTINATIONS:
             raise DslError(
@@ -1249,6 +1264,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         ):
             raise DslError(
                 f"{where}: reveal_until 'tapped' is a boolean and needs "
+                f"destination 'battlefield'"
+            )
+        # "You put that card onto the battlefield **under your control**."
+        # The only value is "you": every other seat a match could enter under is
+        # the scanned library's, which is the default. Anywhere but the
+        # battlefield a card has no controller to set, so the key would say
+        # nothing.
+        if "controller" in effect and (
+            effect["controller"] != "you" or destination != "battlefield"
+        ):
+            raise DslError(
+                f"{where}: reveal_until 'controller' is \"you\" and needs "
                 f"destination 'battlefield'"
             )
     # Same argument as look_at_top, and the printed keyword is *named* for the
@@ -1328,21 +1355,57 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"sentence naming no defender at all ('creatures can't attack this "
                 f"combat'), false for every line that names a seat (506.2)"
             )
+        # `planeswalkers_matching` keeps the seat open and closes only the
+        # defender's walkers of the named subtypes ("can't attack Jaces you
+        # control"). Each refusal below is a card that would load as a different
+        # one: beside `planeswalkers: true` it would close the seat it promises
+        # to leave open; an empty or unknown filter would close nothing (or, read
+        # loosely, everything); and a creature subtype names no planeswalker, so
+        # the line would prohibit nothing.
+        if "planeswalkers_matching" in effect:
+            matching = effect["planeswalkers_matching"]
+            subtypes = matching.get("subtypes") if isinstance(matching, dict) else None
+            if (
+                not isinstance(matching, dict)
+                or set(matching) != {"subtypes"}
+                or not isinstance(subtypes, list)
+                or not subtypes
+                or not all(isinstance(t, str) for t in subtypes)
+            ):
+                raise DslError(
+                    f"{where}.planeswalkers_matching: must be {{'subtypes': [...]}} "
+                    f"naming at least one planeswalker subtype"
+                )
+            for sub in subtypes:
+                if SUBTYPE_CLASS.get(sub) != "Planeswalker":
+                    raise DslError(
+                        f"{where}.planeswalkers_matching: {sub!r} is not a "
+                        f"planeswalker subtype"
+                    )
+            if effect.get("planeswalkers") is True:
+                raise DslError(
+                    f"{where}: cant_attack_player takes 'planeswalkers_matching' or "
+                    f"'planeswalkers: true', not both -- one closes only some walkers "
+                    f"and leaves the seat open, the other closes the seat and every walker"
+                )
     if op == "goad":
         # A goad with no selector goads nobody: the spell resolves, the log says
         # nothing, and every creature attacks exactly as it pleases. Detain's
         # guard, for detain's reason.
         if not effect.get("objects"):
             raise DslError(f"{where}: goad needs 'objects' naming the creatures goaded")
-        # No `duration` key at all, and that is the point of the op rather than an
-        # omission: 701.38a has exactly one clock ("until your next turn") and it
-        # is keyed to the goading *player*, not to a turn number. Accepting a
-        # duration would invite `this_turn` -- which is `must_attack`, a strictly
-        # weaker card that looks identical in a one-turn test.
-        if "duration" in effect:
+        # One `duration` only, and its absence is the default rather than an
+        # omission: 701.38a's clock ("until your next turn") is keyed to the
+        # goading *player*, not to a turn number. The one other printed clock is
+        # "for the rest of the game" (Dack Fayden, Helping Hand), `permanent`.
+        # Accepting any other duration would invite `this_turn` -- which is
+        # `must_attack`, a strictly weaker card that looks identical in a
+        # one-turn test.
+        if "duration" in effect and effect["duration"] != "permanent":
             raise DslError(
-                f"{where}: goad takes no 'duration' -- it lasts until the goading "
-                f"player's next turn (701.38a), which is a player and not a number. "
+                f"{where}: goad takes no 'duration' but 'permanent' (\"for the rest "
+                f"of the game\") -- otherwise it lasts until the goading player's "
+                f"next turn (701.38a), which is a player and not a number. "
                 f"Use must_attack for a one-combat requirement"
             )
         # The goader defaults to the effect's controller, which is every printed
@@ -1424,6 +1487,45 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown unblockable duration {effect['duration']!r} "
                 f"(implemented: {sorted(UNBLOCKABLE_DURATIONS)})"
             )
+        # "…except by creatures with haste": a filter on the *blocker*, matched
+        # by `combat.unblockable` the way `block_restriction`'s `blockers` is,
+        # so it speaks that static filter language and no other. An empty one
+        # would exempt every blocker -- a line that does nothing -- and a key
+        # the static matcher does not read would be ignored, exempting blockers
+        # the printed line does not; both are refused rather than loaded.
+        if "except_blockers" in effect:
+            exempt = effect["except_blockers"]
+            if not isinstance(exempt, Mapping) or not exempt:
+                raise DslError(
+                    f"{where}: unblockable 'except_blockers' is a non-empty static "
+                    f"filter on the blocker, got {exempt!r}"
+                )
+            # "…except by artifact creatures and/or red creatures" is a union,
+            # `any_of`, whose branches are checked as the filter itself is.
+            branches = exempt.get("any_of")
+            if branches is not None and (
+                not isinstance(branches, list)
+                or not branches
+                or not all(isinstance(b, Mapping) and b for b in branches)
+            ):
+                raise DslError(
+                    f"{where}: unblockable 'except_blockers.any_of' is a non-empty "
+                    f"list of non-empty filters, got {branches!r}"
+                )
+            parts = [{k: v for k, v in exempt.items() if k != "any_of"}, *(branches or [])]
+            for part in parts:
+                unknown = set(part) - STATIC_FILTER_KEYS
+                if unknown:
+                    raise DslError(
+                        f"{where}: unblockable 'except_blockers' may only use static "
+                        f"filter keys; unsupported keys {sorted(unknown)}"
+                    )
+                refused = {"self_only", "exclude_self", "controller", "owner"} & set(part)
+                if refused:
+                    raise DslError(
+                        f"{where}: unblockable 'except_blockers' describes what the "
+                        f"blocker is, not whose it is; drop {sorted(refused)}"
+                    )
     if op == "cant_sacrifice":
         # `objects` is required and there is no wildcard shorthand, for the
         # reason `unblockable`'s is and harder: an absent `objects` read as
@@ -1855,6 +1957,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: rotate_control direction is 'left' or 'right', not {effect['direction']!r}"
             )
+    # Dack Fayden's split. Without a pool the op hands out nothing and the
+    # card reads as a gift that never arrives.
+    if op == "distribute_control_among_opponents" and "objects" not in effect:
+        raise DslError(
+            f"{where}: distribute_control_among_opponents needs 'objects' -- "
+            f"the permanents handed out, one to each chosen opponent"
+        )
     if op == "exchange_control":
         # 701.12: two permanents, each named. Without either half the op does
         # nothing at all, which reads like the card and is not it.
@@ -1906,6 +2015,36 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         )
     if op == "create_token" and "token" not in effect:
         raise DslError(f"{where}: create_token needs a 'token' id")
+    if op == "create_token" and ("power" in effect) != ("toughness" in effect):
+        # "Create an X/X …" prints both numbers. One alone would leave the
+        # other at the X/X token's written 0, and a 3/0 Shark dies to 704.5f
+        # the moment it is made. Which tokens take the pair at all is
+        # `linking.validate_token_references`' check, since only it sees the pool.
+        raise DslError(
+            f"{where}: create_token's 'power' and 'toughness' go together -- "
+            f"an X/X token prints both"
+        )
+    if op == "amass":
+        # "Amass Orcs 2" prints both halves. A missing N would amass one, and a
+        # missing or misspelled subtype has no token to create -- an Orc card
+        # quietly making Zombies is a different card in every tribal deck.
+        if "amount" not in effect:
+            raise DslError(f"{where}: amass needs an 'amount', the N of 'Amass Zombies N'")
+        if effect.get("subtype") not in AMASS_TOKENS:
+            raise DslError(
+                f"{where}: amass needs a 'subtype', one of {sorted(AMASS_TOKENS)}, "
+                f"got {effect.get('subtype')!r}"
+            )
+    if op == "incubate" and "amount" not in effect:
+        # "Incubate N" always prints its N. Defaulted, a card missing the key
+        # would load and make a 1/1 where it prints a 3/3 -- or, for Sunfall,
+        # one counter where it counts the creatures it exiled.
+        raise DslError(f"{where}: incubate needs an 'amount', the N of 'Incubate N'")
+    if op == "empower" and "amount" not in effect:
+        # "Empower Jace N" always prints its N. Defaulted, a card missing the
+        # key would load and empower by one -- Mindseeker Oculus putting one
+        # counter where it prints four.
+        raise DslError(f"{where}: empower needs an 'amount', the N of 'Empower Jace N'")
     if "destination_if" in effect:
         # "Put it onto the battlefield tapped if it's a land card. Otherwise,
         # put it into your hand." Only the two search ops read it; anywhere else
@@ -1931,18 +2070,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             to = branch.get("to", "hand")
             if to not in DESTINATIONS:
                 raise DslError(f"{at}.to: unknown destination {to!r}")
-    # Two axes, one op: a creature type (the default) or a permanent type. A
-    # near-miss word here would fall through to the creature-type branch and ask
-    # the wrong question -- a card printing "choose a permanent type" that offers
-    # Vampire.
+    # Three axes, one op: a creature type (the default), a permanent type or a
+    # card type. A near-miss word here would fall through to the creature-type
+    # branch and ask the wrong question -- a card printing "choose a permanent
+    # type" that offers Vampire.
     if (
         op == "choose_type"
         and "of" in effect
-        and effect["of"] not in ("creature_type", "permanent_type")
+        and effect["of"] not in ("creature_type", "permanent_type", "card_type")
     ):
         raise DslError(
-            f"{where}: choose_type's 'of' is 'creature_type' or "
-            f"'permanent_type', not {effect['of']!r}"
+            f"{where}: choose_type's 'of' is 'creature_type', 'permanent_type' "
+            f"or 'card_type', not {effect['of']!r}"
         )
     if op == "fight":
         # Both halves, or it is not a fight. With one missing the op resolves to
@@ -1988,6 +2127,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.or_planeswalker: widens `attacking` to 'that player or a "
                 f"planeswalker they control' and needs an `attacking` to widen"
             )
+    # "Another target creature you control gains toxic 1" (Skrelv, Defector
+    # Mite) has a number a granted word cannot carry.
+    if op == "grant_keyword":
+        refuse_numbered_grant(
+            list(effect.get("keywords") or ()) + ([effect["keyword"]] if "keyword" in effect else []),
+            where,
+        )
     # A misspelled duration would silently fall back to until-end-of-turn,
     # which is the *wrong half* of riot rather than a smaller version of it.
     if op == "grant_keyword" and effect.get("duration", "until_end_of_turn") not in (
@@ -2782,6 +2928,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: cast_from_hand's 'zones' is a non-empty list drawn "
                     f"from {list(allowed)}, got {zones!r}"
                 )
+        if "objects" in effect:
+            # The Ur-Sphinx: a named pool (the cards milled this way) instead of
+            # the caster's own zones. The two are different pools, so writing
+            # both would leave one of them silently ignored.
+            if "zones" in effect:
+                raise DslError(f"{where}: cast_from_hand takes 'objects' or 'zones', not both")
+            if not isinstance(effect["objects"], Mapping):
+                raise DslError(f"{where}: cast_from_hand's 'objects' must be a selector mapping")
+            validate_selector(effect["objects"], f"{where}.objects")
+        if "per_owner" in effect:
+            # "For each player, … a card that player milled" splits a named
+            # pool; over the caster's own zones every card has one owner and
+            # the key would say nothing.
+            if not isinstance(effect["per_owner"], bool):
+                raise DslError(f"{where}: cast_from_hand's 'per_owner' must be a boolean")
+            if effect["per_owner"] and "objects" not in effect:
+                raise DslError(f"{where}: cast_from_hand's 'per_owner' needs 'objects'")
 
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
@@ -2800,6 +2963,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for k in effect.get("keywords", ()) or ():
             if k not in KNOWN_KEYWORDS:
                 raise DslError(f"{where}: unknown keyword {k!r}")
+        refuse_numbered_grant(effect.get("keywords"), f"{where}.keywords")
+        refuse_numbered_grant(effect.get("your_turn_keywords"), f"{where}.your_turn_keywords")
         for c in effect.get("colors", ()) or ():
             if c not in KNOWN_COLORS:
                 raise DslError(f"{where}: unknown colour {c!r}")

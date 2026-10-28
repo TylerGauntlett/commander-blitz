@@ -61,6 +61,7 @@ def push_spell(
     gift_to: int | None = None,
     evoked: bool = False,
     warped: bool = False,
+    impending: bool = False,
     flashback: bool = False,
     graveyard_permission: int | None = None,
     enters_tapped: bool = False,
@@ -140,6 +141,7 @@ def push_spell(
         gift_to=gift_to,
         evoked=evoked,
         warped=warped,
+        impending=impending,
         fused=fused,
         bestowed=bestowed,
         mutated=mutated,
@@ -864,6 +866,10 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     obj.cast_kicked = item.kicked
     obj.cast_evoked = item.evoked
     obj.cast_overloaded = item.overloaded
+    # Impending (702.176a), written before the move for `cast_x`'s reason: the
+    # replacement that puts the time counters on reads it *as* the permanent
+    # enters, and `zones._enter_battlefield` keeps it only for this arrival.
+    obj.cast_impending = item.impending
     # Mutate (702.140b): the spell does not become a permanent of its own, so
     # it never reaches `_place_after_resolution` -- it is merged into the one it
     # targeted instead, and which way round is the caster's choice.

@@ -440,16 +440,19 @@ class CardIndex:
         one row, and a transforming card's row is called "Bloodline Keeper //
         Lord of Lineage", so neither "Bloodline Keeper" nor "Lord of Lineage"
         finds it. Anchored on either side of the ``//`` so that a face name is
-        never matched mid-word.
+        never matched mid-word. Joined rows are real cards unless ``token=True``
+        asks for a double-faced token's row ("Incubator // Phyrexian").
         """
         if not name:
             return None
         if joined:
             sql = (
-                f"{self._select} WHERE is_token = 0 AND (name LIKE ? COLLATE NOCASE "
+                f"{self._select} WHERE is_token = ? AND (name LIKE ? COLLATE NOCASE "
                 f"OR name LIKE ? COLLATE NOCASE)"
             )
-            row = self._con.execute(sql, [f"{name} // %", f"% // {name}"]).fetchone()
+            row = self._con.execute(
+                sql, [1 if token else 0, f"{name} // %", f"% // {name}"]
+            ).fetchone()
             return _row_to_entry(row) if row else None
         sql = f"{self._select} WHERE name = ? COLLATE NOCASE"
         params: list[object] = [name]
@@ -600,7 +603,17 @@ def resolve(card: CardDef, index: CardIndex) -> IndexEntry | None:
     deliberate "no art" plate rather than a broken image.
     """
     if card.is_token:
-        for key in (token_key(card), card.name, strip_token_suffix(card.name)):
+        # A double-faced token (the Incubator) is one token row under the
+        # joined name, like a transforming card; `CardArt.back` picks the face.
+        if card.back_face is not None or card.front_face is not None:
+            hit = index.lookup(token_key(card), token=True, joined=True)
+            if hit is not None:
+                return hit
+        # A named token that shares its name with a real card is stored by
+        # Scryfall with the suffix put back ("Gingerbrute Token" beside the
+        # Gingerbrute card), so the bare name finds no token row.
+        keys = (token_key(card), card.name, strip_token_suffix(card.name), f"{card.name} Token")
+        for key in keys:
             hit = index.lookup(key, token=True)
             if hit is not None:
                 return hit

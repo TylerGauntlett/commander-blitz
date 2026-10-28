@@ -247,7 +247,8 @@ class TargetModel(BaseModel):
     #: (Sink into Stupor). It is one instance of the word "target", so it is one
     #: spec: writing two, one of each kind, is a card that targets twice and
     #: needs both to be legal. The `selector` narrows both halves, since the
-    #: printed clause ("nonland", "an opponent controls") is meant to.
+    #: printed clause ("nonland", "an opponent controls") is meant to -- unless
+    #: `permanent_selector` gives the permanent half its own.
     kind: Literal[
         "permanent",
         "player",
@@ -275,6 +276,15 @@ class TargetModel(BaseModel):
     #: pass it and are six mana of creatures.
     total_mana_value: int | None = None
     selector: dict[str, Any] = Field(default_factory=dict)
+    #: The selector the **permanent half** of a ``"spell_or_permanent"`` target
+    #: takes instead of `selector` -- "return target **spell or creature**"
+    #: (Fatehold Charm), where "creature" narrows only the permanent: any spell
+    #: is legal, and of the permanents only creatures. `selector` then narrows
+    #: the spell half alone. Absent, both halves read `selector`, which is
+    #: Sink into Stupor's "spell or nonland permanent an opponent controls".
+    #: Refused on every other kind, with a ``zone`` other than the battlefield,
+    #: and with a clause naming a sibling target or ``{X}``.
+    permanent_selector: dict[str, Any] | None = None
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
     #: chooses, including zero, rather than a number written into the card.
     #: `count: N, optional: true` is not the same thing and cannot stand in: it
@@ -782,7 +792,10 @@ class AbilityModel(BaseModel):
     #: The qualities a ``protection`` static protects from.  Three lists rather
     #: than one so the card file reads like the card: "protection from
     #: planeswalkers and from Wizards" is a type and a subtype, not two nouns.
-    from_types: list[str] = Field(default_factory=list)
+    #: A ``from_types`` entry may also be ``{"chosen_card_type_of": "self"}``
+    #: -- "protection from the chosen card type" (Serra's Emissary), read off
+    #: the source's `choose_type` answer when a rule asks.
+    from_types: list[str | dict[str, str]] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
     from_colors: list[str] = Field(default_factory=list)
     #: "Protection from each color that's not in your commander's color
@@ -877,6 +890,8 @@ class AbilityModel(BaseModel):
     #: is Doubling Season's "if one or more counters would be put on". Not the
     #: `counter` on `TriggerModel`, which is a different model and a different
     #: question ("whenever a +1/+1 counter is put on this creature").
+    #: Also the kind `enters_with_additional_counters` adds and the kind
+    #: `cant_have_counters` forbids, where it is required.
     counter: str | None = None
     #: `replace_counters`: only counters an **effect** puts on. Doubling
     #: Season's "if **an effect** would put one or more counters…" -- and a
@@ -1132,6 +1147,13 @@ class CardModel(BaseModel):
     #: emblem is its own object in the command zone and has nothing else.
     emblems: list[EmblemModel] = Field(default_factory=list)
     is_token: bool = False
+    #: A token printed **X/X** (`*/*` on its token card): one whose base power
+    #: and toughness the creating effect fixes as it is created -- "create an
+    #: X/X blue Shark creature token with flying" (Shark Typhoon). Written
+    #: 0/0, and created only by a `create_token` carrying a ``power`` and
+    #: ``toughness`` pair, which the loader requires of it and refuses to every
+    #: other token: a printed 0/0 Fractal given X counters is a different card.
+    variable_pt: bool = False
     #: The id of this card's **back face**, for a transforming double-faced
     #: card. The back face is an ordinary card entry in the same pool, marked
     #: with no mana cost -- it is never cast, never shuffled into a deck, and
@@ -1470,6 +1492,14 @@ class CardModel(BaseModel):
     #: mill, and it is also the price -- a player with fewer than N cards left is
     #: not offered the replacement at all.
     dredge: int = 0
+    #: **Toxic N** (702.164a): "Players dealt combat damage by this creature
+    #: also get N poison counters." The number, written beside ``"toxic"`` in
+    #: ``keywords`` -- the word is what "creatures with toxic" filters on, and
+    #: this is how many poison counters it gives. Two printed instances add up
+    #: (702.164c), so the field is their total. The loader requires the two
+    #: together: either alone is a creature that filters as toxic and poisons
+    #: nobody, or poisons and is not "with toxic".
+    toxic: int = 0
     #: **Madness** (702.35a): "If you would discard this card, exile it instead.
     #: Then you may cast it for its madness cost." The exile happens whether or
     #: not the cast is taken.
@@ -1513,6 +1543,15 @@ class CardModel(BaseModel):
     #: to play the card, so like ``retrace`` it is card-level rather than an
     #: ability: the card has no suspend ability while it sits in your hand.
     suspend: dict[str, Any] | None = None
+    #: ``{"cost": "{2}{W}{W}", "counters": 4}`` -- "Impending 4—{2}{W}{W}"
+    #: (702.176a). Suspend's shape and ``warp``'s slot: an alternative mana cost
+    #: offered from hand, with every rider the *rule's*. Cast this way, the
+    #: permanent enters with that many time counters, isn't a creature while it
+    #: has one, and removes one at the beginning of its controller's end step.
+    #: The card prints none of that as a sentence of its own, so none of it is
+    #: written here: the loader supplies the replacement and the end-step
+    #: trigger, and `characteristics._compute` the type change.
+    impending: dict[str, Any] | None = None
     #: Who wrote this card.  ``""`` means a person did.  ``"auto"`` means
     #: ``commanderblitz.cards.authoring`` did, and it only got here by clearing the six
     #: gates in ``authoring/verify.py`` -- including one that casts it and checks

@@ -1,0 +1,57 @@
+{
+  "_comment": "Cards for tests/unit/combat/test_cant_attack_planeswalkers_filtered.py. `t_jace_walker` is a vanilla Jace for the restriction to protect, beside testing.cards.json's `t_walker` (a Sorin) that it must not. `t_jace_gate` is Jace, Multiverse Architect's first line on an artifact, so the trigger can be tested without the walker's own loyalty abilities in the way.",
+  "cards": [
+    {
+      "id": "t_jace_walker",
+      "name": "Test Jace",
+      "oracle_text": "+1: You gain 1 life.",
+      "mana_cost": "{2}{U}",
+      "types": ["Planeswalker"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Jace"],
+      "loyalty": 4,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "+1: You gain 1 life.",
+          "cost": { "loyalty": 1 },
+          "effects": [ { "op": "gain_life", "player": "you", "amount": { "const": 1 } } ]
+        }
+      ]
+    },
+    {
+      "id": "t_jace_gate",
+      "name": "Test Jace Gate",
+      "oracle_text": "At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creatures they control can't attack Jaces you control this turn.",
+      "mana_cost": "{2}{U}",
+      "types": ["Artifact"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on each opponent's turn, they may pay {2}. If they don't, creatures they control can't attack Jaces you control this turn.",
+          "trigger": { "event": "begin_combat", "controller": "opponent" },
+          "effects": [
+            {
+              "op": "may",
+              "player": { "binding": "event_player" },
+              "pay": { "mana": "{2}" },
+              "else": [
+                {
+                  "op": "cant_attack_player",
+                  "attacker": { "binding": "event_player" },
+                  "defender": "you",
+                  "duration": "this_turn",
+                  "planeswalkers_matching": { "subtypes": ["Jace"] }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

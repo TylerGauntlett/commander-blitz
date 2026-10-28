@@ -724,6 +724,28 @@ def retained_mana_by_player(state: GameState) -> dict[int, frozenset[str]]:
     return {pid: frozenset(symbols) for pid, symbols in kept.items()}
 
 
+def colorless_instead_players(state: GameState) -> frozenset[int]:
+    """The seats whose unspent mana becomes colorless instead of being lost.
+
+    Kruphix, God of Horizons, Horizon Stone and Omnath, Locus of the Void: "If
+    you would lose unspent mana, that mana becomes colorless instead." A
+    replacement (614.1a) on the emptying 500.4 and 106.4 describe, read by
+    `GameState.empty_all_mana_pools` beside :func:`retained_mana_by_player` and
+    from one battlefield walk for that function's reason.
+
+    The difference from `mana_retention` is the colour, and it matters: kept
+    red mana still pays {R}, and converted mana pays only generic costs and {C}.
+    The two compose -- a pip `mana_retention` keeps is never lost, so it is
+    never converted.
+    """
+    seats: set[int] = set()
+    for obj, static in _active_player_statics(state, "mana_becomes_colorless"):
+        for player in state.players:
+            if _reaches_player(obj, static, player.pid):
+                seats.add(player.pid)
+    return frozenset(seats)
+
+
 def player_skips_draw_step(state: GameState, pid: int) -> bool:
     """Whether any ``skip_draw_step`` static stops this player's turn-based draw.
 
@@ -2263,6 +2285,36 @@ def counter_placement_replacements(
             continue
         out.append(static)
     return out
+
+
+def counters_prohibited(state: GameState, oid: int, kind: str) -> bool:
+    """Can ``kind`` counters not be put on this permanent at all?
+
+    Darksteel Angel, Melira, Sylvok Outcast: "Creatures you control can't have
+    -1/-1 counters put on them." A ``cant_have_counters`` static, and a
+    prohibition rather than a replacement (101.2: "can't" beats every "can"),
+    so it is asked **before** any `replace_counters` static: a placement that
+    cannot happen is not one Hardened Scales or Doubling Season would modify
+    ("if one or more counters would be put" -- none would).
+
+    Read by `primitives.add_counters` (every effect, wither and infect damage,
+    proliferate, `double_counters`, a cost's counters), `zones._entering_counters`
+    (every "enters with", persist and undying included -- the permanent simply
+    enters without them) and `costs.can_pay`, which refuses a cost that would
+    put such a counter on (Melira's ruling: that cost can't be paid). `counter`
+    is required by the loader, so the kind always narrows.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "cant_have_counters":
+            continue
+        if str(static.get("counter")) != kind:
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            return True
+    return False
 
 
 def _counter_static_applies(

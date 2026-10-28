@@ -264,8 +264,10 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     # its target restriction would keep pointing at an empty seat -- which, with
     # the goader gone, is a defender `alive()` never offers, so the "if able"
     # escape could never fire either. Cleared with `clear_goad`, the same call
-    # the untap step makes, because this *is* that player's last untap step.
-    clear_goad(state, pid)
+    # the untap step makes, because this *is* that player's last untap step --
+    # and with `leaving`, because "for the rest of the game" is the goader's
+    # game, and 800.4a ends what a player who has left did.
+    clear_goad(state, pid, leaving=True)
     # And the same hole in the permanent-scoped prevention shields: "until your
     # next turn, prevent all damage target permanent would deal" is cleared in
     # the installing player's untap step, so a shield keyed to a seat that has

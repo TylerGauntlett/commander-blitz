@@ -1,0 +1,77 @@
+{
+  "_comment": "Shapes for tests/unit/counters/test_cant_have_counters.py. t_chc_ward is Darksteel Angel's and Melira's prohibition on an enchantment, so the creature filter is the only thing between it and its own source; t_chc_bear is a plain creature, t_chc_withered a 4/4 that enters with two -1/-1 counters, t_chc_shrinker a creature whose ability costs a -1/-1 counter on itself, t_chc_rock a noncreature artifact the filter must miss.",
+  "cards": [
+    {
+      "id": "t_chc_ward",
+      "name": "Test Counter Ward",
+      "oracle_text": "Creatures you control can't have -1/-1 counters put on them.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control can't have -1/-1 counters put on them.",
+          "effect": "cant_have_counters",
+          "counter": "-1/-1",
+          "affects": {"controller": "you", "types": ["Creature"]}
+        }
+      ]
+    },
+    {
+      "id": "t_chc_bear",
+      "name": "Test Warded Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_chc_withered",
+      "name": "Test Withered Hulk",
+      "oracle_text": "This creature enters with two -1/-1 counters on it.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Zombie"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 4,
+      "toughness": 4,
+      "replacements": [{"event": "self_enters_with_counters", "counter": "-1/-1", "amount": 2}]
+    },
+    {
+      "id": "t_chc_shrinker",
+      "name": "Test Shrinking Sage",
+      "oracle_text": "Put a -1/-1 counter on this creature: You gain 1 life.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 3,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Put a -1/-1 counter on this creature: You gain 1 life.",
+          "cost": {"put_counters": {"counter": "-1/-1", "amount": 1}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_chc_rock",
+      "name": "Test Warded Rock",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

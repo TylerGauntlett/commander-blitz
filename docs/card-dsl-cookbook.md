@@ -1019,6 +1019,7 @@ they take `affects_player` instead of `affects` — the full list is
 { "kind": "static", "effect": "black_mana_as_phyrexian", "affects_player": "you" }
 { "kind": "static", "effect": "spend_mana_as_any_color", "affects_player": "you" }
 { "kind": "static", "effect": "mana_retention", "affects_player": "you", "colors": ["R"] }
+{ "kind": "static", "effect": "mana_becomes_colorless", "affects_player": "you" }
 { "kind": "static", "effect": "damage_life_floor", "affects_player": "you", "amount": 1 }
 ```
 
@@ -1054,9 +1055,22 @@ included, so the mana crosses into later turns for as long as the permanent stay
 and the first boundary after it leaves empties the pool. It is a fact about the
 player, unlike `add_mana`'s `persists_until_end_of_turn`, which rides on the mana
 one ability made and still runs out at end of turn (Tanuki Transplanter). "Lose
-all unspent mana" (Mana Short) clears the pool without asking it. The "becomes
-colorless instead" sentence (Kruphix, Horizon Stone) is a replacement that
-changes the mana and is not this static.
+all unspent mana" (Mana Short) clears the pool without asking it.
+
+`mana_becomes_colorless` is the other half of that family: Kruphix, God of
+Horizons, Horizon Stone and Omnath, Locus of the Void's "If you would lose unspent
+mana, that mana becomes colorless instead". It takes `affects_player` and an
+optional `condition` and nothing else — no `colors`, because it reaches every
+type of mana. The two differ in what the kept mana can pay for: `mana_retention`
+keeps red as red, so it still pays {R}; this one is a replacement (614.1a) that
+leaves every mana the boundary would have taken in the pool as {C}, so it pays
+generic costs and {C} only, and an author reaching for `mana_retention` with all
+six symbols has written the strictly better card. The same boundary reads both
+(`player_statics.colorless_instead_players` beside `retained_mana_by_player`),
+and they compose: a symbol `mana_retention` keeps, or a Tanuki pip still inside
+its turn, is not lost and so keeps its colour. Either way the pip is kept whole,
+so a "spend this mana only to…" restriction or a Cavern rider on it still
+applies. The loader refuses `colors`, `affects` and `amount` on it.
 
 `double_land_triggers` is Ancient Greenwarden: a land entering makes each of your
 permanents' triggers fire an additional time. Read by `triggers.collect`, which
@@ -1716,6 +1730,33 @@ attributed to his widened `{B}` pips first, since those are not Phyrexian
 symbols. The loader refuses the keyword on a card with no `loyalty` or no
 Phyrexian symbol in its cost.
 
+### `cant_have_counters` — a placement that doesn't happen
+
+"Creatures you control can't have -1/-1 counters put on them." — Darksteel
+Angel, Melira, Sylvok Outcast
+
+```jsonc
+{"kind": "static",
+ "text": "Creatures you control can't have -1/-1 counters put on them.",
+ "effect": "cant_have_counters",
+ "affects": {"controller": "you", "types": ["Creature"]},
+ "counter": "-1/-1"}
+```
+
+A prohibition (101.2), asked by `player_statics.counters_prohibited` before any
+counter replacement: a placement of that kind onto a matching permanent puts
+nothing on, fires no `counter_placed`, and is not one Hardened Scales or
+Doubling Season modifies. It is read at the three places a counter can be put
+on a permanent — `primitives.add_counters` (effects, wither and infect damage,
+proliferate, `double_counters`, a paid cost), `zones._entering_counters`
+(every "enters with", so a persisted or undying creature returns with no
+counter) and `costs.can_pay`, which refuses a `put_counters` cost or a +N
+loyalty cost that would put a forbidden counter on, so that ability can't be
+activated (Melira's ruling). Infect damage to a player is poison, not a
+counter on a permanent, and is untouched. `affects` and `counter` are both
+required. **Not** `replace_counters` with `counter_multiplier: 0`, which the
+loader refuses because a prevention is a different sentence.
+
 ### `enters_with_additional_counters` — a static about other arrivals
 
 "Each planeswalker you control enters with an additional loyalty counter on
@@ -1758,6 +1799,86 @@ A source in the entering group applies nothing (614.12), so Giada returned
 together with an Angel gives it no counters. A count of 0 adds none. A resolving
 permanent spell and a land drop are each their own event, so a token made while
 the spell waited on the stack is counted.
+
+### `empower` — "Empower Jace N"
+
+"Empower Jace 2. (Put two loyalty counters on a Jace token you control. If you
+don't control one, first create a blue Jace planeswalker token with "[−1]:
+Surveil 1" and "[−3]: Draw a card.")" — Reality Fracture's keyword action,
+whose reminder text is the whole rule.
+
+```jsonc
+{"op": "empower", "amount": {"const": 2}}
+```
+
+`amount` is required and is any value expression ("Empower Jace X, where X is
+the number of Islands you control"); below zero reads as zero. The op looks for
+a token with the Jace subtype you control; only when there is none does it
+create `jace_planeswalker_u` (`EMPOWER_TOKEN` in `effects/ops_counters.py`, a
+0-loyalty planeswalker token with the two printed loyalty abilities), and then
+it puts the loyalty counters on **one** Jace token, the empowering player
+choosing when there are several. Creating and countering happen in one effect,
+so the new token never meets 704.5i at zero loyalty unless the amount was zero
+or a doubled creation left a second Jace with nothing on it.
+
+Not `create_token` followed by `add_counters`: that pair makes a second Jace
+beside the one you already control. The loader refuses an `empower` without
+`amount`, and `validate_token_references` refuses a pool without the Jace
+token.
+
+### `amass` — "Amass Zombies N"
+
+Rule 701.47a: "If you don't control an Army creature, create a 0/0 black
+[subtype] Army creature token. Choose an Army creature you control. Put N +1/+1
+counters on that creature. If it isn't a [subtype], it becomes a [subtype] in
+addition to its other types." Dreadhorde Invasion amasses Zombies; the Lord of
+the Rings cards amass Orcs and Goblins.
+
+```jsonc
+{"op": "amass", "subtype": "Zombie", "amount": {"const": 1}, "as": "army"}
+```
+
+`subtype` is the singular creature type and picks the token from
+`AMASS_TOKENS` in `effects/ops_counters.py` (Zombie, Orc, Goblin, Sliver, one
+0/0 black `<subtype>_army_0_0_b` each); the loader refuses an `amass` without
+`amount` or with a subtype that has no token. `amount` is any value expression,
+below zero reads as zero. It is `empower`'s shape with a creature: the token is
+created only when you control no Army *creature* (a token or not, read off the
+characteristics), the counters go on **one** Army the amassing player picks,
+and both happen in one effect, so the 0/0 never meets 704.5f before its
+counters land (only "amass 0", or the second token of a doubled creation, dies).
+The chosen Army then gains the subtype for as long as it stays on the
+battlefield: an Orc Army that amasses Zombies is an Orc Zombie Army. `as`
+records the amassed Army, zero or one oids, for "the amassed Army's power".
+
+Not `create_token` then `add_counters`: that pair makes a fresh Army every time
+and never adds the subtype.
+
+### `incubate` — "Incubate N"
+
+Rule 701.53a: "Create an Incubator token with N +1/+1 counters on it and '{2}:
+Transform this artifact.' It transforms into a 0/0 Phyrexian artifact
+creature." Sunfall incubates X, the number of creatures it exiled.
+
+```jsonc
+{"op": "exile", "objects": {"zone": "battlefield", "types": ["Creature"], "count": "all"}, "as": "exiled"},
+{"op": "incubate", "amount": {"count": {"binding": "exiled"}}}
+```
+
+The op names its token itself, `INCUBATOR_TOKEN` in `effects/ops_counters.py`:
+`incubator_token`, a colorless Incubator artifact whose `back_face` is
+`phyrexian_0_0_c_artifact`, the 0/0 colorless Phyrexian artifact creature. The
+front's "{2}: Transform this artifact." is an ordinary activated `transform`,
+and the counters stay on the permanent as it turns over. `amount` is required
+by the loader and is any value expression, below zero read as zero; incubate 0
+still creates the Incubator. The counters are on the token as it is created
+(`create_token`'s `enters_with`, one placement under 122.6), so counter
+replacements see an artifact: Doubling Season applies, Hardened Scales ("a
+creature you control") does not. `as` records the Incubators made.
+
+Not `create_token` then `add_counters`, which places the counters on a token
+already on the battlefield. And never `create_token` naming the back face:
+linking refuses a token that is some other token's back face.
 
 ## Battles
 
@@ -2526,10 +2647,11 @@ copy carries one seat and no battles, so the battle half would never fire), and
 refuses `defending` on this event without it, since the unsplit batch names no
 one seat to compare.
 
-`batched: true` is **not** the repair for any of this and is a no-op on every
-combat-damage event: `_queue` keys the batch off `event.data["batch"]`, which
-neither `damage_player` nor `_fire_damage_batch` writes. The batching here is
-structural -- one event per damaging player per step -- and needs no flag.
+`batched: true` is **not** the repair for any of this, and the loader refuses
+it on every combat-damage event: `_queue` keys the batch off
+`event.data["batch"]`, which neither `damage_player` nor `_fire_damage_batch`
+writes. The batching here is structural -- one event per damaging player per
+step -- and needs no flag.
 
 ## Soulbond — a relationship that is not attachment
 
@@ -2892,6 +3014,50 @@ Two things then fall out for free:
 Bestow is **not** a second castable face. A second face is two spells; bestow is
 one spell that lands as two different permanents.
 
+## Impending — a creature that is not one until it counts down
+
+```jsonc
+{ "id": "overlord_of_the_mistmoors", "types": ["Enchantment", "Creature"],
+  "mana_cost": "{4}{W}{W}", "impending": { "cost": "{2}{W}{W}", "counters": 4 } }
+```
+
+> Impending 4—{2}{W}{W} *(If you cast this spell for its impending cost, it
+> enters with four time counters and isn't a creature until the last is
+> removed. At the beginning of your end step, remove a time counter from it.)*
+
+702.176a makes the keyword four abilities, and the card writes none of them:
+the field is the price and the count, and the loader, legality and the
+characteristic layer supply the rest.
+
+- **The price** is evoke's slot: a second cast line from hand, `Action.impending`,
+  charged at `cost` in place of the printed cost. Mana value is unchanged.
+- **The counters** are an implied `self_enters_with_counters` replacement
+  (`loader._implied_replacements`), gated on `{"impending": true}`. That
+  condition reads `cast_impending`, which `stack._resolve_spell` writes just
+  before the permanent enters and `zones._enter_battlefield` clears on every
+  other arrival — a reanimated or flickered Overlord was never cast, and enters
+  a creature with no counters.
+- **"Isn't a creature"** is in `characteristics._compute`, beside bestow and for
+  its reason: `cast_impending` and the time counters are pipeline inputs, so the
+  type change cannot come to depend on another static (ADR 0001). The creature
+  types go with the card type, as under `set_types`; the printed P/T stays and
+  matters again the moment the last counter is gone.
+- **The tick** is a real triggered ability the loader appends after the printed
+  ones (`loader._impending_tick`): "at the beginning of your end step, if this
+  permanent's impending cost was paid and it has a time counter on it, remove a
+  time counter from it". It uses the stack and is lost with the permanent's
+  other abilities, which a turn-based tick like suspend's would not be.
+
+Everything else the card prints still works, because the permanent is still on
+the battlefield: "whenever this permanent enters or attacks" fires on the
+impending arrival, and the attack half waits until it is a creature again.
+
+The loader refuses impending on a non-creature (there is no creature type to
+take away), with fewer than one counter, with an X, or at the printed price, and
+an `impending` condition on a card without the field. The printed line is
+claimed at gate 3 by the field, strictly: the count and the cost must both be
+the printed ones.
+
 ## Fuse — the case where the answer is *both* faces
 
 ```jsonc
@@ -2985,6 +3151,13 @@ ordinary card in an ordinary graveyard, not a free spell waiting in exile.
 "morph": "{2}{G}"            // and "morph_counter": true for megamorph
 { "op": "manifest", "player": "you", "amount": { "const": 1 } }
 ```
+
+The printed "Morph {cost}" line is claimed by the field, not by an ability:
+the residual gate accepts it only when the printed cost parses to the declared
+`morph`, and only under the word `morph_counter` says — "Megamorph" needs the
+counter, "Morph" must not have it. A non-mana morph cost ("Morph—Reveal a white
+card") does not parse and stays residual. Disguise is not this field: it also
+grants ward {2} while face down, which the shell does not model.
 
 Two choke points carry it: `card_of` is a single choke point, and `chars` is the
 single place derived characteristics are decided.
@@ -3493,6 +3666,28 @@ eliminating a player moves everybody else's "next turn". `sba` drops the entries
 of a seat that has left, for the reason it drops that seat's block prohibitions:
 a player who never untaps again never clears them.
 
+**`except_blockers` is the exemption** — "can't be blocked this turn except by
+creatures with haste" (the Gingerbrute token Ginger, Queen of Sweets makes):
+
+```jsonc
+// Gingerbrute: "{1}: This token can't be blocked this turn except by creatures with haste."
+{ "op": "unblockable", "objects": { "self_only": true }, "duration": "this_turn",
+  "except_blockers": { "keywords": ["haste"] } }
+```
+
+It is a static filter on the would-be blocker (the `static_filter_keys`, plus
+`any_of` for "artifact creatures and/or red creatures"), and a blocker that
+matches it may block. It is the `blockers` filter of `block_restriction` with the
+sense inverted and a clock added, and it is read the same way: off the
+blocker's *derived* characteristics when blockers are declared, so a creature
+that gained haste after the ability resolved may block. `controller` is implied
+`any` and the loader refuses `controller`, `owner`, `self_only` and
+`exclude_self` — the filter says what the blocker is, never whose. It refuses an
+empty filter too, which would exempt everybody. Never drop the key from a card
+that prints the exception: the plain op refuses every blocker, a strictly better
+card. Two entries on one attacker are two restrictions, and a blocker must clear
+both.
+
 It lives on the table (`GameState.unblockables`, a list of
 `structs.Unblockable`) beside `block_prohibitions`, and is read by
 `combat.unblockable` inside `can_block`. The two predicates never consult each
@@ -3727,6 +3922,36 @@ lock is bought and lost by a payment each combat while the Aura never moves.
 `cant_attack_you` is a static too, and is scoped to the seat its permanent sits
 under. Hence a flag on the pair rather than a third spelling of the sentence.
 
+### `planeswalkers_matching` — "can't attack Jaces you control"
+
+    Jace, Multiverse Architect — "At the beginning of combat on each opponent's
+                                  turn, they may pay {2}. If they don't,
+                                  creatures they control can't attack Jaces you
+                                  control this turn."
+
+```jsonc
+{ "op": "may", "player": { "binding": "event_player" }, "pay": { "mana": "{2}" },
+  "else": [ { "op": "cant_attack_player", "attacker": { "binding": "event_player" },
+              "defender": "you", "duration": "this_turn",
+              "planeswalkers_matching": { "subtypes": ["Jace"] } } ] }
+```
+
+The narrow mirror of `planeswalkers: true`. The flag adds the defender's walkers
+to their seat; this key **takes the seat away** and closes only the defender's
+planeswalkers with one of the listed subtypes. The player, their other
+planeswalkers and their battles all stay attackable. "You control" is the
+`defender` side, because a walker's controller is the defending player (506.2).
+
+The subtypes are read off the walker's current characteristics when attackers
+are declared, not snapshotted when the ability resolved: a prohibition is not one
+of the effects 611.2c locks to the objects present at resolution, so a Jace that
+enters later in the turn is covered too.
+
+The loader takes exactly `{"subtypes": [...]}`, non-empty, with each entry a
+planeswalker subtype (`enums.SUBTYPE_CLASS`), and refuses it beside
+`planeswalkers: true`. The near miss is the seat form with no key at all, which is
+the opposite card: it closes the player and leaves every Jace open.
+
 The legality seam is `combat.attack_target_forbidden(state, oid, defender,
 planeswalker=…)`, and `legal_defenders`, `legal_planeswalker_defenders` and
 `add_attacker` all take the attacking oid and route through it. One predicate,
@@ -3776,10 +4001,30 @@ same creature: each clock runs from its own untap step, and the creature must
 attack around both — so a creature goaded by every other player is free to
 attack any of them, which is the "if able" escape doing its job.
 
-There is deliberately **no `duration` key**, and the loader refuses one. 701.38a
-has exactly one clock and it is a player; accepting a duration would invite
-`this_turn`, which is `must_attack` — a strictly weaker card that looks identical
-in a one-combat test. `objects` is required for detain's reason: a goad with no
+Goad has **two clocks**, and `duration` takes only the second. Omitted, it is
+701.38a's "until your next turn", keyed to a player. `"permanent"` is "they're
+goaded **for the rest of the game**" (Dack Fayden, Helping Hand): the mark is
+also written into `GameObject.goaded_permanently_by`, and `temp_effects.clear_goad`
+leaves it alone at the goader's untap step. The loader refuses any other value,
+because `this_turn` would be `must_attack` — a strictly weaker card that looks
+identical in a one-combat test.
+
+```jsonc
+// Dack Fayden, Helping Hand -- "They're goaded for the rest of the game."
+{ "op": "goad", "objects": { "binding": "revealed" }, "duration": "permanent" }
+```
+
+A permanent goad is the goader's **whoever controls the creature**. It is
+recorded even on a creature the goader controls, which a timed goad refuses as
+vacuous: Dack puts the creatures onto the battlefield under his controller, goads
+them, and hands them to opponents on the next line, so the goad must come first for the creatures to arrive goaded by him. Two
+things still end it. The creature leaving the battlefield makes a new object
+(400.7). The goader leaving the game ends what that player did (800.4a): `sba`
+calls `clear_goad` with `leaving`, and a mark kept would compel the creature
+every combat while pointing its restriction at a seat `alive()` never offers.
+(Dack's own revealed creatures are exiled with him anyway, since he owns them.)
+
+`objects` is required for detain's reason: a goad with no
 selector goads nobody and the card would resolve saying nothing. `player` is the
 goader and defaults to the effect's controller, which is every printed goad.
 
@@ -3912,6 +4157,36 @@ They differ in exactly one place, and it is not the creature half: 702.90b says
 nothing about damage to **players**, so a wither creature that gets through hits
 for life in the ordinary way. Folding the two together would make every wither
 creature a poison threat.
+
+### Toxic N
+
+    Phyrexian Mite token — "Toxic 1"
+    "Creatures you control with toxic have lifelink." — Skrelv's Hive
+
+```jsonc
+"keywords": ["trample", "toxic"],
+"toxic": 2
+```
+
+The word goes in `keywords` and N in the card-level `toxic` field, and the
+loader refuses either without the other. A `Keyword` despite the number,
+because "creatures you control **with toxic**" is an ordinary static filter,
+`"keywords": ["toxic"]`, matching any N. The field is the total of every
+printed instance (702.164c).
+
+Combat damage to a player from a creature with toxic gives that player N
+poison counters **as well as** the damage (`damage_player`, after the life loss
+or infect's poison). Infect is the near miss: it replaces the life loss, and
+toxic does not. Noncombat damage gives none, and the keyword is read on derived
+characteristics, so a `lose_keyword` or "loses all abilities" switches it off.
+
+Toxic is never granted. Every grant spelling — a `grant_keyword` static or op,
+an `animate`, `cast_gains_keywords`, `mana_grant`, a copy's `add_keywords` — is a
+bare word with no N, and the loader refuses `toxic` in each
+(`enums.NUMBERED_KEYWORDS`). For the same reason there is no toxic counter. A
+printed keyword line such as "Trample, toxic 2" is claimed for the residual
+gate only when N equals the card's `toxic` and every other word is one of the
+card's keywords.
 
 ### Fear, intimidate, horsemanship, shadow and nonbasic landwalk
 
@@ -4104,6 +4379,45 @@ counts as the static's quality, is refused beside `from_colors` (it is already t
 whole colour set) and on any effect but `protection`. The +3/+3 is an ordinary
 `buff` static on `{"attached": true}`, and "Equip commander {3}" is an equip line
 whose target selector adds `"is_commander": true`.
+
+**Protection from the chosen card type.** Serra's Emissary — "As this creature
+enters, choose a card type. … creatures you control have protection from the
+chosen card type" — puts `{"chosen_card_type_of": "self"}` in `from_types`, after
+a `choose_type` with `"of": "card_type"` on its enters trigger:
+
+```jsonc
+{ "kind": "static", "effect": "protection",
+  "affects": { "controller": "you", "types": ["Creature"] },
+  "from_types": [ { "chosen_card_type_of": "self" } ] }
+```
+
+`protection_from` substitutes the source's `chosen_card_type` each time it is
+read (`characteristics.resolve_chosen_card_type_list`), so all four rules see it
+and a source that has chosen nothing protects from nothing. It may sit beside
+literal types. A near-miss leaf is refused at load time, and so is the entry on a
+granted static, whose source would be the recipient, which has chosen nothing.
+
+**A player with protection.** "**You** and creatures you control have protection
+from the chosen card type" is two statics: the `protection` above for the
+creatures, and a player-wide `player_protection` for the seat, which spells its
+qualities with the same keys (`from_types`, `from_subtypes`, `from_colors`,
+`from_colorless`, `from_colors_outside_commander_identity`, the chosen leaf
+included):
+
+```jsonc
+{ "kind": "static", "effect": "player_protection", "affects_player": "you",
+  "from_types": [ { "chosen_card_type_of": "self" } ] }
+```
+
+It feeds `characteristics.player_protection_from`, the reader Teferi's
+Protection's timed `PlayerProtection` already fills, so the three rules that
+apply to a protected seat see both: damage from a source with the quality is
+prevented (`damage_player`), the seat can't be targeted by such a source — by
+anyone, its controller included — and an Aura with the quality can't enchant it
+(`attach_to_player`; a cast one is stopped by the target check). It needs
+`affects_player` and a quality, refuses `affects` (the creatures are the other
+static's job), and cannot be granted. The near miss is `player_hexproof`, which
+stops only opponents and prevents no damage.
 
 ### Absorb, which is not protection with a number
 
@@ -7028,6 +7342,41 @@ graveyards. "Most recently" is `GameObject.attached_timestamp`, stamped by every
 there earlier. Being put into the graveyard is not destruction, so a Wicked Role
 replaced this way still drains.
 
+## An X/X token — "create an X/X blue Shark creature token"
+
+Shark Typhoon. `create_token`'s `power` and `toughness` are value expressions,
+evaluated once as the op runs, that become the token's **base** size — the
+copiable values its creating effect sets (111.4, 707.2):
+
+```jsonc
+// "Whenever you cast a noncreature spell, create an X/X … where X is that spell's mana value."
+{ "op": "create_token", "token": "shark_x_x_u_flying",
+  "power":     { "mana_value_of": { "binding": "subject" } },
+  "toughness": { "mana_value_of": { "binding": "subject" } } }
+// "Cycling {X}{1}{U}" … "When you cycle this card, create an X/X …"
+{ "op": "create_token", "token": "shark_x_x_u_flying",
+  "power": { "x": true }, "toughness": { "x": true } }
+```
+
+The token is written **0/0 with `"variable_pt": true`** in `tokens.cards.json`,
+the way its token card prints `*/*`. The loader holds both directions: the pair
+is refused on a token without the flag, a flagged token is refused without the
+pair (it would arrive 0/0 and die), one half alone is refused, and a
+`create_instead` or `and_create` cannot name a flagged token, since a
+replacement names its token by id alone. The flag itself needs a 0/0 creature
+token.
+
+The near misses are each a different card. A 0/0 given X +1/+1 counters (the
+Fractal shape) is what proliferate, -1/-1 counters and "creatures with counters"
+see; a `set_pt` is a layer 7b effect with a duration. The base size sits under
+both, so counters and anthems land on top of it, a copy of the token is the same
+size, and a token-doubling replacement's extra tokens are too.
+
+The two X readers: `mana_value_of` a spell **on the stack** counts the X it was
+cast with (202.3e), so Secure the Wastes for X = 3 makes a 4/4; and a `cycle`
+trigger's `{"x": true}` is the X paid in the cycling cost, which the event
+carries because a card cycled from hand was never cast.
+
 ## Making a token that is already attacking
 
 ```jsonc
@@ -7550,6 +7899,31 @@ creating a token and putting it onto the battlefield one act — but it also fir
 for a token that left and returned, and reads the entering permanent's controller
 rather than the creator's.
 
+## "Whenever **one or more** …" — `batched`
+
+"Whenever you create one or more creature tokens, put a story counter on this
+artifact." (Staff of the Storyteller)
+
+```jsonc
+"trigger": {"event": "token_created", "controller": "you",
+            "filter": {"types": ["Creature"]}, "batched": true}
+```
+
+The event still fires once per object; `batched` makes the *ability* queue once
+per simultaneous group (603.2c), keyed by the `batch` the event carries and by
+the permanent and ability, so two Staffs each get a counter. The `filter` is
+matched first, so a creation of a Treasure and a Spirit queues it once and a
+lone Treasure not at all. A later, separate group fires it again, which is what
+sets it apart from `max_per_turn: 1`.
+
+What one group is depends on the event, and `triggers.BATCHED_EVENTS` lists
+the events that carry one: `permanent_enters` and `leaves_graveyard` group by
+the effect op or cost payment that moved the objects, and `token_created` by
+the `primitives.create_token` call, so every token one creation makes is one
+group, including the extra ones a `replace_token_creation` doubler adds or the
+ones it substitutes. Two `create_token` ops are two groups. The loader refuses
+`batched` on any other event, where nothing would group it.
+
 ## "Enters with a counter on it **for each** …"
 
 "Éomer enters with a +1/+1 counter on it for each other Human you control."
@@ -7978,7 +8352,9 @@ The object model already *is* a copy model: identity is `def_id` pointing at a
 `CardDef`, and `is_token` is a separate flag — so a token copy is a token whose
 `def_id` is the original's. That is not a shortcut. A copy copies the **printed
 card**, so the counters, damage and Auras piled onto the original are exactly
-what must not come with it.
+what must not come with it. A token's copiable values also include what its
+creating effect set (707.2) — an X/X Shark's size, an eternalized token's 4/4 —
+so a copy of one carries those, with its own `except` on top.
 
 Unlike `create_token` it names no token id, so nothing has to be pre-declared and
 `validate_token_references` does not apply: what is being copied is only known
@@ -9628,6 +10004,42 @@ answer takes from). A table where both directions name the same neighbour — a
 duel — is not asked. `direction: "left" | "right"` fixes the answer; any other
 spelling, or a missing `objects`, is a load error.
 
+### Each opponent gains control of the one chosen for them
+
+```jsonc
+// Dack Fayden, Helping Hand — "When Dack Fayden enters, reveal cards from the
+// top of your library until you reveal X creature cards, where X is the number
+// of opponents you have. Put those creature cards onto the battlefield, then
+// shuffle. They're goaded for the rest of the game. For each of those
+// permanents, choose a different opponent. Each opponent gains control of the
+// permanent for which they were chosen."
+{ "op": "reveal_until", "objects": { "types": ["Creature"] },
+  "amount": { "player_count": "each_opponent" },
+  "destination": "battlefield", "shuffle_rest": true, "as": "revealed" },
+{ "op": "goad", "objects": { "binding": "revealed" }, "duration": "permanent" },
+{ "op": "distribute_control_among_opponents", "objects": { "binding": "revealed" } }
+```
+
+`distribute_control_among_opponents` pairs each permanent in `objects` with a
+**different** opponent and gives it to them, permanently. The controller makes
+every choice: one `CHOOSE_PLAYER` per permanent, in pool order, over the
+opponents not yet chosen, so every pairing is reachable. The last question is not asked when one seat is left.
+With fewer permanents than opponents, the opponents never chosen get nothing;
+with more, a permanent left over once every opponent has one has no different
+opponent and stays put (609.3). Every choice is made before any control moves,
+and each move is a `change_control`, so the 302.6 and 506.4 rows above apply.
+`objects` is required.
+
+`gain_control` is the near miss. It gives a whole pool to one player, so a
+`for_each` around it can hand every permanent to the same opponent and has no
+way to say "a different one". `rotate_control` passes boards around the table
+and chooses nothing.
+
+The order of Dack's three ops is the card. The goad comes first, while his
+controller still controls the creatures. A [permanent goad](#goad) records the
+mark even then, so each opponent's new creature must attack a player other than
+Dack's controller for the rest of the game.
+
 ### Exchanging control
 
 ```jsonc
@@ -10090,6 +10502,30 @@ silently *becomes* the card's real maximum.
 `{X}` in an optional `pay` without `x` is refused (nothing would announce X, so
 it would charge {0}), as is `x` without an `{X}`, without `as`, on any op but a
 `may` with a `pay`, and beside `repeat`, `pay.times` or `pay.mana_reduction`.
+
+### "You may pay that much life. If you do…"
+
+`pay_life` in a `pay` may be a value expression, and inside a `may` it is read
+as the `may` resolves, in that effect's context — so a trigger's bindings are in
+hand and "that much" is the life the trigger saw gained:
+
+```jsonc
+// Niv-Mizzet, Ghost Counsel: whenever you gain life, you may pay that much life.
+//                            If you do, draw that many cards.
+{ "op": "may", "pay": { "pay_life": { "binding": "amount" } },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "binding": "amount" } } ] }
+```
+
+The price is fixed to a whole number before the affordability check, so the
+check and the charge see one price. 119.4: more life than the player has is not
+offered and the `effects` do not run; paying down to exactly 0 is allowed, and a
+price of 0 is always paid. A life total that can't change refuses any price above
+0. Outside a `may` (an activated ability's cost, War Room) the expression has no
+bindings to read.
+
+The near miss is a `may` around `lose_life`: losing life is not paying it, so it
+is offered at any life total and to a player whose life can't change. `pay.times`
+scales only the mana half. A malformed expression is a load error.
 
 ### "You may pay any amount of {R}. When you do…"
 
@@ -10914,9 +11350,80 @@ would hand them a fully known deck.
 `rest_to_bottom` defaults to **true** here and to false on `look_at_top`, and the
 defaults disagree because the words do: "look at" means the cards you did not
 take stay on top in order, and no printed "reveal until" leaves them there. The
-loader refuses an `amount` (the scan is unbounded — use `look_at_top` for a
-window) and an empty `objects` (an empty selector matches the first card
+loader refuses an empty `objects` (an empty selector matches the first card
 revealed, quietly turning the card into "put the top card into your hand").
+
+### "Until you reveal that many" — `amount`, `shuffle_rest` and `as`
+
+```jsonc
+// Mass Polymorph -- "Exile all creatures you control, then reveal cards from the
+// top of your library until you reveal that many creature cards. Put all creature
+// cards revealed this way onto the battlefield, then shuffle the rest of the
+// revealed cards into your library."
+{ "op": "exile", "objects": { "types": ["Creature"], "controller": "you", "count": "all" },
+  "as": "exiled" },
+{ "op": "reveal_until", "objects": { "types": ["Creature"] },
+  "amount": { "count": { "binding": "exiled" } },
+  "destination": "battlefield", "shuffle_rest": true }
+```
+
+`amount` is the number of **matches** that ends the scan, a value expression read
+once before it starts; omitted it is one. It is never a window: the depth is
+still the library's. Zero reveals nothing. A library that runs out first moves
+every match it had.
+
+Every match moves in one `entering_together` group, because "put all creature
+cards revealed this way onto the battlefield" is one event and each arrival's
+enters abilities look at the game after it (603.6a): two Soul Wardens put down
+together each gain you a life. A `repeat` around a one-match walk is the near
+miss and makes a different card — N separate reveals, each bottoming or
+shuffling before the next, with each arrival seeing only the ones before it.
+
+`shuffle_rest: true` is "shuffle the rest of the revealed cards into your
+library" (and Dack Fayden's bare "then shuffle"): the revealed cards never left
+the library, so it shuffles the library once after the matches have moved. It
+turns off the default bottoming, and the loader refuses it beside
+`rest_to_bottom: true` — they are two different actions and a card prints one.
+
+"That many" counts the `exile` op's `as` binding through the bare-binding pool,
+`{"count": {"binding": "exiled"}}`, which keeps every oid the op exiled —
+tokens included, which have ceased to exist but were exiled this way. A
+`{"binding": …, "types": [...]}` filter would drop them. Inside a `delay`
+(Synthetic Destiny's "at the beginning of the next end step, reveal …") the
+same count works unchanged, because `delay` carries the resolution's bindings
+forward.
+
+`as` records the matches that moved, across every seat walked, for a sentence
+that names them afterwards ("put those creature cards onto the battlefield …
+they're goaded").
+
+### "Under your control" — another player's library, `controller`
+
+```jsonc
+// Jhoira, Weatherlight Corsair -- "target opponent reveals cards from the top of
+// their library until they reveal a historic permanent card. You put that card
+// onto the battlefield under your control and lose life equal to that
+// permanent's mana value. That player puts the rest of the revealed cards on the
+// bottom of their library in a random order."
+{ "op": "reveal_until", "player": { "target": "t1" },
+  "objects": { "any_types": ["Artifact", "Battle", "Creature", "Enchantment", "Land", "Planeswalker"],
+               "any_of": [ { "types": ["Artifact"] }, { "supertypes": ["Legendary"] },
+                           { "subtypes": ["Saga"] } ] },
+  "destination": "battlefield", "controller": "you", "as": "stolen" },
+{ "op": "lose_life", "amount": { "mana_value_of": { "objects": { "binding": "stolen" } } } }
+```
+
+`player` names whose library is walked, and "the rest" always goes back to that
+library. A match put onto the battlefield enters under the same seat unless
+`controller: "you"` says it is the resolving ability's controller's — the
+spelling `put_onto_battlefield` and `return_from_graveyard` use. The loader
+admits only `"you"` and only beside `destination: "battlefield"`. Leaving it off
+Jhoira loads and hands the opponent their own historic card for free.
+
+"That permanent's mana value" reads the `as` binding through
+`mana_value_of`'s `objects` form; the bare `{"binding": …}` form reads a single
+oid or snapshot and gives 0 for a list. A scan that finds nothing binds the
+empty list, so the loss is zero.
 
 ## Discover — cascade's walk, N or less, cast or hand
 

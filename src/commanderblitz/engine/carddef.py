@@ -68,8 +68,13 @@ class TargetSpec:
 
     id: str
     kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard"
-    #        | "card_in_exile" | "any"
+    #        | "card_in_exile" | "any" | "spell_or_permanent" | "ability_on_stack"
     selector: Mapping[str, Any] = field(default_factory=dict)
+    #: A ``"spell_or_permanent"`` spec's selector for its **permanent** half,
+    #: when the printed word narrows only that half -- "target spell or
+    #: **creature**" (Fatehold Charm). ``None`` means both halves read
+    #: `selector`. See :attr:`permanent_half`.
+    permanent_selector: Mapping[str, Any] | None = None
     #: A number, or ``"any"`` for "any number of target …" -- a size the caster
     #: chooses. At most one spec per card may be ``"any"``, and it must be the
     #: last, because `filter_legal` slices the stored refs spec by spec and a
@@ -136,6 +141,18 @@ class TargetSpec:
     #: as the ability is put on the stack.  See :attr:`Ability.mode_targets` and
     #: `stack.push_triggered_ability`.
     mode: int | None = None
+
+    @property
+    def permanent_half(self) -> Mapping[str, Any]:
+        """The selector a ``"spell_or_permanent"`` spec's battlefield half reads.
+
+        `permanent_selector` when the card wrote one, else `selector`. The one
+        accessor `candidates` and `still_legal` share, so the pool a target is
+        offered from and the one it is re-checked against cannot disagree.
+        """
+        if self.permanent_selector is not None:
+            return self.permanent_selector
+        return self.selector
 
     @property
     def variable_size(self) -> bool:
@@ -1175,6 +1192,8 @@ class CardDef:
     emblems: tuple[CardDef, ...] = ()
     type_line: str = ""
     is_token: bool = False
+    #: An X/X token whose size its creating effect sets; see the card model.
+    variable_pt: bool = False
     #: The id of this card's back face -- a transforming double-faced card.
     #: The two faces are two ``CardDef``s and one ``GameObject``: ``transformed``
     #: on the object decides which one ``GameState.card_of`` returns, so every
@@ -1399,6 +1418,9 @@ class CardDef:
     graveyard_cast_transformed: bool = False
     #: Dredge N -- the mill that replaces a draw. See `engine/replacements.py`.
     dredge: int = 0
+    #: Toxic N (702.164) -- the total N of every printed toxic instance, read
+    #: with `Keyword.TOXIC` by `primitives.damage_player`. Zero means no toxic.
+    toxic: int = 0
     #: Madness -- the price of casting it out of the exile a discard sent it to.
     madness: ManaCost | None = None
     #: Miracle -- the price of casting it as the first card drawn this turn.
@@ -1416,6 +1438,11 @@ class CardDef:
     splice_onto: str = "Arcane"
     #: Suspend: ``(cost, counters)``, or ``None``.  See `engine/suspend.py`.
     suspend: tuple[ManaCost, int] | None = None
+    #: Impending: ``(cost, time counters)``, or ``None`` (702.176a). The cost is
+    #: an alternative one offered from hand beside the printed line; the
+    #: counters, the type change and the end-step tick are the rule's -- see
+    #: `loader._implied_replacements` and `characteristics._compute`.
+    impending: tuple[ManaCost, int] | None = None
 
     @property
     def cast_time_modes(self) -> Mapping[str, Any] | None:

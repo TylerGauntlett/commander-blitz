@@ -1,0 +1,88 @@
+{
+  "_comment": "Cards that exist only for the batched token-created trigger test (tests/unit/triggers/test_batched_token_created.py). Never part of a deck list. `t_storyteller` is Staff of the Storyteller's counter line, with the 'one or more' batching; `t_greedy_storyteller` is the same trigger WITHOUT `batched`, and is the counterfactual that over-counts.",
+  "cards": [
+    {
+      "id": "t_storyteller",
+      "name": "Test Storyteller",
+      "oracle_text": "Whenever you create one or more creature tokens, put a story counter on this artifact.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you create one or more creature tokens, put a story counter on this artifact.",
+          "trigger": {
+            "event": "token_created",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "batched": true
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "story",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_greedy_storyteller",
+      "name": "Test Greedy Storyteller",
+      "oracle_text": "Whenever you create a creature token, put a story counter on this artifact.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Artifact"
+      ],
+      "colors": [],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you create a creature token, put a story counter on this artifact.",
+          "trigger": {
+            "event": "token_created",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "story",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

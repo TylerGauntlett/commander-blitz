@@ -34,6 +34,7 @@ from .costs import pay, zone_of
 from .enums import Zone
 from .events import EventType
 from .mana import ManaCost
+from .objects import TIME_COUNTER
 from .player_statics import player_cant_cast_while_resolving
 from .primitives import cast_locked_zones
 from .targeting import enumerate_target_tuples
@@ -41,10 +42,6 @@ from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
-
-#: The counter suspended cards carry.  Named like the printed one so a UI that
-#: shows counters shows the right word.
-TIME_COUNTER = "time"
 
 
 def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[int], bool]:

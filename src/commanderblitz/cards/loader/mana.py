@@ -38,6 +38,7 @@ from .vocabulary import (
     KNOWN_TYPES,
     MANA_AMOUNT_FORBIDDEN,
     MANA_RIDER_OPS,
+    refuse_numbered_grant,
 )
 
 
@@ -461,6 +462,7 @@ def _mana_grant(spec: Any, is_mana_ability: bool, where: str) -> ManaKeywordGran
         if keyword not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: 'mana_grant' has unknown keyword {name!r}")
         keywords.append(keyword)
+    refuse_numbered_grant(keywords, f"{where}: 'mana_grant'")
     types: list[str] = []
     for name in spec.get("spell_types") or []:
         # Checked against the card types as `chars().types` spells them --

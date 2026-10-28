@@ -1,0 +1,41 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_spell_or_creature_target.py. t_soc_bounce is Fatehold Charm's bounce mode on its own: one spell_or_permanent target whose permanent_selector narrows only the permanent half. t_soc_wide is the near miss, the same clause written as one selector, which makes it 'target creature spell or creature'.",
+  "cards": [
+    {
+      "id": "t_soc_bounce",
+      "name": "Test Spell or Creature Bounce",
+      "oracle_text": "Return target spell or creature to its owner's hand.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell_or_permanent",
+          "count": 1,
+          "permanent_selector": {"types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [{"op": "return_spell_to_hand", "target": "t1"}]
+    },
+    {
+      "id": "t_soc_wide",
+      "name": "Test Creature Spell or Creature Bounce",
+      "oracle_text": "Return target creature spell or creature to its owner's hand.",
+      "mana_cost": "{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell_or_permanent",
+          "count": 1,
+          "selector": {"types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [{"op": "return_spell_to_hand", "target": "t1"}]
+    }
+  ]
+}

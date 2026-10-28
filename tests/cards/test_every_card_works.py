@@ -277,6 +277,18 @@ class TestEveryCardIsPlayable:
         game._advance()
 
         action = find_play(game, card_id)
+        if action is None and card.targets:
+            # Despark -- "Exile target permanent with mana value 4 or
+            # greater." This board's props are the cheap `t_` fixtures, so the
+            # spell was unaimed rather than broken. The same helper
+            # `TestActivatedAbilities` uses, and only for a card that is
+            # otherwise unplayable, so no other card's board changes.
+            hand_oid = next(
+                o for o in game.state.players[0].hand
+                if game.state.objects[o].def_id == card_id
+            )
+            _provide_the_target(game, registry, hand_oid, card)
+            action = find_play(game, card_id)
         assert action is not None, (
             f"{card_id} ({card.name}) is not playable in the sandbox; "
             f"offered: {[a.label for a in game.legal_actions()][:10]}"

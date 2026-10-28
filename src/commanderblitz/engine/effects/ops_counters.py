@@ -6,14 +6,17 @@ import dataclasses
 from collections.abc import Mapping
 from typing import Any
 
+from ..characteristics import chars
 from ..effects.ops_stack import put_copy_on_stack
 from ..enums import Zone
 from ..errors import DslError
 from ..player_statics import player_cant_cast_while_resolving
 from ..primitives import (
     add_counters,
+    add_subtypes,
     attach,
     change_control,
+    create_token,
     remove_counters,
     tap_permanent,
     transform,
@@ -46,6 +49,154 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put counters on")
     for oid in oids:
         add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
+
+
+#: The token "empower Jace" creates when you control no Jace token: the blue
+#: Jace planeswalker with "[-1]: Surveil 1" and "[-3]: Draw a card." and no
+#: printed loyalty (the catalog's tfra token row prints 0).
+EMPOWER_TOKEN = "jace_planeswalker_u"
+
+#: "A Jace token you control" -- read off the characteristics, so it is any
+#: token with the Jace subtype, not only the one `EMPOWER_TOKEN` names.
+_JACE_TOKENS = {"zone": "battlefield", "controller": "you", "subtypes": ["Jace"], "is_token": True}
+
+
+@register("empower")
+def op_empower(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Empower Jace N." -- Reality Fracture's keyword action, whose reminder
+    text is the whole rule: *(Put N loyalty counters on a Jace token you
+    control. If you don't control one, first create a blue Jace planeswalker
+    token with "[-1]: Surveil 1" and "[-3]: Draw a card.")*
+
+    Two primitives in one op, because the order is the card. The token is
+    created only when you control no Jace token, and the counters go on **one**
+    Jace token, chosen by the empowering player when there is more than one --
+    so a doubled creation (Parallel Lives) still empowers one Jace, and the
+    other, at zero loyalty, is binned by 704.5i once the effect is done. Both
+    halves happen inside the same effect, so the new token is never looked at by
+    a state-based action before its counters arrive.
+
+    Not `create_token` then `add_counters`: that pair creates a second Jace
+    beside the one you already control, and with no condition between them it
+    cannot say "if you don't control one". X below zero is zero (107.1b), and
+    zero creates the token and puts nothing on it, which the zero-loyalty
+    state-based action then puts into the graveyard -- the printed outcome.
+    """
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    pool = resolve_pool(ctx, _JACE_TOKENS)
+    if not pool:
+        create_token(ctx.state, EMPOWER_TOKEN, ctx.controller, source=ctx.source_oid)
+        pool = resolve_pool(ctx, _JACE_TOKENS)
+    # The plain "choose" purpose, as `add_counters` asks: one permanent off the
+    # board, which the client's existing board picker already answers.
+    picked = yield from pick_from_pool(ctx, pool, {"count": 1}, "Empower which Jace?")
+    for oid in picked:
+        add_counters(ctx.state, oid, "loyalty", amount, source=ctx.source_oid)
+
+
+#: The token "amass [subtype] N" creates when you control no Army creature,
+#: one per subtype a printed card amasses: the catalog's 0/0 black
+#: "[subtype] Army" token rows (tfrc, tltr, thob, tcmm). The keys are the
+#: values the op's ``subtype`` takes, and the loader refuses any other.
+AMASS_TOKENS = {
+    "Zombie": "zombie_army_0_0_b",
+    "Orc": "orc_army_0_0_b",
+    "Goblin": "goblin_army_0_0_b",
+    "Sliver": "sliver_army_0_0_b",
+}
+
+#: "An Army creature you control" -- read off the characteristics, so any
+#: creature with the Army subtype counts, token or not.
+_ARMY_CREATURES = {
+    "zone": "battlefield",
+    "controller": "you",
+    "types": ["Creature"],
+    "subtypes": ["Army"],
+}
+
+
+@register("amass")
+def op_amass(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Amass [subtype] N." -- rule 701.47a: *If you don't control an Army
+    creature, create a 0/0 black [subtype] Army creature token. Choose an Army
+    creature you control. Put N +1/+1 counters on that creature. If it isn't a
+    [subtype], it becomes a [subtype] in addition to its other types.*
+
+    `empower`'s shape with a creature: the token is created only when you
+    control no Army creature, the counters go on **one** Army, chosen by the
+    amassing player when there is more than one (a doubled creation leaves the
+    other at 0/0 for 704.5f), and both halves happen inside the same effect so
+    the new 0/0 is never looked at by a state-based action before its counters
+    land ("amass 0" still creates it, and it then dies).
+
+    The subtype is a parameter because the printed word changes: Zombie (War
+    of the Spark, whose "amass N" Oracle now reads "amass Zombies N"), Orc,
+    Goblin, Sliver. It picks the token and is the type the chosen Army gains,
+    written onto the object for as long as it stays on the battlefield --
+    an Orc Army that later amasses Zombies is an Orc Zombie Army.
+
+    ``as`` records the amassed Army ("the amassed Army's power"),
+    a list of zero or one oids.
+    """
+    subtype = str(spec["subtype"])
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    pool = resolve_pool(ctx, _ARMY_CREATURES)
+    if not pool:
+        create_token(ctx.state, AMASS_TOKENS[subtype], ctx.controller, source=ctx.source_oid)
+        pool = resolve_pool(ctx, _ARMY_CREATURES)
+    picked = yield from pick_from_pool(ctx, pool, {"count": 1}, "Amass onto which Army?")
+    for oid in picked:
+        add_counters(ctx.state, oid, "+1/+1", amount, source=ctx.source_oid)
+        if subtype not in chars(ctx.state, oid).subtypes:
+            add_subtypes(ctx.state, oid, [subtype], source=ctx.source_oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = list(picked)
+
+
+#: The token "incubate N" creates: the catalog's double-faced Incubator //
+#: Phyrexian token row (tfrc). The front is a colorless Incubator artifact with
+#: "{2}: Transform this artifact."; its `back_face` is the 0/0 colorless
+#: Phyrexian artifact creature it transforms into.
+INCUBATOR_TOKEN = "incubator_token"
+
+
+@register("incubate")
+def op_incubate(ctx: EffectContext, spec: Mapping[str, Any]) -> None:
+    """ "Incubate N." -- rule 701.53a: *Create an Incubator token with N +1/+1
+    counters on it and "{2}: Transform this artifact." It transforms into a 0/0
+    Phyrexian artifact creature.*
+
+    The counters are on the token as it is created (`create_token`'s
+    ``enters_with``), so they are one placement with every other "enters with"
+    (122.6), and the counter replacements look at the Incubator as it is:
+    an artifact, not a creature. Doubling Season ("a permanent you control")
+    makes incubate 3 two Incubators with six each; Hardened Scales ("a
+    creature you control") does nothing to it. Not `create_token` then
+    `add_counters`, which places them on a token already on the battlefield --
+    a second event that "whenever a token enters" sees without them, and that
+    an `add_counters` on "the token" would have to name by binding.
+
+    The token is a transforming double-faced token, so turning it over is the
+    ordinary `transform` op on its own activated ability; the counters stay on
+    the permanent, and the back face is a 0/0 that is N/N with them. Incubate
+    0 still creates the Incubator (an artifact, not a creature, so nothing
+    dies), and transforming it then makes a 0/0 that 704.5f bins.
+
+    ``amount`` is any value expression, below zero read as zero (107.1b):
+    Sunfall's "the number of creatures exiled this way" is
+    ``{"count": {"binding": ...}}`` over the `exile` op's ``as``. ``as``
+    records the Incubators made.
+    """
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    made = create_token(
+        ctx.state,
+        INCUBATOR_TOKEN,
+        ctx.controller,
+        source=ctx.source_oid,
+        enters_with={"+1/+1": amount} if amount else None,
+    )
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = list(made)
 
 
 @register("distribute_counters")

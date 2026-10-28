@@ -1,0 +1,22 @@
+{
+  "card_id": "toll_of_the_invasion",
+  "name": "Toll of the Invasion",
+  "oracle_text": "Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.\nAmass Zombies 1. (Put a +1/+1 counter on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)",
+  "blocked_sentences": [
+    "Target opponent reveals their hand. You choose a nonland card from it. That player discards that card."
+  ],
+  "needs": [
+    {
+      "capability": "targeted_discard",
+      "kind": "op",
+      "what": "a discard in which the target player reveals their hand and the spell's controller (not the discarding player) chooses a card matching a filter (here a nonland card) to be discarded -- Duress/Thoughtseize's shape; no discard if none matches",
+      "why_existing_wont_do": "`discard` takes only amount, as, player, random, up_to and whole_hand: op_discard always asks the discarding player (or picks at random) and has no filter on which card may be taken. `reveal` and `look_at_hand` show the hand but cannot hand the choice to the caster, restrict it to nonland cards, or perform a discard (so discard triggers and Tamiyo's forced-discard bar would be skipped by any move-to-graveyard workaround)."
+    }
+  ],
+  "closest_existing": [
+    "discard",
+    "look_at_hand",
+    "reveal"
+  ],
+  "confidence": "high"
+}

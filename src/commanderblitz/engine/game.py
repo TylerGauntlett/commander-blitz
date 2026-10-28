@@ -491,6 +491,8 @@ class Game:
             # and this charge being made -- at which point a re-derived price
             # would be `None` and the spell would be charged its printed cost.
             cost = ManaCost.parse(action.warp)
+        elif action.impending and card.impending is not None:
+            cost = card.impending[0]
         elif action.bestowed and card.bestow is not None:
             cost = card.bestow
         elif action.mutated and card.mutate is not None:
@@ -909,6 +911,7 @@ class Game:
             gift_to=action.gift_to,
             evoked=action.evoked,
             warped=action.warp is not None,
+            impending=action.impending,
             flashback=action.flashback,
             overloaded=action.overloaded,
             cost_option=action.additional_choice,
@@ -1139,7 +1142,14 @@ class Game:
             # `fire`, not `emit`: emit only writes the log, and a cycle event
             # nothing listens to is the silent no-op this whole run exists to
             # add a listener for.
-            triggers.fire(state, EventType.CYCLED, player=pid, source=oid, card=card.id)
+            #
+            # ``x`` is the X paid in a cycling cost with one -- Shark Typhoon's
+            # "Cycling {X}{1}{U}", whose "When you cycle this card, create an
+            # X/X…" reads that number. The card was never cast, so its own
+            # `cast_x` is 0; the event is the only place the payment survives.
+            triggers.fire(
+                state, EventType.CYCLED, player=pid, source=oid, card=card.id, x=x
+            )
 
     def _ask_distribution(
         self,

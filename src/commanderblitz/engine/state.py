@@ -12,7 +12,7 @@ from .enums import STEP_PHASE, Phase, Step, Zone
 from .events import EventType, GameEvent
 from .objects import GameObject
 from .player import PlayerState
-from .player_statics import retained_mana_by_player
+from .player_statics import colorless_instead_players, retained_mana_by_player
 from .rng import Rng
 from .structs import (
     AttackRestriction,
@@ -180,6 +180,11 @@ class GameState:
     #: matched again, and the set is bounded by how many batched triggers
     #: actually fired rather than by the length of the game.
     batched_triggers: set = field(default_factory=set)
+    #: Events fired inside `triggers.entering_together`, collected only once the
+    #: whole group has moved, so permanents that enter at the same time see one
+    #: another enter (603.6a, 603.10). ``None`` outside such a group, which is
+    #: every moment a state can be saved or copied.
+    held_events: list[Any] | None = field(default=None, repr=False)
     #: `replace_dies` statics whose permanent has just left the battlefield, as
     #: ``(event_batch, source as it last existed, static)``. Kalitas's ruling:
     #: if it dies at the same time as a nontoken creature an opponent controls,
@@ -950,15 +955,27 @@ class GameState:
         ``keep_for_turn`` is the current turn at an ordinary step or phase
         boundary and ``None`` at the end of the turn, which is where "until end
         of turn" runs out. A `mana_retention` static (Leyline Tyrant) spares its
-        symbols at every boundary, the end of the turn included.
+        symbols at every boundary, the end of the turn included, and a
+        `mana_becomes_colorless` static (Kruphix) turns whatever would still be
+        lost into {C} instead.
         """
+        if not any(p.mana_pool.total() for p in self.players):
+            # Every boundary of almost every turn: nothing to empty, and no
+            # reason to walk the battlefield or drop the characteristics cache.
+            return
         retained = retained_mana_by_player(self)
+        colorless = colorless_instead_players(self)
         for p in self.players:
             lost = p.mana_pool.clear(
-                keep_for_turn, retained.get(p.pid, frozenset())
+                keep_for_turn,
+                retained.get(p.pid, frozenset()),
+                colorless_instead=p.pid in colorless,
             )
             if lost:
                 self.emit("mana_emptied", player=p.pid, amount=lost)
+        # A pool is a static's input (`unspent_mana_count`), and `chars` caches
+        # per `char_version` -- `primitives.add_poison`'s reason, for the pool.
+        self.bump_chars()
 
     def commanders_of(self, pid: int) -> list[int]:
         return list(self.players[pid].commanders)

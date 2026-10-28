@@ -49,6 +49,7 @@ from commanderblitz.engine.state import new_object
 
 from ..loader import compile_card
 from ..loader.linking import link_faces, validate_token_references
+from ..loader.vocabulary import KNOWN_KEYWORDS, normalize_keyword
 from ..proxy import CardFacts, lift_keywords
 from ..proxy import _residual as proxy_residual
 from ..registry import CardRegistry
@@ -1315,6 +1316,10 @@ _STRIVE_LINE = re.compile(
     re.IGNORECASE,
 )
 
+#: "Impending 4—{2}{W}{W} (…)": the count, then the price after the em dash
+#: (or a hyphen, for text typed without one).
+_IMPENDING_LINE = re.compile(r"^impending (\d+)\s*[—-]\s*(\{.*)$", re.IGNORECASE)
+
 
 #: The two printed shapes of a card-level alternative cost (118.9), read off the
 #: self-reference-folded, lower-cased line: "[If <condition>, ]you may <payment>
@@ -1471,6 +1476,26 @@ def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     )
 
 
+_TOXIC_PART = re.compile(r"toxic (\d+)")
+
+
+def _claims_toxic_line(card: CardDef, stripped: str) -> bool:
+    """Whether a printed keyword line holding "toxic N" is exactly this card's."""
+    bare = re.sub(r"\s*\([^)]*\)", "", stripped).strip().rstrip(".")
+    parts = [p.strip().casefold() for p in re.split(r"[,;]", bare) if p.strip()]
+    numbered = [m for p in parts if (m := _TOXIC_PART.fullmatch(p))]
+    if len(numbered) != 1 or int(numbered[0].group(1)) != card.toxic:
+        return False
+    have = {str(k) for k in card.keywords}
+    for part in parts:
+        if _TOXIC_PART.fullmatch(part):
+            continue
+        word = normalize_keyword(part.replace(" ", "_"))
+        if word not in KNOWN_KEYWORDS or word not in have:
+            return False
+    return True
+
+
 def _covered(card: CardDef, line: str) -> bool:
     """Whether an ability on the card claims this printed line.
 
@@ -1514,6 +1539,13 @@ def _covered(card: CardDef, line: str) -> bool:
     # `CardDef.can_be_commander` -- strict the same way the "any number" line
     # below is: claimed only when the sentence names this card.
     if card.can_be_commander and stripped.lower().endswith("can be your commander"):
+        return True
+
+    # "Toxic 2", "Trample, toxic 1": a keyword line with one numbered part.
+    # `lift_keywords` cannot consume it -- "toxic_2" is no keyword -- so it is
+    # claimed here, strictly: the number must be the card's `toxic`, and every
+    # other part a keyword the card really has, as the lift would demand.
+    if card.toxic and "toxic" in card.keywords and _claims_toxic_line(card, stripped):
         return True
 
     # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an
@@ -1677,6 +1709,41 @@ def _covered(card: CardDef, line: str) -> bool:
     # closed and the line stays residual.
     if card.warp is not None and stripped.lower().startswith("warp "):
         return _declares_printed_cost(stripped[len("warp ") :], card.warp)
+
+    # "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost…)"
+    # -- warp's shape with a count beside the price, and claimed by the field
+    # for warp's reason: the price is no ability, and the counters, the type
+    # change and the end-step tick are the rule's. Here, ahead of the
+    # replacement claimant below, which would otherwise wave the line through
+    # on its reminder text's "enters with … counters" alone.
+    #
+    # Strict on both numbers: a card declaring four counters cannot claim a
+    # printed "Impending 5", nor `{1}{B}` a printed `{2}{B}`. A mismatch returns
+    # here rather than falling through, so the line stays residual -- and so
+    # does a printed impending line on a card without the field.
+    if (match := _IMPENDING_LINE.match(stripped)) is not None:
+        if card.impending is None:
+            return False
+        cost, counters = card.impending
+        return int(match.group(1)) == counters and _declares_printed_cost(match.group(2), cost)
+
+    # "Morph {3}{R}{R}{R} (You may cast this card face down as a 2/2 creature
+    # for {3}. Turn it face up any time for its morph cost.)" -- warp's shape
+    # once more, and the same hole: the loader parses `morph`, `casting` offers
+    # the face-down cast for {3} and `legality` the turn-up for the morph cost,
+    # but "morph" is not in `KNOWN_KEYWORDS` and no ability carries the line, so
+    # Akroma, Angel of Fury failed gate 3 on exactly this line.
+    #
+    # Strict like warp's claimant and for its reason: the printed cost must be
+    # the declared one. And the word must match `morph_counter`: a printed
+    # "Megamorph" needs the counter (702.109a) and a printed "Morph" must not
+    # have it, or the card turns up a different size than it prints. A morph
+    # cost that is not mana ("Morph—Reveal a white card") will not parse and
+    # stays residual.
+    if card.morph is not None:
+        word = "megamorph " if card.morph_counter else "morph "
+        if stripped.lower().startswith(word):
+            return _declares_printed_cost(stripped[len(word) :], card.morph)
 
     # "As an additional cost to cast this spell, sacrifice a creature" is the
     # same shape again: a card-level `Cost` charged by `_cast_variant`, with no

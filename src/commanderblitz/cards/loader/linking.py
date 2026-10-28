@@ -9,6 +9,11 @@ from commanderblitz.engine.carddef import (
     Ability,
     CardDef,
 )
+from commanderblitz.engine.effects.ops_counters import (
+    AMASS_TOKENS,
+    EMPOWER_TOKEN,
+    INCUBATOR_TOKEN,
+)
 from commanderblitz.engine.errors import DslError
 from commanderblitz.engine.mana import ManaCost, parse_mana_production
 
@@ -238,6 +243,14 @@ def token_references(card: CardDef) -> set[str]:
     for effect in _walk_effects(card):
         if effect.get("op") == "create_token":
             out.add(str(effect.get("token")))
+        if effect.get("op") == "incubate":
+            # The op names its token itself; the bundle's `references` then
+            # carries the Incubator's back face along with it.
+            out.add(INCUBATOR_TOKEN)
+        if effect.get("op") == "empower":
+            out.add(EMPOWER_TOKEN)
+        if effect.get("op") == "amass" and str(effect.get("subtype")) in AMASS_TOKENS:
+            out.add(AMASS_TOKENS[str(effect.get("subtype"))])
     for ability in card.abilities:
         static = ability.static or {}
         out.update(str(token_id) for token_id in static.get("create_instead", ()))
@@ -262,11 +275,35 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
             raise DslError(f"{card.id}: {where} references unknown card {token_id!r}")
         if not token.is_token:
             raise DslError(f"{card.id}: {token_id!r} is not marked as a token")
+        if token.front_face is not None:
+            # The Incubator's Phyrexian is a token face, never a token of its
+            # own: it is reached by transforming the front, and created
+            # directly it would be a 0/0 artifact creature no card prints.
+            raise DslError(
+                f"{card.id}: {where} names {token_id!r}, the back face of "
+                f"{token.front_face!r}; create the front face"
+            )
 
     for card in cards.values():
         for effect in _walk_effects(card):
             if effect.get("op") == "create_token":
                 check(card, str(effect.get("token")), "create_token")
+                sized = cards[str(effect.get("token"))].variable_pt
+                if sized != ("power" in effect):
+                    # Both directions. A pair on a printed-size token repaints
+                    # the size the creating card did not print (a 0/0 Fractal
+                    # that is given X counters is not an X/X), and an X/X token
+                    # made without one is a 0/0 that 704.5f bins on arrival.
+                    raise DslError(
+                        f"{card.id}: create_token {effect.get('token')!r} "
+                        + (
+                            "is an X/X token and needs the 'power' and 'toughness' "
+                            "its creating effect fixes"
+                            if sized
+                            else "has a printed size; 'power' and 'toughness' are "
+                            "only for an X/X token (variable_pt)"
+                        )
+                    )
                 if "attached_to" in effect and not cards[str(effect.get("token"))].is_aura:
                     # Only an Aura is attached by `op_create_token`; anything
                     # else would be created and hang on nothing.
@@ -274,12 +311,28 @@ def validate_token_references(cards: Mapping[str, CardDef]) -> None:
                         f"{card.id}: create_token 'attached_to' needs an Aura token, "
                         f"and {effect.get('token')!r} is not one"
                     )
+            if effect.get("op") == "empower":
+                # The op names its token itself, so a pool without the Jace
+                # fails here rather than the first time a card empowers.
+                check(card, EMPOWER_TOKEN, "empower")
+            if effect.get("op") == "amass":
+                # Likewise the Army token its subtype names (the effects guard
+                # has already refused a subtype with none).
+                check(card, AMASS_TOKENS[str(effect.get("subtype"))], "amass")
+            if effect.get("op") == "incubate":
+                check(card, INCUBATOR_TOKEN, "incubate")
         for ability in card.abilities:
             static = ability.static or {}
-            for token_id in static.get("create_instead", ()):
-                check(card, str(token_id), "create_instead")
-            for token_id in static.get("and_create", ()):
-                check(card, str(token_id), "and_create")
+            for key in ("create_instead", "and_create"):
+                for token_id in static.get(key, ()):
+                    check(card, str(token_id), key)
+                    if cards[str(token_id)].variable_pt:
+                        # A replacement names its token by id alone, so an
+                        # X/X one would arrive the 0/0 it is written as.
+                        raise DslError(
+                            f"{card.id}: {key} names {token_id!r}, an X/X token "
+                            f"whose size only a create_token can fix"
+                        )
 
 
 def _walk_effects(card: CardDef):

@@ -31,7 +31,12 @@ FAVORITES = {
 
 #: The lists Wizards sold, shipped as ``precon``: every one has a row in
 #: ``data/decks/sources.json`` (``tests/cards/test_precon_sources.py``).
-PRECONS = {"fdc_calling_all_angels", "fdc_keen_engineering", "fdc_wretched_ranks"}
+PRECONS = {
+    "fdc_calling_all_angels",
+    "fdc_keen_engineering",
+    "fdc_wretched_ranks",
+    "frc_multiverse_reforged",
+}
 
 #: Every deck a player sees on the shelf.
 SHIPPED = FAVORITES | PRECONS
@@ -99,7 +104,10 @@ class TestDecksAreLegal:
     def test_commander_is_a_legendary_creature(self, deck_id, decks, real_registry):
         for commander_id in decks[deck_id].commanders:
             card = real_registry.get(commander_id)
-            assert card.is_legendary and card.is_creature
+            # 903.3: a legendary creature, or a card that says it "can be your
+            # commander" -- Jace, Multiverse Architect leads Multiverse
+            # Reforged as a planeswalker.
+            assert card.is_legendary and (card.is_creature or card.can_be_commander)
 
     @pytest.mark.parametrize("deck_id", DECK_IDS)
     def test_deck_has_a_playable_mana_base(self, deck_id, decks, real_registry):

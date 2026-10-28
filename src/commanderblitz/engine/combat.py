@@ -398,6 +398,17 @@ def _attack_prohibited(
         for restriction in state.attack_restrictions:
             if restriction.attacker != obj.controller or restriction.defender != defender:
                 continue
+            if restriction.walker_subtypes:
+                # "…can't attack Jaces you control": the seat and every other
+                # permanent stay attackable, and only a walker that *is* one of
+                # the named subtypes right now is closed.
+                if permanent is not None:
+                    walker = chars(state, permanent)
+                    if "Planeswalker" in walker.types and any(
+                        t in walker.subtypes for t in restriction.walker_subtypes
+                    ):
+                        return True
+                continue
             if permanent is None or restriction.planeswalkers:
                 return True
     # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
@@ -828,7 +839,7 @@ def block_prohibited(state: GameState, oid: int) -> bool:
     )
 
 
-def unblockable(state: GameState, oid: int) -> bool:
+def unblockable(state: GameState, oid: int, blocker_oid: int | None = None) -> bool:
     """Is this creature under a one-shot "can't be blocked", as opposed to a static?
 
     The exact mirror of :func:`block_prohibited` one function up, and the two are
@@ -848,12 +859,39 @@ def unblockable(state: GameState, oid: int) -> bool:
     creature chosen when an ability resolved.  Rogue's Passage's target is not
     Rogue's Passage.
 
+    "…can't be blocked this turn **except by creatures with haste**"
+    (Gingerbrute) is an entry carrying ``except_blockers``, and it refuses only
+    the blockers that do not match it -- so it can be answered only for a named
+    ``blocker_oid``. Asked without one, the question is "can *nothing* block
+    it?", and only an entry without an exemption says yes: a Gingerbrute that
+    paid its {1} is still blockable by a hasty creature, and reading it as fully
+    unblockable would be a strictly better card. The filter reads the blocker's
+    derived characteristics, the way `block_restriction`'s ``blockers`` does, so
+    a creature that gained haste this turn may block it; its ``controller``
+    defaults to ``any`` for that reason's twin -- the blocker is the defending
+    player's by definition, and "you" would exempt nobody. Two entries on one
+    attacker are two restrictions, and a blocker must satisfy both.
+
     Guarded on the list being non-empty, because this is on the hot path of the
     block mask and the list is empty in most games.
     """
     if not state.unblockables:
         return False
-    return any(oid in entry.objects for entry in state.unblockables)
+    blocker = state.objects.get(blocker_oid) if blocker_oid is not None else None
+    attacker = state.objects.get(oid)
+    for entry in state.unblockables:
+        if oid not in entry.objects:
+            continue
+        exempt = entry.except_blockers
+        if exempt is None:
+            return True
+        if blocker is None or attacker is None:
+            continue
+        if not matches_static(
+            state, blocker, attacker, {"controller": "any", **dict(exempt)}, derived=True
+        ):
+            return True
+    return False
 
 
 def can_block(
@@ -914,8 +952,9 @@ def can_block(
     # block anything, this one whether this attacker may be blocked by anything.
     # Both are early-outs and neither consults the other, so a blocker under a
     # prohibition facing an unblockable attacker is refused by whichever is
-    # asked first -- the same answer either way.
-    if unblockable(state, attacker_oid):
+    # asked first -- the same answer either way. The blocker is passed because
+    # "…except by creatures with haste" (Gingerbrute) exempts some of them.
+    if unblockable(state, attacker_oid, blocker_oid):
         return False
 
     # "Protection from Wizards" means it cannot be blocked by a Wizard. Checked

@@ -749,6 +749,14 @@ def _cast_options(
     # for ever and never leave.
     if state.objects[oid].zone is Zone.HAND and (warp := warp_cost(state, pid, card)) is not None:
         out += _cast_variant(state, pid, oid, card, tuples, extra_generic=extra_generic, warp=warp)
+    # Impending (702.176a): evoke's slot once more, with warp's kind of riders --
+    # the time counters, the type change and the end-step tick are the rule's,
+    # supplied by the loader and `characteristics._compute`, so this line only
+    # has to offer the price. Hand-only for evoke's reason.
+    if card.impending is not None and state.objects[oid].zone is Zone.HAND:
+        out += _cast_variant(
+            state, pid, oid, card, tuples, extra_generic=extra_generic, impending=True
+        )
     # Bestow (702.103a): the same alternative-cost shape as evoke, and the only
     # one that changes what the spell *points at*. "Enchant creature" is fixed
     # by the rule, so the target comes from `BESTOW_TARGET` rather than from the
@@ -1506,6 +1514,7 @@ def _cast_variant(
     # another permanent, so there is nothing on the card to read it back off.
     # `Action.warp` carries the same string for the same reason.
     warp: str | None = None,
+    impending: bool = False,
     emerge_oid: int | None = None,
     flashback: bool = False,
     alternative: bool = False,
@@ -1598,6 +1607,8 @@ def _cast_variant(
         # printed one outright -- so it sits in this chain beside evoke rather
         # than being netted into `extra_generic` like a discount.
         cost = ManaCost.parse(warp)
+    elif impending and card.impending is not None:
+        cost = card.impending[0]
     elif bestowed and card.bestow is not None:
         cost = card.bestow
     elif mutated and card.mutate is not None:
@@ -1822,6 +1833,8 @@ def _cast_variant(
             # card: a player looking at an artifact in hand under Tannuk has no
             # other way to see what this line costs.
             label_base += f" (warp {warp})"
+        if impending:
+            label_base += " (impending)"
         if fused:
             label_base += " (fused)"
         if bestowed:
@@ -1883,6 +1896,7 @@ def _cast_variant(
                     gift_to=gift_to,
                     evoked=evoked,
                     warp=warp,
+                    impending=impending,
                     alternative=alternative,
                     overloaded=overloaded,
                     additional_times=additional_times,

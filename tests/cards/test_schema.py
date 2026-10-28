@@ -70,6 +70,23 @@ class TestFilesLoad:
                 f"{card.id} is a face but answers to the name {card.name!r}"
             )
 
+    def test_a_name_a_token_shares_resolves_to_the_card(self, registry: CardRegistry):
+        """The token half of the invariant above.
+
+        A named token can print a real card's name -- Kher Keep's token is
+        called Kobolds of Kher Keep, and so is a {0} 0/1 Kobold card -- and the
+        hand-written token file loads before `auto/`, so first-wins alone would
+        resolve a deck list's Kobolds of Kher Keep to a token nobody can cast.
+        """
+        for card in registry:
+            if not card.is_token:
+                continue
+            found = registry.by_name(card.name)
+            assert found is None or not found.is_token, (
+                f"{card.id} is a token but answers to the name {card.name!r}"
+            )
+        assert registry.by_name("Kobolds of Kher Keep").id == "kobolds_of_kher_keep"
+
     def test_token_references_resolve(self, registry: CardRegistry):
         # CardRegistry.from_paths runs validate_token_references; this asserts the
         # shipped set really does go through it.

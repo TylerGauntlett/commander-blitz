@@ -325,14 +325,16 @@ class TestTheLoaderRefusesTheCardsThatWouldBeWrong:
         with pytest.raises(DslError, match="reveal_until needs a non-empty 'objects'"):
             compile_card(self._card({"op": "reveal_until"}))
 
-    def test_an_amount_is_a_load_error(self):
-        """A bounded window is `look_at_top`'s job. A card that wrote an amount
-        here would believe the scan stopped there, and nothing would read it."""
-        with pytest.raises(DslError, match="reveal_until takes no 'amount'"):
+    def test_an_amount_counts_matches_and_is_validated_as_a_value(self):
+        """`amount` is "until you reveal that many" -- see
+        `test_reveal_until_count.py`. It is a value like every other `amount`,
+        so a malformed one fails at load time rather than mid-game."""
+        compile_card(
+            self._card({"op": "reveal_until", "objects": CREATURE, "amount": {"const": 2}})
+        )
+        with pytest.raises(DslError):
             compile_card(
-                self._card(
-                    {"op": "reveal_until", "objects": CREATURE, "amount": {"const": 5}}
-                )
+                self._card({"op": "reveal_until", "objects": CREATURE, "amount": "banana"})
             )
 
     def test_an_unknown_destination_is_a_load_error(self):

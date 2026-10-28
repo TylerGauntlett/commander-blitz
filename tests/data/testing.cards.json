@@ -6931,6 +6931,98 @@
       ]
     },
     {
+      "id": "t_toxic_two",
+      "name": "Test Toxic Stalker",
+      "oracle_text": "Trample, toxic 2 (Players dealt combat damage by this creature also get two poison counters.)",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Horror"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "trample",
+        "toxic"
+      ],
+      "toxic": 2
+    },
+    {
+      "id": "t_toxic_infecter",
+      "name": "Test Toxic Blight",
+      "oracle_text": "Infect, toxic 1",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Horror"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "infect",
+        "toxic"
+      ],
+      "toxic": 1
+    },
+    {
+      "id": "t_toxic_lord",
+      "name": "Test Toxic Lord",
+      "oracle_text": "Creatures you control with toxic have lifelink.",
+      "mana_cost": "{1}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control with toxic have lifelink.",
+          "effect": "grant_keyword",
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "keywords": [
+              "toxic"
+            ]
+          },
+          "keywords": [
+            "lifelink"
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_toxic_suppressor",
+      "name": "Test Toxic Suppressor",
+      "oracle_text": "Creatures lose toxic.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures lose toxic.",
+          "effect": "lose_keyword",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "toxic"
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_kinship",
       "name": "Test Kinship Ox",
       "oracle_text": "Kinship — At the beginning of your upkeep, you may look at the top card of your library. If it shares a creature type with this creature, you may reveal it and you gain 2 life.",

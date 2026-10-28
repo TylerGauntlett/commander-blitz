@@ -63,8 +63,10 @@ from commanderblitz.engine.mana import (
     compile_restriction,
     parse_mana_production,
 )
+from commanderblitz.engine.objects import TIME_COUNTER
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.triggers import (
+    BATCHED_EVENTS,
     ORDINAL_FILTER_KEYS,
     STATE_TRIGGER,
     TRIGGER_EVENTS,
@@ -157,6 +159,7 @@ from .vocabulary import (  # noqa: F401
     UNGRANTABLE_STATIC_EFFECTS,
     WARP_GRANT_FILTER_KEYS,
     WAS_CAST_TRIGGERS,
+    refuse_numbered_grant,
 )
 from .walk import (
     _check_counter_kind,
@@ -456,7 +459,122 @@ def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
                 "condition": None,
             }
         )
+    if model.impending is not None:
+        # Impending (702.176a): "if you chose to pay this permanent's impending
+        # cost, it enters with N time counters on it". A replacement for the
+        # Saga's reason -- the Overlord is never seen on the battlefield without
+        # its counters, so it is never seen as a creature -- and gated on the
+        # cast stamp, so the printed cast and a reanimation enter with none.
+        out.append(
+            {
+                "event": "self_enters_with_counters",
+                "counter": TIME_COUNTER,
+                "amount": int(model.impending["counters"]),
+                "modify": {},
+                "condition": {"impending": True},
+            }
+        )
     return tuple(out)
+
+
+def _compile_impending(
+    model: CardModel, mana_cost: ManaCost, where: str
+) -> tuple[ManaCost, int] | None:
+    """A card's ``impending`` field as ``(cost, time counters)``, or ``None``.
+
+    The refusals are the silent failures. A non-creature has no creature type
+    for "isn't a creature" to take away, so it would load and only cost less;
+    zero counters is the same card entering as a creature at once; a price equal
+    to the printed one is one cast offered twice (evoke's invariant). And the
+    `impending` condition is the rule's to read: a card without the field that
+    asks it asks about a cost nothing could have paid.
+    """
+    if model.impending is None:
+        if _mentions_condition(model, "impending"):
+            raise DslError(f"{where}: reads the 'impending' condition but has no 'impending' cost")
+        return None
+    unknown = set(model.impending) - {"cost", "counters"}
+    if unknown:
+        raise DslError(f"{where}.impending: unsupported keys {sorted(unknown)}")
+    counters = model.impending.get("counters")
+    if isinstance(counters, bool) or not isinstance(counters, int) or counters < 1:
+        raise DslError(
+            f"{where}.impending: 'counters' must be a whole number of at least 1 -- "
+            f"with none the permanent enters a creature and the keyword does nothing"
+        )
+    if not model.impending.get("cost"):
+        raise DslError(f"{where}.impending: needs a 'cost' -- impending is a price")
+    cost = ManaCost.parse(model.impending["cost"])
+    if cost.x_count:
+        raise DslError(f"{where}: an impending cost with X is not implemented")
+    if CardType.CREATURE.value not in model.types:
+        raise DslError(
+            f"{where}: 'impending' is only on creature cards (702.176a) -- 'it isn't "
+            f"a creature' has nothing to take away from this one"
+        )
+    if cost.mana_value() == mana_cost.mana_value():
+        raise DslError(
+            f"{where}: impending {model.impending['cost']!r} costs the same as the printed "
+            f"cost -- the same cast offered twice, and nobody would take the second"
+        )
+    return cost, counters
+
+
+def _impending_tick(index: int, where: str) -> Ability:
+    """Impending's fourth ability (702.176a), which no card prints as a line.
+
+    "At the beginning of your end step, if this permanent's impending cost was
+    paid and it has a time counter on it, remove a time counter from it." A real
+    triggered ability rather than a turn-based tick like suspend's, because the
+    keyword *is* these abilities on the permanent: it uses the stack, the
+    intervening-if is asked as it triggers and again as it resolves, and a
+    permanent that has lost its abilities stops counting down.
+
+    Its ``text`` is the rule's sentence and no printed line's, so it claims
+    nothing at gate 3; the printed "Impending N—cost" line is the field's to
+    claim (`verify._covered`).
+    """
+    return _compile_ability(
+        AbilityModel.model_validate(
+            {
+                "kind": "triggered",
+                "text": (
+                    "At the beginning of your end step, if this permanent's impending "
+                    "cost was paid and it has a time counter on it, remove a time "
+                    "counter from it."
+                ),
+                "trigger": {
+                    "event": "end_step",
+                    "controller": "you",
+                    "condition": {
+                        "all": [
+                            {"impending": True},
+                            {
+                                "cmp": ">=",
+                                "left": {
+                                    "counters_on": {
+                                        "counter": TIME_COUNTER,
+                                        "objects": {"self_only": True},
+                                    }
+                                },
+                                "right": {"const": 1},
+                            },
+                        ]
+                    },
+                },
+                "effects": [
+                    {
+                        "op": "remove_counters",
+                        "counter": TIME_COUNTER,
+                        "amount": {"const": 1},
+                        "objects": {"self_only": True},
+                    }
+                ],
+            }
+        ),
+        index,
+        where,
+    )
 
 
 def _final_chapter(model: CardModel, abilities: tuple[Ability, ...], where: str) -> int | None:
@@ -607,6 +725,18 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     if CardType.CREATURE.value in model.types and (model.power is None or model.toughness is None):
         raise DslError(f"{where}: creatures need power and toughness")
+    if model.variable_pt and not (
+        model.is_token
+        and CardType.CREATURE.value in model.types
+        and (model.power, model.toughness) == (0, 0)
+    ):
+        # The X/X token's size is the creating effect's, so its definition says
+        # nothing about it: written 0/0, the base `create_token`'s ``power`` and
+        # ``toughness`` replace. Anywhere else the flag would mark a size that
+        # nothing ever sets.
+        raise DslError(
+            f"{where}: 'variable_pt' marks an X/X creature token, written 0/0"
+        )
 
     # The same sentence for a battle (310.3), and refused rather than defaulted
     # for a sharper reason: a battle that enters with no defense counters is
@@ -718,6 +848,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                             f"{where}.replacements[{i}].except_.add_keywords: "
                             f"unknown keyword {k!r}"
                         )
+                refuse_numbered_grant(added, f"{where}.replacements[{i}].except_.add_keywords")
         else:
             for key in ("copying", "except_"):
                 if getattr(replacement, key) is not None:
@@ -787,8 +918,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # a card that refuses to load.
         validate_condition(replacement.condition, f"{where}.replacements[{i}].condition")
 
+    impending = _compile_impending(model, mana_cost, where)
     abilities = tuple(_compile_ability(a, i, where) for i, a in enumerate(model.abilities))
     _check_threshold_order(abilities, where)
+    if impending is not None:
+        # The end-step tick, after every printed ability so their indices are
+        # the printed order's and a threshold striation stays a suffix of the
+        # printed lines -- see `_impending_tick`.
+        abilities = (*abilities, _impending_tick(len(abilities), where))
     grantable = tuple(
         _compile_ability(a, i, f"{where}.grantable")
         for i, a in enumerate(model.grantable_abilities)
@@ -1339,6 +1476,17 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             )
     if model.dredge < 0:
         raise DslError(f"{where}: 'dredge' is how many cards are milled, so it cannot be negative")
+    # Toxic N (702.164): the word and the number, together or not at all. The
+    # word alone filters as "with toxic" and poisons nobody; the number alone
+    # poisons and is not "with toxic" -- each a different card from the printed
+    # one, and each would load clean without this.
+    if model.toxic < 0:
+        raise DslError(f"{where}: 'toxic' is how many poison counters, so it cannot be negative")
+    if (model.toxic > 0) != ("toxic" in model.keywords):
+        raise DslError(
+            f"{where}: toxic N is the keyword 'toxic' in 'keywords' *and* the "
+            f"card-level 'toxic' field holding N -- write both or neither"
+        )
     if model.morph_counter and model.morph is None:
         raise DslError(f"{where}: 'morph_counter' is megamorph's rider and needs a 'morph' cost")
     if model.morph is not None and "Creature" not in model.types:
@@ -1693,6 +1841,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         emblems=emblems,
         type_line=build_type_line(supertypes, types, subtypes),
         is_token=model.is_token,
+        variable_pt=model.variable_pt,
         back_face=model.back_face,
         second_face=model.second_face,
         second_face_zone=model.second_face_zone,
@@ -1709,6 +1858,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         overload=overload,
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
+        toxic=model.toxic,
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
@@ -1746,6 +1896,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         graveyard_cast_exiles=model.graveyard_cast == "exile",
         ascend=model.ascend,
         suspend=suspend,
+        impending=impending,
     )
 
 
@@ -2381,6 +2532,20 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"(allowed: {sorted(ORDINAL_FILTER_KEYS)})"
             )
 
+        if (
+            model.trigger.batched
+            and model.trigger.event != STATE_TRIGGER
+            and model.trigger.event not in BATCHED_EVENTS
+        ):
+            # "One or more" groups events by the batch they carry, and only
+            # these events carry one: anywhere else `_queue` queues per event,
+            # so the card would load and count every object it was printed to
+            # count once.
+            raise DslError(
+                f"{where}: 'batched' groups the events of one simultaneous "
+                f"batch and only {sorted(BATCHED_EVENTS)} carry one, "
+                f"not {model.trigger.event!r}"
+            )
         if model.trigger.or_battle and model.trigger.event != "creatures_deal_combat_damage":
             # "…or battle" is a disjunction inside one printed sentence, and the
             # sentence is `creatures_deal_combat_damage`'s. On any other event
@@ -3158,6 +3323,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     for k in model.cast_gains_keywords:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}.cast_gains_keywords: unknown keyword {k!r}")
+    refuse_numbered_grant(model.cast_gains_keywords, f"{where}.cast_gains_keywords")
     if model.effect == "cast_from_graveyard" and "graveyard" in model.active_zones:
         # "You may cast **this card** from your graveyard as long as you control
         # a Zombie" -- Gravecrawler. The card's own permission, read off it by
@@ -4235,6 +4401,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     for k in model.keywords:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: unknown keyword {k!r}")
+    # Losing toxic is sayable -- `chars` drops the word and `damage_player`
+    # reads the derived keywords -- so only the granting statics are refused.
+    if model.effect != "lose_keyword":
+        refuse_numbered_grant(model.keywords, where)
 
     if model.effect == "activate_loyalty_as_though_instant":
         # Whose loyalty abilities, in the permanent-filter language every other
@@ -4350,6 +4520,24 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: enters_tapped is a fact about an arrival, not a "
                 f"quantity; it takes 'affects' and an optional 'condition'"
             )
+
+    if model.effect == "cant_have_counters":
+        # Darksteel Angel: "Creatures you control can't have -1/-1 counters put
+        # on them." Both halves are the printed clause: no filter would shield
+        # every permanent on the table, and no kind would forbid every counter
+        # -- loyalty and lore included -- which no printed card says.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: cant_have_counters needs 'affects' naming the "
+                f"permanents that can't have the counters -- Darksteel Angel says "
+                f"creatures you control"
+            )
+        if model.counter is None:
+            raise DslError(
+                f"{where}: cant_have_counters needs 'counter', the kind that "
+                f"can't be put on (\"-1/-1\")"
+            )
+        _check_counter_kind(model.counter, f"{where}.counter")
 
     if model.effect == "enters_with_additional_counters":
         # Oath of Gideon: "Each planeswalker you control enters with an
@@ -4511,6 +4699,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"and no 'affects' or 'amount'"
             )
 
+    if model.effect == "mana_becomes_colorless" and (
+        model.affects is not None or model.amount is not None or model.colors is not None
+    ):
+        # "If you would lose unspent mana, that mana becomes colorless
+        # instead." Every type of mana, so there is no symbol list to name: a
+        # `colors` here is an attempt at `mana_retention`, which keeps the
+        # colour this static takes away, and nothing would read it.
+        raise DslError(
+            f"{where}: mana_becomes_colorless turns all of the named players' "
+            f"unspent mana colorless; it takes 'affects_player' and an optional "
+            f"'condition', and no 'affects', 'amount' or 'colors' (keeping the "
+            f"colours is mana_retention)"
+        )
+
     if model.effect == "grant_ability" and model.ability is None:
         raise DslError(
             f"{where}: grant_ability needs 'ability' -- the index into this "
@@ -4523,14 +4725,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         qualities.append("outside commander identity")
     if model.from_colorless:
         qualities.append("colorless")
-    if model.effect == "protection":
+    if model.effect in ("protection", "player_protection"):
         # A protection static that names nothing protects from nothing -- a card
         # that looks implemented and is not, which is the one failure this pass
-        # exists to stop.
+        # exists to stop. The seat-side static spells its qualities with the
+        # same keys, so it meets the same checks.
         if not qualities:
             raise DslError(
-                f"{where}: protection needs from_types/from_subtypes/from_colors/"
+                f"{where}: {model.effect} needs from_types/from_subtypes/from_colors/"
                 f"from_colorless/from_colors_outside_commander_identity"
+            )
+        if model.effect == "player_protection" and model.affects is not None:
+            # "You have protection" names a seat. An `affects` beside it would
+            # load clean and be read by nothing -- the creature half of
+            # "you and creatures you control" is its own `protection` static.
+            raise DslError(
+                f"{where}: player_protection names players with 'affects_player'; "
+                f"protection for permanents is a separate 'protection' static"
             )
         _refuse_protection_sentinels(model.from_subtypes, where)
         if model.from_colors_outside_commander_identity and model.from_colors:
@@ -4543,6 +4754,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"colour set; do not also list 'from_colors'"
             )
         for t in model.from_types:
+            if isinstance(t, dict):
+                # "Protection from the chosen card type." The one dynamic
+                # entry, and a near miss is refused: unrefused it would resolve
+                # to nothing and protect from nothing for ever.
+                if t != {"chosen_card_type_of": "self"}:
+                    raise DslError(
+                        f'{where}: the only dynamic from_types entry is '
+                        f'{{"chosen_card_type_of": "self"}}, not {t!r}'
+                    )
+                continue
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown type {t!r} in from_types")
         for c in model.from_colors:
@@ -4556,7 +4777,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     elif qualities:
         raise DslError(
             f"{where}: from_types/from_subtypes/from_colors/from_colorless/"
-            f"from_colors_outside_commander_identity need effect 'protection'"
+            f"from_colors_outside_commander_identity need effect 'protection' "
+            f"or 'player_protection'"
         )
 
     _validate_static_condition(model.condition, f"{where}.condition")

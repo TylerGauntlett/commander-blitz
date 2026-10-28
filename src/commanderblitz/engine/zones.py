@@ -22,7 +22,7 @@ from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
 from .objects import GameObject
-from .player_statics import counter_placement_replacements
+from .player_statics import counter_placement_replacements, counters_prohibited
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -1203,6 +1203,10 @@ def _entering_counters(
     effects: list[_EnteringEffect] = [("add", n) for n in adds if n > 0]
     if not effects:
         return 0
+    if counters_prohibited(state, obj.oid, kind):
+        # "Can't have -1/-1 counters put on them": the permanent enters without
+        # them -- a persisted creature comes back with no counter at all.
+        return 0
     effects += [
         (
             "scale",
@@ -1322,6 +1326,14 @@ def _enter_battlefield(
     # is a fresh object with no cast stamp on it -- so the two halves together
     # are what the sentence says, and each one alone is a wider card.
     obj.entered_by_cast = cause == "resolved" and obj.cast_step is not None
+    # Impending (702.176a) asks "was **this** permanent's impending cost paid",
+    # and only its own resolution can say yes. `stack._resolve_spell` writes the
+    # flag just before this move; every other arrival -- a reanimation, a
+    # flicker, a return from exile -- is a new object (400.7) that was never
+    # cast, so the stamp left over from an earlier cast must not reach the
+    # replacement below.
+    if cause != "resolved":
+        obj.cast_impending = False
     # A fresh arrival answers for nothing that happened before it.
     obj.left_with = ()
     # What it carried in, so the counters it enters with -- and only those --

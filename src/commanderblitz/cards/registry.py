@@ -92,6 +92,14 @@ class CardRegistry:
                 # already run by the time this is built, so the question can be
                 # asked directly instead of being left to sort order.
                 continue
+            if card.is_token:
+                # Nor is a token, for the same reason: a deck list can hold the
+                # card but never the token. Usually the two names differ
+                # ("Rogue Token"), but a named token can print a real card's
+                # name -- Kher Keep makes a token called Kobolds of Kher Keep,
+                # and the hand-written token file loads before `auto/`, so
+                # first-wins would hand an importer the token.
+                continue
             # Built once rather than scanned per call: importing a 100-card deck
             # does 100 name lookups, and a linear scan makes that quadratic in
             # the pool. `setdefault` is first-wins, and the authored cards are

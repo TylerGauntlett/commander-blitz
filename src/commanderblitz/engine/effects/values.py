@@ -19,6 +19,9 @@ forms::
         {"controller": "you",           this turn, by subtype and by
          "subtypes": ["Human"]}}        controller-at-entry
     {"min_life_of": "each_opponent"}  the lowest of them, one player at a time
+    {"max_poison_of": "each_opponent"}  the most poison counters on one of them
+    {"unspent_mana_count": "you"}     the mana in those players' pools
+    {"player_count": "each_opponent"}  how many players the spec names
     {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
         "each_opponent"}                this turn, where the plain tally sums
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
@@ -68,6 +71,27 @@ VALUE_KEYS = frozenset(
         # has…"), `max_life_of` the universal ("each opponent has…").
         "min_life_of",
         "max_life_of",
+        # Corrupted -- "as long as **an opponent has three or more poison
+        # counters**" (Skrelv's Hive). The most poison counters on ONE of the
+        # spec's players, the existential reading, where a sum would open the
+        # threshold at a pod on two opponents with two counters each. Over
+        # nobody it is 0, so "an opponent has three or more" is false once no
+        # opponent is left. Read off `PlayerState.poison`; a player's counters
+        # are not objects, so `counters_on` cannot reach them.
+        "max_poison_of",
+        # "Omnath gets +1/+1 for each **unspent mana you have**" (Omnath, Locus
+        # of the Void). Every mana in the named players' pools, restricted pips
+        # included, summed. Here as well as in the static language for
+        # `max_poison_of`'s reason: the same count arrives as an "as long as"
+        # on one card and a resolving comparison on the next.
+        "unspent_mana_count",
+        # "…where X is **the number of opponents you have**" (Dack Fayden,
+        # Helping Hand). How many seats a player spec resolves to, which no
+        # other leaf reads: every player value above measures something *about*
+        # the players (life, poison, cards, mana) and sums or extremes it, and
+        # `count` counts objects. Only players still in the game are counted
+        # (800.4a): a seat that has left is nobody's opponent.
+        "player_count",
         # "…if you have at least 15 life more than **your starting life
         # total**" -- Angel of Destiny; Righteous Valkyrie asks the same of 7.
         # Rule 103.4: the number the seat began the game with, recorded on
@@ -467,6 +491,15 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "max_life_of" in expr:
         pids = _players(ctx, expr["max_life_of"])
         return max([ctx.state.players[p].life for p in pids], default=0)
+    if "max_poison_of" in expr:
+        pids = _players(ctx, expr["max_poison_of"])
+        return max((ctx.state.players[p].poison for p in pids), default=0)
+    if "unspent_mana_count" in expr:
+        pids = _players(ctx, expr["unspent_mana_count"])
+        return sum(ctx.state.players[p].mana_pool.total() for p in pids)
+    if "player_count" in expr:
+        pids = _players(ctx, expr["player_count"])
+        return len({p for p in pids if ctx.state.is_alive(p)})
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
         return sum(len(ctx.state.players[p].hand) for p in pids)
@@ -852,7 +885,19 @@ def _from_oid(ctx: EffectContext, oid: int | None, which: str) -> int:
         # report the printed cost's mana value.
         if obj.copy_overrides and obj.copy_overrides.get("no_mana_cost"):
             return 0
-        return ctx.state.card_of(obj).mana_value
+        card = ctx.state.card_of(obj)
+        # 202.3e: a spell on the stack counts the X it was cast with, so
+        # "that spell's mana value" (Shark Typhoon) is 6 for a Fireball cast
+        # with X = 5. Everywhere else X is 0 and this is the printed number.
+        spell_x = next(
+            (
+                item.x
+                for item in ctx.state.stack
+                if item.kind == "spell" and item.oid == oid
+            ),
+            0,
+        )
+        return card.mana_value + spell_x * card.mana_cost.x_count
     c = chars(ctx.state, oid)
     return c.power if which == "power" else c.toughness
 
@@ -1211,6 +1256,33 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.attack_power_this_combat: needs a player spec, e.g. 'you' "
                 f"(whose attackers' declared power), got {who!r}"
+            )
+    if "max_poison_of" in expr:
+        who = expr["max_poison_of"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.max_poison_of: needs a player spec, e.g. 'each_opponent' "
+                f"(whose poison counters), got {who!r}"
+            )
+    if "player_count" in expr:
+        who = expr["player_count"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.player_count: needs a player spec, e.g. 'each_opponent' "
+                f"(how many opponents you have), got {who!r}"
+            )
+    if "unspent_mana_count" in expr:
+        who = expr["unspent_mana_count"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.unspent_mana_count: needs a player spec, e.g. 'you' "
+                f"(whose mana pool), got {who!r}"
             )
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(

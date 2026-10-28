@@ -89,7 +89,7 @@ from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin, printed_cost_is
-from .objects import MINUS_ONE, PLUS_ONE, GameObject
+from .objects import MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
@@ -437,6 +437,28 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         subtypes.add("Aura")
         # Its 0/0 is `_base_pt`'s, under the identical condition, so a static
         # filter reads the same non-creature size this line does.
+
+    # Impending (702.176a): "as long as this permanent's impending cost was paid
+    # and it has a time counter on it, it's not a creature". A layer-4 type
+    # change, placed beside bestow's and for its reason: the rule makes it a
+    # static ability of the permanent itself, timestamped with its arrival, so
+    # an animation or a `set_types` that began later layers on top of the
+    # non-creature exactly as it would on a printed enchantment.
+    #
+    # Both halves of the condition are pipeline **inputs** -- `cast_impending`
+    # is a cast stamp and `counters` is the object's own board state, which ADR
+    # 0001 lets a filter read -- so nothing here can come to depend on another
+    # static's output. The creature types go with the card type, as they do
+    # under `set_types` (205.1b, 613.1d): an impending Overlord is a bare
+    # Enchantment until it is a creature again. The printed P/T stays: a
+    # non-creature's size is read by nothing, and the last time counter coming
+    # off is all it takes to be a 6/6 again.
+    #
+    # Ahead of the statics for the layer order too: the effect is applied in
+    # layer 4, so an ability-removing static (layer 6) does not undo it.
+    if obj.cast_impending and obj.on_battlefield and obj.counter(TIME_COUNTER) > 0:
+        types.discard("Creature")
+        subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -1351,6 +1373,7 @@ def _condition_met(
     ``exists``/``cmp`` over ``{"count": filter}``, matched on printed
                       characteristics and, off the battlefield, on zone contents
     ``is_your_turn``  whose turn it is
+    ``has_flag``      a word `set_flag` wrote on the static's own source
     ``is_monarch``    who holds the crown -- the only leaf that may name the
                       ``affected`` permanent's controller (`AFFECTED_CONTROLLER`)
     """
@@ -1386,6 +1409,14 @@ def _condition_met(
         )
     if "is_your_turn" in cond:
         return (state.active_player == source.controller) == bool(cond["is_your_turn"])
+    if "has_flag" in cond:
+        # A Siege's "as this enters, choose Mardu or Jeskai" switching on the
+        # chosen mode's static. `flags` is written only by `set_flag` (which
+        # bumps `char_version`) and cleared only by a zone change, so it is a
+        # pipeline *input* as counters are, and reading it keeps ADR 0001's
+        # fixed order acyclic. Not a copiable value (707.2), so a copy of the
+        # source has made no choice and has no mode on.
+        return str(cond["has_flag"]) in source.flags
     if "is_attached" in cond:
         # "Attached permanents with reconfigure aren't creatures" (702.151d) --
         # a `set_types` static switched by this. `GameObject.attached_to` is a
@@ -1569,6 +1600,22 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
     if "max_life_of" in expr:
         pids = _static_players(state, source, expr["max_life_of"])
         return max([state.players[p].life for p in pids], default=0)
+    if "max_poison_of" in expr:
+        # Corrupted. A poison count is a pipeline input on a life total's terms:
+        # only `primitives.add_poison` writes one, nothing in this pipeline can,
+        # and that funnel bumps `char_version` so the condition is re-read.
+        pids = _static_players(state, source, expr["max_poison_of"])
+        return max((state.players[p].poison for p in pids), default=0)
+    if "unspent_mana_count" in expr:
+        # Omnath, Locus of the Void: "+1/+1 for each unspent mana you have."
+        # Every mana in the pool, restricted pips included -- unspent is not
+        # "spendable on this". The pool is player state, a pipeline input on a
+        # poison count's terms: no layer writes it, and every funnel that does
+        # (`costs.pay_mana`, `costs.activate_mana_ability`, the `add_mana` ops,
+        # `GameState.empty_all_mana_pools`, a player leaving) bumps
+        # `char_version`, so the anthem is re-read as the pool moves.
+        pids = _static_players(state, source, expr["unspent_mana_count"])
+        return sum(state.players[p].mana_pool.total() for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with
@@ -1827,6 +1874,34 @@ def resolve_chosen_color_list(entries: Any, source: GameObject | None) -> list[s
         if entry.get("chosen_color_of") != "self":
             continue
         chosen = source.chosen_color if source is not None else None
+        if chosen is not None:
+            out.append(chosen)
+    return out
+
+
+def resolve_chosen_card_type_list(entries: Any, source: GameObject | None) -> list[str]:
+    """Literal card types, with ``{"chosen_card_type_of": "self"}`` substituted.
+
+    The card-type twin of :func:`resolve_chosen_color_list`, for the readers
+    whose ``from_types`` is a list of protection qualities rather than a
+    filter -- "protection from **the chosen card type**" (Serra's Emissary).
+    The choice is the source's `chosen_card_type`, written by `choose_type`'s
+    ``permanent_type`` and ``card_type`` axes and never by its creature-type
+    one, so a creature type can never leak in as a card type.
+
+    A source that has chosen nothing yet contributes **nothing**: protection
+    from the chosen card type before a type is named is protection from
+    nothing, which is the only reading in which the window between the
+    permanent arriving and its choice resolving grants nobody anything.
+    """
+    out: list[str] = []
+    for entry in entries or ():
+        if not isinstance(entry, Mapping):
+            out.append(entry)
+            continue
+        if entry.get("chosen_card_type_of") != "self":
+            continue
+        chosen = source.chosen_card_type if source is not None else None
         if chosen is not None:
             out.append(chosen)
     return out
@@ -2447,6 +2522,34 @@ def commander_color_identity(state: GameState, pid: int) -> frozenset[str]:
     return frozenset(colors & COLOR_LETTERS)
 
 
+def _static_protection_qualities(
+    state: GameState, source_obj: GameObject, static: Mapping[str, Any]
+) -> set[str]:
+    """The qualities one protection static names, flattened.
+
+    Shared by the object-side `protection` static and the seat-side
+    `player_protection` static, which spell their qualities with the same keys:
+    "you and creatures you control have protection from the chosen card type"
+    (Serra's Emissary) is one quality reaching two kinds of thing, and two
+    readers of the keys would be two places for "from colorless" to drift.
+    """
+    out: set[str] = set()
+    # "Protection from the chosen card type" is read off the static's own
+    # source at the moment a rule asks, so it follows a later choice and
+    # matches nothing before one is made.
+    out.update(resolve_chosen_card_type_list(static.get("from_types"), source_obj))
+    out.update(static.get("from_subtypes", ()))
+    out.update(static.get("from_colors", ()))
+    if static.get("from_colorless"):
+        out.add(PROTECTION_COLORLESS)
+    if static.get("from_colors_outside_commander_identity"):
+        # "Your commander" is the static's controller's -- the Plate's, not
+        # the equipped creature's, and it follows the Equipment when it
+        # changes hands. Asked at read time for that reason.
+        out.update(COLOR_LETTERS - commander_color_identity(state, source_obj.controller))
+    return out
+
+
 def protection_from(state: GameState, oid: int) -> frozenset[str]:
     """The qualities this permanent has protection from.
 
@@ -2468,16 +2571,7 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
-        out.update(static.get("from_types", ()))
-        out.update(static.get("from_subtypes", ()))
-        out.update(static.get("from_colors", ()))
-        if static.get("from_colorless"):
-            out.add(PROTECTION_COLORLESS)
-        if static.get("from_colors_outside_commander_identity"):
-            # "Your commander" is the static's controller's -- the Plate's, not
-            # the equipped creature's, and it follows the Equipment when it
-            # changes hands. Asked at read time for that reason.
-            out.update(COLOR_LETTERS - commander_color_identity(state, source_obj.controller))
+        out |= _static_protection_qualities(state, source_obj, static)
     # "Creatures you control gain protection from each color until end of turn"
     # -- Akroma's Will. Granted protection is one `TempEffect` per quality, so it
     # joins the printed statics' qualities in the same flat set, and the four
@@ -2663,18 +2757,33 @@ def player_protection_from(state: GameState, pid: int) -> frozenset[str]:
 
     The seat-side twin of :func:`protection_from`, and it returns the same flat
     set of strings so the rules that read protection ask one kind of question.
-    Its entries come from `GameState.player_protections` rather than from
-    `_battlefield_statics`: no static can name a seat, and the effect outlives
-    whatever installed it.
+    Two sources feed it, and every reader sees both without knowing which:
 
-    Only two rules read this, against the four that read the object side. A
-    player cannot be blocked, and the "can't be enchanted" half is reached
-    through targeting -- an Aura that enchants a player targets it as it is cast
-    (303.4a), so the target check already refuses it.
+    * `GameState.player_protections` -- the timed grant (Teferi's Protection,
+      The One Ring), which outlives whatever installed it.
+    * the `player_protection` static -- "**you** have protection from the
+      chosen card type" (Serra's Emissary), a player-wide static walked by
+      `player_statics._active_player_statics` like every other one, so its
+      "as long as" condition is honoured, and spelling its qualities with the
+      object-side static's keys.
+
+    Three rules read this, against the four that read the object side: damage
+    (`primitives.damage_player`), targeting (`targeting._player_allowed`), and
+    "can't be enchanted" (`primitives.attach_to_player`, for an Aura put onto
+    a seat without being cast -- one that is cast targets the seat as it is
+    cast, 303.4a, so the target check refuses it first). A player cannot be
+    blocked.
     """
-    if not state.player_protections:
-        return frozenset()
-    return frozenset(entry.quality for entry in state.player_protections if entry.player == pid)
+    # Imported here: `player_statics` is built on this module, and the walk
+    # belongs to it -- a second walk of player-wide statics here would be the
+    # copy that forgets the `condition` gate.
+    from .player_statics import _active_player_statics, _reaches_player
+
+    out = {entry.quality for entry in state.player_protections if entry.player == pid}
+    for source_obj, static in _active_player_statics(state, "player_protection"):
+        if _reaches_player(source_obj, static, pid):
+            out |= _static_protection_qualities(state, source_obj, static)
+    return frozenset(out)
 
 
 def player_protected_from(state: GameState, pid: int, source_oid: int | None) -> bool:

@@ -101,6 +101,10 @@ CARD_LEVEL_COST_KEYS = (
     "flashback",
     "foretell",
     "gift",  # str; the noun phrase promised
+    #: ``{"cost": "{2}{W}{W}", "counters": 4}`` -- "Impending 4—{2}{W}{W}". The
+    #: time counters, "isn't a creature" and the end-step tick are the rule's;
+    #: the card writes none of them.
+    "impending",
     "kicker",
     "madness",
     "morph",
@@ -177,6 +181,8 @@ CARD_LEVEL_RIDER_KEYS = (
     "melds_with",  # the other half of a meld pair
     "melds_into",  # what the pair becomes
     "cant_cast_first_turns",  # "You can't cast this during your first N turns of the game"
+    "toxic",  # int; "Toxic N" -- the N, beside "toxic" in keywords
+    "morph_counter",  # bool; megamorph -- turns face up with a +1/+1 counter, beside `morph`
 )
 
 
@@ -745,8 +751,11 @@ def reference() -> dict:
             " `affects_player: \"any\"` with all six symbols (`C` included)."
             " The mana is kept across turns while the permanent stays. It is"
             " NOT `persists_until_end_of_turn`, which is one ability's mana"
-            " until end of turn, and NOT \"that mana becomes colorless"
-            " instead\" (Kruphix), which is still a gap.",
+            " until end of turn. \"If you would lose unspent mana, that mana"
+            " becomes colorless instead\" (Kruphix, Horizon Stone) is the"
+            " different player-wide static `mana_becomes_colorless` with"
+            " `affects_player: \"you\"` and no `colors`: the mana is kept as"
+            " {C}, not in its colours.",
             "\"You may pay any amount of {R}. When you do, it deals that much"
             " damage to any target\" is `may` with `pay: {\"mana\": \"{R}\"}` and"
             " `any_amount: {\"as\": \"paid\"}`, its `effects` a"

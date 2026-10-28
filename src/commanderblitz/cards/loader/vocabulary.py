@@ -13,11 +13,13 @@ from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
 )
 from commanderblitz.engine.enums import (
+    NUMBERED_KEYWORDS,
     CardType,
     Color,
     Keyword,
     Supertype,
 )
+from commanderblitz.engine.errors import DslError
 
 #: Trigger events whose payload carries a defending player, and therefore the
 #: only ones a ``defending`` clause can be asked of. The per-creature `attacks`
@@ -82,6 +84,28 @@ KNOWN_COLORS = frozenset(c.value for c in Color)
 KEYWORD_ALIASES = {"umbra_armor": Keyword.TOTEM_ARMOR.value}
 
 
+#: The keywords a card may print with their number but nothing may grant --
+#: `enums.NUMBERED_KEYWORDS`, as the strings the loader compares.
+UNGRANTABLE_KEYWORDS = frozenset(k.value for k in NUMBERED_KEYWORDS)
+
+
+def refuse_numbered_grant(keywords: object, where: str) -> None:
+    """Refuse a grant of a keyword whose number lives on the card (toxic).
+
+    Called by every spelling of "gains/has <keyword>" the loader accepts. A
+    grant is a bare word, so "gains toxic 1" written as ``["toxic"]`` would make
+    a creature that filters as toxic and gives no poison -- a weaker card that
+    loads clean, which is the failure this pass exists to refuse.
+    """
+    for k in keywords or ():
+        if k in UNGRANTABLE_KEYWORDS:
+            raise DslError(
+                f"{where}: {k!r} carries a number (toxic N) that a grant has no "
+                f"place for, so it may only be printed -- 'keywords' plus the "
+                f"card-level {k!r} field -- and never granted"
+            )
+
+
 def normalize_keyword(word: str) -> str:
     """A printed keyword folded to the word the engine knows it by.
 
@@ -144,6 +168,15 @@ STATIC_EFFECTS = frozenset(
         # printed card touches only the arrival.  Takes `affects`, `counter`
         # and `amount`.
         "enters_with_additional_counters",
+        # Darksteel Angel, Melira, Sylvok Outcast: "Creatures you control can't
+        # have -1/-1 counters put on them."  A prohibition, not a
+        # `replace_counters` with a multiplier of 0 (refused there as a
+        # different sentence): asked before every replacement by
+        # `player_statics.counters_prohibited`, from `primitives.add_counters`,
+        # `zones._entering_counters` and `costs.can_pay`, so effects, wither and
+        # infect damage, "enters with" counters and costs all find nothing put
+        # on.  Takes `affects` and `counter`, both required.
+        "cant_have_counters",
         # Winter Orb: "As long as this artifact is untapped, players can't
         # untap more than one land during their untap steps."  A **count**,
         # which is the whole difference from `skip_untap_step` next door: that
@@ -214,6 +247,13 @@ STATIC_EFFECTS = frozenset(
         # on a player: protection also prevents damage and stops everyone
         # targeting, the player's own spells included.
         "player_hexproof",
+        # "You have protection from the chosen card type." (Serra's Emissary)
+        # -- 702.16, the static twin of the timed `PlayerProtection` Teferi's
+        # Protection installs, and read through the same
+        # `characteristics.player_protection_from`, so damage, targeting and
+        # "can't be enchanted" all see it. Its qualities are the `protection`
+        # static's keys.
+        "player_protection",
         # "Skip your draw step." Necropotence, and the fourteen other cards that
         # print exactly this sentence. Player-wide for `no_hand_limit`'s reason,
         # and read by `turn._draw_step`, which is the only place a turn-based
@@ -311,6 +351,13 @@ STATIC_EFFECTS = frozenset(
         # mana symbols kept; read by `player_statics.retained_mana_by_player`
         # where every pool empties as a step ends (500.4), and nowhere else.
         "mana_retention",
+        # "If you would lose unspent mana, that mana becomes colorless
+        # instead." Kruphix, God of Horizons, Horizon Stone, Omnath, Locus of
+        # the Void. Player-wide for `mana_retention`'s reason and read at the
+        # same place, `player_statics.colorless_instead_players`: the mana is
+        # kept as {C} rather than in its own colours, so it is a separate
+        # effect and not a `colors` value of that one.
+        "mana_becomes_colorless",
         "play_lands_from_library_top",
         # "Play with the top card of your library revealed." Player-wide, and
         # the only static here that changes nothing about the rules: it grants
@@ -729,6 +776,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",
         "mana_retention",
+        "mana_becomes_colorless",
         "play_lands_from_library_top",
         "reveal_library_top",
         "look_at_library_top",
@@ -761,6 +809,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cant_win_the_game",
         "damage_life_floor",
         "player_hexproof",
+        "player_protection",
     }
 )
 
@@ -1248,6 +1297,13 @@ STATIC_CONDITION_HEADS = (
     # -- not a pipeline input, so admitted only on the rule-modifying statics
     # in `STATIC_DERIVED_CONDITION_EFFECTS`, read outside the pipeline.
     "exists_derived",
+    # "As this enters, choose Mardu or Jeskai. • Mardu — <static>" (Windcrag
+    # Siege). The word `set_flag` wrote on the static's own source. A pipeline
+    # *input* exactly as a counter is: `GameObject.flags` is object state that
+    # only `set_flag` writes and only a zone change clears, and nothing in the
+    # characteristics pipeline reads or writes it, so no static can come to
+    # depend on another static's output through it.
+    "has_flag",
 )
 
 #: The static effects whose condition may read *derived* characteristics
@@ -1326,6 +1382,17 @@ STATIC_LIFE_PLAYERS = frozenset({"you", "opponent", "each_opponent", "each_playe
 #: characteristics pipeline can change one.
 STATIC_LIFE_KEYS = frozenset({"min_life_of", "max_life_of"})
 
+#: The per-player poison leaf -- corrupted, "as long as an opponent has three or
+#: more poison counters". A poison count is an input for a life total's reason,
+#: and takes the same player specs.
+STATIC_POISON_KEYS = frozenset({"max_poison_of"})
+
+#: The mana-pool leaf -- Omnath, Locus of the Void's "+1/+1 for each unspent
+#: mana you have". The pool is player state like a poison count: only mana
+#: being added, spent or emptied writes it, never a layer, and each of those
+#: funnels bumps `char_version`. Takes the life leaves' player specs.
+STATIC_MANA_POOL_KEYS = frozenset({"unspent_mana_count"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1367,6 +1434,8 @@ STATIC_VALUE_KEYS = (
         }
     )
     | STATIC_LIFE_KEYS
+    | STATIC_POISON_KEYS
+    | STATIC_MANA_POOL_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 

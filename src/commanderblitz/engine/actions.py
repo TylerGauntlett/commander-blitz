@@ -56,6 +56,11 @@ class Action:
     #: permanent is exiled at the next end step and the printed cast is not, so
     #: the two lines are very different things to do with one card.
     warp: str | None = None
+    #: Cast for the card's **impending** cost (702.176a). Part of the identity
+    #: for `evoked`'s reason: the impending line and the printed one share every
+    #: other field, and only one of them arrives as a non-creature with time
+    #: counters on it.
+    impending: bool = False
     #: Cast from a graveyard for its flashback cost. Part of the
     #: action's identity like ``kicked`` and ``evoked``: the same card
     #: may be castable from hand and from the graveyard at once, and
@@ -254,6 +259,7 @@ class Action:
             -1 if self.gift_to is None else self.gift_to,
             self.evoked,
             "" if self.warp is None else self.warp,
+            self.impending,
             self.flashback,
             self.alternative,
             self.pay_generic,
@@ -287,6 +293,7 @@ class Action:
             "gift_to": self.gift_to,
             "evoked": self.evoked,
             "warp": self.warp,
+            "impending": self.impending,
             "cast_free": self.cast_free,
             "alternative": self.alternative,
             "pay_generic": self.pay_generic,

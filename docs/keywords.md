@@ -88,6 +88,13 @@ meaning apart from which land type, and there are exactly five. Five keywords
 beat one static, because a keyword can be *filtered on* and a static cannot.
 Skulk is the same shape: "greater power" reads like a parameter and is not.
 
+**A number that something filters on is a keyword plus a field.** Toxic N
+takes a parameter, which routes it to a static, but "creatures you control
+with toxic" filters on the word for any N, and only a `Keyword` can be
+filtered on. So the word is the `Keyword` and N is a card-level field beside
+it; the loader requires both, and refuses every grant of the word, because a
+grant has no N to carry (`enums.NUMBERED_KEYWORDS`).
+
 **Derived versus printed decides the mechanism on its own.** It is the one
 criterion that can overrule every row above it. If the quality must compare
 things that an anthem, a pump spell or a `+1/+1` counter can change, a static
@@ -274,6 +281,7 @@ This is the long tail, and where the build order comes from.
 | Hideaway | shipped | the `hideaway` op writes the `exiled_by` link and `revealed_to`; `play_exiled` is the permission, reading it back | `hideaway` |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |
 | Imprint | free | `exile` with `until_leaves` writes the link; `{"zone": "exile", "controller": "any", "exiled_with": "self"}` reads it back | — |
+| Impending | shipped | card-level field — evoke's alternative cost from hand with every rider the rule's: an implied enters-with-time-counters replacement gated on the cost paid, `chars` dropping `Creature` while the stamp holds and a time counter remains, and a loader-appended end-step trigger removing one. The card writes only the cost and the count | `impending` |
 | Improvise | shipped | `pay_generic_with: "tap_artifacts"` — convoke's shape over artifacts, generic only as printed; which artifacts tap is asked as it is paid, before the mana | `pay_generic_with` |
 | Indestructible | shipped | `Keyword`, read by the lethal-damage state-based action | `indestructible` |
 | Infect † | shipped | `Keyword`, read by `damage_permanent` and `damage_player` -- wither's counters, plus poison to players | `infect` |
@@ -334,6 +342,7 @@ This is the long tail, and where the build order comes from.
 | Support | free | `add_counters` over a target spec with `count` and `optional` | — |
 | Suspend | shipped | card-level field, its own module, and haste on what arrives | `suspend` |
 | Totem armor | shipped | `Keyword` on the **Aura**, read by `zones.destroy` -- the Aura is destroyed instead. The Umbra cycle prints the same ability as **"Umbra armor"**; `KEYWORD_ALIASES` folds that spelling onto this one | `totem_armor` |
+| Toxic | shipped | `Keyword` **plus** the card-level `toxic` field holding N, read on derived keywords by `damage_player` -- poison on top of the combat hit, not instead of it. A `Keyword` despite the number because "creatures you control **with toxic**" filters on the word for any N; the N cannot be granted (`NUMBERED_KEYWORDS`) | `toxic` |
 | Transfigure | free | activated, sorcery speed, cost sacrifices self, then `search_library` on `mana_value` | — |
 | Transform | shipped | op — two `CardDef`s behind one `GameObject`, and `card_of` picks the face | `transform` |
 | Transmute | free | activated from hand with a `discard_self` cost, then `search_library` | — |

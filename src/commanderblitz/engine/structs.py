@@ -223,6 +223,16 @@ class AttackRestriction:
     #: each time: by what the printed sentence names, never by a house rule
     #: about walkers.
     planeswalkers: bool = False
+    #: Non-empty means the restriction covers **only** ``defender``'s
+    #: planeswalkers with one of these subtypes, and neither the seat nor any
+    #: other permanent: Jace, Multiverse Architect's "creatures they control
+    #: can't attack Jaces you control this turn". The narrow mirror of
+    #: ``planeswalkers``, which adds the walkers to the seat; this takes the
+    #: seat away and keeps a subset of the walkers. The subtypes are read off
+    #: the walker's current characteristics at declaration, so a Jace that
+    #: arrives later in the turn is covered too -- a prohibition is not one of
+    #: the effects 611.2c locks to the objects present at resolution.
+    walker_subtypes: tuple[str, ...] = ()
     #: The permanent or spell that installed it, for the log.  Not part of the
     #: lifetime: unlike `frozen_by` this outlives its source leaving the
     #: battlefield, because a resolved one-shot effect does not care what
@@ -235,6 +245,7 @@ class AttackRestriction:
             "defender": self.defender,
             "duration": self.duration,
             "planeswalkers": self.planeswalkers,
+            "walker_subtypes": list(self.walker_subtypes),
             "source": self.source,
         }
 
@@ -409,6 +420,15 @@ class Unblockable:
     #: lifetime: Rogue's Passage may be destroyed in response and the creature it
     #: targeted is still unblockable for the turn.
     source: int | None = None
+    #: "…can't be blocked this turn **except by creatures with haste**"
+    #: (Gingerbrute). A static-filter mapping the would-be blocker must match to
+    #: be exempt, read off its derived characteristics when blockers are
+    #: declared -- the one-turn twin of `block_restriction`'s ``blockers``, with
+    #: the sense inverted: that names who *may not* block, this who *may*.
+    #: ``None`` is the plain sentence, every blocker refused. Compared but not
+    #: hashed, because a mapping is not hashable and equality is all the
+    #: primitive's deduplication asks of it.
+    except_blockers: Mapping[str, Any] | None = field(default=None, hash=False)
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -416,6 +436,9 @@ class Unblockable:
             "duration": self.duration,
             "player": self.player,
             "source": self.source,
+            "except_blockers": (
+                dict(self.except_blockers) if self.except_blockers is not None else None
+            ),
         }
 
 
@@ -1012,6 +1035,11 @@ class StackItem:
     #: cast from exile on a later turn, and no warp card prints a sentence
     #: saying so. See `_place_after_resolution`.
     warped: bool = False
+    #: Cast for its **impending** cost (702.176a). `warped`'s kind of flag --
+    #: every rider is the rule's -- and read at the same moment: copied onto
+    #: the object as `cast_impending` just before the permanent enters, so the
+    #: enters-with-time-counters replacement can see it.
+    impending: bool = False
     #: Cast for its **bestow** cost, which makes it an Aura spell with enchant
     #: creature. Read on resolution to decide which target list the spell has:
     #: the printed card declares none, and "enchant creature" comes from the

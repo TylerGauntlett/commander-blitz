@@ -31,6 +31,9 @@ RECORDING_OPS = frozenset(
         #: accumulating semantics -- "airbend all other creatures" is one pool
         #: a later line may need to name.
         "airbend",
+        #: The amassed Army, a list of zero or one oids -- "the
+        #: amassed Army's power". See `ops_counters.op_amass`.
+        "amass",
         #: What was beheld -- the chosen permanent or the revealed hand card.
         #: See `ops_cards.op_behold`.
         "behold",
@@ -71,6 +74,9 @@ RECORDING_OPS = frozenset(
         #: not. See `ops_cards.op_exile_until`.
         "exile_until",
         "gain_control",
+        #: The Incubators made, `create_token`'s record. See
+        #: `ops_counters.op_incubate`.
+        "incubate",
         "join_forces",
         #: The cards a bounded look off the top actually **took** -- "exile the
         #: top card of your library face down. Put **that card** into your hand
@@ -120,6 +126,10 @@ RECORDING_OPS = frozenset(
         #: is carried forward where a target is not.
         "return_to_hand",
         "reveal",
+        #: The matches a reveal-until walk moved, every seat's -- "put those
+        #: creature cards onto the battlefield … they're goaded". See
+        #: `ops_cards.op_reveal_until`.
+        "reveal_until",
         #: The one recorder whose binding is not a set of objects: `roll_dice`
         #: writes the faces it threw, read back by `{"rolled": …}` rather than
         #: by `{"count": {"binding": …}}`. See `ops_cards.op_roll_dice`.

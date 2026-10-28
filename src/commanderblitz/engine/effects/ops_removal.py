@@ -629,9 +629,25 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
     be put into the graveyard by 704.5m, and fire its own "when this is put into
     a graveyard" on the way out. So the host is resolved first and, with none on
     the battlefield, nothing is made.
+
+    ``power`` and ``toughness`` are "create an **X/X** blue Shark creature
+    token" (Shark Typhoon): value expressions, evaluated once as the op runs,
+    that become the token's base size -- the copiable values its creating
+    effect sets (111.4, 707.2), handed to `primitives.create_token` as the
+    ``overrides`` eternalize's 4/4 already travels in. So counters and anthems
+    land on top of the X/X exactly as on a printed one, the number does not
+    move when what it was read from does, and a copy of the token is X/X too.
+    Only an X/X token (`variable_pt`) takes the pair, and it always does; the
+    loader holds both halves.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     token = str(spec["token"])
+    size: dict[str, int] | None = None
+    if "power" in spec:
+        size = {
+            "power": max(0, evaluate_value(ctx, spec["power"])),
+            "toughness": max(0, evaluate_value(ctx, spec["toughness"])),
+        }
     host: int | None = None
     if "attached_to" in spec:
         hosts = yield from choose_objects(ctx, spec["attached_to"], "Create it attached to")
@@ -649,6 +665,7 @@ def op_create_token(ctx: EffectContext, spec: Mapping[str, Any]):
                 amount,
                 tapped=bool(spec.get("tapped")),
                 attacking=attacking,
+                overrides=dict(size) if size else None,
                 source=ctx.source_oid,
             )
         )
@@ -718,13 +735,17 @@ def op_copy_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     if not oids:
         return
     controllers = _players(ctx, spec.get("controller", "you"))
-    overrides = spec.get("except_") or spec.get("except")
+    exception = spec.get("except_") or spec.get("except")
     attacking = _attacking_player(ctx, spec, _attack_target)
     made: list[int] = []
     for oid in oids:
         source = ctx.state.objects.get(oid)
         if source is None:
             continue
+        # 707.2: a token's copiable values are the ones the effect that created
+        # it set -- an X/X Shark's size, an eternalized token's 4/4 -- so they
+        # come along, and this copy's own exception goes on top (707.9b).
+        overrides = {**(source.copy_overrides or {}), **(exception or {})}
         for pid in controllers:
             made.extend(
                 create_token(

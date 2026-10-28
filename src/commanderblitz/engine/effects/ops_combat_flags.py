@@ -176,6 +176,9 @@ def op_set_flag(ctx: EffectContext, spec: Mapping[str, Any]):
         obj = ctx.state.objects.get(oid)
         if obj is not None and obj.on_battlefield:
             obj.flags.add(flag)
+    # A static's `has_flag` condition reads the word, and `chars` is cached
+    # per `char_version`.
+    ctx.state.bump_chars()
     yield from ()
 
 
@@ -453,13 +456,22 @@ def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
     ``player`` is the goader and defaults to the effect's controller, which is
     every printed goad -- it is spelled out only so a "goaded by target
     opponent" line has somewhere to say it.
+
+    ``duration: "permanent"`` is "they're goaded **for the rest of the game**"
+    (Dack Fayden, Helping Hand), the one other clock a printed goad has: the
+    goader's untap step leaves the mark alone, and the goader leaving the game
+    still ends it (800.4a). The mark is the goader's whoever controls the
+    creature, so a creature goaded this way and then handed to an opponent
+    must attack a player other than the goader -- which is why Dack's goad
+    comes before his control change and must be written in that order.
     """
     goaders = _players(ctx, spec["player"]) if "player" in spec else [ctx.controller]
+    permanent = spec.get("duration") == "permanent"
     for oid in resolve_pool(ctx, spec.get("objects") or {}):
         for player in goaders:
             # Battlefield and liveness are checked in the primitive, which is
             # also what makes a creature that left in response get nothing.
-            goad_creature(ctx.state, oid, player)
+            goad_creature(ctx.state, oid, player, permanent=permanent)
     yield from ()
 
 
@@ -537,6 +549,15 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     lost each combat by a payment. `cant_attack_you` is the other and is a
     static too, besides being scoped to the seat its permanent sits under.
 
+    ``planeswalkers_matching``  optional, ``{"subtypes": [...]}``. The narrow
+    mirror of the flag: the defender's **seat stays open** and so does every
+    other permanent of theirs, and only their planeswalkers with one of those
+    subtypes are closed -- Jace, Multiverse Architect's "creatures they control
+    can't attack Jaces you control this turn". Read off the walker's current
+    subtypes when attackers are declared, so a Jace that arrives later in the
+    turn is covered as well. Never beside ``planeswalkers: true``; the loader
+    refuses the pair.
+
     Nothing is written on any permanent, and that is the point: a resolving
     sorcery leaves no source on the battlefield to hang a static off, which is
     the first of the three reasons the `cant_attack` static could not do this job.
@@ -546,6 +567,7 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_attack_player duration {duration!r}")
     planeswalkers = bool(spec.get("planeswalkers", False))
+    walker_subtypes = tuple((spec.get("planeswalkers_matching") or {}).get("subtypes") or ())
     attackers = _players(ctx, spec.get("attacker"))
     defenders = _players(ctx, spec.get("defender"))
     for attacker in attackers:
@@ -557,6 +579,7 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
                 duration,
                 source=ctx.source_oid,
                 planeswalkers=planeswalkers,
+                walker_subtypes=walker_subtypes,
             )
     yield from ()
 
@@ -652,6 +675,14 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     ``duration`` is required and the two words are not interchangeable:
     ``this_turn`` ends at cleanup, ``until_your_next_turn`` in the granting
     player's own untap step.
+
+    ``except_blockers`` is "…except by creatures with haste" (Gingerbrute): a
+    static filter, ``{"keywords": ["haste"]}``, that a would-be blocker matching
+    is exempt from the restriction. It is read off the blocker as it is when
+    blocks are declared (`combat.unblockable`), not when this resolves, so a
+    creature that gains haste afterwards may still block. Absent, every blocker
+    is refused -- which is why it may never be dropped from a card that prints
+    the exception: the creature would be strictly harder to block than printed.
     """
 
     duration = str(spec.get("duration", "this_turn"))
@@ -662,7 +693,14 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
         for oid in resolve_pool(ctx, spec.get("objects") or {})
         if (obj := ctx.state.objects.get(oid)) is not None and obj.on_battlefield
     ]
-    make_unblockable(ctx.state, oids, duration, player=ctx.controller, source=ctx.source_oid)
+    make_unblockable(
+        ctx.state,
+        oids,
+        duration,
+        player=ctx.controller,
+        source=ctx.source_oid,
+        except_blockers=spec.get("except_blockers"),
+    )
     yield from ()
 
 

@@ -35,7 +35,9 @@ from .vocabulary import (
     STATIC_FILTER_KEYS,
     STATIC_LIFE_KEYS,
     STATIC_LIFE_PLAYERS,
+    STATIC_MANA_POOL_KEYS,
     STATIC_MONARCH_PLAYERS,
+    STATIC_POISON_KEYS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
 )
@@ -310,6 +312,12 @@ def _validate_static_condition(condition: Any, where: str) -> None:
     elif head == "is_your_turn":
         if not isinstance(condition["is_your_turn"], bool):
             raise DslError(f"{where}.is_your_turn: must be true or false")
+    elif head == "has_flag":
+        # Read by exact string off the source's `flags`, so an empty or
+        # non-string flag would switch the static off for ever.
+        flag = condition["has_flag"]
+        if not isinstance(flag, str) or not flag:
+            raise DslError(f"{where}.has_flag: must be a non-empty flag name")
     elif head == "is_attached":
         # Not defaulted: `{"is_attached": false}` is the other half of
         # reconfigure ("it is a creature while unattached"), and a bare
@@ -470,7 +478,7 @@ def _validate_static_value(value: Any, where: str) -> None:
             f"{where}.mana_symbols",
             validate_objects=_validate_static_count_filter,
         )
-    for key in STATIC_LIFE_KEYS & set(value):
+    for key in (STATIC_LIFE_KEYS | STATIC_POISON_KEYS | STATIC_MANA_POOL_KEYS) & set(value):
         who = value[key]
         if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
             raise DslError(

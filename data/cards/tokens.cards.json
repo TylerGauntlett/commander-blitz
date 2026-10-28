@@ -1,5 +1,5 @@
 {
-  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list. Hand-written, and edited only under /extend-dsl (its Tier 0, a gap record with kind 'token'). Three are created by no shipped card and stay as test fixtures: knight_2_2_w_vigilance (the near miss tests/unit/tokens/test_token_pool.py and tests/cards/test_authoring.py contrast with knight_2_2_w and samurai_2_2_w_vigilance), kraken_8_8_u (the 8/8 in tests/unit/triggers/test_once_each_turn_trigger.py and test_atraxa_tokens.py) and vampire_1_1_bw (made by a test-pool card in tests/data/testing.cards.json, and by test_sba_and_commander.py).",
+  "_comment": "Token definitions. Referenced by create_token effects; never in a deck list. Hand-written, and edited only under /extend-dsl (its Tier 0, a gap record with kind 'token'). Three are created by no shipped card and stay as test fixtures: knight_2_2_w_vigilance (the near miss tests/unit/tokens/test_token_pool.py and tests/cards/test_authoring.py contrast with knight_2_2_w and samurai_2_2_w_vigilance), kraken_8_8_u (the 8/8 in tests/unit/triggers/test_once_each_turn_trigger.py and test_atraxa_tokens.py) and vampire_1_1_bw (made by a test-pool card in tests/data/testing.cards.json, and by test_sba_and_commander.py). The four 0/0 black Army tokens are named by no create_token: the amass op picks one by its subtype (ops_counters.AMASS_TOKENS). incubator_token is named only by the incubate op (ops_counters.INCUBATOR_TOKEN), and phyrexian_0_0_c_artifact is its back face, reached by transforming it and never created on its own.",
   "cards": [
     {
       "id": "angel_3_3_w_flying",
@@ -957,6 +957,90 @@
       "is_token": true
     },
     {
+      "id": "goblin_army_0_0_b",
+      "name": "Goblin Army Token",
+      "oracle_text": "0/0 black Goblin Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Goblin",
+        "Army"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "orc_army_0_0_b",
+      "name": "Orc Army Token",
+      "oracle_text": "0/0 black Orc Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Orc",
+        "Army"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "sliver_army_0_0_b",
+      "name": "Sliver Army Token",
+      "oracle_text": "0/0 black Sliver Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Sliver",
+        "Army"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "zombie_army_0_0_b",
+      "name": "Zombie Army Token",
+      "oracle_text": "0/0 black Zombie Army creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie",
+        "Army"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
       "id": "gnome_1_1_c",
       "name": "Gnome Token",
       "oracle_text": "",
@@ -972,6 +1056,73 @@
       "colors": [],
       "color_identity": [],
       "is_token": true
+    },
+    {
+      "id": "gingerbrute_1_1_c",
+      "name": "Gingerbrute",
+      "oracle_text": "Haste\n{1}: This token can't be blocked this turn except by creatures with haste.\n{2}, {T}, Sacrifice this token: You gain 3 life.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Food",
+        "Golem"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "keywords": [
+        "haste"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: This token can't be blocked this turn except by creatures with haste.",
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "op": "unblockable",
+              "objects": {
+                "self_only": true
+              },
+              "duration": "this_turn",
+              "except_blockers": {
+                "keywords": [
+                  "haste"
+                ]
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{2}, {T}, Sacrifice this token: You gain 3 life.",
+          "cost": {
+            "mana": "{2}",
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 3
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "hero_1_1_c",
@@ -1119,6 +1270,52 @@
       ]
     },
     {
+      "id": "incubator_token",
+      "name": "Incubator",
+      "oracle_text": "{2}: Transform this artifact.",
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Incubator"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "back_face": "phyrexian_0_0_c_artifact",
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: Transform this artifact.",
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "op": "transform"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "phyrexian_0_0_c_artifact",
+      "name": "Phyrexian Token",
+      "oracle_text": "0/0 colorless Phyrexian artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "inkling_2_1_wb_flying",
       "name": "Inkling Token",
       "oracle_text": "",
@@ -1161,6 +1358,82 @@
       "power": 1,
       "toughness": 1,
       "is_token": true
+    },
+    {
+      "id": "insect_2_1_w_flying",
+      "name": "Insect Token",
+      "oracle_text": "2/1 white Insect creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Insect"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "jace_planeswalker_u",
+      "name": "Jace",
+      "oracle_text": "−1: Surveil 1.\n−3: Draw a card.",
+      "types": [
+        "Planeswalker"
+      ],
+      "subtypes": [
+        "Jace"
+      ],
+      "loyalty": 0,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "−1: Surveil 1.",
+          "cost": {
+            "loyalty": -1
+          },
+          "effects": [
+            {
+              "op": "surveil",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "−3: Draw a card.",
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
     },
     {
       "id": "junk_token",
@@ -1293,6 +1566,26 @@
       "keywords": [
         "vigilance"
       ]
+    },
+    {
+      "id": "kobolds_of_kher_keep_0_1_r",
+      "name": "Kobolds of Kher Keep",
+      "oracle_text": "0/1 red Kobold creature token named Kobolds of Kher Keep.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kobold"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
     },
     {
       "id": "komas_coil_3_3_u",
@@ -1621,6 +1914,38 @@
       "is_token": true
     },
     {
+      "id": "phyrexian_mite_1_1_c_toxic",
+      "name": "Phyrexian Mite Token",
+      "oracle_text": "1/1 colorless Phyrexian Mite artifact creature token with toxic 1 and \"This token can't block.\"",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Mite"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "toxic"
+      ],
+      "toxic": 1,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This token can't block.",
+          "effect": "cant_block",
+          "affects": {
+            "self_only": true
+          }
+        }
+      ]
+    },
+    {
       "id": "pilot_1_1_c_crew2",
       "name": "Pilot Token",
       "oracle_text": "1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"",
@@ -1713,6 +2038,26 @@
       ],
       "color_identity": [
         "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "rogue_2_2_b",
+      "name": "Rogue Token",
+      "oracle_text": "2/2 black Rogue creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
       ],
       "is_token": true
     },
@@ -1831,6 +2176,30 @@
             "Wall"
           ]
         }
+      ]
+    },
+    {
+      "id": "shark_x_x_u_flying",
+      "name": "Shark Token",
+      "oracle_text": "X/X blue Shark creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Shark"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
       ]
     },
     {

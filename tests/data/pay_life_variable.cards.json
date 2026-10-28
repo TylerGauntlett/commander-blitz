@@ -1,0 +1,26 @@
+{
+  "_comment": "The Niv-Mizzet, Ghost Counsel shape: an optional life payment priced by the trigger's own binding, read as the `may` resolves, with the \"if you do\" draw reading the same binding.",
+  "cards": [
+    {
+      "id": "t_ghost_counsel",
+      "name": "Test Ghost Counsel",
+      "oracle_text": "Whenever you gain life, you may pay that much life. If you do, draw that many cards.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you gain life, you may pay that much life. If you do, draw that many cards.",
+          "trigger": {"event": "you_gain_life", "controller": "you"},
+          "effects": [
+            {
+              "op": "may",
+              "pay": {"pay_life": {"binding": "amount"}},
+              "effects": [{"op": "draw", "player": "you", "amount": {"binding": "amount"}}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

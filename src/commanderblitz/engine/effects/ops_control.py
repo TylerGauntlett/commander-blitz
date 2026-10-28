@@ -80,6 +80,12 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
     the effects (typically a ``reflexive_trigger``) to read. Paying none is not
     paying, so 0 is the no and is never offered after the yes. See
     :func:`_announce_amount`.
+
+    A ``pay_life`` value expression is "you may pay **that much** life. If you
+    do, draw that many cards" -- Niv-Mizzet, Ghost Counsel. It is read here, in
+    this effect's context, so ``{"binding": "amount"}`` is the life the trigger
+    saw gained, and fixed to an integer before the affordability check: 119.4
+    refuses more life than the player has, and 0 life is always payable.
     """
 
     players = select_players(ctx, spec.get("player", "you"))
@@ -102,8 +108,20 @@ def op_may(ctx: EffectContext, spec: Mapping[str, Any]):
         yield from execute(ctx, spec.get("else") or [])
         return
 
+    life_spec = cost.pay_life if cost is not None and isinstance(cost.pay_life, Mapping) else None
+
     # The same guard `repeat` uses: one pathological board must not hang a game.
     for _ in range(100):
+        if cost is not None and life_spec is not None:
+            # "You may pay **that much** life" -- Niv-Mizzet, Ghost Counsel. A
+            # value-expression life price is read here, in the resolving
+            # effect's context, because that is where the trigger's bindings
+            # live: `costs.life_cost` builds a bare context of its own and would
+            # read `{"binding": "amount"}` as 0, a free draw. Fixed to an
+            # integer before `can_pay`, so the check and the charge see one
+            # price (118.4, 119.4: no more than you have; 0 is always paid).
+            # Inside the loop, so a `repeat` re-reads it each time.
+            cost = replace(cost, pay_life=max(0, int(evaluate_value(ctx, life_spec))))
         if cost is not None and not can_pay(ctx.state, chooser, cost, ctx.source_oid):
             yield from execute(ctx, spec.get("else") or [])
             return
@@ -270,6 +288,36 @@ PERMANENT_TYPE_CHOICES: tuple[str, ...] = (
     "Planeswalker",
 )
 
+#: Every card type rule 205.2a lists, in its printed (alphabetical) order --
+#: "choose a **card** type" (Serra's Emissary), the wider axis beside
+#: `PERMANENT_TYPE_CHOICES`.
+#:
+#: Instant, Sorcery and Kindred are the three it adds, and they are the reason
+#: the axis exists: "protection from instants" is the commonest answer on the
+#: card that motivated it, and a list without them offers the wrong choices.
+#: Kindred is offered although no card in this engine is a Kindred card (the
+#: importer drops the word as noise): it is a legal answer at a real table, and
+#: naming it protects from exactly what it would protect from here -- nothing.
+CARD_TYPE_CHOICES: tuple[str, ...] = (
+    "Artifact",
+    "Battle",
+    "Creature",
+    "Enchantment",
+    "Instant",
+    "Kindred",
+    "Land",
+    "Planeswalker",
+    "Sorcery",
+)
+
+#: The fixed-list axes of `choose_type`: ``of`` -> (options, default prompt).
+#: Both write `GameObject.chosen_card_type`; only the creature-type axis is
+#: surveyed from the pool and writes `chosen_type`.
+_CARD_TYPE_AXES: dict[str, tuple[tuple[str, ...], str]] = {
+    "permanent_type": (PERMANENT_TYPE_CHOICES, "Choose a permanent type"),
+    "card_type": (CARD_TYPE_CHOICES, "Choose a card type"),
+}
+
 
 @register("choose_type")
 def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
@@ -299,9 +347,14 @@ def op_choose_type(ctx: EffectContext, spec: Mapping[str, Any]):
     # and `chosen_card_type` a card type; one field would make "of the chosen
     # type" ambiguous at every reader, and a reader that guessed wrong would
     # match nothing silently.
-    if str(spec.get("of", "creature_type")) == "permanent_type":
-        choices = list(PERMANENT_TYPE_CHOICES)
-        prompt = str(spec.get("prompt") or "Choose a permanent type")
+    #
+    # "Choose a **card** type" (Serra's Emissary) is the same again over the
+    # nine types of 205.2a, and writes the same slot: a permanent type *is* a
+    # card type, so every reader of `chosen_card_type` reads either answer.
+    axis = _CARD_TYPE_AXES.get(str(spec.get("of", "creature_type")))
+    if axis is not None:
+        choices = list(axis[0])
+        prompt = str(spec.get("prompt") or axis[1])
         picked = yield from ask_mode(ctx, prompt, choices, ctx.controller)
         if not picked:
             return
@@ -542,6 +595,62 @@ def op_rotate_control(ctx: EffectContext, spec: Mapping[str, Any]):
     for oid, was in before:
         if was in receiver:
             change_control(state, oid, receiver[was], source=ctx.source_oid)
+
+
+@register("distribute_control_among_opponents")
+def op_distribute_control_among_opponents(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "For each of those permanents, choose a different opponent. Each opponent
+    gains control of the permanent for which they were chosen." Dack Fayden,
+    Helping Hand.
+
+    A pairing, which neither existing control op can say: `gain_control` gives
+    a whole pool to one player, so `for_each` around it hands every permanent
+    to the same opponent or loops with no way to say "a *different* one"; and
+    `rotate_control` passes boards one seat round the table, with no choice of
+    who gets what.
+
+    **No new `DecisionKind`.** One `ask_player` per permanent, asked of the
+    controller (who makes every choice the sentence names) over the opponents
+    not yet chosen. Asked in turn, that reaches every pairing: each permanent's
+    question names the seats still free, and with fewer permanents than
+    opponents the seats never picked are the opponents who get nothing. The
+    last question is forced when one seat is left, `ask_player`'s own
+    short-circuit. Once every opponent has been chosen, a further permanent
+    has no different opponent to go to and stays where it is (609.3: do as
+    much as possible).
+
+    Every choice is made **before** any control moves, then each permanent
+    passes through `change_control` -- permanently, the printed line has no
+    duration -- so each is summoning sick for its new controller (302.6) and
+    leaves combat (506.4). A permanent that left the battlefield in the
+    meantime is skipped, and is not asked about.
+
+    ``objects`` names the permanents, in the order asked -- Dack's is
+    ``{"binding": …}`` over what `reveal_until` put onto the battlefield.
+    """
+    state = ctx.state
+    pool = [
+        oid
+        for oid in resolve_pool(ctx, spec.get("objects"))
+        if (obj := state.objects.get(oid)) is not None and obj.on_battlefield
+    ]
+    free = list(ctx.opponents())
+    pairs: list[tuple[int, int]] = []
+    for oid in pool:
+        if not free:
+            break
+        chosen = yield from ask_player(
+            ctx,
+            f"Choose the opponent who gains control of {ctx.name_of(oid)}",
+            free,
+            ctx.controller,
+        )
+        if chosen is None:
+            break
+        free.remove(chosen)
+        pairs.append((oid, chosen))
+    for oid, pid in pairs:
+        change_control(state, oid, pid, source=ctx.source_oid)
 
 
 def _creature_types(ctx: EffectContext) -> frozenset[str]:

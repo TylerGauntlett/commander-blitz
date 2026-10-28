@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**91 cards** blocked by **75** capabilities.
+**92 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,6 +22,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [divided-damage](#divided-damage) | 2 | 5389 | decision |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
+| [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
@@ -81,7 +82,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
-| [targeted-discard](#targeted-discard) | 1 | 11817 | op |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -343,6 +343,25 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
+
+</details>
+
+## targeted-discard
+
+Blocks **2** cards.
+
+- **(op)** a discard in which the target player reveals their hand and the spell's controller (not the discarding player) chooses a card matching a filter (here an instant or sorcery card) to be discarded -- Duress's shape; no discard if none matches
+  <br>Why the existing vocabulary won't do: `discard` takes only amount, as, player, random, up_to and whole_hand: the discarding player always chooses (or it is random), and there is no filter on which card may be taken. `reveal` and `look_at_hand` show the hand but cannot hand the choice to the caster or restrict it to instants and sorceries.
+- **(op)** a discard in which the target player reveals their hand and the spell's controller (not the discarding player) chooses a card matching a filter (here a nonland card) to be discarded -- Duress/Thoughtseize's shape; no discard if none matches
+  <br>Why the existing vocabulary won't do: `discard` takes only amount, as, player, random, up_to and whole_hand: op_discard always asks the discarding player (or picks at random) and has no filter on which card may be taken. `reveal` and `look_at_hand` show the hand but cannot hand the choice to the caster, restrict it to nonland cards, or perform a discard (so discard triggers and Tamiyo's forced-discard bar would be skipped by any move-to-graveyard workaround).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Brutality** (rank 11817) — `collective_brutality`
+  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
+  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+- **Toll of the Invasion** (rank 20219) — `toll_of_the_invasion`
+  - Target opponent reveals their hand. You choose a nonland card from it. That player discards that card.
 
 </details>
 
@@ -1205,21 +1224,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## targeted-discard
-
-Blocks **1** card.
-
-- **(op)** a discard in which the target player reveals their hand and the spell's controller (not the discarding player) chooses a card matching a filter (here an instant or sorcery card) to be discarded -- Duress's shape; no discard if none matches
-  <br>Why the existing vocabulary won't do: `discard` takes only amount, as, player, random, up_to and whole_hand: the discarding player always chooses (or it is random), and there is no filter on which card may be taken. `reveal` and `look_at_hand` show the hand but cannot hand the choice to the caster or restrict it to instants and sorceries.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Collective Brutality** (rank 11817) — `collective_brutality`
-  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
-  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 
 </details>
 

@@ -77,6 +77,15 @@ class TestTokenNaming:
         assert entry.name == "Vampire"
         assert entry.is_token
 
+    def test_a_named_token_sharing_a_cards_name_takes_the_suffixed_row(
+        self, registry, index
+    ):
+        # The Gingerbrute token is named "Gingerbrute" in the engine, but its
+        # Scryfall row is "Gingerbrute Token", because a real card has the name.
+        entry = resolve(registry.get("gingerbrute_1_1_c"), index)
+        assert entry is not None and entry.is_token
+        assert entry.name == "Gingerbrute Token"
+
 
 class TestResolution:
     def test_a_basic_land_resolves(self, registry, index):

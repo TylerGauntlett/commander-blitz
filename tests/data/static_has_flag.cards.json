@@ -1,0 +1,97 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_has_flag.py. t_flag_siege is Windcrag Siege's Mardu half on a one-mana enchantment: the 'as this enters, choose' trigger writes a flag on the source, and a double_triggers static for attack causes is gated on it. t_flag_anthem is the same flag switching a self buff, so the characteristics cache is asserted to see the word arrive. t_attack_lifegainer GAINS LIFE when it attacks, so 'an additional time' is counted as life rather than queue entries.",
+  "cards": [
+    {
+      "id": "t_flag_siege",
+      "name": "Test Flag Siege",
+      "oracle_text": "As this enchantment enters, choose Mardu or Jeskai.\n• Mardu — If a creature attacking causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.\n• Jeskai — This enchantment gets nothing.",
+      "mana_cost": "{R}",
+      "types": ["Enchantment"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose Mardu or Jeskai.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {"label": "Mardu", "effects": [{"op": "set_flag", "flag": "mardu", "objects": {"self_only": true}}]},
+                {"label": "Jeskai", "effects": [{"op": "set_flag", "flag": "jeskai", "objects": {"self_only": true}}]}
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "• Mardu — If a creature attacking causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.",
+          "effect": "double_triggers",
+          "affects": {"controller": "you"},
+          "cause_events": ["attacks"],
+          "condition": {"has_flag": "mardu"}
+        }
+      ]
+    },
+    {
+      "id": "t_flag_anthem",
+      "name": "Test Flag Anthem",
+      "oracle_text": "As this creature enters, choose Mardu or Jeskai.\n• Mardu — This creature gets +2/+2.",
+      "mana_cost": "{R}",
+      "types": ["Creature"],
+      "subtypes": ["Goblin"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this creature enters, choose Mardu or Jeskai.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {"label": "Mardu", "effects": [{"op": "set_flag", "flag": "mardu", "objects": {"self_only": true}}]},
+                {"label": "Jeskai", "effects": [{"op": "set_flag", "flag": "jeskai", "objects": {"self_only": true}}]}
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "• Mardu — This creature gets +2/+2.",
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"const": 2},
+          "toughness": {"const": 2},
+          "condition": {"has_flag": "mardu"}
+        }
+      ]
+    },
+    {
+      "id": "t_attack_lifegainer",
+      "name": "Test Attack Lifegainer",
+      "oracle_text": "Whenever this creature attacks, you gain 1 life.",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you gain 1 life.",
+          "trigger": {"event": "attacks", "source": "self"},
+          "effects": [{"op": "gain_life", "amount": {"const": 1}, "player": "you"}]
+        }
+      ]
+    }
+  ]
+}

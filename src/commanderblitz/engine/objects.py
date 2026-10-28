@@ -21,6 +21,10 @@ from .structs import PermanentShield, TempEffect
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
 MINUS_ONE = "-1/-1"
+#: A **time counter**: what a suspended card in exile carries, and what an
+#: impending permanent enters with (702.176a). Named like the printed one so a
+#: UI that shows counters shows the right word.
+TIME_COUNTER = "time"
 #: A **shield counter** (122.1c): "If this permanent would be dealt damage or
 #: destroyed, remove a shield counter from it instead."
 #:
@@ -694,6 +698,16 @@ class GameObject:
     #: has landed, so a flag wiped on the way onto the battlefield would leave
     #: an ordinary creature attached to something.
     cast_bestowed: bool = False
+    #: Whether the spell this permanent resolved from was cast for its
+    #: **impending** cost (702.176a). Bestow's contract, and for its reason: it
+    #: is read on the battlefield -- by the enters-with-time-counters
+    #: replacement, by the end-step tick and by `characteristics._compute`,
+    #: which is where "isn't a creature while it has a time counter" lives -- so
+    #: it outlives the spell. Unlike bestow's it is cleared by
+    #: `zones._enter_battlefield` on any arrival that is not this object's own
+    #: resolution: a reanimated Overlord was not cast at all, and must not come
+    #: back thinking it was cast for its impending cost.
+    cast_impending: bool = False
     #: Whether this object is currently showing its **second castable face** --
     #: the Adventure half, the Aftermath half, one half of a split card.
     #: ``GameState.card_of`` reads it, exactly as it reads ``transformed``, so
@@ -828,6 +842,13 @@ class GameObject:
     #: combat until the goader untaps. This is read live in
     #: `combat.attack_required` and never spent.
     goaded_by: set[int] = field(default_factory=set)
+    #: The goaders in :attr:`goaded_by` whose goad lasts "for the rest of the
+    #: game" (Dack Fayden, Helping Hand) -- always a subset of it. Everything
+    #: goad *means* is read off `goaded_by`; this says only which marks the
+    #: goader's untap step must leave alone (`temp_effects.clear_goad`). Both
+    #: still end when the goader leaves the game (800.4a) or the creature
+    #: leaves the battlefield (400.7).
+    goaded_permanently_by: set[int] = field(default_factory=set)
     #: "Prevent all damage that would be dealt to him this turn" (Gideon Jura)
     #: and "until your next turn, prevent all damage target permanent would
     #: deal" (Gideon of the Trials) -- see :class:`structs.PermanentShield`.
@@ -1058,6 +1079,7 @@ class GameObject:
         # no longer the creature anybody goaded -- blink your own goaded
         # creature and it owes nothing, which is the printed answer.
         self.goaded_by = set()
+        self.goaded_permanently_by = set()
         # And no longer the permanent a prevention shield was aimed at.
         self.damage_shields = []
         # Nor the planeswalker anybody was told to attack.
@@ -1236,6 +1258,7 @@ class GameObject:
             # Sorted rather than the set itself, so the snapshot is JSON and is
             # comparable between two runs of the same game.
             "goaded_by": sorted(self.goaded_by),
+            "goaded_permanently_by": sorted(self.goaded_permanently_by),
             "granted_keywords": sorted(self.granted_keywords),
             "frozen_by": self.frozen_by,
             "skip_next_untap": self.skip_next_untap,

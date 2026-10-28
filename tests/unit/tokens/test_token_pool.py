@@ -330,6 +330,43 @@ class TestAngelOfInventionsServosAreColorlessArtifacts:
         assert servo.is_token
 
 
+class TestThePhyrexianMiteHasToxicAndCantBlock:
+    """Skrelv's Hive and White Sun's Twilight: *"create a 1/1 colorless
+    **Phyrexian Mite** artifact creature token with **toxic 1** and "This token
+    can't block.""*
+
+    The nearest bodies are the Servo above, the Myr and the Gnome: the right
+    size and colour with neither the toxic nor the restriction. Toxic is the
+    load-bearing half -- Skrelv's Hive gives lifelink to "creatures you control
+    with toxic", so a Servo would gain nothing and poison nobody -- and the
+    restriction is a drawback a near miss would quietly drop.
+    """
+
+    def test_it_exists(self, pool):
+        assert pool.get("phyrexian_mite_1_1_c_toxic") is not None
+
+    def test_it_is_a_one_one_colorless_artifact_phyrexian_mite(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        assert (mite.power, mite.toughness) == (1, 1)
+        assert not mite.colors, "colorless -- the printed word"
+        assert "Artifact" in mite.types and "Creature" in mite.types
+        assert set(mite.subtypes) == {"Phyrexian", "Mite"}
+        assert mite.is_token
+
+    def test_it_has_toxic_1(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        assert set(mite.keywords) == {"toxic"}
+        assert mite.toxic == 1
+
+    def test_it_cannot_block(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        assert [a.static.get("effect") for a in mite.abilities] == ["cant_block"]
+
+    def test_the_servo_is_still_a_separate_token(self, pool):
+        servo = pool.get("servo_1_1_c")
+        assert not servo.keywords and servo.toxic == 0
+
+
 class TestDawnOfHopesSoldiersHaveLifelink:
     """Dawn of Hope: *"{3}{W}: Create a 1/1 white Soldier creature token with
     **lifelink**."*
@@ -474,6 +511,32 @@ class TestJosuVesssKnightsAreZombieKnightsWithMenace:
         assert "Knight" not in other.subtypes
 
 
+class TestCurrencyConvertersRogueIsATwoTwoBlack:
+    """Currency Converter: *"If it's a nonland card, create a **2/2 black
+    Rogue** creature token."*
+
+    Two near misses, each wrong on one axis. `vampire_rogue_1_1_b_lifelink` is
+    the pool's other black Rogue, on half the body with a keyword the card never
+    prints; `zombie_2_2_b` is the right body with the wrong creature type, and
+    Rogue- and Zombie-typal cards each read exactly that.
+    """
+
+    def test_it_is_a_vanilla_two_two_black_rogue(self, pool):
+        token = pool.get("rogue_2_2_b")
+        assert token is not None
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Rogue"]
+        assert not token.keywords
+        assert token.is_creature and token.is_token
+
+    def test_the_vampire_rogue_is_still_a_separate_token(self, pool):
+        other = pool.get("vampire_rogue_1_1_b_lifelink")
+        assert other is not None
+        assert (other.power, other.toughness) == (1, 1)
+        assert "lifelink" in other.keywords
+
+
 class TestMyrBattlespheresMyrAreColorlessArtifactMyr:
     """Myr Battlesphere: *"create four **1/1 colorless Myr artifact** creature
     tokens"*, and then *"you may tap X untapped **Myr** you control"*.
@@ -553,6 +616,37 @@ class TestTheSpiderIsAOneTwoWithReach:
         assert list(insect.subtypes) == ["Insect"]
 
 
+class TestKherKeepsKoboldsCarryTheirName:
+    """Kher Keep: *"Create a 0/1 red Kobold creature token **named Kobolds of
+    Kher Keep**."*
+
+    `plant_0_1_g` is the pool's other 0/1 and is the wrong colour and type.
+    The name is a characteristic too (111.4), and it is the one a vanilla
+    "Kobold Token" would get wrong: it is the name of a real {0} 0/1 card, which
+    is also why `CardRegistry.by_name` must never answer it with the token.
+    """
+
+    def test_it_is_a_zero_one_red_kobold_named_for_the_keep(self, pool):
+        token = pool.get("kobolds_of_kher_keep_0_1_r")
+        assert token is not None
+        assert token.name == "Kobolds of Kher Keep"
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.subtypes) == ["Kobold"]
+        assert not token.keywords
+        assert token.is_creature and token.is_token
+
+    def test_the_card_of_the_same_name_is_still_a_separate_card(self, pool):
+        card = pool.get("kobolds_of_kher_keep")
+        assert card is not None and not card.is_token
+        assert pool.by_name("Kobolds of Kher Keep").id == "kobolds_of_kher_keep"
+
+    def test_the_plant_is_still_a_separate_token(self, pool):
+        plant = pool.get("plant_0_1_g")
+        assert plant is not None
+        assert sorted(plant.colors) == ["G"]
+
+
 class TestEzurisPredationMakesPhyrexianBeasts:
     """Ezuri's Predation: *"create a 4/4 green **Phyrexian** Beast creature
     token."*
@@ -575,3 +669,220 @@ class TestEzurisPredationMakesPhyrexianBeasts:
         beast = pool.get("beast_4_4_g")
         assert beast is not None
         assert list(beast.subtypes) == ["Beast"]
+
+
+class TestEmpowersJaceIsABlueZeroLoyaltyPlaneswalker:
+    """Empower Jace N: *"…first create a **blue Jace planeswalker** token with
+    "[-1]: Surveil 1" and "[-3]: Draw a card."*" (Plan for All Outcomes).
+    The catalog's tfra token row prints no loyalty, so it starts at 0 and
+    lives on the counters empower puts on it.
+
+    The pool's only planeswalker token, and nothing may stand in for it: a
+    printed starting loyalty would make every empower worth that much more,
+    and `op_empower` finds it by its Jace subtype.
+    """
+
+    def test_it_is_a_blue_jace_planeswalker_with_no_loyalty(self, pool):
+        jace = pool.get("jace_planeswalker_u")
+        assert jace is not None and jace.is_token
+        assert jace.name == "Jace"
+        assert list(jace.types) == ["Planeswalker"]
+        assert list(jace.subtypes) == ["Jace"]
+        assert not jace.supertypes, "not legendary: two may coexist"
+        assert sorted(jace.colors) == ["U"]
+        assert jace.loyalty == 0
+
+    def test_it_has_exactly_the_two_printed_abilities(self, pool):
+        jace = pool.get("jace_planeswalker_u")
+        assert [a.cost.loyalty for a in jace.abilities] == [-1, -3]
+        assert [a.effects[0]["op"] for a in jace.abilities] == ["surveil", "draw"]
+
+    def test_it_is_the_only_planeswalker_token(self, pool):
+        tokens = [c.id for c in pool if c.is_token and "Planeswalker" in c.types]
+        assert tokens == ["jace_planeswalker_u"]
+
+
+class TestAmassArmiesAreZeroZeroBlackArmies:
+    """Amass [subtype] N (701.47a): *"…create a 0/0 black [subtype] Army
+    creature token"* (Dreadhorde Invasion amasses Zombies; the catalog's tfrc,
+    tltr, thob and tcmm rows are the Zombie, Orc, Goblin and Sliver Armies).
+
+    The pool's other 0/0 black creature token is the Phyrexian Germ, and the
+    other black Zombies are 2/2s. Neither stands in: a printed size would make
+    every amass worth that much more, and `op_amass` finds the Army it grows by
+    its Army subtype.
+    """
+
+    ARMIES = {
+        "Zombie": "zombie_army_0_0_b",
+        "Orc": "orc_army_0_0_b",
+        "Goblin": "goblin_army_0_0_b",
+        "Sliver": "sliver_army_0_0_b",
+    }
+
+    @pytest.mark.parametrize("subtype", sorted(ARMIES))
+    def test_each_is_a_zero_zero_black_army_of_its_subtype(self, pool, subtype):
+        army = pool.get(self.ARMIES[subtype])
+        assert army is not None and army.is_token
+        assert (army.power, army.toughness) == (0, 0)
+        assert sorted(army.colors) == ["B"]
+        assert list(army.types) == ["Creature"]
+        assert sorted(army.subtypes) == sorted([subtype, "Army"])
+        assert not army.keywords and not army.abilities
+
+    def test_the_op_names_exactly_these(self):
+        from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
+
+        assert AMASS_TOKENS == self.ARMIES
+
+    def test_the_germ_is_still_a_separate_token(self, pool):
+        germ = pool.get("germ_0_0_b")
+        assert germ is not None
+        assert "Army" not in germ.subtypes
+
+
+class TestIncubatesIncubatorIsADoubleFacedToken:
+    """Incubate N (701.53a): *"Create an Incubator token with N +1/+1 counters
+    on it and '{2}: Transform this artifact.' It transforms into a 0/0
+    Phyrexian artifact creature."* (Sunfall; the catalog's tfrc Incubator //
+    Phyrexian row.)
+
+    The pool's other colorless Phyrexian artifact creature is the 1/1 Mite with
+    toxic, and its other 0/0 Phyrexian is the black Germ. Neither stands in for
+    the back face: a printed size or colour would make every incubate a
+    different card, and the back is only ever reached by transforming the
+    front, which is why linking refuses a `create_token` that names it.
+    """
+
+    def test_the_front_is_a_colorless_incubator_artifact(self, pool):
+        front = pool.get("incubator_token")
+        assert front is not None and front.is_token
+        assert list(front.types) == ["Artifact"]
+        assert list(front.subtypes) == ["Incubator"]
+        assert not front.colors
+        assert (front.power, front.toughness) == (None, None)
+        [ability] = front.abilities
+        assert ability.text == "{2}: Transform this artifact."
+        assert ability.cost.mana.text == "{2}"
+        assert ability.effects == ({"op": "transform"},)
+
+    def test_the_back_is_a_zero_zero_colorless_phyrexian_artifact_creature(self, pool):
+        back = pool.get("phyrexian_0_0_c_artifact")
+        assert back is not None and back.is_token
+        assert sorted(back.types) == ["Artifact", "Creature"]
+        assert list(back.subtypes) == ["Phyrexian"]
+        assert (back.power, back.toughness) == (0, 0)
+        assert not back.colors
+        assert not back.keywords and not back.abilities
+
+    def test_the_faces_are_linked(self, pool):
+        assert pool.get("incubator_token").back_face == "phyrexian_0_0_c_artifact"
+        assert pool.get("phyrexian_0_0_c_artifact").front_face == "incubator_token"
+
+    def test_the_op_names_the_front(self):
+        from commanderblitz.engine.effects.ops_counters import INCUBATOR_TOKEN
+
+        assert INCUBATOR_TOKEN == "incubator_token"
+
+    def test_the_mite_and_the_germ_are_still_separate_tokens(self, pool):
+        mite = pool.get("phyrexian_mite_1_1_c_toxic")
+        germ = pool.get("germ_0_0_b")
+        assert (mite.power, mite.toughness) == (1, 1) and mite.keywords
+        assert sorted(germ.colors) == ["B"]
+
+
+class TestSharkTyphoonsSharkIsAnXXBlueFlier:
+    """Shark Typhoon: *"…create an **X/X blue Shark** creature token **with
+    flying**"* (the catalog's Shark token row prints `*/*`, blue, Flying).
+
+    Written 0/0 with `variable_pt`, because its size is the creating effect's
+    (see `tests/unit/tokens/test_variable_pt_token.py`). The pool's other 0/0
+    blue creature token is the green-and-blue Fractal, and its blue fliers are
+    printed sizes; none stands in. A Fractal is a 0/0 that is *given* counters,
+    so it carries no flag.
+    """
+
+    def test_it_is_an_x_x_blue_shark_with_flying(self, pool):
+        shark = pool.get("shark_x_x_u_flying")
+        assert shark is not None and shark.is_token and shark.is_creature
+        assert shark.variable_pt
+        assert (shark.power, shark.toughness) == (0, 0)
+        assert sorted(shark.colors) == ["U"]
+        assert list(shark.types) == ["Creature"]
+        assert list(shark.subtypes) == ["Shark"]
+        assert list(shark.keywords) == ["flying"]
+        assert not shark.abilities
+
+    def test_the_fractal_is_still_a_printed_zero_zero(self, pool):
+        fractal = pool.get("fractal_0_0_gu")
+        assert not fractal.variable_pt
+        assert sorted(fractal.colors) == ["G", "U"]
+
+
+class TestTheMistmoorsInsectsAreTwoOneWhiteFliers:
+    """Overlord of the Mistmoors: *"create two **2/1 white Insect** creature
+    tokens **with flying**"* (the catalog's Insect token row prints 2/1, white,
+    Flying).
+
+    `insect_1_1_g` is the pool's only other Insect, and it is wrong three ways
+    at once: half the power, the wrong colour and no evasion. Two of them on
+    every enter and every attack is a strictly weaker card than the printed one.
+    """
+
+    def test_it_is_a_two_one_white_insect_with_flying(self, pool):
+        token = pool.get("insect_2_1_w_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 1)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Insect"]
+        assert list(token.keywords) == ["flying"]
+        assert not token.abilities
+
+    def test_the_green_insect_is_still_a_separate_token(self, pool):
+        other = pool.get("insect_1_1_g")
+        assert (other.power, other.toughness) == (1, 1)
+        assert sorted(other.colors) == ["G"]
+        assert not other.keywords
+
+
+class TestGingersGingerbruteIsAHastyFoodGolem:
+    """Ginger, Queen of Sweets: *"create a **Gingerbrute** token. (It's a {1}
+    1/1 Food Golem artifact creature with haste, "{1}: This token can't be
+    blocked this turn except by creatures with haste," and "{2}, {T}, Sacrifice
+    this token: You gain 3 life.")"*
+
+    The near misses are `gnome_1_1_c`, the pool's other colorless 1/1 artifact
+    creature (vanilla, no haste, no Food to sacrifice), and `food_token`, which
+    has the life line but is no creature. The evasion line is `unblockable`
+    with `except_blockers`, never the plain op: without the exemption the token
+    would be blockable by nothing. Stored, like every token, with no mana cost.
+    """
+
+    def test_it_is_a_one_one_colorless_food_golem_with_haste(self, pool):
+        token = pool.get("gingerbrute_1_1_c")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.name == "Gingerbrute"
+        assert (token.power, token.toughness) == (1, 1)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert sorted(token.subtypes) == ["Food", "Golem"]
+        assert list(token.keywords) == ["haste"]
+
+    def test_it_has_exactly_the_two_printed_abilities(self, pool):
+        token = pool.get("gingerbrute_1_1_c")
+        evade, food = token.abilities
+        assert [e["op"] for e in evade.effects] == ["unblockable"]
+        assert evade.effects[0]["except_blockers"] == {"keywords": ["haste"]}
+        assert evade.effects[0]["duration"] == "this_turn"
+        assert [e["op"] for e in food.effects] == ["gain_life"]
+        assert food.cost.tap and food.cost.sacrifice
+
+    def test_the_gnome_and_the_food_are_still_separate_tokens(self, pool):
+        gnome, food = pool.get("gnome_1_1_c"), pool.get("food_token")
+        assert not gnome.keywords and not gnome.abilities
+        assert not food.is_creature
+
+    def test_the_name_does_not_answer_for_a_card(self, pool):
+        card = pool.by_name("Gingerbrute")
+        assert card is None or not card.is_token

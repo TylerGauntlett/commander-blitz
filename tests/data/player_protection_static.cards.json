@@ -1,0 +1,44 @@
+{
+  "_comment": "Shapes for tests/unit/protection/test_player_protection_static.py. t_pps_aegis is Serra's Emissary's seat half: you have protection from the card type it chose. t_pps_ward is the same static with a literal quality, protection from creatures. The tests write the choice onto the permanent directly; the choice itself is test_choose_card_type.py's.",
+  "cards": [
+    {
+      "id": "t_pps_aegis",
+      "name": "Test Chosen Type Aegis",
+      "oracle_text": "You have protection from the chosen card type.",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Angel"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You have protection from the chosen card type.",
+          "effect": "player_protection",
+          "affects_player": "you",
+          "from_types": [{ "chosen_card_type_of": "self" }]
+        }
+      ]
+    },
+    {
+      "id": "t_pps_ward",
+      "name": "Test Creature Ward",
+      "oracle_text": "You have protection from creatures.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "You have protection from creatures.",
+          "effect": "player_protection",
+          "affects_player": "you",
+          "from_types": ["Creature"]
+        }
+      ]
+    }
+  ]
+}

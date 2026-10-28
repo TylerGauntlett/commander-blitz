@@ -42,6 +42,7 @@ from .mana import (
 )
 from .player_statics import (
     ability_cost_reduction,
+    counters_prohibited,
     mana_added_on_tap,
     player_cant_activate,
     player_doubles_mana_from,
@@ -1306,6 +1307,17 @@ def can_pay(
         source_oid is None or source_oid not in state.battlefield
     ):
         return False
+    # A cost that would put on a counter the permanent can't have (Darksteel
+    # Angel, Melira) can't be paid: the placement would not happen, and a cost
+    # is paid only by doing all of it (601.2h).
+    if cost.put_counters is not None and counters_prohibited(
+        state, source_oid, str(cost.put_counters["counter"])
+    ):
+        return False
+    if cost.loyalty is not None and cost.loyalty > 0 and source_oid is not None and (
+        counters_prohibited(state, source_oid, "loyalty")
+    ):
+        return False
     if cost.loyalty is not None and cost.loyalty < 0:
         # 606.3: a minus ability may only be activated if there is enough
         # loyalty to pay it. A plus or a zero is always payable, which is why
@@ -2028,6 +2040,10 @@ def pay_mana(
             )
         activate_mana_ability(state, oid, ability_index, pid, option_index)
     spent = player.mana_pool.spend(req, purpose)
+    # The pool is a static's input ("+1/+1 for each unspent mana you have",
+    # Omnath, Locus of the Void), and a payment from floating mana taps nothing
+    # that would bump for it.
+    state.bump_chars()
     if record_colors_on is not None and (obj := state.objects.get(record_colors_on)):
         obj.colors_spent = spent.colors
         obj.mana_sources_spent = spent.sources
@@ -2167,6 +2183,9 @@ def activate_mana_ability(
             mana, source=source, source_traits=mana_source_traits(state, source)
         )
         state.emit(EventType.MANA_ADDED, player=pid, source=source, mana=format_symbols(mana))
+    # The pool grew, and it is a static's input (`unspent_mana_count`); the tap
+    # above bumps only when there was one to make.
+    state.bump_chars()
     if ability.mana_rider:
         _run_mana_rider(state, oid, pid, ability)
     if is_land and obj is not None:

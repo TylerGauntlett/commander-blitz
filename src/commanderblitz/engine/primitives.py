@@ -8,7 +8,7 @@ that is the effect layer's job.
 from __future__ import annotations
 
 import dataclasses
-from collections.abc import Iterable, Sequence
+from collections.abc import Iterable, Mapping, Sequence
 from typing import TYPE_CHECKING, Any
 
 from . import sagas
@@ -26,6 +26,7 @@ from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, STUN, GameObject
 from .player_statics import (
     counter_placement_replacements,
+    counters_prohibited,
     damage_cap,
     damage_multiplier,
     life_gain_addend,
@@ -548,6 +549,18 @@ def damage_player(
         # Teferi's Protection prints both sentences because they differ.
         if lost:
             fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
+    # Toxic N (702.164b, 120.3g): *combat* damage to a player from a creature
+    # with toxic also gives that player N poison counters -- "in addition to the
+    # damage's other results", so it sits after the branch above rather than in
+    # it, and an infect creature with toxic gives both. N is the total of every
+    # printed instance (702.164c), `CardDef.toxic`; the keyword is read on the
+    # **derived** characteristics, so a Mite that has lost all abilities gives
+    # none. After every prevention and on the dealt amount being positive: the
+    # poison is a result of damage dealt, and damage never dealt has no results.
+    if is_combat and source_oid is not None and _has(state, source_oid, Keyword.TOXIC):
+        toxic = state.card_of(state.objects[source_oid]).toxic
+        if toxic > 0:
+            add_poison(state, pid, toxic, source=source_oid)
     src = state.objects.get(source_oid) if source_oid is not None else None
     fire(
         state,
@@ -1018,6 +1031,10 @@ def add_poison(
         player_counter_replacements(state, pid, "poison", by=by), amount
     )
     state.players[pid].poison += amount
+    # A poison count is an input to the static condition language (corrupted's
+    # "as long as an opponent has three or more poison counters"), and `chars`
+    # caches per `char_version` -- `_move_life`'s reason, for the other total.
+    state.bump_chars()
     state.emit(
         EventType.POISON_ADDED,
         player=pid,
@@ -1106,6 +1123,11 @@ def add_counters(
         # that really arrived, and a Saga chapter comparison below has to see
         # the same total the board does. Only on the way up -- "would be put on"
         # is nothing to do with counters coming off.
+        if counters_prohibited(state, oid, kind):
+            # "Can't have -1/-1 counters put on them" (Darksteel Angel): the
+            # placement does not happen, so no replacement modifies it, no
+            # `counter_placed` fires and nothing is written.
+            return 0
         if by is None:
             by = _putter(state, source, obj.controller)
         amount = _replaced_counter_amount(
@@ -1298,6 +1320,7 @@ def create_token(
     attacking: int | None = None,
     overrides: dict[str, Any] | None = None,
     source: int | None = None,
+    enters_with: Mapping[str, int] | None = None,
 ) -> list[int]:
     """Put ``count`` copies of a token onto the battlefield under ``controller``.
 
@@ -1326,10 +1349,22 @@ def create_token(
     is recorded in its `created_tokens` -- "tokens created with this creature"
     (Faerie Artisans). A substituted token is recorded too: it is still the
     token that effect created.
+
+    ``enters_with`` is "create an Incubator token **with N +1/+1 counters on
+    it**" (incubate, 701.53a): counters each token is created with, handed to
+    `move_object` so they are one placement with any other "enters with"
+    (122.6) and every counter replacement that applies to the token as it
+    arrives sees them -- the token is never on the battlefield without them.
     """
     plan = _token_creation_plan(state, def_id, controller, count)
     if plan is None:
         plan = [(def_id, count, False)]
+    # "Whenever you create **one or more** creature tokens" (Staff of the
+    # Storyteller) fires once per creation, and every token this call makes --
+    # doubled or substituted -- is that one creation (603.2c). Read once,
+    # before any token moves, so nothing a token's arrival runs can split the
+    # group. See `triggers.BATCHED_EVENTS`.
+    batch = state.event_batch
     made: list[int] = []
     for token_id, token_count, substituted in plan:
         for _ in range(max(0, token_count)):
@@ -1352,7 +1387,14 @@ def create_token(
             # ETB triggers and enters-tapped replacements run through the normal
             # path.
             state.players[controller].exile.append(obj.oid)
-            move_object(state, obj.oid, Zone.BATTLEFIELD, tapped=tapped, cause="token")
+            move_object(
+                state,
+                obj.oid,
+                Zone.BATTLEFIELD,
+                tapped=tapped,
+                cause="token",
+                enters_with=enters_with,
+            )
             if attacking is not None and state.combat is not None:
                 state.combat.attackers[obj.oid] = attacking
             # `fire`, not `emit`: the event has always been recorded in the log
@@ -1365,6 +1407,7 @@ def create_token(
                 player=controller,
                 source=obj.oid,
                 card=token_id,
+                batch=batch,
             )
             made.append(obj.oid)
     return made
@@ -1411,12 +1454,14 @@ def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
     taking either could not tell them apart, and the failure would be an Aura
     silently enchanting an unrelated permanent.
 
-    The two restrictions `attach` enforces have no counterpart here, and both
-    absences are rules rather than omissions. 301.5c is about a permanent
-    attaching to *itself*, which a seat cannot be. And protection is a property
-    of objects and players alike, but the enchant restriction it blocks is
-    "can't be enchanted by" -- a player has no protection in any card the engine
-    can be handed, and inventing one here would be a rule nothing asked for.
+    Of the two restrictions `attach` enforces, one has no counterpart here:
+    301.5c is about a permanent attaching to *itself*, which a seat cannot be.
+    The other does. A player with protection can't be enchanted by an Aura with
+    that quality (702.16c) -- "you have protection from enchantments" on
+    Serra's Emissary -- so an Aura put onto a protected seat without being cast
+    is refused, exactly as `attach` refuses a protected permanent. A cast one
+    never gets this far: it targets the seat (303.4a) and the target check
+    stops it first.
 
     Liveness is checked, unlike `attach`'s battlefield test, and it is the same
     check: a player who has lost the game is no more a legal host than a
@@ -1429,6 +1474,8 @@ def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
     """
     aura = state.objects.get(aura_oid)
     if aura is None or not aura.on_battlefield or not state.is_alive(player):
+        return False
+    if player_protected_from(state, player, aura_oid):
         return False
     aura.attached_to_player = player
     aura.attached_to = None

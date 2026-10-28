@@ -120,6 +120,26 @@ exile is kept per owner, so "cards you own in exile" needs no filter. A card an
 opponent owns is never offered. The loader takes `hand`, `graveyard` and
 `exile`, each at most once. The library top is `look_at_top`'s `cast_free`.
 
+`objects` replaces the caster's zones with a named pool, and `per_owner` asks
+once per owner of a card in it. The Ur-Sphinx's "each player mills that many
+cards. For each player, you may cast a card that player milled this way without
+paying its mana cost":
+
+```jsonc
+{ "op": "mill", "player": "each_player",
+  "amount": { "count": { "binding": "attackers", "subtypes": ["Sphinx"] } },
+  "as": "milled" },
+{ "op": "cast_from_hand",
+  "objects": { "binding": "milled", "zone": "graveyard" },
+  "per_owner": true }
+```
+
+`zone: "graveyard"` is what makes it "milled this way": a milled card that has
+since left its owner's graveyard is not offered, and neither is one that was
+already there. The caster controls the spell; its owner keeps the card. Without
+`per_owner` the pool is one choice. The loader refuses `objects` beside `zones`,
+and `per_owner` without `objects`.
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
@@ -1045,6 +1065,22 @@ permanent on the board and with only a spell on the stack.
 so every ref this pool offers is one it will accept. The `selector` narrows both
 halves, since "nonland" and "an opponent controls" are meant to.
 
+When the printed word narrows only the permanent, `permanent_selector` gives
+that half its own selector and `selector` is left to the spell half:
+
+```jsonc
+{ "id": "t1", "kind": "spell_or_permanent", "count": 1,
+  "permanent_selector": { "types": ["Creature"] } }
+```
+
+"Return target spell or creature to its owner's hand" (Fatehold Charm): any
+spell, or a creature permanent. Writing `"selector": {"types": ["Creature"]}`
+instead is the near miss — it would narrow the spell half too, making the card
+"target creature spell or creature". `permanent_selector` is refused on every
+other kind, with a `zone` other than the battlefield, and with a clause naming a
+sibling target or `{X}`; `candidates` and `still_legal` both read it through
+`TargetSpec.permanent_half`.
+
 `return_spell_to_hand` reads both `target_sids` and `target_oids` for the same
 reason: a union target that landed on a permanent would otherwise return nothing
 and leave it on the battlefield with the card looking like it worked — the silent
@@ -1266,6 +1302,7 @@ Anywhere a number is expected -- the leaf list is
 { "min_count_of": { "player": "each_opponent",  // "…EACH opponent controls more"
                     "objects": { "types": ["Creature"] } } }
 { "cards_in_hand": "each_opponent" }
+{ "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
@@ -1302,6 +1339,13 @@ Anywhere a number is expected -- the leaf list is
 { "sum": [a, b] } { "minus": [a, b] } { "times": [a, b] } { "max": [...] } { "min": [...] }
 { "half": { "of": a, "round": "up" } }          // "round up"; "down" is the other
 ```
+
+`player_count` counts the seats a player spec names, never anything about
+them: "where X is the number of opponents you have" (Dack Fayden, Helping Hand)
+is `{"player_count": "each_opponent"}`. Only players still in the game are
+counted, because a player who has left is nobody's opponent (800.4a). It is
+effect-side only; no static prints a headcount. The near miss is
+`{"count": …}`, which counts objects and cannot reach a player.
 
 `half` is the one division in the language, and it takes its rounding direction
 as a **required** key: 107.1a makes the card say which way a fraction goes, and
@@ -2699,7 +2743,7 @@ answers it with the card in hand, on every cast path; on an opponent's turn a
 card with flash can still be cast. `GameState.turn` is the near miss: it counts
 the table's turns, and in a pod the game's third turn is somebody's first.
 
-### Choosing a permanent type, and reading it back
+### Choosing a permanent or card type, and reading it back
 
 ```jsonc
 // Creeping Renaissance
@@ -2716,13 +2760,13 @@ creature types its options come from `CardRegistry.creature_types()` and its
 answer lands in `GameObject.chosen_type`, whose one reader substitutes into a
 filter's `subtypes`.
 
-`of` is the axis — `creature_type` (the default) or `permanent_type` — and it is
-a parameter rather than a second op because the decision, the prompt, the storage
-and the read-back have the same shape on both. A near-miss word is a load error,
+`of` is the axis — `creature_type` (the default), `permanent_type` or
+`card_type` — and it is a parameter rather than a second op because the decision,
+the prompt, the storage and the read-back have the same shape on all three. A near-miss word is a load error,
 since it would fall through to the creature branch and offer Vampire on a card
 that prints "choose a permanent type".
 
-It writes a **separate slot**, `chosen_card_type`, read back by
+`permanent_type` and `card_type` write a **separate slot**, `chosen_card_type`, read back by
 `{"chosen_card_type_of": "self"}` in a selector's `types`. One field for both
 axes would make "of the chosen type" ambiguous at every reader, and the reader
 that guessed wrong would match nothing — silently. The leaf is refused outside
@@ -2736,6 +2780,14 @@ from the same index. Battle and Planeswalker are offered although neither is
 modelled: they are legal answers at a real table, and a list that quietly held
 four would make a card that offers the wrong choices rather than one that
 refuses.
+
+`card_type` offers the nine types of rule 205.2a in the same order
+(`CARD_TYPE_CHOICES`): the six permanent types plus Instant, Kindred and
+Sorcery — "as this enters, choose a card type" (Serra's Emissary), where an
+instant is a legal and common answer. A permanent type is a card type, so both
+axes share the slot and every reader of it reads either answer. Kindred is
+offered although no card in the engine carries it; naming it matches nothing,
+which is what it would match here.
 
 A source that has chosen nothing yet matches **nothing** — "all cards of the
 chosen type" before a type is chosen returns nothing, not the whole graveyard.
@@ -4063,7 +4115,7 @@ played:
 
 | leaf | what it gives |
 |---|---|
-| `mana_value_of` | the **printed** cost — unmoved by reductions, alternative costs, free casts |
+| `mana_value_of` | the **printed** cost — unmoved by reductions, alternative costs, free casts; a spell on the stack adds the X it was cast with (202.3e) |
 | `additional_paid` | only the overpayment *above* the mana cost — 0 for a plainly qualifying {3}{R} |
 | `colors_of_mana_spent`, `mana_symbols` | colour and printed symbols, not an amount |
 
@@ -4742,6 +4794,8 @@ smaller than the effect-side `value_keys`:
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
+| `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
+| `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -4901,14 +4955,25 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
 | `{"is_attached": true}` | whether the source is attached to something — reconfigure |
+| `{"has_flag": "mardu"}` | whether `set_flag` wrote that word on the source — a Siege's chosen mode |
 | `{"top_of_library": filter}` | matches the **one** card on top of a library, on its printed face |
 | `{"is_monarch": player}` | whether that player is the monarch — `you`, `opponent`, `each_player`, or `affected_controller` (below) |
 | `{"exists_derived": filter}` | does a permanent match on its **current** characteristics — `cant_attack` and `cant_block` only (below) |
+
+`has_flag` is how "As this enchantment enters, choose Mardu or Jeskai" switches
+a **static** mode on. The choice is a `self_enters` trigger whose `choose_mode`
+runs `set_flag` on `self_only`, exactly as for a triggered mode (Outpost Siege);
+the static mode then carries `{"has_flag": "mardu"}`. Windcrag Siege's Mardu
+mode is a `double_triggers` with `cause_events: ["attacks"]` under it. The flag
+is object state that only `set_flag` writes and only a zone change clears, so it
+is a pipeline input like a counter. It is not a copiable value (707.2), so a
+copy of the Siege has chosen nothing. A counter is the near miss, and a wrong one:
+proliferate and counter removal would see it.
 
 A condition works on a [player-wide static](card-dsl-cookbook.md#player-wide-statics) too — the
 `affects_player` effects go through the same `_static_active`, from
@@ -5046,6 +5111,52 @@ that reading is correct.
 Both work in the `if`-effect language and in a static's `condition`; the two are
 validated separately, so a leaf added to one and not the other would load in a
 card that then quietly read 0.
+
+#### Corrupted — "an opponent has three or more poison counters"
+
+`{"max_poison_of": spec}` is the most poison counters (`PlayerState.poison`) on
+any **one** of the spec's players — the existential, for `min_life_of`'s reason:
+a sum would open "an opponent has three or more" at a pod on two opponents with
+two counters each.
+
+```jsonc
+// Skrelv's Hive -- "Corrupted — As long as an opponent has three or more poison
+// counters, creatures you control with toxic have lifelink."
+{ "kind": "static", "effect": "grant_keyword", "keyword": "lifelink",
+  "affects": { "types": ["Creature"], "controller": "you", "keywords": ["toxic"] },
+  "condition": { "cmp": ">=", "left": { "max_poison_of": "each_opponent" },
+                 "right": { "const": 3 } } }
+```
+
+Over nobody it is 0, so the condition is off once no opponent is left. A
+poison count is a pipeline input like a life total — only `primitives.add_poison`
+writes one, and it bumps `char_version`, so a static re-reads the condition the
+moment a counter lands. `counters_on` is the near miss and cannot reach it: it
+counts counters on objects, and a player is not one. The leaf works in both
+languages; in a static it takes the life leaves' player specs.
+
+#### "For each unspent mana you have"
+
+`{"unspent_mana_count": spec}` is the total mana in the spec's players' pools,
+summed, every type and every pip — a pip carrying a "spend this mana only to…"
+restriction is still unspent mana, so it counts.
+
+```jsonc
+// Omnath, Locus of the Void -- "Omnath gets +1/+1 for each unspent mana you have."
+{ "kind": "static", "effect": "buff", "affects": { "self_only": true },
+  "power": { "unspent_mana_count": "you" },
+  "toughness": { "unspent_mana_count": "you" } }
+```
+
+The pool is player state, a pipeline input on a poison count's terms: only
+adding, spending and emptying mana write it, never a layer, so the anthem cannot
+come to depend on another static's output (ADR 0001). Each of those funnels —
+`costs.activate_mana_ability`, `costs.pay_mana`, the `add_mana` ops,
+`GameState.empty_all_mana_pools` and a player leaving — bumps `char_version`, so
+the size moves the moment the pool does. A test or a new funnel that writes
+`ManaPool` directly must bump too. The leaf works in both languages; in a static
+it takes the life leaves' player specs. `mana_spent_of` is the near miss and
+reads the other thing: mana already spent on a spell, not mana still floating.
 
 #### "At least 7 life more than your starting life total"
 
@@ -5279,6 +5390,7 @@ The cookbook's subsystem chapters, one line each:
 - [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card)
 - [Mutate — two cards, one permanent, and one synthesised `CardDef`](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef)
 - [Bestow — the alternative cost that changes what the spell points at](card-dsl-cookbook.md#bestow--the-alternative-cost-that-changes-what-the-spell-points-at)
+- [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down)
 - [Fuse — the case where the answer is *both* faces](card-dsl-cookbook.md#fuse--the-case-where-the-answer-is-both-faces)
 - [A second castable face — adventure, aftermath and split cards](card-dsl-cookbook.md#a-second-castable-face--adventure-aftermath-and-split-cards)
 - [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest)
