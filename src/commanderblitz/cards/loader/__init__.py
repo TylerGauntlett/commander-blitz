@@ -2381,15 +2381,15 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                 f"{' or '.join(repr(e) for e in sorted(DEFENDING_TRIGGERS))}, "
                 f"not on {model.trigger.event!r}"
             )
-        if model.trigger.defending == "most_life" and model.trigger.event != "attacks":
-            # Dethrone's "attacks the player with the most life". Only the
-            # per-creature `attacks` event says whether the attack was at a
-            # player or at a planeswalker or battle that player controls;
-            # `creatures_attack_player` folds the two together on purpose, and
-            # a damage event is not an attack.
+        if model.trigger.defending in ("most_life", "monarch") and model.trigger.event != "attacks":
+            # Dethrone's "attacks the player with the most life" and "attacks
+            # the monarch". Only the per-creature `attacks` event says whether
+            # the attack was at a player or at a planeswalker or battle that
+            # player controls; `creatures_attack_player` folds the two together
+            # on purpose, and a damage event is not an attack.
             raise DslError(
-                f"{where}: defending 'most_life' is dethrone's 'attacks the player "
-                f"with the most life' and only means anything on 'attacks', "
+                f"{where}: defending {model.trigger.defending!r} names a player "
+                f"attacked as a player and only means anything on 'attacks', "
                 f"not on {model.trigger.event!r}"
             )
         if model.trigger.cause_controller is not None:

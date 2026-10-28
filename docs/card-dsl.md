@@ -3887,6 +3887,17 @@ controller, so it fires on an attack at the walker. Printed dethrone is the
 for the cards that print the sentence with another effect (Preacher of the
 Schism, Undercover Butler).
 
+`defending: "monarch"` is "whenever equipped creature attacks **the monarch**"
+(The Spear of Bashenga), also legal on `attacks` only. It asks the same two
+questions with the crown in place of the life totals: the creature attacked a
+player and not a planeswalker or battle (506.2), and that player is
+`GameState.monarch` as the creature attacks. Part of the event, so the crown
+moving before resolution does not undo the trigger. "That player" is the
+event's defender, so a target restricted to them is `"controller": {"binding":
+"defender"}` in its selector. The near miss is `condition: {"is_monarch":
+{"binding": "defender"}}` with `recheck: false`, which fires on an attack at the
+monarch's planeswalker because `defender` names the walker's controller.
+
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"

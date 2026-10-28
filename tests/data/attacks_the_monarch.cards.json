@@ -1,0 +1,41 @@
+{
+  "_comment": "Cards for tests/unit/triggers/test_attacks_the_monarch.py. `t_spear` is The Spear of Bashenga's third line alone on an Equipment; the tests attach it directly rather than paying an equip cost.",
+  "cards": [
+    {
+      "id": "t_spear",
+      "name": "Test Monarch Spear",
+      "oracle_text": "Whenever equipped creature attacks the monarch, destroy target tapped nonland permanent that player controls.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "subtypes": ["Equipment"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks the monarch, destroy target tapped nonland permanent that player controls.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "any",
+            "filter": {"attached": true},
+            "defending": "monarch"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": {"binding": "defender"},
+                "tapped": true,
+                "not_types": ["Land"]
+              }
+            }
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

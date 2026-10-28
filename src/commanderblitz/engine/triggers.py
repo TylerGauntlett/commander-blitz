@@ -1564,13 +1564,21 @@ def _defender_matches(
     names its controller as ``defender`` but carries ``attacked_permanent``,
     and attacked the permanent (506.2) -- and that player's life is at least
     every other living player's (`GameState.has_most_life`).
+
+    ``monarch`` is "attacks **the monarch**" (The Spear of Bashenga): the same
+    player-not-permanent test, then that player holds the crown
+    (`GameState.monarch`, 721) as the creature attacks. Part of the event for
+    the reason ``most_life`` is -- the sentence has no "if" -- so the crown
+    changing hands before the ability resolves does not undo the trigger.
     """
     defender = event.data.get("defender")
     if defender is None:
         return False
-    if clause == "most_life":
+    if clause in ("most_life", "monarch"):
         if event.data.get("attacked_permanent") is not None:
             return False
+        if clause == "monarch":
+            return state.monarch is not None and state.monarch == int(defender)
         return state.has_most_life(int(defender))
     if clause == "you":
         return int(defender) == obj.controller
