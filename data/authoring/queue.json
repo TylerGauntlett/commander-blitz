@@ -131102,12 +131102,12 @@
     },
     "Hulkbuster Armor": {
       "edhrec_rank": 11864,
-      "gate": "template",
+      "gate": null,
       "name": "Hulkbuster Armor",
-      "reason": "no template for: Equipped creature has base power and toughness 9/9 and has flying",
+      "reason": "",
       "scryfall_id": "0cd857a3-ad93-4d74-80e0-c99d0a04a60a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hulking Bugbear": {
@@ -139902,12 +139902,12 @@
     },
     "Iron Man, Armored Avenger": {
       "edhrec_rank": 9577,
-      "gate": "template",
+      "gate": "schema",
       "name": "Iron Man, Armored Avenger",
-      "reason": "no template for: Whenever you draw a card, put a +1/+1 counter on target creature",
+      "reason": "1 validation error for CardModel",
       "scryfall_id": "94af0633-59c6-4893-ab44-232d37573dde",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Iron Man, Bleeding Edge": {
@@ -142112,12 +142112,12 @@
     },
     "Jarvis, Earth's Mightiest Butler": {
       "edhrec_rank": 14853,
-      "gate": "template",
+      "gate": null,
       "name": "Jarvis, Earth's Mightiest Butler",
-      "reason": "no template for: Whenever you cast a Hero spell, draw a card",
+      "reason": "",
       "scryfall_id": "62c31cd8-0c30-4cfb-89d6-2e4dac19f6ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jasmine Boreal": {
@@ -143382,12 +143382,12 @@
     },
     "Jocasta, Automaton Avenger": {
       "edhrec_rank": 15520,
-      "gate": "template",
+      "gate": null,
       "name": "Jocasta, Automaton Avenger",
-      "reason": "no template for: Whenever your commander deals combat damage to a player, put a +1/+1 counter on Jocasta",
+      "reason": "",
       "scryfall_id": "808c7052-1a10-4825-a0aa-1b8252e7587f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jodah's Avenger": {
@@ -149062,12 +149062,12 @@
     },
     "Kindred Discovery": {
       "edhrec_rank": 343,
-      "gate": "template",
+      "gate": null,
       "name": "Kindred Discovery",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "19bdedb2-768b-4adf-8193-917a10c8f729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kindred Dominance": {

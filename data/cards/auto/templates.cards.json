@@ -66861,6 +66861,114 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 9
+          },
+          "text": "Equipped creature has base power and toughness 9/9 and has flying",
+          "toughness": {
+            "const": 9
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has base power and toughness 9/9 and has flying"
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Hero"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip Hero {3}"
+        },
+        {
+          "cost": {
+            "mana": "{6}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {6}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hulkbuster_armor",
+      "mana_cost": "{4}",
+      "name": "Hulkbuster Armor",
+      "oracle_text": "Equipped creature has base power and toughness 9/9 and has flying.\nEquip Hero {3}\nEquip {6}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -71640,6 +71748,55 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a Hero spell, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Hero"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "jarvis_earth_s_mightiest_butler",
+      "mana_cost": "{2}{U}",
+      "name": "Jarvis, Earth's Mightiest Butler",
+      "oracle_text": "Whenever you cast a Hero spell, draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "W"
@@ -72443,6 +72600,102 @@
       ],
       "toughness": 5,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever your commander deals combat damage to a player, put a +1/+1 counter on Jocasta.",
+          "trigger": {
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "is_commander": true,
+              "owner": "you"
+            }
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "jocasta_defender",
+                  "op": "choose_player",
+                  "players": "each_opponent",
+                  "prompt": "Choose the player Jocasta attacks"
+                },
+                {
+                  "attacking": {
+                    "binding": "jocasta_defender"
+                  },
+                  "controller": "you",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield",
+                  "or_planeswalker": true,
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Return Jocasta to the battlefield tapped and attacking?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with your commander, if this card is in your graveyard, you may return it to the battlefield tapped and attacking.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "is_commander": true,
+                "owner": "you"
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "jocasta_automaton_avenger",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}",
+      "name": "Jocasta, Automaton Avenger",
+      "oracle_text": "Flying\nWhenever your commander deals combat damage to a player, put a +1/+1 counter on Jocasta.\nWhenever you attack with your commander, if this card is in your graveyard, you may return it to the battlefield tapped and attacking.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Robot",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -75544,6 +75797,92 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_type",
+              "prompt": "Choose a creature type"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this enchantment enters, choose a creature type.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control of the chosen type enters or attacks, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "subtypes": [
+                {
+                  "chosen_type_of": "self"
+                }
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control of the chosen type enters or attacks, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "filter": {
+              "subtypes": [
+                {
+                  "chosen_type_of": "self"
+                }
+              ],
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "kindred_discovery",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Kindred Discovery",
+      "oracle_text": "As this enchantment enters, choose a creature type.\nWhenever a creature you control of the chosen type enters or attacks, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

@@ -6004,6 +6004,10 @@
   "hulk_bruce_banner": {
     "zone": "battlefield"
   },
+  "hulkbuster_armor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hulking_bugbear": {
     "zone": "battlefield"
   },
@@ -6390,6 +6394,10 @@
   "jagwasp_swarm": {
     "zone": "battlefield"
   },
+  "jarvis_earth_s_mightiest_butler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jasmine_boreal": {
     "zone": "battlefield"
   },
@@ -6464,6 +6472,10 @@
     "zone": "battlefield"
   },
   "jin_gitaxias_progress_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "jocasta_automaton_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -6694,6 +6706,16 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "kindred_discovery": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "kindred_judgment": {
     "battlefield_count": 30,
