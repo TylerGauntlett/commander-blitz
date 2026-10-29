@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**93 cards** blocked by **76** capabilities.
+**92 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -34,7 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
-| [copy-placed-counters](#copy-placed-counters) | 1 | 15263 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [damage-redirection](#damage-redirection) | 1 | 15560 | replacement |
@@ -526,20 +525,6 @@ Blocks **1** card.
 
 - **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
   - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
-
-</details>
-
-## copy-placed-counters
-
-Blocks **1** card.
-
-- **(value)** a counter_placed trigger that exposes the triggering placement's counter kind and amount to its effects, so an add_counters on the source can put 'the same number and kind of counters' (any kind, not one fixed kind) that were just put on the other creature
-  <br>Why the existing vocabulary won't do: counter_placed with put_by: you and a filter (types Creature, exclude_self, not_subtypes Kree) can detect the event, but its `counter` trigger key fixes ONE kind, and op_add_counters reads `counter` as a fixed string; no value_key reads the event's placed amount or kind, so the trigger cannot mirror an arbitrary kind and number
-
-<details><summary>Cards waiting on this</summary>
-
-- **Captain Marvel, Apex Avenger** (rank 15263) — `captain_marvel_apex_avenger`
-  - Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on Captain Marvel.
 
 </details>
 

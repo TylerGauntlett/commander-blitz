@@ -76,7 +76,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `shuffle` | Cards |  | Shuffle a library. | [Effect ops](card-dsl.md#effect-ops) |
 | `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them. | [Effect ops](card-dsl.md#effect-ops) |
 | `two_piles` | Cards |  | Separate cards into two piles; an opponent chooses one. | [Two piles](card-dsl-cookbook.md#two-piles) |
-| `add_counters` | Board |  | Put N counters of a kind on permanents or players. | [Effect ops](card-dsl.md#effect-ops) |
+| `add_counters` | Board |  | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [Effect ops](card-dsl.md#effect-ops) |
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |
 | `amass` | Board | yes | Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too. | [amass — "Amass Zombies N"](card-dsl-cookbook.md#amass--amass-zombies-n) |
 | `attach` | Board |  | Attach an Aura, Equipment or Fortification to a permanent or player. | [Auras and Equipment](card-dsl-cookbook.md#auras-and-equipment) |
@@ -968,7 +968,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 
 | Name | Description | Defined in |
 |---|---|---|
-| `add_counters` | Put N counters of a kind on permanents or players. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
+| `add_counters` | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `add_poison` | A player gets N poison counters. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `gain_life` | A player gains N life. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |

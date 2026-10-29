@@ -1506,6 +1506,14 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
 )
 
 
+#: The one non-string ``counter`` an ``add_counters`` may name: "the same
+#: **kind** of counters" (Captain Marvel, Apex Avenger), the kind the
+#: triggering placement put. Only `counter_placed` binds a ``counter``, so the
+#: loader allows it on that trigger's effects and nowhere else; anywhere else
+#: the binding is absent and the op would put nothing, silently.
+PLACED_COUNTER_KIND = {"binding": "counter"}
+
+
 #: Target kinds whose chosen ref can be a **player**, so ``{"target": "t1"}``
 #: means something as a player spec. ``"any"`` is here because "any target" is
 #: creatures, planeswalkers *and* players (115.4) -- a damage op reads the ref

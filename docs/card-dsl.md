@@ -2633,6 +2633,39 @@ it puts (2 become 6) and "whenever a counter is put on" triggers. Not
 `proliferate` (one of each kind) and not `move_counters` (from somewhere else).
 `objects` is required.
 
+### The same number and kind of counters
+
+```jsonc
+// Captain Marvel, Apex Avenger
+{ "kind": "triggered",
+  "text": "Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on Captain Marvel.",
+  "trigger": { "event": "counter_placed", "controller": "any", "put_by": "you",
+               "filter": { "types": ["Creature"], "exclude_self": true },
+               "condition": { "exists": { "binding": "subject", "types": ["Creature"],
+                                          "not_subtypes": ["Kree"] } } },
+  "effects": [ { "op": "may", "prompt": "Put the same counters on Captain Marvel?",
+                 "effects": [ { "op": "add_counters",
+                                "counter": { "binding": "counter" },
+                                "amount": { "binding": "amount" },
+                                "objects": { "self_only": true } } ] } ] }
+```
+
+`counter: {"binding": "counter"}` on `add_counters` is the kind the triggering
+placement put, and `amount: {"binding": "amount"}` the number that arrived,
+after the recipient's counter replacements (122.6). Both are copied into the
+bindings by every `counter_placed` trigger. The copy is a placement of its own,
+so a replacement on the recipient applies to it again: under Hardened Scales two
+counters on the other creature become three, and the copy becomes four.
+
+`counter_placed` fires once per kind per permanent, so a placement of two kinds
+at once (proliferate, or an arrival with a +1/+1 and a flying counter) is two
+triggers, each copying its own kind, and "you may" is answered for each.
+
+The loader accepts the mapping only in that one shape, only on `add_counters`
+and only inside a `counter_placed` trigger's effects, the only place the binding
+exists; on a spell, another trigger or another op it is refused. The near miss
+is a fixed `counter: "+1/+1"`, which copies one kind and is a weaker card.
+
 ### Counters replaced on the way in
 
 ```jsonc

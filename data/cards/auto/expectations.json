@@ -1912,6 +1912,17 @@
     },
     "zone": "battlefield"
   },
+  "captain_marvel_apex_avenger": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "double_strike",
+        "indestructible"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "captain_of_the_watch": {
     "battlefield_count": 36,
     "tokens": {

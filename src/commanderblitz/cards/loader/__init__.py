@@ -174,6 +174,7 @@ from .walk import (
     _mentions_pair,
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
+    reads_placed_kind,
 )
 
 
@@ -872,6 +873,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
+    if reads_placed_kind(model.spell_effects):
+        raise DslError(
+            f"{where}.spell_effects: {{'binding': 'counter'}} is the kind a "
+            f"counter_placed trigger's placement put, and a spell has no trigger "
+            f"to read it from -- name the counter"
+        )
     _check_distribution_homes(model, where)
     _check_division_homes(model, where)
 
@@ -2299,6 +2306,20 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.effects):
         _validate_effect(effect, f"{where}.effects[{i}]", target_kinds)
+    if reads_placed_kind(model.effects) and not (
+        kind is AbilityKind.TRIGGERED
+        and model.trigger is not None
+        and model.trigger.event == "counter_placed"
+    ):
+        # "The same kind of counters" names the kind the triggering placement
+        # put, and only COUNTER_PLACED carries one into the bindings. On any
+        # other ability the binding is absent and the op puts nothing -- a card
+        # that loads, reads as printed and silently does half of it.
+        raise DslError(
+            f"{where}: {{'binding': 'counter'}} is the kind a counter_placed "
+            f"trigger's placement put, so it only means anything on a "
+            f"counter_placed trigger"
+        )
 
     cost = (
         _compile_cost(model.cost, where, defines_x=kind is AbilityKind.ACTIVATED)

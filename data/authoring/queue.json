@@ -39472,12 +39472,12 @@
     },
     "Captain Marvel, Apex Avenger": {
       "edhrec_rank": 15263,
-      "gate": "template",
+      "gate": null,
       "name": "Captain Marvel, Apex Avenger",
-      "reason": "no template for: Whenever you put one or more counters on another creature, if it's not a Kree, you may put",
+      "reason": "",
       "scryfall_id": "516e14ce-9cc8-4be3-aacb-ba801f26a6bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain Marvel, Earth's Protector": {

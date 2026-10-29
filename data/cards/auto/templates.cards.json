@@ -20807,6 +20807,87 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "counter": {
+                    "binding": "counter"
+                  },
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put the same number and kind of counters on Captain Marvel?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on Captain Marvel.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "subject",
+                "not_subtypes": [
+                  "Kree"
+                ],
+                "types": [
+                  "Creature"
+                ]
+              }
+            },
+            "controller": "any",
+            "event": "counter_placed",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "put_by": "you"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "captain_marvel_apex_avenger",
+      "keywords": [
+        "flying",
+        "double_strike",
+        "indestructible"
+      ],
+      "mana_cost": "{5}{R}{W}",
+      "name": "Captain Marvel, Apex Avenger",
+      "oracle_text": "Flying, double strike, indestructible\nWhenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on Captain Marvel.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Kree",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "exclude_self": true,
