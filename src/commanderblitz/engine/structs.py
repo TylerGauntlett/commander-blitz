@@ -58,7 +58,9 @@ class TempEffect:
     another permanent), ``"animate"`` ("becomes a 4/4 creature until end of
     turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
     addition to its other types": ``subtypes`` added, base P/T untouched), or
-    ``"control"`` ("gain control of target permanent until end of turn").  The lock is not a keyword because it is not a characteristic: it is
+    ``"control"`` ("gain control of target permanent until end of turn"), or
+    ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
+    read by `temp_effects.sacrifice_forbidden`).  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 
@@ -133,6 +135,19 @@ class TempEffect:
     #: that player's untap step, beside every other ``until_your_next_turn``
     #: table, and keyed by the player for the same reason those are.
     until_player: int | None = None
+    #: "…**until the end of your next turn**" (611.2b), the third clock and
+    #: neither of the other two: the seat whose next turn's cleanup step ends
+    #: the entry, and ``None`` on every other clock. Stilt-Man, Towering
+    #: Terror's steal and the "can't be sacrificed" it grants. Read with
+    #: :attr:`since_turn` by `primitives.clear_until_eot`, which ends the entry
+    #: in the cleanup of the first of that seat's turns to *begin* after the
+    #: grant: made during your own turn, "your next turn" is a later one.
+    until_end_of_turn_of: int | None = None
+    #: The turn an :attr:`until_end_of_turn_of` entry was made in. Compared only
+    #: with the turn now ending and never projected forward to a future turn
+    #: number, so an elimination or an extra turn that moves the seat's next
+    #: turn moves the end with it -- detain's reason for keying on the seat.
+    since_turn: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -148,6 +163,8 @@ class TempEffect:
             "new_controller": self.new_controller,
             "exact": self.exact,
             "until_player": self.until_player,
+            "until_end_of_turn_of": self.until_end_of_turn_of,
+            "since_turn": self.since_turn,
         }
 
 
@@ -156,13 +173,16 @@ class TempEffect:
 #: every other duration in the DSL is a bare string a card file writes.
 ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat")
 
-#: The two durations a control change can carry -- Captivating Vampire's steal
-#: and Act of Treason's.  Spelled the way ``grant_keyword``'s pair is, because
-#: it is the same distinction on a different field, and enumerated rather than
-#: defaulted for a harsher reason than most: a misread ``"until_end_of_turn"``
-#: is a *permanent* steal, which is the strictly better card the loader has
-#: always refused to let anybody write by accident.
-CONTROL_DURATIONS = ("permanent", "until_end_of_turn")
+#: The durations a control change can carry -- Captivating Vampire's steal, Act
+#: of Treason's, and Stilt-Man, Towering Terror's "…until the end of your next
+#: turn" (`TempEffect.until_end_of_turn_of`).  The first pair is spelled the way
+#: ``grant_keyword``'s is, because it is the same distinction on a different
+#: field; the third the way `grant_playable`'s Light Up the Stage permission
+#: is, because it is the same clock.  Enumerated rather than defaulted for a
+#: harsher reason than most: a misread ``"until_end_of_turn"`` is a *permanent*
+#: steal, which is the strictly better card the loader has always refused to
+#: let anybody write by accident.
+CONTROL_DURATIONS = ("permanent", "until_end_of_turn", "end_of_your_next_turn")
 
 
 @dataclass(frozen=True)
@@ -954,6 +974,15 @@ class CastLock:
 #: clock nothing ever winds would be a permanent prohibition wearing a
 #: temporary one's clothes.
 SACRIFICE_RESTRICTION_DURATIONS = ("this_turn",)
+
+#: The durations the `cant_sacrifice` op takes: the table's, plus "It gains
+#: \"This permanent can't be sacrificed\" **until the end of your next turn**"
+#: (Stilt-Man, Towering Terror).  That one is not a row in the table but a
+#: `TempEffect(kind="cant_sacrifice")` on the permanent itself, because it is a
+#: granted ability and has to end with the object (400.7): an oid survives a
+#: zone change, and across a turn boundary a flickered permanent coming back
+#: still protected is a reachable line rather than a curiosity.
+CANT_SACRIFICE_DURATIONS = (*SACRIFICE_RESTRICTION_DURATIONS, "end_of_your_next_turn")
 
 
 @dataclass(frozen=True)

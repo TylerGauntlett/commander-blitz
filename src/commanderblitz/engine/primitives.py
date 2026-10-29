@@ -1680,8 +1680,14 @@ def change_control(
     pid: int,
     source: int | None = None,
     duration: str = "permanent",
+    clock: int | None = None,
 ) -> bool:
     """ "Gain control of target creature." Rule 800.4a.
+
+    ``clock`` is the seat whose turn ``"end_of_your_next_turn"`` counts --
+    "until the end of **your** next turn", where "your" is the effect's
+    controller -- and defaults to ``pid``, the player gaining control, which is
+    the same seat on every printed card.  Ignored for the other durations.
 
     The object does not move: ``GameObject.controller`` is a field and
     ``state.battlefield`` is one shared list, so the whole change is that field
@@ -1739,13 +1745,16 @@ def change_control(
     obj.entered_turn = state.turn
     if state.combat is not None:
         state.combat.remove(oid)
-    if duration == "until_end_of_turn":
+    if duration in ("until_end_of_turn", "end_of_your_next_turn"):
+        next_turn = duration == "end_of_your_next_turn"
         obj.until_eot.append(
             TempEffect(
                 kind="control",
                 source=source,
                 previous_controller=previous,
                 new_controller=pid,
+                until_end_of_turn_of=(pid if clock is None else clock) if next_turn else None,
+                since_turn=state.turn,
             )
         )
     state.bump_chars()
@@ -2125,12 +2134,77 @@ def clear_until_eot(state: GameState) -> None:
         handbacks.extend(
             (oid, temp)
             for temp in obj.until_eot
-            if temp.kind == "control" and temp.until_player is None
+            if temp.kind == "control" and _ends_this_cleanup(state, temp)
         )
         # "…until **your next turn**" rides the same list and outlives this
         # cleanup: it is `clear_until_next_turn`'s, in its player's untap step.
-        obj.until_eot = [temp for temp in obj.until_eot if temp.until_player is not None]
+        # "…until the **end of your next turn**" outlives every cleanup but
+        # one; see `_ends_this_cleanup`.
+        obj.until_eot = [temp for temp in obj.until_eot if not _ends_this_cleanup(state, temp)]
     state.bump_chars()
+    _hand_back_control(state, handbacks)
+
+
+def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
+    """Whether the cleanup step now running is the end of ``temp``'s duration.
+
+    "Until end of turn" ends in every cleanup.  "Until your next turn" ends in
+    none of them -- in its player's untap step instead.  "Until the end of your
+    next turn" ends in the cleanup of the first of its seat's turns to *begin*
+    after it was made, so the turn check is strict: made during that seat's own
+    turn, this cleanup ends the turn it was made in, which is not "your next
+    turn" -- the Light Up the Stage reading `turn._expire_permissions` makes for
+    the same words.  Reading the active player rather than a stored turn number
+    is what lets an extra turn, or a seat leaving, move the end with it.
+    """
+    if temp.until_player is not None:
+        return False
+    if temp.until_end_of_turn_of is None:
+        return True
+    return temp.until_end_of_turn_of == state.active_player and temp.since_turn < state.turn
+
+
+def end_effects_of_leaving_player(state: GameState, pid: int) -> None:
+    """800.4a: "any effects which give that player control of any objects ...
+    end" -- and the "until the end of your next turn" effects keyed to them.
+
+    Called by `sba._eliminate` **before** it exiles what the leaving player
+    still controls, because 800.4a orders it that way: the control effects end
+    first, and only what is *still* theirs afterwards is exiled.  A permanent
+    stolen until end of turn, or until the end of the thief's next turn, goes
+    back to the seat it was taken from rather than out of the game with the
+    thief -- it is not theirs to take with them.
+
+    Two kinds of entry end here.  Every timed control entry that handed the
+    permanent to ``pid`` is handed back now, through `_hand_back_control` and so
+    with its newest-first order and its still-the-reason check.  And every entry
+    on ``pid``'s "end of your next turn" clock is dropped -- the clock's seat
+    never takes that turn, so the effect would otherwise stand for the rest of
+    the game (800.4a's "until that turn would have begun", read the way
+    `clear_until_next_turn` reads it); a control entry among them is handed back
+    as well, because ending a control effect *is* the handback.
+
+    A permanent taken *permanently* carries no entry and is not returned: there
+    is no record of whom it came from.
+    """
+    handbacks: list[tuple[int, TempEffect]] = []
+    changed = False
+    for oid, obj in state.objects.items():
+        if not obj.until_eot:
+            continue
+        kept = []
+        for temp in obj.until_eot:
+            if temp.kind == "control" and (
+                temp.new_controller == pid or temp.until_end_of_turn_of == pid
+            ):
+                handbacks.append((oid, temp))
+            elif temp.until_end_of_turn_of != pid:
+                kept.append(temp)
+        if len(kept) != len(obj.until_eot):
+            obj.until_eot = kept
+            changed = True
+    if changed:
+        state.bump_chars()
     _hand_back_control(state, handbacks)
 
 

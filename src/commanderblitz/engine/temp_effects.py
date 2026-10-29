@@ -33,6 +33,7 @@ from .structs import (
     PermanentShield,
     PlayerProtection,
     SacrificeRestriction,
+    TempEffect,
     Unblockable,
 )
 
@@ -626,6 +627,46 @@ def forbid_sacrifice(
     return True
 
 
+def grant_cant_be_sacrificed(
+    state: GameState,
+    objects: Iterable[int],
+    player: int,
+    source: int | None = None,
+) -> list[int]:
+    """ "It gains \"This permanent can't be sacrificed\" until the end of your
+    next turn." (Stilt-Man, Towering Terror.)
+
+    The same prohibition as :func:`forbid_sacrifice` on a longer clock, and
+    deliberately not a row in the same table.  The printed sentence grants the
+    permanent an *ability*, and a granted ability ends with the object (400.7);
+    the table is keyed on oids, which survive a zone change.  Over a single turn
+    that difference is the one `forbid_sacrifice` argues away -- across a turn
+    boundary a flickered permanent coming back still protected is a reachable
+    line.  So the grant is a `TempEffect(kind="cant_sacrifice")` on the
+    permanent itself: `reset_permanent_state` empties it when the permanent
+    leaves, and `primitives.clear_until_eot` ends it in the cleanup of
+    ``player``'s next turn (`TempEffect.until_end_of_turn_of`).
+
+    Only permanents on the battlefield get it -- one gone in response is not
+    there to gain anything.  Returns the oids that did.
+    """
+    granted = []
+    for oid in dict.fromkeys(objects):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.until_eot.append(
+            TempEffect(
+                kind="cant_sacrifice",
+                source=source,
+                until_end_of_turn_of=player,
+                since_turn=state.turn,
+            )
+        )
+        granted.append(oid)
+    return granted
+
+
 def sacrifice_forbidden(state: GameState, oid: int) -> bool:
     """Whether ``oid`` may not be sacrificed right now (701.17b).
 
@@ -659,6 +700,10 @@ def sacrifice_forbidden(state: GameState, oid: int) -> bool:
     ``char_version`` and is an empty list in the same games.
     """
     if any(oid in entry.objects for entry in state.sacrifice_restrictions):
+        return True
+    obj = state.objects.get(oid)
+    if obj is not None and any(temp.kind == "cant_sacrifice" for temp in obj.until_eot):
+        # The granted form, :func:`grant_cant_be_sacrificed`'s.
         return True
     return _forbidden_by_a_static(state, oid)
 

@@ -32,6 +32,7 @@ from commanderblitz.engine.objects import PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
+    CANT_SACRIFICE_DURATIONS,
     CAST_LOCK_DURATIONS,
     COMBAT_FOG_DURATIONS,
     CONTROL_DURATIONS,
@@ -43,7 +44,6 @@ from commanderblitz.engine.structs import (
     PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
     PROTECTION_SENTINELS,
-    SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
 from commanderblitz.engine.triggers import (
@@ -1623,19 +1623,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"can't be sacrificed, chosen when it resolves)"
             )
         # And the duration is required for the reason the three above it are.
-        # `this_turn` is the only word implemented; a card that wanted a longer
-        # one would be a strictly better card than any printed sacrifice
-        # prohibition, so a second word is added to
-        # `SACRIFICE_RESTRICTION_DURATIONS` rather than defaulted to here.
+        # A longer word read as a shorter one, or the reverse, is a different
+        # card, so the implemented words are enumerated in
+        # `CANT_SACRIFICE_DURATIONS` rather than defaulted to here.
         if "duration" not in effect:
             raise DslError(
                 f"{where}: cant_sacrifice needs a 'duration' "
-                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
+                f"(implemented: {sorted(CANT_SACRIFICE_DURATIONS)})"
             )
-        if str(effect["duration"]) not in SACRIFICE_RESTRICTION_DURATIONS:
+        if str(effect["duration"]) not in CANT_SACRIFICE_DURATIONS:
             raise DslError(
                 f"{where}: unknown cant_sacrifice duration {effect['duration']!r} "
-                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
+                f"(implemented: {sorted(CANT_SACRIFICE_DURATIONS)})"
             )
     if op == "prevent_damage":
         # The op, not the `static_effects` entry of the same name. That one is
@@ -2050,7 +2049,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if "duration" in effect and str(effect["duration"]) not in CONTROL_DURATIONS:
             raise DslError(
                 f"{where}: unknown gain_control duration {effect['duration']!r} "
-                f"(use 'until_end_of_turn' or 'permanent')"
+                f"(use one of {list(CONTROL_DURATIONS)})"
             )
     if op == "rotate_control":
         # Aminatou's -6. Without a pool the op rotates nothing and the card
@@ -3138,7 +3137,9 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # but itself is a permanent animation, the strictly better card.
         # Nissa, Vital Force's land stays a 5/5 "until your next turn".
         duration = effect.get("duration", "until_end_of_turn")
-        allowed = (*CONTROL_DURATIONS, "until_your_next_turn")
+        # Spelled out rather than built from `CONTROL_DURATIONS`: that list
+        # also has "end_of_your_next_turn", which no animation implements.
+        allowed = ("permanent", "until_end_of_turn", "until_your_next_turn")
         if duration not in allowed:
             raise DslError(
                 f"{where}: animate's 'duration' is one of {list(allowed)}, "

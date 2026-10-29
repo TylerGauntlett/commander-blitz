@@ -500,7 +500,12 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     is what every "*you* gain control" line means; the spec exists because "target
     opponent gains control of" is the same effect pointed elsewhere.
 
-    ``duration`` is ``"permanent"`` or ``"until_end_of_turn"``.  The default is
+    ``duration`` is ``"permanent"``, ``"until_end_of_turn"`` or
+    ``"end_of_your_next_turn"`` -- Stilt-Man, Towering Terror's "…until the end
+    of your next turn", whose "your" is this effect's controller even when
+    ``player`` hands the permanent to somebody else, and which, granted during
+    that controller's own turn, outlasts that turn's cleanup and ends in the
+    next one's (`primitives._ends_this_cleanup`).  The default is
     ``"permanent"`` because that is what every card written before this meant,
     not because it is the safer reading -- it is the *stronger* one, and it is
     the loader rather than this default that keeps a misspelling from silently
@@ -528,7 +533,14 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     taken = [
         oid
         for oid in oids
-        if change_control(ctx.state, oid, players[0], source=ctx.source_oid, duration=duration)
+        if change_control(
+            ctx.state,
+            oid,
+            players[0],
+            source=ctx.source_oid,
+            duration=duration,
+            clock=ctx.controller,
+        )
     ]
     if name := spec.get("as"):
         ctx.bindings[str(name)] = taken

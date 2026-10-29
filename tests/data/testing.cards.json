@@ -2543,6 +2543,44 @@
       ]
     },
     {
+      "id": "t_long_steal",
+      "name": "Test Long Steal",
+      "oracle_text": "Gain control of target creature until the end of your next turn. It gains \"This permanent can't be sacrificed\" until the end of your next turn.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_control",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "end_of_your_next_turn"
+        },
+        {
+          "op": "cant_sacrifice",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "end_of_your_next_turn"
+        }
+      ]
+    },
+    {
       "id": "t_slip",
       "name": "Test Slip",
       "oracle_text": "Target creature can't be blocked this turn.",

@@ -16,7 +16,7 @@ from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
-    SACRIFICE_RESTRICTION_DURATIONS,
+    CANT_SACRIFICE_DURATIONS,
     UNBLOCKABLE_DURATIONS,
     TargetRef,
 )
@@ -24,6 +24,7 @@ from ..temp_effects import (
     forbid_block,
     forbid_sacrifice,
     goad_creature,
+    grant_cant_be_sacrificed,
     make_unblockable,
     require_attack_on,
     restrict_attack,
@@ -747,9 +748,13 @@ def op_cant_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     ``objects`` is required and resolved **now**: "those creatures" is the set
     the same spell just gained control of. There is deliberately no wildcard
     form -- no printed one-shot protects the whole board, and a global sentinel
-    would read a one-sided sentence as a two-sided one. ``duration`` is required
-    and ``this_turn`` is the only word implemented; see
-    `structs.SACRIFICE_RESTRICTION_DURATIONS`.
+    would read a one-sided sentence as a two-sided one. ``duration`` is required:
+    ``this_turn``, or ``end_of_your_next_turn`` for Stilt-Man, Towering
+    Terror's "It gains \"This permanent can't be sacrificed\" until the end of
+    your next turn" -- "your" being this effect's controller. That second word is
+    a granted ability riding the permanent rather than a table row, so it ends
+    with the object as well as with the clock; see
+    `temp_effects.grant_cant_be_sacrificed` and `structs.CANT_SACRIFICE_DURATIONS`.
 
     Unlike `cant_block` and `unblockable` the pool is **not** filtered to the
     battlefield here. Those two record creatures for a combat that has not
@@ -761,8 +766,17 @@ def op_cant_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
     """
 
     duration = str(spec.get("duration", "this_turn"))
-    if duration not in SACRIFICE_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
+    if duration not in CANT_SACRIFICE_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_sacrifice duration {duration!r}")
+    if duration == "end_of_your_next_turn":
+        grant_cant_be_sacrificed(
+            ctx.state,
+            resolve_pool(ctx, spec.get("objects") or {}),
+            ctx.controller,
+            source=ctx.source_oid,
+        )
+        yield from ()
+        return
     forbid_sacrifice(
         ctx.state,
         resolve_pool(ctx, spec.get("objects") or {}),

@@ -171,7 +171,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Static filter and value keys** | `counters_on` in a static's magnitude (`STATIC_VALUE_KEYS`, Door of Destinies) with `_static_value` raising on unknown vocabulary; `power` and `toughness` in `STATIC_FILTER_KEYS` read off `characteristics._base_pt` (ferocious); `has_counters`; `entered_this_turn`; `any_of` in `affects` (`STATIC_AFFECTS_FILTER_KEYS`), a union applied once per object with `exclude_self` scoped to its branch (611.3a) |
 | **Activation restrictions and locks** | `condition` on an activated ability checked by `legality` before it is offered (602.5c); `sorcery_speed_only`; `activate_steps`; `once_each_turn`; `lock_abilities` ("its activated abilities can't be activated this turn"), covering mana abilities |
 | **"Creature spells you control can't be countered"** | `spells_cant_be_countered` with an optional `affects_spells`, omitted meaning any controller (Lier) |
-| **Sacrifice prohibitions** | 701.17b: the `cant_sacrifice` op on `GameState.sacrifice_restrictions`, narrowing cost pools (`costs._sacrifice_pool`, `legality._emerge_fodder`) and the `sacrifice` op's pool, never guarding `zones.sacrifice` |
+| **Sacrifice prohibitions** | 701.17b: the `cant_sacrifice` op on `GameState.sacrifice_restrictions` (`this_turn`) or, granted "until the end of your next turn", as a `TempEffect(kind="cant_sacrifice")` that ends with the object (400.7), narrowing cost pools (`costs._sacrifice_pool`, `legality._emerge_fodder`) and the `sacrifice` op's pool, never guarding `zones.sacrifice` |
 
 ### Targets and selectors
 
@@ -285,7 +285,7 @@ under [Simplified](#simplified); what is missing outright is under
 
 | Area | Detail |
 |---|---|
-| **Gaining control** | `gain_control` with `permanent` or `until_end_of_turn`: `controller` plus summoning sickness (302.6), removal from combat (506.4) and owner-bound zone destinations (400.3), the `control_changed` event; the handback is a `TempEffect(kind="control")` re-entering `change_control` the other way |
+| **Gaining control** | `gain_control` with `permanent`, `until_end_of_turn` or `end_of_your_next_turn` (611.2b: the cleanup of the first of the effect controller's turns to begin after it, `primitives._ends_this_cleanup`); a timed steal ends before the thief's permanents are exiled when they leave (800.4a, `primitives.end_effects_of_leaving_player`), a permanent one does not: `controller` plus summoning sickness (302.6), removal from combat (506.4) and owner-bound zone destinations (400.3), the `control_changed` event; the handback is a `TempEffect(kind="control")` re-entering `change_control` the other way |
 | **Exchanging and rotating control** | `exchange_control` with `first` and `second`, one act (701.12a), nothing happening unless both resolve to one permanent each with different controllers (701.12b); `rotate_control` reads every controller before any moves, skipping eliminated seats (Aminatou); `distribute_control_among_opponents` pairs each permanent with a different opponent chosen by the controller, every choice before any move (Dack Fayden, Helping Hand) |
 | **Join forces** | `may`'s `pay` with a `player` spec asked one unit at a time per seat in turn order, the total bound under `as` |
 

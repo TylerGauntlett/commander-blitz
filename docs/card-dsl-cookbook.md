@@ -3928,12 +3928,22 @@ and the safe reading.
 **`objects` is required and there is no wildcard**, for `unblockable`'s reason
 and harder: read as "everything" an absent `objects` is a one-sided Sigarda for
 the turn, and read as "nothing" it is a card that silently protects nobody.
-**`duration` is required** and `this_turn` is the only word implemented — the
-only one printed — so there is no `until_your_next_turn`, no `player` field to
-carry its clock, and nothing for `sba` to prune when a seat leaves. The record is
-`structs.SacrificeRestriction` on `GameState.sacrifice_restrictions`, cleared by
-`turn._cleanup_step` beside the three restrictions above it, and read through the
-one predicate `primitives.sacrifice_forbidden`.
+**`duration` is required**: `this_turn` or `end_of_your_next_turn`
+(`structs.CANT_SACRIFICE_DURATIONS`). There is no `until_your_next_turn`, because
+no card prints it.
+
+The two words are two records. `this_turn` is `structs.SacrificeRestriction` on
+`GameState.sacrifice_restrictions`, keyed on the oids chosen at resolution and
+cleared by `turn._cleanup_step` beside the three restrictions above it.
+`end_of_your_next_turn` is Stilt-Man's "it **gains** \"This permanent can't be
+sacrificed\"", a granted ability, and is a `TempEffect(kind="cant_sacrifice")`
+on each permanent on the battlefield (`temp_effects.grant_cant_be_sacrificed`)
+on the clock described under *…until the end of your next turn* above. It is not
+a table row because a granted ability ends with the object (400.7) and an oid
+survives a zone change: over one turn the difference is negligible, but across a
+turn boundary a flickered permanent coming back still protected is a line a
+player can actually take. Both are read through the one predicate
+`temp_effects.sacrifice_forbidden`.
 
 ## Attack requirements
 
@@ -10310,7 +10320,8 @@ built from zone changes alone would show a creature silently swapping sides.
 ```
 
 Act of Treason, Threaten, Zealous Conscripts. `duration` is `"permanent"` (the
-default) or `"until_end_of_turn"`; **any other spelling is a load error**. A
+default), `"until_end_of_turn"` or `"end_of_your_next_turn"` (below); **any
+other spelling is a load error**. A
 `duration` the engine does not read would be understood as "until end of turn"
 by whoever wrote it and turn Act of Treason into a permanent steal — a strictly
 better card than the printed one, loading clean.
@@ -10348,6 +10359,48 @@ Call for Aid says the same three sentences about a *set* rather than one
 targeted permanent, and there the follow-on clauses have nowhere to point once
 control has moved — which is what `as` is for; see *Bindings* above and the
 `cant_sacrifice` op below.
+
+### …until the end of your next turn
+
+    Stilt-Man, Towering Terror — "Whenever one or more Villains you control deal
+    combat damage to a player, gain control of target noncreature, nonland
+    permanent that player controls until the end of your next turn. It gains
+    "This permanent can't be sacrificed" until the end of your next turn."
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" },
+  "duration": "end_of_your_next_turn" },
+{ "op": "cant_sacrifice", "objects": { "target": "t1" },
+  "duration": "end_of_your_next_turn" }
+```
+
+Rule 611.2b's turn-relative duration, spelled the way `grant_playable`'s Light
+Up the Stage permission is because it is the same clock. The entry ends in the
+**cleanup step of the first turn of yours to begin after it was made**: made
+during your own turn — always, for a combat-damage trigger — that turn is not
+"your next turn" and the opponents' turns are not yours, so the permanent stays
+through two cleanups and goes back in the third. Made during an opponent's turn,
+your very next turn ends it. "Your" is the effect's controller, which `player`
+does not change.
+
+It is `TempEffect.until_end_of_turn_of` (the seat) and `since_turn` (the turn it
+was made in) on the same `TempEffect(kind="control")`, read by
+`primitives.clear_until_eot` — never a projected future turn number, so an extra
+turn or an eliminated seat moves the end with it. The near misses are both
+wrong cards: `until_end_of_turn` is Act of Treason, and `until_your_next_turn`
+(an untap-step clock some other ops take) would hand the permanent back before
+you could use it on the turn the printed card promises.
+
+**800.4a** applies to every timed steal: when the player who gained control
+leaves the game, `sba._eliminate` ends the effects that gave it to them
+(`primitives.end_effects_of_leaving_player`) before it exiles what they still
+control, so the stolen permanent goes back to the seat it came from. An entry
+whose clock seat leaves ends too, because that turn never comes. A *permanent*
+steal records no previous controller and still leaves with the thief.
+
+"It gains \"This permanent can't be sacrificed\"" is `cant_sacrifice` on the
+same clock; see that op below for why it rides the permanent rather than the
+table.
 
 ### "Choose left or right" — passing the board around the table
 
