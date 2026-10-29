@@ -717,6 +717,10 @@
     },
     "zone": "graveyard"
   },
+  "archnemesis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archon_of_cruelty": {
     "hand_size": {
       "0": 2

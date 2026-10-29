@@ -12222,12 +12222,12 @@
     },
     "Archnemesis": {
       "edhrec_rank": 13937,
-      "gate": "template",
+      "gate": null,
       "name": "Archnemesis",
-      "reason": "no template for: Enchant opponent",
+      "reason": "",
       "scryfall_id": "2a75bfc8-7aa5-49ce-90c7-21d76733760c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archon of Absolution": {

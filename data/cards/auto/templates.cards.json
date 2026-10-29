@@ -7324,6 +7324,108 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "defender"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack enchanted player, that player loses 2 life. You draw a card and gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "defending": "enchanted_player",
+            "event": "creatures_attack_player"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "op": "attach",
+                  "player": {
+                    "binding": "event_player"
+                  }
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player attacks you, you may attach this Aura to that player.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking_player": "you",
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "defending": "you",
+            "event": "creatures_attack_player",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "archnemesis",
+      "mana_cost": "{1}{U}{B}",
+      "name": "Archnemesis",
+      "oracle_text": "Enchant opponent\nWhenever you attack enchanted player, that player loses 2 life. You draw a card and gain 2 life.\nWhenever a player attacks you, you may attach this Aura to that player.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "any_types": [
                   "Creature",
