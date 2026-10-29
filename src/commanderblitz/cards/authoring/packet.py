@@ -760,6 +760,14 @@ def reference() -> dict:
             " with `affects_spells: {\"types\": [\"Planeswalker\"]}` (the"
             " `cant_cast_spells` spell filter), which loosens only the cast of"
             " a matching spell and never an activated ability.",
+            "\"You may play them without paying their mana costs\" on cards an"
+            " effect exiles is `playable_free: true` beside that effect's"
+            " `playable` duration (`exile`, `look_at_top` to exile,"
+            " `grant_playable`); \"for as long as they remain exiled\" is"
+            " `playable: \"while_exiled\"`. The permission is always the"
+            " effect controller's, cards from an opponent's library included;"
+            " a land still uses a land drop, a spell keeps its timing and its"
+            " additional costs, and X is 0.",
             "\"You don't lose unspent red mana as steps and phases end\" is the"
             " player-wide static `mana_retention` with `affects_player: \"you\"`"
             " and `colors: [\"R\"]`; \"Players don't lose unspent mana\" is"

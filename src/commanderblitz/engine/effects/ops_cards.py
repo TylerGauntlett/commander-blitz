@@ -251,6 +251,9 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # read only where `playable_turn` already gates the offer.
         obj.playable_any_type = any_type
         obj.playable_any_color = bool(spec.get("any_color"))
+        # "…without paying their mana costs" (601.2b), plot's flag on the
+        # same permission and read by the same cast path.
+        obj.playable_free = bool(spec.get("playable_free"))
 
 
 
@@ -630,13 +633,25 @@ def _move_found(
         # them -- after the move, because `reset_permanent_state` would wipe it.
         if destination is Zone.EXILE and spec.get("link") and ctx.source_oid is not None:
             link_exiled(ctx.state, oid, ctx.source_oid)
+        # The permission is the **effect's controller's**, not the library
+        # owner's: "Look at the top card of each player's library, then exile
+        # those cards face down. **You** may play them" (Extract Power). The
+        # same seat `exile` and `grant_playable` write, and for every
+        # `player: "you"` lookup the two seats are one.
+        #
+        # ``playable_free`` is "…without paying their mana costs" (601.2b) on
+        # the same permission -- plot's flag, read by the same cast path, which
+        # prices the line free, makes X 0 and still charges additional costs. A
+        # land needs no flag: it is played, never cast, and spends the land drop
+        # like any other (305.2).
         if destination is Zone.EXILE and (duration := playable_duration_of(spec)):
             obj = ctx.state.objects.get(oid)
             if obj is not None:
-                obj.playable_by = pid
+                obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = duration
                 obj.playable_any_color = bool(spec.get("any_color"))
+                obj.playable_free = bool(spec.get("playable_free"))
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What
@@ -655,7 +670,11 @@ def _move_found(
             obj = ctx.state.objects.get(oid)
             if obj is not None:
                 obj.hidden_in_exile = True
-                obj.revealed_to = set()
+                # The one exception is the player the permission names: a card
+                # you may play is a card you may look at, or the permission
+                # would be a blind pick (Extract Power). Everybody else still
+                # sees only that a card is there.
+                obj.revealed_to = {obj.playable_by} if obj.playable_by is not None else set()
 
 
 @register("look_at_top")

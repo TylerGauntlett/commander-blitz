@@ -815,6 +815,12 @@ def _cast_options(
     # graveyard and a commander cast out of the command zone owe it too. The
     # blocks below stay hand-only because morph, overload, emerge and convoke
     # genuinely are.
+    #
+    # The rebuilt line keeps the plain line's price: a mandatory additional
+    # cost withdraws the free line it is charged on, so a card the permission
+    # makes castable "without paying its mana cost" (Extract Power, plot) has
+    # to come back free with the cost added, or it is offered at the printed
+    # price out of exile and an empty pool sees no line at all (601.2b, 601.2f).
     out = _charge_additional_cost(
         state,
         pid,
@@ -830,6 +836,8 @@ def _cast_options(
             extra_generic=extra_generic,
             additional_times=times,
             additional_choice=choice,
+            free=free,
+            alt_cost=alt_cost,
         ),
     )
     # Spree (702.166a): "Choose one or more additional costs." One line per

@@ -801,6 +801,32 @@ every seat's exile, as the cast half always did: an opponent's card exiled by
 your effect sits in *their* exile. A land played that way enters under the
 control of the player who played it (110.2).
 
+### "You may play them without paying their mana costs"
+
+```jsonc
+{ "op": "look_at_top", "player": "each_player", "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "face_down": true,
+  "playable": "while_exiled", "playable_free": true }              // Extract Power
+```
+
+`playable_free` is a rider on the permission a `playable` duration grants, on
+`exile`, `look_at_top` to exile or `grant_playable`, and the loader refuses it
+without one. It sets the object's `playable_free`, the flag plot already writes,
+so the cast path is the same one: the line is priced free (601.2b), X is 0, an
+additional cost is still charged (601.2f), and the spell keeps its own timing --
+a creature still waits for your main phase. A land needs no price: it is played
+from exile with your land drop, at sorcery speed (305.1, 305.2). `any_color` and
+`any_type` beside it are refused, because nothing is spent.
+
+The permission belongs to the effect's controller on all three ops, so a card
+taken off an opponent's library is yours to play and not theirs. Exiled
+`face_down` with a permission, the card is shown to that player and to nobody
+else; the rest of the table sees only that a card is there.
+
+The near misses are `cast_free` on `look_at_top` or `exile_until`, which casts
+one spell while the effect resolves and never a land, and `play_exiled`, which
+does the same for a linked card. Neither leaves a permission behind.
+
 ## Auras and Equipment
 
 An Aura's "Enchant creature" line is not an ability — it is the spell's

@@ -314,6 +314,9 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 # any color to cast it" -- printed beside the permission, and
                 # read only while it is live.
                 obj.playable_any_color = bool(spec.get("any_color"))
+                # "…without paying its mana cost" (601.2b) -- plot's flag,
+                # read by the same cast path. See `_move_found`.
+                obj.playable_free = bool(spec.get("playable_free"))
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.
