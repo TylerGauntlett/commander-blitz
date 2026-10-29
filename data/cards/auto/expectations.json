@@ -5959,6 +5959,15 @@
     },
     "zone": "graveyard"
   },
+  "heroic_sacrifice": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "hexplate_golem": {
     "zone": "battlefield"
   },

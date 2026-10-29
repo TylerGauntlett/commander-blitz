@@ -349,6 +349,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                        "Preventing all damage to a player for the turn"),
     "prevent_combat_damage": ("Life & damage", "Prevent combat damage this turn, optionally only from sources matching `by`.",
                               "Fog — combat damage prevented by its source"),
+    "redirect_damage": ("Life & damage", "Damage to a player and to permanents matching `permanents` is dealt to `to` instead this turn.",
+                        "Damage dealt to the chosen creature instead"),
     "prevent_damage_permanent": ("Life & damage", "Prevent damage dealt to or by a permanent for a duration.",
                                  "Preventing all damage to or by a **permanent**, for a while"),
     "lock_life_total": ("Life & damage", "A player's life total can't change for a duration.",

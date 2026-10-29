@@ -1,0 +1,839 @@
+{
+  "id": "msc_avengers_assemble",
+  "name": "Avengers Assemble",
+  "commanders": [
+    "captain_america_team_leader"
+  ],
+  "color_identity": [
+    "R",
+    "U",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "MSC",
+    "set_name": "Marvel Super Heroes Commander",
+    "date": "2026-06-26"
+  },
+  "notes": "Marvel Super Heroes Commander precon, card for card (https://mtgjson.com/api/v5/decks/AvengersAssemble_MSC.json).",
+  "tags": [
+    "Heroes",
+    "Tribal",
+    "Counters",
+    "Go wide"
+  ],
+  "strategy": "Captain America, Team Leader gives every Hero that enters vigilance and haste and puts a +1/+1 counter on it and on himself, so the deck curves out on Heroes that attack the turn they land and grow as the team does. Avengers Tower, Plaza of Heroes and the Talismans fix three colours toward them; Herald's Horn, Door of Destinies and Kindred Discovery reward naming Hero; Iron Man, Armored Avenger turns every draw into another counter and lends modified attackers flying; and Thor, Asgard's Avenger adds 1 to each hit the team lands on an opponent's side. Heroic Sacrifice and Gift of Immortality keep the key Hero alive through a sweeper, while Swords to Plowshares, Austere Command, Avenge and Arcane Denial answer the rest.",
+  "archetype": "tribal",
+  "printings": {
+    "ant_man_elusive_avenger": {
+      "scryfall_id": "18e2b0a4-0ed3-48e6-8334-198a19e54bff",
+      "artist": "Steve Morris",
+      "set_code": "msc",
+      "collector_number": "73"
+    },
+    "arcane_denial": {
+      "scryfall_id": "5eb843ef-b223-40d0-a461-54b16d188d0e",
+      "artist": "Bastien L. Deharme",
+      "set_code": "msc",
+      "collector_number": "147"
+    },
+    "arcane_signet": {
+      "scryfall_id": "1cad1bd2-7c56-4ce0-99a6-b2a49c1288dd",
+      "artist": "Jason Smith",
+      "set_code": "msc",
+      "collector_number": "191"
+    },
+    "austere_command": {
+      "scryfall_id": "a8bc7912-e201-468a-b251-140205cb741c",
+      "artist": "Taurin Clarke",
+      "set_code": "msc",
+      "collector_number": "121"
+    },
+    "avenge": {
+      "scryfall_id": "8b385779-bc6b-4f67-8724-d8ae136d1436",
+      "artist": "Alex Horley-Orlandelli",
+      "set_code": "msc",
+      "collector_number": "11"
+    },
+    "avengers_quinjet": {
+      "scryfall_id": "c090d4b3-b108-4596-9d6d-738eb5e2249c",
+      "artist": "Maxim Ruabtsev",
+      "set_code": "msc",
+      "collector_number": "102"
+    },
+    "avengers_tower": {
+      "scryfall_id": "88f0d9c9-8a1f-4b5a-b6f9-821ddd658d27",
+      "artist": "Arthur Yuan",
+      "set_code": "msh",
+      "collector_number": "260"
+    },
+    "bastion_protector": {
+      "scryfall_id": "1582488a-ad15-487e-9271-6d9330b46fb4",
+      "artist": "Uzuri",
+      "set_code": "msc",
+      "collector_number": "122"
+    },
+    "black_widow_agile_avenger": {
+      "scryfall_id": "8c2bf77c-9acf-4e2c-9cad-e74546f26070",
+      "artist": "Junggeun Yoon",
+      "set_code": "msc",
+      "collector_number": "77"
+    },
+    "captain_america_living_legend": {
+      "scryfall_id": "6516f292-469d-4092-b099-97c698f373cd",
+      "artist": "Smirtouille",
+      "set_code": "msh",
+      "collector_number": "210"
+    },
+    "captain_america_team_leader": {
+      "scryfall_id": "61a51b67-d941-4e07-9c12-ffe583cb65d4",
+      "artist": "Mark Spears",
+      "set_code": "msc",
+      "collector_number": "5"
+    },
+    "captain_mar_vell_space_born": {
+      "scryfall_id": "27924c2f-756c-42af-9830-18a5a2735137",
+      "artist": "Gintas Galvanauskas",
+      "set_code": "msh",
+      "collector_number": "12"
+    },
+    "captain_marvel_apex_avenger": {
+      "scryfall_id": "516e14ce-9cc8-4be3-aacb-ba801f26a6bc",
+      "artist": "Julie Bell",
+      "set_code": "msc",
+      "collector_number": "78"
+    },
+    "clifftop_retreat": {
+      "scryfall_id": "4a7f7767-1959-4812-8654-0a22634096b1",
+      "artist": "Arthur Yuan",
+      "set_code": "msc",
+      "collector_number": "231"
+    },
+    "coastal_peak": {
+      "scryfall_id": "d2a70a9d-2d9f-4afd-9393-8d6518936ee2",
+      "artist": "Jonas De Ro",
+      "set_code": "msc",
+      "collector_number": "232"
+    },
+    "command_tower": {
+      "scryfall_id": "0548fb60-c843-4f8f-a029-6f10efc63a41",
+      "artist": "Leon Tukker",
+      "set_code": "msc",
+      "collector_number": "233"
+    },
+    "destroy_evil": {
+      "scryfall_id": "af2498a2-3763-408a-9bd2-279034869285",
+      "artist": "David Palumbo",
+      "set_code": "msc",
+      "collector_number": "128"
+    },
+    "director_nick_fury": {
+      "scryfall_id": "9a19d4ec-399a-4371-acc3-0956dd4dcb84",
+      "artist": "Javier Charro",
+      "set_code": "msc",
+      "collector_number": "81"
+    },
+    "dismantling_wave": {
+      "scryfall_id": "39e7bb05-96df-4e76-90a6-3f3625b7965a",
+      "artist": "Uzuri",
+      "set_code": "msc",
+      "collector_number": "129"
+    },
+    "door_of_destinies": {
+      "scryfall_id": "1d0d80c7-87b5-47cc-b2fd-7defd281e1a2",
+      "artist": "David Szabo",
+      "set_code": "msc",
+      "collector_number": "198"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "8853ff94-bf44-4cfd-9d3a-0743c361fb0d",
+      "artist": "David Szabo",
+      "set_code": "msc",
+      "collector_number": "241"
+    },
+    "falcon_and_redwing": {
+      "scryfall_id": "e565fb47-acca-4348-87bb-afdadbf55e8a",
+      "artist": "Allen Douglas",
+      "set_code": "msc",
+      "collector_number": "14"
+    },
+    "fellwar_stone": {
+      "scryfall_id": "1e24e2bc-b239-4f9a-85c0-5f272f58ed43",
+      "artist": "Carlos Dattoli",
+      "set_code": "msc",
+      "collector_number": "285"
+    },
+    "firebird_blazing_ranger": {
+      "scryfall_id": "11dc3b30-b130-4558-ab37-9c32792641ea",
+      "artist": "Alessandra Pisano",
+      "set_code": "msc",
+      "collector_number": "50"
+    },
+    "folk_hero": {
+      "scryfall_id": "85bf7c95-4534-435b-bb25-f39340ecf9be",
+      "artist": "John Tyler Christopher",
+      "set_code": "msc",
+      "collector_number": "132"
+    },
+    "frostboil_snarl": {
+      "scryfall_id": "ae705a26-5371-4236-904c-fe3e58b4721d",
+      "artist": "Fariba Khamseh",
+      "set_code": "msc",
+      "collector_number": "246"
+    },
+    "furycalm_snarl": {
+      "scryfall_id": "afc12892-4978-4442-ace5-c4dea5c0ee00",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "247"
+    },
+    "gift_of_immortality": {
+      "scryfall_id": "4ae22015-073a-4666-9e3b-15dcf61f50ce",
+      "artist": "Marco Turini",
+      "set_code": "msc",
+      "collector_number": "134"
+    },
+    "glacial_fortress": {
+      "scryfall_id": "d673a2d5-0c61-48dc-8c8d-06f0c7b6b8bf",
+      "artist": "Eugene Maslovski",
+      "set_code": "msc",
+      "collector_number": "248"
+    },
+    "glittering_massif": {
+      "scryfall_id": "a01274c2-a8f4-43b5-bd91-c4905b8cee7e",
+      "artist": "Jonas De Ro",
+      "set_code": "msc",
+      "collector_number": "249"
+    },
+    "hawkeye_avenging_archer": {
+      "scryfall_id": "1f394a6f-3649-4464-939b-c183b2b01768",
+      "artist": "Darius Zablockis",
+      "set_code": "msc",
+      "collector_number": "84"
+    },
+    "herald_s_horn": {
+      "scryfall_id": "1c2e4ff2-5c14-488e-8548-eb89ffd18e41",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "287"
+    },
+    "hercules_olympian_hero": {
+      "scryfall_id": "77be0e26-90db-41a5-97c2-43cf6ef87ab0",
+      "artist": "Alex Horley-Orlandelli",
+      "set_code": "msc",
+      "collector_number": "16"
+    },
+    "hero_s_blade": {
+      "scryfall_id": "6f2fa911-5735-4ee2-828f-59dea6927b20",
+      "artist": "Jason Smith",
+      "set_code": "msc",
+      "collector_number": "201"
+    },
+    "heroic_return": {
+      "scryfall_id": "707e0b51-701b-4eb6-b721-19c21a3c4d90",
+      "artist": "David Seeley",
+      "set_code": "msc",
+      "collector_number": "17"
+    },
+    "heroic_sacrifice": {
+      "scryfall_id": "ec7bd155-1dd6-4fc3-870f-e0905f8c6d42",
+      "artist": "Lie Setiawan",
+      "set_code": "msc",
+      "collector_number": "18"
+    },
+    "hulkbuster_armor": {
+      "scryfall_id": "0cd857a3-ad93-4d74-80e0-c99d0a04a60a",
+      "artist": "Maxim Ruabtsev",
+      "set_code": "msc",
+      "collector_number": "107"
+    },
+    "iron_man_armored_avenger": {
+      "scryfall_id": "94af0633-59c6-4893-ab44-232d37573dde",
+      "artist": "Carlos Dattoli",
+      "set_code": "msc",
+      "collector_number": "33"
+    },
+    "irrigated_farmland": {
+      "scryfall_id": "996b4484-a701-409a-822c-aa19be89a2c6",
+      "artist": "Milivoj Ćeran",
+      "set_code": "msc",
+      "collector_number": "251"
+    },
+    "island": {
+      "scryfall_id": "5a74175b-2418-4226-8435-1490532e644f",
+      "artist": "Raymond Bonilla",
+      "set_code": "msh",
+      "collector_number": "289"
+    },
+    "jarvis_earth_s_mightiest_butler": {
+      "scryfall_id": "62c31cd8-0c30-4cfb-89d6-2e4dac19f6ea",
+      "artist": "Gintas Galvanauskas",
+      "set_code": "msc",
+      "collector_number": "34"
+    },
+    "jocasta_automaton_avenger": {
+      "scryfall_id": "f666e211-0d80-4f01-b206-dac19bcbcfa7",
+      "artist": "Myles Wohl",
+      "set_code": "msc",
+      "collector_number": "108"
+    },
+    "kindred_discovery": {
+      "scryfall_id": "19bdedb2-768b-4adf-8193-917a10c8f729",
+      "artist": "Stephanie Hans",
+      "set_code": "msc",
+      "collector_number": "150"
+    },
+    "love_on_the_battlefield": {
+      "scryfall_id": "3f2e65ff-27ae-4dfc-bf17-66f0c4949699",
+      "artist": "Stephanie Hans",
+      "set_code": "msc",
+      "collector_number": "87"
+    },
+    "make_your_move": {
+      "scryfall_id": "05fa34df-99b0-4121-b2f1-d41afe97b200",
+      "artist": "Uzuri",
+      "set_code": "msc",
+      "collector_number": "137"
+    },
+    "metallic_mimic": {
+      "scryfall_id": "2623640e-51bb-4aba-a31f-1b6d170f58f6",
+      "artist": "Greg Smallwood",
+      "set_code": "msc",
+      "collector_number": "203"
+    },
+    "methods_of_the_mighty": {
+      "scryfall_id": "f3699f46-6173-47e1-97b2-a7632224fb6c",
+      "artist": "David Seeley",
+      "set_code": "msc",
+      "collector_number": "21"
+    },
+    "mountain": {
+      "scryfall_id": "4bdbae27-9a55-485f-a1fc-3fa988184e9d",
+      "artist": "Rockey Chen",
+      "set_code": "msh",
+      "collector_number": "293"
+    },
+    "mystic_monastery": {
+      "scryfall_id": "bc23343a-3a01-4975-8430-17bf15fa639d",
+      "artist": "Arthur Yuan",
+      "set_code": "msc",
+      "collector_number": "253"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "836b8f52-10d2-4716-9f7b-38fb23bc68de",
+      "artist": "Ben Harvey",
+      "set_code": "msc",
+      "collector_number": "254"
+    },
+    "patriot_shield_wielder": {
+      "scryfall_id": "1467d7c9-00d8-43f1-b4e7-a279d2b10503",
+      "artist": "Vlad Petruchik",
+      "set_code": "msh",
+      "collector_number": "30"
+    },
+    "photon_mighty_marvel": {
+      "scryfall_id": "2b164aca-2bda-49a6-81ce-16ef4721ec63",
+      "artist": "Tran Nguyen",
+      "set_code": "msc",
+      "collector_number": "58"
+    },
+    "plains": {
+      "scryfall_id": "5f029c91-f20b-4aa5-a7d9-dd6ddef1c877",
+      "artist": "Domenico Cava",
+      "set_code": "msh",
+      "collector_number": "287"
+    },
+    "plaza_of_heroes": {
+      "scryfall_id": "96fe4b9b-d766-463b-a6df-345ebebfc17c",
+      "artist": "Taurin Clarke",
+      "set_code": "msc",
+      "collector_number": "255"
+    },
+    "port_town": {
+      "scryfall_id": "3f962cab-c058-41f5-b7e1-5b063f374eb0",
+      "artist": "Arthur Yuan",
+      "set_code": "msc",
+      "collector_number": "256"
+    },
+    "prairie_stream": {
+      "scryfall_id": "b2e133b4-2263-4ac2-8d16-7bf307d5e104",
+      "artist": "Rockey Chen",
+      "set_code": "msc",
+      "collector_number": "257"
+    },
+    "professor_hulk": {
+      "scryfall_id": "1b03fa4e-b3a1-4c23-8341-e9ce89aa872f",
+      "artist": "Leroy Steinmann",
+      "set_code": "msc",
+      "collector_number": "37"
+    },
+    "quicksilver_speedster": {
+      "scryfall_id": "5a454bad-c137-4d7c-9fcc-928c0c1798f4",
+      "artist": "Leroy Steinmann",
+      "set_code": "msc",
+      "collector_number": "91"
+    },
+    "radiant_summit": {
+      "scryfall_id": "81b619cc-900c-4d65-83da-8b9dcb370984",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "msc",
+      "collector_number": "258"
+    },
+    "raise_the_palisade": {
+      "scryfall_id": "ce9347e8-962f-4fc1-808f-b59ac751de13",
+      "artist": "Arthur Yuan",
+      "set_code": "msc",
+      "collector_number": "278"
+    },
+    "reconnaissance_mission": {
+      "scryfall_id": "9fdd83d4-b473-498f-b45e-174f025e1259",
+      "artist": "Berto Martinez",
+      "set_code": "msc",
+      "collector_number": "153"
+    },
+    "relic_of_legends": {
+      "scryfall_id": "89691cda-e38b-4f53-bee6-4c234186e6ad",
+      "artist": "Milivoj Ćeran",
+      "set_code": "msc",
+      "collector_number": "209"
+    },
+    "rescue_pepper_potts": {
+      "scryfall_id": "476f75a4-a4e0-4d09-9756-f1001ebabc84",
+      "artist": "Julia Vasilyeva",
+      "set_code": "msc",
+      "collector_number": "755"
+    },
+    "rip_apart": {
+      "scryfall_id": "b4964c78-b9ca-43c2-bcaa-bf75d92b9065",
+      "artist": "Marco Turini",
+      "set_code": "msc",
+      "collector_number": "187"
+    },
+    "scarlet_witch_chaotic_avenger": {
+      "scryfall_id": "2308c274-40d8-490f-955e-67a57b89525a",
+      "artist": "Solan",
+      "set_code": "msc",
+      "collector_number": "93"
+    },
+    "scavenger_grounds": {
+      "scryfall_id": "9fbe68ba-ffe5-4fe0-ac0a-0b3221e4f395",
+      "artist": "Bastien Grivet",
+      "set_code": "msc",
+      "collector_number": "263"
+    },
+    "scorched_geyser": {
+      "scryfall_id": "43abdfba-0a55-4b8a-858e-3372ee40a579",
+      "artist": "Maxim Ruabtsev",
+      "set_code": "msc",
+      "collector_number": "264"
+    },
+    "secluded_courtyard": {
+      "scryfall_id": "c0d17d04-cf0b-4918-bfec-b34b0d98a602",
+      "artist": "Jonas De Ro",
+      "set_code": "msc",
+      "collector_number": "265"
+    },
+    "shang_chi_and_the_ten_rings": {
+      "scryfall_id": "8d6288b7-c959-437b-9a3f-eb85c306c9f2",
+      "artist": "Carissa Susilo",
+      "set_code": "msc",
+      "collector_number": "94"
+    },
+    "she_hulk_wallbreaker": {
+      "scryfall_id": "8c57fb16-f4a3-437c-be27-d1c00a2be01e",
+      "artist": "Julia Vasilyeva",
+      "set_code": "msc",
+      "collector_number": "60"
+    },
+    "sol_ring": {
+      "scryfall_id": "91fdb56b-54d5-4272-8319-505ff987fe9b",
+      "artist": "Myles Wohl",
+      "set_code": "msc",
+      "collector_number": "211"
+    },
+    "spectator_seating": {
+      "scryfall_id": "4c62dcfc-4bc8-4551-b3c7-9eec26be3362",
+      "artist": "Pablo Mendoza",
+      "set_code": "msc",
+      "collector_number": "268"
+    },
+    "speed_young_avenger": {
+      "scryfall_id": "d15d187b-dc5d-482d-a79a-b9b98193ad7a",
+      "artist": "Tyler Walpole",
+      "set_code": "msh",
+      "collector_number": "152"
+    },
+    "sulfur_falls": {
+      "scryfall_id": "c762f475-7e58-4477-839b-b3c55434b88f",
+      "artist": "Piotr Dura",
+      "set_code": "msc",
+      "collector_number": "269"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "b4e9c870-23c0-413a-ae39-265f09da16d1",
+      "artist": "Greg Smallwood",
+      "set_code": "msc",
+      "collector_number": "143"
+    },
+    "talisman_of_conviction": {
+      "scryfall_id": "a365885c-f7d9-4ea1-9125-5265055e5570",
+      "artist": "Uzuri",
+      "set_code": "msc",
+      "collector_number": "217"
+    },
+    "talisman_of_creativity": {
+      "scryfall_id": "3ed13229-bbbb-41a7-933e-8975a6b64226",
+      "artist": "Andreia Ugrai",
+      "set_code": "msc",
+      "collector_number": "218"
+    },
+    "talisman_of_progress": {
+      "scryfall_id": "b356ee36-1c62-4097-87d7-fef6a6dad067",
+      "artist": "John Tyler Christopher",
+      "set_code": "msc",
+      "collector_number": "221"
+    },
+    "the_wasp_winsome_avenger": {
+      "scryfall_id": "ce5fb436-fcc6-426f-a33b-a8ba904df0ff",
+      "artist": "Raoul Vitale",
+      "set_code": "msc",
+      "collector_number": "39"
+    },
+    "thor_asgard_s_avenger": {
+      "scryfall_id": "3513c041-7147-467d-845d-3d1c83fb3328",
+      "artist": "Wayne Reynolds",
+      "set_code": "msc",
+      "collector_number": "756"
+    },
+    "thought_vessel": {
+      "scryfall_id": "6ec6a910-f6d0-4225-8b55-d329dc788c64",
+      "artist": "Svetlin Velinov",
+      "set_code": "msc",
+      "collector_number": "222"
+    },
+    "tome_of_legends": {
+      "scryfall_id": "84546bb2-6c82-4e3e-8f64-cb7aa865ee60",
+      "artist": "Monztre",
+      "set_code": "msc",
+      "collector_number": "223"
+    },
+    "unclaimed_territory": {
+      "scryfall_id": "d3782952-3839-4a94-95bc-716611d3ece6",
+      "artist": "Pavel Kolomeyets",
+      "set_code": "msc",
+      "collector_number": "275"
+    },
+    "vision_synthezoid_avenger": {
+      "scryfall_id": "f7007b77-84ec-4391-b279-8c188dd569d0",
+      "artist": "Mark Spears",
+      "set_code": "msc",
+      "collector_number": "119"
+    },
+    "war_machine_avenging_arsenal": {
+      "scryfall_id": "8c62621f-20b2-4950-a74a-7c2e4fc02e54",
+      "artist": "David Seeley",
+      "set_code": "msc",
+      "collector_number": "63"
+    },
+    "west_coast_expansion": {
+      "scryfall_id": "41533f78-4a4e-424a-9612-a8bdb2a14b4b",
+      "artist": "E. M. Gist",
+      "set_code": "msc",
+      "collector_number": "40"
+    },
+    "winter_soldier_reborn_avenger": {
+      "scryfall_id": "de13b219-a99c-47ef-8b68-d57463cf5de8",
+      "artist": "Lucio Parrillo",
+      "set_code": "msc",
+      "collector_number": "27"
+    }
+  },
+  "cards": [
+    {
+      "id": "ant_man_elusive_avenger"
+    },
+    {
+      "id": "arcane_denial"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "austere_command"
+    },
+    {
+      "id": "avenge"
+    },
+    {
+      "id": "avengers_quinjet"
+    },
+    {
+      "id": "avengers_tower"
+    },
+    {
+      "id": "bastion_protector"
+    },
+    {
+      "id": "black_widow_agile_avenger"
+    },
+    {
+      "id": "captain_america_living_legend"
+    },
+    {
+      "id": "captain_mar_vell_space_born"
+    },
+    {
+      "id": "captain_marvel_apex_avenger"
+    },
+    {
+      "id": "clifftop_retreat"
+    },
+    {
+      "id": "coastal_peak"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "destroy_evil"
+    },
+    {
+      "id": "director_nick_fury"
+    },
+    {
+      "id": "dismantling_wave"
+    },
+    {
+      "id": "door_of_destinies"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "falcon_and_redwing"
+    },
+    {
+      "id": "fellwar_stone"
+    },
+    {
+      "id": "firebird_blazing_ranger"
+    },
+    {
+      "id": "folk_hero"
+    },
+    {
+      "id": "frostboil_snarl"
+    },
+    {
+      "id": "furycalm_snarl"
+    },
+    {
+      "id": "gift_of_immortality"
+    },
+    {
+      "id": "glacial_fortress"
+    },
+    {
+      "id": "glittering_massif"
+    },
+    {
+      "id": "hawkeye_avenging_archer"
+    },
+    {
+      "id": "herald_s_horn"
+    },
+    {
+      "id": "hercules_olympian_hero"
+    },
+    {
+      "id": "hero_s_blade"
+    },
+    {
+      "id": "heroic_return"
+    },
+    {
+      "id": "heroic_sacrifice"
+    },
+    {
+      "id": "hulkbuster_armor"
+    },
+    {
+      "id": "iron_man_armored_avenger"
+    },
+    {
+      "id": "irrigated_farmland"
+    },
+    {
+      "id": "island",
+      "qty": 5
+    },
+    {
+      "id": "jarvis_earth_s_mightiest_butler"
+    },
+    {
+      "id": "jocasta_automaton_avenger"
+    },
+    {
+      "id": "kindred_discovery"
+    },
+    {
+      "id": "love_on_the_battlefield"
+    },
+    {
+      "id": "make_your_move"
+    },
+    {
+      "id": "metallic_mimic"
+    },
+    {
+      "id": "methods_of_the_mighty"
+    },
+    {
+      "id": "mountain",
+      "qty": 5
+    },
+    {
+      "id": "mystic_monastery"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "patriot_shield_wielder"
+    },
+    {
+      "id": "photon_mighty_marvel"
+    },
+    {
+      "id": "plains",
+      "qty": 6
+    },
+    {
+      "id": "plaza_of_heroes"
+    },
+    {
+      "id": "port_town"
+    },
+    {
+      "id": "prairie_stream"
+    },
+    {
+      "id": "professor_hulk"
+    },
+    {
+      "id": "quicksilver_speedster"
+    },
+    {
+      "id": "radiant_summit"
+    },
+    {
+      "id": "raise_the_palisade"
+    },
+    {
+      "id": "reconnaissance_mission"
+    },
+    {
+      "id": "relic_of_legends"
+    },
+    {
+      "id": "rescue_pepper_potts"
+    },
+    {
+      "id": "rip_apart"
+    },
+    {
+      "id": "scarlet_witch_chaotic_avenger"
+    },
+    {
+      "id": "scavenger_grounds"
+    },
+    {
+      "id": "scorched_geyser"
+    },
+    {
+      "id": "secluded_courtyard"
+    },
+    {
+      "id": "shang_chi_and_the_ten_rings"
+    },
+    {
+      "id": "she_hulk_wallbreaker"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "spectator_seating"
+    },
+    {
+      "id": "speed_young_avenger"
+    },
+    {
+      "id": "sulfur_falls"
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "talisman_of_conviction"
+    },
+    {
+      "id": "talisman_of_creativity"
+    },
+    {
+      "id": "talisman_of_progress"
+    },
+    {
+      "id": "the_wasp_winsome_avenger"
+    },
+    {
+      "id": "thor_asgard_s_avenger"
+    },
+    {
+      "id": "thought_vessel"
+    },
+    {
+      "id": "tome_of_legends"
+    },
+    {
+      "id": "unclaimed_territory"
+    },
+    {
+      "id": "vision_synthezoid_avenger"
+    },
+    {
+      "id": "war_machine_avenging_arsenal"
+    },
+    {
+      "id": "west_coast_expansion"
+    },
+    {
+      "id": "winter_soldier_reborn_avenger"
+    }
+  ],
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "captain_america_team_leader",
+      "why": "Every Hero that enters gets haste, vigilance and a counter, and so does Captain America."
+    },
+    {
+      "card_id": "iron_man_armored_avenger",
+      "why": "Each card you draw is a +1/+1 counter, and his attack gives modified creatures flying."
+    },
+    {
+      "card_id": "thor_asgard_s_avenger",
+      "why": "Each time another source of yours deals damage to an opponent or their permanents, it deals 1 more."
+    },
+    {
+      "card_id": "heroic_sacrifice",
+      "why": "All damage to you and your creatures lands on one Hero, which passes its counters on as it dies."
+    }
+  ]
+}

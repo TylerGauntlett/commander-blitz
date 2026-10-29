@@ -6770,6 +6770,34 @@ Omitted, every source is fogged — Fog itself. It installs a `CombatFog` on
 noncombat damage is never touched. `duration` is required (`this_turn`), and the
 loader refuses an `amount` and a `by` naming a target, binding, count or zone.
 
+## Damage dealt to the chosen creature instead
+
+```jsonc
+// Heroic Sacrifice: "Choose target creature you control. Until end of turn, all
+//   damage that would be dealt to you and creatures you control is dealt to the
+//   chosen creature instead (if it's still on the battlefield)."
+{ "op": "redirect_damage", "duration": "this_turn", "to": { "target": "t1" },
+  "player": "you",
+  "permanents": { "types": ["Creature"], "controller": "you" } }
+```
+
+A replacement of the damage's **recipient** (614.9), which no prevention,
+multiplier or addend can say. `to` is the one permanent dealt the damage
+instead, resolved when the op does; `player` is the seat whose damage is
+redirected and `permanents` an effect-side selector over the permanents whose
+damage is, matched on their current characteristics each time damage would be
+dealt, so a creature entering later in the turn is covered. Damage already
+aimed at `to` is dealt to it once, and the redirected damage keeps its source:
+lifelink, deathtouch, infect and wither apply as the source has them, and no
+life, poison or commander damage reaches the seat. It installs a
+`DamageRedirect` on `GameState.damage_redirects`, read **first** by both damage
+primitives, so the chosen creature's own shields and doublers apply and the
+original recipient's do not; it ends when `to` leaves the battlefield and at
+cleanup. Combat damage sent away from a seat is not "combat damage to a player"
+for the monarch or any trigger. `duration` (`this_turn`), `to` and one of
+`player` or `permanents` are required, and the loader refuses a `permanents`
+naming a target, binding, count or zone.
+
 ## Prevent all but N of that damage
 
 ```jsonc

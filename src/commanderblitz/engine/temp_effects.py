@@ -16,6 +16,7 @@ from .structs import (
     BLOCK_PROHIBITION_DURATIONS,
     CAST_LOCK_DURATIONS,
     COMBAT_FOG_DURATIONS,
+    DAMAGE_REDIRECT_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
@@ -25,6 +26,7 @@ from .structs import (
     BlockProhibition,
     CastLock,
     CombatFog,
+    DamageRedirect,
     DamageShield,
     FlashPermission,
     LifeFloor,
@@ -937,6 +939,100 @@ def clear_combat_fogs(state: GameState, duration: str) -> None:
     """Drop the combat fogs of one duration, at cleanup with the damage shields."""
     if state.combat_fogs:
         state.combat_fogs = [f for f in state.combat_fogs if f.duration != duration]
+
+
+def redirect_damage_to(
+    state: GameState,
+    to: int,
+    controller: int,
+    *,
+    player: int | None = None,
+    permanents: Mapping[str, Any] | None = None,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> bool:
+    """Deal damage to ``player`` and to ``permanents`` to ``to`` instead.
+
+    One rules-relevant thing: it records the `DamageRedirect`. Reading it is
+    `damage_redirect`'s job, asked first by both damage primitives. Refused,
+    returning ``False``, when ``to`` has already left the battlefield: "if it's
+    still on the battlefield" is false from the start, so the effect does
+    nothing.
+    """
+    if duration not in DAMAGE_REDIRECT_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown damage redirect duration {duration!r}")
+    obj = state.objects.get(to)
+    if obj is None or not obj.on_battlefield:
+        return False
+    entry = DamageRedirect(
+        to=to,
+        controller=controller,
+        player=player,
+        permanents=dict(permanents) if permanents is not None else None,
+        duration=duration,
+        source=source,
+    )
+    if entry not in state.damage_redirects:
+        state.damage_redirects.append(entry)
+    return True
+
+
+def damage_redirect(
+    state: GameState,
+    *,
+    pid: int | None = None,
+    oid: int | None = None,
+    applied: tuple[DamageRedirect, ...] = (),
+) -> DamageRedirect | None:
+    """The redirect that takes damage about to be dealt to seat ``pid`` or permanent ``oid``.
+
+    ``applied`` is the redirects this damage has already been through: 614.5
+    lets a replacement modify an event once, so two Heroic Sacrifices on two
+    creatures pass damage from one to the other and never back again. Damage
+    already aimed at a redirect's own creature is not redirected by it.
+
+    When two apply, 616.1 lets the affected player choose and the primitives
+    cannot ask, so the earliest installed wins. Asked on every instance of
+    damage, so the empty table costs nothing.
+    """
+    if not state.damage_redirects:
+        return None
+    # Deferred: the effect layer imports this module.
+    from .effects.context import EffectContext
+    from .effects.selectors import matches
+
+    for redirect in state.damage_redirects:
+        if redirect in applied or redirect.to == oid:
+            continue
+        if pid is not None:
+            if redirect.player == pid:
+                return redirect
+            continue
+        if oid is None or redirect.permanents is None:
+            continue
+        # The effect-side selector over current characteristics, as the damage
+        # would be dealt; "you" is the spell's controller.
+        ctx = EffectContext(state=state, controller=redirect.controller, source_oid=redirect.source)
+        if matches(ctx, oid, redirect.permanents):
+            return redirect
+    return None
+
+
+def end_redirects_to(state: GameState, oid: int) -> None:
+    """End every redirect onto ``oid``, which is leaving the battlefield.
+
+    Called by `zones.move_object` as the permanent leaves: the oid survives the
+    move, and without this a creature that died and was returned would be "the
+    chosen creature" again.
+    """
+    if state.damage_redirects:
+        state.damage_redirects = [r for r in state.damage_redirects if r.to != oid]
+
+
+def clear_damage_redirects(state: GameState, duration: str) -> None:
+    """Drop the damage redirects of one duration, at cleanup with the combat fogs."""
+    if state.damage_redirects:
+        state.damage_redirects = [r for r in state.damage_redirects if r.duration != duration]
 
 
 def clear_damage_shields(state: GameState, duration: str) -> None:
