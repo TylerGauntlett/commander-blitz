@@ -71322,12 +71322,12 @@
     },
     "Doctor Doom, King of Latveria": {
       "edhrec_rank": 10735,
-      "gate": "template",
+      "gate": null,
       "name": "Doctor Doom, King of Latveria",
-      "reason": "no template for: Whenever you discard one or more land cards, each opponent loses 2 life",
+      "reason": "",
       "scryfall_id": "099ed408-9178-4403-8b2d-479ca3cbda9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doctor Doom, Unrivaled": {

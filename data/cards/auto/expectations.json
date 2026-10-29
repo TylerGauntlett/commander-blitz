@@ -3345,6 +3345,10 @@
   "djinn_of_the_lamp": {
     "zone": "battlefield"
   },
+  "doctor_doom_king_of_latveria": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dolmen_gate": {
     "battlefield_count": 33,
     "zone": "battlefield"
