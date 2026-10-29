@@ -388,6 +388,14 @@ STATE_TRIGGER = "state"
 #: every later event in the batch adds its damage to the queued trigger's
 #: ``amount`` (`_joins_batched_damage`), so Hercules, Olympian Hero blocked by
 #: two creatures is dealt damage once, for both blockers' damage together.
+#:
+#: `discard` takes it from `replacements.discard`: one call is one discard
+#: (603.2c) -- a "discard two cards", one player's share of "each player
+#: discards", the cleanup-step discard, one conniving creature's discard -- and
+#: opens its own batch, so Doctor Doom, King of Latveria's "whenever you discard
+#: one or more **land** cards" drains once for two lands. The `filter` is asked
+#: per card before the batch is spent, so a land and a nonland discarded
+#: together fire it once and two nonlands not at all.
 BATCHED_EVENTS = frozenset(
     {
         "permanent_enters",
@@ -395,6 +403,7 @@ BATCHED_EVENTS = frozenset(
         "token_created",
         "attacks_unblocked",
         "dealt_damage",
+        "discard",
     }
 )
 

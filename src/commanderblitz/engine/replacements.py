@@ -144,7 +144,18 @@ def discard(
     ``caused_by`` is passed through to `discard_cards`: the controller of the
     spell or ability that caused the discard, or ``None`` for the cleanup step
     and for a discard paid as a cost. See that function.
+
+    One call is one discard event, however many cards it takes (603.2c), so it
+    opens its own `state.event_batch` and every DISCARD it fires -- the madness
+    exiles and the ordinary cards alike -- carries that batch. Its own rather
+    than the enclosing op's: the cleanup-step discard has no op around it and
+    would otherwise share the batch of whatever resolved last, and an op that
+    discards twice (once per player, or once per conniving creature) discards
+    twice. Taken once, up front, because a madness cast offered mid-discard
+    pays a cost, and a payment bumps the counter.
     """
+    state.event_batch += 1
+    batch = state.event_batch
     ordinary: list[int] = []
     for oid in oids:
         obj = state.objects.get(oid)
@@ -154,8 +165,8 @@ def discard(
         if card.madness is None:
             ordinary.append(oid)
             continue
-        yield from _madness(state, pid, oid)
-    return discard_cards(state, pid, ordinary, caused_by=caused_by)
+        yield from _madness(state, pid, oid, batch)
+    return discard_cards(state, pid, ordinary, caused_by=caused_by, batch=batch)
 
 
 # ----------------------------------------------------------------------
@@ -209,7 +220,7 @@ def _miracle(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     yield from _offer_cast(state, pid, oid, card.miracle, "miracle")
 
 
-def _madness(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
+def _madness(state: GameState, pid: int, oid: int, batch: int) -> Generator[Any, list[int]]:
     """"If you would discard this card, exile it instead."
 
     The exile happens whether or not the cast is taken, and that is the half a
@@ -222,7 +233,7 @@ def _madness(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     obj = state.objects[oid]
     card = state.card_of(obj)
     move_object(state, oid, Zone.EXILE, to_player=obj.owner, cause="madness")
-    state.emit(EventType.DISCARD, player=pid, source=oid, oid=oid, madness=True)
+    state.emit(EventType.DISCARD, player=pid, source=oid, oid=oid, madness=True, batch=batch)
     yield from _offer_cast(state, pid, oid, card.madness, "madness")
 
 

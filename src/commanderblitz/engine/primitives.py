@@ -97,7 +97,12 @@ def draw_cards(state: GameState, pid: int, count: int) -> list[int]:
 
 
 def discard_cards(
-    state: GameState, pid: int, oids: Sequence[int], *, caused_by: int | None = None
+    state: GameState,
+    pid: int,
+    oids: Sequence[int],
+    *,
+    caused_by: int | None = None,
+    batch: int | None = None,
 ) -> list[int]:
     """Discard these cards, recording who *made* the player discard them.
 
@@ -112,7 +117,14 @@ def discard_cards(
     Not the trigger's `controller` clause, which `_actor` answers with the
     discarding player: written there, Orvar's line would read "an opponent
     discarded a card".
+
+    ``batch`` is the `state.event_batch` of the one discard these cards are
+    part of, which `replacements.discard` opens; ``None`` reads the current
+    one. Every DISCARD this call fires carries it, so "whenever you discard
+    **one or more** land cards" fires once for the lot (603.2c).
     """
+    if batch is None:
+        batch = state.event_batch
     out = []
     for oid in oids:
         obj = state.objects.get(oid)
@@ -131,6 +143,7 @@ def discard_cards(
             source=oid,
             oid=oid,
             cause_controller=caused_by,
+            batch=batch,
         )
         out.append(oid)
     return out

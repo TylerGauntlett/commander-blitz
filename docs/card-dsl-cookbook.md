@@ -8167,8 +8167,26 @@ group, including the extra ones a `replace_token_creation` doubler adds or the
 ones it substitutes. Two `create_token` ops are two groups. `attacks_unblocked`
 groups by the block declaration (`combat.finish_blockers`), since every attacker
 is blocked or unblocked at that one instant (509.1h); a second combat is a second
-group. `dealt_damage` groups by the damage event, below. The loader refuses
+group. `discard` groups by the discard: one `replacements.discard` call -- a
+"discard two cards", one player's share of "each player discards", the
+cleanup-step trim, one creature's connive -- is one group, and two discards
+are two. `dealt_damage` groups by the damage event, below. The loader refuses
 `batched` on any other event, where nothing would group it.
+
+"Whenever you discard one or more land cards, each opponent loses 2 life."
+(Doctor Doom, King of Latveria)
+
+```jsonc
+"trigger": {"event": "discard", "controller": "you",
+            "filter": {"types": ["Land"]}, "batched": true},
+"effects": [
+  {"op": "lose_life", "player": "each_opponent", "amount": {"const": 2}}
+]
+```
+
+Two lands discarded together drain 2, a land beside a nonland drains 2, two
+nonlands drain nothing. Without `batched` the same trigger is "whenever you
+discard **a** land card" and drains once per land.
 
 "Whenever one or more creatures an opponent controls attack you and aren't
 blocked, that player draws three cards and gains control of this artifact.

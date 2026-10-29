@@ -423,7 +423,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player. | [Triggers](card-dsl.md#triggers) |
 | `dealt_damage` | `damage_dealt` | A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dies` | `dies` | A permanent dies. | [Triggers](card-dsl.md#triggers) |
-| `discard` | `discard` | A player discards a card. | [Triggers](card-dsl.md#triggers) |
+| `discard` | `discard` | A player discards a card; `batched` fires once per discard, however many cards it takes. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `draw` | `draw` | A player draws a card. | [Triggers](card-dsl.md#triggers) |
 | `draw_step` | `draw_step` | At the beginning of the draw step. | [Triggers](card-dsl.md#triggers) |
 | `end_step` | `end_step` | At the beginning of the end step. | [Triggers](card-dsl.md#triggers) |

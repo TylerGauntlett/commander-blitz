@@ -4871,6 +4871,73 @@
       ]
     },
     {
+      "id": "t_land_discard_drainer",
+      "name": "Test Land Discard Drainer",
+      "oracle_text": "Whenever you discard one or more land cards, each opponent loses 2 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you discard one or more land cards, each opponent loses 2 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "you",
+            "batched": true,
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_greedy_land_discard_drainer",
+      "name": "Test Greedy Land Discard Drainer",
+      "oracle_text": "Whenever you discard a land card, each opponent loses 2 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you discard a land card, each opponent loses 2 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_persister",
       "name": "Test Persister",
       "oracle_text": "Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
