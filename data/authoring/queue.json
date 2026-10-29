@@ -295352,12 +295352,12 @@
     },
     "Typhoid Mary, Fractured": {
       "edhrec_rank": 14475,
-      "gate": "template",
+      "gate": null,
       "name": "Typhoid Mary, Fractured",
-      "reason": "no template for: Whenever Typhoid Mary attacks, choose one at random. If you discarded a card this turn, yo",
+      "reason": "",
       "scryfall_id": "6880df6d-2ec3-459d-aa4f-92f595fab9b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Typhoid Rats": {

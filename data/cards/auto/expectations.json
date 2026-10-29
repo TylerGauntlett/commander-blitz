@@ -13605,6 +13605,10 @@
   "two_headed_zombie": {
     "zone": "battlefield"
   },
+  "typhoid_mary_fractured": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "typhoid_rats": {
     "zone": "battlefield"
   },
