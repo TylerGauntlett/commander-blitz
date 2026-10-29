@@ -139982,12 +139982,12 @@
     },
     "Iron Monger, Sadistic Tycoon": {
       "edhrec_rank": 11508,
-      "gate": "template",
+      "gate": null,
       "name": "Iron Monger, Sadistic Tycoon",
-      "reason": "no template for: Whenever a creature you control connives, put a +1/+1 counter on each Villain you control",
+      "reason": "",
       "scryfall_id": "16dd0d87-6f54-41eb-94ed-62488a7f85ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iron Myr": {
@@ -296232,12 +296232,12 @@
     },
     "Ultron, Unlimited": {
       "edhrec_rank": 10963,
-      "gate": "template",
+      "gate": null,
       "name": "Ultron, Unlimited",
-      "reason": "no template for: Whenever Ultron attacks, he connives",
+      "reason": "",
       "scryfall_id": "8b00cc03-88ac-42d6-a5cf-59fa2af06ba3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ultros, Obnoxious Octopus": {

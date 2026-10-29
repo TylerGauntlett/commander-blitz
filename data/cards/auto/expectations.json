@@ -6396,6 +6396,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "iron_monger_sadistic_tycoon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "iron_myr": {
     "zone": "battlefield"
   },
@@ -13550,6 +13554,10 @@
     "zone": "battlefield"
   },
   "ukud_cobra": {
+    "zone": "battlefield"
+  },
+  "ultron_unlimited": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ulvenwald_tracker": {
