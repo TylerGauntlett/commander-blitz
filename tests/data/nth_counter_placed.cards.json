@@ -1,0 +1,55 @@
+{
+  "_comment": "Shapes for tests/unit/counters/test_nth_counter_placed.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_ncp_rings is Shang-Chi and the Ten Rings on a {G} 1/1: a +1/+1 counter for every card you draw, and draw five and gain 5 when the tenth +1/+1 counter is put on it. t_ncp_charge watches the third charge counter, so the kind is pinned by a second card. The bolt comes from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_ncp_rings",
+      "name": "Test Tenth-Counter Master",
+      "oracle_text": "Whenever you draw a card, put a +1/+1 counter on this creature.\nWhen the tenth +1/+1 counter is put on this creature, you draw five cards and gain 5 life.",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Monk"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you draw a card, put a +1/+1 counter on this creature.",
+          "trigger": {"event": "draw", "controller": "you"},
+          "effects": [
+            {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"self_only": true}}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When the tenth +1/+1 counter is put on this creature, you draw five cards and gain 5 life.",
+          "trigger": {"event": "counter_placed", "source": "self", "counter": "+1/+1", "nth": 10},
+          "effects": [
+            {"op": "draw", "player": "you", "amount": {"const": 5}},
+            {"op": "gain_life", "player": "you", "amount": {"const": 5}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ncp_charge",
+      "name": "Test Third-Charge Relic",
+      "oracle_text": "When the third charge counter is put on this artifact, you gain 3 life.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When the third charge counter is put on this artifact, you gain 3 life.",
+          "trigger": {"event": "counter_placed", "source": "self", "counter": "charge", "nth": 3},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"const": 3}}
+          ]
+        }
+      ]
+    }
+  ]
+}

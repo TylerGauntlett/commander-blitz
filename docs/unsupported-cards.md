@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**92 cards** blocked by **75** capabilities.
+**91 cards** blocked by **74** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -65,7 +65,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
-| [nth-counter-placed-trigger](#nth-counter-placed-trigger) | 1 | 14377 | trigger_event |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
@@ -975,20 +974,6 @@ Blocks **1** card.
 - **Jeweled Amulet** (rank 3604) — `jeweled_amulet`
   - Note the type of mana spent to pay this activation cost.
   - {T}, Remove a charge counter from this artifact: Add one mana of this artifact's last noted type.
-
-</details>
-
-## nth-counter-placed-trigger
-
-Blocks **1** card.
-
-- **(trigger_event)** a counter_placed trigger that fires exactly once when a placement of the given kind on this permanent carries its count across N (before < N <= before + amount), e.g. trigger {event: counter_placed, source: self, counter: "+1/+1", nth: 10}; the event payload would need the pre-placement count, the way add_counters already reads `before` for Saga chapters
-  <br>Why the existing vocabulary won't do: counter_placed fires on every placement and its payload carries only the amount, not the count before it; `nth` on a trigger is defined only for draw and spell_cast ordinals; a `counters_on >= 10` condition fires again on every later counter (and an intervening-if recheck would misread it); the `state` trigger fires on the count holding, not on the tenth counter arriving; `chapter` handles the crossing logic but only for lore counters on Sagas
-
-<details><summary>Cards waiting on this</summary>
-
-- **Shang-Chi and the Ten Rings** (rank 14377) — `shang_chi_and_the_ten_rings`
-  - When the tenth +1/+1 counter is put on Shang-Chi, you draw five cards and gain 5 life.
 
 </details>
 

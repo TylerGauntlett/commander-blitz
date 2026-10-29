@@ -124288,6 +124288,85 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you draw a card, put a +1/+1 counter on Shang-Chi.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When the tenth +1/+1 counter is put on Shang-Chi, you draw five cards and gain 5 life.",
+          "trigger": {
+            "counter": "+1/+1",
+            "event": "counter_placed",
+            "nth": 10,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "shang_chi_and_the_ten_rings",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{W}{U}",
+      "name": "Shang-Chi and the Ten Rings",
+      "oracle_text": "First strike\nWhenever you draw a card, put a +1/+1 counter on Shang-Chi.\nWhen the tenth +1/+1 counter is put on Shang-Chi, you draw five cards and gain 5 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

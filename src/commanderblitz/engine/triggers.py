@@ -1273,8 +1273,19 @@ def _matches(
     # `spell_cast` asks the same question of a cast -- "an opponent casts their
     # second spell each turn" (Mangara) -- and, with a `filter`, of a *run* of
     # casts: see `_spell_ordinal`.
-    if spec.nth is not None and _ordinal(state, spec, event) != spec.nth:
-        return False
+    #
+    # `counter_placed` asks a different ordinal: "when the **tenth** +1/+1
+    # counter is put on Shang-Chi" is the placement that carries the count of
+    # the named kind across N -- before it, fewer than N; after it, N or more.
+    # The comparison 714.2c makes for a chapter, so one placement of three
+    # counters onto eight crosses ten once, and a placement onto ten or more
+    # crosses nothing. See `_crosses_nth`.
+    if spec.nth is not None:
+        if spec.event == "counter_placed":
+            if not _crosses_nth(event, spec.nth):
+                return False
+        elif _ordinal(state, spec, event) != spec.nth:
+            return False
 
     actor = _actor(state, spec.event, event, subject_oid)
     if actor is not None:
@@ -1351,6 +1362,28 @@ ORDINAL_FILTER_KEYS = frozenset(
         "name",
     }
 )
+
+
+def _crosses_nth(event: GameEvent, nth: int) -> bool:
+    """Did this COUNTER_PLACED put the ``nth`` counter of its kind on its permanent?
+
+    ``before`` is the count of that kind just before the placement, written by
+    both placement paths (`primitives.add_counters`, and
+    `zones._fire_entered_with_counters` for an arrival, where it is what the
+    permanent carried in); ``amount`` is what really arrived, after
+    replacements. So the Nth counter is among the ones put on exactly when
+    ``before < nth <= before + amount``.
+
+    A count is the counters on the object *now*, not a lifetime tally: counters
+    removed and put back cross N again, and so does a new object after a zone
+    change (400.7), whose count starts from nought. An event that forgot to
+    carry ``before`` fails the check -- wider is the dangerous direction.
+    """
+    before = event.data.get("before")
+    amount = event.data.get("amount")
+    if not isinstance(before, int) or not isinstance(amount, int):
+        return False
+    return before < nth <= before + amount
 
 
 def _ordinal(state: GameState, spec: TriggerSpec, event: GameEvent) -> int | None:

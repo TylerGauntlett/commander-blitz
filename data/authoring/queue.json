@@ -242582,12 +242582,12 @@
     },
     "Shang-Chi and the Ten Rings": {
       "edhrec_rank": 14377,
-      "gate": "template",
+      "gate": null,
       "name": "Shang-Chi and the Ten Rings",
-      "reason": "no template for: Whenever you draw a card, put a +1/+1 counter on Shang-Chi",
+      "reason": "",
       "scryfall_id": "8d6288b7-c959-437b-9a3f-eb85c306c9f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shang-Chi, Martial Mentor": {

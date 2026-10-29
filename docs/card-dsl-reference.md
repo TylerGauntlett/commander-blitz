@@ -409,7 +409,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `begin_combat` | `begin_combat` | At the beginning of combat. | [Triggers](card-dsl.md#triggers) |
 | `blocks` | `blocks` | A creature blocks. | [Triggers](card-dsl.md#triggers) |
 | `chapter` | `chapter_reached` | A Saga reaches a chapter (supplied by rule, never written). | [Sagas](card-dsl-cookbook.md#sagas) |
-| `counter_placed` | `counter_placed` | Counters are put on a permanent or player. | [Triggers](card-dsl.md#triggers) |
+| `counter_placed` | `counter_placed` | Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it. | [Triggers](card-dsl.md#triggers) |
 | `creature_dies` | `dies` | A creature dies. | [Triggers](card-dsl.md#triggers) |
 | `creatures_attack_player` | `creatures_attacked_player` | One or more creatures attack a player. | ["Whenever one or more creatures attack one of your opponents"](card-dsl-cookbook.md#whenever-one-or-more-creatures-attack-one-of-your-opponents) |
 | `creatures_deal_combat_damage` | `creatures_dealt_combat_damage` | One or more creatures deal combat damage to one or more players. | ["One or more creatures … one or more players"](card-dsl-cookbook.md#one-or-more-creatures--one-or-more-players) |

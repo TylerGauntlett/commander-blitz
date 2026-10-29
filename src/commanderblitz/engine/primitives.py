@@ -1213,6 +1213,11 @@ def add_counters(
             # opponent's spell putting a counter on my creature has `player`
             # me and `put_by` them.
             put_by=by,
+            # The count of this kind just before the placement, for "when the
+            # **tenth** +1/+1 counter is put on" (Shang-Chi and the Ten Rings):
+            # an `nth` on `counter_placed` asks whether this placement carried
+            # the count across N, the comparison 714.2c makes for chapters.
+            before=before,
         )
         if kind == sagas.LORE:
             # Here rather than at each caller, because every way a lore counter

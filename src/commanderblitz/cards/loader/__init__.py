@@ -2589,17 +2589,31 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "spell_cast",
             "you_gain_life",
             "attacks",
+            "counter_placed",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
-            # `spell_cast`, `you_gain_life` and `attacks` carry an ordinal, so
-            # accepting it
+            # `spell_cast`, `you_gain_life` and `attacks` carry an ordinal, and
+            # `counter_placed` the count before the placement, so accepting it
             # elsewhere would look like "your second card each turn" and be a
             # restriction that never matches -- an ability that silently never
             # fires.
             raise DslError(
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
-                f"you_gain_life trigger, or an attacks trigger, "
-                f"not on {model.trigger.event!r}"
+                f"you_gain_life trigger, or an attacks trigger, or a counter_placed "
+                f"trigger, not on {model.trigger.event!r}"
+            )
+        if (
+            model.trigger.nth is not None
+            and model.trigger.event == "counter_placed"
+            and model.trigger.counter is None
+        ):
+            # "When the tenth **+1/+1** counter is put on" counts one kind; the
+            # event's `before` is the count of the kind it placed, so without
+            # `counter` a tenth charge counter would fire it, and ten counters
+            # of mixed kinds would never add up to the tenth of any.
+            raise DslError(
+                f"{where}: 'nth' on a counter_placed trigger counts counters of "
+                f"one kind, so it needs 'counter' (\"the tenth +1/+1 counter\")"
             )
         if model.trigger.nth is not None and model.trigger.nth < 1:
             # Ordinals count from 1. A zeroth or negative card or spell is

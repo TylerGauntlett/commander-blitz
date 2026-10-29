@@ -109,6 +109,9 @@ class EventType:
     LAND_PLAYED = "land_played"
     TAPPED = "tapped"
     UNTAPPED = "untapped"
+    #: Counters of one kind put on one permanent (122.6). ``data`` carries the
+    #: ``counter`` kind, the ``amount`` that arrived, ``put_by`` and ``before``,
+    #: the count of that kind just before -- what an ``nth`` trigger compares.
     COUNTER_PLACED = "counter_placed"
     COUNTER_REMOVED = "counter_removed"
     ATTACHED = "attached"

@@ -4092,7 +4092,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast`, a `you_gain_life` or an `attacks` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -4168,6 +4168,29 @@ selector key, re-asked on resolution as the printed "if" requires.
   "condition": { "exists": { "zone": "battlefield", "self_only": true,
                              "attacking_player": "most_life" } } }
 ```
+
+On `counter_placed`, with `counter`, it is "when the **tenth** +1/+1 counter
+is put on" (Shang-Chi and the Ten Rings): the placement that carries the count
+of that kind on the permanent across N. Every COUNTER_PLACED carries `before`,
+the count just before it, beside `amount`, what really arrived after
+replacements, and the trigger fires when `before < nth <= before + amount` --
+the before/after comparison 714.2c makes for a Saga's chapter. One placement of
+three onto eight fires it once; a placement onto ten or more does not; an
+arrival with ten counters does (122.6, `before` is what it carried in). The
+count is the counters on the object now, not a lifetime tally, so counters
+removed (or annihilated by a -1/-1 counter, 704.5q) and put back cross N again,
+and a permanent that leaves and returns is a new object counting from nought
+(400.7). The loader refuses `nth` here without `counter`: ten counters of mixed
+kinds are the tenth of none.
+
+```jsonc
+// Shang-Chi and the Ten Rings
+{ "event": "counter_placed", "source": "self", "counter": "+1/+1", "nth": 10 }
+```
+
+A `counters_on >= 10` condition is the near miss: it fires on the eleventh
+counter and every one after. A `state` trigger fires on the count holding, not on
+the tenth counter arriving.
 
 Three near misses. `max_per_turn: 1` is a cap **per permanent**, so in a pod the
 first opponent's spell spends it and the second opponent's first spell does

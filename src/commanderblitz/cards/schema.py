@@ -407,7 +407,9 @@ class TriggerModel(BaseModel):
     #: turn", counted over the spells matching ``filter`` when there is one
     #: ("their first **noncreature** spell").  For ``attacks``: "whenever this
     #: creature attacks **for the first time each turn**", the creature's own
-    #: count of attacks this turn.  Matched where
+    #: count of attacks this turn.  For ``counter_placed`` with ``counter``:
+    #: "when the **tenth** +1/+1 counter is put on Shang-Chi", the placement
+    #: that carries the count of that kind across N.  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
     #: tally, which rule 603.4 re-evaluates after the tally has moved on.
     nth: int | None = None

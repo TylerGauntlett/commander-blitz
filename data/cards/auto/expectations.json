@@ -11014,6 +11014,18 @@
   "shambling_vent": {
     "zone": "battlefield"
   },
+  "shang_chi_and_the_ten_rings": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "shanodin_dryads": {
     "zone": "battlefield"
   },
