@@ -5223,6 +5223,10 @@
   "gloomhunter": {
     "zone": "battlefield"
   },
+  "glorious_purpose": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "glory_seeker": {
     "zone": "battlefield"
   },

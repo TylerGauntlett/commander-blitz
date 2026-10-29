@@ -111522,12 +111522,12 @@
     },
     "Glorious Purpose": {
       "edhrec_rank": 12744,
-      "gate": "template",
+      "gate": null,
       "name": "Glorious Purpose",
-      "reason": "no template for: Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan ",
+      "reason": "",
       "scryfall_id": "164e83b1-2822-4215-8857-d31b10b9c4c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glorious Sunrise": {

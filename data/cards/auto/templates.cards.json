@@ -57461,6 +57461,121 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "plan",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.",
+          "trigger": {
+            "controller": "you",
+            "event": "connives",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "sacrificed",
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "as": "exiled",
+                  "destination": "exile",
+                  "objects": {
+                    "count": "all"
+                  },
+                  "op": "look_at_top"
+                },
+                {
+                  "objects": {
+                    "binding": "exiled",
+                    "count": "any",
+                    "not_types": [
+                      "Land"
+                    ],
+                    "zone": "exile"
+                  },
+                  "op": "play_exiled"
+                },
+                {
+                  "objects": {
+                    "binding": "exiled",
+                    "count": "all",
+                    "zone": "exile"
+                  },
+                  "op": "return_to_hand"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When the sixth plan counter is put on this enchantment, sacrifice it. If you do, exile the top four cards of your library. You may cast any number of spells from among them without paying their mana costs. Put the rest into your hand.",
+          "trigger": {
+            "counter": "plan",
+            "event": "counter_placed",
+            "nth": 6,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "glorious_purpose",
+      "mana_cost": "{1}{U}",
+      "name": "Glorious Purpose",
+      "oracle_text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.\nWhen the sixth plan counter is put on this enchantment, sacrifice it. If you do, exile the top four cards of your library. You may cast any number of spells from among them without paying their mana costs. Put the rest into your hand.",
+      "source": "auto",
+      "subtypes": [
+        "Plan"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
