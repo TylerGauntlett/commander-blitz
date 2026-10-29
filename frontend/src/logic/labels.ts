@@ -492,6 +492,13 @@ export function describeEvent(
     case "cycled":
       return `${who} ${v("cycle", "cycles")} ${card ?? "a card"}`;
     /*
+     * A permanent connived (701.47). The draw and the discard already have
+     * their own lines; this one says they were one connive, and it is the
+     * moment "whenever a creature you control connives" triggers off.
+     */
+    case "connived":
+      return `${card ?? "A creature"} connives`;
+    /*
      * A library search (701.19) -- a tutor, a fetchland, landcycling.
      *
      * Nothing else in the log says it: the shuffle that ends a search emits

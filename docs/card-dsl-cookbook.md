@@ -11952,6 +11952,41 @@ the turn your hand was all lands.
 connives on its own — its own controller draws, from its own hand, onto its own
 counters.
 
+## "Whenever a creature you control connives"
+
+```jsonc
+// Glorious Purpose — "Whenever a creature you control connives, put a +1/+1
+// counter on that creature and a plan counter on this enchantment."
+{ "kind": "triggered",
+  "trigger": { "event": "connives", "controller": "you",
+               "filter": { "types": ["Creature"] } },
+  "effects": [
+    { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+      "objects": { "binding": "subject", "zone": "battlefield" } },
+    { "op": "add_counters", "counter": "plan", "amount": { "const": 1 },
+      "objects": { "zone": "battlefield", "self_only": true } } ] }
+
+// "Whenever this creature connives, …"
+{ "trigger": { "event": "connives", "source": "self" } }
+```
+
+The `connives` trigger event fires once for each permanent that connives,
+after its draw, its discard and its counter are all done. Its subject is the
+permanent that connived: `filter` asks what that permanent is,
+`controller: "you"` asks who controls it, and `{"binding": "subject"}` is "that
+creature". `source: "self"` means this permanent connived, never that this
+permanent's ability made something else connive.
+
+A connive counts whatever it drew or discarded. Connive 2 is one connive and
+fires once. A connive whose discard an opponent's discard shield stopped still
+fires. A permanent that left the battlefield before its connive resolved does
+not connive in this engine (see `docs/rules-coverage.md`), so nothing fires.
+
+`draw` and `discard` are the near misses. Both fire once per card and on every
+draw and discard at the table, so connive 2 would pay twice and a cleanup-step
+discard would pay too. Neither one names the creature, so "that creature" has
+nothing to point at.
+
 ## Clash
 
 ```jsonc

@@ -205,6 +205,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: cause rather than the search: a cracked fetchland and a resolved tutor
     #: are both one search, and a "you may search" declined is none.
     "searches_library": EventType.LIBRARY_SEARCHED,
+    #: "Whenever a creature you control connives, …" (701.47) -- Glorious
+    #: Purpose, Iron Monger, Ultron. Once per conniving permanent, after its
+    #: draw, discard and counter, fired by `ops_cards.op_connive`. The subject
+    #: is the permanent that connived (see `OBJECT_SUBJECT_TRIGGERS`), so a
+    #: `filter` asks what it is, `controller: "you"` reads its controller, and
+    #: `{"binding": "subject"}` is "that creature".
+    #:
+    #: `draw` and `discard` are the near misses and fire per card and on every
+    #: draw and discard at the table: connive 2 would pay twice, a cleanup
+    #: discard would pay at all, and a connive whose discard an opponent's
+    #: shield stopped would not pay -- and neither event names the creature.
+    "connives": EventType.CONNIVED,
     #: Enrage (702.131): "Whenever this creature is dealt damage, …".  No new
     #: event -- `DAMAGE_DEALT` has always been fired through the trigger bus and
     #: nothing subscribed to it.  Sugar in the same sense `creature_dies` is:
@@ -472,6 +484,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # battlefield**". The emission passes `source=oid` and no `oid` key, so
         # `_subject_oid` reaches it through the `event.source` fallthrough.
         "ability_activated",
+        # The permanent that connived, so a filter can ask "a *creature you
+        # control*" and `{"binding": "subject"}` is "that creature". Never the
+        # event's `source`, which is whatever made it connive: see the
+        # `source: "self"` check in `_matches`.
+        "connives",
         # The Saga itself. Listed so `source: "self"` -- which the loader always
         # supplies for a chapter -- scopes the ability to *this* Saga rather than
         # to every Saga on the table, and so `_actor` reads the Saga's controller
@@ -1165,6 +1182,12 @@ def _matches(
     # for this one they are the victim and the attacker, so a bear would trigger
     # its own enrage every time it hit something.
     if spec.event == "dealt_damage" and spec.source == "self" and subject_oid != obj.oid:
+        return False
+
+    # The same for "whenever *this creature* connives": the event's `source` is
+    # the ability that made something connive, so Doctor Doom making a Villain
+    # connive would otherwise count as Doom conniving.
+    if spec.event == "connives" and spec.source == "self" and subject_oid != obj.oid:
         return False
 
     if spec.event == "deals_damage_to_player" and subject_oid is None:

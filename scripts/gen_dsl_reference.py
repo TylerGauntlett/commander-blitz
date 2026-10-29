@@ -690,6 +690,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "begin_combat": ("At the beginning of combat.", None),
     "blocks": ("A creature blocks.", None),
     "chapter": ("A Saga reaches a chapter (supplied by rule, never written).", "Sagas"),
+    "connives": ("A permanent connives, once per connive after it completes; the subject is the conniver.",
+                 '"Whenever a creature you control connives"'),
     "counter_placed": ("Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it.",
                        None),
     "creature_dies": ("A creature dies.", None),

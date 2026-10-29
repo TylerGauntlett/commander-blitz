@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 59 |
 | [Conditions](#conditions) | 32 |
-| [Trigger events](#trigger-events) | 47 |
+| [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 34 |
 | [Static effects](#static-effects) | 85 |
 | [Player-wide statics](#player-wide-statics) | 43 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 16 |
-| [Engine events](#engine-events) | 75 |
+| [Engine events](#engine-events) | 76 |
 
 ## Effect ops
 
@@ -410,6 +410,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `begin_combat` | `begin_combat` | At the beginning of combat. | [Triggers](card-dsl.md#triggers) |
 | `blocks` | `blocks` | A creature blocks. | [Triggers](card-dsl.md#triggers) |
 | `chapter` | `chapter_reached` | A Saga reaches a chapter (supplied by rule, never written). | [Sagas](card-dsl-cookbook.md#sagas) |
+| `connives` | `connived` | A permanent connives, once per connive after it completes; the subject is the conniver. | ["Whenever a creature you control connives"](card-dsl-cookbook.md#whenever-a-creature-you-control-connives) |
 | `counter_placed` | `counter_placed` | Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it. | [Triggers](card-dsl.md#triggers) |
 | `creature_dies` | `dies` | A creature dies. | [Triggers](card-dsl.md#triggers) |
 | `creatures_attack_player` | `creatures_attacked_player` | One or more creatures attack a player. | ["Whenever one or more creatures attack one of your opponents"](card-dsl-cookbook.md#whenever-one-or-more-creatures-attack-one-of-your-opponents) |
@@ -1050,6 +1051,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `city_s_blessing` |  |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_planeswalker` | `deals_combat_damage_to_planeswalker` |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_player` | `deals_combat_damage_to_player` |  | [Triggers](card-dsl.md#triggers) |
+| `connived` | `connives` |  | [Triggers](card-dsl.md#triggers) |
 | `control_changed` |  |  | [Triggers](card-dsl.md#triggers) |
 | `counter_placed` | `counter_placed` |  | [Triggers](card-dsl.md#triggers) |
 | `counter_removed` |  |  | [Triggers](card-dsl.md#triggers) |

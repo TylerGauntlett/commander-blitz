@@ -1420,10 +1420,16 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
     its own hand is discarded from, its own counters. That matters for "each
     creature you control connives" only at a pod, and is free here.
 
+    Each permanent that connives fires one `EventType.CONNIVED` once its draw,
+    discard and counter are done -- the `connives` trigger event, with that
+    permanent as the subject. A connive whose discard an opponent's shield
+    stopped is still a connive and still fires.
+
     *Divergence*: 701.47b keeps the draw and the discard when the conniving
     permanent has left the battlefield, and drops only the counter. Here an empty
     pool does nothing at all, so a creature killed in response to its own connive
-    trigger draws nobody a card. Recorded in rules-coverage.md.
+    trigger draws nobody a card -- and, consistently, fires no `connives`
+    trigger, where 701.47b would. Recorded in rules-coverage.md.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Connive", "connive")
@@ -1455,11 +1461,16 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
         # uncaused.
         yield from replacements.discard(ctx.state, pid, picked, caused_by=ctx.controller)
         add_counters(ctx.state, oid, PLUS_ONE, nonland, source=ctx.source_oid)
-        ctx.state.emit(
-            "connive",
+        # Fired, not emitted: "whenever a creature you control connives" listens
+        # for it. Once per permanent and after the counter, so the trigger sees
+        # the connive finished (701.47a) and "that creature" is ``oid``.
+        fire(
+            ctx.state,
+            EventType.CONNIVED,
             player=pid,
             source=ctx.source_oid,
             oid=oid,
+            card=obj.def_id,
             drawn=amount,
             discarded=len(picked),
             nonland=nonland,

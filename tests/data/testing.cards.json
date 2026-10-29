@@ -14131,6 +14131,101 @@
       ]
     },
     {
+      "id": "t_connive_planner",
+      "name": "Test Connive Planner",
+      "oracle_text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.",
+      "mana_cost": "{2}{U}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.",
+          "trigger": {
+            "event": "connives",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "op": "add_counters",
+              "counter": "plan",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_self_conniver",
+      "name": "Test Self Conniver",
+      "oracle_text": "Whenever this creature connives, you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature connives, you gain 1 life.",
+          "trigger": {
+            "event": "connives",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_life_floor_emblem",
       "name": "Test Life Floor Emblem",
       "oracle_text": "You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\"",

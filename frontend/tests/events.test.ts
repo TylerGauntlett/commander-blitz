@@ -166,6 +166,19 @@ describe("beatsFor", () => {
     expect(theirs.banner).toEqual({ text: "Edgar AI is the monarch", tone: "danger" });
   });
 
+  it("gives a connive its own beat and line", () => {
+    // Without a case here the connive would have a log line and no beat, and
+    // the trigger that follows it would arrive with nothing before it.
+    const [beat] = beatsFor(
+      [event("connived", { card: "ultron_unlimited" }, { player: 1, source: 12 })],
+      NAMES,
+      undefined,
+      0,
+    );
+    expect(beat).toMatchObject({ hold: 200 });
+    expect(beat.text).toBe("Ultron Unlimited connives");
+  });
+
   it("gives a library search its own beat and line", () => {
     // `beatsFor` and `describeEvent` are parallel switches with parallel
     // `default`s; a search left out of this one would be dropped from the
