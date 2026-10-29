@@ -44,16 +44,16 @@
       "collector_number": "165"
     },
     "anguished_unmaking": {
-      "scryfall_id": "2cef491b-1838-473c-949e-671e8aae8585",
+      "scryfall_id": "c7ce164c-3437-440c-b462-acca491bfd91",
       "artist": "Wesley Burt",
-      "set_code": "psoi",
-      "collector_number": "242p"
+      "set_code": "tdc",
+      "collector_number": "279"
     },
     "anowon_the_ruin_sage": {
-      "scryfall_id": "7b247681-1cf6-42a0-ad44-76261c690596",
+      "scryfall_id": "e3631ede-7703-4e84-aec0-b4880fdb3685",
       "artist": "Dan Murayama Scott",
-      "set_code": "wwk",
-      "collector_number": "49"
+      "set_code": "c17",
+      "collector_number": "96"
     },
     "arcane_signet": {
       "scryfall_id": "935644d4-a140-4f24-b8ab-d5e79a682a9b",
@@ -61,11 +61,23 @@
       "set_code": "tdc",
       "collector_number": "105"
     },
+    "authority_of_the_consuls": {
+      "scryfall_id": "324b2f55-1e09-490e-8f7e-bfde85a91ac4",
+      "artist": "Lake Hurwitz",
+      "set_code": "kld",
+      "collector_number": "5"
+    },
     "baron_bertram_graywater": {
       "scryfall_id": "e9da18b4-1efc-44b7-8001-a2cfd44c69bf",
       "artist": "Johan Grenier",
       "set_code": "otj",
       "collector_number": "195"
+    },
+    "bartolome_del_presidio": {
+      "scryfall_id": "f82bb486-7009-4b53-973f-477fc13ad7e7",
+      "artist": "Pig Hands",
+      "set_code": "lci",
+      "collector_number": "301"
     },
     "bastion_of_remembrance": {
       "scryfall_id": "9d0c6077-f84c-4e91-87dc-b0ac81d557f8",
@@ -74,10 +86,10 @@
       "collector_number": "171"
     },
     "battlefield_forge": {
-      "scryfall_id": "c47c1bf5-f11e-4f86-b20b-5d899a11dc56",
+      "scryfall_id": "f09bf0b7-45fa-4315-b393-f3ec0303c0c2",
       "artist": "Thomas Stoop",
-      "set_code": "soc",
-      "collector_number": "362"
+      "set_code": "tdc",
+      "collector_number": "340"
     },
     "black_market_connections": {
       "scryfall_id": "9bac8176-d0db-4397-820d-acbdd3264377",
@@ -92,16 +104,16 @@
       "collector_number": "300"
     },
     "blood_artist": {
-      "scryfall_id": "c4c1641d-c4ea-4657-a0ae-db09bba83a0f",
-      "artist": "Julie Dillon",
-      "set_code": "j22",
-      "collector_number": "117"
+      "scryfall_id": "2e1fb442-68ff-4249-8e44-87edf6fae211",
+      "artist": "Johannes Voss",
+      "set_code": "avr",
+      "collector_number": "86"
     },
     "blood_crypt": {
-      "scryfall_id": "0994aef4-b341-45f4-8881-523565a5956e",
-      "artist": "Rob Alexander",
-      "set_code": "rvr",
-      "collector_number": "273"
+      "scryfall_id": "6da63cc5-4624-4491-abd9-9b600c3fefe2",
+      "artist": "Adam Paquette",
+      "set_code": "ecl",
+      "collector_number": "262"
     },
     "bloodghast": {
       "scryfall_id": "08e01310-d192-41e9-a6f0-0edbd6fb3cfb",
@@ -116,10 +128,16 @@
       "collector_number": "92"
     },
     "bloodline_keeper": {
-      "scryfall_id": "60658907-dd63-478d-a66a-123e4e9d2a00",
+      "scryfall_id": "13896468-e3d0-4bcb-b09e-b5c187aecb03",
       "artist": "Jason Chan",
-      "set_code": "inr",
-      "collector_number": "98"
+      "set_code": "isd",
+      "collector_number": "90"
+    },
+    "bloodline_recollector_ancestral_craving": {
+      "scryfall_id": "4fcc913e-f736-460a-b24b-022fa2e861b9",
+      "artist": "Cynthia Sheppard",
+      "set_code": "fra",
+      "collector_number": "49"
     },
     "bloodthirsty_conqueror": {
       "scryfall_id": "ce860ed4-a5bd-4347-9eab-dd716ea84db1",
@@ -127,23 +145,17 @@
       "set_code": "fdn",
       "collector_number": "58"
     },
-    "bloodthrone_vampire": {
-      "scryfall_id": "e62f3371-8aa6-4fbf-b642-5ba6af219703",
-      "artist": "Steve Argyle",
-      "set_code": "m11",
-      "collector_number": "85"
-    },
     "bojuka_bog": {
-      "scryfall_id": "55b5b094-9d2d-4d96-b90c-78fecdae725a",
+      "scryfall_id": "38834333-f9ea-43a8-b00a-17935d59eaea",
       "artist": "Howard Lyon",
-      "set_code": "soc",
-      "collector_number": "363"
+      "set_code": "tdc",
+      "collector_number": "341"
     },
     "captivating_vampire": {
-      "scryfall_id": "0f87aadf-7638-4691-b5a5-86f928e98462",
+      "scryfall_id": "f99b0735-cc3c-48dc-a7ad-b7d9eea45e54",
       "artist": "Eric Deschamps",
-      "set_code": "inr",
-      "collector_number": "100"
+      "set_code": "m11",
+      "collector_number": "87"
     },
     "carmen_cruel_skymarcher": {
       "scryfall_id": "c0e07f8a-5290-47c4-a93d-0c3a14afebd3",
@@ -152,16 +164,16 @@
       "collector_number": "5"
     },
     "carrion_feeder": {
-      "scryfall_id": "d3e33835-a293-4a1f-85d5-8ac22360ef35",
-      "artist": "Brian Snõddy",
-      "set_code": "ema",
-      "collector_number": "84"
+      "scryfall_id": "0a19da90-880e-4eca-8cf7-6d7baf090d53",
+      "artist": "Svetlin Velinov",
+      "set_code": "mh1",
+      "collector_number": "81"
     },
     "caves_of_koilos": {
-      "scryfall_id": "a8a57915-5226-4d3c-ae8e-a55c50f3c131",
+      "scryfall_id": "92bef577-f055-4d54-9a75-e9d4a125001c",
       "artist": "Julian Kok Joon Wen",
-      "set_code": "soc",
-      "collector_number": "365"
+      "set_code": "tdc",
+      "collector_number": "348"
     },
     "charismatic_conqueror": {
       "scryfall_id": "599c934d-bfff-43ce-a545-6e3cde124515",
@@ -206,10 +218,10 @@
       "collector_number": "116"
     },
     "dragonskull_summit": {
-      "scryfall_id": "92964d76-3a01-4ab6-abf9-66b754708f90",
+      "scryfall_id": "243ae383-f77d-4942-ae73-61f991131e03",
       "artist": "Jon Foster",
-      "set_code": "ecc",
-      "collector_number": "147"
+      "set_code": "tdc",
+      "collector_number": "357"
     },
     "edgar_ancient_bloodlord": {
       "scryfall_id": "7c619fed-2394-4efc-8cdc-6df5f51c1f57",
@@ -236,22 +248,16 @@
       "collector_number": "268"
     },
     "exotic_orchard": {
-      "scryfall_id": "dc0a1bc1-ba94-4494-a196-5363fde85194",
+      "scryfall_id": "c2ea2395-4518-4683-8eed-59c43fb3328a",
       "artist": "Steven Belledin",
-      "set_code": "ecc",
-      "collector_number": "148"
+      "set_code": "tdc",
+      "collector_number": "360"
     },
     "fetid_heath": {
-      "scryfall_id": "f465ded8-0d38-42ac-bafc-a12185013c5d",
+      "scryfall_id": "16af23b7-db97-4dd0-84c2-c0095f6dbe96",
       "artist": "Daarken",
-      "set_code": "soc",
-      "collector_number": "372"
-    },
-    "florian_voldaren_scion": {
-      "scryfall_id": "53289e69-74da-46d2-91c2-a11378ba76ef",
-      "artist": "Justine Cruz",
-      "set_code": "mid",
-      "collector_number": "223"
+      "set_code": "tdc",
+      "collector_number": "362"
     },
     "forerunner_of_the_legion": {
       "scryfall_id": "10718d37-63d4-44b7-9450-5d49cffce944",
@@ -260,16 +266,16 @@
       "collector_number": "9"
     },
     "ghostly_prison": {
-      "scryfall_id": "6ef870ec-5dc4-4d50-8d8f-31839758fa57",
+      "scryfall_id": "da3b83cb-f778-4096-9022-b1d6637354ff",
       "artist": "Wayne England",
-      "set_code": "cn2",
-      "collector_number": "86"
+      "set_code": "tdc",
+      "collector_number": "116"
     },
     "godless_shrine": {
-      "scryfall_id": "ced4c824-2dfc-42ae-84e6-09f8e3f51b5b",
-      "artist": "Ravenna Tran",
-      "set_code": "rna",
-      "collector_number": "248"
+      "scryfall_id": "8c542ea4-98c3-4c2d-9066-205ab7aa697a",
+      "artist": "Rob Rey",
+      "set_code": "eoe",
+      "collector_number": "254"
     },
     "grave_pact": {
       "scryfall_id": "b728cdab-e4fe-478b-b7b2-5912bd6a80a3",
@@ -278,10 +284,10 @@
       "collector_number": "29"
     },
     "haunted_ridge": {
-      "scryfall_id": "01b62353-e170-4c29-bda1-7cd8441c01c2",
-      "artist": "Victor Harmatiuk",
-      "set_code": "who",
-      "collector_number": "286"
+      "scryfall_id": "b200e822-be36-4e59-bd0e-9d0188a68df8",
+      "artist": "Jonas De Ro",
+      "set_code": "mid",
+      "collector_number": "263"
     },
     "henrika_domnathi_henrika_infernal_seer": {
       "scryfall_id": "946ca338-5f43-4cff-bd93-1b28449c5fdc",
@@ -290,10 +296,10 @@
       "collector_number": "119"
     },
     "herald_s_horn": {
-      "scryfall_id": "2cfafee3-c060-44bd-be6e-8d36501d72d3",
+      "scryfall_id": "e64d51b3-20a2-4cc3-bd70-7f165940c157",
       "artist": "Jason Felix",
-      "set_code": "m3c",
-      "collector_number": "296"
+      "set_code": "jmp",
+      "collector_number": "469"
     },
     "high_society_hunter": {
       "scryfall_id": "51da4a4b-ea12-4169-a7cf-eb4427f13e84",
@@ -308,28 +314,22 @@
       "collector_number": "44"
     },
     "indulgent_aristocrat": {
-      "scryfall_id": "296e4dc6-6997-4c4a-8137-c0835b44a1c9",
+      "scryfall_id": "84a20b23-e34d-47aa-8695-c2baf87f8032",
       "artist": "Anna Steinbauer",
-      "set_code": "lcc",
-      "collector_number": "200"
+      "set_code": "sir",
+      "collector_number": "118"
     },
     "isolated_chapel": {
-      "scryfall_id": "78814c92-b52c-462a-866f-3e7da9db9f70",
+      "scryfall_id": "2358a441-4ef7-469c-bb9c-c6ff4d719658",
       "artist": "Richard Wright",
-      "set_code": "soc",
-      "collector_number": "382"
+      "set_code": "tdc",
+      "collector_number": "373"
     },
     "legion_lieutenant": {
-      "scryfall_id": "33f7ff99-65d6-4e97-bdfa-b6e6eac0588f",
+      "scryfall_id": "85c6bd7d-537a-42fe-9c68-742bdf2e7025",
       "artist": "Zezhou Chen",
-      "set_code": "rix",
-      "collector_number": "163"
-    },
-    "malakir_bloodwitch": {
-      "scryfall_id": "be917193-f4ab-485d-aac2-826db6a08275",
-      "artist": "Shelly Wan",
-      "set_code": "c17",
-      "collector_number": "116"
+      "set_code": "lcc",
+      "collector_number": "275"
     },
     "malakir_rebirth_malakir_mire": {
       "scryfall_id": "609d3ecf-f88d-4268-a8d3-4bf2bcf5df60",
@@ -374,22 +374,22 @@
       "collector_number": "263"
     },
     "olivia_s_wrath": {
-      "scryfall_id": "98893cc1-f502-4ca6-b6c1-e09fa1f4ef7a",
+      "scryfall_id": "3eb5cc8d-a198-43cd-a2bd-9c9414d815b2",
       "artist": "Néstor Ossandón Leal",
-      "set_code": "voc",
-      "collector_number": "20"
+      "set_code": "lcc",
+      "collector_number": "205"
     },
     "oubliette": {
-      "scryfall_id": "96ccfecd-0dab-426a-8897-86c73934d21d",
+      "scryfall_id": "d4800a7d-c229-4ced-97ff-0e58645d58d6",
       "artist": "Jim Pavelec",
-      "set_code": "plst",
-      "collector_number": "2XM-100"
+      "set_code": "2xm",
+      "collector_number": "100"
     },
     "path_of_ancestry": {
-      "scryfall_id": "9335e773-4b45-4b91-8140-5159fe7e0395",
+      "scryfall_id": "b8504812-fcf5-47d3-977d-1d9a11231fd0",
       "artist": "Alayna Danner",
-      "set_code": "soc",
-      "collector_number": "393"
+      "set_code": "tdc",
+      "collector_number": "382"
     },
     "patron_of_the_vein": {
       "scryfall_id": "a70d7b65-77d0-41d3-9735-d64b9288fde1",
@@ -404,16 +404,22 @@
       "collector_number": "493"
     },
     "plains": {
-      "scryfall_id": "a4446149-341b-449b-86e2-2b6b47b7a75e",
-      "artist": "Sam Burley",
-      "set_code": "j25",
-      "collector_number": "81"
+      "scryfall_id": "24dc369c-020a-4115-a4bb-d60a44de64e3",
+      "artist": "WFlemming Illustration",
+      "set_code": "hob",
+      "collector_number": "194"
     },
     "qarsi_revenant": {
-      "scryfall_id": "8c93a0f6-5e50-4dda-9ff6-da741fb839ff",
+      "scryfall_id": "afc7b965-8c46-4073-9839-18b2d90c75c3",
       "artist": "Lorenzo Mastroianni",
-      "set_code": "tdm",
-      "collector_number": "86"
+      "set_code": "ptdm",
+      "collector_number": "86p"
+    },
+    "ruthless_lawbringer": {
+      "scryfall_id": "927b5498-23f1-47c0-b441-7daaeb54f9b8",
+      "artist": "Joshua Raphael",
+      "set_code": "otj",
+      "collector_number": "229"
     },
     "sacred_foundry": {
       "scryfall_id": "8b4e2642-3c87-4708-b9b4-2e7f7359ac7d",
@@ -422,16 +428,16 @@
       "collector_number": "256"
     },
     "sanctum_seeker": {
-      "scryfall_id": "28da9211-13f4-4500-98f9-58c260c01e18",
+      "scryfall_id": "893279fb-6f51-4d1e-b2fd-a0cdb603785f",
       "artist": "Volkan Baǵa",
-      "set_code": "voc",
-      "collector_number": "136"
+      "set_code": "lcc",
+      "collector_number": "209"
     },
     "shared_animosity": {
-      "scryfall_id": "bb7a56c4-5f20-4fd0-8f95-44061dec1df8",
+      "scryfall_id": "1bd77ae9-c5ba-44af-80e9-7c852722ef6c",
       "artist": "Chuck Lukacs",
-      "set_code": "c20",
-      "collector_number": "158"
+      "set_code": "lcc",
+      "collector_number": "231"
     },
     "shattered_sanctum": {
       "scryfall_id": "2c531254-1b12-44d8-a942-e767d516364e",
@@ -446,10 +452,10 @@
       "collector_number": "103"
     },
     "smoldering_marsh": {
-      "scryfall_id": "d6890462-aeb0-4356-93dc-b2eda0df0c0e",
+      "scryfall_id": "a357b4ad-adb8-4db7-a4dc-2fc3f6b7e2d5",
       "artist": "Adam Paquette",
-      "set_code": "ecc",
-      "collector_number": "168"
+      "set_code": "tdc",
+      "collector_number": "395"
     },
     "sol_ring": {
       "scryfall_id": "7b0ccfd4-f118-4497-9c5a-54cf12000e16",
@@ -481,23 +487,17 @@
       "set_code": "dmu",
       "collector_number": "256"
     },
-    "sundown_pass": {
-      "scryfall_id": "8f3fddd7-ede4-41c7-a645-a6af298a3d35",
-      "artist": "Muhammad Firdaus",
-      "set_code": "vow",
-      "collector_number": "266"
-    },
     "swamp": {
-      "scryfall_id": "02fe3fdf-1d21-4e35-b0f3-3bcde7b05e23",
-      "artist": "Kasia 'Kafis' Zielińska",
-      "set_code": "j25",
-      "collector_number": "89"
+      "scryfall_id": "c5f590a3-9993-4ac4-a93c-1beb44eda17b",
+      "artist": "WFlemming Illustration",
+      "set_code": "hob",
+      "collector_number": "196"
     },
     "swords_to_plowshares": {
-      "scryfall_id": "68ec2aed-7662-48ae-ab25-04f74ece1e41",
+      "scryfall_id": "f87cf997-14b5-4a2c-a7d1-34b7de6561a2",
       "artist": "Jesper Ejsing",
-      "set_code": "soc",
-      "collector_number": "179"
+      "set_code": "tdc",
+      "collector_number": "134"
     },
     "takenuma_abandoned_mire": {
       "scryfall_id": "499037cc-a577-41cb-8ca2-5e117945634f",
@@ -512,28 +512,22 @@
       "collector_number": "329"
     },
     "talisman_of_hierarchy": {
-      "scryfall_id": "0c959368-2f58-48de-b7a5-2bab408652b5",
+      "scryfall_id": "7a283444-2cb5-4dd2-8d20-e8cb90ac0ffe",
       "artist": "Lindsey Look",
-      "set_code": "soc",
-      "collector_number": "358"
+      "set_code": "tdc",
+      "collector_number": "331"
     },
     "talisman_of_indulgence": {
-      "scryfall_id": "3f1e2fad-0aab-4ead-9b25-509c83ad4a93",
-      "artist": "Xabi Gaztelua",
-      "set_code": "who",
-      "collector_number": "252"
+      "scryfall_id": "ccacf88d-407d-465d-958a-1389b7d700e6",
+      "artist": "Ioannis Fiore",
+      "set_code": "msc",
+      "collector_number": "220"
     },
     "teferi_s_protection": {
-      "scryfall_id": "483fa1cb-1e35-44f2-a143-98c0f107f5ca",
+      "scryfall_id": "77f130c7-0138-4a1a-9f67-62d2c302dc48",
       "artist": "Chase Stone",
-      "set_code": "2x2",
-      "collector_number": "32"
-    },
-    "vampire_of_the_dire_moon": {
-      "scryfall_id": "b3c185b9-5d97-4a5a-af0b-8b9c44dcd235",
-      "artist": "Anna Podedworna",
-      "set_code": "m20",
-      "collector_number": "120"
+      "set_code": "c17",
+      "collector_number": "8"
     },
     "vault_of_the_archangel": {
       "scryfall_id": "8f203f04-bd73-4d88-bb5e-aab63507dbd1",
@@ -554,22 +548,22 @@
       "collector_number": "212"
     },
     "viscera_seer": {
-      "scryfall_id": "f511830b-1c1f-4d30-aa5d-4314726d142e",
+      "scryfall_id": "d0f3a502-064e-4700-a730-2e86f985bbc3",
       "artist": "John Stanko",
-      "set_code": "soc",
-      "collector_number": "229"
+      "set_code": "tdc",
+      "collector_number": "199"
     },
     "vito_thorn_of_the_dusk_rose": {
-      "scryfall_id": "0fe79ee4-c3f3-4a6b-a967-203ca3b70ee5",
+      "scryfall_id": "2415707c-2b0a-4d4c-a9a0-2a6dca69589b",
       "artist": "Lie Setiawan",
-      "set_code": "m21",
-      "collector_number": "127"
+      "set_code": "pm21",
+      "collector_number": "127★"
     },
     "voldaren_estate": {
-      "scryfall_id": "2577e5fd-903a-44ce-989a-d53d56511ad3",
+      "scryfall_id": "1fcbc704-4fb3-49c3-9040-aa1681e86e2c",
       "artist": "Richard Wright",
-      "set_code": "vow",
-      "collector_number": "267"
+      "set_code": "lcc",
+      "collector_number": "369"
     },
     "war_room": {
       "scryfall_id": "48d6ce7c-5dc8-449b-acbd-db259ae687ed",
@@ -578,10 +572,10 @@
       "collector_number": "361"
     },
     "welcoming_vampire": {
-      "scryfall_id": "a6ed954c-17e5-45e4-9fba-8eedcad8f9b9",
+      "scryfall_id": "0825bced-f992-4c5d-810b-41d07e6f513d",
       "artist": "Lorenzo Mastroianni",
-      "set_code": "mkc",
-      "collector_number": "91"
+      "set_code": "pvow",
+      "collector_number": "46★"
     }
   },
   "cards": [
@@ -598,7 +592,13 @@
       "id": "arcane_signet"
     },
     {
+      "id": "authority_of_the_consuls"
+    },
+    {
       "id": "baron_bertram_graywater"
+    },
+    {
+      "id": "bartolome_del_presidio"
     },
     {
       "id": "bastion_of_remembrance"
@@ -628,10 +628,10 @@
       "id": "bloodline_keeper"
     },
     {
-      "id": "bloodthirsty_conqueror"
+      "id": "bloodline_recollector_ancestral_craving"
     },
     {
-      "id": "bloodthrone_vampire"
+      "id": "bloodthirsty_conqueror"
     },
     {
       "id": "bojuka_bog"
@@ -688,9 +688,6 @@
       "id": "fetid_heath"
     },
     {
-      "id": "florian_voldaren_scion"
-    },
-    {
       "id": "forerunner_of_the_legion"
     },
     {
@@ -725,9 +722,6 @@
     },
     {
       "id": "legion_lieutenant"
-    },
-    {
-      "id": "malakir_bloodwitch"
     },
     {
       "id": "malakir_rebirth_malakir_mire"
@@ -773,6 +767,9 @@
       "id": "qarsi_revenant"
     },
     {
+      "id": "ruthless_lawbringer"
+    },
+    {
       "id": "sacred_foundry"
     },
     {
@@ -806,11 +803,8 @@
       "id": "sulfurous_springs"
     },
     {
-      "id": "sundown_pass"
-    },
-    {
       "id": "swamp",
-      "qty": 7
+      "qty": 8
     },
     {
       "id": "swords_to_plowshares"
@@ -829,9 +823,6 @@
     },
     {
       "id": "teferi_s_protection"
-    },
-    {
-      "id": "vampire_of_the_dire_moon"
     },
     {
       "id": "vault_of_the_archangel"
