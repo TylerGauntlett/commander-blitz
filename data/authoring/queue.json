@@ -282422,12 +282422,12 @@
     },
     "The Squadron Sinister": {
       "edhrec_rank": 13349,
-      "gate": "template",
+      "gate": null,
       "name": "The Squadron Sinister",
-      "reason": "no template for: Other Villains you control get +2/+2 and have flying and haste",
+      "reason": "",
       "scryfall_id": "013fc8c1-dd0c-42ce-9498-1a13305c75a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Stasis Coffin": {

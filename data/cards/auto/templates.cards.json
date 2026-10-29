@@ -148789,6 +148789,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Villain"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Other Villains you control get +2/+2 and have flying and haste.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Villain"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Other Villains you control get +2/+2 and have flying and haste."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "the_squadron_sinister",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{5}{U}{R}",
+      "mayhem": "{3}{U}{R}",
+      "name": "The Squadron Sinister",
+      "oracle_text": "Flying, haste\nOther Villains you control get +2/+2 and have flying and haste.\nMayhem {3}{U}{R} (You may cast this card from your graveyard for {3}{U}{R} if you discarded it this turn. Timing rules still apply.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
