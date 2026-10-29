@@ -26,6 +26,9 @@
   "abbey_griffin": {
     "zone": "battlefield"
   },
+  "abomination_world_ravager": {
+    "zone": "battlefield"
+  },
   "abrade": {
     "hand_size": {
       "0": 1

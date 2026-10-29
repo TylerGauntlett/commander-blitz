@@ -363,6 +363,37 @@
       "colors": [
         "R"
       ],
+      "id": "abomination_world_ravager",
+      "keywords": [
+        "menace",
+        "trample"
+      ],
+      "mana_cost": "{7}{R}",
+      "mayhem": "{4}{R}",
+      "name": "Abomination, World Ravager",
+      "oracle_text": "Menace, trample\nMayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if you discarded it this turn. Timing rules still apply.)",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Gamma",
+        "Berserker",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 10,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
       "id": "abrade",
       "mana_cost": "{1}{R}",
       "name": "Abrade",

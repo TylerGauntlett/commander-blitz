@@ -3,20 +3,19 @@
   "name": "Chameleon, Master of Disguise",
   "oracle_text": "You may have Chameleon enter as a copy of a creature you control, except his name is Chameleon, Master of Disguise.\nMayhem {2}{U} (You may cast this card from your graveyard for {2}{U} if you discarded it this turn. Timing rules still apply.)",
   "blocked_sentences": [
-    "Mayhem {2}{U} (You may cast this card from your graveyard for {2}{U} if you discarded it this turn. Timing rules still apply.)"
+    "You may have Chameleon enter as a copy of a creature you control, except his name is Chameleon, Master of Disguise."
   ],
   "needs": [
     {
-      "capability": "mayhem",
-      "kind": "cost",
-      "what": "a card-level alternative cost castable only from the graveyard, at the printed mayhem price, and only if this card was discarded (put into the graveyard from hand by a discard) this turn; normal timing rules apply",
-      "why_existing_wont_do": "graveyard_cost is an alternative graveyard price offered unconditionally; the cast_from_graveyard static charges the printed mana cost rather than {2}{U}; no condition_keys or static_condition_keys entry reads \"this card was discarded this turn\" (has_flag/has_turn_flag would need a discard-from-hand trigger that marks the card in the graveyard, and the discard trigger fires only from the battlefield source)"
+      "capability": "enters_as_copy_except_name",
+      "kind": "replacement",
+      "what": "a self_enters_as_copy replacement (copying {zone: battlefield, types: [Creature], controller: you}) whose 707.9b exception sets the copy's name to the card's own printed name, so the copy keeps 'Chameleon, Master of Disguise' as its name (legend rule and name checks read it) while taking every other copiable value from the chosen creature",
+      "why_existing_wont_do": "self_enters_as_copy is not in this packet's reference, and in the engine its except_ accepts only add_keywords (the loader rejects any other key); become_copy has except_name but is an op, so running it from a self_enters trigger would let the creature be seen as itself first (614.1b) rather than entering as the copy; rename_permanent renames a non-copying permanent"
     }
   ],
   "closest_existing": [
-    "graveyard_cost",
-    "cast_from_graveyard",
-    "madness"
+    "self_enters_as_copy",
+    "become_copy"
   ],
   "confidence": "high"
 }

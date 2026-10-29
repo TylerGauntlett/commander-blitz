@@ -642,12 +642,12 @@
     },
     "Abomination, World Ravager": {
       "edhrec_rank": 16046,
-      "gate": "template",
+      "gate": null,
       "name": "Abomination, World Ravager",
-      "reason": "no template for: Mayhem {4}{R}",
+      "reason": "",
       "scryfall_id": "5093ee4c-6275-47e9-85cf-c2f621d3a1da",
-      "source": "",
-      "status": "pending",
+      "source": "template:mayhem",
+      "status": "done",
       "wanted": false
     },
     "Aboroth": {
