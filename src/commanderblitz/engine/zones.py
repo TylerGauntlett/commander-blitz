@@ -1893,6 +1893,59 @@ def link_exiled(state: GameState, oid: int, source_oid: int) -> None:
     state.bump_chars()
 
 
+UNTIL_NEXT_EXILE = "until_next_exile_by_source"
+
+
+def end_permissions_until_next_exile(state: GameState, source_oid: int | None) -> None:
+    """End the permissions ``source_oid`` granted "until you exile another card".
+
+    Superior Foes of Spider-Man: "you may play that card until you exile
+    another card with this creature." Called by every exiling op whose source
+    this is, *once* and before it moves anything, so the cards one resolution
+    exiles together are granted together and only a later exile ends them.
+
+    Each card is checked against `playable_source` as well as the list: a card
+    this source exiled may since have left exile and been exiled again by
+    something else, and that newer permission is not this source's to end.
+    """
+    if source_oid is None:
+        return
+    source = state.objects.get(source_oid)
+    if source is None or not source.playable_grants:
+        return
+    for oid in source.playable_grants:
+        obj = state.objects.get(oid)
+        if (
+            obj is None
+            or obj.playable_duration != UNTIL_NEXT_EXILE
+            or obj.playable_source != source_oid
+        ):
+            continue
+        obj.playable_by = None
+        obj.playable_source = None
+        obj.playable_any_type = False
+        obj.playable_any_color = False
+        obj.playable_free = False
+        obj.playable_alt_cost = None
+    source.playable_grants = []
+
+
+def record_playable_source(state: GameState, oid: int, source_oid: int | None) -> None:
+    """Tie a freshly granted permission to the object that granted it.
+
+    Only the ``"until_next_exile_by_source"`` duration reads the tie, so every
+    grant site calls this after writing `playable_duration` and it does
+    nothing for the others.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or source_oid is None or obj.playable_duration != UNTIL_NEXT_EXILE:
+        return
+    obj.playable_source = source_oid
+    source = state.objects.get(source_oid)
+    if source is not None and oid not in source.playable_grants:
+        source.playable_grants.append(oid)
+
+
 def bounce(state: GameState, oid: int, *, by: int | None = None) -> bool:
     """Return a permanent to its owner's hand."""
     obj = state.objects.get(oid)

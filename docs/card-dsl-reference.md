@@ -25,7 +25,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card-level costs](#card-level-costs) | 31 |
 | [Keywords](#keywords) | 42 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
-| [Durations](#durations) | 5 |
+| [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
 | [Static conditions](#static-conditions) | 14 |
@@ -846,6 +846,7 @@ The values `playable` takes on `exile`, `look_at_top` and `grant_playable` -- ho
 | `end_of_your_next_turn` | Until the end of your next turn. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
 | `later_turns` | On a later turn only (plot, warp). | [Plot](card-dsl.md#plot) |
 | `while_exiled` | For as long as it remains exiled. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
+| `until_next_exile_by_source` | Until the granting object exiles another card, or while exiled once it is gone. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
 
 ## Decision kinds
 

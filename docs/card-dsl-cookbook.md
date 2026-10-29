@@ -787,6 +787,8 @@ graveyard that refills as you empty it, that is the loop, not a rounding error.
   "playable": "end_of_your_next_turn" }                             // Light Up the Stage
 { "op": "exile", "objects": { ... },
   "playable": "while_exiled" }                                      // Elder Brain
+{ "op": "look_at_top", "destination": "exile",
+  "playable": "until_next_exile_by_source" }                        // Superior Foes of Spider-Man
 ```
 
 The values are `PLAYABLE_DURATIONS` in `engine/objects.py`, listed for workers as
@@ -826,6 +828,21 @@ way (400.7), which is exactly where the printed permission ends. For that reason
 the loader accepts it only where the card is in exile -- `exile`, `look_at_top`
 with `destination: "exile"`, or `grant_playable` over `zone: "exile"` -- since on
 a graveyard card the same reset would read "while it remains in the graveyard".
+
+**`until_next_exile_by_source`** is "you may play that card **until you exile
+another card with this creature**" (Superior Foes of Spider-Man). No clock: the
+grant records the source on the card (`playable_source`) and the card on the
+source (`playable_grants`), and `zones.end_permissions_until_next_exile` ends
+those grants at the start of the source's next `exile`, `airbend` or
+`look_at_top` into exile, whether or not that op grants anything itself. Once
+per op, before any card moves, so the cards one op exiles together keep the
+permissions they were granted together. The tie is to the **object** (400.7):
+`reset_permanent_state` empties the source's list when it leaves the
+battlefield, so the last card it exiled stays playable while it stays exiled,
+and the creature returning is a new object whose exiles end only its own grants.
+The loader accepts it where `while_exiled` is accepted, since leaving exile is
+its other end. `while_exiled` is the near miss: it leaves every earlier card
+playable for ever, a stronger card than printed.
 
 The land half ("you may **play lands** … from among the exiled cards") walks
 every seat's exile, as the cast half always did: an opponent's card exiled by

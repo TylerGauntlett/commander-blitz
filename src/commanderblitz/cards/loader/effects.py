@@ -1924,12 +1924,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown 'playable' duration {duration!r} "
                 f"(implemented: {sorted(PLAYABLE_DURATIONS)})"
             )
-        if duration == "while_exiled":
+        if duration in ("while_exiled", "until_next_exile_by_source"):
             # "For as long as they remain exiled" ends when the card leaves
             # exile, which is the zone-change reset -- so it is only the printed
             # duration on a card that is *in* exile. On a graveyard or a hand
             # card the same reset would read "for as long as it remains
             # there", which is a different sentence and a silent one.
+            # "Until you exile another card with this creature" is a card the
+            # creature exiled, so the same zone-change reset is its other end.
             objects = effect.get("objects")
             in_exile = (
                 op == "exile"
@@ -1942,7 +1944,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
             if not in_exile:
                 raise DslError(
-                    f"{where}: 'playable': \"while_exiled\" lasts while the card is in "
+                    f"{where}: 'playable': {duration!r} lasts at most while the card is in "
                     f"exile, so it needs cards being exiled or already there "
                     f"(exile, look_at_top to exile, grant_playable over zone exile)"
                 )

@@ -764,7 +764,9 @@ def reference() -> dict:
             " effect exiles is `playable_free: true` beside that effect's"
             " `playable` duration (`exile`, `look_at_top` to exile,"
             " `grant_playable`); \"for as long as they remain exiled\" is"
-            " `playable: \"while_exiled\"`. The permission is always the"
+            " `playable: \"while_exiled\"`; \"until you exile another card"
+            " with this creature\" is `playable: \"until_next_exile_by_source\"`."
+            " The permission is always the"
             " effect controller's, cards from an opponent's library included;"
             " a land still uses a land drop, a spell keeps its timing and its"
             " additional costs, and X is 0.",

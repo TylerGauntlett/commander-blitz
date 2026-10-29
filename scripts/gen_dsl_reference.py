@@ -1083,6 +1083,10 @@ DURATIONS: dict[str, Entry] = {
     "end_of_your_next_turn": ("Until the end of your next turn.", None),
     "later_turns": ("On a later turn only (plot, warp).", "Plot"),
     "while_exiled": ("For as long as it remains exiled.", None),
+    "until_next_exile_by_source": (
+        "Until the granting object exiles another card, or while exiled once it is gone.",
+        None,
+    ),
 }
 
 DECISIONS: dict[str, Entry] = {

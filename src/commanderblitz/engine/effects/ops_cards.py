@@ -23,11 +23,13 @@ from ..structs import GraveyardCastGrant
 from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
+    end_permissions_until_next_exile,
     link_exiled,
     move_object,
     offer_enters_replacement,
     offer_read_ahead,
     offer_riot_choice,
+    record_playable_source,
 )
 from . import execute
 from .behold import announce_beheld, behold_count, behold_pool
@@ -254,6 +256,7 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # "…without paying their mana costs" (601.2b), plot's flag on the
         # same permission and read by the same cast path.
         obj.playable_free = bool(spec.get("playable_free"))
+        record_playable_source(ctx.state, oid, ctx.source_oid)
 
 
 
@@ -598,8 +601,15 @@ def _move_found(
     Weatherlight Corsair scans an *opponent's* library and puts the hit down
     "under your control", which is the one case where the two differ.
     """
+    # "…until you exile another card with this creature": the first card this
+    # lookup exiles ends what its source granted before. Once, so the cards
+    # exiled together here keep the permissions granted together below.
+    ended_earlier_grants = False
     for oid in picked:
         destination, tapped = _destination_for(ctx, oid, spec, destination, tapped)
+        if destination is Zone.EXILE and not ended_earlier_grants:
+            end_permissions_until_next_exile(ctx.state, ctx.source_oid)
+            ended_earlier_grants = True
         if destination is Zone.BATTLEFIELD:
             # to_player only picks the destination zone list; the battlefield
             # is global, so controller has to be set explicitly or the
@@ -652,6 +662,7 @@ def _move_found(
                 obj.playable_duration = duration
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
+                record_playable_source(ctx.state, oid, ctx.source_oid)
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What

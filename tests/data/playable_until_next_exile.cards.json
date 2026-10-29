@@ -1,0 +1,48 @@
+{
+  "_comment": "Cards that exist only for tests/unit/casting/test_playable_until_next_exile.py. Never part of a deck list. `t_foes_impulse` is Superior Foes of Spider-Man's trigger without its optional 'may' (trample left off too): every spell of mana value 4 or greater exiles the top card, playable until the creature exiles another. `t_foes_big_spell` is the four-mana spell that fires it.",
+  "cards": [
+    {
+      "id": "t_foes_impulse",
+      "name": "Test Foes Impulse",
+      "oracle_text": "Whenever you cast a spell with mana value 4 or greater, exile the top card of your library. You may play that card until you exile another card with this creature.",
+      "mana_cost": "{3}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a spell with mana value 4 or greater, exile the top card of your library. You may play that card until you exile another card with this creature.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {"mana_value": {"op": ">=", "value": 4}}
+          },
+          "effects": [
+            {
+              "op": "look_at_top",
+              "player": "you",
+              "amount": {"const": 1},
+              "objects": {"count": 1},
+              "destination": "exile",
+              "playable": "until_next_exile_by_source"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_foes_big_spell",
+      "name": "Test Foes Big Spell",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{3}{R}",
+      "types": ["Instant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}

@@ -15,12 +15,14 @@ from ..temp_effects import sacrifice_forbidden
 from ..turn import phase_in, phase_out
 from ..zones import (
     destroy,
+    end_permissions_until_next_exile,
     exile,
     link_exiled,
     move_object,
     offer_enters_replacement,
     offer_read_ahead,
     offer_riot_choice,
+    record_playable_source,
     sacrifice,
 )
 from ..zones import snapshot as capture_snapshot
@@ -299,6 +301,12 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
         previous = ctx.bindings.get(str(name))
         earlier = list(previous) if isinstance(previous, list) else []
         ctx.bindings[str(name)] = earlier + list(oids)
+    if oids:
+        # "…until you exile another card with this creature": any exile this
+        # source makes ends what it granted before, whether or not this one
+        # grants anything. Once, before the moves, so the cards exiled
+        # together here keep the permissions granted together below.
+        end_permissions_until_next_exile(ctx.state, ctx.source_oid)
     for oid in oids:
         exile(ctx.state, oid, by=ctx.source_oid)
         if playable:
@@ -317,6 +325,7 @@ def op_exile(ctx: EffectContext, spec: Mapping[str, Any]):
                 # "…without paying its mana cost" (601.2b) -- plot's flag,
                 # read by the same cast path. See `_move_found`.
                 obj.playable_free = bool(spec.get("playable_free"))
+                record_playable_source(ctx.state, oid, ctx.source_oid)
         if link and ctx.source_oid is not None:
             # After the move: `move_object` runs `reset_permanent_state` on the
             # way, which would wipe this if it were set first.
@@ -362,6 +371,8 @@ def op_airbend(ctx: EffectContext, spec: Mapping[str, Any]):
         previous = ctx.bindings.get(str(name))
         earlier = list(previous) if isinstance(previous, list) else []
         ctx.bindings[str(name)] = earlier + list(oids)
+    if oids:
+        end_permissions_until_next_exile(ctx.state, ctx.source_oid)
     for oid in oids:
         exile(ctx.state, oid, by=ctx.source_oid)
         # After the move, for `op_exile`'s reason: `move_object` runs
