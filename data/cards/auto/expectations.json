@@ -12142,6 +12142,10 @@
   "steward_of_valeron": {
     "zone": "battlefield"
   },
+  "stilt_man_towering_terror": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stirring_wildwood": {
     "zone": "battlefield"
   },

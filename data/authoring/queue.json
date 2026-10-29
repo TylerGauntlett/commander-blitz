@@ -264432,12 +264432,12 @@
     },
     "Stilt-Man, Towering Terror": {
       "edhrec_rank": 18564,
-      "gate": "template",
+      "gate": null,
       "name": "Stilt-Man, Towering Terror",
-      "reason": "no template for: Whenever one or more Villains you control deal combat damage to a player, gain control of ",
+      "reason": "",
       "scryfall_id": "7ffa820c-ac05-4b3d-a0ec-5cbd3c42ac9c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stiltzkin, Moogle Merchant": {
