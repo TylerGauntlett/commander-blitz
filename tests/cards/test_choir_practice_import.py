@@ -21,7 +21,9 @@ statics reading them, and counters a permanent enters with that never counted as
 
 The list then moved -- Archivist of Oghma and Heraldic Banner out, Herald of
 Eternal Dawn and Lightning Greaves in -- and came back 73 of 74, with the Herald's
-"you can't lose the game" inert until it was written.
+"you can't lose the game" inert until it was written. Then Angel of the Ruins
+and Angel of Vitality out, Herald of the Host and Seraph of the Sword in -- 73
+of 74, with the Host's myriad inert until it was written.
 
 So this file pins the same claim as its siblings: **every one of its 74 distinct
 cards resolving `native`**, through the same `importer.import_deck` a pasted link
@@ -51,8 +53,6 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Akroma's Will", 1),
     ("Angel of Destiny", 1),
     ("Angel of Invention", 1),
-    ("Angel of the Ruins", 1),
-    ("Angel of Vitality", 1),
     ("Angelic Field Marshal", 1),
     ("Arcane Signet", 1),
     ("Archangel of Thune", 1),
@@ -83,6 +83,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Giver of Runes", 1),
     ("Grasp of Fate", 1),
     ("Herald of Eternal Dawn", 1),
+    ("Herald of the Host", 1),
     ("Herald's Horn", 1),
     ("Inspiring Overseer", 1),
     ("Kindred Judgment", 1),
@@ -105,6 +106,7 @@ DECK: tuple[tuple[str, int], ...] = (
     ("Secluded Steppe", 1),
     ("Sephara, Sky's Blade", 1),
     ("Seraph Sanctuary", 1),
+    ("Seraph of the Sword", 1),
     ("Serra the Benevolent", 1),
     ("Sol Ring", 1),
     ("Starnheim Aspirant", 1),
