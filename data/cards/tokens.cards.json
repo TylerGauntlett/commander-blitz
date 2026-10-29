@@ -1081,6 +1081,47 @@
       "is_token": true
     },
     {
+      "id": "robot_villain_2_2_c",
+      "name": "Robot Villain Token",
+      "oracle_text": "2/2 colorless Robot Villain artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Robot",
+        "Villain"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "villain_2_1_b_menace",
+      "name": "Villain Token",
+      "oracle_text": "2/1 black Villain creature token with menace.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Villain"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "menace"
+      ]
+    },
+    {
       "id": "goat_0_1_w",
       "name": "Goat Token",
       "oracle_text": "0/1 white Goat creature token.",

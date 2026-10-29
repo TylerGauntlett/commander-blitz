@@ -1,0 +1,22 @@
+{
+  "card_id": "chameleon_master_of_disguise",
+  "name": "Chameleon, Master of Disguise",
+  "oracle_text": "You may have Chameleon enter as a copy of a creature you control, except his name is Chameleon, Master of Disguise.\nMayhem {2}{U} (You may cast this card from your graveyard for {2}{U} if you discarded it this turn. Timing rules still apply.)",
+  "blocked_sentences": [
+    "Mayhem {2}{U} (You may cast this card from your graveyard for {2}{U} if you discarded it this turn. Timing rules still apply.)"
+  ],
+  "needs": [
+    {
+      "capability": "mayhem",
+      "kind": "cost",
+      "what": "a card-level alternative cost castable only from the graveyard, at the printed mayhem price, and only if this card was discarded (put into the graveyard from hand by a discard) this turn; normal timing rules apply",
+      "why_existing_wont_do": "graveyard_cost is an alternative graveyard price offered unconditionally; the cast_from_graveyard static charges the printed mana cost rather than {2}{U}; no condition_keys or static_condition_keys entry reads \"this card was discarded this turn\" (has_flag/has_turn_flag would need a discard-from-hand trigger that marks the card in the graveyard, and the discard trigger fires only from the battlefield source)"
+    }
+  ],
+  "closest_existing": [
+    "graveyard_cost",
+    "cast_from_graveyard",
+    "madness"
+  ],
+  "confidence": "high"
+}

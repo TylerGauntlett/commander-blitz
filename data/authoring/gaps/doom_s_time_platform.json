@@ -1,0 +1,23 @@
+{
+  "card_id": "doom_s_time_platform",
+  "name": "Doom's Time Platform",
+  "oracle_text": "Whenever you attack, exile target nonland card from your graveyard with two time counters on it. If it doesn't have suspend, it gains suspend. (At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. If it's a creature, it has haste.)",
+  "blocked_sentences": [
+    "Whenever you attack, exile target nonland card from your graveyard with two time counters on it. If it doesn't have suspend, it gains suspend."
+  ],
+  "needs": [
+    {
+      "capability": "suspend",
+      "kind": "op",
+      "what": "an effect that exiles a target card from a graveyard with N time counters and makes it suspended (702.62: it gains suspend if it lacks it), so the engine's upkeep tick removes counters and offers the free cast (with haste for a creature) when the last is removed",
+      "why_existing_wont_do": "Suspend exists only as the card-level `suspend` cost key and the SUSPEND special action from hand (engine/suspend.py `suspend_card`), which is the only place `suspended_by` is set; `exile` has no counters/suspended option, and `exile` followed by `add_counters` time would leave an inert card the upkeep tick ignores. No op grants suspend to a card in exile"
+    }
+  ],
+  "closest_existing": [
+    "exile",
+    "add_counters",
+    "grant_graveyard_cast",
+    "exile_until"
+  ],
+  "confidence": "high"
+}

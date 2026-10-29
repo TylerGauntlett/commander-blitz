@@ -1,0 +1,18 @@
+{
+  "card_id": "helmut_zemo_mastermind",
+  "name": "Helmut Zemo, Mastermind",
+  "oracle_text": "Whenever Helmut Zemo attacks, you may cast target instant or sorcery card with mana value less than or equal to his power from your graveyard. If that spell would be put into your graveyard, exile it instead. If you cast a spell this way, put a +1/+1 counter on Helmut Zemo.",
+  "blocked_sentences": [
+    "If that spell would be put into your graveyard, exile it instead."
+  ],
+  "needs": [
+    {
+      "capability": "cast_card_exile_instead",
+      "kind": "op",
+      "what": "an option on cast_card (e.g. \"exiles\": true) that marks the spell it casts from a graveyard so that, on resolving, fizzling or being countered, it goes to exile instead of its owner's graveyard -- the same rider flashback and a cast_from_graveyard permission get through card.graveyard_cast_exiles in stack.py",
+      "why_existing_wont_do": "cast_card (op_options: as, objects) pushes the spell via push_spell with neither flashback nor graveyard_permission set, so obj.cast_from_graveyard stays False and stack.py sends it back to the graveyard, where it could be recast every attack. grant_graveyard_cast does carry the exile rider but is a later-priority-window permission, so the 'If you cast a spell this way' counter could not be read during the trigger's resolution; the card-level exiles_itself rider is about the card's own spell, not another card"
+    }
+  ],
+  "closest_existing": ["cast_card", "grant_graveyard_cast"],
+  "confidence": "high"
+}

@@ -1,0 +1,14 @@
+{
+  "card_id": "abomination_world_ravager",
+  "name": "Abomination, World Ravager",
+  "oracle_text": "Menace, trample\nMayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if you discarded it this turn. Timing rules still apply.)",
+  "blocked_sentences": ["Mayhem {4}{R}"],
+  "needs": [{
+    "capability": "mayhem",
+    "kind": "cost",
+    "what": "a card-level alternative cost, castable from the graveyard for the printed mayhem price, offered only while this card is in the graveyard because its owner discarded it this turn (a per-card 'discarded this turn' mark that clears at end of turn); the card goes wherever it normally would on resolution (a permanent to the battlefield, no exile rider)",
+    "why_existing_wont_do": "`graveyard_cost` is an alternative graveyard price but is offered unconditionally, with no condition slot; the `cast_from_graveyard` static takes a condition but casts at the printed price ({7}{R}), not {4}{R}; and no condition or static condition key reads whether this card was discarded this turn (only aggregate values like cards_to_graveyard_this_turn). `madness` is the nearest discard-keyed cost but triggers on the discard itself and casts from exile"
+  }],
+  "closest_existing": ["graveyard_cost", "madness", "cast_from_graveyard"],
+  "confidence": "high"
+}

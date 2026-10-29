@@ -20782,12 +20782,12 @@
     },
     "Baron Strucker, HYDRA Overlord": {
       "edhrec_rank": 10007,
-      "gate": "template",
+      "gate": null,
       "name": "Baron Strucker, HYDRA Overlord",
-      "reason": "no template for: Villain spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "0eb58292-72f2-4344-b5ec-db6c8999cb01",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baron, Airship Kingdom": {
@@ -21632,12 +21632,12 @@
     },
     "Batroc the Leaper": {
       "edhrec_rank": 22217,
-      "gate": "template",
+      "gate": null,
       "name": "Batroc the Leaper",
-      "reason": "no template for: Multikicker {2}",
+      "reason": "",
       "scryfall_id": "c2c43855-e2f9-4369-b404-ebede94fd264",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Battalion Foot Soldier": {
@@ -60252,12 +60252,12 @@
     },
     "Damocles Base, Sword of Kang": {
       "edhrec_rank": 17462,
-      "gate": "template",
+      "gate": null,
       "name": "Damocles Base, Sword of Kang",
-      "reason": "no template for: Whenever Damocles Base deals combat damage to a player, that player faces a villainous cho",
+      "reason": "",
       "scryfall_id": "32d79eb7-307a-4c26-b7dc-9ec019f2d2c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dampen Thought": {
@@ -126338,7 +126338,7 @@
       "scryfall_id": "e8d57d75-275d-45c8-85f4-aab230af35b2",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Herald of the Pantheon": {
       "edhrec_rank": 1853,
@@ -145772,12 +145772,12 @@
     },
     "Kang, Temporal Tyrant": {
       "edhrec_rank": 11791,
-      "gate": "template",
+      "gate": null,
       "name": "Kang, Temporal Tyrant",
-      "reason": "no template for: Whenever Kang attacks, he connives",
+      "reason": "",
       "scryfall_id": "e5dc6bca-f005-43e9-b6c7-739e49064c2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kangee's Lieutenant": {
@@ -148812,12 +148812,12 @@
     },
     "Killmonger, Ruthless Usurper": {
       "edhrec_rank": 16401,
-      "gate": "template",
+      "gate": null,
       "name": "Killmonger, Ruthless Usurper",
-      "reason": "no template for: Whenever Killmonger attacks, he gets +1/+0 until end of turn for each artifact defending p",
+      "reason": "",
       "scryfall_id": "0ec1ec8b-24d7-40e4-9e9d-4d9ec4f0a4f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Killmonger, Scourge of Wakanda": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "glorious_purpose",
+  "name": "Glorious Purpose",
+  "oracle_text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.\nWhen the sixth plan counter is put on this enchantment, sacrifice it. If you do, exile the top four cards of your library. You may cast any number of spells from among them without paying their mana costs. Put the rest into your hand.",
+  "blocked_sentences": [
+    "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "connive",
+      "kind": "trigger_event",
+      "what": "a 'connives' trigger event fired when a permanent completes a connive action (701.50), carrying the conniving creature as the event subject so the effect can put a +1/+1 counter on 'that creature', filterable by controller ('a creature you control connives')",
+      "why_existing_wont_do": "connive exists only as an op; trigger_events has no connives event, and neither draw nor discard triggers identify the conniving creature or fire exactly once per connive"
+    }
+  ],
+  "closest_existing": ["connive", "draw", "discard"],
+  "confidence": "high"
+}

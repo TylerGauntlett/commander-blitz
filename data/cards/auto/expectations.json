@@ -1098,6 +1098,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "baron_strucker_hydra_overlord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "barony_vampire": {
     "zone": "battlefield"
   },
@@ -1133,6 +1137,18 @@
   "bastion_protector": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "batroc_the_leaper": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 32,
+      "1": 40
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "battle_cry_goblin": {
     "zone": "battlefield"
@@ -2875,6 +2891,9 @@
       "0": 20
     },
     "zone": "graveyard"
+  },
+  "damocles_base_sword_of_kang": {
+    "zone": "battlefield"
   },
   "dancing_scimitar": {
     "zone": "battlefield"
@@ -6604,6 +6623,10 @@
   "kami_of_old_stone": {
     "zone": "battlefield"
   },
+  "kang_temporal_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kappa_cannoneer": {
     "counters": {
       "amount": 1,
@@ -6730,6 +6753,10 @@
     "zone": "battlefield"
   },
   "kher_keep": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "killmonger_ruthless_usurper": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

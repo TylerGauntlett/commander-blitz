@@ -1000,3 +1000,50 @@ class TestWKabisRhinoIsAFourFourGreenTrampler:
         assert (beast.power, beast.toughness) == (4, 4)
         assert not beast.keywords
         assert "Rhino" not in beast.subtypes
+
+
+class TestAgeOfUltronsRobotIsATwoTwoColorlessVillain:
+    """Age of Ultron, chapter II: *"For each opponent, you create a 2/2
+    colorless Robot Villain artifact creature token."*
+
+    `gnome_1_1_c` is the pool's nearest colorless artifact creature: half the
+    body, and not a Villain, which the Doom Prevails deck counts.
+    """
+
+    def test_it_is_a_two_two_colorless_robot_villain_artifact(self, pool):
+        token = pool.get("robot_villain_2_2_c")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert sorted(token.subtypes) == ["Robot", "Villain"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_gnome_is_still_a_separate_token(self, pool):
+        gnome = pool.get("gnome_1_1_c")
+        assert (gnome.power, gnome.toughness) == (1, 1)
+        assert "Villain" not in gnome.subtypes
+
+
+class TestEndlessRanksVillainIsATwoOneBlackMenace:
+    """Endless Ranks of HYDRA: *"For each opponent, you create a 2/1 black
+    Villain creature token with menace."*
+
+    `pirate_2_2_b_menace` is the pool's nearest: a point of toughness bigger,
+    and a Pirate rather than the Villain the Doom Prevails deck counts.
+    """
+
+    def test_it_is_a_two_one_black_villain_with_menace(self, pool):
+        token = pool.get("villain_2_1_b_menace")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 1)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Villain"]
+        assert list(token.keywords) == ["menace"]
+        assert not token.abilities
+
+    def test_the_pirate_is_still_a_separate_token(self, pool):
+        pirate = pool.get("pirate_2_2_b_menace")
+        assert (pirate.power, pirate.toughness) == (2, 2)
+        assert "Villain" not in pirate.subtypes
