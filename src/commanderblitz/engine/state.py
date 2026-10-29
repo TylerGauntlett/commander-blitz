@@ -575,6 +575,13 @@ class GameState:
                 # itself rather than granted on top of it: the exception is
                 # part of what the copy is, so it is there before any layer.
                 copied = replace(copied, keywords=copied.keywords | obj.copying_keywords)
+            if obj.copying_remove_supertypes:
+                # "…and it isn't legendary" (Spark Double), the same 707.9b
+                # exception the other way: the copied face has no Legendary, so
+                # the legend rule (704.5j) never pairs it with its original.
+                copied = replace(
+                    copied, supertypes=copied.supertypes - obj.copying_remove_supertypes
+                )
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied

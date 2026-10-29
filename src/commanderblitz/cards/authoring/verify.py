@@ -1891,7 +1891,19 @@ def _covered(card: CardDef, line: str) -> bool:
             # `except_`, or the card claims a sentence it only half performs.
             if "until end of turn" in lowered and replacement.get("duration") != "end_of_turn":
                 continue
-            if "except it has" in lowered and not replacement.get("except_"):
+            # Each printed half of the exception needs its key: "…isn't
+            # legendary" (Spark Double), "…his name is…" (Chameleon), "…enters
+            # with an additional … counter" (Spark Double again).
+            exception = replacement.get("except_") or {}
+            if "except" in lowered and not exception:
+                continue
+            if "isn't legendary" in lowered and "Legendary" not in (
+                exception.get("remove_supertypes") or ()
+            ):
+                continue
+            if "name is" in lowered and not exception.get("name"):
+                continue
+            if "enters with" in lowered and not exception.get("enters_with"):
                 continue
             return True
         if event == "self_enters_replaced" and "would enter" in lowered:

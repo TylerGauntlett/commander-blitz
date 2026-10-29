@@ -1040,9 +1040,15 @@ class ReplacementModel(BaseModel):
     #: `self_enters_as_copy`: the copy exception (707.9b), written into the
     #: copiable values the permanent enters with -- "…except it has **haste and
     #: dethrone**" (Dack's Duplicate) is ``{"add_keywords": ["haste",
-    #: "dethrone"]}``. ``add_keywords`` is the one key: the keywords are part of
-    #: the copy, not a layer-6 grant on top of it, so the copy has them from the
-    #: moment it arrives and loses them only when the copy itself ends.
+    #: "dethrone"]}``. The keywords are part of the copy, not a layer-6 grant on
+    #: top of it, so the copy has them from the moment it arrives and loses
+    #: them only when the copy itself ends. The other keys:
+    #: ``remove_supertypes`` (`copy_permanent`'s spelling -- Spark Double's
+    #: "…and it isn't legendary"), ``name`` ("…except his name is Chameleon,
+    #: Master of Disguise") and ``enters_with``, a list of ``{counter, amount,
+    #: condition}`` judged against the copy as it enters (Spark Double's "an
+    #: additional +1/+1 counter on it if it's a creature"). The loader holds
+    #: the set as ``ENTERS_COPY_EXCEPT_KEYS``.
     except_: dict[str, Any] | None = None
     #: `self_enters_as_copy`: how long the copy lasts. ``permanent`` (the
     #: default) is Phyrexian Metamorph's -- 706.2 gives a copy no duration, so

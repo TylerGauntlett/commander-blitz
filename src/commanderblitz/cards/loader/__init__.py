@@ -398,6 +398,76 @@ def load_deck_file(path: Path) -> DeckModel:
 # ----------------------------------------------------------------------
 
 
+#: The keys a `self_enters_as_copy` replacement's ``except_`` (707.9b) reads.
+#: ``add_keywords`` and ``remove_supertypes`` say what `copy_permanent`'s keys
+#: of the same names say; ``name`` is `become_copy`'s ``except_name``; and
+#: ``enters_with`` is the one clause no token copy prints, because a token is
+#: never "entering" as anything but itself.
+ENTERS_COPY_EXCEPT_KEYS = frozenset({"add_keywords", "remove_supertypes", "name", "enters_with"})
+
+
+def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
+    """The copy exception an as-enters copy writes into its copiable values.
+
+    Checked whole at load, because every key is read only when a permanent
+    actually enters as a copy: a misspelt keyword, supertype or counter would
+    arrive as a plain copy -- a different card from the printed one, and
+    nothing would say so.
+    """
+    unknown = set(spec) - ENTERS_COPY_EXCEPT_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}: unsupported keys {sorted(unknown)} "
+            f"(known: {sorted(ENTERS_COPY_EXCEPT_KEYS)})"
+        )
+    if not spec:
+        raise DslError(f"{where}: an empty exception -- omit 'except_' instead")
+    if "add_keywords" in spec:
+        # "…except it has haste and dethrone" (Dack's Duplicate).
+        added = spec["add_keywords"]
+        if not isinstance(added, list) or not added:
+            raise DslError(f"{where}.add_keywords: needs a non-empty list of keywords")
+        for k in added:
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}.add_keywords: unknown keyword {k!r}")
+        refuse_numbered_grant(added, f"{where}.add_keywords")
+    if "remove_supertypes" in spec:
+        # "…and it isn't legendary" (Spark Double). Dropped, the copy of a
+        # legendary permanent is binned by the legend rule beside its original.
+        removed = spec["remove_supertypes"]
+        if not isinstance(removed, list) or not removed:
+            raise DslError(f"{where}.remove_supertypes: must be a non-empty list")
+        for s in removed:
+            if s not in KNOWN_SUPERTYPES:
+                raise DslError(f"{where}.remove_supertypes: unknown supertype {s!r}")
+    if "name" in spec:
+        # "…except his name is Chameleon, Master of Disguise."
+        name = spec["name"]
+        if not isinstance(name, str) or not name.strip():
+            raise DslError(f"{where}.name: must be a non-empty string")
+    if "enters_with" in spec:
+        # "…except it enters with an additional +1/+1 counter on it if it's a
+        # creature" (Spark Double). Each entry is a `self_enters_with_counters`
+        # replacement's own three fields, judged once the copy is applied.
+        entries = spec["enters_with"]
+        if not isinstance(entries, list) or not entries:
+            raise DslError(f"{where}.enters_with: must be a non-empty list")
+        for j, entry in enumerate(entries):
+            at = f"{where}.enters_with[{j}]"
+            if not isinstance(entry, Mapping) or "counter" not in entry:
+                raise DslError(f"{at}: needs a 'counter'")
+            extra = set(entry) - {"counter", "amount", "condition"}
+            if extra:
+                raise DslError(
+                    f"{at}: unsupported keys {sorted(extra)} "
+                    f"(known: amount, condition, counter)"
+                )
+            _check_counter_kind(entry["counter"], f"{at}.counter")
+            validate_value(entry.get("amount", 1), f"{at}.amount")
+            if entry.get("condition") is not None:
+                validate_condition(entry["condition"], f"{at}.condition")
+
+
 def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
     """A card's replacements, plus the ones the rules put on it.
 
@@ -907,29 +977,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 replacement.copying, f"{where}.replacements[{i}].copying"
             )
             if replacement.except_ is not None:
-                # "…except it has haste and dethrone." The one exception this
-                # replacement writes, and checked the way a printed keyword
-                # list is: a misspelt keyword would enter as a copy with
-                # nothing added, a cheaper card than the printed one.
-                unknown = set(replacement.except_) - {"add_keywords"}
-                if unknown:
-                    raise DslError(
-                        f"{where}.replacements[{i}].except_: unsupported keys "
-                        f"{sorted(unknown)} (only 'add_keywords')"
-                    )
-                added = replacement.except_.get("add_keywords")
-                if not isinstance(added, list) or not added:
-                    raise DslError(
-                        f"{where}.replacements[{i}].except_.add_keywords: "
-                        f"needs a non-empty list of keywords"
-                    )
-                for k in added:
-                    if k not in KNOWN_KEYWORDS:
-                        raise DslError(
-                            f"{where}.replacements[{i}].except_.add_keywords: "
-                            f"unknown keyword {k!r}"
-                        )
-                refuse_numbered_grant(added, f"{where}.replacements[{i}].except_.add_keywords")
+                _check_enters_copy_except(
+                    replacement.except_, f"{where}.replacements[{i}].except_"
+                )
         else:
             for key in ("copying", "except_"):
                 if getattr(replacement, key) is not None:

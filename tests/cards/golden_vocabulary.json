@@ -86,6 +86,12 @@
    "recipient",
    "subject"
   ],
+  "ENTERS_COPY_EXCEPT_KEYS": [
+   "add_keywords",
+   "enters_with",
+   "name",
+   "remove_supertypes"
+  ],
   "FREE_CAST_FILTER_KEYS": [
    "any_types",
    "colors",

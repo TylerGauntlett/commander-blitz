@@ -1453,7 +1453,10 @@ def _enter_battlefield(
     read_ahead = obj.read_ahead_chapter
     obj.read_ahead_chapter = None
     _apply_board_enters_tapped(state, obj)
-    for replacement in card.replacements:
+    # A list rather than the tuple itself: a copy applied below appends the
+    # copied face's "enters with" counters to it (614.12).
+    replacements = list(card.replacements)
+    for replacement in replacements:
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
         # rather than by a static, because the answer is only ever asked once
@@ -1481,12 +1484,58 @@ def _enter_battlefield(
             # The rest of this loop goes on reading the **printed** card's
             # replacements, which is what every card in this family wants:
             # Vesuva's "enter tapped" is printed on Vesuva, not on the land it
-            # copies.
+            # copies. The one addition is the copied face's "enters with"
+            # counters, appended below.
             if copy_on_arrival is not None:
+                exception = replacement.get("except_") or {}
                 obj.copying = copy_on_arrival
                 obj.copying_until_eot = replacement.get("duration") == "end_of_turn"
-                added = (replacement.get("except_") or {}).get("add_keywords")
+                added = exception.get("add_keywords")
                 obj.copying_keywords = frozenset(added) if added else None
+                # "…and it isn't legendary" (Spark Double), and "…except his
+                # name is Chameleon, Master of Disguise" -- the two other
+                # copiable values an exception rewrites, read by `card_of`.
+                dropped = exception.get("remove_supertypes")
+                obj.copying_remove_supertypes = frozenset(dropped) if dropped else None
+                obj.copying_name = exception.get("name")
+                state.bump_chars()
+                # 614.12: the copied face's own "enters with" -- above all a
+                # planeswalker's intrinsic starting loyalty (306.5b), which
+                # the loader compiles as one -- applies to a permanent entering
+                # as a copy of it. Appended to the list this loop is walking, so
+                # they join the one placement below (122.6). Only counters: the
+                # printed card's other replacements stay the ones read, as the
+                # note above says.
+                replacements.extend(
+                    r
+                    for r in state.registry.get(copy_on_arrival).replacements
+                    if r.get("event") == "self_enters_with_counters"
+                    or (
+                        r.get("event") == "self_enters"
+                        and (r.get("modify") or {}).get("counters")
+                    )
+                )
+                # "…except it enters with an additional +1/+1 counter on it if
+                # it's a creature, it enters with an additional loyalty counter
+                # on it if it's a planeswalker" (Spark Double). Part of the same
+                # replacement (614.1c), so judged now, against the copy -- the
+                # 0/0 is never seen at its printed size, and a planeswalker copy
+                # enters with its copied loyalty and the extra one in a single
+                # placement.
+                for entry in exception.get("enters_with") or ():
+                    if not evaluate_condition(
+                        state,
+                        entry.get("condition"),
+                        controller=obj.controller,
+                        source=obj.oid,
+                    ):
+                        continue
+                    ctx = EffectContext(
+                        state=state, controller=obj.controller, source_oid=obj.oid
+                    )
+                    entering.setdefault(str(entry["counter"]), []).append(
+                        evaluate_value(ctx, entry.get("amount", 1))
+                    )
             continue
         if event == "self_enters_prepared":
             # "This creature **enters prepared**." A characteristic of the

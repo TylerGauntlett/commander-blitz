@@ -2342,14 +2342,58 @@ permanent enters none (Phyrexian Metamorph). `end_of_turn` is Cursed Mirror's
 copy is `clear_until_eot`'s timed form, and after cleanup the permanent is its
 own printed card again.
 
-`except_` is the copy exception, 707.9b, and `add_keywords` is its one key —
-Dack's Duplicate's "…except it has haste and dethrone" is
-`{"add_keywords": ["haste", "dethrone"]}`. The keywords go on
-`GameObject.copying_keywords`, which `GameState.card_of` writes into the copied
-face, so they are part of the copy rather than granted on top of it and they end
-when the copy ends. The near miss is a printed `grant_keyword` static: that is a
-layer-6 grant which keeps working on the uncopied card when the controller
-declines. The loader refuses an unknown keyword, an empty list and any other key.
+`except_` is the copy exception, 707.9b. Dack's Duplicate's "…except it has
+haste and dethrone" is `{"add_keywords": ["haste", "dethrone"]}`. The keywords go
+on `GameObject.copying_keywords`, which `GameState.card_of` writes into the
+copied face, so they are part of the copy rather than granted on top of it and
+they end when the copy ends. The near miss is a printed `grant_keyword` static:
+that is a layer-6 grant which keeps working on the uncopied card when the
+controller declines.
+
+```jsonc
+// Spark Double
+{ "event": "self_enters_as_copy",
+  "copying": { "zone": "battlefield", "controller": "you",
+               "any_types": ["Creature", "Planeswalker"] },
+  "except_": {
+    "enters_with": [
+      { "counter": "+1/+1", "amount": 1,
+        "condition": { "exists": { "self_only": true, "types": ["Creature"] } } },
+      { "counter": "loyalty", "amount": 1,
+        "condition": { "exists": { "self_only": true, "types": ["Planeswalker"] } } } ],
+    "remove_supertypes": ["Legendary"] } }
+
+// Chameleon, Master of Disguise
+{ "event": "self_enters_as_copy",
+  "copying": { "zone": "battlefield", "controller": "you", "types": ["Creature"] },
+  "except_": { "name": "Chameleon, Master of Disguise" } }
+```
+
+The other keys, each a copiable value the copy carries until it ends:
+
+| key | meaning |
+|---|---|
+| `add_keywords` | keywords added to the copied face |
+| `remove_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy does not take, on `copying_remove_supertypes`. The legend rule reads the result |
+| `name` | the name the copy keeps (`become_copy`'s `except_name`), on `copying_name` |
+| `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has |
+
+`enters_with` is part of the replacement (614.1c). Its conditions are judged once
+the copy is applied, with the arriving permanent as `self_only`, so "if it's a
+creature" asks about the copy and never about the printed 0/0. The counters join
+the arrival's one placement (122.6), so Hardened Scales and Oath of Gideon apply
+to the total. Written as a `self_enters` trigger, the counters would arrive a
+moment after the copy, and a planeswalker copy would sit at its copied loyalty
+until they did.
+
+Whatever the exception, a permanent entering as a copy also takes the copied
+face's own "enters with" counters (614.12), above all a planeswalker's starting
+loyalty (306.5b), which the loader compiles as a `self_enters_with_counters` on
+that face. The printed card's other replacements stay the ones read.
+
+The loader holds the key set as `ENTERS_COPY_EXCEPT_KEYS`. It refuses an unknown
+key, an empty exception, an empty list, an unknown keyword, supertype or counter,
+a malformed condition and an empty name.
 
 `copying` is required on the event; `copying`, `except_` and a non-default
 `duration` are refused on the other four. Always an
