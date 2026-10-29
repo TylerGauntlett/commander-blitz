@@ -853,6 +853,11 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
         seats = state.turn_ledger.seats_attacked.get(pid, set())
         state.attacked_last_turn[pid] = (state.turn, frozenset(seats))
     state.turn_ledger.clear()
+    # The ledger is a static's input (`spells_cast_this_turn`,
+    # `permanents_entered_this_turn`), and `chars` caches per `char_version`.
+    # The clears above bump it before this line, so an answer read in between
+    # would otherwise outlive the turn into a 514.3a priority window.
+    state.bump_chars()
     # Rule 514.3a: if anything happened, players get priority and cleanup repeats.
     state.cleanup_repeat = bool(state.pending_triggers)
 

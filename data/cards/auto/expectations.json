@@ -1901,6 +1901,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "captain_mar_vell_space_born": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "captain_of_the_watch": {
     "battlefield_count": 36,
     "tokens": {

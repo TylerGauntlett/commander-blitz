@@ -20760,6 +20760,53 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "spells_cast_this_turn": "opponent"
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "effect": "cast_as_though_flash",
+          "kind": "static",
+          "text": "Cosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells as though they had flash."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "captain_mar_vell_space_born",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Captain Mar-Vell, Space-Born",
+      "oracle_text": "Flying, vigilance\nCosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells as though they had flash.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Kree",
+        "Soldier",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "exclude_self": true,

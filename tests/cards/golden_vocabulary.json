@@ -593,6 +593,7 @@
    "min_count_of",
    "min_life_of",
    "permanents_entered_this_turn",
+   "spells_cast_this_turn",
    "starting_life_of",
    "sum",
    "times",

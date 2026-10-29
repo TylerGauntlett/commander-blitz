@@ -945,6 +945,10 @@ class GameState:
                 # `spells_cast_ids[pid][:nth]` is the run up to and including
                 # this spell however many are cast before a trigger reads it.
                 data["nth"] = ledger.spells_cast[pid]
+                # The count is a static's input (`spells_cast_this_turn`, Captain
+                # Mar-Vell's "as long as an opponent has cast a spell this
+                # turn"), and `chars` caches per `char_version`.
+                self.bump_chars()
         elif event.type == EventType.ZONE_CHANGE:
             obj = self.objects.get(data.get("oid"))
             # 400.7: the oid survives a zone change and the object does not. A

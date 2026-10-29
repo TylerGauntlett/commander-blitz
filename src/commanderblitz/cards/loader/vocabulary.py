@@ -1405,6 +1405,16 @@ STATIC_POISON_KEYS = frozenset({"max_poison_of"})
 #: funnels bumps `char_version`. Takes the life leaves' player specs.
 STATIC_MANA_POOL_KEYS = frozenset({"unspent_mana_count"})
 
+#: The per-turn cast leaf -- Captain Mar-Vell, Space-Born's "as long as an
+#: opponent has cast a spell this turn, you may cast spells as though they had
+#: flash". `TurnLedger.spells_cast` is written only by `GameState._tally`
+#: folding SPELL_CAST and emptied only by the cleanup step, never by a layer,
+#: and both funnels bump `char_version`, so it is a pipeline input on a poison
+#: count's terms. The bare player-spec form only, with the life leaves' specs:
+#: the effect side's typed `{"player", "filter"}` form matches the cast cards'
+#: printed faces, which no static has needed.
+STATIC_SPELLS_CAST_KEYS = frozenset({"spells_cast_this_turn"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1448,6 +1458,7 @@ STATIC_VALUE_KEYS = (
     | STATIC_LIFE_KEYS
     | STATIC_POISON_KEYS
     | STATIC_MANA_POOL_KEYS
+    | STATIC_SPELLS_CAST_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 

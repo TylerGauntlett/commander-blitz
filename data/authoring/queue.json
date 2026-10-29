@@ -39462,12 +39462,12 @@
     },
     "Captain Mar-Vell, Space-Born": {
       "edhrec_rank": 18404,
-      "gate": "template",
+      "gate": null,
       "name": "Captain Mar-Vell, Space-Born",
-      "reason": "no template for: Cosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells ",
+      "reason": "",
       "scryfall_id": "27924c2f-756c-42af-9830-18a5a2735137",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain Marvel, Apex Avenger": {

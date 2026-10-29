@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**94 cards** blocked by **77** capabilities.
+**93 cards** blocked by **76** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -81,7 +81,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-spells-cast-this-turn](#static-spells-cast-this-turn) | 1 | 18404 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -1208,20 +1207,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## static-spells-cast-this-turn
-
-Blocks **1** card.
-
-- **(value)** the per-turn spell-cast ledger readable from a static ability's condition: `spells_cast_this_turn` (scoped to opponents) in `static_value_keys`, so a `cast_as_though_flash` static with affects_player "you" can carry condition `cmp` {spells_cast_this_turn: opponent} > 0 and switch on the moment any opponent casts a spell this turn
-  <br>Why the existing vocabulary won't do: The `cast_as_though_flash` static already expresses the permission, but its `condition` may only use `static_condition_keys`/`static_value_keys`; `spells_cast_this_turn` is in `value_keys` (effects and triggers) and absent from `static_value_keys`, and no `has_turn_flag` style key exists for statics. A `spell_cast` trigger setting a flag would be an unprinted ability and would miss spells cast before this permanent entered
-
-<details><summary>Cards waiting on this</summary>
-
-- **Captain Mar-Vell, Space-Born** (rank 18404) — `captain_mar_vell_space_born`
-  - Cosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells as though they had flash.
 
 </details>
 

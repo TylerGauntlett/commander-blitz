@@ -653,9 +653,13 @@ CONDITIONS: dict[str, Entry] = {
 }
 
 #: Static-only value leaves, which the effect-side `VALUES` does not have.
+#: Static-side entries, read before `VALUES`: a leaf in both languages whose
+#: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
     "greatest_commander_mana_value": (
         "The greatest printed mana value among your commanders, wherever they are.", None),
+    "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; the bare spec only.",
+                              '"As long as an opponent has cast a spell this turn"'),
 }
 
 STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
@@ -1263,7 +1267,7 @@ def families() -> list[Family]:
         ),
         Family(
             "Static values", H_STATIC_MAGNITUDE, tuple(sorted(STATIC_VALUE_KEYS)),
-            lambda name: VALUES.get(name) or STATIC_VALUE_EXTRAS.get(name),
+            lambda name: STATIC_VALUE_EXTRAS.get(name) or VALUES.get(name),
             "The subset of the value language a static's magnitude (`power`, `amount`, …) "
             "may use.",
         ),

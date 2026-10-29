@@ -5006,6 +5006,7 @@ smaller than the effect-side `value_keys`:
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
+| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — the bare player spec only |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -5165,7 +5166,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
@@ -5368,6 +5369,33 @@ the size moves the moment the pool does. A test or a new funnel that writes
 `ManaPool` directly must bump too. The leaf works in both languages; in a static
 it takes the life leaves' player specs. `mana_spent_of` is the near miss and
 reads the other thing: mana already spent on a spell, not mana still floating.
+
+#### "As long as an opponent has cast a spell this turn"
+
+```jsonc
+// Captain Mar-Vell, Space-Born -- "Cosmic Awareness — As long as an opponent
+// has cast a spell this turn, you may cast spells as though they had flash."
+{ "kind": "static", "effect": "cast_as_though_flash", "affects_player": "you",
+  "condition": { "cmp": ">", "left": { "spells_cast_this_turn": "opponent" },
+                 "right": { "const": 0 } } }
+```
+
+`{"spells_cast_this_turn": spec}` in a static is the storm count: how many
+spells the spec's players have cast this turn, summed, read off
+`TurnLedger.spells_cast`. "An opponent has cast" is `opponent` and `> 0`, so in
+a pod any one opponent's cast is enough; your own casts are not counted. The
+engine folds every SPELL_CAST into the ledger whatever is watching, so a spell
+cast before the permanent arrived counts, and the cleanup step empties it, so
+the static stops existing with the turn. A copy is never cast and adds nothing.
+
+The ledger is a pipeline input on a poison count's terms: only the cast fold
+writes it and only the cleanup step empties it, never a layer (ADR 0001), and
+both bump `char_version`, so a `buff` with the same condition moves the moment
+the spell is cast and again when the turn ends. A static takes the life
+leaves' player specs and the bare spec only; the loader refuses the effect
+side's typed `{"player", "filter"}` form by name. A `spell_cast` trigger setting
+a turn flag is the near miss: it is an ability the card does not print, and it
+misses a spell cast before the permanent entered.
 
 #### "At least 7 life more than your starting life total"
 
