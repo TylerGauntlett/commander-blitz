@@ -23702,6 +23702,48 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "chameleon_master_of_disguise",
+      "mana_cost": "{3}{U}",
+      "mayhem": "{2}{U}",
+      "name": "Chameleon, Master of Disguise",
+      "oracle_text": "You may have Chameleon enter as a copy of a creature you control, except his name is Chameleon, Master of Disguise.\nMayhem {2}{U} (You may cast this card from your graveyard for {2}{U} if you discarded it this turn. Timing rules still apply.)",
+      "power": 2,
+      "replacements": [
+        {
+          "copying": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "name": "Chameleon, Master of Disguise"
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shapeshifter",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -134666,6 +134708,71 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "spark_double",
+      "mana_cost": "{3}{U}",
+      "name": "Spark Double",
+      "oracle_text": "You may have this creature enter as a copy of a creature or planeswalker you control, except it enters with an additional +1/+1 counter on it if it's a creature, it enters with an additional loyalty counter on it if it's a planeswalker, and it isn't legendary.",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "you",
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "enters_with": [
+              {
+                "amount": 1,
+                "condition": {
+                  "exists": {
+                    "self_only": true,
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                },
+                "counter": "+1/+1"
+              },
+              {
+                "amount": 1,
+                "condition": {
+                  "exists": {
+                    "self_only": true,
+                    "types": [
+                      "Planeswalker"
+                    ]
+                  }
+                },
+                "counter": "loyalty"
+              }
+            ],
+            "remove_supertypes": [
+              "Legendary"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Illusion"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {

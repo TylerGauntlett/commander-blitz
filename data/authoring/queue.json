@@ -43322,12 +43322,12 @@
     },
     "Chameleon, Master of Disguise": {
       "edhrec_rank": 2043,
-      "gate": "template",
+      "gate": null,
       "name": "Chameleon, Master of Disguise",
-      "reason": "no template for: You may have Chameleon enter as a copy of a creature you control, except his name is",
+      "reason": "",
       "scryfall_id": "dcc50ba7-c4be-4c20-a1fc-466194aab7c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Champion Lancer": {
@@ -256862,12 +256862,12 @@
     },
     "Spark Double": {
       "edhrec_rank": 400,
-      "gate": "template",
+      "gate": null,
       "name": "Spark Double",
-      "reason": "no template for: You may have this creature enter as a copy of a creature or planeswalker you control, exce",
+      "reason": "",
       "scryfall_id": "83932e9e-18e7-4c41-ad54-0c063c4aa33d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spark Elemental": {

@@ -2144,6 +2144,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "chameleon_master_of_disguise": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "champion_of_arashin": {
     "zone": "battlefield"
   },
@@ -11866,6 +11870,14 @@
     "zone": "battlefield"
   },
   "spara_s_headquarters": {
+    "zone": "battlefield"
+  },
+  "spark_double": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "speaker_of_the_heavens": {
