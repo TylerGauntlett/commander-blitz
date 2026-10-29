@@ -434,7 +434,7 @@ and the mute setting's e2e assertion still passes.
 
 ### Damage redirected to a chosen creature until end of turn
 
-Effort **M** · Impact **medium**, Heroic Sacrifice, the last card the Avengers Assemble precon lacks, waits on it, and every redirection card after it · Depends on nothing · Awaiting decisions.
+Effort **M** · Impact **medium**, Heroic Sacrifice, the last card the Avengers Assemble precon lacks, waits on it, and every redirection card after it · Depends on nothing.
 
 #### Today
 
@@ -491,23 +491,22 @@ lifelink and deathtouch on the source still apply to the redirected damage; once
 the chosen creature leaves, damage goes where it was aimed; the effect ends at
 cleanup. `tests/cards` with Heroic Sacrifice through the six gates.
 
-#### Open questions
+#### Decisions
 
 - **Where the replacement is read:** inside `damage_player` and
-  `damage_permanent`, or one level up in the callers that build each damage
-  event (combat damage assignment and the `damage` op). Recommended: inside the
-  primitives, because every damage event already passes through them and a
-  caller-side hook would miss the next one written.
-- **Order against prevention and the multipliers (616.1):** the affected player
-  chooses, but the primitives cannot ask. Recommended: redirect first, then
-  apply the new recipient's multipliers, addends and preventions, so damage is
-  replaced once for the object that actually receives it; record the choice in
-  `docs/rules-coverage.md` beside the doubler-and-addend order.
-- **Scope of the pull request:** the capability, Heroic Sacrifice and the
-  Avengers Assemble deck file, titled `feat(cards):`, so
+  `damage_permanent`, not in the callers that build each damage event (combat
+  damage assignment and the `damage` op). Every damage event already passes
+  through the primitives, and a caller-side hook would miss the next one
+  written.
+- **Order against prevention and the multipliers (616.1):** redirect first,
+  then apply the new recipient's multipliers, addends and preventions, so the
+  damage is replaced once, for the object that actually receives it. The
+  choice is recorded in `docs/rules-coverage.md` beside the doubler-and-addend
+  order.
+- **Scope of the pull request:** one `feat(cards):` pull request with the
+  capability, Heroic Sacrifice and the Avengers Assemble deck file, so
   [precon-msc-avengers-assemble](precon-msc-avengers-assemble.md) retires in
-  the same pull request. Recommended, so the review stays one mechanic and the
-  precon item retires with it.
+  the same pull request and the review stays one mechanic.
 
 ## Decks
 
