@@ -34,6 +34,7 @@ FAVORITES = {
 PRECONS = {
     "fdc_calling_all_angels",
     "fdc_keen_engineering",
+    "fdc_reign_of_dragons",
     "fdc_tramplesaurus_rex",
     "fdc_wretched_ranks",
     "frc_multiverse_reforged",
