@@ -50,7 +50,6 @@ each heading; this table is generated from them.
 
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
-| [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) | L | high | Damage redirected to a chosen creature until end of turn | 0 |
 | [Doom Prevails (Marvel Super Heroes Commander)](#doom-prevails-marvel-super-heroes-commander) | L | high | nothing | 0 |
 | [The Fantastic Four (Marvel Super Heroes Commander)](#the-fantastic-four-marvel-super-heroes-commander) | L | high | nothing | 0 |
 | [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
@@ -149,7 +148,6 @@ each heading; this table is generated from them.
 | [Outcomes as data](#outcomes-as-data) | M | medium | nothing | 2 |
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
-| [Damage redirected to a chosen creature until end of turn](#damage-redirected-to-a-chosen-creature-until-end-of-turn) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -165,8 +163,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Damage redirected to a chosen creature until end of turn](#damage-redirected-to-a-chosen-creature-until-end-of-turn).
 
 **Ready now, best first:**
 
@@ -277,7 +273,6 @@ same list, and `/extend-roadmap` starts at the top of it.
 
 **Blocked, and by what:**
 
-- [Avengers Assemble (Marvel Super Heroes Commander)](#avengers-assemble-marvel-super-heroes-commander) — [Damage redirected to a chosen creature until end of turn](#damage-redirected-to-a-chosen-creature-until-end-of-turn)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -431,134 +426,7 @@ The timing test still holds every golden batch at or under its cost, since a
 cue that waits on a file load would be a lag the narration must never have;
 and the mute setting's e2e assertion still passes.
 
-## Cards
-
-### Damage redirected to a chosen creature until end of turn
-
-Effort **M** · Impact **medium**, Heroic Sacrifice, the last card the Avengers Assemble precon lacks, waits on it, and every redirection card after it · Depends on nothing · **In progress**.
-
-#### Today
-
-Damage can be prevented, multiplied or increased, never dealt to something
-else. [rules-coverage.md](rules-coverage.md) lists "Damage redirection
-effects" under "Not implemented". Every damage event goes through
-`primitives.damage_player` or `primitives.damage_permanent`, which ask
-`player_statics.replaced_damage` for the amount (the `replace_damage` static's
-`damage_multiplier` and `damage_addend`) and the prevention hooks
-(`prevent_damage`, `prevent_damage_permanent`, `prevented_player_damage`) for
-what is left. None of them can change the recipient, and the primitives are not
-generators, so they cannot ask a player anything mid-combat.
-
-One gap record names the capability, `damage-redirection`:
-`data/authoring/gaps/heroic_sacrifice.json`, the last card the Avengers Assemble
-precon lacks. Heroic Sacrifice reads "Choose target creature you control. Until
-end of turn, all damage that would be dealt to you and creatures you control is
-dealt to the chosen creature instead (if it's still on the battlefield). When
-that creature dies this turn, put its counters on up to one target creature you
-control and draw a card." Its second sentence is reachable already:
-`delayed_trigger` watches a subject's own death, and `move_counters` with
-`all_kinds` and `from_had_counters` moves a dead creature's counters off the
-leave event's snapshot (The Ozolith); the gap record files that half as
-`delayed-trigger-on-target-dies-move-counters`.
-
-#### The change
-
-1. A one-shot op that installs an until-end-of-turn redirection (a
-   `TempEffect` kind in `engine/structs.py`): damage that would be dealt to a
-   named player and to the permanents a selector names is dealt to one bound
-   object instead, while that object is on the battlefield (614.9, a
-   replacement effect). Damage already aimed at the chosen creature is not
-   redirected, and the redirected damage keeps its source, so lifelink,
-   deathtouch, infect and wither apply as the source has them (120.3).
-2. The damage primitives read the redirection before `replaced_damage` and the
-   preventions, in the order 616.1 leaves to the affected player, and the
-   choice is recorded in `docs/rules-coverage.md` as the doubler-and-addend
-   order already is.
-3. Harvest Heroic Sacrifice through `/author-cards`, whose second sentence
-   composes `delayed_trigger` and `move_counters` as **Today** says (or names
-   the narrow gap if it does not), then finish
-   [precon-msc-avengers-assemble](precon-msc-avengers-assemble.md), which
-   depends on this item.
-
-It does not build a general replacement system (616), which stays under "Not
-implemented".
-
-#### Gate
-
-A unit test under `tests/unit/damage/` that casts the redirection and asserts:
-combat and noncombat damage to you and to another creature you control lands on
-the chosen creature; damage to the chosen creature is dealt once, not twice;
-lifelink and deathtouch on the source still apply to the redirected damage; once
-the chosen creature leaves, damage goes where it was aimed; the effect ends at
-cleanup. `tests/cards` with Heroic Sacrifice through the six gates.
-
-#### Decisions
-
-- **Where the replacement is read:** inside `damage_player` and
-  `damage_permanent`, not in the callers that build each damage event (combat
-  damage assignment and the `damage` op). Every damage event already passes
-  through the primitives, and a caller-side hook would miss the next one
-  written.
-- **Order against prevention and the multipliers (616.1):** redirect first,
-  then apply the new recipient's multipliers, addends and preventions, so the
-  damage is replaced once, for the object that actually receives it. The
-  choice is recorded in `docs/rules-coverage.md` beside the doubler-and-addend
-  order.
-- **Scope of the pull request:** one `feat(cards):` pull request with the
-  capability, Heroic Sacrifice and the Avengers Assemble deck file, so
-  [precon-msc-avengers-assemble](precon-msc-avengers-assemble.md) retires in
-  the same pull request and the review stays one mechanic.
-
 ## Decks
-
-### Avengers Assemble (Marvel Super Heroes Commander)
-
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Damage redirected to a chosen creature until end of turn](#damage-redirected-to-a-chosen-creature-until-end-of-turn).
-
-#### Today
-
-Avengers Assemble, the Marvel Super Heroes Commander precon released 2026-06-26, is a
-coming-soon shell on the shelf: its row `msc_avengers_assemble` is in
-`data/decks/sources.json` and there is no `data/decks/msc_avengers_assemble.deck.json`, so
-`GET /api/precons/upcoming` serves it.
-`python scripts/sync_precons.py --missing msc_avengers_assemble` lists the cards the engine
-lacks, and the gap records in `data/authoring/gaps/` name the capability each
-attempted card waits on.
-
-#### The change
-
-Avengers Assemble ships native, card for card, as one batch of
-[every precon native](#every-precon-native-one-at-a-time-then-every-import), which holds the procedure:
-
-1. `/author-cards` by name over the `--missing` list.
-2. One `/extend-dsl` run per capability the gap records name, in the order
-   the most cards elsewhere in the catalog wait on it.
-3. Re-author until `--missing` is empty, then `--write-deck msc_avengers_assemble`, the
-   dossier and the archetype, and the deck joins `PRECONS` in
-   `tests/cards/test_deck_legality.py`; its shell leaves the shelf by itself.
-4. One `/author-cards` wave over the pending cards the new capabilities reach.
-
-It does not touch another precon's deck.
-
-#### Gate
-
-`tests/cards/test_precon_imports.py` over the new deck; one unit test under
-`tests/unit/` per capability; the manifest test and
-`tests/server/test_upcoming_precons.py` still green; and the sampled
-whole-game test able to draw the deck.
-
-#### Decisions
-
-- **Scope:** this precon only, taken to 100% in one pull request titled
-  `feat(cards):`; the harvest is one `/author-cards` wave and no more.
-- **The editorial fields:** the run writes the dossier and picks the closest
-  existing `archetype`. It adds no strategy module or `docs/cpus/` page; an
-  archetype that visibly misplays the deck is a new item.
-- **A capability that needs a rules subsystem the engine does not have**
-  (`rules-coverage.md`, not implemented): the run stops there, writes it as its
-  own item through `/plan-feature`, adds it to this item's `depends_on`, sets
-  this item back to `proposed`, and opens the pull request with the cards and
-  capabilities done so far. This item stays until the deck is whole.
 
 ### Doom Prevails (Marvel Super Heroes Commander)
 
