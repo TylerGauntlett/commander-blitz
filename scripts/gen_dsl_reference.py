@@ -420,7 +420,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "noop": ("Control flow", "Do nothing (a placeholder for text with no effect).", None),
     "delay": ("Control flow", "Run effects at the beginning of a named later step.",
               'Delayed triggers — "at the beginning of the next …"'),
-    "delayed_trigger": ("Control flow", "Create a trigger that watches an event for the rest of the turn.",
+    "delayed_trigger": ("Control flow", "Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat).",
                         H_DELAYED),
     "join_forces": ("Control flow", "Each player may pay into one shared X.",
                     "Join forces — the one cost the whole table pays"),

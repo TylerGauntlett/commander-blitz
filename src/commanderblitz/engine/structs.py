@@ -1293,7 +1293,23 @@ class DelayedTrigger:
 #:     611.2b's clock: it fires **every** time, `turn._cleanup_step` leaves it
 #:     alone, and `primitives.clear_until_next_turn` drops it in its
 #:     controller's untap step -- and when that controller leaves the game.
-DELAYED_DURATIONS = ("this_turn", "until_it_fires", "once_this_turn", "until_your_next_turn")
+#: ``this_combat``
+#:     "Whenever either of those creatures deals combat damage to a player
+#:     **this combat**, put a +1/+1 counter on it" (Love on the Battlefield).
+#:     `this_turn`'s repeating subscription on the combat phase's clock: it
+#:     fires **every** time -- each creature, in each combat damage step -- and
+#:     `combat.end_combat` drops it as the end of combat step begins, so an
+#:     extra combat later in the turn is not "this combat". Installed only
+#:     inside a combat phase (`op_delayed_trigger` does nothing outside one,
+#:     where there is no combat for it to belong to); `turn._cleanup_step`
+#:     drops one that somehow survived, with the other turn-scoped entries.
+DELAYED_DURATIONS = (
+    "this_turn",
+    "until_it_fires",
+    "once_this_turn",
+    "until_your_next_turn",
+    "this_combat",
+)
 
 
 @dataclass(frozen=True)

@@ -1913,6 +1913,14 @@ def end_combat(state: GameState) -> None:
     # trigger fires at the beginning of each combat and the previous combat's
     # restriction has gone with the combat that bought it.
     clear_attack_restrictions(state, "this_combat")
+    # "…deals combat damage to a player **this combat**" (Love on the
+    # Battlefield): the event-watching delayed abilities on the same clock, for
+    # the same reason. An extra combat later this turn is a combat of its own.
+    state.delayed_triggers = [
+        d
+        for d in state.delayed_triggers
+        if d.trigger is None or d.duration != "this_combat"
+    ]
 
 
 def _fire_per_source(state: GameState, dealt: dict[int, int]) -> None:

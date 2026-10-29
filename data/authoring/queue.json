@@ -162022,12 +162022,12 @@
     },
     "Love on the Battlefield": {
       "edhrec_rank": 21583,
-      "gate": "template",
+      "gate": null,
       "name": "Love on the Battlefield",
-      "reason": "no template for: Whenever you attack with exactly two creatures, those creatures gain first strike until en",
+      "reason": "",
       "scryfall_id": "3f2e65ff-27ae-4dfc-bf17-66f0c4949699",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lovestruck Beast // Heart's Desire": {

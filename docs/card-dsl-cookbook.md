@@ -2592,6 +2592,33 @@ battlefield is struck out of the scope by `zones.move_object` (400.7: an oid
 survives the zone change, the object does not), and a subscription whose last
 subject left is dropped rather than read as unscoped.
 
+#### `this_combat` — "… this combat"
+
+```jsonc
+// Love on the Battlefield — inside its you_attack trigger (exactly two attackers),
+// after granting them first strike and drawing a card
+{ "op": "delayed_trigger", "duration": "this_combat",
+  "trigger": { "event": "deals_combat_damage_to_player", "controller": "any",
+               "subject": { "binding": "attackers" } },
+  "effects": [ { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+                 "objects": { "binding": "subject" } } ] }
+```
+
+`this_turn`'s repeating subscription on the combat phase's clock. It fires every
+time one of its subjects matches — each creature, in each combat damage step, so
+a double striker that connects twice is two firings (510.4) — and
+`combat.end_combat` drops it as the end of combat step begins, beside the
+`this_combat` attack restrictions. An extra combat later in the turn is not
+"this combat": attacking again there fires nothing off the old subscription.
+Outside a combat phase there is no combat for it to belong to, and the op
+installs nothing.
+
+`subject: {"binding": "attackers"}` is "either of **those** creatures": the
+attackers bound when the attack trigger resolved, nothing else. The effect's
+`{"binding": "subject"}` is the one that just connected — "put a counter on
+**it**", not on both. `this_turn` is the near miss and gives a second counter
+in an extra combat; `once_this_turn` stops after the first of the two connects.
+
 #### Why this is a `delayed_trigger` and not a duration on `exile`
 
 `link` is the same record under a neutral name, and **only** a record. Written

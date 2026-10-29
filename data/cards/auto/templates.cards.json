@@ -83156,6 +83156,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "first_strike"
+              ],
+              "objects": {
+                "binding": "attackers"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "duration": "this_combat",
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.",
+              "trigger": {
+                "controller": "any",
+                "event": "deals_combat_damage_to_player",
+                "subject": {
+                  "binding": "attackers"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with exactly two creatures, those creatures gain first strike until end of turn, then draw a card. Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "love_on_the_battlefield",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Love on the Battlefield",
+      "oracle_text": "Whenever you attack with exactly two creatures, those creatures gain first strike until end of turn, then draw a card. Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

@@ -1,0 +1,82 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_delayed_trigger_this_combat.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_dtc_love is Love on the Battlefield on a {W} enchantment: an attack with exactly two creatures gives them first strike, draws a card, and installs a this_combat delayed trigger scoped to them that puts a +1/+1 counter on whichever connects. The vigilant 2/2s, the double striker and the bears come from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_dtc_love",
+      "name": "Test Battlefield Romance",
+      "oracle_text": "Whenever you attack with exactly two creatures, those creatures gain first strike until end of turn, then draw a card. Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.",
+      "mana_cost": "{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you attack with exactly two creatures, those creatures gain first strike until end of turn, then draw a card. Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "you_attack",
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "keywords": [
+                "first_strike"
+              ],
+              "objects": {
+                "binding": "attackers"
+              }
+            },
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            },
+            {
+              "op": "delayed_trigger",
+              "text": "Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.",
+              "duration": "this_combat",
+              "trigger": {
+                "event": "deals_combat_damage_to_player",
+                "controller": "any",
+                "subject": {
+                  "binding": "attackers"
+                }
+              },
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 1
+                  },
+                  "objects": {
+                    "binding": "subject"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -185,7 +185,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |
 | `choose_type` | Control flow |  | Choose a creature, permanent or card type (`of`), readable later. | ["Choose a creature type"](card-dsl-cookbook.md#choose-a-creature-type) |
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
-| `delayed_trigger` | Control flow |  | Create a trigger that watches an event for the rest of the turn. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
+| `delayed_trigger` | Control flow |  | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `for_each` | Control flow |  | Run effects once per object a selector finds, bound as the loop value. | [Effect ops](card-dsl.md#effect-ops) |
 | `for_each_player` | Control flow |  | Run effects once per player of a spec. | ["Each opponent sacrifices…" — a loop over players](card-dsl-cookbook.md#each-opponent-sacrifices--a-loop-over-players) |
 | `if` | Control flow |  | Run `then` effects if a condition holds, else `else`. | [Effect ops](card-dsl.md#effect-ops) |

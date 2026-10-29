@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**90 cards** blocked by **73** capabilities.
+**89 cards** blocked by **72** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [damage-redirection](#damage-redirection) | 1 | 15560 | replacement |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delayed-trigger-on-target-dies-move-counters](#delayed-trigger-on-target-dies-move-counters) | 1 | 15560 | op |
-| [delayed-trigger-this-combat](#delayed-trigger-this-combat) | 1 | 21583 | engine |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
@@ -596,20 +595,6 @@ Blocks **1** card.
 - **Heroic Sacrifice** (rank 15560) — `heroic_sacrifice`
   - Choose target creature you control. Until end of turn, all damage that would be dealt to you and creatures you control is dealt to the chosen creature instead (if it's still on the battlefield).
   - When that creature dies this turn, put its counters on up to one target creature you control and draw a card.
-
-</details>
-
-## delayed-trigger-this-combat
-
-Blocks **1** card.
-
-- **(engine)** a `this_combat` duration for the event-watching `delayed_trigger` op: a subscription created by a resolving attack trigger, scoped to the attacking creatures (the `attackers` binding, as `trigger.subject`), firing on each `deals_combat_damage_to_player` by one of them and putting a +1/+1 counter on that dealer (the event's `subject` binding), and struck off when the current combat phase ends rather than at cleanup
-  <br>Why the existing vocabulary won't do: `delayed_trigger` accepts only the durations in DELAYED_DURATIONS (this_turn, until_it_fires, once_this_turn, until_your_next_turn). `this_turn` (Tamiyo, Field Researcher's shape) would keep firing in an extra combat later in the turn, where the printed card gives no counter; `once_this_turn`/`until_it_fires` would stop after the first of the two creatures connects. `this_combat` exists only as an AttackRestriction duration. The packet's `trigger_keys` also do not list `subject`, so the scoping to "either of those creatures" is not in the advertised vocabulary either. The first sentence (you_attack with count of attackers == 2, grant_keyword first_strike on the attackers binding, draw) is expressible on its own.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Love on the Battlefield** (rank 21583) — `love_on_the_battlefield`
-  - Whenever either of those creatures deals combat damage to a player this combat, put a +1/+1 counter on it.
 
 </details>
 

@@ -7342,6 +7342,9 @@
     },
     "zone": "battlefield"
   },
+  "love_on_the_battlefield": {
+    "zone": "battlefield"
+  },
   "lowland_giant": {
     "zone": "battlefield"
   },
