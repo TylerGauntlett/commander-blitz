@@ -25,12 +25,17 @@ from commanderblitz.cards.schema import CardModel
 from commanderblitz.engine import sba
 from commanderblitz.engine.effects import execute_one
 from commanderblitz.engine.effects.context import EffectContext
-from commanderblitz.engine.enums import ActionKind, Step, Zone
+from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.errors import DslError
-from commanderblitz.engine.primitives import become_monarch, damage_permanent, damage_player
+from commanderblitz.engine.primitives import (
+    add_counters,
+    become_monarch,
+    damage_permanent,
+    damage_player,
+)
 from commanderblitz.engine.temp_effects import clear_damage_redirects, shield_player
 from commanderblitz.engine.zones import move_object
-from tests.conftest import pass_until
+from tests.conftest import declare_targets, pass_until, settle
 
 WALL = "t_f_3_3"  # the chosen creature, 3/3
 BEAR = "t_rd_bear"  # another creature you control, 2/2
@@ -266,6 +271,69 @@ class TestTheLoader:
     def test_permanents_cannot_name_a_target(self):
         with pytest.raises(DslError, match="mean nothing there"):
             compile_card(self._card(self._effect(permanents={"target": "t1"})))
+
+
+class TestHeroicSacrifice:
+    """The card, end to end: the half the sandbox cannot reach, because
+    nothing in it makes a creature die."""
+
+    def _cast(self, builder):
+        game = (
+            builder(players=2)
+            .battlefield(0, ["plains", "plains", WALL, BEAR])
+            .battlefield(1, [BEAR])
+            .hand(0, ["heroic_sacrifice"])
+            .library(0, ["forest"] * 5)
+            .library(1, ["forest"] * 5)
+            .step(Step.PRECOMBAT_MAIN)
+            .active(0)
+            .build()
+        )
+        wall = oid(game, 0, WALL)
+        casts = [
+            a for a in game.legal_actions()
+            if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == "heroic_sacrifice"
+        ]
+        game.apply(next(
+            (a for a in casts if any(ref.id == wall for ref in a.targets)), casts[0]
+        ))
+        if game.pending() is not None and game.pending().kind is DecisionKind.CHOOSE_OBJECTS:
+            declare_targets(game, wall)
+        settle(game)
+        return game, wall
+
+    def test_the_chosen_creature_takes_your_damage(self, builder):
+        game, wall = self._cast(builder)
+        life = game.state.players[0].life
+
+        damage_player(game.state, 0, 2, oid(game, 1, BEAR))
+
+        assert game.state.players[0].life == life
+        assert game.state.objects[wall].damage == 2
+
+    def test_its_death_moves_its_counters_and_draws(self, builder):
+        game, wall = self._cast(builder)
+        bear = oid(game, 0, BEAR)
+        add_counters(game.state, wall, "+1/+1", 2)
+        hand = len(game.state.players[0].hand)
+
+        damage_player(game.state, 0, 5, oid(game, 1, BEAR))
+        pass_until(game, lambda g: g.pending() is not None
+                   and g.pending().kind is DecisionKind.CHOOSE_OBJECTS)
+        decision = game.pending()
+        pick = next(i for i, o in enumerate(decision.options) if o.ref is not None and o.ref.id == bear)
+        game.apply(next(
+            a for a in game.legal_actions() if a.kind is ActionKind.CHOOSE and a.choice == pick
+        ))
+        if game.pending() is decision:
+            game.apply(next(
+                a for a in game.legal_actions() if a.kind is ActionKind.FINISH_DECLARATION
+            ))
+        settle(game)
+
+        assert game.state.objects[wall].zone is Zone.GRAVEYARD
+        assert game.state.objects[bear].counter("+1/+1") == 2
+        assert len(game.state.players[0].hand) == hand + 1
 
 
 def swing(game, attacker: int) -> None:
