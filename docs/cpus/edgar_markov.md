@@ -5,14 +5,14 @@
 Mardu Vampires with a commander who **works from the command zone**. Edgar's
 eminence makes a 1/1 Vampire whenever the deck casts another Vampire, whether
 or not Edgar himself has been cast. So the first turns are cheap Vampires —
-Vampire of the Dire Moon, Viscera Seer, Cordial Vampire, Legion Lieutenant —
+Viscera Seer, Cordial Vampire, Bartolomé del Presidio, Legion Lieutenant —
 each of which is **two bodies for the price of one**. By the time Edgar costs
 six and arrives with haste, the board is already wide, and his attack trigger
 puts a +1/+1 counter on all of it.
 
 The second half of the deck is aristocrats: the bodies are **fuel**. Blood
 Artist, Cruel Celebrant, Bastion of Remembrance and Vein Ripper drain on every
-death; Viscera Seer, Carrion Feeder, Bloodthrone Vampire and Phyrexian Tower
+death; Viscera Seer, Carrion Feeder, Bartolomé del Presidio and Phyrexian Tower
 are free sacrifice outlets; Grave Pact and Anowon turn each sacrifice into an
 opponent's creature too. It plays **fast and wide**, and wins on drain as
 often as on combat damage.

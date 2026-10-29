@@ -471,7 +471,11 @@ function DeckPick({
           }
         }}
       >
-        <CommanderCard cardId={deck.commanders[0] ?? null} variant="board" />
+        <CommanderCard
+          cardId={deck.commanders[0] ?? null}
+          variant="board"
+          art={deck.commander_art?.art}
+        />
         {selected && (
           <span className="tile__tick" aria-hidden="true">
             ✓

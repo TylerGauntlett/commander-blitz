@@ -53,18 +53,6 @@
       "set_code": "tdc",
       "collector_number": "109"
     },
-    "angel_of_the_ruins": {
-      "scryfall_id": "3a3f00d5-5847-4fc8-8c76-81ea11ce4376",
-      "artist": "Viko Menezes",
-      "set_code": "fdc",
-      "collector_number": "12"
-    },
-    "angel_of_vitality": {
-      "scryfall_id": "dbb38f33-9f51-48cb-9f69-9a62f2c4b907",
-      "artist": "Johannes Voss",
-      "set_code": "fdc",
-      "collector_number": "13"
-    },
     "angelic_field_marshal": {
       "scryfall_id": "b4f751ad-336d-479a-b63c-d2d193a42ccf",
       "artist": "Scott Murphy",
@@ -88,12 +76,6 @@
       "artist": "Cynthia Sheppard",
       "set_code": "fdc",
       "collector_number": "17"
-    },
-    "austere_command": {
-      "scryfall_id": "a47d6756-400c-4d45-8708-8a8e95c926c8",
-      "artist": "Anna Steinbauer",
-      "set_code": "fdc",
-      "collector_number": "18"
     },
     "avacyn_angel_of_hope": {
       "scryfall_id": "a0519776-3d86-4f7d-9c3b-71c1dfbf7e12",
@@ -251,23 +233,35 @@
       "set_code": "fdc",
       "collector_number": "32"
     },
+    "herald_of_eternal_dawn": {
+      "scryfall_id": "4e5e421e-c187-4bf5-be9d-20a1e32b570b",
+      "artist": "PINDURSKI",
+      "set_code": "fdn",
+      "collector_number": "299"
+    },
+    "herald_of_the_host": {
+      "scryfall_id": "e8d57d75-275d-45c8-85f4-aab230af35b2",
+      "artist": "Nils Hamm",
+      "set_code": "cmm",
+      "collector_number": "30"
+    },
     "herald_s_horn": {
       "scryfall_id": "d5ba6786-c812-4744-bb2e-f180010b18b7",
       "artist": "Jason Felix",
       "set_code": "fdc",
       "collector_number": "264"
     },
-    "heraldic_banner": {
-      "scryfall_id": "eb25d007-aeff-4282-9623-621302b99bfe",
-      "artist": "Ravenna Tran",
-      "set_code": "fdc",
-      "collector_number": "263"
-    },
     "inspiring_overseer": {
       "scryfall_id": "d04d0a9b-a5a7-423a-bc27-8ea9b2cbff75",
       "artist": "Irina Nordsol",
       "set_code": "fdc",
       "collector_number": "35"
+    },
+    "kindred_judgment": {
+      "scryfall_id": "8cbcd273-a7eb-40b1-a7b6-7aafcb15c141",
+      "artist": "Joshua Cairos",
+      "set_code": "fra",
+      "collector_number": "322"
     },
     "lightning_greaves": {
       "scryfall_id": "779abd27-985f-4bb9-9330-38d49bf52903",
@@ -342,10 +336,10 @@
       "collector_number": "294"
     },
     "plains": {
-      "scryfall_id": "4ef17ed4-a9b5-4b8e-b4cb-2ecb7e5898c3",
-      "artist": "Rebecca Guay",
-      "set_code": "fdn",
-      "collector_number": "272"
+      "scryfall_id": "15dd9a36-55df-4942-a7eb-1c49a7999e68",
+      "artist": "David Petersen",
+      "set_code": "hob",
+      "collector_number": "316"
     },
     "radiant_fountain": {
       "scryfall_id": "9ab17fb1-98ed-4c8e-985d-a453d236095d",
@@ -376,6 +370,12 @@
       "artist": "Livia Prima",
       "set_code": "fdc",
       "collector_number": "47"
+    },
+    "seraph_of_the_sword": {
+      "scryfall_id": "3dbfbdba-52d0-4b49-8c86-8f1686e2285b",
+      "artist": "Jaime Jones",
+      "set_code": "fdc",
+      "collector_number": "48"
     },
     "seraph_sanctuary": {
       "scryfall_id": "cef8e044-6cc0-4988-9d5f-bf9a0ab1c66f",
@@ -491,12 +491,6 @@
       "id": "angel_of_invention"
     },
     {
-      "id": "angel_of_vitality"
-    },
-    {
-      "id": "angel_of_the_ruins"
-    },
-    {
       "id": "angelic_field_marshal"
     },
     {
@@ -507,9 +501,6 @@
     },
     {
       "id": "archangel_of_tithes"
-    },
-    {
-      "id": "austere_command"
     },
     {
       "id": "avacyn_angel_of_hope"
@@ -587,13 +578,19 @@
       "id": "grasp_of_fate"
     },
     {
+      "id": "herald_of_eternal_dawn"
+    },
+    {
+      "id": "herald_of_the_host"
+    },
+    {
       "id": "herald_s_horn"
     },
     {
-      "id": "heraldic_banner"
+      "id": "inspiring_overseer"
     },
     {
-      "id": "inspiring_overseer"
+      "id": "kindred_judgment"
     },
     {
       "id": "lightning_greaves"
@@ -652,6 +649,9 @@
     },
     {
       "id": "seraph_sanctuary"
+    },
+    {
+      "id": "seraph_of_the_sword"
     },
     {
       "id": "serra_the_benevolent"

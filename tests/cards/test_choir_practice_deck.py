@@ -47,6 +47,7 @@ from commanderblitz.engine import legality, sba
 from commanderblitz.engine.cost_reduction import cost_reduction
 from commanderblitz.engine.enums import ActionKind, DecisionKind, Step, Zone
 from commanderblitz.engine.primitives import create_token
+from commanderblitz.engine.structs import TargetRef
 from tests.conftest import (
     _default_answer,
     activations,
@@ -1345,3 +1346,67 @@ class TestHeraldOfEternalDawn:
         pass_until(game, lambda g: g.pending() is not None and g.pending().player == 0)
         assert game.state.active_player == 1
         assert castable(game, self.HERALD)
+
+
+class TestHeraldOfTheHost:
+    """ "Myriad" -- a copy for each opponent other than defending player.
+
+    The gate casts the Herald and reads "on the battlefield": it declines combat,
+    so the attack trigger the card is played for never fires. The near misses are
+    the seats -- no copy for the defending player, none in a two-player game,
+    none when each "may" is declined -- and the clock: the copies hit before
+    they leave, and they are gone by the postcombat main phase.
+    """
+
+    HOST = "herald_of_the_host"
+
+    def swing(self, builder, *, players: int = 4, yes: bool = True):
+        b = builder(players=players)
+        for pid in range(players):
+            b = b.battlefield(pid, [PLAINS, *([self.HOST] if pid == 0 else ())])
+            b = b.hand(pid, [ANCHOR])
+        game = b.active(0).step(Step.BEGIN_COMBAT).build()
+        host = only_oid(game, self.HOST, 0)
+        attack_options(game)
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ADD_ATTACKER
+                and a.source == host
+                and a.targets[0] == TargetRef.player(1)
+            )
+        )
+        game.apply(find_action(game, ActionKind.FINISH_DECLARATION))
+        answer(game, yes=yes)
+        return game, host
+
+    def copies(self, game) -> list[int]:
+        return [o.oid for o in tokens(game, self.HOST)]
+
+    def test_a_tapped_attacking_copy_for_each_other_opponent(self, builder):
+        game, host = self.swing(builder)
+        combat = game.state.combat
+        copies = self.copies(game)
+
+        assert sorted(combat.attackers[oid] for oid in copies) == [2, 3]
+        assert all(game.state.objects[oid].tapped for oid in copies)
+        assert combat.attackers[host] == 1
+
+    def test_declining_makes_none(self, builder):
+        game, _ = self.swing(builder, yes=False)
+        assert self.copies(game) == []
+
+    def test_one_opponent_means_no_copy(self, builder):
+        """The defending player is excluded, so two seats leave nobody to copy for."""
+        game, _ = self.swing(builder, players=2)
+        assert self.copies(game) == []
+
+    def test_the_copies_hit_and_are_exiled_at_end_of_combat(self, builder):
+        game, host = self.swing(builder)
+        power = game.state.registry.get(self.HOST).power
+        pass_until(game, lambda g: g.state.step is Step.POSTCOMBAT_MAIN)
+
+        assert [life(game, pid) for pid in (1, 2, 3)] == [40 - power] * 3
+        assert self.copies(game) == []
+        assert game.state.objects[host].zone is Zone.BATTLEFIELD

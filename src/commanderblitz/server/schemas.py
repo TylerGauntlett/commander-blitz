@@ -166,6 +166,19 @@ class UpcomingPreconDTO(BaseModel):
     commanders: list[ShellCommanderDTO] = Field(default_factory=list)
 
 
+class ImageRefDTO(BaseModel):
+    """Where one card's art lives.
+
+    Deliberately carries no ``cards.scryfall.io`` URL: the browser only ever
+    talks to this server, so the board keeps working when Scryfall is rate
+    limiting, down, or simply unreachable.
+    """
+
+    card_id: str
+    art: str | None = None
+    artist: str | None = None
+
+
 class DeckSummary(BaseModel):
     id: str
     name: str
@@ -199,6 +212,10 @@ class DeckSummary(BaseModel):
     #: have, so it would play with blank plates offline (ADR 0022).  ``None``
     #: means nobody checked, which is every deck the hosted server lists.
     complete: bool | None = None
+    #: The printing the deck chose for its lead commander, which is what its
+    #: tile, its dossier and its pod seat draw.  ``None`` when the deck named
+    #: none, and the client falls back to the catalog's art.
+    commander_art: ImageRefDTO | None = None
 
 
 class DeckRatingsDTO(BaseModel):
@@ -460,19 +477,6 @@ class CardResponse(BaseModel):
     #: Same-origin path, never a third-party URL.  ``None`` means this card has
     #: no printing and the client should draw its "no art" plate.
     art_url: str | None = None
-    artist: str | None = None
-
-
-class ImageRefDTO(BaseModel):
-    """Where one card's art lives.
-
-    Deliberately carries no ``cards.scryfall.io`` URL: the browser only ever
-    talks to this server, so the board keeps working when Scryfall is rate
-    limiting, down, or simply unreachable.
-    """
-
-    card_id: str
-    art: str | None = None
     artist: str | None = None
 
 

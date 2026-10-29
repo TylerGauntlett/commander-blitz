@@ -128,10 +128,6 @@ def create_app(
     # the test is about surviving a restart.
     games, pods = session_store(sessions_dir) if sessions_dir else (None, None)
     app.state.sessions = SessionRegistry(game_data, games)
-    # Handed the session registry rather than the GameData: a pod must read
-    # decks through `sessions.data` so an imported deck shows up in the lobby
-    # the moment `reload()` rebinds it.
-    app.state.pods = PodRegistry(app.state.sessions, pods)
 
     # Both are optional. A fresh clone that has not run the build script must
     # still deal a game -- it simply renders text frames, which is what the
@@ -145,6 +141,10 @@ def create_app(
         allow_fetch=allow_art_fetch,
         upstream=settings.remote_origin if settings.mode == "desktop" else None,
     )
+    # Handed the session registry rather than the GameData: a pod must read
+    # decks through `sessions.data` so an imported deck shows up in the lobby
+    # the moment `reload()` rebinds it.
+    app.state.pods = PodRegistry(app.state.sessions, pods, app.state.art)
 
     def reload() -> None:
         """Pick up cards and decks that an import just wrote to disk.

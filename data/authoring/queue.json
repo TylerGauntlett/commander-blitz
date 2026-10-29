@@ -126332,13 +126332,13 @@
     },
     "Herald of the Host": {
       "edhrec_rank": 8119,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of the Host",
-      "reason": "no template for: Myriad",
+      "reason": "",
       "scryfall_id": "e8d57d75-275d-45c8-85f4-aab230af35b2",
-      "source": "",
-      "status": "pending",
-      "wanted": false
+      "source": "agent",
+      "status": "done",
+      "wanted": true
     },
     "Herald of the Pantheon": {
       "edhrec_rank": 1853,

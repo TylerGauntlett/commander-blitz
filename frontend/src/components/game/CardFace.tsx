@@ -80,14 +80,19 @@ export type CardVariant = "board" | "detail" | "big";
 interface Props {
   card: CardView;
   variant?: CardVariant;
+  /**
+   * The printing a deck chose, for a card drawn outside a game -- a lobby has
+   * no seat for `artUrlFor` to read it from. Wins over the catalog's pick.
+   */
+  art?: string | null;
 }
 
-export function CardFace({ card, variant = "board" }: Props) {
+export function CardFace({ card, variant = "board", art: chosen }: Props) {
   const images = useUiStore((s) => s.images);
   const seatImages = useUiStore((s) => s.seatImages);
   // `undefined` = the map has not arrived; draw no art layer at all rather than
   // flashing a "no art" plate on every card during the first paint.
-  const art = artUrlFor(images, seatImages, card);
+  const art = chosen ?? artUrlFor(images, seatImages, card);
   const [broken, setBroken] = useState(false);
   const showArt = art !== undefined && art !== null && !broken;
 

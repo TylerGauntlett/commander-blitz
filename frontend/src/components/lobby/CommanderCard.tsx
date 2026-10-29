@@ -79,9 +79,20 @@ interface Props {
   variant?: "board" | "detail" | "big";
   /** What the back should say while the card is loading or absent. */
   placeholder?: string;
+  /**
+   * The deck's chosen printing (`DeckSummary.commander_art`). Absent or `null`
+   * draws the catalog's art, which is the right picture for a deck that chose
+   * none.
+   */
+  art?: string | null;
 }
 
-export function CommanderCard({ cardId, variant = "big", placeholder = "Loading" }: Props) {
+export function CommanderCard({
+  cardId,
+  variant = "big",
+  placeholder = "Loading",
+  art,
+}: Props) {
   const query = useQuery({
     queryKey: ["card", cardId],
     queryFn: () => api.card(cardId as string),
@@ -107,5 +118,12 @@ export function CommanderCard({ cardId, variant = "big", placeholder = "Loading"
     forgotten -- and it matches nothing on `variant="board"`, which the deck
     catalogue's rack uses and which is already correct.
   */
-  return <StaticCard card={cardViewFor(query.data)} variant={variant} className="podcard" />;
+  return (
+    <StaticCard
+      card={cardViewFor(query.data)}
+      variant={variant}
+      className="podcard"
+      art={art}
+    />
+  );
 }
