@@ -288152,12 +288152,12 @@
     },
     "Titania, Proud Pummeler": {
       "edhrec_rank": 17758,
-      "gate": "template",
+      "gate": null,
       "name": "Titania, Proud Pummeler",
-      "reason": "no template for: Melee",
+      "reason": "",
       "scryfall_id": "31255422-9afa-416c-90b2-62baf1d02cca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titania, Rugged Rumbler": {

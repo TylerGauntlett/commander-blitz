@@ -13299,6 +13299,16 @@
   "titan_of_littjara": {
     "zone": "battlefield"
   },
+  "titania_proud_pummeler": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "melee"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "tobias_andrion": {
     "zone": "battlefield"
   },

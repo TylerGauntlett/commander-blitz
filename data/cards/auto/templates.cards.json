@@ -152664,6 +152664,52 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "melee"
+          ],
+          "kind": "static",
+          "text": "Other creatures you control have melee."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "titania_proud_pummeler",
+      "keywords": [
+        "first_strike",
+        "melee"
+      ],
+      "mana_cost": "{3}{R}",
+      "name": "Titania, Proud Pummeler",
+      "oracle_text": "First strike\nMelee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nOther creatures you control have melee.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
