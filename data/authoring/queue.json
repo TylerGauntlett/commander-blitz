@@ -177522,12 +177522,12 @@
     },
     "Molecule Man": {
       "edhrec_rank": 10188,
-      "gate": "template",
+      "gate": null,
       "name": "Molecule Man",
-      "reason": "no template for: Nonland cards in your hand have miracle {0}",
+      "reason": "",
       "scryfall_id": "3b4f30a7-4096-48f4-b502-3e31e0940632",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Molimo, Maro-Sorcerer": {

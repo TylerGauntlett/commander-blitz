@@ -93522,6 +93522,41 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "effect": "grant_miracle",
+          "kind": "static",
+          "miracle_cost": "{0}",
+          "text": "Nonland cards in your hand have miracle {0}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "molecule_man",
+      "mana_cost": "{6}",
+      "name": "Molecule Man",
+      "oracle_text": "Nonland cards in your hand have miracle {0}. (You may cast a card for its miracle cost when you draw it if it's the first card you drew this turn.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

@@ -8259,6 +8259,10 @@
   "moldering_karok": {
     "zone": "battlefield"
   },
+  "molecule_man": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "molimo_maro_sorcerer": {
     "zone": "battlefield"
   },
