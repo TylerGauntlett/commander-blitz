@@ -2787,6 +2787,23 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"{where}: 'to_zones' names zones a permanent can leave to, "
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
+        if model.trigger.from_zones is not None:
+            # "Whenever you play a card from exile." Only a cast and a land
+            # drop record where the card was played from, so anywhere else
+            # this would be a filter that never applies.
+            if model.trigger.event not in ("spell_cast", "land_played"):
+                raise DslError(
+                    f"{where}: 'from_zones' narrows a spell_cast or land_played "
+                    f"trigger to where the card was played from, and means "
+                    f"nothing on {model.trigger.event!r}"
+                )
+            origins = {"library", "hand", "graveyard", "exile", "command"}
+            bad = [z for z in model.trigger.from_zones if z not in origins]
+            if bad or not model.trigger.from_zones:
+                raise DslError(
+                    f"{where}: 'from_zones' names zones a card can be played "
+                    f"from, from {sorted(origins)}, got {model.trigger.from_zones!r}"
+                )
         _validate_state_trigger(model, where)
         trigger = TriggerSpec(
             event=model.trigger.event,
@@ -2809,6 +2826,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             or_battle=model.trigger.or_battle,
             per_player=model.trigger.per_player,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
+            from_zones=tuple(model.trigger.from_zones) if model.trigger.from_zones else None,
             state=dict(model.trigger.state) if model.trigger.state else None,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:

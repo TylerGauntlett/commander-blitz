@@ -1221,6 +1221,16 @@ def _matches(
     if spec.to_zones is not None and event.data.get("to_zone") not in spec.to_zones:
         return False
 
+    # "Whenever you play a card **from exile**" -- where the card was played
+    # from. A spell is already on the stack when SPELL_CAST fires, so it is
+    # asked the origin `push_spell` stamped on it (601.2a); a land is already
+    # on the battlefield, and its drop carries the origin on the payload. An
+    # unknown origin fails the clause, for the `mana_ability` check's reason.
+    if spec.from_zones is not None and (
+        _played_from(state, spec.event, event, subject_oid) not in spec.from_zones
+    ):
+        return False
+
     # "When **a spell or ability an opponent controls** causes you to discard
     # this card" -- Orvar, the All-Form. Who made the discard happen, which is a
     # different question from who discarded: `_actor` answers the `controller`
@@ -1409,6 +1419,16 @@ ORDINAL_FILTER_KEYS = frozenset(
         "name",
     }
 )
+
+
+def _played_from(
+    state: GameState, dsl_event: str, event: GameEvent, subject_oid: int | None
+) -> str | None:
+    """The zone a cast spell or a played land came from, for `from_zones`."""
+    if dsl_event == "land_played":
+        return event.data.get("from_zone")
+    obj = state.objects.get(subject_oid) if subject_oid is not None else None
+    return obj.cast_from_zone if obj is not None else None
 
 
 def _crosses_nth(event: GameEvent, nth: int) -> bool:

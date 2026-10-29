@@ -95,6 +95,7 @@ def push_spell(
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND
+    obj.cast_from_zone = obj.zone.value
     # Addendum (Ravnica Allegiance): "if you cast this spell during your main
     # phase". Stamped here, with `cast_from_hand`, because this is the moment
     # the sentence is about and the only moment it is knowable -- the spell can

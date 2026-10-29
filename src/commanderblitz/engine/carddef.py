@@ -724,6 +724,13 @@ class TriggerSpec:
     #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which
     #: `move_object` stamps on every departure. ``None`` is any destination.
     to_zones: tuple[str, ...] | None = None
+    #: For ``spell_cast`` and ``land_played``: the zone names the card must
+    #: have been played from -- "whenever you play a card **from exile**" is
+    #: ``("exile",)``. A spell is asked `GameObject.cast_from_zone`, stamped by
+    #: `stack.push_spell` before the card reaches the stack (601.2a); a land
+    #: drop carries ``from_zone`` on its LAND_PLAYED payload. ``None`` is any
+    #: origin.
+    from_zones: tuple[str, ...] | None = None
     #: The ``state`` event only: the condition a **state trigger** watches
     #: (603.8) -- "When there are four or more page counters on this
     #: artifact…" (Mazemind Tome). Checked whenever state-based actions are, by

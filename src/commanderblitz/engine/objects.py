@@ -98,6 +98,12 @@ class GameObject:
     #: is the loop guard: a rebounded spell is cast from exile, so without it
     #: the card would rebound again every upkeep for ever.
     cast_from_hand: bool = False
+    #: The zone this card was cast from, by name, written beside
+    #: `cast_from_hand` by `stack.push_spell` -- the only moment it is knowable
+    #: (601.2a moves the card to the stack first). Read by a `from_zones`
+    #: clause on a `spell_cast` trigger: Klaw, Master of Sound's "whenever you
+    #: play a card **from exile**".
+    cast_from_zone: str | None = None
     #: Which **colours of mana were actually spent** casting this -- sunburst
     #: (702.43a) and converge. Recorded by `pay_mana`, which is the only moment
     #: it is knowable: `ManaPool.spend` decrements six integers and afterwards

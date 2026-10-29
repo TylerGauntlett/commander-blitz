@@ -365,6 +365,10 @@ class Game:
         # what the arriving permanent is and riot asks about a creature.
         yield from offer_riot_choice(state, oid, pid)
         yield from offer_read_ahead(state, oid, pid)
+        # Where the land was played from -- "whenever you play a card **from
+        # exile**" (Klaw, Master of Sound). Read before the move, which is the
+        # last moment the object still says.
+        from_zone = state.objects[oid].zone.value
         # Its own simultaneous event, as a resolving spell's arrival is.
         state.event_batch += 1
         move_object(state, oid, Zone.BATTLEFIELD, cause="land_drop")
@@ -376,6 +380,7 @@ class Game:
             oid=oid,
             land_oid=oid,
             card=card.id,
+            from_zone=from_zone,
         )
 
     def _cast(self, pid: int, action: Action) -> Generator[Any, list[int]]:

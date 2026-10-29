@@ -4006,7 +4006,8 @@ and the filter keys are
     "put_by": "you",                 // `counter_placed` only: YOU put them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
-    "to_zones": ["graveyard", "exile"] // `leaves_battlefield` only: where it went
+    "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
+    "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
   },
   "effects": [ ... ]
 }
@@ -4065,6 +4066,19 @@ only, and names zones a permanent can leave to (`library`, `hand`, `graveyard`,
 `exile`, `command`). To return the card from whichever zone it reached, use a
 `union` of `{"zone": "graveyard", "self_only": true}` and `{"zone": "exile",
 "self_only": true}`.
+
+`from_zones` is "whenever you play a card **from exile**" -- Klaw, Master of
+Sound. "Play" is cast or play a land, so the line is two abilities claiming one
+printed sentence, `spell_cast` and `land_played`, each with
+`from_zones: ["exile"]`; one play is never both, so they never fire together.
+The trigger fires only when the zone the card was played from is in the list. A
+spell answers with the origin `stack.push_spell` stamps on it
+(`GameObject.cast_from_zone`), because 601.2a has already moved it to the stack
+when SPELL_CAST fires; a land drop carries `from_zone` on its LAND_PLAYED
+payload. It is allowed on those two events only, and names zones a card is
+played from (`library`, `hand`, `graveyard`, `exile`, `command`). A filter's
+`zone: "exile"` is the near miss: it reads where the subject is *now*, the stack
+or the battlefield, and never matches.
 
 `self_enters` and `permanent_enters` are the *same* engine event, separated only
 by `source: "self"` — so the loader supplies it for `self_enters` rather than
