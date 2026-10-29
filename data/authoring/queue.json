@@ -88982,12 +88982,12 @@
     },
     "Extract Power": {
       "edhrec_rank": 17797,
-      "gate": "template",
+      "gate": null,
       "name": "Extract Power",
-      "reason": "no template for: Look at the top card of each player's library, then exile those cards face down. You may p",
+      "reason": "",
       "scryfall_id": "11aaa7c6-c79d-48f9-af66-3b360d3b15b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extract a Confession": {

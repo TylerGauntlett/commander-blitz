@@ -4116,6 +4116,18 @@
     },
     "zone": "graveyard"
   },
+  "extract_power": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "exultant_skymarcher": {
     "zone": "battlefield"
   },

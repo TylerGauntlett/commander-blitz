@@ -45592,6 +45592,38 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "extract_power",
+      "mana_cost": "{5}{U}",
+      "name": "Extract Power",
+      "oracle_text": "Look at the top card of each player's library, then exile those cards face down. You may play them without paying their mana costs for as long as they remain exiled.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "destination": "exile",
+          "face_down": true,
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable": "while_exiled",
+          "playable_free": true,
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
