@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 153 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 60 |
+| [Values](#values) | 61 |
 | [Conditions](#conditions) | 32 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 34 |
