@@ -54,6 +54,11 @@ RECORDING_OPS = frozenset(
         "choose_permanents",
         "copy_permanent",
         "create_token",
+        #: The permanents actually **destroyed** -- Avenge's "for each creature
+        #: destroyed this way". Not the ones chosen: indestructible,
+        #: regeneration, a shield counter and totem armor each leave a chosen
+        #: permanent out of it. Accumulates. See `ops_removal.op_destroy`.
+        "destroy",
         #: "…then draw that many cards" -- Joshua; "draw that many cards **plus
         #: one**" -- Celes; "if a **creature card** was discarded this way" --
         #: Mog. The binding **accumulates** across the players a single discard

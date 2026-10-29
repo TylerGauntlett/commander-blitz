@@ -1103,10 +1103,18 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
     turn, since the crown may not move for six of them. See
     :data:`~commanderblitz.engine.structs.DELAYED_DURATIONS`; the two values are read at
     exactly two places, `triggers._arm_delayed` and `turn._cleanup_step`.
+
+    ``this_combat`` is Love on the Battlefield's "…deals combat damage to a
+    player **this combat**", ended by `combat.end_combat`. Outside a combat
+    phase there is no "this combat" for it to belong to, so it installs
+    nothing rather than waiting for whichever combat comes next.
     """
 
     trigger = spec.get("trigger") or {}
     state = ctx.state
+    duration = str(spec.get("duration", "this_turn"))
+    if duration == "this_combat" and state.combat is None:
+        return
     # "Choose target creature you control. Whenever **that creature** deals
     # combat damage…" -- resolved now, to an oid, because the spell that is
     # saying it will be in a graveyard before the first blow lands and there
@@ -1150,7 +1158,7 @@ def op_delayed_trigger(ctx: EffectContext, spec: Mapping[str, Any]):
             ),
             subject_oids=subject_oids,
             recipient_oids=recipient_oids,
-            duration=str(spec.get("duration", "this_turn")),
+            duration=duration,
         )
     )
 

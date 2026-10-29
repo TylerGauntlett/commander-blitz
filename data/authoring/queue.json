@@ -9832,12 +9832,12 @@
     },
     "Ant-Man, Elusive Avenger": {
       "edhrec_rank": 14638,
-      "gate": "template",
+      "gate": null,
       "name": "Ant-Man, Elusive Avenger",
-      "reason": "no template for: Ant-Man can't be blocked by creatures with greater power",
+      "reason": "",
       "scryfall_id": "18e2b0a4-0ed3-48e6-8334-198a19e54bff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ant-Man, Reformed Rogue": {
@@ -17682,12 +17682,12 @@
     },
     "Avenge": {
       "edhrec_rank": 17207,
-      "gate": "template",
+      "gate": null,
       "name": "Avenge",
-      "reason": "no template for: This spell costs {2} less to cast if a player attacked you during their last turn",
+      "reason": "",
       "scryfall_id": "8b385779-bc6b-4f67-8724-d8ae136d1436",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avenger en-Dal": {
@@ -17742,22 +17742,22 @@
     },
     "Avengers Quinjet": {
       "edhrec_rank": 15768,
-      "gate": "template",
+      "gate": null,
       "name": "Avengers Quinjet",
-      "reason": "no template for: Whenever this Vehicle enters or attacks, choose one —",
+      "reason": "",
       "scryfall_id": "8f2e0e76-f8e9-4914-bdd8-474dc4667efb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avengers Tower": {
       "edhrec_rank": 9188,
-      "gate": "template",
+      "gate": null,
       "name": "Avengers Tower",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a Hero spell or to activate a",
+      "reason": "",
       "scryfall_id": "1292713f-1462-438f-a3a2-1f69ece99668",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avengers: Under Siege": {
@@ -25772,12 +25772,12 @@
     },
     "Black Widow, Agile Avenger": {
       "edhrec_rank": 10571,
-      "gate": "template",
+      "gate": null,
       "name": "Black Widow, Agile Avenger",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, put a +1/+1 counter on Black Widow",
+      "reason": "",
       "scryfall_id": "0b165b56-ad86-4d8c-91e2-1464b2ac5c6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Widow, Daring Operative": {
@@ -39342,12 +39342,12 @@
     },
     "Captain America, Living Legend": {
       "edhrec_rank": 9590,
-      "gate": "template",
+      "gate": null,
       "name": "Captain America, Living Legend",
-      "reason": "no template for: Whenever a creature you control becomes tapped during your turn, if it's the first time th",
+      "reason": "",
       "scryfall_id": "6516f292-469d-4092-b099-97c698f373cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain America, Skybound": {
@@ -39382,12 +39382,12 @@
     },
     "Captain America, Team Leader": {
       "edhrec_rank": 13543,
-      "gate": "template",
+      "gate": null,
       "name": "Captain America, Team Leader",
-      "reason": "no template for: Whenever another Hero you control enters, it gains vigilance and haste until end of turn. ",
+      "reason": "",
       "scryfall_id": "61a51b67-d941-4e07-9c12-ffe583cb65d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain America, Unbowed": {
@@ -39462,22 +39462,22 @@
     },
     "Captain Mar-Vell, Space-Born": {
       "edhrec_rank": 18404,
-      "gate": "template",
+      "gate": null,
       "name": "Captain Mar-Vell, Space-Born",
-      "reason": "no template for: Cosmic Awareness — As long as an opponent has cast a spell this turn, you may cast spells ",
+      "reason": "",
       "scryfall_id": "27924c2f-756c-42af-9830-18a5a2735137",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain Marvel, Apex Avenger": {
       "edhrec_rank": 15263,
-      "gate": "template",
+      "gate": null,
       "name": "Captain Marvel, Apex Avenger",
-      "reason": "no template for: Whenever you put one or more counters on another creature, if it's not a Kree, you may put",
+      "reason": "",
       "scryfall_id": "516e14ce-9cc8-4be3-aacb-ba801f26a6bc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Captain Marvel, Earth's Protector": {
@@ -69332,12 +69332,12 @@
     },
     "Director Nick Fury": {
       "edhrec_rank": 13945,
-      "gate": "template",
+      "gate": null,
       "name": "Director Nick Fury",
-      "reason": "no template for: Hero spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "7b7e00b4-d2f5-4c89-8a1b-e22b7bba111b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Diregraf Captain": {
@@ -70002,12 +70002,12 @@
     },
     "Dismantling Wave": {
       "edhrec_rank": 4267,
-      "gate": "template",
+      "gate": null,
       "name": "Dismantling Wave",
-      "reason": "no template for: For each opponent, destroy up to one target artifact or enchantment that player controls",
+      "reason": "",
       "scryfall_id": "39e7bb05-96df-4e76-90a6-3f3625b7965a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dismember": {
@@ -90382,12 +90382,12 @@
     },
     "Falcon and Redwing": {
       "edhrec_rank": 13450,
-      "gate": "template",
+      "gate": null,
       "name": "Falcon and Redwing",
-      "reason": "no template for: Whenever deal combat damage to a player, create that many 1/1 white Bird creature tokens w",
+      "reason": "",
       "scryfall_id": "a2f3d58c-ad5c-4d1a-bda6-fbc55635e946",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Falcon's Wing Harness": {
@@ -95802,12 +95802,12 @@
     },
     "Firebird, Blazing Ranger": {
       "edhrec_rank": 17167,
-      "gate": "template",
+      "gate": null,
       "name": "Firebird, Blazing Ranger",
-      "reason": "no template for: Whenever Firebird attacks, other attacking creatures get +X/+0 until end of turn, where X ",
+      "reason": "",
       "scryfall_id": "11dc3b30-b130-4558-ab37-9c32792641ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fireblade Artist": {
@@ -109092,12 +109092,12 @@
     },
     "Gift of Immortality": {
       "edhrec_rank": 1936,
-      "gate": "template",
+      "gate": null,
       "name": "Gift of Immortality",
-      "reason": "no template for: When enchanted creature dies, return that card to the battlefield under its owner's contro",
+      "reason": "",
       "scryfall_id": "4ae22015-073a-4666-9e3b-15dcf61f50ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gift of Orzhova": {
@@ -123842,12 +123842,12 @@
     },
     "Hawkeye, Avenging Archer": {
       "edhrec_rank": 20138,
-      "gate": "template",
+      "gate": null,
       "name": "Hawkeye, Avenging Archer",
-      "reason": "no template for: Whenever a creature an opponent controls dies, if Hawkeye dealt damage to it this turn, dr",
+      "reason": "",
       "scryfall_id": "1f394a6f-3649-4464-939b-c183b2b01768",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hawkeye, Bowslinger": {
@@ -126412,12 +126412,12 @@
     },
     "Hercules, Olympian Hero": {
       "edhrec_rank": 17089,
-      "gate": "template",
+      "gate": null,
       "name": "Hercules, Olympian Hero",
-      "reason": "no template for: Whenever Hercules attacks, put a +1/+1 counter on him. He gains indestructible until end o",
+      "reason": "",
       "scryfall_id": "49397fee-6f78-48cb-ae5b-d18f627f6700",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hercules, Prince of Power": {
@@ -126722,12 +126722,12 @@
     },
     "Hero's Blade": {
       "edhrec_rank": 1879,
-      "gate": "template",
+      "gate": null,
       "name": "Hero's Blade",
-      "reason": "no template for: Whenever a legendary creature you control enters, you may attach this Equipment to it",
+      "reason": "",
       "scryfall_id": "6f2fa911-5735-4ee2-828f-59dea6927b20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hero's Demise": {
@@ -126892,12 +126892,12 @@
     },
     "Heroic Return": {
       "edhrec_rank": 18147,
-      "gate": "template",
+      "gate": null,
       "name": "Heroic Return",
-      "reason": "no template for: This spell costs {2} less to cast if a creature is attacking you",
+      "reason": "",
       "scryfall_id": "707e0b51-701b-4eb6-b721-19c21a3c4d90",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heroic Sacrifice": {
@@ -131102,12 +131102,12 @@
     },
     "Hulkbuster Armor": {
       "edhrec_rank": 11864,
-      "gate": "template",
+      "gate": null,
       "name": "Hulkbuster Armor",
-      "reason": "no template for: Equipped creature has base power and toughness 9/9 and has flying",
+      "reason": "",
       "scryfall_id": "0cd857a3-ad93-4d74-80e0-c99d0a04a60a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hulking Bugbear": {
@@ -139902,12 +139902,12 @@
     },
     "Iron Man, Armored Avenger": {
       "edhrec_rank": 9577,
-      "gate": "template",
+      "gate": null,
       "name": "Iron Man, Armored Avenger",
-      "reason": "no template for: Whenever you draw a card, put a +1/+1 counter on target creature",
+      "reason": "",
       "scryfall_id": "94af0633-59c6-4893-ab44-232d37573dde",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iron Man, Bleeding Edge": {
@@ -142112,12 +142112,12 @@
     },
     "Jarvis, Earth's Mightiest Butler": {
       "edhrec_rank": 14853,
-      "gate": "template",
+      "gate": null,
       "name": "Jarvis, Earth's Mightiest Butler",
-      "reason": "no template for: Whenever you cast a Hero spell, draw a card",
+      "reason": "",
       "scryfall_id": "62c31cd8-0c30-4cfb-89d6-2e4dac19f6ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jasmine Boreal": {
@@ -143382,12 +143382,12 @@
     },
     "Jocasta, Automaton Avenger": {
       "edhrec_rank": 15520,
-      "gate": "template",
+      "gate": null,
       "name": "Jocasta, Automaton Avenger",
-      "reason": "no template for: Whenever your commander deals combat damage to a player, put a +1/+1 counter on Jocasta",
+      "reason": "",
       "scryfall_id": "808c7052-1a10-4825-a0aa-1b8252e7587f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jodah's Avenger": {
@@ -149062,12 +149062,12 @@
     },
     "Kindred Discovery": {
       "edhrec_rank": 343,
-      "gate": "template",
+      "gate": null,
       "name": "Kindred Discovery",
-      "reason": "no template for: As this enchantment enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "19bdedb2-768b-4adf-8193-917a10c8f729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kindred Dominance": {
@@ -162022,12 +162022,12 @@
     },
     "Love on the Battlefield": {
       "edhrec_rank": 21583,
-      "gate": "template",
+      "gate": null,
       "name": "Love on the Battlefield",
-      "reason": "no template for: Whenever you attack with exactly two creatures, those creatures gain first strike until en",
+      "reason": "",
       "scryfall_id": "3f2e65ff-27ae-4dfc-bf17-66f0c4949699",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lovestruck Beast // Heart's Desire": {
@@ -165482,12 +165482,12 @@
     },
     "Make Your Move": {
       "edhrec_rank": 6370,
-      "gate": "template",
+      "gate": null,
       "name": "Make Your Move",
-      "reason": "no template for: Destroy target artifact, enchantment, or creature with power 4 or greater",
+      "reason": "",
       "scryfall_id": "05fa34df-99b0-4121-b2f1-d41afe97b200",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Make Your Own Luck": {
@@ -172412,12 +172412,12 @@
     },
     "Methods of the Mighty": {
       "edhrec_rank": 16965,
-      "gate": "template",
+      "gate": null,
       "name": "Methods of the Mighty",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "b0a2eccc-afa7-453c-8d8e-df10e90f6e1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Meticulous Archive": {
@@ -198742,12 +198742,12 @@
     },
     "Patriot, Shield Wielder": {
       "edhrec_rank": 19533,
-      "gate": "template",
+      "gate": null,
       "name": "Patriot, Shield Wielder",
-      "reason": "no template for: {2}, {T}: Another target creature you control gets +2/+0 and gains hexproof until end of t",
+      "reason": "",
       "scryfall_id": "1467d7c9-00d8-43f1-b4e7-a279d2b10503",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Patriot, Young Avenger": {
@@ -201262,12 +201262,12 @@
     },
     "Photon, Mighty Marvel": {
       "edhrec_rank": 15761,
-      "gate": "template",
+      "gate": null,
       "name": "Photon, Mighty Marvel",
-      "reason": "no template for: Whenever Photon deals combat damage to a player, add that much mana of any one color. Unti",
+      "reason": "",
       "scryfall_id": "09e4d824-b01b-4bf8-8b08-3ba94657b580",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phthisis": {
@@ -204302,12 +204302,12 @@
     },
     "Plaza of Heroes": {
       "edhrec_rank": 499,
-      "gate": "template",
+      "gate": null,
       "name": "Plaza of Heroes",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a legendary spell",
+      "reason": "",
       "scryfall_id": "2375d88b-b49f-43b2-a4cd-bfa2c9faa879",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plea for Guidance": {
@@ -208102,12 +208102,12 @@
     },
     "Professor Hulk": {
       "edhrec_rank": 12104,
-      "gate": "template",
+      "gate": null,
       "name": "Professor Hulk",
-      "reason": "no template for: Whenever deals combat damage to a player, draw that many cards",
+      "reason": "",
       "scryfall_id": "010aea2b-dd25-4ac2-9b3f-cd3b18740d06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Professor Onyx": {
@@ -212052,12 +212052,12 @@
     },
     "Quicksilver, Speedster": {
       "edhrec_rank": 17781,
-      "gate": "template",
+      "gate": null,
       "name": "Quicksilver, Speedster",
-      "reason": "no template for: As long as Quicksilver is tapped, you may cast spells as though they had flash",
+      "reason": "",
       "scryfall_id": "5a454bad-c137-4d7c-9fcc-928c0c1798f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quicksmith Genius": {
@@ -213772,12 +213772,12 @@
     },
     "Raise the Palisade": {
       "edhrec_rank": 994,
-      "gate": "template",
+      "gate": null,
       "name": "Raise the Palisade",
-      "reason": "no template for: Choose a creature type. Return all creatures that aren't of the chosen type to their owner",
+      "reason": "",
       "scryfall_id": "2a7b9598-9234-4621-90e4-f578f2f84983",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Raise the Past": {
@@ -219882,12 +219882,12 @@
     },
     "Relic of Legends": {
       "edhrec_rank": 547,
-      "gate": "template",
+      "gate": null,
       "name": "Relic of Legends",
-      "reason": "no template for: Tap an untapped legendary creature you control: Add one mana of any color",
+      "reason": "",
       "scryfall_id": "89691cda-e38b-4f53-bee6-4c234186e6ad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relic of Progenitus": {
@@ -221042,12 +221042,12 @@
     },
     "Rescue, Pepper Potts": {
       "edhrec_rank": 16791,
-      "gate": "template",
+      "gate": null,
       "name": "Rescue, Pepper Potts",
-      "reason": "no template for: When Rescue enters, return up to one other target artifact or creature you control to its ",
+      "reason": "",
       "scryfall_id": "476f75a4-a4e0-4d09-9756-f1001ebabc84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rescuer Chwinga": {
@@ -224442,12 +224442,12 @@
     },
     "Rip Apart": {
       "edhrec_rank": 2523,
-      "gate": "template",
+      "gate": null,
       "name": "Rip Apart",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "b4964c78-b9ca-43c2-bcaa-bf75d92b9065",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rip, Spawn Hunter": {
@@ -234982,12 +234982,12 @@
     },
     "Scarlet Witch, Chaotic Avenger": {
       "edhrec_rank": 13463,
-      "gate": "template",
+      "gate": null,
       "name": "Scarlet Witch, Chaotic Avenger",
-      "reason": "no template for: Whenever Scarlet Witch deals combat damage to a player, look at the top two cards of your ",
+      "reason": "",
       "scryfall_id": "00242e12-a957-4cb2-9d26-e1124e614e72",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scarlet Witch, Wanda Maximoff": {
@@ -242582,12 +242582,12 @@
     },
     "Shang-Chi and the Ten Rings": {
       "edhrec_rank": 14377,
-      "gate": "template",
+      "gate": null,
       "name": "Shang-Chi and the Ten Rings",
-      "reason": "no template for: Whenever you draw a card, put a +1/+1 counter on Shang-Chi",
+      "reason": "",
       "scryfall_id": "8d6288b7-c959-437b-9a3f-eb85c306c9f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shang-Chi, Martial Mentor": {
@@ -243412,12 +243412,12 @@
     },
     "She-Hulk, Wallbreaker": {
       "edhrec_rank": 13342,
-      "gate": "template",
+      "gate": null,
       "name": "She-Hulk, Wallbreaker",
-      "reason": "no template for: Other Heroes you control have trample",
+      "reason": "",
       "scryfall_id": "8c57fb16-f4a3-437c-be27-d1c00a2be01e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shed Weakness": {
@@ -257462,12 +257462,12 @@
     },
     "Spectator Seating": {
       "edhrec_rank": 171,
-      "gate": "template",
+      "gate": null,
       "name": "Spectator Seating",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "404f23f0-e14d-4179-bdbc-e08ee840fdb6",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Specter of Mortality": {
@@ -257802,12 +257802,12 @@
     },
     "Speed, Young Avenger": {
       "edhrec_rank": 20424,
-      "gate": "template",
+      "gate": null,
       "name": "Speed, Young Avenger",
-      "reason": "no template for: Whenever you cast a noncreature spell, you may pay {1}. When you do, target creature with ",
+      "reason": "",
       "scryfall_id": "7224b9cc-6a88-4aea-a7ab-ab64e0e25451",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Speedball, New Warrior": {
@@ -282882,12 +282882,12 @@
     },
     "The Wasp, Winsome Avenger": {
       "edhrec_rank": 16164,
-      "gate": "template",
+      "gate": null,
       "name": "The Wasp, Winsome Avenger",
-      "reason": "no template for: When The Wasp enters, target Hero gains hexproof until end of turn",
+      "reason": "",
       "scryfall_id": "ce5fb436-fcc6-426f-a33b-a8ba904df0ff",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Watcher in the Water": {
@@ -283872,12 +283872,12 @@
     },
     "Thor, Asgard's Avenger": {
       "edhrec_rank": 15539,
-      "gate": "template",
+      "gate": null,
       "name": "Thor, Asgard's Avenger",
-      "reason": "no template for: If another source you control would deal damage to an opponent or a permanent an opponent ",
+      "reason": "",
       "scryfall_id": "00fa6bb3-e769-4a0e-9ee6-42eea85a237b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thor, God of Thunder": {
@@ -296742,12 +296742,12 @@
     },
     "Unclaimed Territory": {
       "edhrec_rank": 245,
-      "gate": "template",
+      "gate": null,
       "name": "Unclaimed Territory",
-      "reason": "no template for: As this land enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "d3782952-3839-4a94-95bc-716611d3ece6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uncle Iroh": {
@@ -305822,12 +305822,12 @@
     },
     "Vision, Synthezoid Avenger": {
       "edhrec_rank": 17180,
-      "gate": "template",
+      "gate": null,
       "name": "Vision, Synthezoid Avenger",
-      "reason": "no template for: Whenever a player casts a spell, if it isn't that player's turn, choose one —",
+      "reason": "",
       "scryfall_id": "f7007b77-84ec-4391-b279-8c188dd569d0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Visionary Augmenter": {
@@ -310362,12 +310362,12 @@
     },
     "War Machine, Avenging Arsenal": {
       "edhrec_rank": 13383,
-      "gate": "template",
+      "gate": null,
       "name": "War Machine, Avenging Arsenal",
-      "reason": "no template for: Whenever War Machine attacks, attacking modified creatures you control gain double strike ",
+      "reason": "",
       "scryfall_id": "411210d1-02ae-404c-98d6-f1aa6ae2a484",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "War Machine, James Rhodes": {
@@ -313552,12 +313552,12 @@
     },
     "West Coast Expansion": {
       "edhrec_rank": 16458,
-      "gate": "template",
+      "gate": null,
       "name": "West Coast Expansion",
-      "reason": "no template for: Draw X cards. If X is 5 or more, you may cast a Hero spell from your hand without paying i",
+      "reason": "",
       "scryfall_id": "41533f78-4a4e-424a-9612-a8bdb2a14b4b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "West Wind Avatar": {
@@ -316812,12 +316812,12 @@
     },
     "Winter Soldier, Reborn Avenger": {
       "edhrec_rank": 14446,
-      "gate": "template",
+      "gate": null,
       "name": "Winter Soldier, Reborn Avenger",
-      "reason": "no template for: Whenever Winter Soldier attacks, return target creature card with mana value less than or ",
+      "reason": "",
       "scryfall_id": "75ae41f8-5968-49de-ae6d-9f9523aecba5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winter's Chill": {

@@ -109,6 +109,9 @@ class EventType:
     LAND_PLAYED = "land_played"
     TAPPED = "tapped"
     UNTAPPED = "untapped"
+    #: Counters of one kind put on one permanent (122.6). ``data`` carries the
+    #: ``counter`` kind, the ``amount`` that arrived, ``put_by`` and ``before``,
+    #: the count of that kind just before -- what an ``nth`` trigger compares.
     COUNTER_PLACED = "counter_placed"
     COUNTER_REMOVED = "counter_removed"
     ATTACHED = "attached"
@@ -214,6 +217,11 @@ class EventType:
     ENERGY_ADDED = "energy_added"
     #: Energy spent on a ``pay_energy`` cost. ``amount`` paid, ``total`` left.
     ENERGY_PAID = "energy_paid"
+    #: Damage dealt to a player (``to="player"``) or a permanent
+    #: (``to="permanent"``, with its ``oid``). The permanent half carries
+    #: ``batch``, the simultaneous damage event it belongs to -- one combat
+    #: damage step (510.2), or one effect op -- for a ``batched`` `dealt_damage`
+    #: trigger to group and sum.
     DAMAGE_DEALT = "damage_dealt"
     DAMAGE_PREVENTED = "damage_prevented"
     COMBAT_DAMAGE_TO_PLAYER = "combat_damage_to_player"

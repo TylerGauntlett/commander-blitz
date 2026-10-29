@@ -201,6 +201,23 @@ def _effects_move_source(effects: Any) -> bool:
     return False
 
 
+def reads_placed_kind(effects: Any) -> bool:
+    """Does any effect in this tree put "the same kind" a placement put?
+
+    That is an ``add_counters`` whose ``counter`` is the ``{"binding":
+    "counter"}`` mapping. `_validate_effect` holds the mapping to that one op
+    and that one shape; whether the binding will exist is a question about the
+    trigger, which only the ability compiler can see.
+    """
+    if isinstance(effects, Mapping):
+        if effects.get("op") == "add_counters" and isinstance(effects.get("counter"), Mapping):
+            return True
+        return any(reads_placed_kind(v) for v in effects.values())
+    if isinstance(effects, (list, tuple)):
+        return any(reads_placed_kind(v) for v in effects)
+    return False
+
+
 def _mentions_condition(model: CardModel, key: str) -> bool:
     """Does anything on this card read the ``key`` condition?"""
     return _mentions(model, lambda node: key in node)

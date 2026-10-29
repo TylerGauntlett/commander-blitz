@@ -38,6 +38,7 @@ from .vocabulary import (
     STATIC_MANA_POOL_KEYS,
     STATIC_MONARCH_PLAYERS,
     STATIC_POISON_KEYS,
+    STATIC_SPELLS_CAST_KEYS,
     STATIC_VALUE_KEYS,
     STATIC_ZONE_FILTER_KEYS,
 )
@@ -483,7 +484,18 @@ def _validate_static_value(value: Any, where: str) -> None:
             f"{where}.mana_symbols",
             validate_objects=_validate_static_count_filter,
         )
-    for key in (STATIC_LIFE_KEYS | STATIC_POISON_KEYS | STATIC_MANA_POOL_KEYS) & set(value):
+    if isinstance(value.get("spells_cast_this_turn"), Mapping):
+        # The effect side's typed form, `{"player": …, "filter": …}`. Refused by
+        # name rather than by the generic message below, which would read as
+        # though the leaf itself were unknown here.
+        raise DslError(
+            f"{where}.spells_cast_this_turn: a static takes the bare player spec "
+            f"only, e.g. 'opponent' (an opponent has cast a spell this turn), "
+            f"got {value['spells_cast_this_turn']!r}"
+        )
+    for key in (
+        STATIC_LIFE_KEYS | STATIC_POISON_KEYS | STATIC_MANA_POOL_KEYS | STATIC_SPELLS_CAST_KEYS
+    ) & set(value):
         who = value[key]
         if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
             raise DslError(

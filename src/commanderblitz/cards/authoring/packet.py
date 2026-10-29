@@ -38,6 +38,7 @@ from commanderblitz.engine.effects.selectors import SELECTOR_KEYS
 from commanderblitz.engine.effects.values import VALUE_KEYS
 from commanderblitz.engine.enums import CardType, Keyword, Supertype
 from commanderblitz.engine.objects import PLAYABLE_DURATIONS
+from commanderblitz.engine.structs import DELAYED_DURATIONS
 from commanderblitz.engine.triggers import TRIGGER_EVENTS, TRIGGER_FILTER_KEYS
 
 from ..images import IndexEntry
@@ -45,6 +46,7 @@ from ..loader.vocabulary import (
     COST_REDUCTION_FILTER_KEYS,
     COST_REDUCTION_KEYS,
     COST_REDUCTION_REFUSED_FILTER_KEYS,
+    DELAYED_TRIGGER_KEYS,
     MANA_RIDER_OPS,
     STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
@@ -493,6 +495,13 @@ def reference() -> dict:
         # while `max_per_turn` sat on TriggerModel, already shipping on
         # Jin-Gitaxias' own spell_cast trigger.
         "trigger_keys": sorted(TriggerModel.model_fields),
+        # A `delayed_trigger`'s `trigger` is a narrower object than a printed
+        # one, and `subject` -- "whenever **either of those creatures**" -- is
+        # on it and on no TriggerModel. Love on the Battlefield was filed as a
+        # gap partly because `trigger_keys` did not list it; `delayed_durations`
+        # is how long the subscription lasts ("this turn", "this combat").
+        "delayed_trigger_keys": sorted(DELAYED_TRIGGER_KEYS),
+        "delayed_durations": sorted(DELAYED_DURATIONS),
         # And what a target spec may carry. `id` and `kind` are required, and
         # three gate-1 rejections in this run were a worker writing neither.
         "target_keys": sorted(TargetModel.model_fields),
@@ -642,7 +651,10 @@ def reference() -> dict:
             " trigger -- counted per caster, and over the spells matching the"
             " trigger's `filter` when it has one (\"their first noncreature"
             " spell\"). A trigger's FILTER keys go inside"
-            " `filter`, never on the trigger itself.",
+            " `filter`, never on the trigger itself. A `delayed_trigger`'s own"
+            " `trigger` takes `delayed_trigger_keys` instead (`subject` is"
+            " \"whenever either of those creatures\"), and its `duration` is one"
+            " of `delayed_durations` (`this_combat` is \"... this combat\").",
             "`target_keys` is what a card-level or ability `targets` entry may"
             " carry, and `ability_kinds` is the closed vocabulary of an"
             " ability's `kind`.",
@@ -770,6 +782,15 @@ def reference() -> dict:
             " that much life plus 1 instead\" is the same static with"
             " `gain_addend: 1` in place of `gain_multiplier` (one or the other,"
             " never both).",
+            "\"It deals that much damage plus 1 instead\" is the static"
+            " `replace_damage` with `damage_addend: 1` in place of"
+            " `damage_multiplier` (one or the other, never both), filtered as"
+            " the doubler is: \"another source you control\" is"
+            " `damage_source: {\"controller\": \"you\", \"exclude_self\": true}`"
+            " (any zone, burn spells included), \"to an opponent or a permanent"
+            " an opponent controls\" is `affects_player: \"opponent\"` with"
+            " `affects: {\"controller\": \"opponent\"}`. NOT a damage trigger"
+            " dealing 1 more.",
             "\"If you gained life this turn\" is the value"
             " `{\"life_gained_this_turn\": \"you\"}` compared `>` against"
             " `{\"const\": 0}` -- on a trigger, as its `condition` (an"

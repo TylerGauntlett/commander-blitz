@@ -174,6 +174,7 @@ from .walk import (
     _mentions_pair,
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
+    reads_placed_kind,
 )
 
 
@@ -872,6 +873,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
+    if reads_placed_kind(model.spell_effects):
+        raise DslError(
+            f"{where}.spell_effects: {{'binding': 'counter'}} is the kind a "
+            f"counter_placed trigger's placement put, and a spell has no trigger "
+            f"to read it from -- name the counter"
+        )
     _check_distribution_homes(model, where)
     _check_division_homes(model, where)
 
@@ -2299,6 +2306,20 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.effects):
         _validate_effect(effect, f"{where}.effects[{i}]", target_kinds)
+    if reads_placed_kind(model.effects) and not (
+        kind is AbilityKind.TRIGGERED
+        and model.trigger is not None
+        and model.trigger.event == "counter_placed"
+    ):
+        # "The same kind of counters" names the kind the triggering placement
+        # put, and only COUNTER_PLACED carries one into the bindings. On any
+        # other ability the binding is absent and the op puts nothing -- a card
+        # that loads, reads as printed and silently does half of it.
+        raise DslError(
+            f"{where}: {{'binding': 'counter'}} is the kind a counter_placed "
+            f"trigger's placement put, so it only means anything on a "
+            f"counter_placed trigger"
+        )
 
     cost = (
         _compile_cost(model.cost, where, defines_x=kind is AbilityKind.ACTIVATED)
@@ -2568,17 +2589,31 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "spell_cast",
             "you_gain_life",
             "attacks",
+            "counter_placed",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
-            # `spell_cast`, `you_gain_life` and `attacks` carry an ordinal, so
-            # accepting it
+            # `spell_cast`, `you_gain_life` and `attacks` carry an ordinal, and
+            # `counter_placed` the count before the placement, so accepting it
             # elsewhere would look like "your second card each turn" and be a
             # restriction that never matches -- an ability that silently never
             # fires.
             raise DslError(
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
-                f"you_gain_life trigger, or an attacks trigger, "
-                f"not on {model.trigger.event!r}"
+                f"you_gain_life trigger, or an attacks trigger, or a counter_placed "
+                f"trigger, not on {model.trigger.event!r}"
+            )
+        if (
+            model.trigger.nth is not None
+            and model.trigger.event == "counter_placed"
+            and model.trigger.counter is None
+        ):
+            # "When the tenth **+1/+1** counter is put on" counts one kind; the
+            # event's `before` is the count of the kind it placed, so without
+            # `counter` a tenth charge counter would fire it, and ten counters
+            # of mixed kinds would never add up to the tenth of any.
+            raise DslError(
+                f"{where}: 'nth' on a counter_placed trigger counts counters of "
+                f"one kind, so it needs 'counter' (\"the tenth +1/+1 counter\")"
             )
         if model.trigger.nth is not None and model.trigger.nth < 1:
             # Ordinals count from 1. A zeroth or negative card or spell is
@@ -3891,19 +3926,39 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         )
 
     if model.effect == "replace_damage":
-        # Refused below 2 for `token_multiplier`'s reason: 1 replaces damage
-        # with itself and 0 prevents it, which is `prevent_damage`'s sentence
-        # and a much stronger card. Required, because a replacement that says
-        # nothing about how much damage is dealt is not this effect.
-        if model.damage_multiplier is None:
+        # Two axes, exactly one per static -- `replace_life_gain`'s shape:
+        # "double that damage" (`damage_multiplier`) and "that much damage
+        # plus 1" (`damage_addend`, Thor, Asgard's Avenger). One static
+        # carrying both would be a single replacement whose internal order
+        # nothing prints. Required, because a replacement that says nothing
+        # about how much damage is dealt is not this effect.
+        #
+        # The multiplier is refused below 2 for `token_multiplier`'s reason: 1
+        # replaces damage with itself and 0 prevents it, which is
+        # `prevent_damage`'s sentence and a much stronger card. The addend is
+        # refused below 1: 0 replaces damage with itself, and a negative one is
+        # a prevention.
+        if model.damage_multiplier is not None and model.damage_addend is not None:
+            raise DslError(
+                f"{where}: replace_damage takes 'damage_multiplier' (\"double "
+                f"that damage\") or 'damage_addend' (\"that much damage plus "
+                f"1\"), not both"
+            )
+        if model.damage_multiplier is None and model.damage_addend is None:
             raise DslError(
                 f"{where}: replace_damage needs 'damage_multiplier' -- "
-                f"\"deals double that damage instead\" is 2"
+                f"\"deals double that damage instead\" is 2 -- or "
+                f"'damage_addend' -- \"that much damage plus 1\" is 1"
             )
-        if model.damage_multiplier < 2:
+        if model.damage_multiplier is not None and model.damage_multiplier < 2:
             raise DslError(
                 f"{where}.damage_multiplier: must be 2 or more; 1 replaces damage "
                 f"with itself and 0 prevents it, which is 'prevent_damage'"
+            )
+        if model.damage_addend is not None and model.damage_addend < 1:
+            raise DslError(
+                f"{where}.damage_addend: must be 1 or more; 0 replaces damage "
+                f"with itself, and a negative addend is a prevention"
             )
         # Every filter here is optional. `damage_source` is the dealer and
         # `affects` the *recipient*, both in the printed-characteristic
@@ -3926,11 +3981,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                     f"{where}.damage_source: static filters may only read printed "
                     f"characteristics; unsupported keys {sorted(unknown)}"
                 )
-    elif model.damage_multiplier is not None or (
-        model.damage_source is not None and model.effect != "prevent_damage"
+    elif (
+        model.damage_multiplier is not None
+        or model.damage_addend is not None
+        or (model.damage_source is not None and model.effect != "prevent_damage")
     ):
         raise DslError(
-            f"{where}: 'damage_multiplier'/'damage_source' only mean "
+            f"{where}: 'damage_multiplier'/'damage_addend'/'damage_source' only mean "
             f"anything on a replace_damage static ('damage_source' also on a "
             f"prevent_damage static), not on {model.effect!r}"
         )
@@ -4966,7 +5023,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # spelled out below: a field the schema accepts and this loop forgets
     # loads, compiles and applies with the clause absent -- here that would be
     # a High Score that replaces every counter in the game, or doubles nothing.
-    # `replace_damage`'s three, copied explicitly for the whitelist reason
+    # `replace_damage`'s four, copied explicitly for the whitelist reason
     # below: forgotten here, the Flail would double every source's damage to
     # everything, or none of it.
     # `ability_cost_reduction`'s two, copied explicitly for the whitelist reason
@@ -4981,6 +5038,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["targeting"] = dict(model.targeting)
     if model.damage_multiplier is not None:
         static["damage_multiplier"] = model.damage_multiplier
+    if model.damage_addend is not None:
+        static["damage_addend"] = model.damage_addend
     if model.damage_source is not None:
         static["damage_source"] = dict(model.damage_source)
     if model.combat_only:

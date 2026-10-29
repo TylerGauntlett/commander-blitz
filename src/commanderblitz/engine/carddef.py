@@ -642,7 +642,9 @@ class TriggerSpec:
     #: turn, compared against ``nth`` on the event.  On ``spell_cast`` with a
     #: ``filter`` it is the ordinal among that player's spells **matching** the
     #: filter -- "their first noncreature spell" -- see
-    #: `triggers._spell_ordinal`.
+    #: `triggers._spell_ordinal`.  On ``counter_placed`` it is "the **tenth**
+    #: +1/+1 counter": the placement whose ``before`` and ``amount`` straddle
+    #: it -- see `triggers._crosses_nth`.
     #:
     #: A restriction on the trigger rather than a ``condition``, and that is the
     #: whole of the feature.  The condition form -- ``cards_drawn_this_turn ==

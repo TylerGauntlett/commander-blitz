@@ -1256,6 +1256,9 @@ COST_CONDITION_HEADS = frozenset(
         "is_monarch",
         "no_monarch",
         "combat_damage_by",
+        # Avenge. Player state kept across turns by the cleanup step, so it
+        # needs nothing on the stack and reads the same offered and charged.
+        "attacked_you_last_turn",
         # Both read the reduction's own source, which is a real object at
         # pricing time: the permanent whose ability is being activated, or the
         # card in the graveyard being cast.
@@ -1402,6 +1405,16 @@ STATIC_POISON_KEYS = frozenset({"max_poison_of"})
 #: funnels bumps `char_version`. Takes the life leaves' player specs.
 STATIC_MANA_POOL_KEYS = frozenset({"unspent_mana_count"})
 
+#: The per-turn cast leaf -- Captain Mar-Vell, Space-Born's "as long as an
+#: opponent has cast a spell this turn, you may cast spells as though they had
+#: flash". `TurnLedger.spells_cast` is written only by `GameState._tally`
+#: folding SPELL_CAST and emptied only by the cleanup step, never by a layer,
+#: and both funnels bump `char_version`, so it is a pipeline input on a poison
+#: count's terms. The bare player-spec form only, with the life leaves' specs:
+#: the effect side's typed `{"player", "filter"}` form matches the cast cards'
+#: printed faces, which no static has needed.
+STATIC_SPELLS_CAST_KEYS = frozenset({"spells_cast_this_turn"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1445,6 +1458,7 @@ STATIC_VALUE_KEYS = (
     | STATIC_LIFE_KEYS
     | STATIC_POISON_KEYS
     | STATIC_MANA_POOL_KEYS
+    | STATIC_SPELLS_CAST_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 
@@ -1490,6 +1504,14 @@ MANA_AMOUNT_FORBIDDEN = frozenset({"x", "target", "binding", "loop_value"})
 COUNTERS_ON_ARRIVAL_OPS = frozenset(
     {"return_from_graveyard", "put_onto_battlefield", "look_at_top"}
 )
+
+
+#: The one non-string ``counter`` an ``add_counters`` may name: "the same
+#: **kind** of counters" (Captain Marvel, Apex Avenger), the kind the
+#: triggering placement put. Only `counter_placed` binds a ``counter``, so the
+#: loader allows it on that trigger's effects and nowhere else; anywhere else
+#: the binding is absent and the op would put nothing, silently.
+PLACED_COUNTER_KIND = {"binding": "counter"}
 
 
 #: Target kinds whose chosen ref can be a **player**, so ``{"target": "t1"}``

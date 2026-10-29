@@ -13,8 +13,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 151 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 58 |
-| [Conditions](#conditions) | 31 |
+| [Values](#values) | 59 |
+| [Conditions](#conditions) | 32 |
 | [Trigger events](#trigger-events) | 47 |
 | [Trigger filters](#trigger-filters) | 34 |
 | [Static effects](#static-effects) | 85 |
@@ -29,7 +29,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
 | [Static conditions](#static-conditions) | 14 |
-| [Static values](#static-values) | 15 |
+| [Static values](#static-values) | 16 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
 | [Mana rider ops](#mana-rider-ops) | 6 |
@@ -76,7 +76,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `shuffle` | Cards |  | Shuffle a library. | [Effect ops](card-dsl.md#effect-ops) |
 | `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them. | [Effect ops](card-dsl.md#effect-ops) |
 | `two_piles` | Cards |  | Separate cards into two piles; an opponent chooses one. | [Two piles](card-dsl-cookbook.md#two-piles) |
-| `add_counters` | Board |  | Put N counters of a kind on permanents or players. | [Effect ops](card-dsl.md#effect-ops) |
+| `add_counters` | Board |  | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [Effect ops](card-dsl.md#effect-ops) |
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |
 | `amass` | Board | yes | Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too. | [amass — "Amass Zombies N"](card-dsl-cookbook.md#amass--amass-zombies-n) |
 | `attach` | Board |  | Attach an Aura, Equipment or Fortification to a permanent or player. | [Auras and Equipment](card-dsl-cookbook.md#auras-and-equipment) |
@@ -89,7 +89,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cast_copy` | Board |  | Cast a copy of an encoded or linked card without paying its cost. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_permanent` | Board | yes | Create a token copy of a permanent; `as` records the copies. | [Token copies](card-dsl-cookbook.md#token-copies) |
 | `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
-| `destroy` | Board |  | Destroy permanents; `no_regenerate` forbids regeneration. | [Effect ops](card-dsl.md#effect-ops) |
+| `destroy` | Board | yes | Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed. | [Effect ops](card-dsl.md#effect-ops) |
 | `detain` | Board |  | Detain permanents until your next turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `distribute_control_among_opponents` | Board |  | For each permanent, choose a different opponent; each gains control of theirs. | [Each opponent gains control of the one chosen for them](card-dsl-cookbook.md#each-opponent-gains-control-of-the-one-chosen-for-them) |
 | `distribute_counters` | Board |  | Distribute N counters among targets as the player chooses. | [Distributing counters among targets](card-dsl.md#distributing-counters-among-targets) |
@@ -185,7 +185,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |
 | `choose_type` | Control flow |  | Choose a creature, permanent or card type (`of`), readable later. | ["Choose a creature type"](card-dsl-cookbook.md#choose-a-creature-type) |
 | `delay` | Control flow |  | Run effects at the beginning of a named later step. | [Delayed triggers — "at the beginning of the next …"](card-dsl-cookbook.md#delayed-triggers--at-the-beginning-of-the-next-) |
-| `delayed_trigger` | Control flow |  | Create a trigger that watches an event for the rest of the turn. | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
+| `delayed_trigger` | Control flow |  | Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat). | [delayed_trigger — an ability that watches an event](card-dsl-cookbook.md#delayed_trigger--an-ability-that-watches-an-event) |
 | `for_each` | Control flow |  | Run effects once per object a selector finds, bound as the loop value. | [Effect ops](card-dsl.md#effect-ops) |
 | `for_each_player` | Control flow |  | Run effects once per player of a spec. | ["Each opponent sacrifices…" — a loop over players](card-dsl-cookbook.md#each-opponent-sacrifices--a-loop-over-players) |
 | `if` | Control flow |  | Run `then` effects if a condition holds, else `else`. | [Effect ops](card-dsl.md#effect-ops) |
@@ -345,6 +345,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `starting_life_of` | The life total a player began with. | ["At least 7 life more than your starting life total"](card-dsl.md#at-least-7-life-more-than-your-starting-life-total) |
 | `sum` | a + b + …. | [Value expressions](card-dsl.md#value-expressions) |
 | `times` | a * b. | [Value expressions](card-dsl.md#value-expressions) |
+| `times_tapped_this_turn` | Times one object has become tapped this turn, counting every tap since the turn began. | [How many times a permanent has become tapped this turn](card-dsl.md#how-many-times-a-permanent-has-become-tapped-this-turn) |
 | `toughness_had` | The toughness the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `toughness_of` | An object's toughness. | [Value expressions](card-dsl.md#value-expressions) |
 | `unspent_mana_count` | The unspent mana in a spec's players' mana pools. | ["For each unspent mana you have"](card-dsl.md#for-each-unspent-mana-you-have) |
@@ -358,6 +359,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 |---|---|---|
 | `all` | Every listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `any` | At least one listed condition holds. | [Conditions](card-dsl.md#conditions) |
+| `attacked_you_last_turn` | One of these players attacked you (not your planeswalker or battle) during their last completed turn. | [Conditions](card-dsl.md#conditions) |
 | `cast_during` | The phase this spell was cast in (addendum). | [Addendum — the phase a spell was cast in](card-dsl-cookbook.md#addendum--the-phase-a-spell-was-cast-in) |
 | `cast_from_graveyard` | This spell was cast from a graveyard. | [Conditions](card-dsl.md#conditions) |
 | `cast_from_hand` | This spell was cast from hand. | [Conditions](card-dsl.md#conditions) |
@@ -407,7 +409,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `begin_combat` | `begin_combat` | At the beginning of combat. | [Triggers](card-dsl.md#triggers) |
 | `blocks` | `blocks` | A creature blocks. | [Triggers](card-dsl.md#triggers) |
 | `chapter` | `chapter_reached` | A Saga reaches a chapter (supplied by rule, never written). | [Sagas](card-dsl-cookbook.md#sagas) |
-| `counter_placed` | `counter_placed` | Counters are put on a permanent or player. | [Triggers](card-dsl.md#triggers) |
+| `counter_placed` | `counter_placed` | Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it. | [Triggers](card-dsl.md#triggers) |
 | `creature_dies` | `dies` | A creature dies. | [Triggers](card-dsl.md#triggers) |
 | `creatures_attack_player` | `creatures_attacked_player` | One or more creatures attack a player. | ["Whenever one or more creatures attack one of your opponents"](card-dsl-cookbook.md#whenever-one-or-more-creatures-attack-one-of-your-opponents) |
 | `creatures_deal_combat_damage` | `creatures_dealt_combat_damage` | One or more creatures deal combat damage to one or more players. | ["One or more creatures … one or more players"](card-dsl-cookbook.md#one-or-more-creatures--one-or-more-players) |
@@ -417,7 +419,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `deals_combat_damage_to_planeswalker` | `combat_damage_to_planeswalker` | A creature deals combat damage to a planeswalker. | ["…deals combat damage to a player or planeswalker"](card-dsl.md#deals-combat-damage-to-a-player-or-planeswalker) |
 | `deals_combat_damage_to_player` | `combat_damage_to_player` | A creature deals combat damage to a player. | [Triggers](card-dsl.md#triggers) |
 | `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player. | [Triggers](card-dsl.md#triggers) |
-| `dealt_damage` | `damage_dealt` | A permanent is dealt damage. | [Triggers](card-dsl.md#triggers) |
+| `dealt_damage` | `damage_dealt` | A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dies` | `dies` | A permanent dies. | [Triggers](card-dsl.md#triggers) |
 | `discard` | `discard` | A player discards a card. | [Triggers](card-dsl.md#triggers) |
 | `draw` | `draw` | A player draws a card. | [Triggers](card-dsl.md#triggers) |
@@ -549,7 +551,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `prevent_damage` |  | yes | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` |  | yes | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` |  | yes | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
-| `replace_damage` |  | yes | Damage dealt by or to matching permanents is multiplied or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
+| `replace_damage` |  | yes | Damage dealt by or to matching permanents is multiplied, increased by N or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
 | `replace_dies` |  | yes | If a matching permanent would die, exile it instead, optionally creating tokens. | ["If a nontoken creature an opponent controls would die, instead exile that card"](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) |
 | `replace_draw` | yes |  | If the player would draw a card, draw more instead. | ["If you would draw a card, draw two cards instead"](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) |
 | `replace_empty_draw` | yes |  | If the player would draw from an empty library, something else happens. | [Static abilities](card-dsl.md#static-abilities) |
@@ -657,7 +659,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `prevent_damage` | Prevent damage dealt to matching permanents (absorb N, all of it, or all of it as that many +1/+1 counters) or N of each damage to a seat from a matching dealer. | [Absorb, which is not protection with a number](card-dsl-cookbook.md#absorb-which-is-not-protection-with-a-number) |
 | `protection` | Matching permanents have protection from a quality. | [Protection](card-dsl-cookbook.md#protection) |
 | `replace_counters` | Counters put on matching permanents are replaced (doubled, redirected). | [Counters replaced on the way in](card-dsl.md#counters-replaced-on-the-way-in) |
-| `replace_damage` | Damage dealt by or to matching permanents is multiplied or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
+| `replace_damage` | Damage dealt by or to matching permanents is multiplied, increased by N or redirected. | [Damage multiplied on the way out](card-dsl.md#damage-multiplied-on-the-way-out) |
 | `replace_dies` | If a matching permanent would die, exile it instead, optionally creating tokens. | ["If a nontoken creature an opponent controls would die, instead exile that card"](card-dsl-cookbook.md#if-a-nontoken-creature-an-opponent-controls-would-die-instead-exile-that-card) |
 | `replace_graveyard` | If a matching card would go to a graveyard, it goes elsewhere. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `set_colors` | Matching permanents are the given colors. | [set_colors](card-dsl-cookbook.md#set_colors) |
@@ -926,6 +928,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `min_life_of` | The lowest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
+| `spells_cast_this_turn` | Spells a player spec's players have cast this turn; the bare spec only. | ["As long as an opponent has cast a spell this turn"](card-dsl.md#as-long-as-an-opponent-has-cast-a-spell-this-turn) |
 | `starting_life_of` | The life total a player began with. | ["At least 7 life more than your starting life total"](card-dsl.md#at-least-7-life-more-than-your-starting-life-total) |
 | `sum` | a + b + …. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `times` | a * b. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
@@ -965,7 +968,7 @@ The ops a mana ability may carry beside `add_mana` -- the painland's drawback. D
 
 | Name | Description | Defined in |
 |---|---|---|
-| `add_counters` | Put N counters of a kind on permanents or players. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
+| `add_counters` | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `add_poison` | A player gets N poison counters. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |
 | `damage` | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `gain_life` | A player gains N life. | [A mana ability with a rider — the painland's drawback](card-dsl-cookbook.md#a-mana-ability-with-a-rider--the-painlands-drawback) |

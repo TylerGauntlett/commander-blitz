@@ -407,7 +407,9 @@ class TriggerModel(BaseModel):
     #: turn", counted over the spells matching ``filter`` when there is one
     #: ("their first **noncreature** spell").  For ``attacks``: "whenever this
     #: creature attacks **for the first time each turn**", the creature's own
-    #: count of attacks this turn.  Matched where
+    #: count of attacks this turn.  For ``counter_placed`` with ``counter``:
+    #: "when the **tenth** +1/+1 counter is put on Shang-Chi", the placement
+    #: that carries the count of that kind across N.  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
     #: tally, which rule 603.4 re-evaluates after the tally has moved on.
     nth: int | None = None
@@ -888,6 +890,13 @@ class AbilityModel(BaseModel):
     #: `token_multiplier`'s reason: 1 replaces damage with itself and 0 is a
     #: prevention, which is `prevent_damage`'s sentence and a different card.
     damage_multiplier: int | None = None
+    #: `replace_damage`: what is added to damage instead. Thor, Asgard's
+    #: Avenger's "it deals that much damage **plus 1** instead" is ``1``. The
+    #: other axis of the same static, as ``gain_addend`` is of
+    #: ``replace_life_gain``: a static uses exactly one of ``damage_multiplier``
+    #: and ``damage_addend``, and the addend is refused below 1 because 0
+    #: replaces damage with itself.
+    damage_addend: int | None = None
     #: `replace_damage` and `prevent_damage`: a filter on the **dealer** --
     #: "if **equipped creature** would deal combat damage", "if **a creature**
     #: would deal damage to you" (Orbs of Warding). Omitted is any source, which

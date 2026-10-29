@@ -818,7 +818,7 @@ fail differently — which is why one `as` covers both:
 number**" sayable at all. `count` defaults to `"all"`.
 
 The ops that record are `engine.effects.RECORDING_OPS` -- among them `sacrifice`,
-`reveal`, `exile`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
+`reveal`, `exile`, `destroy`, `create_token`, `copy_permanent`, `gain_control`, `snapshot`,
 `join_forces`, `roll_dice`, `search_library`, `search_zones`, `discard`, `mill`,
 `may`, `draw` and `lose_life`. **No other op does**, and an `as` on one
 that does not is a load error — it would name a binding nothing writes, every
@@ -910,6 +910,16 @@ that was already yours. Written after the loop, like `create_token`'s and unlike
 in response — or one that was already yours, which `change_control` refuses as a
 no-op — is not one of "those creatures".
 
+`destroy`'s is "for each creature **destroyed this way**" (Avenge), and it is
+written after the moves for the same reason: it records the permanents that
+were actually destroyed, not the ones chosen. An indestructible creature, one a
+regeneration shield or a shield counter saved, and one whose totem armor took
+the hit were never destroyed (701.8a), so none of them is in it; one whose death
+a replacement sent to exile was destroyed and is. With `no_regeneration` a
+shielded creature is destroyed and counted. The near miss is a `count` or
+`snapshot` of the creatures ahead of the wrath, which gains a life for every
+survivor. The binding accumulates across a loop, as `exile`'s does.
+
 ```jsonc
 // Grey Host Reinforcements — "…equal to the number of creature cards exiled this way."
 { "op": "exile", "as": "exiled",
@@ -917,6 +927,12 @@ no-op — is not one of "those creatures".
 { "op": "add_counters", "counter": "+1/+1",
   "objects": { "zone": "battlefield", "self_only": true },
   "amount": { "count": { "binding": "exiled", "types": ["Creature"] } } }
+
+// Avenge — "Destroy all creatures. You gain 1 life for each creature destroyed this way."
+{ "op": "destroy", "as": "destroyed",
+  "objects": { "zone": "battlefield", "types": ["Creature"], "count": "all" } },
+{ "op": "gain_life", "player": "you",
+  "amount": { "count": { "binding": "destroyed" } } }
 
 // Flamerush Rider — "Exile the token …"
 { "op": "copy_permanent", "objects": { "target": "t1" },
@@ -2439,7 +2455,32 @@ card's own owner's copy of that zone.
 // Fiery Emancipation: the same dealer, no recipient named
 { "effect": "replace_damage", "damage_multiplier": 3,
   "damage_source": { "controller": "you" } }
+
+// Thor, Asgard's Avenger: "if ANOTHER source you control would deal damage to
+//  an opponent or a permanent an opponent controls, it deals that much damage
+//  plus 1 instead"
+{ "effect": "replace_damage", "damage_addend": 1,
+  "damage_source": { "controller": "you", "exclude_self": true },
+  "affects_player": "opponent",
+  "affects": { "controller": "opponent" } }
 ```
+
+**Two axes, one per static.** `damage_multiplier` is "double that damage" (2 or
+more) and `damage_addend` is "that much damage plus N" (1 or more); the loader
+requires exactly one, as `replace_life_gain` requires one of `gain_multiplier`
+and `gain_addend`. Several statics multiply and add independently, each applied
+once to the event (614.5), so two Thors add 2. The near miss for the addend is a
+"whenever a source you control deals damage" trigger dealing 1 more: that is a
+second damage event on the stack, not a bigger one.
+
+**Against a doubler the order shows.** 616.1 lets the affected player — the one
+being dealt the damage, or the damaged permanent's controller — choose, and
+under Furnace of Rath and Thor a 3 is 3×2+1 = 7 or (3+1)×2 = 8. The damage
+primitives cannot ask, so `player_statics.replaced_damage` applies every
+multiplier before every addend, the smaller hit and the one the affected player
+picks. Damage a `prevent_damage` shield turns into +1/+1 counters is the
+exception: there the permanent's controller wants the larger number, and the
+addends go first.
 
 The other multiplier replacements — `replace_life_gain`, `replace_life_loss`,
 `replace_draw`, `replace_mill`, `replace_token_creation` — are life and card
@@ -2492,9 +2533,11 @@ battlefield by construction, so the widening is keyed on the filter's shape
 rather than a new key: a `damage_source` naming **only** `controller` is
 answered off the dealer's controller in whatever zone it stands, and the moment
 a card names a type, an attachment or any other characteristic it is describing
-a permanent and gets the permanent reading. The Flail's "another **creature**"
-and the Tyrant's "a **source** you control" are different sentences, and the
-filters say so. An *empty* `damage_source` is not the widened shape — `{}` keeps
+a permanent and gets the permanent reading. `exclude_self` beside `controller`
+keeps the widened reading — Thor's "**another** source you control" is still a
+source in any zone, and only the static's own permanent is left out. The Flail's
+"another **creature**" and the Tyrant's "a **source** you control" are different
+sentences, and the filters say so. An *empty* `damage_source` is not the widened shape — `{}` keeps
 the default `controller: "you"` and so means "a permanent you control".
 
 Read in `primitives.damage_permanent` and `primitives.damage_player`, the two
@@ -2509,8 +2552,10 @@ planeswalker branches, each of which is a different *place to put* the damage
 rather than a change to how much there is. 616.1's ordering of a prevention
 against a doubling is not asked; doubling last means "prevent the next 3" answers
 3 of the printed damage, the order the damaged object's controller would have
-chosen — the judgement the shield counter already makes. Several compound by
-multiplication, so between two of these the unasked order cannot show.
+chosen — the judgement the shield counter already makes. Several multipliers
+compound by multiplication, so between two of them the unasked order cannot
+show; against an addend it can, and the paragraph above says which order is
+taken.
 
 ### Distributing counters among targets
 
@@ -2587,6 +2632,39 @@ more — through `add_counters`, so it is a placement: Doubling Season doubles w
 it puts (2 become 6) and "whenever a counter is put on" triggers. Not
 `proliferate` (one of each kind) and not `move_counters` (from somewhere else).
 `objects` is required.
+
+### The same number and kind of counters
+
+```jsonc
+// Captain Marvel, Apex Avenger
+{ "kind": "triggered",
+  "text": "Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on Captain Marvel.",
+  "trigger": { "event": "counter_placed", "controller": "any", "put_by": "you",
+               "filter": { "types": ["Creature"], "exclude_self": true },
+               "condition": { "exists": { "binding": "subject", "types": ["Creature"],
+                                          "not_subtypes": ["Kree"] } } },
+  "effects": [ { "op": "may", "prompt": "Put the same counters on Captain Marvel?",
+                 "effects": [ { "op": "add_counters",
+                                "counter": { "binding": "counter" },
+                                "amount": { "binding": "amount" },
+                                "objects": { "self_only": true } } ] } ] }
+```
+
+`counter: {"binding": "counter"}` on `add_counters` is the kind the triggering
+placement put, and `amount: {"binding": "amount"}` the number that arrived,
+after the recipient's counter replacements (122.6). Both are copied into the
+bindings by every `counter_placed` trigger. The copy is a placement of its own,
+so a replacement on the recipient applies to it again: under Hardened Scales two
+counters on the other creature become three, and the copy becomes four.
+
+`counter_placed` fires once per kind per permanent, so a placement of two kinds
+at once (proliferate, or an arrival with a +1/+1 and a flying counter) is two
+triggers, each copying its own kind, and "you may" is answered for each.
+
+The loader accepts the mapping only in that one shape, only on `add_counters`
+and only inside a `counter_placed` trigger's effects, the only place the binding
+exists; on a spell, another trigger or another op it is refused. The near miss
+is a fixed `counter: "+1/+1"`, which copies one kind and is a weaker card.
 
 ### Counters replaced on the way in
 
@@ -2914,6 +2992,44 @@ printed clause is `== 1`, and "the second combat" needs no new vocabulary.
 `max_per_turn: 1` is the other near miss and is a different card: it caps how
 often the ability fires, so a creature that sat out the first combat and attacked
 in a later one would still get its extra combat.
+
+### How many times a permanent has become tapped this turn
+
+```jsonc
+// Captain America, Living Legend: "Whenever a creature you control becomes
+// tapped during your turn, if it's the first time that creature has become
+// tapped this turn, untap it."
+"trigger": {
+  "event": "becomes_tapped", "controller": "you", "filter": { "types": ["Creature"] },
+  "condition": { "all": [
+    { "is_your_turn": true },
+    { "cmp": "==", "left": { "times_tapped_this_turn": { "binding": "subject" } },
+      "right": { "const": 1 } } ] } },
+"effects": [ { "op": "untap", "objects": { "binding": "subject" } } ]
+```
+
+`times_tapped_this_turn` is how many times **one object** has become tapped this
+turn, read off `TurnLedger.taps_by_permanent`. The engine folds every TAPPED
+event into it from the start of the turn, whether or not anything was watching,
+so a creature tapped for mana to cast the Captain has used its first time before
+the Captain arrived. TAPPED fires only from `tap_permanent`, which does nothing to
+a permanent that is already tapped, so the count is of times it *became* tapped;
+entering the battlefield tapped is not one. The tap that fires a `becomes_tapped`
+trigger is already counted when the trigger is checked, so "the first time" is
+`== 1`, and the recheck on resolution (603.4) fails if the creature was untapped
+and tapped again in response.
+
+It takes an object reference, not a selector: `{"binding": "subject"}` for the
+permanent a trigger bound, `{"self": true}`, or `{"target": id}`. The loader
+refuses anything else, `true` included, which reads like the sentence and names
+no object. A permanent that leaves the battlefield and comes back is a new object
+(400.7) and reads from 0; phasing out and changing control are the same object
+and keep their count.
+
+| | |
+|---|---|
+| `set_turn_flag` / `has_turn_flag` written by the trigger | Remembers only the taps this trigger saw, so a creature tapped before the Captain entered, or while its trigger was not armed, is untapped on its second tap |
+| `max_per_turn: 1` | Caps the *ability's* firings across every creature, so the second creature tapped in a turn is never untapped |
 
 ### Counting different values rather than objects
 
@@ -3728,6 +3844,7 @@ The form list is
 { "zone_is": "battlefield" }
 { "is_your_turn": true }
 { "combat_damage_by": ["Faerie", "Rogue"] }   // prowl
+{ "attacked_you_last_turn": "each_player" }   // "if a player attacked you during their last turn"
 { "has_city_s_blessing": "you" }              // ascend
 { "is_monarch": "you" }                       // the monarch (721)
 { "no_monarch": true }                        // …and the vacancy, which is not its negation
@@ -3766,6 +3883,27 @@ home that never attacked, false after the one that connected traded in combat.
 Read off **derived** subtypes at the moment the damage lands, so a changeling
 and a creature granted the type both count. Combat damage only, and cleared at
 cleanup with the rest of the ledger.
+
+`attacked_you_last_turn` is Avenge's "costs {2} less to cast **if a player
+attacked you during their last turn**". It takes a player spec naming who might
+have attacked — `"each_player"` for "a player", `"each_opponent"` for "an
+opponent", a binding for O-Kagachi's "that player" — and is true when any of
+them declared an attacker against the condition's controller during their own
+most recent completed turn. "You" is the player: an attacker sent at your
+planeswalker or battle attacked that permanent (506.2) and does not count, and
+neither does an attack on somebody else. Each of a player's turns replaces their
+record, so an attack two turns of theirs ago is forgotten once they take a quiet
+one; while their turn is in progress their last turn is still the previous one.
+An attacker that died in combat still attacked. The loader refuses `true` (it
+reads like the sentence and names nobody) and an unknown player name. A cost
+reduction may use it, because the record is kept on the state across turns —
+`GameState.attacked_last_turn`, written by the cleanup step from
+`TurnLedger.seats_attacked` before the ledger is cleared.
+
+The near misses are the per-turn ones: the `attacked_this_turn` value and
+selector key, and `exists` over creatures attacking you (Heroic Return's "if a
+creature is attacking you"). All of them see only the turn in progress, and a
+sorcery cast in your own main phase is never inside the attacker's turn.
 
 `has_flag` and `has_turn_flag` are the same question with two lifetimes, and
 they are two keys over two stores rather than one key with a duration — see
@@ -3954,7 +4092,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast`, a `you_gain_life` or an `attacks` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -4030,6 +4168,29 @@ selector key, re-asked on resolution as the printed "if" requires.
   "condition": { "exists": { "zone": "battlefield", "self_only": true,
                              "attacking_player": "most_life" } } }
 ```
+
+On `counter_placed`, with `counter`, it is "when the **tenth** +1/+1 counter
+is put on" (Shang-Chi and the Ten Rings): the placement that carries the count
+of that kind on the permanent across N. Every COUNTER_PLACED carries `before`,
+the count just before it, beside `amount`, what really arrived after
+replacements, and the trigger fires when `before < nth <= before + amount` --
+the before/after comparison 714.2c makes for a Saga's chapter. One placement of
+three onto eight fires it once; a placement onto ten or more does not; an
+arrival with ten counters does (122.6, `before` is what it carried in). The
+count is the counters on the object now, not a lifetime tally, so counters
+removed (or annihilated by a -1/-1 counter, 704.5q) and put back cross N again,
+and a permanent that leaves and returns is a new object counting from nought
+(400.7). The loader refuses `nth` here without `counter`: ten counters of mixed
+kinds are the tenth of none.
+
+```jsonc
+// Shang-Chi and the Ten Rings
+{ "event": "counter_placed", "source": "self", "counter": "+1/+1", "nth": 10 }
+```
+
+A `counters_on >= 10` condition is the near miss: it fires on the eleventh
+counter and every one after. A `state` trigger fires on the count holding, not on
+the tenth counter arriving.
 
 Three near misses. `max_per_turn: 1` is a cap **per permanent**, so in a pod the
 first opponent's spell spends it and the second opponent's first spell does
@@ -4901,6 +5062,7 @@ smaller than the effect-side `value_keys`:
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
+| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — the bare player spec only |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -5060,7 +5222,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |
@@ -5263,6 +5425,33 @@ the size moves the moment the pool does. A test or a new funnel that writes
 `ManaPool` directly must bump too. The leaf works in both languages; in a static
 it takes the life leaves' player specs. `mana_spent_of` is the near miss and
 reads the other thing: mana already spent on a spell, not mana still floating.
+
+#### "As long as an opponent has cast a spell this turn"
+
+```jsonc
+// Captain Mar-Vell, Space-Born -- "Cosmic Awareness — As long as an opponent
+// has cast a spell this turn, you may cast spells as though they had flash."
+{ "kind": "static", "effect": "cast_as_though_flash", "affects_player": "you",
+  "condition": { "cmp": ">", "left": { "spells_cast_this_turn": "opponent" },
+                 "right": { "const": 0 } } }
+```
+
+`{"spells_cast_this_turn": spec}` in a static is the storm count: how many
+spells the spec's players have cast this turn, summed, read off
+`TurnLedger.spells_cast`. "An opponent has cast" is `opponent` and `> 0`, so in
+a pod any one opponent's cast is enough; your own casts are not counted. The
+engine folds every SPELL_CAST into the ledger whatever is watching, so a spell
+cast before the permanent arrived counts, and the cleanup step empties it, so
+the static stops existing with the turn. A copy is never cast and adds nothing.
+
+The ledger is a pipeline input on a poison count's terms: only the cast fold
+writes it and only the cleanup step empties it, never a layer (ADR 0001), and
+both bump `char_version`, so a `buff` with the same condition moves the moment
+the spell is cast and again when the turn ends. A static takes the life
+leaves' player specs and the bare spec only; the loader refuses the effect
+side's typed `{"player", "filter"}` form by name. A `spell_cast` trigger setting
+a turn flag is the near miss: it is an ability the card does not print, and it
+misses a spell cast before the permanent entered.
 
 #### "At least 7 life more than your starting life total"
 

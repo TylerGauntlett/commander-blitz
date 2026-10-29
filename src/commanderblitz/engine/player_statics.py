@@ -2422,8 +2422,8 @@ def _matches_damage_source(
     Keyed on the filter's shape rather than a new key, because the shape
     already says it: the moment a card names a type, a zone, an attachment or
     any other characteristic it is describing a permanent and wants the
-    permanent reading. No shipped card writes a controller-only
-    ``damage_source``, so nothing changes meaning under this.
+    permanent reading. ``exclude_self`` beside ``controller`` keeps the
+    any-zone reading: "another source you control" is still "a source".
 
     An **empty** filter is not this -- ``{}`` falls through to `_matches`,
     where the default ``controller: "you"`` makes it "a permanent you control".
@@ -2434,7 +2434,12 @@ def _matches_damage_source(
     would deal damage to you" asks about a creature-land that is animated and
     not about one that is not.
     """
-    if set(dealer) == {"controller"}:
+    if "controller" in dealer and set(dealer) <= {"controller", "exclude_self"}:
+        # "**Another** source you control" (Thor, Asgard's Avenger) is the same
+        # any-zone reading with the static's own permanent left out: its
+        # abilities' damage is dealt by it, and a burn spell never is.
+        if dealer.get("exclude_self") and obj.oid == source_obj.oid:
+            return False
         who = str(dealer.get("controller") or "you")
         if who == "you":
             return obj.controller == source_obj.controller
@@ -2444,20 +2449,15 @@ def _matches_damage_source(
     return _matches(state, obj, source_obj, dealer, derived=derived)
 
 
-def damage_multiplier(
+def _damage_replacements(
     state: GameState,
     source_oid: int | None,
     target_oid: int | None,
     *,
-    target_pid: int | None = None,
+    target_pid: int | None,
     is_combat: bool,
-) -> int:
-    """What this damage is multiplied by, after every `replace_damage` applies.
-
-    Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
-    Emancipation, Twinflame Tyrant. Read by `primitives.damage_permanent` and
-    `primitives.damage_player` and by nothing else, the way
-    `counter_placement_replacements` is read by `add_counters` alone.
+) -> Iterator[Mapping[str, Any]]:
+    """Every `replace_damage` static that reaches this one damage event.
 
     ``target_oid`` is ``None`` when the damage is being dealt to a **player**,
     and ``target_pid`` names that player then. Exactly one of the two exists
@@ -2474,13 +2474,11 @@ def damage_multiplier(
       opponent controls". ANDing them would double nothing, because no single
       damage event is dealt to a player *and* a permanent.
 
-    Returned as a product rather than applied here, because the two call sites
-    have different things to do with the number and only one of them exists at
-    a time. 614.5 is kept by the shape: each static is consulted once, and
-    multiplication commutes, so 616.1's unasked ordering cannot show between
-    two of these.
+    Each static is yielded once, which is 614.5: a replacement applies to an
+    event at most once. :func:`damage_multiplier` and :func:`damage_addend`
+    read the two axes off the same set, so they can never disagree about
+    which statics apply.
     """
-    multiplier = 1
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "replace_damage":
             continue
@@ -2509,8 +2507,95 @@ def damage_multiplier(
                     continue
                 if not _matches(state, obj, source_obj, recipient):
                     continue
+        yield static
+
+
+def damage_multiplier(
+    state: GameState,
+    source_oid: int | None,
+    target_oid: int | None,
+    *,
+    target_pid: int | None = None,
+    is_combat: bool,
+) -> int:
+    """What this damage is multiplied by, after every `replace_damage` applies.
+
+    Inquisitor's Flail, Furnace of Rath, Gratuitous Violence, Fiery
+    Emancipation, Twinflame Tyrant. Which statics reach the event is
+    :func:`_damage_replacements`' question; this is the product of their
+    ``damage_multiplier`` (an addend static contributes 1). Multiplication
+    commutes, so 616.1's unasked ordering cannot show between two of these --
+    it shows against an addend, and :func:`replaced_damage` owns that.
+    """
+    multiplier = 1
+    for static in _damage_replacements(
+        state, source_oid, target_oid, target_pid=target_pid, is_combat=is_combat
+    ):
         multiplier *= max(1, int(static.get("damage_multiplier") or 1))
     return multiplier
+
+
+def damage_addend(
+    state: GameState,
+    source_oid: int | None,
+    target_oid: int | None,
+    *,
+    target_pid: int | None = None,
+    is_combat: bool,
+) -> int:
+    """What is added to this damage by every `replace_damage` that applies.
+
+    Thor, Asgard's Avenger and Torbran: "it deals that much damage **plus 1**
+    instead." The additive axis of the same static, read off the same set as
+    :func:`damage_multiplier` and **summed**, because two such statics are two
+    replacements each applying once to the event (614.5): plus 1, then plus 1
+    again. A multiplier static contributes 0.
+    """
+    addend = 0
+    for static in _damage_replacements(
+        state, source_oid, target_oid, target_pid=target_pid, is_combat=is_combat
+    ):
+        addend += max(0, int(static.get("damage_addend") or 0))
+    return addend
+
+
+def replaced_damage(
+    state: GameState,
+    amount: int,
+    source_oid: int | None,
+    target_oid: int | None,
+    *,
+    target_pid: int | None = None,
+    is_combat: bool,
+    addends_first: bool = False,
+) -> int:
+    """``amount`` after every `replace_damage` multiplier and addend applies.
+
+    **616.1 and the order of a doubler against an addend.** The affected
+    player -- the player being dealt the damage, or the damaged permanent's
+    controller -- chooses which replacement applies first, and here the order
+    shows: under Furnace of Rath and Thor a 3-damage hit is 3*2+1 = 7 or
+    (3+1)*2 = 8. The damage primitives are not generators (combat damage
+    reaches them), so they cannot ask; this applies every multiplier
+    **before** every addend, the smaller hit and the order the one being hit
+    picks -- the same judgement `damage_player` makes in placing a prevention
+    ahead of the doubling.
+
+    ``addends_first`` is the one exception, the Panther Habit shield that turns
+    the damage into +1/+1 counters: there the permanent's controller wants the
+    *larger* number, so the addends go first. The divergence -- an affected
+    player who wanted the other order cannot have it -- is recorded in
+    ``docs/rules-coverage.md``.
+    """
+    multiplier = damage_multiplier(
+        state, source_oid, target_oid, target_pid=target_pid, is_combat=is_combat
+    )
+    addend = damage_addend(
+        state, source_oid, target_oid, target_pid=target_pid, is_combat=is_combat
+    )
+    if addends_first:
+        return (amount + addend) * multiplier
+    return amount * multiplier + addend
 
 
 def damage_cap(

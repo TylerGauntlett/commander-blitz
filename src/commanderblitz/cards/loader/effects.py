@@ -67,6 +67,7 @@ from .vocabulary import (
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
     KNOWN_TYPES,
+    PLACED_COUNTER_KIND,
     PLAYER_TARGET_KINDS,
     PLURAL_PLAYER_SPEC_NAMES,
     STATIC_FILTER_KEYS,
@@ -686,7 +687,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # Every op that names a counter kind spells it `counter` -- `add_counters`,
     # `remove_counters`, `move_counters` -- so this is checked once here rather
     # than per op, and the next op to grow one is covered before it is written.
-    if "counter" in effect:
+    if "counter" in effect and isinstance(effect["counter"], Mapping):
+        # "The same number and kind of counters": the kind the triggering
+        # placement put, read off the bindings. Only `add_counters` reads the
+        # mapping, and only this one; that it sits on a `counter_placed`
+        # trigger is checked where the trigger is in view (`reads_placed_kind`).
+        if op != "add_counters" or dict(effect["counter"]) != PLACED_COUNTER_KIND:
+            raise DslError(
+                f"{where}.counter: a counter kind is a string, or "
+                f"{PLACED_COUNTER_KIND} on add_counters for the kind a "
+                f"counter_placed trigger's placement put; got {effect['counter']!r} "
+                f"on {op!r}"
+            )
+    elif "counter" in effect:
         _check_counter_kind(effect["counter"], f"{where}.counter")
     # `return_from_graveyard`'s "return it with a lifelink counter on it" spells
     # the same thing as a kind-keyed map, so both spellings are covered.
@@ -2401,8 +2414,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(f"{where}: 'as' must be a non-empty binding name, got {effect['as']!r}")
         if op not in RECORDING_OPS:
             # And an `as` on an op that writes no binding fails exactly the same
-            # way while looking right on the page: "destroy the creatures, then
-            # draw a card for each destroyed this way" would load, resolve, and
+            # way while looking right on the page: "tap all creatures, then
+            # draw a card for each tapped this way" would load, resolve, and
             # draw nothing. Only these ops record, so only these may be asked
             # to -- the next op to grow one adds itself here.
             raise DslError(
