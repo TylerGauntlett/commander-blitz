@@ -125972,12 +125972,12 @@
     },
     "Helmut Zemo, Mastermind": {
       "edhrec_rank": 19562,
-      "gate": "template",
+      "gate": null,
       "name": "Helmut Zemo, Mastermind",
-      "reason": "no template for: Whenever Helmut Zemo attacks, you may cast target instant or sorcery card with mana value ",
+      "reason": "",
       "scryfall_id": "1977e0ad-8468-42c9-9f40-48a436a8552e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Helpful Hunter": {

@@ -5856,6 +5856,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "helmut_zemo_mastermind": {
+    "zone": "battlefield"
+  },
   "helpful_hunter": {
     "hand_size": {
       "0": 2
