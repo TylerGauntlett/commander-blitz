@@ -920,6 +920,7 @@
   "put_on_top",
   "put_onto_battlefield",
   "redirect_attack",
+  "redirect_damage",
   "reflexive_trigger",
   "regenerate",
   "remove_counters",

@@ -24,6 +24,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT
 from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
+from .temp_effects import end_redirects_to
 from .triggers import delayed_watches_departure, fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -312,6 +313,10 @@ def move_object(
         # Every subscription but the ones waiting for this very departure; those
         # are released below, once it has been announced (603.10a).
         _release_delayed_subject(state, oid, look_back=True)
+        # "…is dealt to the chosen creature instead (if it's still on the
+        # battlefield)". It is not, and the object that may come back is a new
+        # one (400.7) under the same oid. See `structs.DamageRedirect`.
+        end_redirects_to(state, oid)
 
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:

@@ -43,6 +43,7 @@ from .temp_effects import (
     clear_block_prohibitions,
     clear_cast_locks,
     clear_combat_fogs,
+    clear_damage_redirects,
     clear_damage_shields,
     clear_flash_permissions,
     clear_goad,
@@ -798,6 +799,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_damage_shields(state, "this_turn")
     # "Prevent all combat damage that would be dealt this turn" (Arachnogenesis).
     clear_combat_fogs(state, "this_turn")
+    # "Until end of turn, all damage … is dealt to the chosen creature instead"
+    # (Heroic Sacrifice), on the same clock.
+    clear_damage_redirects(state, "this_turn")
     # "Prevent all damage that would be dealt to him **this turn**." (Gideon
     # Jura.) The permanent-scoped counterpart, on the same clock.
     clear_permanent_shields(state, "this_turn")

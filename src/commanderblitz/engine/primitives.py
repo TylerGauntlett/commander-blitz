@@ -43,8 +43,14 @@ from .player_statics import (
     untap_held,
 )
 from .state import new_object
-from .structs import CONTROL_DURATIONS, TempEffect
-from .temp_effects import combat_fogged, life_floor, permanent_shielded, shielded
+from .structs import CONTROL_DURATIONS, DamageRedirect, TempEffect
+from .temp_effects import (
+    combat_fogged,
+    damage_redirect,
+    life_floor,
+    permanent_shielded,
+    shielded,
+)
 from .triggers import fire
 from .zones import move_object
 
@@ -385,10 +391,28 @@ def damage_player(
     source_oid: int | None,
     *,
     is_combat: bool = False,
+    redirected: tuple[DamageRedirect, ...] = (),
 ) -> int:
-    """Deal damage to a player, applying lifelink and commander damage tracking."""
+    """Deal damage to a player, applying lifelink and commander damage tracking.
+
+    ``redirected`` is the redirects this damage has already been through, so
+    none applies to it twice (614.5); only the redirect itself passes it.
+    """
     if amount <= 0:
         return 0
+    # "…all damage that would be dealt to you … is dealt to the chosen creature
+    # instead" (Heroic Sacrifice, 614.9). **Before every prevention and
+    # multiplier**, the 616.1 order this engine picks because it cannot ask:
+    # the damage is replaced once, by whatever actually receives it, so the
+    # chosen creature's shields and doublers apply and this seat's do not. The
+    # source is unchanged (120.3), so lifelink, deathtouch, infect and wither
+    # all read it in `damage_permanent`, and no life, poison or commander
+    # damage reaches this player.
+    if (redirect := damage_redirect(state, pid=pid, applied=redirected)) is not None:
+        return damage_permanent(
+            state, redirect.to, amount, source_oid,
+            is_combat=is_combat, redirected=(*redirected, redirect),
+        )
     # "Prevent all damage that would be dealt to you this turn" (615.1). Checked
     # *first*, above everything, because prevented damage was never dealt: no
     # life lost, no poison counters, no lifelink for the attacker, no
@@ -667,6 +691,7 @@ def damage_permanent(
     *,
     is_combat: bool = False,
     batch: int | None = None,
+    redirected: tuple[DamageRedirect, ...] = (),
 ) -> int:
     """Mark damage on a permanent.  State-based actions destroy it later.
 
@@ -674,12 +699,23 @@ def damage_permanent(
     `DAMAGE_DEALT` for a ``batched`` `dealt_damage` trigger to group by.
     Combat damage passes the step's own (510.2); anything else is part of the
     effect op or cost payment dealing it, `state.event_batch`.
+
+    ``redirected`` is `damage_player`'s: the redirects already applied.
     """
     if amount <= 0:
         return 0
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
         return 0
+    # "…all damage that would be dealt to … creatures you control is dealt to
+    # the chosen creature instead" (Heroic Sacrifice). First, for the reason
+    # given in `damage_player`: the new recipient's replacements apply, this
+    # permanent's do not.
+    if (redirect := damage_redirect(state, oid=oid, applied=redirected)) is not None:
+        return damage_permanent(
+            state, redirect.to, amount, source_oid,
+            is_combat=is_combat, batch=batch, redirected=(*redirected, redirect),
+        )
     # "If equipped creature would be dealt damage, prevent that damage and put
     # that many +1/+1 counters on it" (Panther Habit). One replacement (615):
     # the damage is never dealt -- no mark, no deathtouch, no lifelink, no

@@ -20,6 +20,7 @@ from .structs import (
     CastLock,
     CombatFog,
     CombatState,
+    DamageRedirect,
     DamageShield,
     DelayedTrigger,
     EnteredPermanent,
@@ -386,6 +387,11 @@ class GameState:
     #: "Prevent all combat damage that would be dealt this turn" -- see
     #: :class:`structs.CombatFog`. A timed table for `damage_shields`' reason.
     combat_fogs: list[CombatFog] = field(default_factory=list)
+    #: "All damage that would be dealt to you and creatures you control is
+    #: dealt to the chosen creature instead" -- see
+    #: :class:`structs.DamageRedirect`. A timed table for `damage_shields`'
+    #: reason, read first by both damage primitives.
+    damage_redirects: list[DamageRedirect] = field(default_factory=list)
     #: "You gain protection from everything until your next turn" -- see
     #: :class:`structs.PlayerProtection`.
     #:

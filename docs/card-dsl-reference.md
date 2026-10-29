@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 151 |
+| [Effect ops](#effect-ops) | 152 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 59 |
@@ -155,6 +155,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `prevent_combat_damage` | Life & damage |  | Prevent combat damage this turn, optionally only from sources matching `by`. | [Fog — combat damage prevented by its source](card-dsl-cookbook.md#fog--combat-damage-prevented-by-its-source) |
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn. | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
 | `prevent_damage_permanent` | Life & damage |  | Prevent damage dealt to or by a permanent for a duration. | [Preventing all damage to or by a permanent, for a while](card-dsl-cookbook.md#preventing-all-damage-to-or-by-a-permanent-for-a-while) |
+| `redirect_damage` | Life & damage |  | Damage to a player and to permanents matching `permanents` is dealt to `to` instead this turn. | [Damage dealt to the chosen creature instead](card-dsl-cookbook.md#damage-dealt-to-the-chosen-creature-instead) |
 | `become_monarch` | Players |  | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `cant_cast_spells` | Players |  | A player can't cast spells for a duration (the timed form of the static). | ["You may cast that card" — a paid cast during resolution](card-dsl-cookbook.md#you-may-cast-that-card--a-paid-cast-during-resolution) |
 | `cant_cast_spells_from_zones` | Players |  | A player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |

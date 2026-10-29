@@ -28,6 +28,7 @@ from ..temp_effects import (
     fog_combat_damage,
     lock_game_outcome,
     lock_life_total,
+    redirect_damage_to,
     set_life_floor,
     shield_permanent,
     shield_player,
@@ -216,6 +217,39 @@ def op_prevent_combat_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     fog_combat_damage(
         ctx.state, ctx.controller, spec.get("by"), duration, source=ctx.source_oid
     )
+
+
+@register("redirect_damage")
+def op_redirect_damage(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until end of turn, all damage that would be dealt to you and creatures
+    you control is dealt to the chosen creature instead (if it's still on the
+    battlefield)." (Heroic Sacrifice.)
+
+    A replacement of the damage's recipient (614.9), where every prevention
+    only answers how much lands. ``to`` names the one permanent that receives
+    it, resolved now -- usually ``{"target": "t1"}``. ``player`` is the seat
+    whose damage is redirected and ``permanents`` a static filter over the
+    permanents whose damage is, read on their current characteristics as the
+    damage would be dealt; at least one is required. ``duration`` is
+    ``this_turn``, required for `prevent_damage`'s reason. Installs a
+    `structs.DamageRedirect` and modifies nothing else; with ``to`` already
+    gone it installs nothing.
+    """
+    duration = str(spec.get("duration", "this_turn"))
+    chosen = resolve_pool(ctx, spec["to"])
+    if not chosen:
+        return
+    pids = select_players(ctx, spec["player"]) if "player" in spec else [None]
+    for pid in pids:
+        redirect_damage_to(
+            ctx.state,
+            chosen[0],
+            ctx.controller,
+            player=pid,
+            permanents=spec.get("permanents"),
+            duration=duration,
+            source=ctx.source_oid,
+        )
 
 
 @register("lock_life_total")
