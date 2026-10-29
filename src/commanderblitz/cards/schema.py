@@ -997,6 +997,10 @@ class AbilityModel(BaseModel):
     #: read only their printed face, and this says what the grant costs, which
     #: is a fact about the granting permanent.
     warp_cost: str | None = None
+    #: ``grant_miracle``: the miracle cost the filtered cards in hand gain --
+    #: Molecule Man's ``"{0}"``. Beside `affects_spells` for `warp_cost`'s
+    #: reason.
+    miracle_cost: str | None = None
 
 
 class ReplacementModel(BaseModel):

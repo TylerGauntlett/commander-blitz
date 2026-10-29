@@ -364,6 +364,37 @@ an artifact card has warp, a red creature card has warp, a blue creature card
 with the same body does not — along with the alternative cost, the exile at the
 next end step, and the cast from exile a turn later.
 
+### `grant_miracle` — miracle handed to cards in your hand
+
+```jsonc
+{ "kind": "static", "effect": "grant_miracle", "affects_player": "you",
+  "miracle_cost": "{0}",
+  "affects_spells": { "not_types": ["Land"] } }
+```
+
+Molecule Man: *"Nonland cards in your hand have miracle {0}."* `grant_warp`'s
+shape for the card-level `miracle` price: `affects_spells` names the cards (the
+same printed-face filter, `any_of` included) and `miracle_cost` the price, both
+required — `"{0}"` is a price and is written, and a cost with X is refused.
+
+It is read by `player_statics.granted_miracle_cost` from the draw-time offer,
+`replacements._miracle`, after the drawn card is in hand. So the static must be
+active **as the card is drawn** (702.94a reveals it then): a card drawn before
+the granter arrived was never offered, and a second card drawn this turn is not
+offered either. It reaches only the granter's controller's hand.
+
+**Not `grant_warp` or `granted_alternative_cost`.** Those are prices offered at
+every cast; a miracle cost is offered once, at the draw, and is gone after it.
+
+A card that prints its own miracle and is granted another has **two miracle
+abilities**. Each is offered in turn, printed first; declining one leaves the
+other, a cast ends the offers, and two identical prices are one offer. Two
+grants are one price — the first wins, for `grant_warp`'s reason.
+
+`tests/unit/replacement/test_grant_miracle.py` pins the scope: a nonland card
+drawn first is cast for `{0}`, a second draw, a land, a missing granter and an
+opponent's draw are offered nothing.
+
 ### Restricted mana
 
 ```jsonc

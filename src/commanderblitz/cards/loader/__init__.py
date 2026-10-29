@@ -3761,6 +3761,28 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if ManaCost.parse(model.warp_cost).x_count:
             raise DslError(f"{where}: a warp cost with X is not implemented")
+    elif model.effect == "grant_miracle":
+        # `grant_warp`'s guards for its reasons: no filter is miracle on every
+        # card in every hand rather than the printed "nonland cards", and no
+        # price is a free cast nobody printed ("{0}" is a price, and is written).
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: grant_miracle filters cards in hand with 'affects_spells', "
+                f"not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is None:
+            raise DslError(
+                f"{where}: grant_miracle needs 'affects_spells' naming which cards in "
+                f"hand gain miracle -- without one every card in the game has it"
+            )
+        _check_warp_grant_filter(model.affects_spells, f"{where}.affects_spells")
+        if not model.miracle_cost:
+            raise DslError(
+                f"{where}: grant_miracle needs a 'miracle_cost' -- miracle is a price; "
+                f"write \"{{0}}\" for a free one"
+            )
+        if ManaCost.parse(model.miracle_cost).x_count:
+            raise DslError(f"{where}: a miracle cost with X is not implemented")
     elif model.effect == "granted_alternative_cost":
         # `free_cast_permission`'s guards, for its reason: a grant with no
         # filter re-prices every spell in the game rather than the printed
@@ -5172,6 +5194,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # and offer warp for nothing.
     if model.warp_cost is not None:
         static["warp_cost"] = model.warp_cost
+    # `grant_miracle`'s price, whitelisted for `warp_cost`'s reason.
+    if model.miracle_cost is not None:
+        static["miracle_cost"] = model.miracle_cost
     # `double_triggers`' cause clause. Copied explicitly like every other field
     # here: this dict is a whitelist, not a dump of the model, so a field the
     # schema accepts and this loop forgets is silently dropped -- the static

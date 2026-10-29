@@ -2177,6 +2177,38 @@ def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     return None
 
 
+def granted_miracle_cost(state: GameState, pid: int, card: CardDef) -> str | None:
+    """The miracle cost a static hands this card in ``pid``'s hand, or None.
+
+    "Nonland cards in your hand have miracle {0}" -- Molecule Man.
+    `granted_warp_cost`'s shape for the draw-time price: the grant is read by
+    `replacements._miracle` once the drawn card is in hand, so the static must
+    be active as the card is drawn (702.94a reveals it *as* it is drawn), and a
+    card drawn before the granter arrived was never offered.
+
+    **The first grant wins**, for `granted_warp_cost`'s reason: two Molecule
+    Men are one miracle cost, not two identical offers.
+    """
+    for source_obj, static in _active_player_statics(state, "grant_miracle"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        filt = static.get("affects_spells")
+        price = static.get("miracle_cost")
+        if not filt or not price:
+            # The loader requires both; defaulting either would hand miracle
+            # to every card, or hand it over free.
+            continue
+        who = str(filt.get("controller", "you"))
+        if who == "you" and source_obj.controller != pid:
+            continue
+        if who == "opponent" and source_obj.controller == pid:
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            return str(price)
+    return None
+
+
 def granted_alternative_cost(
     state: GameState, pid: int, card: CardDef
 ) -> Mapping[str, Any] | None:

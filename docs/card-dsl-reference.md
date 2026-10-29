@@ -17,8 +17,8 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Conditions](#conditions) | 32 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 35 |
-| [Static effects](#static-effects) | 85 |
-| [Player-wide statics](#player-wide-statics) | 43 |
+| [Static effects](#static-effects) | 86 |
+| [Player-wide statics](#player-wide-statics) | 44 |
 | [Grantable statics](#grantable-statics) | 39 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
@@ -540,6 +540,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `freeze_opponent_lands` | yes |  | The player's lands don't untap during their untap step. | [Static abilities](card-dsl.md#static-abilities) |
 | `grant_ability` |  |  | Matching permanents have one of the card's `grantable_abilities`. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `grant_keyword` |  | yes | Matching permanents have keywords. | [Static abilities](card-dsl.md#static-abilities) |
+| `grant_miracle` | yes |  | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
 | `grant_warp` | yes |  | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |
 | `granted_alternative_cost` | yes |  | The player may pay `cost` (energy or life) instead of matching spells' mana cost. | [granted_alternative_cost — paying energy instead of a spell's mana cost](card-dsl-cookbook.md#granted_alternative_cost--paying-energy-instead-of-a-spells-mana-cost) |
 | `imprint_characteristics` |  | yes | This creature has the power, toughness and creature types of the last creature card exiled with it. | [imprint_characteristics — Duplicant's size from a card in exile](card-dsl-cookbook.md#imprint_characteristics--duplicants-size-from-a-card-in-exile) |
@@ -611,6 +612,7 @@ The static effects that describe the *player* rather than a characteristic, and 
 | `extra_land_drops` | The player may play N additional lands each turn. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
 | `free_cast_permission` | The player may cast matching spells without paying their mana cost. | [free_cast_permission — Dracogenesis' standing free cast](card-dsl-cookbook.md#free_cast_permission--dracogenesis-standing-free-cast) |
 | `freeze_opponent_lands` | The player's lands don't untap during their untap step. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |
+| `grant_miracle` | Matching cards in the player's hand have miracle for a price. | [grant_miracle — miracle handed to cards in your hand](card-dsl-cookbook.md#grant_miracle--miracle-handed-to-cards-in-your-hand) |
 | `grant_warp` | Matching spells the player casts have warp for a price. | [grant_warp — a card-level price handed to somebody else's cards](card-dsl-cookbook.md#grant_warp--a-card-level-price-handed-to-somebody-elses-cards) |
 | `granted_alternative_cost` | The player may pay `cost` (energy or life) instead of matching spells' mana cost. | [granted_alternative_cost — paying energy instead of a spell's mana cost](card-dsl-cookbook.md#granted_alternative_cost--paying-energy-instead-of-a-spells-mana-cost) |
 | `look_at_library_top` | The player may look at the top card of their library any time. | [Player-wide statics](card-dsl-cookbook.md#player-wide-statics) |

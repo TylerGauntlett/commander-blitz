@@ -40,9 +40,11 @@ from .carddef import Cost
 from .effects.context import EffectContext, ask_objects, ask_yes_no
 from .enums import Zone
 from .events import EventType
+from .mana import ManaCost
 from .player_statics import (
     draw_cap,
     draw_replacements,
+    granted_miracle_cost,
     player_cant_cast_while_resolving,
     wins_on_empty_draw,
 )
@@ -214,10 +216,25 @@ def _miracle(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     what they drew.
     """
     card = state.card_of(state.objects[oid])
-    if card.miracle is None:
+    # Read with the card in hand: "Nonland cards in your hand have miracle {0}"
+    # (Molecule Man) gives the card the ability only there, and only while the
+    # granting static is active as the card is drawn.
+    granted = granted_miracle_cost(state, pid, card)
+    costs = [] if card.miracle is None else [card.miracle]
+    if granted is not None:
+        extra = ManaCost.parse(granted)
+        if extra not in costs:
+            costs.append(extra)
+    if not costs:
         return
     state.emit("reveal", player=pid, source=oid, cards=[card.id])
-    yield from _offer_cast(state, pid, oid, card.miracle, "miracle")
+    # A printed miracle beside a granted one is two miracle abilities (702.94a),
+    # each its own "you may cast it for [cost]" -- offered in turn, printed
+    # first, so declining one leaves the other; one cast ends it, since the
+    # card has left the hand. An identical price is one offer, not two.
+    for cost in costs:
+        if (yield from _offer_cast(state, pid, oid, cost, "miracle")):
+            return
 
 
 def _madness(state: GameState, pid: int, oid: int, batch: int) -> Generator[Any, list[int]]:

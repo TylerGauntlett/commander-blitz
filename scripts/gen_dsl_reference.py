@@ -814,6 +814,8 @@ STATICS: dict[str, Entry] = {
                                  "`granted_alternative_cost` — paying energy instead of a spell's mana cost"),
     "grant_warp": ("Matching spells the player casts have warp for a price.",
                    "`grant_warp` — a card-level price handed to somebody else's cards"),
+    "grant_miracle": ("Matching cards in the player's hand have miracle for a price.",
+                      "`grant_miracle` — miracle handed to cards in your hand"),
     "look_at_library_top": ("The player may look at the top card of their library any time.", None),
     "lose_all_abilities": ("Matching permanents lose all abilities.",
                            "`lose_all_abilities`, and why `abilities_of` exists"),

@@ -226,6 +226,7 @@ under [Simplified](#simplified); what is missing outright is under
 |---|---|
 | **Looking at the top N** | `look_at_top` with a required `amount`, no shuffle unless asked, `rest_to_bottom`, `destination`, `counters` and `counters_if` joining the arrival's own enters-with counters as one placement (122.6) |
 | **A free cast out of the looked-at window** | `cast_free` on `look_at_top`, lands filtered out, through `_offer_free_cast` and `suspend.cast_for_free` (601.2b) |
+| **Granted miracle** | `grant_miracle` hands a miracle cost to matching cards in its controller's hand (702.94a), read by `replacements._miracle` as the card is drawn; a printed and a granted miracle are two abilities, offered in turn |
 | **Replacing a draw, and the draws that are not draws** | `replacements.draw` wraps every draw but the opening hand (103): dredge replaces the draw (702.52a), madness exiles either way, miracle reads the tally before the draw; `replace_draw` per card (121.2) with the draw-step exemption counted by `cards_drawn_this_draw_step`; `draw_limit` is a "can't" asked first (101.2); `replace_empty_draw` wins instead of decking (104.3c) |
 
 ### Prevention and replacements
