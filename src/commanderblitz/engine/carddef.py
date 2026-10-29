@@ -1831,3 +1831,36 @@ DETHRONE_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(DETHRONE_TRIGGER)
+
+
+#: Melee's trigger (702.121a): "Whenever this creature attacks, it gets +1/+1
+#: until end of turn for each opponent you attacked with a creature this
+#: combat."
+#:
+#: Rules-supplied for exalted's reason: Titania, Proud Pummeler *grants*
+#: melee, so the sentence cannot live on the printed card.
+#: `triggers._candidate_abilities` yields it once for every battlefield
+#: permanent whose derived keywords include melee, with that permanent as the
+#: source.
+#:
+#: The bonus is counted as the ability resolves (702.121b), off
+#: `TurnLedger.opponents_attacked_this_combat` -- the opponents its controller
+#: declared attackers against in the combat in progress, a planeswalker's or
+#: battle's controller included -- so an attacker removed before resolution
+#: still counts its opponent, and a second combat counts afresh.
+MELEE_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Melee",
+    trigger=TriggerSpec(event="attacks", controller="you", source="self"),
+    effects=(
+        {
+            "op": "pump",
+            "objects": {"zone": "battlefield", "self_only": True},
+            "power": {"opponents_attacked_this_combat": "you"},
+            "toughness": {"opponents_attacked_this_combat": "you"},
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(MELEE_TRIGGER)

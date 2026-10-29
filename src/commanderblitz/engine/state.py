@@ -818,6 +818,10 @@ class GameState:
                 power = sum(chars(self, oid).power for oid in declared if oid in self.objects)
                 totals = ledger.attack_power_this_combat
                 totals[pid] = totals.get(pid, 0) + power
+                # Melee's opponents, frozen here for the same reason.
+                ledger.opponents_attacked_this_combat.setdefault(pid, set()).update(
+                    int(seat) for seat in data.get("defenders") or ()
+                )
         elif event.type == EventType.ATTACKS:
             # Angel of Destiny's "each player this creature attacked this turn".
             # Only an attack on a seat: one aimed at a planeswalker or a battle

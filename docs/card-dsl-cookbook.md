@@ -4525,6 +4525,39 @@ planeswalker or battle does not count.
 the card that prints it, and a grant cannot hand it to another creature. Write
 the keyword. A permanent holding dethrone twice triggers once, as exalted does.
 
+### Melee
+
+    Titania, Proud Pummeler — "Melee" and "Other creatures you control have melee."
+
+```jsonc
+"keywords": ["first_strike", "melee"]                  // printed on the permanent
+
+{ "kind": "static", "text": "Other creatures you control have melee.",
+  "effect": "grant_keyword", "keywords": ["melee"],
+  "affects": { "controller": "you", "types": ["Creature"], "exclude_self": true } }
+```
+
+Exalted's shape again: a `Keyword` whose content is the rules-supplied
+`carddef.MELEE_TRIGGER`, yielded once for every battlefield permanent whose
+derived keywords include melee. The trigger is "whenever this creature attacks,
+it gets +1/+1 until end of turn for each opponent you attacked with a creature
+this combat" (702.121a): `attacks` from `source: "self"`, then a `pump` of
+itself by the `opponents_attacked_this_combat` value for `"you"`.
+
+That value is counted as the ability resolves (702.121b), off
+`TurnLedger.opponents_attacked_this_combat`: the distinct seats the player
+declared attackers against in the combat in progress. A creature attacking a
+planeswalker or battle counts that permanent's controller; an attacker removed
+before resolution still counts its opponent; a creature put onto the
+battlefield attacking was never declared (508.4) and adds nobody; and a second
+combat in the turn starts again from nought.
+
+**The near miss** is an `attacks` trigger pumping by `attacked_this_turn` or by
+a `player_count` over `attacked_by`: the first counts who attacked rather than
+whom, the second only the seats this one creature attacked, and both per turn
+rather than per combat. Write the keyword. A permanent holding melee twice
+triggers once, as exalted does.
+
 ## Protection
 
 Parameterised, so it is a static rather than a `Keyword`:

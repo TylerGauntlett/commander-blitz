@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 153 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 59 |
+| [Values](#values) | 60 |
 | [Conditions](#conditions) | 32 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 34 |
@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 31 |
-| [Keywords](#keywords) | 41 |
+| [Keywords](#keywords) | 42 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -336,6 +336,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `min_life_of` | The lowest life total among a spec's players. | [Value expressions](card-dsl.md#value-expressions) |
 | `minus` | a - b. | [Value expressions](card-dsl.md#value-expressions) |
 | `most_sharing_a_name` | The largest group in a pool sharing one name. | [Value expressions](card-dsl.md#value-expressions) |
+| `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `player_count` | How many players still in the game a player spec names ("the number of opponents you have"). | [Value expressions](card-dsl.md#value-expressions) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
@@ -790,6 +791,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `intimidate` | Intimidate. | [Fear, intimidate, horsemanship, shadow and nonbasic landwalk](card-dsl-cookbook.md#fear-intimidate-horsemanship-shadow-and-nonbasic-landwalk) |
 | `islandwalk` | Islandwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `lifelink` | Lifelink. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `melee` | Melee. | [Melee](card-dsl-cookbook.md#melee) |
 | `menace` | Menace. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `mountainwalk` | Mountainwalk. | [Landwalk, and global attack prohibitions](card-dsl-cookbook.md#landwalk-and-global-attack-prohibitions) |
 | `nightbound` | Nightbound. | [Daybound and nightbound — one field for the whole table](card-dsl-cookbook.md#daybound-and-nightbound--one-field-for-the-whole-table) |

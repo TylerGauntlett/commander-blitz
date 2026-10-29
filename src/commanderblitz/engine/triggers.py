@@ -14,7 +14,14 @@ from contextlib import contextmanager
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CLOAK_WARD, DETHRONE_TRIGGER, EXALTED_TRIGGER, Ability, TriggerSpec
+from .carddef import (
+    CLOAK_WARD,
+    DETHRONE_TRIGGER,
+    EXALTED_TRIGGER,
+    MELEE_TRIGGER,
+    Ability,
+    TriggerSpec,
+)
 from .characteristics import (
     _battlefield_statics,
     _matches_printed,
@@ -1068,6 +1075,9 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # with the keyword, so Marchesa's granted dethrone listens too.
         if not obj.face_down and has_keyword(state, oid, Keyword.DETHRONE.value):
             yield obj, DETHRONE_TRIGGER
+        # Melee (702.121): the same shape again, for Titania's granted melee.
+        if not obj.face_down and has_keyword(state, oid, Keyword.MELEE.value):
+            yield obj, MELEE_TRIGGER
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.

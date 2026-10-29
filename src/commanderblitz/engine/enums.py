@@ -302,6 +302,14 @@ class Keyword(str, Enum):
     #: `Keyword` that triggers.  The trigger is `carddef.DETHRONE_TRIGGER`,
     #: supplied by the rules for every permanent with the keyword.
     DETHRONE = "dethrone"
+    #: Melee (702.121a).  "Whenever this creature attacks, it gets +1/+1 until
+    #: end of turn for each opponent you attacked with a creature this combat."
+    #: Exalted's shape and for exalted's reason: Titania, Proud Pummeler grants
+    #: it ("Other creatures you control have melee"), so it has to be a
+    #: `Keyword` that triggers.  The trigger is `carddef.MELEE_TRIGGER`,
+    #: supplied by the rules for every permanent with the keyword; its count is
+    #: the `opponents_attacked_this_combat` value, read on resolution.
+    MELEE = "melee"
     #: Compleated (702.150a): "If this permanent would enter with one or more
     #: loyalty counters on it, it enters with two fewer loyalty counters on it
     #: for each Phyrexian mana symbol life was paid for as it was cast."  A

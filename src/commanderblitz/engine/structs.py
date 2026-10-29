@@ -1536,6 +1536,19 @@ class TurnLedger:
     #: second combat's pack tactics counts only that combat's attackers.
     #: Summed with derived power and negatives included, as crew sums.
     attack_power_this_combat: dict[int, int] = field(default_factory=dict)
+    #: The players each player **declared attackers against in the combat in
+    #: progress**: attacking seat -> defending seats. Melee -- "+1/+1 for each
+    #: opponent you attacked with a creature this combat" (702.121).
+    #:
+    #: A defending seat is `CombatState.attackers`' value, so a creature that
+    #: attacked a planeswalker or a battle records that permanent's controller:
+    #: 702.121b counts them, which is where this parts from `seats_attacked`
+    #: (506.2's "an attack on a walker is not an attack on its controller").
+    #: Frozen at the declaration for pack tactics' reasons -- an attacker
+    #: removed from combat before melee resolves still attacked its opponent
+    #: -- and a creature put onto the battlefield attacking was never declared
+    #: and records nothing. Per **combat**: `combat.start_combat` resets it.
+    opponents_attacked_this_combat: dict[int, set[int]] = field(default_factory=dict)
     #: Which creatures each player has **declared as attackers** this turn:
     #: player id -> the oids they attacked with.  Two questions, one record.
     #:
@@ -1891,6 +1904,7 @@ class TurnLedger:
         self.creatures_died.clear()
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
+        self.opponents_attacked_this_combat.clear()
         self.players_attacked_by.clear()
         self.seats_attacked.clear()
         self.attacks_by_creature.clear()

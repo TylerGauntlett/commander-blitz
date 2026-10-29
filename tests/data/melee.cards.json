@@ -1,0 +1,40 @@
+{
+  "_comment": "Shapes for tests/unit/keywords/test_melee.py. t_ml_brawler carries melee as a printed keyword; t_ml_titania is Titania, Proud Pummeler: first strike, melee, and the grant to other creatures.",
+  "cards": [
+    {
+      "id": "t_ml_brawler",
+      "name": "Test Melee Brawler",
+      "oracle_text": "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Warrior"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 2,
+      "toughness": 2,
+      "keywords": ["melee"]
+    },
+    {
+      "id": "t_ml_titania",
+      "name": "Test Melee Titania",
+      "oracle_text": "First strike\nMelee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nOther creatures you control have melee.",
+      "mana_cost": "{3}{G}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Warrior"],
+      "colors": ["G", "W"],
+      "color_identity": ["G", "W"],
+      "power": 4,
+      "toughness": 4,
+      "keywords": ["first_strike", "melee"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Other creatures you control have melee.",
+          "effect": "grant_keyword",
+          "keywords": ["melee"],
+          "affects": {"controller": "you", "types": ["Creature"], "exclude_self": true}
+        }
+      ]
+    }
+  ]
+}

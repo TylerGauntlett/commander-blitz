@@ -598,6 +598,8 @@ VALUES: dict[str, Entry] = {
                            '"For each unspent mana you have"'),
     "min_count_of": ("The fewest objects any one player of a spec has.", H_PER_PLAYER),
     "min_life_of": ("The lowest life total among a spec's players.", None),
+    "opponents_attacked_this_combat": ("How many opponents the player declared attackers against this combat, "
+                                       "a planeswalker's or battle's controller included (melee).", "Melee"),
     "minus": ("a - b.", None),
     "permanents_entered_this_turn": ("How many matching permanents entered this turn.", H_ENTERED),
     "power_had": ("The power the dying creature had.", None),
@@ -1033,6 +1035,7 @@ KEYWORDS: dict[str, Entry] = {
     "intimidate": ("Intimidate.", "Fear, intimidate, horsemanship, shadow and nonbasic landwalk"),
     "islandwalk": ("Islandwalk.", H_LANDWALK),
     "lifelink": ("Lifelink.", None),
+    "melee": ("Melee.", "Melee"),
     "menace": ("Menace.", None),
     "mountainwalk": ("Mountainwalk.", H_LANDWALK),
     "nightbound": ("Nightbound.", "Daybound and nightbound — one field for the whole table"),
