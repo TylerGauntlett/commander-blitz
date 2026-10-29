@@ -543,6 +543,56 @@ class CombatFog:
 #: The one clock a :class:`CombatFog` runs on.
 COMBAT_FOG_DURATIONS = ("this_turn",)
 
+
+@dataclass(frozen=True)
+class DamageRedirect:
+    """"Until end of turn, all damage that would be dealt to you and creatures
+    you control is dealt to the chosen creature instead (if it's still on the
+    battlefield)." -- Heroic Sacrifice.
+
+    A replacement effect (614.9) that changes the damage's **recipient**, which
+    no prevention, multiplier or addend can: each of those answers how much
+    damage lands, never where. So it lives on the table
+    (:attr:`GameState.damage_redirects`) beside `combat_fogs`, for
+    `DamageShield`'s reason -- an instant installs it and leaves nothing behind
+    to own it.
+
+    ``permanents`` is matched against the damaged permanent's **current**
+    characteristics as the damage would be dealt, `CombatFog.by`'s reading, so
+    a creature that enters after the spell resolved is covered and one that
+    changed controllers is not. ``to`` is fixed at resolution: "the chosen
+    creature" is one object, and the entry ends the moment it leaves the
+    battlefield (`end_redirects_to`, from `zones.move_object`), because an oid
+    survives the zone change and the creature that comes back is a new object
+    (400.7) the spell never chose.
+    """
+
+    #: The chosen creature, which receives the damage instead.
+    to: int
+    #: Who controlled the spell, for ``permanents``' "you".
+    controller: int
+    #: The seat whose damage is redirected, or ``None`` for no seat.
+    player: int | None = None
+    #: A selector over the permanents whose damage is redirected, or ``None``.
+    permanents: Mapping[str, Any] | None = None
+    duration: str = "this_turn"
+    #: The spell or permanent that installed it, for the log.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "to": self.to,
+            "controller": self.controller,
+            "player": self.player,
+            "permanents": dict(self.permanents) if self.permanents is not None else None,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
+#: The one clock a :class:`DamageRedirect` runs on.
+DAMAGE_REDIRECT_DURATIONS = ("this_turn",)
+
 #: The two clocks a :class:`PermanentShield` can run on.  Both are printed:
 #: "prevent all damage that would be dealt to him **this turn**" (Gideon Jura,
 #: Gideon, Champion of Justice) and "**until your next turn**, prevent all damage

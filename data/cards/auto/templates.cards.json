@@ -65406,6 +65406,107 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "id": "heroic_sacrifice_dies",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When that creature dies this turn, put its counters on up to one target creature you control and draw a card."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "heroic_sacrifice",
+      "mana_cost": "{1}{W}",
+      "name": "Heroic Sacrifice",
+      "oracle_text": "Choose target creature you control. Until end of turn, all damage that would be dealt to you and creatures you control is dealt to the chosen creature instead (if it's still on the battlefield). When that creature dies this turn, put its counters on up to one target creature you control and draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "this_turn",
+          "op": "redirect_damage",
+          "permanents": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "player": "you",
+          "to": {
+            "target": "t1"
+          }
+        },
+        {
+          "effects": [
+            {
+              "ability": "heroic_sacrifice_dies",
+              "op": "reflexive_trigger"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "When that creature dies this turn, put its counters on up to one target creature you control and draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "subject": {
+              "target": "t1"
+            }
+          }
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "hexplate_golem",

@@ -35,6 +35,7 @@ from commanderblitz.engine.structs import (
     CAST_LOCK_DURATIONS,
     COMBAT_FOG_DURATIONS,
     CONTROL_DURATIONS,
+    DAMAGE_REDIRECT_DURATIONS,
     DAMAGE_SHIELD_DURATIONS,
     DELAYED_DURATIONS,
     FLASH_PERMISSION_DURATIONS,
@@ -1673,6 +1674,44 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(
                     f"{where}.by: names the creature dealing the damage when it is "
                     f"dealt; {sorted(asked_now)} mean nothing there"
+                )
+    if op == "redirect_damage":
+        # Every omission loads clean and plays another card: no `to` sends the
+        # damage nowhere, a guessed duration outlives the turn, and with neither
+        # `player` nor `permanents` the spell redirects nothing at all.
+        if str(effect.get("duration")) not in DAMAGE_REDIRECT_DURATIONS:
+            raise DslError(
+                f"{where}: redirect_damage needs a 'duration' "
+                f"(implemented: {sorted(DAMAGE_REDIRECT_DURATIONS)}; got {effect.get('duration')!r})"
+            )
+        to = effect.get("to")
+        if not isinstance(to, Mapping) or not to:
+            raise DslError(
+                f"{where}: redirect_damage needs 'to', the permanent that is dealt "
+                f"the damage instead ({{\"target\": \"t1\"}} for 'the chosen creature')"
+            )
+        validate_selector(to, f"{where}.to")
+        if "target" in to and str(to["target"]) not in target_kinds:
+            raise DslError(
+                f"{where}.to: references target {to['target']!r} which the card does not declare"
+            )
+        if "player" not in effect and "permanents" not in effect:
+            raise DslError(
+                f"{where}: redirect_damage needs 'player', 'permanents' or both "
+                f"-- whose damage is dealt to 'to' instead"
+            )
+        permanents = effect.get("permanents")
+        if permanents is not None:
+            # Asked as the damage would be dealt, `prevent_combat_damage.by`'s
+            # reading, so the same keys mean nothing there.
+            if not isinstance(permanents, Mapping) or not permanents:
+                raise DslError(f"{where}.permanents: a non-empty filter over the damaged permanent")
+            validate_selector(permanents, f"{where}.permanents")
+            asked_now = {"target", "binding", "count", "zone", "optional", "as"} & set(permanents)
+            if asked_now:
+                raise DslError(
+                    f"{where}.permanents: names the permanent being dealt damage "
+                    f"when it is dealt; {sorted(asked_now)} mean nothing there"
                 )
     if op == "must_attack":
         duration = str(effect.get("duration", "next_combat"))

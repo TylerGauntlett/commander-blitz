@@ -11,7 +11,7 @@ UX is still "select all, confirm".
 from __future__ import annotations
 
 from collections.abc import Generator
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from typing import TYPE_CHECKING, Any
 
 from .carddef import Cost
@@ -34,7 +34,7 @@ from .player_statics import (
 )
 from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
 from .structs import CombatState
-from .temp_effects import clear_attack_restrictions
+from .temp_effects import clear_attack_restrictions, damage_redirect
 from .triggers import fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -1522,22 +1522,33 @@ def deal_combat_damage(
     # What each source actually dealt, after prevention -- "deals combat damage"
     # is about damage that was dealt, and a fully prevented blow is none.
     dealt: dict[int, int] = {}
+    # Where each blow lands. A hit on a seat that Heroic Sacrifice sends to the
+    # chosen creature (614.9) was never dealt to a player, so the monarch's
+    # trigger and "deal combat damage to a player" must not see it; asked just
+    # before `damage_player`, which applies the same redirect.
+    landed: list[DamageAssignment] = []
     for assignment in assignments:
         amount = 0
         if assignment.to_player is not None:
+            if (redirect := damage_redirect(state, pid=assignment.to_player)) is not None:
+                landed.append(replace(assignment, to_player=None, to_object=redirect.to))
+            else:
+                landed.append(assignment)
             amount = damage_player(
                 state, assignment.to_player, assignment.amount, assignment.source, is_combat=True
             )
-        elif assignment.to_object is not None:
-            amount = damage_permanent(
-                state, assignment.to_object, assignment.amount, assignment.source,
-                is_combat=True, batch=batch,
-            )
+        else:
+            landed.append(assignment)
+            if assignment.to_object is not None:
+                amount = damage_permanent(
+                    state, assignment.to_object, assignment.amount, assignment.source,
+                    is_combat=True, batch=batch,
+                )
         if amount and assignment.source is not None:
             dealt[assignment.source] = dealt.get(assignment.source, 0) + amount
 
-    _monarch_transfer(state, monarch_before, assignments)
-    _fire_damage_batch(state, assignments)
+    _monarch_transfer(state, monarch_before, landed)
+    _fire_damage_batch(state, landed)
     _fire_per_source(state, dealt)
 
     if first_strike_step:

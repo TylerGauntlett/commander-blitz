@@ -126338,7 +126338,7 @@
       "scryfall_id": "e8d57d75-275d-45c8-85f4-aab230af35b2",
       "source": "agent",
       "status": "done",
-      "wanted": true
+      "wanted": false
     },
     "Herald of the Pantheon": {
       "edhrec_rank": 1853,
@@ -126902,12 +126902,12 @@
     },
     "Heroic Sacrifice": {
       "edhrec_rank": 15560,
-      "gate": "template",
+      "gate": null,
       "name": "Heroic Sacrifice",
-      "reason": "no template for: Choose target creature you control. Until end of turn, all damage that would be dealt to y",
+      "reason": "",
       "scryfall_id": "ec7bd155-1dd6-4fc3-870f-e0905f8c6d42",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heroic Teamwork": {

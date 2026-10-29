@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**89 cards** blocked by **72** capabilities.
+**88 cards** blocked by **70** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -36,9 +36,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
-| [damage-redirection](#damage-redirection) | 1 | 15560 | replacement |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
-| [delayed-trigger-on-target-dies-move-counters](#delayed-trigger-on-target-dies-move-counters) | 1 | 15560 | op |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
@@ -554,21 +552,6 @@ Blocks **1** card.
 
 </details>
 
-## damage-redirection
-
-Blocks **1** card.
-
-- **(replacement)** a one-shot spell op creating an until-end-of-turn replacement effect: all damage that would be dealt to you (the player) and to creatures you control is dealt instead to one chosen (targeted) creature, applying only while that creature is still on the battlefield (and not redirecting damage already aimed at it)
-  <br>Why the existing vocabulary won't do: prevent_damage / prevent_damage_permanent only prevent damage, never re-deal it to another object; replace_damage is a static_effect that needs a permanent source, not a timed effect created by an instant; redirect_attack moves attackers, not damage
-
-<details><summary>Cards waiting on this</summary>
-
-- **Heroic Sacrifice** (rank 15560) — `heroic_sacrifice`
-  - Choose target creature you control. Until end of turn, all damage that would be dealt to you and creatures you control is dealt to the chosen creature instead (if it's still on the battlefield).
-  - When that creature dies this turn, put its counters on up to one target creature you control and draw a card.
-
-</details>
-
 ## dealt-damage-to-player-this-turn
 
 Blocks **1** card.
@@ -580,21 +563,6 @@ Blocks **1** card.
 
 - **Giltspire Avenger** (rank 15516) — `giltspire_avenger`
   - {T}: Destroy target creature that dealt damage to you this turn.
-
-</details>
-
-## delayed-trigger-on-target-dies-move-counters
-
-Blocks **1** card.
-
-- **(op)** a this-turn delayed trigger keyed to the spell's chosen creature dying, whose effect moves the counters it had (last-known information, all kinds) onto up to one new target creature you control and draws a card
-  <br>Why the existing vocabulary won't do: delayed_trigger exists, but move_counters reads counters from an object on the battlefield; the dead creature's counters need last-known information (only counters_had as a value, not as a source for moving every kind), and the delayed trigger must choose a fresh 'up to one' target on firing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Heroic Sacrifice** (rank 15560) — `heroic_sacrifice`
-  - Choose target creature you control. Until end of turn, all damage that would be dealt to you and creatures you control is dealt to the chosen creature instead (if it's still on the battlefield).
-  - When that creature dies this turn, put its counters on up to one target creature you control and draw a card.
 
 </details>
 
