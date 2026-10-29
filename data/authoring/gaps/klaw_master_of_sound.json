@@ -3,19 +3,19 @@
   "name": "Klaw, Master of Sound",
   "oracle_text": "Deathtouch\nWhenever you play a card from exile, Klaw gains indestructible until end of turn.\nWhenever Klaw deals combat damage to a player, look at the top card of that player's library, then exile it face down. You may play it for as long as it remains exiled. Mana of any type can be spent to cast a spell this way.",
   "blocked_sentences": [
-    "Whenever you play a card from exile, Klaw gains indestructible until end of turn."
+    "Mana of any type can be spent to cast a spell this way."
   ],
   "needs": [
     {
-      "capability": "play_from_exile_trigger",
-      "kind": "trigger_event",
-      "what": "a trigger on 'you play a card from exile': fires when its controller casts a spell OR plays a land whose origin zone (before the cast/land drop) was exile -- one trigger covering both spell_cast and land_played, filtered on the zone the card was played from",
-      "why_existing_wont_do": "spell_cast and land_played are separate events, and neither payload carries the zone the card came from (Game._cast fires SPELL_CAST with no origin; _play_land fires LAND_PLAYED with none). The trigger filter's `zone` key reads the object's current zone (stack/battlefield), so `zone: exile` never matches; `from_zone` is a binding only for enters events. Writing it as a plain spell_cast trigger would fire on every spell and miss lands played from exile"
+      "capability": "playable_any_type_on_exile",
+      "kind": "op",
+      "what": "an `any_type` rider on look_at_top's `playable` permission (destination exile, face_down, playable while_exiled), setting playable_any_type on the exiled card so mana of any type can be spent to cast it while the permission lasts",
+      "why_existing_wont_do": "look_at_top's options carry any_color but not any_type, and any_color is a different rule (it still demands colorless for {C}); only grant_playable sets playable_any_type, and op_look_at_top never reads any_type"
     }
   ],
   "closest_existing": [
-    "spell_cast",
-    "land_played"
+    "look_at_top",
+    "grant_playable"
   ],
   "confidence": "high"
 }
