@@ -112,6 +112,11 @@ VALUE_KEYS = frozenset(
         # count of objects, and the two stop agreeing the moment anything is
         # played, discarded, or drawn on somebody else's turn.
         "cards_drawn_this_turn",
+        # "…if you **discarded a card** this turn" (Typhoid Mary, Fractured).
+        # Per discarding seat, off `TurnLedger.cards_discarded`. Not mayhem's
+        # per-object record, which forgets a discarded card the moment it
+        # leaves the graveyard -- the player still discarded it.
+        "cards_discarded_this_turn",
         # The rest of the per-turn ledger (`structs.TurnLedger`).  All six are
         # values rather than condition leaves, so morbid is an ordinary `cmp`
         # against 1 and nothing new had to be added to the condition language:
@@ -629,6 +634,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_gained_this_turn" in expr:
         pids = _players(ctx, expr["life_gained_this_turn"])
         return sum(ledger.life_gained.get(p, 0) for p in pids)
+    if "cards_discarded_this_turn" in expr:
+        pids = _players(ctx, expr["cards_discarded_this_turn"])
+        return sum(ledger.cards_discarded.get(p, 0) for p in pids)
     if "loyalty_activations_this_turn" in expr:
         pids = _players(ctx, expr["loyalty_activations_this_turn"])
         return sum(ledger.loyalty_activations.get(p, 0) for p in pids)
@@ -1394,6 +1402,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
                 f"(whose commanders' casts from the command zone), got {who!r}"
+            )
+    if "cards_discarded_this_turn" in expr:
+        who = expr["cards_discarded_this_turn"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.cards_discarded_this_turn: needs a player spec, e.g. 'you' "
+                f"(who discarded), got {who!r}"
             )
     if "player_count" in expr:
         who = expr["player_count"]

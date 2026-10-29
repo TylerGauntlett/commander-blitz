@@ -1802,6 +1802,17 @@ class TurnLedger:
     #: madness's replacement, put nothing there to cast. Not `object_flags`,
     #: which deliberately survives the zone change.
     discarded: dict[int, int] = field(default_factory=dict)
+    #: How many cards each player has **discarded** this turn: player id ->
+    #: count. "If you discarded a card this turn" (Typhoid Mary, Fractured).
+    #:
+    #: Not `discarded` above, which is about one *object* and is dropped when
+    #: that object changes zones again: a card discarded and then exiled from
+    #: the graveyard (or cast with mayhem) is no longer there, but its owner
+    #: still discarded a card this turn. A count keyed by the discarding seat
+    #: has no object to lose. Folded off DISCARD in `GameState._tally`, so a
+    #: discard madness sent to exile counts too (702.35a: it is still
+    #: discarded), and a discard paid as a cost counts like any other.
+    cards_discarded: dict[int, int] = field(default_factory=dict)
 
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
@@ -1926,6 +1937,7 @@ class TurnLedger:
         self.object_flags.clear()
         self.modes_chosen.clear()
         self.discarded.clear()
+        self.cards_discarded.clear()
         self.permanents_entered.clear()
         self.combats = 0
 

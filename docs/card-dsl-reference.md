@@ -298,6 +298,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `attacked_this_turn` | 1 if the player attacked this turn, else 0 (raid). | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `attackers_this_turn` | How many creatures the player attacked with this turn. | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `binding` | A number a trigger or an `as` carried. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
+| `cards_discarded_this_turn` | Cards the player discarded this turn, wherever they went after. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_drawn_this_turn` | Cards the player drew this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_from_graveyard_this_turn` | Cards that left the player's graveyard this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_in_hand` | Cards in the player's hand. | [Value expressions](card-dsl.md#value-expressions) |

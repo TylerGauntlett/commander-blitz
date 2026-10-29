@@ -9158,6 +9158,37 @@ meaningless there anyway: a spell is a new object each cast. **`"turn"` is also
 refused on an activated ability** (Kargan Intimidator), for the same reason:
 602.2b answers its modes in `Game._ask_modes`, which strikes nothing off.
 
+## "Choose one at random" — and "you choose one instead"
+
+Typhoid Mary, Fractured — *"Whenever Typhoid Mary attacks, choose one at random.
+If you discarded a card this turn, you choose one instead."*
+
+```jsonc
+{"op": "choose_mode", "count": 1, "random": true,
+ "choose_instead_if": {"cmp": ">", "left": {"cards_discarded_this_turn": "you"},
+                       "right": {"const": 0}},
+ "modes": [...]}
+```
+
+`random: true` picks exactly `count` modes, uniformly, off the game's seeded
+`state.rng`, so a game replays from its seed and nobody is asked. The pick is
+made where a player's choice would be: as a spell is cast (601.2b), as a
+trigger is put on the stack (603.3c), or on resolution for a nested
+`choose_mode`. Only modes that could have been chosen are in the draw — one
+with no legal target, or one spent under `once_each`, is struck off first.
+
+`choose_instead_if` is a condition, read at that same moment; while it holds,
+the controller chooses as for an ordinary `choose_mode`. It is refused without
+`random: true`, and `random` is refused beside every clause that shapes a
+player's answer (`up_to`, `or_more`, `up_to_if`, `all_if`, `budget`,
+`chooser`).
+
+The near miss is `roll_dice` with an `if` per face. It is a different card: it
+rolls a die, and a roll is an event "whenever you roll" cards see. For the
+condition, `cards_discarded_this_turn` counts the player's discards wherever
+the cards went; mayhem's per-object record is the near miss there, and forgets
+a discarded card that has since left the graveyard.
+
 ## One choice across two zones — `union`
 
 Cloak and Dagger, Entwined — *"You may exile a nonland card from their **hand

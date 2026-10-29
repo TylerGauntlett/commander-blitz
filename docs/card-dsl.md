@@ -1321,6 +1321,7 @@ Anywhere a number is expected -- the leaf list is
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
+{ "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
@@ -3236,6 +3237,12 @@ Two things about that ledger are load-bearing:
   took 4 each. `max_damage_taken_this_turn` reads each player's total and
   takes the greatest, so the `cmp` asks about one opponent — the
   `life_of` / `min_life_of` split, for the same reason.
+- **A count per seat is not a record per object.** `cards_discarded_this_turn`
+  ("if you discarded a card this turn", Typhoid Mary, Fractured) counts DISCARD
+  events by the discarding player, so a card discarded and since exiled, cast
+  with mayhem, or replaced into exile by madness or Rest in Peace still counts.
+  Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
+  and forgets it at its next zone change (400.7).
 
 It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn`
 — nothing it counts can happen before turn 1, so it has no opening hand to

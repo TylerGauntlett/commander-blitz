@@ -17,7 +17,16 @@ from ..zones import snapshot as capture_snapshot
 from . import execute
 from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
-from .modes import _mode_flag, modal_bounds, mode_labels, per_turn, record_per_turn, unspent
+from .modes import (
+    _mode_flag,
+    chosen_at_random,
+    modal_bounds,
+    mode_labels,
+    per_turn,
+    pick_at_random,
+    record_per_turn,
+    unspent,
+)
 from .registry import register
 from .selectors import resolve_pool, select_players
 from .values import evaluate_value
@@ -771,6 +780,11 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
     if chosen or ctx.modes_answered:
         ctx.modes = ()
         ctx.modes_answered = False
+    elif chosen_at_random(ctx, spec):
+        # "Choose one at random" -- a nested one, or one nobody answered
+        # earlier. Off the seeded `state.rng`, so a replay picks the same.
+        chosen = pick_at_random(ctx.state, offered, min(floor, len(offered)))
+        record_per_turn(ctx.state, ctx.source_oid, spec, labels, chosen)
     elif once_each:
         picked = yield from ask_mode(
             ctx,

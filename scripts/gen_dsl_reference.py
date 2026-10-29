@@ -548,6 +548,7 @@ VALUES: dict[str, Entry] = {
     "attackers_this_turn": ("How many creatures the player attacked with this turn.", H_ATTACKED),
     "binding": ("A number a trigger or an `as` carried.", H_RECORDING),
     "cards_drawn_this_turn": ("Cards the player drew this turn.", H_LEDGER),
+    "cards_discarded_this_turn": ("Cards the player discarded this turn, wherever they went after.", H_LEDGER),
     "cards_from_graveyard_this_turn": ("Cards that left the player's graveyard this turn.", H_LEDGER),
     "cards_in_hand": ("Cards in the player's hand.", None),
     "cards_to_graveyard_this_turn": ("Cards put into any graveyard this turn (gravestorm).", H_LEDGER),

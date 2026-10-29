@@ -2523,6 +2523,36 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         validate_condition(more["condition"], f"{where}.up_to_if.condition")
         if "count" in more:
             validate_value(more["count"], f"{where}.up_to_if.count")
+    if op == "choose_mode" and "random" in effect:
+        # "Choose one at random" -- the game picks exactly `count` modes off its
+        # seeded rng. Every clause that shapes a *player's* answer is
+        # meaningless here and would load, be ignored, and leave a card whose
+        # printed widening or chooser does nothing.
+        if not isinstance(effect["random"], bool):
+            raise DslError(f"{where}: 'random' is a boolean, got {effect['random']!r}")
+        if effect["random"]:
+            clash = [
+                key
+                for key in ("chooser", "budget", "up_to", "up_to_if", "or_more", "all_if")
+                if effect.get(key) not in (None, False)
+            ]
+            if clash:
+                raise DslError(
+                    f"{where}: a 'random' choose_mode picks exactly 'count' modes "
+                    f"with nobody choosing, so {clash} cannot apply to it"
+                )
+    if "choose_instead_if" in effect:
+        # "If you discarded a card this turn, you choose one instead" (Typhoid
+        # Mary, Fractured). Only a random pick has an "instead" to switch to;
+        # anywhere else the key would load and be ignored.
+        if op != "choose_mode" or effect.get("random") is not True:
+            raise DslError(
+                f"{where}: 'choose_instead_if' only means anything on a choose_mode "
+                f"with 'random': true"
+            )
+        validate_condition(effect["choose_instead_if"], f"{where}.choose_instead_if")
+        if effect["choose_instead_if"] is None:
+            raise DslError(f"{where}: 'choose_instead_if' needs a condition")
     if "as" in effect:
         # `as` names a binding -- `snapshot`'s, and the record `reveal`,
         # `sacrifice`, `exile` and the two token-making ops write of what they

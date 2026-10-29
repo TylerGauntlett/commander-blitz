@@ -50,7 +50,7 @@ from .costs import (
 )
 from .division import divided_damage, division_amount, division_caps
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
-from .effects.modes import modal_bounds, mode_labels
+from .effects.modes import chosen_at_random, modal_bounds, mode_labels, pick_at_random
 from .enums import ActionKind, DecisionKind, Step, Zone
 from .errors import IllegalActionError, RulesLoopError
 from .events import EventType, GameEvent
@@ -1534,6 +1534,10 @@ class Game:
         # reaches a modal spell without going through that check, and hanging
         # the game would be the worse failure.
         floor = min(floor, len(offered))
+        if chosen_at_random(ctx, spec):
+            # "Choose one at random": the game answers 601.2b, from the modes
+            # that could have been chosen, and nobody is asked.
+            return tuple(pick_at_random(self.state, offered, floor))
         labels = mode_labels(modes)
         picked = yield from ask_mode(
             ctx, "Choose", [labels[i] for i in offered], pid, floor, up_to

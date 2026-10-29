@@ -24,7 +24,14 @@ from .characteristics import abilities_of, granted_ability_origin, printed_abili
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_targets, ask_yes_no
-from .effects.modes import modal_bounds, mode_labels, record_per_turn, unspent
+from .effects.modes import (
+    chosen_at_random,
+    modal_bounds,
+    mode_labels,
+    pick_at_random,
+    record_per_turn,
+    unspent,
+)
 from .enums import DecisionKind, Zone
 from .events import EventType
 from .primitives import attach, attach_to_player, merge_permanents
@@ -512,10 +519,15 @@ def _choose_trigger_modes(
     # indistinguishable from the board: with no mode chosen the ability resolves
     # having done nothing, which is what being removed looks like.
     floor = min(floor, len(offered))
-    picked = yield from ask_mode(
-        ctx, "Choose", [labels[i] for i in offered], trig.controller, floor, up_to
-    )
-    chosen = tuple(sorted(offered[i] for i in picked))
+    if chosen_at_random(ctx, spec):
+        # "Choose one at random" -- chosen here as well, as the trigger is put
+        # on the stack (603.3c), from what could have been chosen.
+        chosen = tuple(pick_at_random(state, offered, floor))
+    else:
+        picked = yield from ask_mode(
+            ctx, "Choose", [labels[i] for i in offered], trig.controller, floor, up_to
+        )
+        chosen = tuple(sorted(offered[i] for i in picked))
     # "…that hasn't been chosen **this turn**" is spent here, as the trigger is
     # put on the stack (603.3c), not when it resolves -- see `record_per_turn`.
     record_per_turn(state, trig.source_oid, spec, labels, chosen)
@@ -690,7 +702,10 @@ def free_cast_modes(
     ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
     floor, _ = modal_bounds(ctx, spec)
     offered = selectable_modes(state, pid, card, oid) or []
-    modes = tuple(offered[:floor])
+    if chosen_at_random(ctx, spec):
+        modes = tuple(pick_at_random(state, list(offered), floor))
+    else:
+        modes = tuple(offered[:floor])
     refs: list[TargetRef] = []
     for index in modes:
         options = enumerate_target_tuples(
