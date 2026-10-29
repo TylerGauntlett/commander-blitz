@@ -141376,6 +141376,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "destination": "exile",
+                  "objects": {
+                    "count": 1
+                  },
+                  "op": "look_at_top",
+                  "playable": "until_next_exile_by_source",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Exile the top card of your library?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell with mana value 4 or greater, you may exile the top card of your library. If you do, you may play that card until you exile another card with this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "mana_value": {
+                "op": ">=",
+                "value": 4
+              }
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "superior_foes_of_spider_man",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Superior Foes of Spider-Man",
+      "oracle_text": "Trample\nWhenever you cast a spell with mana value 4 or greater, you may exile the top card of your library. If you do, you may play that card until you exile another card with this creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue",
+        "Villain"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"

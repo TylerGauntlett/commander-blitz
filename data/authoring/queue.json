@@ -270372,12 +270372,12 @@
     },
     "Superior Foes of Spider-Man": {
       "edhrec_rank": 15670,
-      "gate": "template",
+      "gate": null,
       "name": "Superior Foes of Spider-Man",
-      "reason": "no template for: Whenever you cast a spell with mana value 4 or greater, you may exile the top card of your",
+      "reason": "",
       "scryfall_id": "bb759a0b-df7b-43c8-8e8e-bd52535cdbc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Superior Numbers": {

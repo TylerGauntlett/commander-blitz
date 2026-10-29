@@ -12432,6 +12432,10 @@
   "super_villain_lockup": {
     "zone": "battlefield"
   },
+  "superior_foes_of_spider_man": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "supreme_verdict": {
     "battlefield_count": 30,
     "graveyard_size": {
