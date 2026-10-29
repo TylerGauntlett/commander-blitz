@@ -11,12 +11,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 153 |
-| [Selectors](#selectors) | 66 |
+| [Selectors](#selectors) | 67 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 61 |
 | [Conditions](#conditions) | 32 |
 | [Trigger events](#trigger-events) | 48 |
-| [Trigger filters](#trigger-filters) | 34 |
+| [Trigger filters](#trigger-filters) | 35 |
 | [Static effects](#static-effects) | 85 |
 | [Player-wide statics](#player-wide-statics) | 43 |
 | [Grantable statics](#grantable-statics) | 39 |
@@ -230,6 +230,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `exclude_self` | Not this permanent ("other"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `exiled_with` | Exiled with the named source. | [Targeting a card in exile](card-dsl-cookbook.md#targeting-a-card-in-exile) |
 | `extreme` | The greatest/least of power, toughness or mana value in the pool. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `has_counters` | Has counters (of a kind) on it. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -467,6 +468,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `encoded_by` | Cards encoded on the named creature (cipher). | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Triggers](card-dsl.md#triggers) |
+| `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
 | `has_counters` | Has counters (of a kind) on it. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Triggers](card-dsl.md#triggers) |

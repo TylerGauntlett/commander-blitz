@@ -464,6 +464,8 @@ SELECTORS: dict[str, Entry] = {
     "exclude_self": ("Not this permanent (\"other\").", None),
     "exiled_with": ("Exiled with the named source.", "Targeting a card in exile"),
     "extreme": ("The greatest/least of power, toughness or mana value in the pool.", None),
+    "goaded": ("Is (or is not) goaded, by anyone (701.38).",
+               '"Goaded creatures" — `goaded`'),
     "has_counters": ("Has counters (of a kind) on it.", "`has_counters` — \"with counters on them\""),
     "haunted_by": ("Haunted by the named card.", "Haunt — the exile link pointing the other way"),
     "is_commander": ("Is (or is not) a commander.", None),

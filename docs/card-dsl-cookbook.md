@@ -4248,6 +4248,52 @@ otherwise become impossible:
   party controls — is legally attackable, which is why a goad can never empty the
   defender list and never makes a creature unable to attack.
 
+### "Goaded creatures" — `goaded`
+
+    Puppet Master, String Puller — "Whenever you attack, goad target creature an
+    opponent controls. It can't block this turn. … Whenever one or more goaded
+    creatures deal combat damage to one of your opponents, create a Treasure
+    token."
+
+```jsonc
+// The second ability: the payoff for every goad at the table.
+{ "kind": "triggered",
+  "trigger": { "event": "creatures_deal_combat_damage", "controller": "any",
+               "per_player": true, "defending": "opponent",
+               "filter": { "goaded": true } },
+  "effects": [ { "op": "create_token", "token": "treasure_token" } ] }
+
+// The first ability needs nothing new: goad, then the cant_block op.
+{ "kind": "triggered", "trigger": { "event": "you_attack" },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 1,
+                 "selector": { "zone": "battlefield", "controller": "opponent",
+                               "types": ["Creature"] } } ],
+  "effects": [ { "op": "goad", "objects": { "target": "t1" } },
+               { "op": "cant_block", "objects": { "target": "t1" },
+                 "duration": "this_turn" } ] }
+```
+
+`goaded` is a selector and trigger-filter key that reads `GameObject.goaded_by`:
+`true` matches a creature somebody has goaded right now, `false` one nobody
+has. **Anybody's** goad counts, because the printed word names no goader — a
+creature another player goaded is as much a goaded creature as one you goaded.
+It is a boolean only; the loader refuses a word such as `"you"`, which `bool()`
+would otherwise read as `true`.
+
+Three parts of the trigger carry the sentence, and each one has a near miss:
+
+| | |
+|---|---|
+| `controller: "any"` | The goaded creatures are nearly always an opponent's, and on this event `controller` is compared with the player whose creatures dealt the damage. The schema's default, `"you"`, would leave the ability unable to fire at all |
+| `per_player` + `defending: "opponent"` | "…to one of your opponents" is the per-seat reading: one firing, and so one Treasure, for each opponent the batch dealt damage to, with `damagers` narrowed to the creatures that hit that seat. Damage to you never fires it, so a goaded creature that gets through to you pays nothing even when another one hits an opponent |
+| `filter: { "goaded": true }` | Read over the narrowed damagers and met by any of them ("one or more"). A goaded creature that hit one opponent does not make an ungoaded creature's hit on another opponent count |
+
+The key reads live state, and in a trigger filter it is asked once, as the
+event fires. On `creatures_deal_combat_damage` that is as the damage is dealt,
+before state-based actions can remove the creature, so a goaded creature that
+dies in combat still counts. A creature that leaves the battlefield loses its
+marks (400.7), so off the battlefield `goaded` is always false.
+
 ## Block restrictions
 
 "This creature can't be blocked by …" is a static, not a keyword, because the

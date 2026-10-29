@@ -1852,6 +1852,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "is_commander",
         "tapped",
         "has_counters",
+        "goaded",
         "entered_this_turn",
         "attacking_player",
         "mana_value",
@@ -2173,6 +2174,16 @@ def matches_card_filter(
     if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
         filt["has_counters"]
     ):
+        return False
+    # "Whenever one or more **goaded** creatures deal combat damage to one of
+    # your opponents" -- Puppet Master, String Puller. Live object state, sound
+    # for `tapped`'s reason: the filter is asked once, as the event fires, and
+    # on `creatures_deal_combat_damage` that is the moment the damage is dealt
+    # (510.2), before any state-based action can move the creature. Goaded by
+    # anyone (701.38): the printed word names no goader. The creatures are
+    # usually an opponent's, which is why the trigger beside this filter says
+    # `controller: "any"` -- the schema's default `"you"` would refuse them.
+    if "goaded" in filt and bool(obj.goaded_by) != bool(filt["goaded"]):
         return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the

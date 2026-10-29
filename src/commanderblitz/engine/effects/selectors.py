@@ -373,6 +373,15 @@ SELECTOR_KEYS = frozenset(
         #: negation of `blocking`: that key is about a blocker, and these are
         #: two different creatures.
         "blocked",
+        #: "Whenever one or more **goaded** creatures deal combat damage to one
+        #: of your opponents" -- Puppet Master, String Puller. A creature that
+        #: is goaded right now (701.38), by **anyone**: `true` when
+        #: `GameObject.goaded_by` is non-empty, `false` when it is empty. The
+        #: printed word names no goader, so a creature another player goaded
+        #: counts exactly as one you goaded did. A boolean only; who goaded it
+        #: is not a question any printed filter asks, and a word here would
+        #: read as a boolean and pass silently, so the loader refuses one.
+        "goaded",
         # "When the creature this card haunts dies…" -- a trigger filter only,
         # answered off the ability's source, which is the card sitting in exile
         # with the link on it. The haunted creature carries no record of it.
@@ -1053,6 +1062,11 @@ def matches(
         is_blocked = bool(combat and any(v == oid for v in combat.blockers.values()))
         if is_blocked != bool(selector["blocked"]):
             return False
+    # "…goaded creatures…" (701.38): goaded by anyone, read off the live
+    # object. `reset_permanent_state` clears the marks when it leaves the
+    # battlefield, so a card elsewhere is never goaded.
+    if "goaded" in selector and bool(obj.goaded_by) != bool(selector["goaded"]):
+        return False
     if (blocking := selector.get("blocking")) is not None:
         if isinstance(blocking, Mapping) and "binding" in blocking:
             # "…blocked by a creature without flanking": *which* attacker it is
@@ -1624,6 +1638,15 @@ def validate_selector(selector: Any, where: str) -> None:
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
             f"cost has an {{X}} symbol at all; use 'mana_value' to compare numbers"
+        )
+    # "Goaded creatures" names no goader, so the key is a predicate. `"you"`
+    # is the tempting spelling -- `goaded_by` is the field it reads -- and it
+    # would be read through `bool()` as `true`, quietly meaning "by anyone"
+    # whatever word was written.
+    if "goaded" in selector and not isinstance(selector["goaded"], bool):
+        raise DslError(
+            f"{where}: 'goaded' is true or false -- whether anyone has goaded "
+            f"the creature (701.38); it names no goader"
         )
     # A bare `true` is the tempting spelling -- it is how `attacking` is written
     # -- and it would name nobody: the key is *which* player, and a boolean read
