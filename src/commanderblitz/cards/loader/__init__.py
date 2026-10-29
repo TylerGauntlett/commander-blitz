@@ -77,6 +77,7 @@ from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
+    _validate_attach_to_player,
     _validate_cast_lock_zones,
     _validate_effect,
     _validate_enchanted_player,
@@ -1863,6 +1864,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     _validate_was_cast_placement(model, where)
     _validate_enchanted_player(model, where)
+    _validate_attach_to_player(model, where)
 
     colors = (
         frozenset(model.colors)

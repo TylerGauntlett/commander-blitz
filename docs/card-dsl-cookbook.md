@@ -919,6 +919,52 @@ including inside a static's `affects` filter — nothing else is ever attached t
 player, so it would resolve to nobody for the whole game and the ability would
 read on screen as though it did something.
 
+### Moving an Aura onto a player — `attach` with `player`
+
+    Archnemesis — "Enchant opponent
+                   Whenever you attack enchanted player, that player loses 2
+                   life. You draw a card and gain 2 life.
+                   Whenever a player attacks you, you may attach this Aura to
+                   that player."
+
+```jsonc
+// "Whenever you attack enchanted player, that player loses 2 life…"
+"trigger": { "event": "creatures_attack_player", "controller": "you",
+             "defending": "enchanted_player" },
+"effects": [ { "op": "lose_life", "player": { "binding": "defender" }, "amount": { "const": 2 } },
+             { "op": "draw", "player": "you", "amount": { "const": 1 } },
+             { "op": "gain_life", "player": "you", "amount": { "const": 2 } } ]
+
+// "Whenever a player attacks you, you may attach this Aura to that player."
+"trigger": { "event": "creatures_attack_player", "controller": "any",
+             "defending": "you", "recheck": false,
+             "condition": { "cmp": ">=", "right": { "const": 1 },
+                            "left": { "count": { "binding": "attackers",
+                                                 "attacking_player": "you" } } } },
+"effects": [ { "op": "may",
+               "effects": [ { "op": "attach", "player": { "binding": "event_player" } } ] } ]
+```
+
+`attach` with `player` in place of `objects` moves the ability's **source**
+Aura onto the one seat the spec names (701.3). The host is not a selector the
+card wrote to encode its enchant clause, so the op asks the clause itself: the
+Aura's first declared target, the spec `stack._attach_aura` reads on the cast
+path, resolved against the Aura's current controller. "Enchant opponent" never
+lands on its own controller (303.4); an illegal host, a seat that has lost, or a
+seat with protection from the Aura leaves it where it was (701.3b) rather than
+unattached, and the player it is already on is a no-op with no `attached`
+event. Attaching is not targeting, so hexproof does not stop it.
+
+The loader refuses it on anything but an Aura whose first target is
+`kind: "player"`, beside `objects` or `attachment`, and with a spec that can
+name several seats (`"opponent"`, `"each_opponent"`, `"each_player"`, `"all"`).
+
+"That player" in the second sentence is the attacking player,
+`{"binding": "event_player"}` on `creatures_attack_player`. The condition is
+"attacks **you**", not your planeswalker (506.2); it is part of the event, hence
+`recheck: false`. `defending: "enchanted_player"` in the first sentence is
+described under [Triggers](card-dsl.md#triggers).
+
 ### Reconfigure — taking it off again
 
 ```jsonc

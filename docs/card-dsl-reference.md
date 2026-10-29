@@ -80,7 +80,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `add_counters` | Board |  | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [Effect ops](card-dsl.md#effect-ops) |
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |
 | `amass` | Board | yes | Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too. | [amass — "Amass Zombies N"](card-dsl-cookbook.md#amass--amass-zombies-n) |
-| `attach` | Board |  | Attach an Aura, Equipment or Fortification to a permanent or player. | [Auras and Equipment](card-dsl-cookbook.md#auras-and-equipment) |
+| `attach` | Board |  | Attach an Aura, Equipment or Fortification to a permanent; with `player`, move this Aura onto one player (701.3). | [Auras and Equipment](card-dsl-cookbook.md#auras-and-equipment) |
 | `aura_swap` | Board |  | Exchange the source for an Aura card in hand. | [Aura swap — an exchange, not two moves](card-dsl-cookbook.md#aura-swap--an-exchange-not-two-moves) |
 | `become_copy` | Board |  | A permanent becomes a copy of another. | [A permanent that enters as a copy](card-dsl.md#a-permanent-that-enters-as-a-copy) |
 | `become_prepared` | Board |  | Prepare the source so it may cast a copy of its `prepared_face`. | [Prepared](card-dsl-cookbook.md#prepared) |

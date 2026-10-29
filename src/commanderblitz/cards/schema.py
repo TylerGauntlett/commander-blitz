@@ -364,7 +364,11 @@ class TriggerModel(BaseModel):
     #: needs this one. ``most_life`` is dethrone's "attacks the player with the
     #: most life or tied for most life", and ``monarch`` is "attacks the
     #: monarch" (The Spear of Bashenga); both are legal on ``attacks`` only.
-    defending: Literal["you", "opponent", "any", "most_life", "monarch"] | None = None
+    #: ``enchanted_player`` is the seat this Aura is attached to -- "whenever
+    #: you attack enchanted player" (Archnemesis) -- attacked as a player.
+    defending: (
+        Literal["you", "opponent", "any", "most_life", "monarch", "enchanted_player"] | None
+    ) = None
     #: "…if it wasn't put onto the battlefield with this ability."  Names the
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
     #: puts permanents onto the battlefield avoids triggering on its own output.

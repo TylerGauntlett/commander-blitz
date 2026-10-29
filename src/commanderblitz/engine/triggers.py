@@ -1645,6 +1645,25 @@ def _defender_matches(
     defender = event.data.get("defender")
     if defender is None:
         return False
+    if clause == "enchanted_player":
+        # The seat this Aura is attached to -- Archnemesis's "whenever you
+        # attack enchanted player" -- read as the event happens. On an attack
+        # event it is the **player** that must be attacked (506.2): an
+        # `attacks` aimed at their planeswalker or battle is not it, and
+        # `creatures_attack_player`, which folds a seat and its permanents
+        # together, needs one of its creatures attacking the seat itself. On a
+        # damage event the seat that was dealt the damage is the whole question.
+        if obj.attached_to_player is None or int(defender) != obj.attached_to_player:
+            return False
+        if event.type == EventType.ATTACKS:
+            return event.data.get("attacked_permanent") is None
+        if event.type == EventType.CREATURES_ATTACKED_PLAYER:
+            combat = state.combat
+            return combat is not None and any(
+                int(oid) not in combat.attacking_permanent
+                for oid in event.data.get("attackers") or ()
+            )
+        return True
     if clause in ("most_life", "monarch"):
         if event.data.get("attacked_permanent") is not None:
             return False

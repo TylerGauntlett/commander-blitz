@@ -4066,6 +4066,16 @@ event's defender, so a target restricted to them is `"controller": {"binding":
 {"binding": "defender"}}` with `recheck: false`, which fires on an attack at the
 monarch's planeswalker because `defender` names the walker's controller.
 
+`defending: "enchanted_player"` is "whenever you attack **enchanted player**"
+(Archnemesis): the defender is the seat this Aura is attached to as the event
+happens, and only on an Aura, like every `enchanted_player`. On `attacks` the
+creature must attack that player, not their planeswalker or battle (506.2); on
+`creatures_attack_player` one of the declared creatures must. On a damage event
+it is the seat that was dealt the damage. "That player" in the effect is
+`{"binding": "defender"}`. The near miss is `defending: "opponent"` with a
+condition on `enchanted_player`, which still fires on an attack at the
+enchanted player's planeswalker alone.
+
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`
 counters, so Fathom Mage's "whenever a +1/+1 counter is put on this creature"

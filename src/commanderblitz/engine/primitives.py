@@ -1554,6 +1554,10 @@ def attach_to_player(state: GameState, aura_oid: int, player: int) -> bool:
         return False
     if player_protected_from(state, player, aura_oid):
         return False
+    if aura.attached_to_player == player:
+        # 701.3b: attaching an Aura to the player it is already on does
+        # nothing -- no ATTACHED event for a trigger to mistake for a move.
+        return False
     aura.attached_to_player = player
     aura.attached_to = None
     aura.last_attached_to = None

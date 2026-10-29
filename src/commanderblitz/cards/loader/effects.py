@@ -279,6 +279,34 @@ def _validate_enchanted_player(model: CardModel, where: str) -> None:
         )
 
 
+def _validate_attach_to_player(model: CardModel, where: str) -> None:
+    """``attach`` with ``player`` only on an Aura that enchants a player.
+
+    The op moves the ability's **source** onto a seat, and reads the legal
+    hosts off the source's first declared target (303.4a) -- the enchant
+    clause. On anything but an Aura whose clause names a player the op could
+    never attach, and the ability would read on screen as though it did.
+    """
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            if node.get("op") == "attach" and "player" in node:
+                return True
+            return any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    if not walk(model.model_dump()):
+        return
+    if "Aura" not in model.subtypes or not model.targets or model.targets[0].kind != "player":
+        raise DslError(
+            f"{where}: attach with 'player' moves this Aura onto a player, so the "
+            f"card must be an Aura whose enchant clause -- its first target -- "
+            f"is kind 'player' (303.4a)"
+        )
+
+
 def _validate_was_cast_placement(model: CardModel, where: str) -> None:
     """``was_cast`` only on this permanent's own enters trigger (603.6e)."""
 
@@ -1102,6 +1130,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.attachment: references target {sub['target']!r} "
                 f"which the card does not declare"
+            )
+    if op == "attach" and "player" in effect:
+        # "…attach this Aura to **that player**" (Archnemesis). The host is a
+        # seat, so `objects` beside it would be a second host (303.4: an Aura
+        # is attached to one thing), and the mover is the source Aura whose
+        # enchant clause the op checks -- `attachment` would move something
+        # whose clause nothing here has seen. A spec naming several seats would
+        # need a choice the printed line never offers, and the op would attach
+        # to nobody.
+        for key in ("objects", "attachment"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: attach with 'player' moves this Aura onto that seat; "
+                    f"it takes no {key!r}"
+                )
+        if effect["player"] in ("opponent", "each_opponent", "each_player", "all"):
+            raise DslError(
+                f"{where}.player: an Aura is attached to one player, and "
+                f"{effect['player']!r} can name several -- name the one seat, "
+                f'e.g. {{"binding": "event_player"}}'
             )
     if "new_targets" in effect:
         # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on the
