@@ -11839,6 +11839,45 @@ them out of the library.
 The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
 `cast_free`.
 
+## "It gains suspend" — suspending a card from an effect
+
+```jsonc
+// Doom's Time Platform -- "Whenever you attack, exile target nonland card from
+// your graveyard with two time counters on it. If it doesn't have suspend, it
+// gains suspend."
+{ "kind": "triggered",
+  "trigger": { "event": "you_attack", "controller": "you" },
+  "targets": [{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+                "selector": { "zone": "graveyard", "controller": "you",
+                              "not_types": ["Land"] } }],
+  "effects": [{ "op": "suspend", "objects": { "target": "t1" }, "amount": 2 }] }
+
+// Kang Prime -- "exile cards from the top of your library until you exile a
+// nonland card. Put two time counters on that card. If it doesn't have
+// suspend, it gains suspend."
+"effects": [
+  { "op": "exile_until", "objects": { "not_types": ["Land"] }, "as": "hit" },
+  { "op": "suspend", "objects": { "binding": "hit" }, "amount": 2 }
+]
+```
+
+`suspend` puts each card in `objects` into exile if it is not there already,
+puts `amount` time counters on it and marks it suspended (702.62). From then on
+it is exactly a card suspended from hand: its owner's upkeep removes a counter,
+the last one casts it for free, and a creature cast that way has haste.
+
+- The card is its **owner's** suspended card, whoever controlled the effect: a
+  card in exile is controlled by its owner, so the owner's upkeep ticks it and
+  the owner casts it.
+- `amount` is a value expression evaluated once; both keys are required, and
+  the loader refuses either missing.
+- A card that does not stay in exile -- a commander its owner moves to the
+  command zone -- is not suspended.
+
+The near misses: `exile` followed by `add_counters` with `time` leaves a card
+nothing ticks, and `exile_until`'s `cast_free` casts the hit now rather than two
+upkeeps later.
+
 ## behold — choose a permanent or reveal a card
 
 ```jsonc

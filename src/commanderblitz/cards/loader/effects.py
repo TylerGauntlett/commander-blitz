@@ -1342,6 +1342,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{effect['else_destination']!r} "
                     f"(implemented: {sorted(EXILE_UNTIL_ELSE_DESTINATIONS)})"
                 )
+    if op == "suspend":
+        # Both are the card: which card is suspended, and for how many upkeeps.
+        # An omitted count would evaluate to zero and suspend nothing, and an
+        # omitted selector would exile nothing -- a trigger that loads and does
+        # nothing, with no test of its own to notice. `amount` rather than
+        # `counters`, which is the kind-keyed map a permanent arrives with.
+        if not effect.get("objects"):
+            raise DslError(f"{where}: suspend needs 'objects' -- the card to suspend")
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: suspend needs an 'amount' -- \"with N time counters on it\""
+            )
     if op == "cant_attack_player":
         # All three keys are required, and each omission is silent in its own
         # way. Without `attacker`/`defender` the spec defaults to the controller

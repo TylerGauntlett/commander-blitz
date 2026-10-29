@@ -20,7 +20,7 @@ from ..player_statics import (
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
 from ..structs import GraveyardCastGrant
-from ..suspend import cast_for_free
+from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
     link_exiled,
@@ -2178,6 +2178,34 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
         cast = yield from _offer_free_cast(ctx, pid, hit, f"Cast {name} for free?")
     if not cast and (where := spec.get("else_destination")):
         move_object(ctx.state, hit, DESTINATIONS[str(where)], to_player=pid, cause="exile_until")
+
+
+@register("suspend")
+def op_suspend(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Exile target nonland card from your graveyard with two time counters on
+    it. If it doesn't have suspend, it gains suspend." — Doom's Time Platform.
+
+    "Put two time counters on that card. If it doesn't have suspend, it gains
+    suspend." — Kang Prime, after an `exile_until` walk that bound the card.
+
+    The card is suspended exactly as if its owner had suspended it from hand
+    (702.62): `suspend.make_suspended` exiles it if it is not already in exile,
+    puts ``counters`` time counters on it and marks it, and from there the
+    upkeep tick, the free cast and a creature's haste are suspend's own.
+
+    - ``objects`` is the card or cards -- a target, or a binding an earlier op
+      wrote. Required.
+    - ``amount`` is the number of time counters, a value expression evaluated
+      once. Required: the printed number is the whole timing of the card.
+
+    Not `exile` followed by `add_counters`: that leaves a card with time
+    counters that nothing ticks, which is an exile with no way back. Not
+    `exile_until`'s ``cast_free``: that casts the card now, two upkeeps early.
+    """
+    counters = evaluate_value(ctx, spec.get("amount"))
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Suspend")
+    for oid in oids:
+        make_suspended(ctx.state, oid, counters, by=ctx.source_oid)
 
 
 @register("ripple")

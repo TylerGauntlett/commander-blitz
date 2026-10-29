@@ -198,6 +198,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  "Discover — cascade's walk, N or less, cast or hand"),
     "exile_until": ("Cards", "Exile from the top until a card matches; the rest stay exiled, the hit may be cast free.",
                     "exile_until — a walk that leaves its cards in exile"),
+    "suspend": ("Cards", "Exile a card (if it is not already in exile) with N time counters; it is suspended, its owner's to tick and cast.",
+                '"It gains suspend" — suspending a card from an effect'),
     "ripple": ("Cards", "Ripple N: reveal the top N, cast any with the same name free.",
                H_CASCADE),
     "reveal_until": ("Cards", "Reveal from the top until `amount` cards match (default one), move them together (under `controller: you` if named); bottom or shuffle the rest.",

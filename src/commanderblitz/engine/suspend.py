@@ -38,7 +38,7 @@ from .objects import TIME_COUNTER
 from .player_statics import player_cant_cast_while_resolving
 from .primitives import cast_locked_zones
 from .targeting import enumerate_target_tuples
-from .zones import move_object
+from .zones import exile, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -62,6 +62,51 @@ def suspend_card(state: GameState, pid: int, oid: int) -> Generator[Any, list[in
     obj.suspended_by = pid
     state.emit(
         EventType.SUSPENDED, player=pid, source=oid, card=card.id, counters=counters
+    )
+    return True
+
+
+def make_suspended(
+    state: GameState, oid: int, counters: int, *, by: int | None = None
+) -> bool:
+    """ "…with N time counters on it. If it doesn't have suspend, it gains
+    suspend." The effect-side road into the same state `suspend_card` reaches.
+
+    Doom's Time Platform exiles a card out of a graveyard; Kang Prime's card is
+    already in exile, put there by the walk before it. So the move happens only
+    when the card is somewhere else, and the counters go on either way.
+
+    **The owner, not the controller of the effect.** A card in exile is
+    controlled by its owner, so suspend's "at the beginning of **your** upkeep"
+    and "**you** may cast it" both name the owner -- whoever's ability put it
+    there. `suspended_by` is written as `obj.owner`, which is the seat whose
+    `exile` the card sits in and so the seat `tick` walks.
+
+    "Gains suspend" has no other consequence in the engine than this mark:
+    nothing reads the keyword off a card in exile except the tick, and the tick
+    reads `suspended_by`. Written after the move, because `move_object` runs
+    `reset_permanent_state` on the way.
+
+    Returns whether the card ended up suspended -- a commander its owner sent
+    to the command zone, or a token that ceased to exist, did not.
+    """
+
+    obj = state.objects.get(oid)
+    if obj is None or counters <= 0:
+        return False
+    if obj.zone is not Zone.EXILE:
+        exile(state, oid, cause="suspended", by=by)
+        obj = state.objects.get(oid)
+        if obj is None or obj.zone is not Zone.EXILE:
+            return False
+    obj.add_counter(TIME_COUNTER, counters)
+    obj.suspended_by = obj.owner
+    state.emit(
+        EventType.SUSPENDED,
+        player=obj.owner,
+        source=oid,
+        card=obj.def_id,
+        counters=counters,
     )
     return True
 

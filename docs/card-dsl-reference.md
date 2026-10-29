@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 151 |
+| [Effect ops](#effect-ops) | 152 |
 | [Selectors](#selectors) | 66 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 59 |
@@ -75,6 +75,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `search_zones` | Cards | yes | One search over the union of two or more of your own zones. | [Effect ops](card-dsl.md#effect-ops) |
 | `shuffle` | Cards |  | Shuffle a library. | [Effect ops](card-dsl.md#effect-ops) |
 | `surveil` | Cards |  | Surveil N: look at the top cards, graveyard any of them. | [Effect ops](card-dsl.md#effect-ops) |
+| `suspend` | Cards |  | Exile a card (if it is not already in exile) with N time counters; it is suspended, its owner's to tick and cast. | ["It gains suspend" — suspending a card from an effect](card-dsl-cookbook.md#it-gains-suspend--suspending-a-card-from-an-effect) |
 | `two_piles` | Cards |  | Separate cards into two piles; an opponent chooses one. | [Two piles](card-dsl-cookbook.md#two-piles) |
 | `add_counters` | Board |  | Put N counters of a kind on permanents or players; `counter: {"binding": "counter"}` on a `counter_placed` trigger is the kind that placement put. | [Effect ops](card-dsl.md#effect-ops) |
 | `airbend` | Board | yes | Airbend: exile and let owners cast for {2}; `as` records the pool. | [Airbend — "exile them, and their owners may cast them for {2}"](card-dsl-cookbook.md#airbend--exile-them-and-their-owners-may-cast-them-for-2) |

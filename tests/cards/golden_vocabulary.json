@@ -949,6 +949,7 @@
   "skip_untap",
   "snapshot",
   "surveil",
+  "suspend",
   "tap",
   "transform",
   "two_piles",
