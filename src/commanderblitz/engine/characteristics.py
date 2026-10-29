@@ -1626,6 +1626,16 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # `char_version`, so the anthem is re-read as the pool moves.
         pids = _static_players(state, source, expr["unspent_mana_count"])
         return sum(state.players[p].mana_pool.total() for p in pids)
+    if "spells_cast_this_turn" in expr:
+        # Captain Mar-Vell, Space-Born: "As long as an opponent has cast a spell
+        # this turn, you may cast spells as though they had flash." The turn
+        # ledger's per-seat cast count, the effect side's storm leaf in its
+        # bare player-spec form. A pipeline input: `GameState._tally` writes it
+        # off SPELL_CAST and the cleanup step empties it, no layer touches it,
+        # and both bump `char_version`, so a cached answer cannot outlive the
+        # cast that changed it or the turn that ended it.
+        pids = _static_players(state, source, expr["spells_cast_this_turn"])
+        return sum(state.turn_ledger.spells_cast.get(p, 0) for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

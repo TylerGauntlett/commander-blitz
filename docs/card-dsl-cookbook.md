@@ -2592,6 +2592,33 @@ battlefield is struck out of the scope by `zones.move_object` (400.7: an oid
 survives the zone change, the object does not), and a subscription whose last
 subject left is dropped rather than read as unscoped.
 
+#### `this_combat` — "… this combat"
+
+```jsonc
+// Love on the Battlefield — inside its you_attack trigger (exactly two attackers),
+// after granting them first strike and drawing a card
+{ "op": "delayed_trigger", "duration": "this_combat",
+  "trigger": { "event": "deals_combat_damage_to_player", "controller": "any",
+               "subject": { "binding": "attackers" } },
+  "effects": [ { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+                 "objects": { "binding": "subject" } } ] }
+```
+
+`this_turn`'s repeating subscription on the combat phase's clock. It fires every
+time one of its subjects matches — each creature, in each combat damage step, so
+a double striker that connects twice is two firings (510.4) — and
+`combat.end_combat` drops it as the end of combat step begins, beside the
+`this_combat` attack restrictions. An extra combat later in the turn is not
+"this combat": attacking again there fires nothing off the old subscription.
+Outside a combat phase there is no combat for it to belong to, and the op
+installs nothing.
+
+`subject: {"binding": "attackers"}` is "either of **those** creatures": the
+attackers bound when the attack trigger resolved, nothing else. The effect's
+`{"binding": "subject"}` is the one that just connected — "put a counter on
+**it**", not on both. `this_turn` is the near miss and gives a second counter
+in an extra combat; `once_this_turn` stops after the first of the two connects.
+
 #### Why this is a `delayed_trigger` and not a duration on `exile`
 
 `link` is the same record under a neutral name, and **only** a record. Written
@@ -8066,8 +8093,8 @@ group, including the extra ones a `replace_token_creation` doubler adds or the
 ones it substitutes. Two `create_token` ops are two groups. `attacks_unblocked`
 groups by the block declaration (`combat.finish_blockers`), since every attacker
 is blocked or unblocked at that one instant (509.1h); a second combat is a second
-group. The loader refuses `batched` on any other event, where nothing would group
-it.
+group. `dealt_damage` groups by the damage event, below. The loader refuses
+`batched` on any other event, where nothing would group it.
 
 "Whenever one or more creatures an opponent controls attack you and aren't
 blocked, that player draws three cards and gains control of this artifact.
@@ -8092,6 +8119,29 @@ attacking creature's controller. `creatures_attack_player` with `defending:
 "you"` is the near miss: it is batched already but fires as attackers are
 declared, before anything has blocked, and its `defending` also counts your
 planeswalkers.
+
+"Whenever Hercules is dealt damage for the first time each turn, put that many
++1/+1 counters on him. (He must survive the damage to get the counters.)"
+(Hercules, Olympian Hero)
+
+```jsonc
+"trigger": {"event": "dealt_damage", "source": "self", "batched": true, "max_per_turn": 1},
+"effects": [
+  {"op": "add_counters", "counter": "+1/+1", "amount": {"binding": "amount"},
+   "objects": {"self_only": true}}
+]
+```
+
+`dealt_damage` groups by the simultaneous damage event: one combat damage step
+(510.2; a first-strike step is its own, 510.4) or one effect op. It is the one
+batched event whose `amount` is **summed**: each later event of the group adds
+its damage to the firing already queued, so Hercules blocked by two 2/2s fires
+once for four. A batch that already fired is folded in before `max_per_turn` is
+asked, so the cap counts damage events, not sources: "the first time each turn"
+is the whole first step, and a first striker's damage is it. Lethal damage
+still triggers the ability, and it resolves with him gone, which is the
+reminder text. Without `batched` the cap keeps the first source's event and
+`amount` reads one blocker's damage.
 
 ## "Enters with a counter on it **for each** …"
 

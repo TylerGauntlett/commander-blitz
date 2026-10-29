@@ -1,0 +1,52 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_spells_cast_this_turn.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_ssct_awareness is Captain Mar-Vell, Space-Born's Cosmic Awareness on a {4} artifact; t_ssct_brawler reads the same leaf from a layered buff, so the characteristics cache is exercised too. t_sorcery, t_bolt and t_bear come from the other fixture files.",
+  "cards": [
+    {
+      "id": "t_ssct_awareness",
+      "name": "Test Cosmic Awareness",
+      "oracle_text": "As long as an opponent has cast a spell this turn, you may cast spells as though they had flash.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as an opponent has cast a spell this turn, you may cast spells as though they had flash.",
+          "effect": "cast_as_though_flash",
+          "affects_player": "you",
+          "condition": {
+            "cmp": ">",
+            "left": {"spells_cast_this_turn": "opponent"},
+            "right": {"const": 0}
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ssct_brawler",
+      "name": "Test Provoked Brawler",
+      "oracle_text": "As long as an opponent has cast a spell this turn, this creature gets +2/+0.",
+      "mana_cost": "{1}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Warrior"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "As long as an opponent has cast a spell this turn, this creature gets +2/+0.",
+          "effect": "buff",
+          "affects": {"self_only": true},
+          "power": {"const": 2},
+          "toughness": {"const": 0},
+          "condition": {
+            "cmp": ">",
+            "left": {"spells_cast_this_turn": "opponent"},
+            "right": {"const": 0}
+          }
+        }
+      ]
+    }
+  ]
+}

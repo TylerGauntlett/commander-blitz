@@ -1,0 +1,30 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_damage_addend.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_da_thor is Thor, Asgard's Avenger -- a replace_damage static with damage_addend 1 from another source you control to an opponent or a permanent an opponent controls. The bears, the Furnace, the lifelinker, the scorch and the Panther Habit come from replace_damage.cards.json and prevent_damage_into_counters.cards.json.",
+  "cards": [
+    {
+      "id": "t_da_thor",
+      "name": "Test Thor",
+      "oracle_text": "Flying\nIf another source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 1 instead.",
+      "mana_cost": "{2}{R}{R}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["God", "Warrior", "Hero"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 4,
+      "toughness": 4,
+      "keywords": ["flying"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "If another source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 1 instead.",
+          "effect": "replace_damage",
+          "damage_addend": 1,
+          "damage_source": {"controller": "you", "exclude_self": true},
+          "affects_player": "opponent",
+          "affects": {"controller": "opponent"}
+        }
+      ]
+    }
+  ]
+}

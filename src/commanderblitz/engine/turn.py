@@ -845,7 +845,19 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # And with it every other "this turn" tally. Cleanup rather than untap for
     # the reason the comment in `_untap_step` gives in reverse: none of these can
     # happen before turn 1, so there is nothing for them to have to survive.
+    # "…if a player attacked you during their last turn." Handed over before
+    # the ledger forgets it, and only on the first pass: a 514.3a repeat finds
+    # the ledger already empty and this turn's record already written.
+    kept = state.attacked_last_turn.get(pid)
+    if kept is None or kept[0] != state.turn:
+        seats = state.turn_ledger.seats_attacked.get(pid, set())
+        state.attacked_last_turn[pid] = (state.turn, frozenset(seats))
     state.turn_ledger.clear()
+    # The ledger is a static's input (`spells_cast_this_turn`,
+    # `permanents_entered_this_turn`), and `chars` caches per `char_version`.
+    # The clears above bump it before this line, so an answer read in between
+    # would otherwise outlive the turn into a 514.3a priority window.
+    state.bump_chars()
     # Rule 514.3a: if anything happened, players get priority and cleanup repeats.
     state.cleanup_repeat = bool(state.pending_triggers)
 

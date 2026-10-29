@@ -1382,6 +1382,9 @@ def _fire_entered_with_counters(
             counter=kind,
             amount=amount,
             put_by=obj.controller,
+            # What it carried in -- nought for a new object (400.7) -- so an
+            # `nth` trigger sees an arrival with ten counters cross ten.
+            before=before.get(kind, 0),
         )
 
 

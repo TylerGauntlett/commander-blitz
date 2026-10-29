@@ -45,10 +45,28 @@ def op_add_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     # *remove* one, because a negative `add_counter` is how removal is spelled
     # underneath.
     amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
-    kind = str(spec.get("counter", "+1/+1"))
+    kind = _counter_kind(ctx, spec.get("counter", "+1/+1"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put counters on")
+    if kind is None:
+        return
     for oid in oids:
         add_counters(ctx.state, oid, kind, amount, source=ctx.source_oid)
+
+
+def _counter_kind(ctx: EffectContext, counter: Any) -> str | None:
+    """The kind an `add_counters` puts: printed, or the placement that fired it.
+
+    ``{"binding": "counter"}`` is "the same **kind** of counters" (Captain
+    Marvel, Apex Avenger): the kind the triggering `counter_placed` event put,
+    which `triggers.event_bindings` copies into the bindings beside ``amount``.
+    The loader allows it only on a `counter_placed` trigger, so an absent or
+    non-string binding is a placement with nothing to copy and puts nothing --
+    never a +1/+1 counter by default.
+    """
+    if isinstance(counter, Mapping):
+        bound = ctx.bindings.get(str(counter.get("binding", "")))
+        return bound if isinstance(bound, str) and bound else None
+    return str(counter)
 
 
 #: The token "empower Jace" creates when you control no Jace token: the blue

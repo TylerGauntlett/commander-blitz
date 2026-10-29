@@ -1,0 +1,41 @@
+{
+  "_comment": "Shapes for tests/unit/ledger/test_times_tapped_this_turn.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_ttt_captain is Captain America, Living Legend's second sentence on a {G} 1/1, so a Llanowar Elves can pay for it. Llanowar Elves comes from data/cards, the bear from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_ttt_captain",
+      "name": "Test First-Tap Captain",
+      "oracle_text": "Whenever a creature you control becomes tapped during your turn, if it's the first time that creature has become tapped this turn, untap it.",
+      "mana_cost": "{G}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control becomes tapped during your turn, if it's the first time that creature has become tapped this turn, untap it.",
+          "trigger": {
+            "event": "becomes_tapped",
+            "controller": "you",
+            "filter": {"types": ["Creature"]},
+            "condition": {
+              "all": [
+                {"is_your_turn": true},
+                {
+                  "cmp": "==",
+                  "left": {"times_tapped_this_turn": {"binding": "subject"}},
+                  "right": {"const": 1}
+                }
+              ]
+            }
+          },
+          "effects": [
+            {"op": "untap", "objects": {"binding": "subject"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

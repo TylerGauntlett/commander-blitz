@@ -369,8 +369,21 @@ STATE_TRIGGER = "state"
 #: creature. Whom they attack is the trigger's `filter` -- `attacking_player:
 #: "you"` excludes a creature sent at your planeswalker (506.2) -- and the
 #: filter is asked before the batch is spent.
+#:
+#: `dealt_damage` takes it from `primitives.damage_permanent`: one combat damage
+#: step (510.2, `combat.deal_combat_damage`; first strike is its own step) or
+#: one effect op. It is the one batched event whose ``amount`` is **summed**:
+#: every later event in the batch adds its damage to the queued trigger's
+#: ``amount`` (`_joins_batched_damage`), so Hercules, Olympian Hero blocked by
+#: two creatures is dealt damage once, for both blockers' damage together.
 BATCHED_EVENTS = frozenset(
-    {"permanent_enters", "leaves_graveyard", "token_created", "attacks_unblocked"}
+    {
+        "permanent_enters",
+        "leaves_graveyard",
+        "token_created",
+        "attacks_unblocked",
+        "dealt_damage",
+    }
 )
 
 #: Triggers whose subject is an object rather than a player.
@@ -661,6 +674,8 @@ def _collect_one(
     spec = ability.trigger
     assert spec is not None
     if not _matches(state, obj, spec, event):
+        return
+    if _joins_batched_damage(state, obj, ability, event):
         return
     _queue(state, obj, ability, event)
     if obj.controller in doubled:
@@ -1273,8 +1288,19 @@ def _matches(
     # `spell_cast` asks the same question of a cast -- "an opponent casts their
     # second spell each turn" (Mangara) -- and, with a `filter`, of a *run* of
     # casts: see `_spell_ordinal`.
-    if spec.nth is not None and _ordinal(state, spec, event) != spec.nth:
-        return False
+    #
+    # `counter_placed` asks a different ordinal: "when the **tenth** +1/+1
+    # counter is put on Shang-Chi" is the placement that carries the count of
+    # the named kind across N -- before it, fewer than N; after it, N or more.
+    # The comparison 714.2c makes for a chapter, so one placement of three
+    # counters onto eight crosses ten once, and a placement onto ten or more
+    # crosses nothing. See `_crosses_nth`.
+    if spec.nth is not None:
+        if spec.event == "counter_placed":
+            if not _crosses_nth(event, spec.nth):
+                return False
+        elif _ordinal(state, spec, event) != spec.nth:
+            return False
 
     actor = _actor(state, spec.event, event, subject_oid)
     if actor is not None:
@@ -1351,6 +1377,28 @@ ORDINAL_FILTER_KEYS = frozenset(
         "name",
     }
 )
+
+
+def _crosses_nth(event: GameEvent, nth: int) -> bool:
+    """Did this COUNTER_PLACED put the ``nth`` counter of its kind on its permanent?
+
+    ``before`` is the count of that kind just before the placement, written by
+    both placement paths (`primitives.add_counters`, and
+    `zones._fire_entered_with_counters` for an arrival, where it is what the
+    permanent carried in); ``amount`` is what really arrived, after
+    replacements. So the Nth counter is among the ones put on exactly when
+    ``before < nth <= before + amount``.
+
+    A count is the counters on the object *now*, not a lifetime tally: counters
+    removed and put back cross N again, and so does a new object after a zone
+    change (400.7), whose count starts from nought. An event that forgot to
+    carry ``before`` fails the check -- wider is the dangerous direction.
+    """
+    before = event.data.get("before")
+    amount = event.data.get("amount")
+    if not isinstance(before, int) or not isinstance(amount, int):
+        return False
+    return before < nth <= before + amount
 
 
 def _ordinal(state: GameState, spec: TriggerSpec, event: GameEvent) -> int | None:
@@ -2194,11 +2242,6 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # Vampires each get their own draw.
     spec_cap = ability.trigger.max_per_turn if ability.trigger is not None else None
     spec_batched = ability.trigger.batched if ability.trigger is not None else False
-    if spec_cap is not None:
-        key = (obj.oid, ability.index)
-        if state.triggers_this_turn.get(key, 0) >= spec_cap:
-            return
-        state.triggers_this_turn[key] = state.triggers_this_turn.get(key, 0) + 1
 
     # "Whenever **one or more** cards leave your graveyard" -- one firing per
     # simultaneous group, not per card. `state.event_batch` is bumped once per
@@ -2209,13 +2252,27 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # Keyed by (permanent, ability index, batch) for the reason the per-turn cap
     # is keyed by (permanent, ability index): two Spirit Mascots each get their
     # own counter from the same departure.
+    #
+    # Asked before the per-turn cap, so the rest of a group that already fired
+    # is folded into that firing rather than spending the cap: "dealt damage
+    # for the first time each turn" with `max_per_turn: 1` is the whole first
+    # combat damage step, and its second blocker's damage is part of it.
+    batched_key = None
     if spec_batched:
         batch = event.data.get("batch")
         if batch is not None:
-            key = (obj.oid, ability.index, batch)
-            if key in state.batched_triggers:
+            batched_key = (obj.oid, ability.index, batch)
+            if batched_key in state.batched_triggers:
                 return
-            state.batched_triggers.add(key)
+
+    if spec_cap is not None:
+        key = (obj.oid, ability.index)
+        if state.triggers_this_turn.get(key, 0) >= spec_cap:
+            return
+        state.triggers_this_turn[key] = state.triggers_this_turn.get(key, 0) + 1
+
+    if batched_key is not None:
+        state.batched_triggers.add(batched_key)
 
     state.triggers_this_step += 1
     if state.triggers_this_step > MAX_TRIGGERS_PER_STEP:
@@ -2230,6 +2287,9 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
     # differently. `x` is carried through so "enters with X counters" can read
     # what was paid.
     bindings = event_bindings(state, obj, spec, event)
+    if batched_key is not None and spec.event == "dealt_damage":
+        # What `_joins_batched_damage` finds this firing by.
+        bindings["batch"] = batched_key[2]
 
     card = state.card_of(obj)
     # `ability_index` is read back against whichever list `granted_by` names, so
@@ -2259,6 +2319,42 @@ def _queue(state: GameState, obj: GameObject, ability: Ability, event: GameEvent
         ability=ability.index,
         trigger=spec.event,
     )
+
+
+def _joins_batched_damage(
+    state: GameState, obj: GameObject, ability: Ability, event: GameEvent
+) -> bool:
+    """Fold a later event's damage into the batched `dealt_damage` firing it joins.
+
+    "Put **that many** +1/+1 counters on him" -- Hercules, Olympian Hero. One
+    combat damage step is one damage event (510.2) however many creatures deal
+    it, so "that many" is all of it: the firing queued on the first blocker's
+    damage reads the second's too. True when the event belonged to a batch that
+    already fired this ability, so `_collect_one` queues nothing more for it.
+
+    Here, once per heard event, rather than in `_queue`, which a trigger doubler
+    calls again for the *same* event: adding there would count its damage
+    twice. Every copy of the firing still in `pending_triggers` is topped up --
+    and it is still there, because a batch is dealt in full before anything is
+    put on the stack.
+    """
+    spec = ability.trigger
+    if spec is None or not spec.batched or spec.event != "dealt_damage":
+        return False
+    batch = event.data.get("batch")
+    if batch is None or (obj.oid, ability.index, batch) not in state.batched_triggers:
+        return False
+    granted_by, ability_index = _granter_of(state, obj, ability)
+    amount = int(event.data.get("amount", 0))
+    for pending in state.pending_triggers:
+        if (
+            pending.source_oid == obj.oid
+            and pending.ability_index == ability_index
+            and pending.granted_by == granted_by
+            and pending.bindings.get("batch") == batch
+        ):
+            pending.bindings["amount"] = int(pending.bindings.get("amount", 0)) + amount
+    return True
 
 
 def check_state_triggers(state: GameState) -> None:

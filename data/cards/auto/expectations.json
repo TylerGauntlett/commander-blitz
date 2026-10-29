@@ -528,6 +528,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ant_man_elusive_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "anurid_murkdiver": {
     "zone": "battlefield"
   },
@@ -941,10 +945,26 @@
   "aven_squire": {
     "zone": "battlefield"
   },
+  "avenge": {
+    "battlefield_count": 30,
+    "life": {
+      "0": 44
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "avengers_hangar": {
     "life": {
       "0": 41
     }
+  },
+  "avengers_quinjet": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "avengers_tower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "avian_changeling": {
     "zone": "battlefield"
@@ -1268,6 +1288,10 @@
     "zone": "battlefield"
   },
   "black_market_connections": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "black_widow_agile_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -1867,6 +1891,36 @@
     "zone": "battlefield"
   },
   "capital_guard": {
+    "zone": "battlefield"
+  },
+  "captain_america_living_legend": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "captain_america_team_leader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "captain_mar_vell_space_born": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "vigilance"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "captain_marvel_apex_avenger": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "double_strike",
+        "indestructible"
+      ]
+    },
     "zone": "battlefield"
   },
   "captain_of_the_watch": {
@@ -3190,6 +3244,10 @@
       "graveyard"
     ]
   },
+  "director_nick_fury": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "diregraf_colossus": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3201,6 +3259,10 @@
     "life": {
       "0": 41
     }
+  },
+  "dismantling_wave": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "dismember": {
     "zone": "graveyard"
@@ -4041,6 +4103,10 @@
     },
     "zone": "graveyard"
   },
+  "falcon_and_redwing": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "falkenrath_pit_fighter": {
     "battlefield_count": 33,
     "hand_size": {
@@ -4314,6 +4380,10 @@
     "zone": "battlefield"
   },
   "fire_sprites": {
+    "zone": "battlefield"
+  },
+  "firebird_blazing_ranger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "firemane_commando": {
@@ -4953,6 +5023,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "gift_of_immortality": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "gift_of_orzhova": {
     "zone": [
@@ -5616,6 +5690,10 @@
   "hawkeater_moth": {
     "zone": "battlefield"
   },
+  "hawkeye_avenging_archer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hawkeye_clint_barton": {
     "zone": "battlefield"
   },
@@ -5765,6 +5843,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hercules_olympian_hero": {
+    "zone": "battlefield"
+  },
   "herd_heirloom": {
     "zone": "battlefield"
   },
@@ -5773,6 +5854,10 @@
     "zone": "battlefield"
   },
   "hero_of_bladehold": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hero_s_blade": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5790,6 +5875,13 @@
         "indestructible"
       ]
     }
+  },
+  "heroic_return": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "graveyard"
   },
   "hexplate_golem": {
     "zone": "battlefield"
@@ -5951,6 +6043,10 @@
     "zone": "battlefield"
   },
   "hulk_bruce_banner": {
+    "zone": "battlefield"
+  },
+  "hulkbuster_armor": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hulking_bugbear": {
@@ -6251,6 +6347,10 @@
   "iron_giant": {
     "zone": "battlefield"
   },
+  "iron_man_armored_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "iron_myr": {
     "zone": "battlefield"
   },
@@ -6339,6 +6439,10 @@
   "jagwasp_swarm": {
     "zone": "battlefield"
   },
+  "jarvis_earth_s_mightiest_butler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "jasmine_boreal": {
     "zone": "battlefield"
   },
@@ -6413,6 +6517,10 @@
     "zone": "battlefield"
   },
   "jin_gitaxias_progress_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "jocasta_automaton_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -6643,6 +6751,16 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "kindred_discovery": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
   },
   "kindred_judgment": {
     "battlefield_count": 30,
@@ -7228,6 +7346,9 @@
     },
     "zone": "battlefield"
   },
+  "love_on_the_battlefield": {
+    "zone": "battlefield"
+  },
   "lowland_giant": {
     "zone": "battlefield"
   },
@@ -7389,6 +7510,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "graveyard"
+  },
+  "make_your_move": {
+    "opponent_battlefield_count": 5,
     "zone": "graveyard"
   },
   "makindi_aeronaut": {
@@ -7822,6 +7947,10 @@
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
+  },
+  "methods_of_the_mighty": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "meticulous_archive": {
     "zone": "battlefield"
@@ -9080,6 +9209,10 @@
   "path_of_ancestry": {
     "zone": "battlefield"
   },
+  "patriot_shield_wielder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "patron_of_the_vein": {
     "battlefield_count": 33,
     "counters": {
@@ -9172,6 +9305,10 @@
     "zone": "battlefield"
   },
   "phoenix_down": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "photon_mighty_marvel": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9280,6 +9417,10 @@
     "zone": "battlefield"
   },
   "plated_wurm": {
+    "zone": "battlefield"
+  },
+  "plaza_of_heroes": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "plover_knights": {
@@ -9459,6 +9600,13 @@
       "graveyard"
     ]
   },
+  "professor_hulk": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "promising_vein": {
     "zone": "battlefield"
   },
@@ -9606,6 +9754,10 @@
   "quicksilver_pietro_maximoff": {
     "zone": "battlefield"
   },
+  "quicksilver_speedster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "quilled_slagwurm": {
     "zone": "battlefield"
   },
@@ -9669,6 +9821,13 @@
   },
   "rainbow_vale": {
     "zone": "battlefield"
+  },
+  "raise_the_palisade": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
   },
   "rakdos_guildgate": {
     "zone": "battlefield"
@@ -9867,6 +10026,10 @@
     },
     "zone": "graveyard"
   },
+  "relic_of_legends": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "relic_sloth": {
     "zone": "battlefield"
   },
@@ -9899,6 +10062,13 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
+  },
+  "rescue_pepper_potts": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
   },
   "rescue_retriever": {
     "battlefield_count": 33,
@@ -10103,6 +10273,9 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "rip_apart": {
+    "zone": "graveyard"
   },
   "rip_clan_crasher": {
     "zone": "battlefield"
@@ -10473,6 +10646,10 @@
     "zone": "battlefield"
   },
   "scampering_surveyor": {
+    "zone": "battlefield"
+  },
+  "scarlet_witch_chaotic_avenger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "scarlet_witch_wanda_maximoff": {
@@ -10847,6 +11024,18 @@
   "shambling_vent": {
     "zone": "battlefield"
   },
+  "shang_chi_and_the_ten_rings": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "shanodin_dryads": {
     "zone": "battlefield"
   },
@@ -10878,6 +11067,10 @@
     "zone": "battlefield"
   },
   "shatterskull_recruit": {
+    "zone": "battlefield"
+  },
+  "she_hulk_wallbreaker": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sheltered_thicket": {
@@ -11557,6 +11750,10 @@
     },
     "zone": "battlefield"
   },
+  "spectator_seating": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "spectral_flight": {
     "zone": [
       "battlefield",
@@ -11564,6 +11761,10 @@
     ]
   },
   "spectral_rider": {
+    "zone": "battlefield"
+  },
+  "speed_young_avenger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sphinx_mindbreaker": {
@@ -12685,6 +12886,16 @@
   "the_wasp_janet_van_dyne": {
     "zone": "battlefield"
   },
+  "the_wasp_winsome_avenger": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "the_whizzer_classic_speedster": {
     "zone": "battlefield"
   },
@@ -12719,6 +12930,10 @@
     "zone": "battlefield"
   },
   "thopter_spy_network": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thor_asgard_s_avenger": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -13211,6 +13426,10 @@
       ]
     },
     "zone": "graveyard"
+  },
+  "unclaimed_territory": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "undead_augur": {
     "battlefield_count": 33,
@@ -13714,6 +13933,10 @@
     },
     "zone": "battlefield"
   },
+  "vision_synthezoid_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "visions_of_beyond": {
     "graveyard_size": {
       "0": 3
@@ -13941,6 +14164,10 @@
   "war_elephant": {
     "zone": "battlefield"
   },
+  "war_machine_avenging_arsenal": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "war_mammoth": {
     "zone": "battlefield"
   },
@@ -14091,6 +14318,15 @@
   "well_of_lost_dreams": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "west_coast_expansion": {
+    "hand_size": {
+      "0": 21
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
   },
   "wetland_sambar": {
     "zone": "battlefield"
@@ -14337,6 +14573,10 @@
     "zone": "battlefield"
   },
   "winter_soldier_bucky_barnes": {
+    "zone": "battlefield"
+  },
+  "winter_soldier_reborn_avenger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wirewood_elf": {

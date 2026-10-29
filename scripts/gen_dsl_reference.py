@@ -219,7 +219,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "return_to_command_zone": ("Cards", "Return a commander from wherever it is to the command zone.",
                                '"Return it to the command zone" — `return_to_command_zone`'),
     # ---- Board -----------------------------------------------------------
-    "destroy": ("Board", "Destroy permanents; `no_regenerate` forbids regeneration.", None),
+    "destroy": ("Board", "Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed.", None),
     "exile": ("Board", "Exile objects; `link`/`playable` tie them to the source or a permission.",
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",
@@ -228,7 +228,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                              None),
     "create_token": ("Board", "Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token.",
                      'An X/X token — "create an X/X blue Shark creature token"'),
-    "add_counters": ("Board", "Put N counters of a kind on permanents or players.", None),
+    "add_counters": ("Board", "Put N counters of a kind on permanents or players; `counter: {\"binding\": \"counter\"}` on a `counter_placed` trigger is the kind that placement put.",
+                     None),
     "empower": ("Board", "Empower Jace N: N loyalty on a Jace token you control, creating one first if none.",
                 '`empower` — "Empower Jace N"'),
     "amass": ("Board", "Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too.",
@@ -419,7 +420,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "noop": ("Control flow", "Do nothing (a placeholder for text with no effect).", None),
     "delay": ("Control flow", "Run effects at the beginning of a named later step.",
               'Delayed triggers — "at the beginning of the next …"'),
-    "delayed_trigger": ("Control flow", "Create a trigger that watches an event for the rest of the turn.",
+    "delayed_trigger": ("Control flow", "Create a trigger that watches an event for a `duration` (the rest of the turn by default, or this combat).",
                         H_DELAYED),
     "join_forces": ("Control flow", "Each player may pay into one shared X.",
                     "Join forces — the one cost the whole table pays"),
@@ -587,6 +588,8 @@ VALUES: dict[str, Entry] = {
     "min": ("The least of several values.", None),
     "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\").",
                      None),
+    "times_tapped_this_turn": ("Times one object has become tapped this turn, counting every tap since the turn began.",
+                               "How many times a permanent has become tapped this turn"),
     "unspent_mana_count": ("The unspent mana in a spec's players' mana pools.",
                            '"For each unspent mana you have"'),
     "min_count_of": ("The fewest objects any one player of a spec has.", H_PER_PLAYER),
@@ -612,6 +615,8 @@ VALUES: dict[str, Entry] = {
 CONDITIONS: dict[str, Entry] = {
     "all": ("Every listed condition holds.", None),
     "any": ("At least one listed condition holds.", None),
+    "attacked_you_last_turn": ("One of these players attacked you (not your planeswalker or battle) during their last completed turn.",
+                               None),
     "cast_during": ("The phase this spell was cast in (addendum).",
                     "Addendum — the phase a spell was cast in"),
     "cast_from_graveyard": ("This spell was cast from a graveyard.", None),
@@ -649,9 +654,13 @@ CONDITIONS: dict[str, Entry] = {
 }
 
 #: Static-only value leaves, which the effect-side `VALUES` does not have.
+#: Static-side entries, read before `VALUES`: a leaf in both languages whose
+#: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
     "greatest_commander_mana_value": (
         "The greatest printed mana value among your commanders, wherever they are.", None),
+    "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; the bare spec only.",
+                              '"As long as an opponent has cast a spell this turn"'),
 }
 
 STATIC_CONDITION_EXTRAS: dict[str, Entry] = {
@@ -679,7 +688,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "begin_combat": ("At the beginning of combat.", None),
     "blocks": ("A creature blocks.", None),
     "chapter": ("A Saga reaches a chapter (supplied by rule, never written).", "Sagas"),
-    "counter_placed": ("Counters are put on a permanent or player.", None),
+    "counter_placed": ("Counters are put on a permanent or player; with `counter` and `nth`, the placement that puts the Nth counter of that kind on it.",
+                       None),
     "creature_dies": ("A creature dies.", None),
     "creatures_attack_player": ("One or more creatures attack a player.",
                                 '"Whenever one or more creatures attack one of your opponents"'),
@@ -693,7 +703,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                                             '"…deals combat damage to a player or planeswalker"'),
     "deals_combat_damage_to_player": ("A creature deals combat damage to a player.", None),
     "deals_damage_to_player": ("A source deals any damage to a player.", None),
-    "dealt_damage": ("A permanent is dealt damage.", None),
+    "dealt_damage": ("A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total.",
+                     H_BATCHED),
     "dies": ("A permanent dies.", None),
     "discard": ("A player discards a card.", None),
     "draw": ("A player draws a card.", None),
@@ -818,7 +829,7 @@ STATICS: dict[str, Entry] = {
     "protection": ("Matching permanents have protection from a quality.", "Protection"),
     "replace_counters": ("Counters put on matching permanents are replaced (doubled, redirected).",
                          "Counters replaced on the way in"),
-    "replace_damage": ("Damage dealt by or to matching permanents is multiplied or redirected.",
+    "replace_damage": ("Damage dealt by or to matching permanents is multiplied, increased by N or redirected.",
                        "Damage multiplied on the way out"),
     "replace_dies": ("If a matching permanent would die, exile it instead, optionally creating tokens.",
                      '"If a nontoken creature an opponent controls would die, instead exile that card"'),
@@ -1259,7 +1270,7 @@ def families() -> list[Family]:
         ),
         Family(
             "Static values", H_STATIC_MAGNITUDE, tuple(sorted(STATIC_VALUE_KEYS)),
-            lambda name: VALUES.get(name) or STATIC_VALUE_EXTRAS.get(name),
+            lambda name: STATIC_VALUE_EXTRAS.get(name) or VALUES.get(name),
             "The subset of the value language a static's magnitude (`power`, `amount`, …) "
             "may use.",
         ),

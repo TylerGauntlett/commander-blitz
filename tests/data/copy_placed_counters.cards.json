@@ -1,0 +1,58 @@
+{
+  "_comment": "Shapes for tests/unit/counters/test_copy_placed_counters.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_cpc_captain is Captain Marvel, Apex Avenger's trigger on a {W} 1/1, and t_cpc_kree the creature it refuses to copy from. The bear and the bolt come from testing.cards.json, the Hardened Scales from replace_counters.cards.json.",
+  "cards": [
+    {
+      "id": "t_cpc_captain",
+      "name": "Test Mirroring Captain",
+      "oracle_text": "Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on this creature.",
+      "mana_cost": "{W}",
+      "types": ["Creature"],
+      "subtypes": ["Human", "Soldier"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you put one or more counters on another creature, if it's not a Kree, you may put the same number and kind of counters on this creature.",
+          "trigger": {
+            "event": "counter_placed",
+            "controller": "any",
+            "put_by": "you",
+            "filter": {"types": ["Creature"], "exclude_self": true},
+            "condition": {
+              "exists": {"binding": "subject", "types": ["Creature"], "not_subtypes": ["Kree"]}
+            }
+          },
+          "effects": [
+            {
+              "op": "may",
+              "prompt": "Put the same number and kind of counters on this creature?",
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": {"binding": "counter"},
+                  "amount": {"binding": "amount"},
+                  "objects": {"self_only": true}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cpc_kree",
+      "name": "Test Kree Soldier",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "types": ["Creature"],
+      "subtypes": ["Kree", "Soldier"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["W"],
+      "color_identity": ["W"]
+    }
+  ]
+}

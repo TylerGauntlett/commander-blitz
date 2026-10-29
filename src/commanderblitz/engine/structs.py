@@ -1293,7 +1293,23 @@ class DelayedTrigger:
 #:     611.2b's clock: it fires **every** time, `turn._cleanup_step` leaves it
 #:     alone, and `primitives.clear_until_next_turn` drops it in its
 #:     controller's untap step -- and when that controller leaves the game.
-DELAYED_DURATIONS = ("this_turn", "until_it_fires", "once_this_turn", "until_your_next_turn")
+#: ``this_combat``
+#:     "Whenever either of those creatures deals combat damage to a player
+#:     **this combat**, put a +1/+1 counter on it" (Love on the Battlefield).
+#:     `this_turn`'s repeating subscription on the combat phase's clock: it
+#:     fires **every** time -- each creature, in each combat damage step -- and
+#:     `combat.end_combat` drops it as the end of combat step begins, so an
+#:     extra combat later in the turn is not "this combat". Installed only
+#:     inside a combat phase (`op_delayed_trigger` does nothing outside one,
+#:     where there is no combat for it to belong to); `turn._cleanup_step`
+#:     drops one that somehow survived, with the other turn-scoped entries.
+DELAYED_DURATIONS = (
+    "this_turn",
+    "until_it_fires",
+    "once_this_turn",
+    "until_your_next_turn",
+    "this_combat",
+)
 
 
 @dataclass(frozen=True)
@@ -1471,6 +1487,17 @@ class TurnLedger:
     #: battlefield: an oid survives the zone change but the object does not
     #: (400.7), and a flickered Angel back from exile attacked nobody.
     players_attacked_by: dict[int, set[int]] = field(default_factory=dict)
+    #: Which **players** each player attacked this turn: attacking seat -> the
+    #: seats they declared an attacker against. The seat-level twin of
+    #: `players_attacked_by`, and the half `GameState.attacked_last_turn` is
+    #: handed at cleanup -- "if a player attacked you during their last turn"
+    #: (Avenge, O-Kagachi) is a question about seats, asked turns later.
+    #:
+    #: Not derivable from `players_attacked_by`, which forgets a creature that
+    #: has left the battlefield: a player whose only attacker died in combat
+    #: still attacked you. Seats only, for the same 506.2 reason -- an attack
+    #: on a planeswalker or a battle is not an attack on its controller.
+    seats_attacked: dict[int, set[int]] = field(default_factory=dict)
     #: How many times each creature has **attacked** this turn: attacker oid ->
     #: the number of ATTACKS events it has been the subject of. "Whenever this
     #: creature attacks **for the first time each turn**" (Scourge of the
@@ -1486,6 +1513,21 @@ class TurnLedger:
     #: never attacked (508.4) and adds nothing; one that leaves the battlefield
     #: is a new object (400.7) and starts again from nought.
     attacks_by_creature: dict[int, int] = field(default_factory=dict)
+    #: How many times each permanent has **become tapped** this turn: oid ->
+    #: the number of TAPPED events it has been the subject of. "…if it's the
+    #: first time that creature has become tapped this turn, untap it"
+    #: (Captain America, Living Legend) asks about every tap since the turn
+    #: began, so the engine counts all of them, whatever was watching: a
+    #: creature tapped for mana to cast the Captain has been tapped once
+    #: already, and a flag written by the Captain's own trigger would miss it.
+    #:
+    #: Folded off TAPPED, which only `primitives.tap_permanent` fires and
+    #: never for a permanent that is already tapped, so "becomes" is the
+    #: primitive's reading. Entering the battlefield tapped is not becoming
+    #: tapped and adds nothing. One that leaves the battlefield is a new
+    #: object (400.7) and starts again from nought; phasing and a change of
+    #: control are the same object and keep their count.
+    taps_by_permanent: dict[int, int] = field(default_factory=dict)
     #: Which **players** each creature dealt **combat damage** to this turn:
     #: source oid -> the seats. "Destroy each nonland permanent with mana value X
     #: whose controller was dealt combat damage by this creature this turn" --
@@ -1748,7 +1790,9 @@ class TurnLedger:
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
         self.players_attacked_by.clear()
+        self.seats_attacked.clear()
         self.attacks_by_creature.clear()
+        self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
         self.damage_taken.clear()
         self.life_lost.clear()

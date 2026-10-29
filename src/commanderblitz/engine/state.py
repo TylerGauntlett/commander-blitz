@@ -274,6 +274,22 @@ class GameState:
     #: it is folded from the event stream in one place (`emit`'s SPELL_CAST arm),
     #: so no cast path can forget it.
     spells_cast_this_game: dict[int, list[str]] = field(default_factory=dict)
+    #: Whom each player attacked during **their most recent completed turn**:
+    #: player id -> ``(turn number, seats)``. "This spell costs {2} less to
+    #: cast if a player attacked you during their last turn" (Avenge) is asked
+    #: on *your* turn about somebody else's, by which time
+    #: `TurnLedger.seats_attacked` has been cleared twice over.
+    #:
+    #: Written once per turn, for the active player, by the cleanup step from
+    #: the ledger it is about to clear; the turn number is what makes a 514.3a
+    #: repeat of that step leave the record alone instead of overwriting it
+    #: with the already-empty ledger. Every turn replaces its player's entry,
+    #: so a player who attacked you two turns of theirs ago and not on the last
+    #: one has an empty record, and one who has taken no turn has none. While
+    #: a player's turn is in progress their entry is still the previous turn.
+    #: Seats only (506.2): attacking a planeswalker or a battle you control is
+    #: not attacking you.
+    attacked_last_turn: dict[int, tuple[int, frozenset[int]]] = field(default_factory=dict)
     #: Day / night (726). ``None`` until a daybound permanent makes it day, then
     #: ``"day"`` or ``"night"`` for the rest of the game.
     #:
@@ -797,6 +813,10 @@ class GameState:
             attacker, defender = data.get("attacker"), data.get("defender")
             if attacker is not None and defender is not None and not data.get("attacked_permanent"):
                 ledger.players_attacked_by.setdefault(int(attacker), set()).add(int(defender))
+                # The seat-level record survives the attacker leaving the
+                # battlefield, which the per-creature one above does not.
+                if pid is not None:
+                    ledger.seats_attacked.setdefault(pid, set()).add(int(defender))
             # "Whenever this creature attacks for the first time each turn."
             # The ordinal goes on the event, as a cast's and a draw's do, so an
             # `attacks` trigger with `nth` reads it at queue time -- and every
@@ -805,6 +825,15 @@ class GameState:
                 counts = ledger.attacks_by_creature
                 counts[int(attacker)] = counts.get(int(attacker), 0) + 1
                 data["nth"] = counts[int(attacker)]
+        elif event.type == EventType.TAPPED:
+            # "…if it's the first time that creature has become tapped this
+            # turn" (Captain America, Living Legend). Every tap is counted,
+            # whether or not anything was watching, so a creature tapped for
+            # mana before the watcher arrived has already used its first time.
+            oid = data.get("oid")
+            if oid is not None:
+                taps = ledger.taps_by_permanent
+                taps[int(oid)] = taps.get(int(oid), 0) + 1
         elif event.type == EventType.ENTERS_BATTLEFIELD:
             # "…if another Human entered the battlefield under your control this
             # turn." Snapshotted here rather than counted, because the question
@@ -916,6 +945,10 @@ class GameState:
                 # `spells_cast_ids[pid][:nth]` is the run up to and including
                 # this spell however many are cast before a trigger reads it.
                 data["nth"] = ledger.spells_cast[pid]
+                # The count is a static's input (`spells_cast_this_turn`, Captain
+                # Mar-Vell's "as long as an opponent has cast a spell this
+                # turn"), and `chars` caches per `char_version`.
+                self.bump_chars()
         elif event.type == EventType.ZONE_CHANGE:
             obj = self.objects.get(data.get("oid"))
             # 400.7: the oid survives a zone change and the object does not. A
@@ -924,6 +957,7 @@ class GameState:
             if data.get("from") == Zone.BATTLEFIELD.value:
                 ledger.players_attacked_by.pop(data.get("oid"), None)
                 ledger.attacks_by_creature.pop(data.get("oid"), None)
+                ledger.taps_by_permanent.pop(data.get("oid"), None)
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # The departure half. Keyed by the graveyard's **owner** rather than
