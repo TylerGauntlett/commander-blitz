@@ -1,0 +1,24 @@
+{
+  "card_id": "titania_proud_pummeler",
+  "name": "Titania, Proud Pummeler",
+  "oracle_text": "First strike\nMelee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nOther creatures you control have melee.",
+  "blocked_sentences": [
+    "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)",
+    "Other creatures you control have melee."
+  ],
+  "needs": [
+    {
+      "capability": "melee",
+      "kind": "keyword",
+      "what": "the melee keyword (702.121): a triggered ability 'whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat', grantable to other creatures via a static grant_keyword; underneath it needs a value counting the distinct opponents (players, plus controllers of attacked planeswalkers/battles per 702.121b) that any creature you control attacked in the current combat",
+      "why_existing_wont_do": "melee is not in keywords. A hand-written attacks trigger has no value for 'opponents you attacked this combat': attacked_this_turn counts which players attacked (raid), attackers_this_turn counts creatures, and player_count over {attacked_by: self} counts only seats this one creature attacked, this turn rather than this combat -- wrong whenever your creatures split across several opponents or there are two combats. Granting the trigger to other creatures would also need grant_ability of a self-referential attacks trigger, which a keyword would avoid."
+    }
+  ],
+  "closest_existing": [
+    "attacked_this_turn",
+    "attacked_by",
+    "exalted",
+    "grant_keyword"
+  ],
+  "confidence": "high"
+}

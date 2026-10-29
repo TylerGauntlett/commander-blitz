@@ -116,6 +116,30 @@
       "is_token": true
     },
     {
+      "id": "ape_villain_3_3_r_haste",
+      "name": "Ape Villain Token",
+      "oracle_text": "3/3 red Ape Villain creature token with haste.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ape",
+        "Villain"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "haste"
+      ]
+    },
+    {
       "id": "assassin_1_1_b_lose_game",
       "name": "Assassin Token",
       "oracle_text": "1/1 black Assassin creature token with \"Whenever this creature deals combat damage to a player, that player loses the game.\"",

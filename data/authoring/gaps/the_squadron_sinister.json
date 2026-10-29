@@ -1,0 +1,22 @@
+{
+  "card_id": "the_squadron_sinister",
+  "name": "The Squadron Sinister",
+  "oracle_text": "Flying, haste\nOther Villains you control get +2/+2 and have flying and haste.\nMayhem {3}{U}{R} (You may cast this card from your graveyard for {3}{U}{R} if you discarded it this turn. Timing rules still apply.)",
+  "blocked_sentences": [
+    "Mayhem {3}{U}{R}"
+  ],
+  "needs": [
+    {
+      "capability": "mayhem",
+      "kind": "cost",
+      "what": "a card-level alternative cost, castable from the graveyard for the printed mayhem price ({3}{U}{R}), offered only while this card is in the graveyard because its owner discarded it this turn (a per-card 'discarded this turn' mark that clears at end of turn), timing rules unchanged; the card goes wherever it normally would on resolution (a permanent to the battlefield, no exile rider)",
+      "why_existing_wont_do": "`graveyard_cost` is an alternative graveyard price but is offered unconditionally, with no condition slot; the `cast_from_graveyard` static takes a condition but casts at the printed price ({5}{U}{R}), not {3}{U}{R}; no condition or static condition key reads whether this card was discarded this turn (only aggregate values like cards_to_graveyard_this_turn). `madness` is the nearest discard-keyed cost but triggers on the discard itself and casts from exile. The other lines (Flying, haste; the Villain anthem via buff + grant_keyword statics with subtypes Villain and exclude_self) are expressible"
+    }
+  ],
+  "closest_existing": [
+    "graveyard_cost",
+    "madness",
+    "cast_from_graveyard"
+  ],
+  "confidence": "high"
+}

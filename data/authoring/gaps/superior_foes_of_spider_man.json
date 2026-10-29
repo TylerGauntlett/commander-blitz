@@ -1,0 +1,22 @@
+{
+  "card_id": "superior_foes_of_spider_man",
+  "name": "Superior Foes of Spider-Man",
+  "oracle_text": "Trample\nWhenever you cast a spell with mana value 4 or greater, you may exile the top card of your library. If you do, you may play that card until you exile another card with this creature.",
+  "blocked_sentences": [
+    "Whenever you cast a spell with mana value 4 or greater, you may exile the top card of your library. If you do, you may play that card until you exile another card with this creature."
+  ],
+  "needs": [
+    {
+      "capability": "playable_until_next_exile",
+      "kind": "value",
+      "what": "a playable duration on exile/grant_playable that lasts until the same source exiles another card (the permission on the previously exiled card ends when this creature exiles a new one), so only the most recently exiled card with this source is playable",
+      "why_existing_wont_do": "playable_durations offers end_of_your_next_turn, later_turns, this_turn, while_exiled and your_next_end_step; while_exiled is strictly better than printed because earlier exiled cards would stay playable forever, and the others expire on a turn boundary rather than on the next exile by this source"
+    }
+  ],
+  "closest_existing": [
+    "exile (playable: while_exiled)",
+    "grant_playable",
+    "spell_cast trigger with filter mana_value"
+  ],
+  "confidence": "high"
+}

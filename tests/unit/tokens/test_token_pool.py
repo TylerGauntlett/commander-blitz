@@ -1047,3 +1047,28 @@ class TestEndlessRanksVillainIsATwoOneBlackMenace:
         pirate = pool.get("pirate_2_2_b_menace")
         assert (pirate.power, pirate.toughness) == (2, 2)
         assert "Villain" not in pirate.subtypes
+
+
+class TestRedGhostsApeIsAThreeThreeRedVillainWithHaste:
+    """Red Ghost, Intangible Genius: *"…create a 3/3 red Ape Villain creature
+    token with haste."*
+
+    `ape_3_3_g` is the pool's other 3/3 Ape: green, no haste, and not a
+    Villain.
+    """
+
+    def test_it_is_a_three_three_red_ape_villain_with_haste(self, pool):
+        token = pool.get("ape_villain_3_3_r_haste")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.types) == ["Creature"]
+        assert sorted(token.subtypes) == ["Ape", "Villain"]
+        assert list(token.keywords) == ["haste"]
+        assert not token.abilities
+
+    def test_the_green_ape_is_still_a_separate_token(self, pool):
+        ape = pool.get("ape_3_3_g")
+        assert sorted(ape.colors) == ["G"]
+        assert not ape.keywords
+        assert "Villain" not in ape.subtypes

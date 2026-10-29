@@ -1,0 +1,22 @@
+{
+  "card_id": "spark_double",
+  "name": "Spark Double",
+  "oracle_text": "You may have this creature enter as a copy of a creature or planeswalker you control, except it enters with an additional +1/+1 counter on it if it's a creature, it enters with an additional loyalty counter on it if it's a planeswalker, and it isn't legendary.",
+  "blocked_sentences": [
+    "You may have this creature enter as a copy of a creature or planeswalker you control, except it enters with an additional +1/+1 counter on it if it's a creature, it enters with an additional loyalty counter on it if it's a planeswalker, and it isn't legendary"
+  ],
+  "needs": [
+    {
+      "capability": "enters_as_copy_exception",
+      "kind": "replacement",
+      "what": "a self_enters_as_copy replacement whose copy exception (707.9b) can (a) add an extra +1/+1 counter if the copy is a creature and an extra loyalty counter if it is a planeswalker, conditional on the copied characteristics, and (b) remove the Legendary supertype from the copiable values; plus a copying pool of creatures or planeswalkers you control",
+      "why_existing_wont_do": "The packet's reference exposes no self_enters_as_copy replacement event at all (only self_enters / self_enters_tapped), and the engine's self_enters_as_copy except_ accepts only add_keywords, so it cannot add type-dependent counters or strip Legendary; become_copy/copy_permanent are effects that run after entering, not a 614.1b enters-as replacement, so the creature would be seen as a 0/0 and die first"
+    }
+  ],
+  "closest_existing": [
+    "become_copy",
+    "copy_permanent",
+    "enters_with_additional_counters"
+  ],
+  "confidence": "high"
+}

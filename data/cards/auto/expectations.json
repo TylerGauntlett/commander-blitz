@@ -109,6 +109,13 @@
   "affa_protector": {
     "zone": "battlefield"
   },
+  "age_of_ultron": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
   "ageless_guardian": {
     "zone": "battlefield"
   },
@@ -3815,6 +3822,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "endless_ranks_of_hydra": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "villain_2_1_b_menace"
+    },
+    "zone": "graveyard"
+  },
   "endless_ranks_of_the_dead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6623,6 +6638,14 @@
   "kami_of_old_stone": {
     "zone": "battlefield"
   },
+  "kang_dynasty": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "kang_temporal_tyrant": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6788,6 +6811,14 @@
       "0": 40
     },
     "zone": "battlefield"
+  },
+  "kindred_dominance": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "kindred_judgment": {
     "battlefield_count": 30,
@@ -7276,6 +7307,13 @@
     },
     "zone": "battlefield"
   },
+  "loki_s_scepter": {
+    "zone": "battlefield"
+  },
+  "loki_the_deceiver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lone_missionary": {
     "life": {
       "0": 44
@@ -7457,6 +7495,10 @@
   "lush_portico": {
     "zone": "battlefield"
   },
+  "luxury_suite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lynx": {
     "zone": "battlefield"
   },
@@ -7473,6 +7515,13 @@
     "zone": "battlefield"
   },
   "macetail_hystrodon": {
+    "zone": "battlefield"
+  },
+  "madame_hydra": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "madcap_skills": {
@@ -8222,6 +8271,10 @@
         "flying"
       ]
     },
+    "zone": "battlefield"
+  },
+  "moonstone_harsh_mistress": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "moor_fiend": {
@@ -9653,6 +9706,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "prowler_clawed_thief": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "prowling_caracal": {
     "zone": "battlefield"
   },
@@ -10001,6 +10058,10 @@
   "red_elemental_blast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "red_ghost_intangible_genius": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "redwood_treefolk": {
     "zone": "battlefield"
@@ -12408,6 +12469,15 @@
     },
     "zone": "graveyard"
   },
+  "syphon_mind": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "t_chaka_venerable_king": {
     "library_size": {
       "0": 37
@@ -12841,6 +12911,14 @@
   "the_fabulous_frog_man": {
     "zone": "battlefield"
   },
+  "the_frightful_four": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "the_great_mound": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13133,6 +13211,9 @@
       "0": 43
     }
   },
+  "titan_of_littjara": {
+    "zone": "battlefield"
+  },
   "tobias_andrion": {
     "zone": "battlefield"
   },
@@ -13158,6 +13239,10 @@
     "zone": "battlefield"
   },
   "tolarian_scholar": {
+    "zone": "battlefield"
+  },
+  "tombstone_career_criminal": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tome_of_legends": {
@@ -13298,6 +13383,10 @@
     "zone": "battlefield"
   },
   "tresserhorn_sinks": {
+    "zone": "battlefield"
+  },
+  "tri_sentinel_act_of_vengeance": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "triton_shorethief": {
@@ -13931,6 +14020,10 @@
     "hand_size": {
       "0": 3
     }
+  },
+  "villainous_hideout": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vine_trellis": {
     "zone": "battlefield"
