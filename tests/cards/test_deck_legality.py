@@ -38,6 +38,7 @@ PRECONS = {
     "fdc_tramplesaurus_rex",
     "fdc_wretched_ranks",
     "frc_multiverse_reforged",
+    "msc_avengers_assemble",
     "msc_wakanda_forever",
 }
 
