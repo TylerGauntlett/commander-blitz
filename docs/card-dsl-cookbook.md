@@ -10803,10 +10803,31 @@ narrower than 601.2b, never cheaper. `objects` is required, and `free`,
 `selector`, `zones` and `per_owner` are refused, because those keys belong to
 the free casts.
 
+**`exiles: true`** is "If that spell would be put into your graveyard, exile
+it instead" — Helmut Zemo, Mastermind, casting from a graveyard:
+
+```jsonc
+{ "op": "cast_card", "objects": { "target": "t1" }, "exiles": true, "as": "cast" },
+{ "op": "if", "condition": { "exists": { "binding": "cast" } },
+  "then": [ { "op": "add_counters",
+              "objects": { "zone": "battlefield", "self_only": true },
+              "counter": "+1/+1", "amount": { "const": 1 } } ] }
+```
+
+It is a replacement on the spell, so it applies however the spell leaves the
+stack for a graveyard: when it resolves, when it fizzles (608.2b) and when it is
+countered. It is carried on the stack item (`StackItem.exiles_instead`) and not
+on the card, so the same card cast again later by any other route goes back to
+the graveyard. "If you cast a spell this way" is `exists` over the `as` binding.
+`exiles` must be a boolean. It does not set the `cast_from_graveyard` condition,
+and it is not the card's own `graveyard_cast` rider: that rider belongs to
+flashback-like keywords printed on the card.
+
 | near miss | why it is not this |
 |---|---|
 | `cast_from_hand`, `play_exiled`, `cascade`, `look_at_top`'s `cast_free` | free: they go through `suspend.cast_for_free`, and a free Conduit is a strictly better card |
 | `grant_playable`, `grant_graveyard_cast` | leave a *permission* to cast later in a priority window; "if you do" has nothing to read while the ability resolves |
+| the card-level `exiles_itself` | the card's rider about *its own* spell, whoever casts it; Zemo's rider is about the spell his trigger cast |
 
 **`cant_cast_spells`** is the timed, one-shot form of the `cant_cast_spells`
 static: a player-wide, **total** prohibition. `player` (who is locked) and
@@ -10821,7 +10842,8 @@ zone-filtered lock is `cant_cast_spells_from_zones`. The clock and the cleanup
 are the timed table's own. A spell already on the stack is untouched, so the
 card Conduit just cast still resolves.
 
-Pinned in `tests/unit/casting/test_cast_card.py`.
+Pinned in `tests/unit/casting/test_cast_card.py` and, for `exiles`,
+`tests/unit/casting/test_cast_card_exiles.py`.
 
 ## Addendum — the phase a spell was cast in
 

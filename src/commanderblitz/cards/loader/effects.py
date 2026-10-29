@@ -2972,6 +2972,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if not isinstance(effect.get("objects"), Mapping):
             raise DslError(f"{where}: cast_card needs an 'objects' selector naming the card")
         validate_selector(effect["objects"], f"{where}.objects")
+        if "exiles" in effect and not isinstance(effect["exiles"], bool):
+            # "Exile it instead" is a yes or a no; a string "false" read as
+            # truthy would exile a spell the card sends back to the graveyard.
+            raise DslError(f"{where}: cast_card's 'exiles' is true or false")
         for key in ("free", "selector", "zones", "per_owner"):
             if key in effect:
                 # The near misses' keys. `cast_card` charges the mana cost; a

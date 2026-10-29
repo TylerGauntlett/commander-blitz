@@ -1,0 +1,81 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_cast_card_exiles.py. t_cce_zemo is Helmut Zemo, Mastermind's attack trigger on a vanilla 2/3: a paid cast of an instant or sorcery card from your graveyard during the trigger's resolution, with the 'exile it instead' replacement on the spell, and a +1/+1 counter only if a spell was cast. t_cce_reanimate_spell casts the same card from a graveyard without the rider, so the rider is shown to belong to the effect and not the card.",
+  "cards": [
+    {
+      "id": "t_cce_zemo",
+      "name": "Test Graveyard Mastermind",
+      "oracle_text": "Whenever this creature attacks, you may cast target instant or sorcery card with mana value less than or equal to this creature's power from your graveyard. If that spell would be put into your graveyard, exile it instead. If you cast a spell this way, put a +1/+1 counter on this creature.",
+      "mana_cost": "{2}{U}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 2,
+      "toughness": 3,
+      "colors": ["U", "B"],
+      "color_identity": ["U", "B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you may cast target instant or sorcery card with mana value less than or equal to this creature's power from your graveyard. If that spell would be put into your graveyard, exile it instead. If you cast a spell this way, put a +1/+1 counter on this creature.",
+          "trigger": {"event": "attacks", "source": "self"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard",
+                "any_types": ["Instant", "Sorcery"],
+                "mana_value": {"op": "<=", "value": {"power_of": {"self": true}}}
+              }
+            }
+          ],
+          "effects": [
+            {"op": "cast_card", "objects": {"target": "t1"}, "exiles": true, "as": "cast"},
+            {
+              "op": "if",
+              "condition": {"exists": {"binding": "cast"}},
+              "then": [
+                {
+                  "op": "add_counters",
+                  "objects": {"zone": "battlefield", "self_only": true},
+                  "counter": "+1/+1",
+                  "amount": {"const": 1}
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_cce_regrowth",
+      "name": "Test Graveyard Recast",
+      "oracle_text": "{T}: Choose target instant or sorcery card in your graveyard. You may cast that card.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Choose target instant or sorcery card in your graveyard. You may cast that card.",
+          "cost": {"tap": true},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard",
+                "any_types": ["Instant", "Sorcery"]
+              }
+            }
+          ],
+          "effects": [
+            {"op": "cast_card", "objects": {"target": "t1"}, "as": "cast"}
+          ]
+        }
+      ]
+    }
+  ]
+}

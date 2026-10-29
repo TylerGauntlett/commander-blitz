@@ -1108,6 +1108,14 @@ class StackItem:
     #: granting permanent's oid, so the per-turn use is billed to the one the
     #: line was offered under, and `None` for everything else.
     graveyard_permission: int | None = None
+    #: "If that spell would be put into your graveyard, exile it instead" --
+    #: the rider an *effect* puts on a spell it casts (Helmut Zemo,
+    #: Mastermind), set by `cast_card`'s ``exiles``. A replacement on the
+    #: spell, so it is read wherever the spell leaves the stack for a
+    #: graveyard: resolving, fizzling (608.2b) and being countered. On the
+    #: item, not the card: it is not the card's own rider, and another cast of
+    #: the same card by other means goes to the graveyard as usual.
+    exiles_instead: bool = False
     #: "…that artifact **enters tapped**", the rider on that permission. Carried
     #: on the item rather than the object because `reset_permanent_state` runs
     #: on the way onto the battlefield and would wipe a flag set beforehand.

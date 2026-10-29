@@ -65,6 +65,7 @@ def push_spell(
     impending: bool = False,
     flashback: bool = False,
     graveyard_permission: int | None = None,
+    exiles_instead: bool = False,
     enters_tapped: bool = False,
     overloaded: bool = False,
     cost_option: int | None = None,
@@ -149,6 +150,7 @@ def push_spell(
         mutated=mutated,
         flashback=flashback,
         graveyard_permission=graveyard_permission,
+        exiles_instead=exiles_instead,
         enters_tapped=enters_tapped,
         overloaded=overloaded,
         cost_option=cost_option,
@@ -777,7 +779,9 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         # applies -- and the same exemption: an escape spell whose targets all
         # left is back in the graveyard to be escaped again.
         destination = (
-            Zone.EXILE if item.flashback and card.graveyard_cast_exiles else Zone.GRAVEYARD
+            Zone.EXILE
+            if (item.flashback and card.graveyard_cast_exiles) or item.exiles_instead
+            else Zone.GRAVEYARD
         )
         move_object(state, item.oid, destination, to_player=obj.owner, cause="fizzled")
         return
@@ -879,7 +883,12 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         yield from _merge_mutation(state, item, targets)
         return
     yield from _place_after_resolution(
-        state, obj, card, enters_tapped=item.enters_tapped, warped=item.warped
+        state,
+        obj,
+        card,
+        enters_tapped=item.enters_tapped,
+        warped=item.warped,
+        exiles_instead=item.exiles_instead,
     )
     _attach_aura(state, obj, card, targets, specs)
 
@@ -925,7 +934,13 @@ def _merge_mutation(
 
 
 def _place_after_resolution(
-    state: GameState, obj, card: CardDef, *, enters_tapped: bool = False, warped: bool = False
+    state: GameState,
+    obj,
+    card: CardDef,
+    *,
+    enters_tapped: bool = False,
+    warped: bool = False,
+    exiles_instead: bool = False,
 ):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
@@ -956,6 +971,12 @@ def _place_after_resolution(
     if destination is Zone.GRAVEYARD and (
         (obj.cast_from_graveyard and card.graveyard_cast_exiles)
         or (obj.playable_exiles and obj.playable_live(state.turn))
+        # "If that spell would be put into your graveyard, exile it instead"
+        # -- the rider the effect that cast it put on the stack item
+        # (`cast_card`'s ``exiles``). A third path, and the one with no flag
+        # on the object: neither of the above is true of a card Helmut Zemo
+        # cast from a graveyard, which would otherwise come back every attack.
+        or exiles_instead
     ):
         destination = Zone.EXILE
     # Buyback: "put it into your hand instead of your graveyard as it

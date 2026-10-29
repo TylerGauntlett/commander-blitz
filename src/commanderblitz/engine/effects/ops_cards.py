@@ -1791,7 +1791,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
                 cast_for_free(ctx.state, pid, picked[0])
 
 
-def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int):
+def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):
     """ "You may cast that card", in the middle of a resolution, at its price.
 
     Returns whether the card reached the stack. The paid sibling of
@@ -1817,6 +1817,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int):
     is not offered at all rather than cast without it. Madness and miracle
     (`replacements._offer_cast`) make the same narrowing, and it is narrower
     than 601.2b, never cheaper.
+
+    ``exiles`` puts the "exile it instead" replacement on the spell
+    (`StackItem.exiles_instead`); see `op_cast_card`.
     """
     # Local: `costs` and `targeting` import the effect layer.
     from ..cost_reduction import cost_reduction
@@ -1921,7 +1924,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int):
     )
     if not paid:  # pragma: no cover - the offer proved this payable
         return False
-    item = push_spell(state, oid, pid, tuple(targets) + mode_refs, x=x, modes=modes)
+    item = push_spell(
+        state, oid, pid, tuple(targets) + mode_refs, x=x, modes=modes, exiles_instead=exiles
+    )
     fire(
         state,
         EventType.SPELL_CAST,
@@ -1954,11 +1959,22 @@ def op_cast_card(ctx: EffectContext, spec: Mapping[str, Any]):
     controller. ``as`` records the cards actually **cast**, which is what "if
     you do" reads: ``{"exists": {"binding": …}}``. A declined offer, a card
     with no payable line and a card a lock refuses all leave it empty.
+
+    ``exiles: true`` is "If that spell would be put into your graveyard,
+    exile it instead" -- Helmut Zemo, Mastermind, casting from a graveyard.
+    A replacement on the **spell**, so it holds however the spell leaves the
+    stack for a graveyard: resolving, fizzling or being countered. It rides
+    on the stack item (`StackItem.exiles_instead`) rather than the card, so
+    the same card cast later by other means goes back to the graveyard.
+    Not `cast_from_graveyard`, which is a fact about where a cast came from
+    that the card's own conditions read, and not flashback's
+    `graveyard_cast_exiles`, which is the card's own rider.
     """
 
+    exiles = bool(spec.get("exiles", False))
     cast: list[int] = []
     for oid in resolve_pool(ctx, spec.get("objects")):
-        if (yield from _cast_paying_mana_cost(ctx, ctx.controller, oid)):
+        if (yield from _cast_paying_mana_cost(ctx, ctx.controller, oid, exiles=exiles)):
             cast.append(oid)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = cast

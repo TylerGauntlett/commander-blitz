@@ -478,7 +478,12 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
                 # was cast as -- and a countered Adventure is a card in the
                 # graveyard, since 715.3c exiles it only *as it resolves*.
                 obj.showing_second_face = False
-                move_object(state, item.oid, Zone.GRAVEYARD, to_player=obj.owner, cause="countered")
+                # "If that spell would be put into your graveyard, exile it
+                # instead" is a replacement on the spell, not a resolution
+                # rider, so a countered one is exiled too (`cast_card`'s
+                # ``exiles``).
+                destination = Zone.EXILE if item.exiles_instead else Zone.GRAVEYARD
+                move_object(state, item.oid, destination, to_player=obj.owner, cause="countered")
 
 
 @register("reflexive_trigger")
