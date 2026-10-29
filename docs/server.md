@@ -244,7 +244,11 @@ both, and is its own module because the lobby needs a summary as much as the
 deck routes do; a pod importing a private helper out of `routes` would be the
 wrong direction of dependency. The `simplified` count reads the importer's
 coverage file per request, since an import writes it and a cached map would
-misreport the deck somebody just imported.
+misreport the deck somebody just imported. `commander_art` is the deck's own
+printing of its lead commander as a whole image ref, the way the board's
+per-seat art is: the lobby has no seat to read that from, so the tile, the
+dossier and the pod seat would otherwise draw the catalog's pick. A deck that
+chose none sends `null`.
 
 ## `art.py` — the browser never talks to Scryfall
 

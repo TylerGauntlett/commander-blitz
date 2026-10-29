@@ -8,6 +8,7 @@
 
 import type { Meta, StoryObj } from "@storybook/react-vite";
 import { expect, fn, userEvent, waitFor, within } from "storybook/test";
+import { stubImage } from "../../testing/art";
 import { expectFontFloor, expectHandheldFloors, settled } from "../../testing/asserts";
 import { cardResponse } from "../../testing/fixtures";
 import * as pods from "../../testing/pods";
@@ -94,6 +95,41 @@ export const ArtStillToFetch: Story = {
     expect(badge.getAttribute("aria-label")).toMatch(/not on this device/);
     expect(canvas.queryByTestId("deck-aesi-incomplete")).toBeNull();
     expectFontFloor(canvasElement);
+  },
+};
+
+/**
+ * A deck that chose its commander's printing shows that printing on its tile.
+ *
+ * The lobby has no seat for the board's per-seat art to read, so the choice
+ * rides on the summary. A deck that chose none keeps the catalog's picture.
+ */
+export const ChosenCommanderPrinting: Story = {
+  args: {
+    decks: pods.DECKS.map((deck) =>
+      deck.id === "aesi"
+        ? {
+            ...deck,
+            commander_art: {
+              card_id: deck.commanders[0],
+              art: stubImage("a chosen printing"),
+              artist: "Somebody Else",
+            },
+          }
+        : deck,
+    ),
+  },
+  play: async ({ canvasElement }) => {
+    const canvas = within(canvasElement);
+    const art = (deckId: string) =>
+      canvas.getByTestId(`deck-${deckId}`).querySelector<HTMLImageElement>("img.face__art-img")
+        ?.src;
+    await waitFor(() => expect(art("aesi")).toBe(stubImage("a chosen printing")));
+    const other = pods.DECKS.find((deck) => deck.id !== "aesi" && deck.commanders.length > 0);
+    expect(other).toBeDefined();
+    await waitFor(() =>
+      expect(art(other?.id ?? "")).toBe(stubImage(other?.commanders[0] ?? "")),
+    );
   },
 };
 

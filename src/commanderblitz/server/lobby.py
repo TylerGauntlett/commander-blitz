@@ -43,6 +43,7 @@ from .persist import JsonStore
 from .schemas import MAX_NAME_LENGTH, DeckSummary, PodSeatView, PodView, SeatConfig
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .art import ArtStore
     from .sessions import GameSession, SessionRegistry
 
 log = logging.getLogger(__name__)
@@ -423,9 +424,17 @@ class Pod:
 class PodRegistry:
     """All live pods in this process.  The analogue of ``SessionRegistry``."""
 
-    def __init__(self, sessions: SessionRegistry, store: JsonStore | None = None) -> None:
+    def __init__(
+        self,
+        sessions: SessionRegistry,
+        store: JsonStore | None = None,
+        art: ArtStore | None = None,
+    ) -> None:
         self.sessions = sessions
         self.store = store
+        #: Only for the seat's commander picture; a pod without one draws the
+        #: catalog's art.
+        self.art = art
         self._pods: dict[str, Pod] = {}
         self._lock = threading.RLock()
 
@@ -441,7 +450,7 @@ class PodRegistry:
         """
         data = self.sessions.data
         deck = data.decks.get(deck_id)
-        return None if deck is None else deck_summary(deck, data)
+        return None if deck is None else deck_summary(deck, data, self.art)
 
     def _known_deck(self, deck_id: str) -> None:
         if deck_id not in self.sessions.data.decks:

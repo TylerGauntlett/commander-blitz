@@ -129,7 +129,11 @@ export function PodSeat({
     that in one glance; the reading is a press away in the dossier.
   */
   const face = readable ? (
-    <CommanderCard cardId={deck.commanders[0] ?? null} variant="board" />
+    <CommanderCard
+      cardId={deck.commanders[0] ?? null}
+      variant="board"
+      art={deck.commander_art?.art}
+    />
   ) : seat.kind === "empty" ? (
     <CardBack mark="Empty" tone="empty" />
   ) : seat.kind === "open" ? (

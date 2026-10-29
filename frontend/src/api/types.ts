@@ -439,6 +439,12 @@ export interface DeckSummary {
    * it; `null` or absent means nobody checked.
    */
   complete?: boolean | null;
+  /**
+   * The deck's chosen printing of its lead commander -- a whole ref, so its
+   * artist is the deck's own. `null` or absent when it chose none, and the
+   * lobby draws the catalog's art.
+   */
+  commander_art?: { card_id: string; art: string | null; artist: string | null } | null;
 }
 
 /**

@@ -325,10 +325,13 @@ export function StaticCard({
   className,
   style,
   onSurface = false,
+  art,
 }: {
   card: CardView;
   variant?: CardVariant;
   className?: string;
+  /** Passed to `CardFace`: a deck's chosen printing, outside a game. */
+  art?: string | null;
   style?: CSSProperties;
   /**
    * The card sits on a surface that fades out as a whole -- the opening hand,
@@ -359,7 +362,7 @@ export function StaticCard({
       data-card-name={card.name}
     >
       <div className="card__pivot">
-        <CardFace card={card} variant={variant} />
+        <CardFace card={card} variant={variant} art={art} />
       </div>
     </motion.div>
   );

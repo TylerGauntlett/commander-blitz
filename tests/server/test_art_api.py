@@ -386,6 +386,46 @@ class TestThePrintingReachesTheRoute:
         assert seen == [("forest", CHOSEN)]
 
 
+#: The Edgar Markov printing the Markov Chains list chose on Moxfield
+#: (Innistrad Remastered #234), which is not the catalog's pick.
+EDGAR_INR = "a577ba08-0aa8-45be-aa83-d5078770127c"
+
+
+class TestADeckTileDrawsItsOwnCommander:
+    """The lobby has no seat, so a deck's chosen commander printing rides on its
+    summary -- the tile, the dossier and the pod seat all draw from it."""
+
+    def _summary(self, client, deck_id):
+        return next(d for d in client.get("/api/decks").json() if d["id"] == deck_id)
+
+    def test_the_chosen_printing_wins_over_the_catalogs(self, client, game_data):
+        ref = self._summary(client, "edgar_markov")["commander_art"]
+        assert ref["art"] == f"/art/edgar_markov.jpg?p={EDGAR_INR}"
+        assert client.app.state.art.images["edgar_markov"].scryfall_id != EDGAR_INR
+
+    def test_the_artist_is_the_decks_own(self, client):
+        """Never the catalog printing's illustrator under another painting."""
+        ref = self._summary(client, "edgar_markov")["commander_art"]
+        assert ref["artist"] == "Volkan Baǵa"
+        assert ref["artist"] != client.app.state.art.artist_for("edgar_markov")
+
+    def test_a_printing_the_catalog_agrees_with_stays_on_the_shipped_bytes(self, client):
+        ref = self._summary(client, "giada_font_of_hope")["commander_art"]
+        assert ref["art"] == "/art/giada_font_of_hope.jpg"
+
+    def test_a_deck_that_chose_none_falls_back(self, client):
+        """`null`, so the client draws the catalog's art as it does everywhere."""
+        assert self._summary(client, "isperia")["commander_art"] is None
+
+    def test_the_dossier_carries_it_too(self, client):
+        detail = client.get("/api/decks/edgar_markov").json()
+        assert detail["commander_art"]["art"] == f"/art/edgar_markov.jpg?p={EDGAR_INR}"
+
+    def test_a_pod_seat_carries_it_too(self, client):
+        summary = client.app.state.pods._deck_summary("edgar_markov")
+        assert summary.commander_art.art == f"/art/edgar_markov.jpg?p={EDGAR_INR}"
+
+
 #: Sheoldred, the Apocalypse, the card this pair of tests was written for.
 #: `art_pins.json` pins the Dominaria United printing; the Secret Lair is what
 #: the dedupe picked before the pin and what a deck imported before it recorded.

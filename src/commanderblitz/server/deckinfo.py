@@ -19,7 +19,14 @@ from commanderblitz.cards.importer import coverage_path
 from commanderblitz.cards.registry import DeckList, GameData
 
 from .art import ArtStore
-from .schemas import DeckDetail, DeckRatingsDTO, DeckSummary, ReleaseDTO, SignatureCardDTO
+from .schemas import (
+    DeckDetail,
+    DeckRatingsDTO,
+    DeckSummary,
+    ImageRefDTO,
+    ReleaseDTO,
+    SignatureCardDTO,
+)
 
 #: Mana values 1..6 then "7 or more".  A 0-drop is folded into the first bucket:
 #: it is a real card the deck can cast on turn one, and a column of its own for
@@ -47,7 +54,31 @@ def source_id_of(deck: DeckList) -> str:
     return found.group(1) if found else ""
 
 
-def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
+def commander_art(deck: DeckList, art: ArtStore | None) -> ImageRefDTO | None:
+    """The deck's own picture of its lead commander, or ``None``.
+
+    ``None`` when the deck named no printing for it -- a hand-built favorite,
+    an import from before printings were recorded -- and the client then draws
+    the catalog's art, exactly as it does for any other card.  A printing the
+    catalog already agrees with comes back as the plain card URL, so the tile
+    stays on the bytes the repository ships.
+
+    A whole ref, as the board's seat overrides are: the artist is the deck's
+    own or nothing, never the catalog printing's illustrator.
+    """
+    if art is None or not deck.commanders:
+        return None
+    lead = deck.commanders[0]
+    printing = deck.printings.get(lead) or {}
+    url = art.url_for(lead, printing=printing.get("scryfall_id"))
+    if not printing.get("scryfall_id") or url is None:
+        return None
+    return ImageRefDTO(card_id=lead, art=url, artist=printing.get("artist") or None)
+
+
+def deck_summary(deck: DeckList, data: GameData, art: ArtStore | None = None) -> DeckSummary:
+    """``art`` is optional only for callers that draw no commander: without it
+    ``commander_art`` is ``None`` and a tile falls back to the catalog's pick."""
     coverage = coverage_map()
     simplified = sum(
         qty
@@ -78,6 +109,7 @@ def deck_summary(deck: DeckList, data: GameData) -> DeckSummary:
         release=None if deck.release is None else ReleaseDTO(**deck.release),
         starred=deck.starred,
         complete=deck.complete,
+        commander_art=commander_art(deck, art),
     )
 
 
@@ -87,7 +119,7 @@ def deck_detail(deck: DeckList, data: GameData, art: ArtStore) -> DeckDetail:
     The curve, the land count and the swap count are *derived from the list*
     rather than authored, so they cannot drift away from the deck they describe.
     """
-    summary = deck_summary(deck, data)
+    summary = deck_summary(deck, data, art)
     curve = [0] * CURVE_BUCKETS
     lands = 0
     for card_id, qty in deck.cards:

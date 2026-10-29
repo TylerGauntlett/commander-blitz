@@ -110,7 +110,10 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
   // request, which react-query would dedupe anyway.
   const images = useUiStore((state) => state.images);
   const commander = deck?.commanders[0] ?? null;
-  const artist = commander ? artistOf(images, commander) : null;
+  // The deck's chosen printing wins, artist and all: crediting the catalog's
+  // illustrator under somebody else's painting is worse than no credit.
+  const chosen = deck?.commander_art ?? null;
+  const artist = chosen ? chosen.artist : commander ? artistOf(images, commander) : null;
 
   /* Escape and B alike, and only while this is the top of the stack -- the
      catalogue underneath opens this one and must not close with it. */
@@ -161,7 +164,7 @@ export function DeckDossier({ deckId, canTake, onTake, onClose }: Props) {
             <>
               <div className="dos__top">
                 <div className="dos__card">
-                  <CommanderCard cardId={commander} variant="big" />
+                  <CommanderCard cardId={commander} variant="big" art={chosen?.art} />
                   {/* Absent while the image map is still loading, and absent
                       forever on a server with no art. Both are "we do not
                       know", and neither is worth a placeholder. */}

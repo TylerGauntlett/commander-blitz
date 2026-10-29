@@ -165,7 +165,7 @@ def list_decks(request: Request, library: str | None = _LIBRARY) -> list[DeckSum
     """
     data = _registry(request).data
     return [
-        deck_summary(deck, data)
+        deck_summary(deck, data, _art(request))
         for deck in data.decks.values()
         if _visible_to(deck, library)
     ]
@@ -272,7 +272,7 @@ def import_deck(
         data = _registry(request).data
         deck = data.decks.get(report.deck_id)
     summary = (
-        deck_summary(deck, data)
+        deck_summary(deck, data, _art(request))
         if deck is not None
         else DeckSummary(
             id=report.deck_id,
@@ -419,7 +419,9 @@ def star_deck(
         raise HTTPException(status_code=403, detail=f"{deck_id} belongs to another library")
     importer.mark_starred(deck_id, body.starred)
     request.app.state.reload()
-    return deck_summary(_registry(request).data.decks[deck_id], _registry(request).data)
+    return deck_summary(
+        _registry(request).data.decks[deck_id], _registry(request).data, _art(request)
+    )
 
 
 @router.delete("/decks/{deck_id}", status_code=204)
