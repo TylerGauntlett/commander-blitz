@@ -37079,6 +37079,52 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "suspend"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever you attack, exile target nonland card from your graveyard with two time counters on it. If it doesn't have suspend, it gains suspend",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "doom_s_time_platform",
+      "mana_cost": "{4}",
+      "name": "Doom's Time Platform",
+      "oracle_text": "Whenever you attack, exile target nonland card from your graveyard with two time counters on it. If it doesn't have suspend, it gains suspend. (At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. If it's a creature, it has haste.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "choose_type",
               "prompt": "Choose a creature type"
             }
@@ -74939,6 +74985,95 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "binding": "hit"
+              },
+              "op": "suspend"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kang Prime enters or attacks, exile cards from the top of your library until you exile a nonland card. Put two time counters on that card. If it doesn't have suspend, it gains suspend.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "objects": {
+                "binding": "hit"
+              },
+              "op": "suspend"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Kang Prime enters or attacks, exile cards from the top of your library until you exile a nonland card. Put two time counters on that card. If it doesn't have suspend, it gains suspend.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "kang_prime",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}{B}",
+      "name": "Kang Prime",
+      "oracle_text": "Flying\nWhenever Kang Prime enters or attacks, exile cards from the top of your library until you exile a nonland card. Put two time counters on that card. If it doesn't have suspend, it gains suspend. (At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. If it's a creature, it has haste.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {

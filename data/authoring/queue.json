@@ -72012,12 +72012,12 @@
     },
     "Doom's Time Platform": {
       "edhrec_rank": 12063,
-      "gate": "template",
+      "gate": null,
       "name": "Doom's Time Platform",
-      "reason": "no template for: Whenever you attack, exile target nonland card from your graveyard with two time counters ",
+      "reason": "",
       "scryfall_id": "6f7935d1-d588-40ca-804f-bac56d986d74",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doombot Harbinger": {
@@ -145752,12 +145752,12 @@
     },
     "Kang Prime": {
       "edhrec_rank": 16601,
-      "gate": "template",
+      "gate": null,
       "name": "Kang Prime",
-      "reason": "no template for: Whenever enters or attacks, exile cards from the top of your library until you exile a non",
+      "reason": "",
       "scryfall_id": "88cf0311-d7e3-40bb-85fa-3cca973c5e44",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kang the Conqueror": {

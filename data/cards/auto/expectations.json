@@ -3345,6 +3345,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "doom_s_time_platform": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "door_of_destinies": {
     "counters": {
       "amount": 0,
@@ -6651,6 +6655,16 @@
       "kind": "lore"
     },
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "kang_prime": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
     "zone": "battlefield"
   },
   "kang_temporal_tyrant": {
