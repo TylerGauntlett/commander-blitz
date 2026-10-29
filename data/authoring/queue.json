@@ -210032,12 +210032,12 @@
     },
     "Puppet Master, String Puller": {
       "edhrec_rank": 13756,
-      "gate": "template",
+      "gate": null,
       "name": "Puppet Master, String Puller",
-      "reason": "no template for: Whenever you attack, goad target creature an opponent controls. It can't block this turn",
+      "reason": "",
       "scryfall_id": "ab888daa-1161-4917-bca0-efd5c430b2d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Puppet Strings": {

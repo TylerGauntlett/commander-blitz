@@ -9821,6 +9821,10 @@
     },
     "zone": "graveyard"
   },
+  "puppet_master_string_puller": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "putrefy": {
     "battlefield_count": 31,
     "graveyard_size": {
