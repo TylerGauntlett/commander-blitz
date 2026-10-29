@@ -1514,6 +1514,13 @@ class CardModel(BaseModel):
     #: card is the *back* face from the moment it goes on the stack, so its
     #: name, types and effects are the back face's and not the front's.
     graveyard_cast_transformed: bool = False
+    #: **Mayhem** (702.187a): "You may cast this card from your graveyard for
+    #: {cost} if you discarded it this turn. Timing rules still apply." The
+    #: printed mana price. Compiled onto the `graveyard_cost` slot with escape's
+    #: destination -- the card goes wherever it normally would -- plus the one
+    #: condition mayhem adds: this object was discarded this turn. Refused
+    #: beside `graveyard_cost`/`flashback`, `graveyard_cast` and `retrace`.
+    mayhem: str | None = None
     #: **Dredge N** (702.51a): "If you would draw a card, you may instead return
     #: this card from your graveyard to your hand and mill N." The number is the
     #: mill, and it is also the price -- a player with fewer than N cards left is

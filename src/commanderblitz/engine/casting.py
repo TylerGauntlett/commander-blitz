@@ -282,7 +282,15 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # Flashback is the same widening with a different price: an alternative
         # cost that *replaces* the printed one, so it is offered as its own
         # variant rather than folded into the ordinary cast.
-        if card.flashback is not None and can_pay(state, pid, card.flashback.without_mana(), oid):
+        #
+        # Mayhem (702.187a) is this line with one condition: "if **you**
+        # discarded it this turn". Asked of the ledger by oid, so the object
+        # must be the one the discard made (400.7) and the discarder the caster.
+        if (
+            card.flashback is not None
+            and (not card.mayhem or state.turn_ledger.discarded.get(oid) == pid)
+            and can_pay(state, pid, card.flashback.without_mana(), oid)
+        ):
             fb_tuples = enumerate_target_tuples(
                 state,
                 pid,
@@ -1877,7 +1885,7 @@ def _cast_variant(
         # count it carries is a floor the cast asks the player to meet, not a
         # price the row has to tell apart from another row.
         if flashback:
-            label_base += " (flashback)"
+            label_base += " (mayhem)" if card.mayhem else " (flashback)"
         if emerge_oid is not None:
             label_base += f" (emerge, sacrificing {state.card(emerge_oid).name})"
         if extra_generic:

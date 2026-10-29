@@ -3180,6 +3180,64 @@
       ]
     },
     {
+      "id": "t_mayhem_brute",
+      "name": "Test Mayhem Brute",
+      "oracle_text": "Mayhem {1}{R} (You may cast this card from your graveyard for {1}{R} if you discarded it this turn. Timing rules still apply.)",
+      "mana_cost": "{4}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ogre"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "mayhem": "{1}{R}"
+    },
+    {
+      "id": "t_mayhem_bolt",
+      "name": "Test Mayhem Bolt",
+      "oracle_text": "Test Mayhem Bolt deals 2 damage to target player.\nMayhem {R} (You may cast this card from your graveyard for {R} if you discarded it this turn. Timing rules still apply.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "mayhem": "{R}",
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_discard_one",
+      "name": "Test Discard One",
+      "oracle_text": "Discard a card.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
       "id": "t_escapist",
       "name": "Test Escapist",
       "oracle_text": "Test Escapist deals 2 damage to any target.\nEscape—{1}{R}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",

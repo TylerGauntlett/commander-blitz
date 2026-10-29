@@ -1420,6 +1420,11 @@ class CardDef:
     graveyard_cast_exiles: bool = True
     #: Disturb: a graveyard cast that arrives on the **back** face.
     graveyard_cast_transformed: bool = False
+    #: Mayhem (702.187a): the graveyard cost above is the mayhem price, and it
+    #: is offered only while this object is in the graveyard because its
+    #: owner discarded it this turn (`TurnLedger.discarded`). The card goes
+    #: wherever it normally would, so `graveyard_cast_exiles` is False beside it.
+    mayhem: bool = False
     #: Dredge N -- the mill that replaces a draw. See `engine/replacements.py`.
     dredge: int = 0
     #: Toxic N (702.164) -- the total N of every printed toxic instance, read

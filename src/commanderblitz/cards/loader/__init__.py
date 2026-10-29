@@ -1736,8 +1736,31 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"the same field, and a card with two prices from the graveyard has "
             f"no answer to what it costs from there"
         )
+    # Mayhem (702.187a) is the same slot once more: an alternative price from
+    # the graveyard, with escape's destination (the card goes wherever it
+    # normally would) and one condition the others lack -- legality offers it
+    # only while `TurnLedger.discarded` holds this object. Everything mayhem
+    # implies is the rule's, so a card naming any of the slot's other keys
+    # beside it would be two answers to one question.
+    if model.mayhem is not None:
+        if model.flashback is not None or model.graveyard_cost is not None:
+            raise DslError(
+                f"{where}: give 'mayhem' or a graveyard cost, not both -- mayhem "
+                f"is the graveyard cost, offered only after a discard"
+            )
+        if "graveyard_cast" in model.model_fields_set or model.graveyard_cast_transformed:
+            raise DslError(
+                f"{where}: 'mayhem' already says where the card goes -- wherever "
+                f"it normally would -- so 'graveyard_cast' and "
+                f"'graveyard_cast_transformed' have nothing to add"
+            )
     graveyard_spec = model.graveyard_cost or model.flashback
-    flashback = Cost.from_spec(graveyard_spec.model_dump()) if graveyard_spec else None
+    if graveyard_spec is not None:
+        flashback = Cost.from_spec(graveyard_spec.model_dump())
+    elif model.mayhem is not None:
+        flashback = Cost.from_spec({"mana": model.mayhem})
+    else:
+        flashback = None
     if flashback is not None:
         if not flashback.mana.text:
             # The mana half *replaces* the printed cost, so without it the card
@@ -1973,7 +1996,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         emerge_subtype=model.emerge_subtype,
         alternative_cost=alternative_cost,
         alternative_condition=alternative_condition,
-        graveyard_cast_exiles=model.graveyard_cast == "exile",
+        graveyard_cast_exiles=model.graveyard_cast == "exile" and model.mayhem is None,
+        mayhem=model.mayhem is not None,
         ascend=model.ascend,
         suspend=suspend,
         impending=impending,

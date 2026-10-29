@@ -332,6 +332,8 @@ def unimplemented_mechanics(card: CardDef, printed: str) -> list[str]:
         declared.add("affinity")
     if card.flashback is not None:
         declared.add("flashback")
+    if card.mayhem:
+        declared.add("mayhem")
 
     out: list[str] = []
     for line in printed.split("\n"):

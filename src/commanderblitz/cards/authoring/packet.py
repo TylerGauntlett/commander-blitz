@@ -109,6 +109,9 @@ CARD_LEVEL_COST_KEYS = (
     "impending",
     "kicker",
     "madness",
+    #: "Mayhem {4}{R}": the price from the graveyard, offered only after this
+    #: card was discarded this turn. Never beside `graveyard_cost`.
+    "mayhem",
     "morph",
     "multikicker",
     "mutate",

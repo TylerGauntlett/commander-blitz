@@ -22,7 +22,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Grantable statics](#grantable-statics) | 39 |
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
-| [Card-level costs](#card-level-costs) | 30 |
+| [Card-level costs](#card-level-costs) | 31 |
 | [Keywords](#keywords) | 41 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 5 |
@@ -747,6 +747,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `impending` | Impending N and its cost. | [Impending — a creature that is not one until it counts down](card-dsl-cookbook.md#impending--a-creature-that-is-not-one-until-it-counts-down) |
 | `kicker` | Kicker cost. | [Kicker](card-dsl-cookbook.md#kicker) |
 | `madness` | Madness cost. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
+| `mayhem` | Mayhem cost: castable from the graveyard if discarded this turn. | [Mayhem](card-dsl-cookbook.md#mayhem) |
 | `morph` | Morph cost. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `multikicker` | Multikicker cost. | [Multikicker](card-dsl-cookbook.md#multikicker) |
 | `mutate` | Mutate cost. | [Mutate — two cards, one permanent, and one synthesised CardDef](card-dsl-cookbook.md#mutate--two-cards-one-permanent-and-one-synthesised-carddef) |

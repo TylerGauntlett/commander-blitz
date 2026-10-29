@@ -948,6 +948,7 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "gift": ("The gift promised (a noun phrase).", H_GIFT),
     "kicker": ("Kicker cost.", "Kicker"),
     "madness": ("Madness cost.", H_DREDGE),
+    "mayhem": ("Mayhem cost: castable from the graveyard if discarded this turn.", "Mayhem"),
     "morph": ("Morph cost.", H_MORPH),
     "multikicker": ("Multikicker cost.", "Multikicker"),
     "escalate": ("Escalate cost, paid once per mode beyond the first.", "Escalate"),

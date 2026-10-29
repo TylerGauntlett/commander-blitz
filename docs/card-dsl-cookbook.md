@@ -4944,6 +4944,34 @@ exiled as it resolves the way flashback is. The near miss is `graveyard_cost`
 with the printed mana, which has no `condition`: the card would be castable from
 the graveyard with no Zombie at all.
 
+#### Mayhem
+
+"Mayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if you
+discarded it this turn. Timing rules still apply.)" is one card-level key, the
+printed price:
+
+```jsonc
+// Abomination, World Ravager
+"mayhem": "{4}{R}"
+```
+
+It compiles onto the graveyard-cost slot above with escape's destination: a
+permanent resolves onto the battlefield and an instant or sorcery goes back to
+the graveyard, with no exile rider. The one thing mayhem adds is the condition.
+Legality offers the line only while `TurnLedger.discarded` maps this object to
+the caster. `primitives.discard_cards` writes the entry after the move, and only
+when the card really reached a graveyard (a Rest in Peace exile leaves nothing
+to cast). `zones.move_object` drops it at the next zone change, and the ledger
+clears with the turn. So a card milled or put into the graveyard by any other
+route is not castable this way. Neither is one cast with mayhem that resolves
+back into the graveyard, because that card is a new object (400.7).
+
+The loader refuses `mayhem` beside `graveyard_cost`/`flashback`, `graveyard_cast`,
+`graveyard_cast_transformed` or `retrace`. Each of those is a second answer to
+what the card costs from the graveyard or where it goes. The near miss is
+`graveyard_cost` plus `graveyard_cast: "graveyard"`, which has no condition:
+the card would be castable from the graveyard every turn, however it got there.
+
 #### An *alternative* cost that is not mana
 
 ```jsonc

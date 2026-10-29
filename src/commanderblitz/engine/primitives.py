@@ -119,6 +119,11 @@ def discard_cards(
         if obj is None or obj.zone is not Zone.HAND:
             continue
         move_object(state, oid, Zone.GRAVEYARD, to_player=pid, cause="discard")
+        # Mayhem's "if you discarded it this turn" (702.187a): recorded on the
+        # object that arrived, and only if a graveyard is where it arrived --
+        # Rest in Peace's exile leaves nothing to cast. See `TurnLedger.discarded`.
+        if obj.zone is Zone.GRAVEYARD:
+            state.turn_ledger.discarded[oid] = pid
         fire(
             state,
             EventType.DISCARD,

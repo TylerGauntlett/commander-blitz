@@ -1688,6 +1688,21 @@ class TurnLedger:
     #: whose modes are reordered cannot re-open a spent one.
     modes_chosen: dict[int, set[str]] = field(default_factory=dict)
 
+    #: object id -> the player who **discarded** it this turn, for every card a
+    #: discard put into a graveyard (mayhem, 702.187: "if you discarded it this
+    #: turn").
+    #:
+    #: `modes_chosen`'s lifetime and for its reason: the permission is about the
+    #: one object the discard made (400.7), so `zones.move_object` drops the
+    #: entry at the next zone change -- a card cast with mayhem that resolves
+    #: back into the graveyard, or one returned to hand and discarded again
+    #: next turn, is a new object nobody discarded this turn. Written by
+    #: `primitives.discard_cards` *after* the move, and only when the card
+    #: really reached a graveyard: a discard Rest in Peace sent to exile, or
+    #: madness's replacement, put nothing there to cast. Not `object_flags`,
+    #: which deliberately survives the zone change.
+    discarded: dict[int, int] = field(default_factory=dict)
+
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
     #:
@@ -1809,6 +1824,7 @@ class TurnLedger:
         self.ability_resolutions.clear()
         self.object_flags.clear()
         self.modes_chosen.clear()
+        self.discarded.clear()
         self.permanents_entered.clear()
         self.combats = 0
 
