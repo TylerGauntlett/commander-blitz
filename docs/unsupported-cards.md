@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**91 cards** blocked by **74** capabilities.
+**90 cards** blocked by **73** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [damage-redirection](#damage-redirection) | 1 | 15560 | replacement |
-| [dealt-damage-batched](#dealt-damage-batched) | 1 | 17089 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delayed-trigger-on-target-dies-move-counters](#delayed-trigger-on-target-dies-move-counters) | 1 | 15560 | op |
 | [delayed-trigger-this-combat](#delayed-trigger-this-combat) | 1 | 21583 | engine |
@@ -568,20 +567,6 @@ Blocks **1** card.
 - **Heroic Sacrifice** (rank 15560) — `heroic_sacrifice`
   - Choose target creature you control. Until end of turn, all damage that would be dealt to you and creatures you control is dealt to the chosen creature instead (if it's still on the battlefield).
   - When that creature dies this turn, put its counters on up to one target creature you control and draw a card.
-
-</details>
-
-## dealt-damage-batched
-
-Blocks **1** card.
-
-- **(trigger_event)** a 'this permanent is dealt damage' trigger that fires once per simultaneous damage event (e.g. one combat damage step, 510.2) with its `amount` binding the TOTAL damage dealt to it in that event across all sources, so 'for the first time each turn' plus 'put that many' counts every blocker's damage, not just the first source's
-  <br>Why the existing vocabulary won't do: `dealt_damage` with `source: self` fires one DAMAGE_DEALT per (source, recipient), so `max_per_turn: 1` keeps only the first source's event and `{binding: amount}` reads that one source's damage; a Hercules blocked by two creatures would get counters for one blocker only. `batched` keys on `event.data.batch`, which damage events do not carry, and would still bind only the first event's amount. `damage_taken_this_turn` sums damage to players, not to a permanent.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hercules, Olympian Hero** (rank 17089) — `hercules_olympian_hero`
-  - Whenever Hercules is dealt damage for the first time each turn, put that many +1/+1 counters on him. (He must survive the damage to get the counters.)
 
 </details>
 

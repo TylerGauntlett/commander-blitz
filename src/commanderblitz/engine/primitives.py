@@ -666,8 +666,15 @@ def damage_permanent(
     source_oid: int | None,
     *,
     is_combat: bool = False,
+    batch: int | None = None,
 ) -> int:
-    """Mark damage on a permanent.  State-based actions destroy it later."""
+    """Mark damage on a permanent.  State-based actions destroy it later.
+
+    ``batch`` is the simultaneous damage event this damage belongs to, put on
+    `DAMAGE_DEALT` for a ``batched`` `dealt_damage` trigger to group by.
+    Combat damage passes the step's own (510.2); anything else is part of the
+    effect op or cost payment dealing it, `state.event_batch`.
+    """
     if amount <= 0:
         return 0
     obj = state.objects.get(oid)
@@ -932,6 +939,7 @@ def damage_permanent(
         amount=amount,
         to="permanent",
         combat=is_combat,
+        batch=state.event_batch if batch is None else batch,
     )
     _apply_lifelink(state, source_oid, amount)
     return amount

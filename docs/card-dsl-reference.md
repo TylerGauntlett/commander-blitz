@@ -419,7 +419,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `deals_combat_damage_to_planeswalker` | `combat_damage_to_planeswalker` | A creature deals combat damage to a planeswalker. | ["…deals combat damage to a player or planeswalker"](card-dsl.md#deals-combat-damage-to-a-player-or-planeswalker) |
 | `deals_combat_damage_to_player` | `combat_damage_to_player` | A creature deals combat damage to a player. | [Triggers](card-dsl.md#triggers) |
 | `deals_damage_to_player` | `damage_dealt` | A source deals any damage to a player. | [Triggers](card-dsl.md#triggers) |
-| `dealt_damage` | `damage_dealt` | A permanent is dealt damage. | [Triggers](card-dsl.md#triggers) |
+| `dealt_damage` | `damage_dealt` | A permanent is dealt damage; `batched` fires once per simultaneous damage event, `amount` its total. | ["Whenever one or more …" — batched](card-dsl-cookbook.md#whenever-one-or-more---batched) |
 | `dies` | `dies` | A permanent dies. | [Triggers](card-dsl.md#triggers) |
 | `discard` | `discard` | A player discards a card. | [Triggers](card-dsl.md#triggers) |
 | `draw` | `draw` | A player draws a card. | [Triggers](card-dsl.md#triggers) |

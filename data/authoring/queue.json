@@ -126412,12 +126412,12 @@
     },
     "Hercules, Olympian Hero": {
       "edhrec_rank": 17089,
-      "gate": "template",
+      "gate": null,
       "name": "Hercules, Olympian Hero",
-      "reason": "no template for: Whenever Hercules attacks, put a +1/+1 counter on him. He gains indestructible until end o",
+      "reason": "",
       "scryfall_id": "49397fee-6f78-48cb-ae5b-d18f627f6700",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hercules, Prince of Power": {

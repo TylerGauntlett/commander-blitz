@@ -1510,6 +1510,15 @@ def deal_combat_damage(
     # would otherwise be answering a question its own first hit had changed.
     monarch_before = state.monarch
 
+    # 510.2: all of this step's combat damage is dealt at once, so it is one
+    # batch -- what a `batched` `dealt_damage` trigger groups by, and sums, so
+    # a creature blocked by two others is dealt damage once, for the total.
+    # Captured here and passed down rather than read as each point lands, so
+    # nothing a replacement runs mid-step can split the event. A first-strike
+    # step is a batch of its own (510.4).
+    state.event_batch += 1
+    batch = state.event_batch
+
     # What each source actually dealt, after prevention -- "deals combat damage"
     # is about damage that was dealt, and a fully prevented blow is none.
     dealt: dict[int, int] = {}
@@ -1521,7 +1530,8 @@ def deal_combat_damage(
             )
         elif assignment.to_object is not None:
             amount = damage_permanent(
-                state, assignment.to_object, assignment.amount, assignment.source, is_combat=True
+                state, assignment.to_object, assignment.amount, assignment.source,
+                is_combat=True, batch=batch,
             )
         if amount and assignment.source is not None:
             dealt[assignment.source] = dealt.get(assignment.source, 0) + amount

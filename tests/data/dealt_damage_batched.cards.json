@@ -1,0 +1,137 @@
+{
+  "_comment": "Shapes for tests/unit/damage/test_dealt_damage_batched.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_ddb_hero is the second ability of Hercules, Olympian Hero on a {G} 2/5: the first time each turn it is dealt damage, that many +1/+1 counters. t_ddb_grower is the same line without the per-turn cap, so a second damage event visibly fires it again. t_ddb_near_miss is t_ddb_hero without `batched`, the near miss that reads one source's damage. The bears, the first striker and the bolt come from testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_ddb_hero",
+      "name": "Test Labouring Hero",
+      "oracle_text": "Whenever this creature is dealt damage for the first time each turn, put that many +1/+1 counters on it.",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "power": 2,
+      "toughness": 5,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage for the first time each turn, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self",
+            "batched": true,
+            "max_per_turn": 1
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "binding": "amount"
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ddb_grower",
+      "name": "Test Battered Grower",
+      "oracle_text": "Whenever this creature is dealt damage, put that many +1/+1 counters on it.",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Beast"
+      ],
+      "power": 2,
+      "toughness": 5,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self",
+            "batched": true
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "binding": "amount"
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ddb_near_miss",
+      "name": "Test First-Blow Hero",
+      "oracle_text": "Whenever this creature is dealt damage for the first time each turn, put that many +1/+1 counters on it.",
+      "mana_cost": "{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "power": 2,
+      "toughness": 5,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature is dealt damage for the first time each turn, put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "dealt_damage",
+            "source": "self",
+            "max_per_turn": 1
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "binding": "amount"
+              },
+              "objects": {
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

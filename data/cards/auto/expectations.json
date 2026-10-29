@@ -5839,6 +5839,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hercules_olympian_hero": {
+    "zone": "battlefield"
+  },
   "herd_heirloom": {
     "zone": "battlefield"
   },
