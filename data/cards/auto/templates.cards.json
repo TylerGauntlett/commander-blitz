@@ -28412,6 +28412,50 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "exile",
+                  "playable": "this_turn"
+                }
+              ],
+              "op": "may",
+              "prompt": "Exile the discarded card with Containment Construct? You may play it this turn."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you discard a card, you may exile that card from your graveyard. If you do, you may play that card this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "discard"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "containment_construct",
+      "mana_cost": "{2}",
+      "name": "Containment Construct",
+      "oracle_text": "Whenever you discard a card, you may exile that card from your graveyard. If you do, you may play that card this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -79738,6 +79782,154 @@
         "Ally"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "hit",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until"
+            },
+            {
+              "amount": {
+                "minus": [
+                  {
+                    "max": [
+                      {
+                        "mana_value_of": {
+                          "binding": "subject"
+                        }
+                      },
+                      {
+                        "mana_value_of": {
+                          "objects": {
+                            "binding": "hit"
+                          }
+                        }
+                      }
+                    ]
+                  },
+                  {
+                    "min": [
+                      {
+                        "mana_value_of": {
+                          "binding": "subject"
+                        }
+                      },
+                      {
+                        "mana_value_of": {
+                          "objects": {
+                            "binding": "hit"
+                          }
+                        }
+                      }
+                    ]
+                  }
+                ]
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "subject",
+                "zone": "stack"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "hit"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast that card without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your first instant, sorcery, or Villain spell each turn, exile it, then exile cards from the top of your library until you exile a nonland card. Lady Loki deals damage to each opponent equal to the difference between that spell's mana value and that nonland card's mana value. You may cast that card without paying its mana cost.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "spells_cast_this_turn": {
+                  "filter": {
+                    "any_of": [
+                      {
+                        "any_types": [
+                          "Instant",
+                          "Sorcery"
+                        ]
+                      },
+                      {
+                        "subtypes": [
+                          "Villain"
+                        ]
+                      }
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "any_types": [
+                    "Instant",
+                    "Sorcery"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Villain"
+                  ]
+                }
+              ]
+            },
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "lady_loki_agent_of_chaos",
+      "mana_cost": "{5}{R}",
+      "name": "Lady Loki, Agent of Chaos",
+      "oracle_text": "Whenever you cast your first instant, sorcery, or Villain spell each turn, exile it, then exile cards from the top of your library until you exile a nonland card. Lady Loki deals damage to each opponent equal to the difference between that spell's mana value and that nonland card's mana value. You may cast that card without paying its mana cost.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "God",
+        "Sorcerer",
+        "Villain"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

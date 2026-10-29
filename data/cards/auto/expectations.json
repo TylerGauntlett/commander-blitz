@@ -2529,6 +2529,10 @@
   "contagious_nim": {
     "zone": "battlefield"
   },
+  "containment_construct": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "contaminated_aquifer": {
     "zone": "battlefield"
   },
@@ -7036,6 +7040,10 @@
     "zone": "battlefield"
   },
   "kyoshi_warrior_guard": {
+    "zone": "battlefield"
+  },
+  "lady_loki_agent_of_chaos": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lady_orca": {

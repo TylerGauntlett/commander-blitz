@@ -52502,12 +52502,12 @@
     },
     "Containment Construct": {
       "edhrec_rank": 1868,
-      "gate": "template",
+      "gate": null,
       "name": "Containment Construct",
-      "reason": "no template for: Whenever you discard a card, you may exile that card from your graveyard. If you do, you m",
+      "reason": "",
       "scryfall_id": "050c52b1-5dea-4aae-aa32-e501d61b56e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Containment Membrane": {
@@ -153822,12 +153822,12 @@
     },
     "Lady Loki, Agent of Chaos": {
       "edhrec_rank": 18077,
-      "gate": "compile",
+      "gate": null,
       "name": "Lady Loki, Agent of Chaos",
-      "reason": "lady_loki_agent_of_chaos.abilities[0]: 'nth' on a spell_cast trigger counts earlier spells by their printed faces, so its filter cannot use ['any_of'] (allowed: ['any_types', 'colorless', 'colors', 'keywords', 'min_colors', 'name', 'not_keywords', 'not_types', 'subtypes', 'supertypes', 'types'])",
+      "reason": "",
       "scryfall_id": "44ac85d4-0429-4813-b7fe-eed1f6575b7d",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lady Octopus, Inspired Inventor": {
