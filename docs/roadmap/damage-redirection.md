@@ -6,7 +6,7 @@ effort: M
 impact: medium
 why: Heroic Sacrifice, the last card the Avengers Assemble precon lacks, waits on it, and every redirection card after it
 depends_on: []
-status: proposed
+status: in_progress
 ---
 
 ## Today

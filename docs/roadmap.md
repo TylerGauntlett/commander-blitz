@@ -166,6 +166,8 @@ on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
 
+**In progress:** [Damage redirected to a chosen creature until end of turn](#damage-redirected-to-a-chosen-creature-until-end-of-turn).
+
 **Ready now, best first:**
 
 1. [Doom Prevails (Marvel Super Heroes Commander)](#doom-prevails-marvel-super-heroes-commander) — L, high
@@ -265,14 +267,13 @@ same list, and `/extend-roadmap` starts at the top of it.
 95. [Outcomes as data](#outcomes-as-data) — M, medium
 96. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 97. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
-98. [Damage redirected to a chosen creature until end of turn](#damage-redirected-to-a-chosen-creature-until-end-of-turn) — M, medium
-99. [Replays and sharing](#replays-and-sharing) — M, medium
-100. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-101. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-102. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-103. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-104. [Archidekt import](#archidekt-import) — S, low
-105. [Sound](#sound) — S, low
+98. [Replays and sharing](#replays-and-sharing) — M, medium
+99. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+100. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+101. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+102. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+103. [Archidekt import](#archidekt-import) — S, low
+104. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -434,7 +435,7 @@ and the mute setting's e2e assertion still passes.
 
 ### Damage redirected to a chosen creature until end of turn
 
-Effort **M** · Impact **medium**, Heroic Sacrifice, the last card the Avengers Assemble precon lacks, waits on it, and every redirection card after it · Depends on nothing.
+Effort **M** · Impact **medium**, Heroic Sacrifice, the last card the Avengers Assemble precon lacks, waits on it, and every redirection card after it · Depends on nothing · **In progress**.
 
 #### Today
 
