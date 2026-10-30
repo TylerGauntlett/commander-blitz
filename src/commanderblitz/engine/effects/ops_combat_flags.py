@@ -22,6 +22,7 @@ from ..structs import (
     TargetRef,
 )
 from ..temp_effects import (
+    forbid_attack_while_counter,
     forbid_block,
     forbid_sacrifice,
     goad_creature,
@@ -603,9 +604,34 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     Nothing is written on any permanent, and that is the point: a resolving
     sorcery leaves no source on the battlefield to hang a static off, which is
     the first of the three reasons the `cant_attack` static could not do this job.
+
+    ``objects`` in place of ``attacker`` names **creatures** rather than a
+    player: Promise of Loyalty's "each of those creatures can't attack you or
+    planeswalkers you control for as long as it has a vow counter on it". Its
+    one duration is ``while_counter``, with ``counter`` naming the kind, and
+    each creature carries the prohibition itself (`structs.AttackMark`) -- so a
+    creature that changes hands still may not attack ``defender``, and one that
+    leaves is a new object (400.7). A creature without the counter gets nothing:
+    its duration is already over.
     """
 
     duration = str(spec.get("duration", "this_turn"))
+    if "objects" in spec:
+        counter = str(spec.get("counter", ""))
+        walkers = bool(spec.get("planeswalkers", False))
+        defenders = _players(ctx, spec.get("defender"))
+        for oid in resolve_pool(ctx, spec.get("objects") or {}):
+            for defender in defenders:
+                forbid_attack_while_counter(
+                    ctx.state,
+                    oid,
+                    defender,
+                    counter,
+                    planeswalkers=walkers,
+                    source=ctx.source_oid,
+                )
+        yield from ()
+        return
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_attack_player duration {duration!r}")
     planeswalkers = bool(spec.get("planeswalkers", False))

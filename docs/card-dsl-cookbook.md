@@ -4254,6 +4254,37 @@ if able" is a per-creature restriction on *which* defender, and unlike this one
 it does reach planeswalkers, which is why `attack_target_forbidden` is told which
 kind of attack it is being asked about rather than inferring it.
 
+
+### `objects` — "those creatures can't attack you … for as long as it has a vow counter"
+
+    Promise of Loyalty — "Each player puts a vow counter on a creature they
+    control and sacrifices the rest. Each of those creatures can't attack you or
+    planeswalkers you control for as long as it has a vow counter on it."
+
+```jsonc
+{ "op": "cant_attack_player", "objects": { "binding": "kept" },
+  "defender": "you", "duration": "while_counter", "counter": "vow",
+  "planeswalkers": true }
+```
+
+`objects` in place of `attacker` names **creatures** instead of a player, and
+each one carries the prohibition itself as a `structs.AttackMark`, read beside
+the table in `combat._attack_prohibited`. So it follows the creature to a new
+controller, and a creature that leaves and returns is a new object without it
+(400.7). `planeswalkers` means what it means on the table: the defender's
+planeswalkers and battles are closed as well.
+
+The creature form has one clock, `while_counter`, with `counter` naming the
+kind: the mark stands while the creature has one and is dropped when the last
+one goes (`GameObject.remove_counter`), so a counter put back later does not
+revive it (611.2b). A creature without the counter at resolution gets nothing.
+The loader refuses `objects` beside `attacker`, any other `duration` with
+`objects`, a missing `counter`, and `while_counter` without `objects`.
+
+The `cant_attack_you` static is the near miss and is scoped to the seat of the
+permanent printing it: granted to another player's creature, "you" would be
+that creature's own controller.
+
 ## Goad
 
     Taunt from the Rampart — "Goad all creatures your opponents control. Until

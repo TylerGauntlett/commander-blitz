@@ -278,7 +278,8 @@ ATTACK_MARK_DURATIONS = ("end_of_your_next_turn",)
 @dataclass(frozen=True)
 class AttackMark:
     """"Target creature attacks **that player** each combat if able." A
-    requirement written on one creature that names the defending player.
+    requirement written on one creature that names the defending player --
+    or, with ``prohibition``, "those creatures can't attack you".
 
     The per-creature counterpart of :class:`AttackRestriction`, which names a
     pair of *players* and no creature: this names one creature and one seat.
@@ -295,19 +296,39 @@ class AttackMark:
     ``until_end_of_turn_of`` and ``since_turn`` are `TempEffect`'s "until the
     end of your next turn" clock, read the same way: the entry ends in the
     cleanup of the first of that seat's turns to begin after ``since_turn``.
+
+    ``prohibition`` turns the mark round: Promise of Loyalty's "each of those
+    creatures can't attack you or planeswalkers you control for as long as it
+    has a vow counter on it". Read by `combat._attack_prohibited` beside the
+    player-pair `AttackRestriction`, so it closes ``defender``'s seat -- and,
+    with ``planeswalkers``, every permanent ``defender`` may be attacked
+    through, which is that table's flag with that table's meaning. Its clock is
+    ``while_counter``: the mark stands while the creature has a counter of
+    that kind and is dropped the moment the last one goes
+    (`GameObject.remove_counter`), so a counter put back later does not revive
+    a duration that has ended (611.2b).
     """
 
-    #: The player the creature must attack.
+    #: The player the creature must (or, with ``prohibition``, may not) attack.
     defender: int
-    #: The seat whose next turn's end ends the mark.
-    until_end_of_turn_of: int
+    #: The seat whose next turn's end ends the mark; ``None`` on a
+    #: ``while_counter`` mark.
+    until_end_of_turn_of: int | None = None
     #: The turn the mark was made in.
-    since_turn: int
+    since_turn: int = 0
     #: The permanent or spell that installed it, for the log.
     source: int | None = None
+    #: "Can't attack" rather than "attacks if able".
+    prohibition: bool = False
+    #: A prohibition that also closes ``defender``'s planeswalkers and battles.
+    planeswalkers: bool = False
+    #: "For as long as it has a <kind> counter on it": the counter kind.
+    while_counter: str | None = None
 
     def ends_now(self, active_player: int, turn: int) -> bool:
         """Is the cleanup step of this turn the end of the mark's duration?"""
+        if self.until_end_of_turn_of is None:
+            return False
         return self.until_end_of_turn_of == active_player and self.since_turn < turn
 
     def to_dict(self) -> dict[str, Any]:
@@ -316,6 +337,9 @@ class AttackMark:
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,
             "source": self.source,
+            "prohibition": self.prohibition,
+            "planeswalkers": self.planeswalkers,
+            "while_counter": self.while_counter,
         }
 
 

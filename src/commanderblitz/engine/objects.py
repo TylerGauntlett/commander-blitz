@@ -1248,6 +1248,7 @@ class GameObject:
         new = self.counters.get(kind, 0) + amount
         if new <= 0:
             self.counters.pop(kind, None)
+            self._last_counter_gone(kind)
             return max(new, 0) if amount > 0 else 0
         self.counters[kind] = new
         return new
@@ -1257,9 +1258,21 @@ class GameObject:
         taken = min(have, amount)
         if have - taken <= 0:
             self.counters.pop(kind, None)
+            self._last_counter_gone(kind)
         else:
             self.counters[kind] = have - taken
         return taken
+
+    def _last_counter_gone(self, kind: str) -> None:
+        """End the "for as long as it has a <kind> counter" attack marks.
+
+        Here, where every road to removing a counter meets, rather than in one
+        primitive: the duration ends when the last counter goes (611.2b), and a
+        counter put on again later must not revive it -- which a live "has the
+        counter?" read alone would do.
+        """
+        if self.attack_marks:
+            self.attack_marks = [m for m in self.attack_marks if m.while_counter != kind]
 
     # -- convenience ----------------------------------------------------------
 

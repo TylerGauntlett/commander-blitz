@@ -110,8 +110,14 @@ def can_attack(state: GameState, oid: int) -> bool:
     # `cant_attack_you` is the second thing that can empty both lists -- an
     # Inkling in a two-player game whose only opponent has a Combat Calligrapher
     # has nowhere legal to swing -- so it joins the cheap guard rather than
-    # relying on the one already there.
-    if (state.attack_restrictions or any_defender_attack_prohibition(state)) and not (
+    # relying on the one already there. A creature's own prohibition mark
+    # (Promise of Loyalty) is the third, and is on the creature, so asking is
+    # free.
+    if (
+        state.attack_restrictions
+        or any(m.prohibition for m in obj.attack_marks)
+        or any_defender_attack_prohibition(state)
+    ) and not (
         legal_defenders(state, oid) or legal_permanent_defenders(state, oid)
     ):
         return False
@@ -424,6 +430,20 @@ def _attack_prohibited(
                 continue
             if permanent is None or restriction.planeswalkers:
                 return True
+    # Promise of Loyalty: "each of those creatures can't attack you or
+    # planeswalkers you control for as long as it has a vow counter on it". The
+    # same prohibition as the table above, written on the one creature it
+    # names (`structs.AttackMark`); its counter clock is ended by
+    # `GameObject.remove_counter`, and the counter is read again here so a mark
+    # can never outlast it.
+    if obj is not None and obj.attack_marks:
+        for mark in obj.attack_marks:
+            if not mark.prohibition or mark.defender != defender:
+                continue
+            if mark.while_counter is not None and obj.counter(mark.while_counter) <= 0:
+                continue
+            if permanent is None or mark.planeswalkers:
+                return True
     # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
     # control." The same seam read off a *static* instead of the table, so the
     # prohibition is filtered on the attacking creature and lives exactly as
@@ -499,7 +519,9 @@ def required_attack_defenders(state: GameState, oid: int) -> list[frozenset[int]
     if obj is None or obj.controller != state.active_player:
         return []
     named = static_attack_defenders(state, oid)
-    named.extend(frozenset((mark.defender,)) for mark in obj.attack_marks)
+    named.extend(
+        frozenset((mark.defender,)) for mark in obj.attack_marks if not mark.prohibition
+    )
     out: list[frozenset[int]] = []
     for seats in named:
         open_seats = frozenset(

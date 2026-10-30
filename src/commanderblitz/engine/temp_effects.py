@@ -1224,7 +1224,45 @@ def require_attack_player(
     mark = AttackMark(
         defender=defender, until_end_of_turn_of=clock, since_turn=state.turn, source=source
     )
-    obj.attack_marks = [m for m in obj.attack_marks if m.defender != defender] + [mark]
+    obj.attack_marks = [
+        m for m in obj.attack_marks if m.prohibition or m.defender != defender
+    ] + [mark]
+    return True
+
+
+def forbid_attack_while_counter(
+    state: GameState,
+    oid: int,
+    defender: int,
+    counter: str,
+    *,
+    planeswalkers: bool = False,
+    source: int | None = None,
+) -> bool:
+    """ "That creature can't attack ``defender`` for as long as it has a
+    ``counter`` counter on it." One rules-relevant thing: it writes the mark.
+
+    Refused, returning ``False``, for a creature no longer on the battlefield,
+    a defender out of the game, and a creature with no such counter -- its
+    duration is already over (611.2b), so the mark would lie in the log. A
+    defender who controls the creature is not refused: control can change.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.counter(counter) <= 0:
+        return False
+    if not state.is_alive(defender):
+        return False
+    mark = AttackMark(
+        defender=defender,
+        since_turn=state.turn,
+        source=source,
+        prohibition=True,
+        planeswalkers=planeswalkers,
+        while_counter=counter,
+    )
+    if mark in obj.attack_marks:
+        return False
+    obj.attack_marks = [*obj.attack_marks, mark]
     return True
 
 

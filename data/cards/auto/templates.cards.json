@@ -114307,6 +114307,81 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "promise_of_loyalty",
+      "mana_cost": "{4}{W}",
+      "name": "Promise of Loyalty",
+      "oracle_text": "Each player puts a vow counter on a creature they control and sacrifices the rest. Each of those creatures can't attack you or planeswalkers you control for as long as it has a vow counter on it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "kept",
+              "objects": {
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Put a vow counter on a creature"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "vow",
+          "objects": {
+            "binding": "kept"
+          },
+          "op": "add_counters"
+        },
+        {
+          "objects": {
+            "chooser": "none",
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "kept",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        },
+        {
+          "counter": "vow",
+          "defender": "you",
+          "duration": "while_counter",
+          "objects": {
+            "binding": "kept"
+          },
+          "op": "cant_attack_player",
+          "planeswalkers": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

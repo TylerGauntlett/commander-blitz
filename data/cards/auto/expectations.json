@@ -9917,6 +9917,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "promise_of_loyalty": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "promising_vein": {
     "zone": "battlefield"
   },

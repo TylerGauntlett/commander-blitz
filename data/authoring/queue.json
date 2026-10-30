@@ -208322,12 +208322,12 @@
     },
     "Promise of Loyalty": {
       "edhrec_rank": 955,
-      "gate": "template",
+      "gate": null,
       "name": "Promise of Loyalty",
-      "reason": "no template for: Each player puts a vow counter on a creature they control and sacrifices the rest. Each of",
+      "reason": "",
       "scryfall_id": "c95252b7-4af9-48ca-ba01-192f9c1dbb05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Promise of Power": {

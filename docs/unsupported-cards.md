@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**94 cards** blocked by **75** capabilities.
+**93 cards** blocked by **74** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -87,7 +87,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [vow-counter](#vow-counter) | 1 | 955 | op |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
 ## combat-only-permanent-shield
@@ -1293,20 +1292,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## vow-counter
-
-Blocks **1** card.
-
-- **(op)** a per-creature attack prohibition installed by a resolving spell: the chosen creatures (a binding) can't attack the spell's controller or planeswalkers that player controls, lasting for as long as each creature has a vow counter on it (checked when attackers are declared, ending when the counter is removed or the creature leaves)
-  <br>Why the existing vocabulary won't do: The cant_attack_player op names players on both sides (attacker/defender), not specific creatures, and its duration is only this_turn or this_combat, never 'while it has a <kind> counter'. The cant_attack_you static is scoped to the seat of the permanent carrying it, so granting it to each opponent's creature via grant_ability would make 'you' mean that creature's own controller, not the caster. The cant_attack static has no defender in its question at all.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Promise of Loyalty** (rank 955) — `promise_of_loyalty`
-  - Each of those creatures can't attack you or planeswalkers you control for as long as it has a vow counter on it.
 
 </details>
 
