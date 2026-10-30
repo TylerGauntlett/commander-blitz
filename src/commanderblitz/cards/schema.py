@@ -1483,11 +1483,11 @@ class CardModel(BaseModel):
     #: your graveyard. One cast line, and which permanents tap (or which cards
     #: go) is asked as the spell is paid for -- see ADR 0020.
     #:
-    #: Generic only, and clamped at what the spell actually costs. That is
-    #: improvise's and delve's printed rule; convoke's "or one mana of that
-    #: creature's colour" is a documented simplification: it is the same trade
-    #: `cost_reduction` already makes, and it bites only on a spell whose
-    #: coloured pips a creature could have paid.
+    #: Improvise and delve pay generic only, clamped at what the spell
+    #: actually costs. Convoke also pays "one mana of that creature's color"
+    #: (702.51a): a creature pays a coloured or hybrid pip of its own colour,
+    #: and the spell's effects name the creatures that convoked it with the
+    #: ``{"convoked": true}`` selector key (702.51c).
     pay_generic_with: (
         Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
     ) = None

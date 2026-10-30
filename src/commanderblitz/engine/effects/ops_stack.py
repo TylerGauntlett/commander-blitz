@@ -16,7 +16,7 @@ from ..enums import Zone
 from ..events import EventType
 from ..stack import StackItem, ability_of, announce_targets
 from ..state import new_object
-from ..structs import TriggerInstance
+from ..structs import CONVOKED_BINDING, TriggerInstance
 from ..targeting import describe_ref, enumerate_target_tuples
 from ..triggers import fire
 from ..zones import move_object
@@ -251,7 +251,15 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # declared under the promised target list, so `stack._resolve_spell`
         # has to split them by that list rather than the unpromised one.
         gift_to=original.gift_to,
-        bindings=dict(original.bindings),
+        # Everything but the convoking creatures: 702.51c's "convoked it" is a
+        # creature tapped to *pay* for the spell, and a copy was never paid for
+        # -- convoke is neither an additional nor an alternative cost, so
+        # 707.10 does not carry it over.
+        bindings={
+            key: value
+            for key, value in original.bindings.items()
+            if key != CONVOKED_BINDING
+        },
         description=f"{card.name} (copy)",
     )
     obj.stack_id = copy.sid

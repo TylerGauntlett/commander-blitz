@@ -219,6 +219,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `convoked` | The creatures that convoked the resolving spell (702.51c); true only. | [Convoke, improvise and delve](card-dsl-cookbook.md#convoke-improvise-and-delve) |
 | `count` | How many: an int or value, `all`, or `any`. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `created_with` | Tokens created with the named permanent. | [Tokens "created with this creature" — created_with](card-dsl.md#tokens-created-with-this-creature--created_with) |
 | `damaged` | Was dealt damage this turn. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |

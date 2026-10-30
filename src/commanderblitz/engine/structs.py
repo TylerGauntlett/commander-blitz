@@ -1114,6 +1114,13 @@ class SacrificeRestriction:
         }
 
 
+#: The `StackItem.bindings` key a convoke spell's cast writes: the creatures
+#: tapped to pay for it (702.51c, "a creature that convoked it"), struck out one
+#: by one by `zones.move_object` as they leave the battlefield. Read by the
+#: ``{"convoked": true}`` selector key.
+CONVOKED_BINDING = "convoked"
+
+
 @dataclass
 class StackItem:
     """One object on the stack: a spell, or an activated/triggered ability."""

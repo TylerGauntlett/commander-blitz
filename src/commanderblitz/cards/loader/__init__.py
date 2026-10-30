@@ -1862,6 +1862,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads the 'clash_won' binding but never clashes, so it would always read 0"
         )
 
+    # "Each creature that convoked this spell" is recorded by a convoke cast and
+    # by nothing else, so on any other card the key loads and matches nothing.
+    if _mentions_pair(model, "convoked", True) and model.pay_generic_with != "tap_creatures":
+        raise DslError(
+            f"{where}: reads {{'convoked': true}} but has no convoke "
+            f"(pay_generic_with: 'tap_creatures'), so no creature ever convoked it"
+        )
+
     # Dice are the same two halves, and fail the same way. A roll is never the
     # effect -- "roll X six-sided dice" on its own does nothing a player can
     # see -- and a `{"rolled": …}` with no roll behind it reads 0 for ever, so

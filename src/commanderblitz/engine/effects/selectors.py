@@ -21,6 +21,7 @@ from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
 from ..player_statics import commander_subtypes
+from ..structs import CONVOKED_BINDING
 from .context import EffectContext, ask_objects
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -83,6 +84,14 @@ SELECTOR_KEYS = frozenset(
         #: ask which; this reads the mark `draw_cards` puts on each card as it is
         #: drawn. Effect-side only: nothing continuous asks the question.
         "drawn_this_turn",
+        #: "Each creature **that convoked this spell** connives" -- Lethal
+        #: Scheme. The creatures tapped to pay for the resolving spell (702.51c),
+        #: recorded on its stack item by the cast that tapped them; `true` only,
+        #: and only on a card with convoke. A creature that has since left the
+        #: battlefield is struck out of the record, because the one that may
+        #: come back under its oid is a new object (400.7); the default zone is
+        #: the battlefield besides.
+        "convoked",
         #: "**modified** creatures you control" (Silkguard, and the whole Kamigawa
         #: cycle) -- a permanent with a counter on it, equipped, or enchanted by
         #: an Aura you control. A definition rather than a characteristic, which
@@ -762,6 +771,8 @@ def matches(
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
     if selector.get("modified") and not _is_modified(ctx, oid):
+        return False
+    if selector.get("convoked") and oid not in _bound_oids(ctx, CONVOKED_BINDING):
         return False
     if selector.get("drawn_this_turn") and obj.drawn_turn != state.turn:
         # Compared against the turn rather than read as a flag, so nothing has
@@ -1587,6 +1598,10 @@ def validate_selector(selector: Any, where: str) -> None:
                 f"snapshot records one player, so only 'you', 'opponent' and 'any' "
                 f"can be asked of it"
             )
+    if "convoked" in selector and selector["convoked"] is not True:
+        # "That didn't convoke this spell" is printed on nothing, and `false`
+        # would load as "every creature" -- the opposite of the card.
+        raise DslError(f"{where}: convoked must be true, got {selector['convoked']!r}")
     if "created_with" in selector and selector["created_with"] != "self":
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.

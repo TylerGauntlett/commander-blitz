@@ -449,6 +449,8 @@ SELECTORS: dict[str, Entry] = {
                 "`chooser` — when somebody else picks the mode"),
     "colors": ("Has one of these colors.", None),
     "controller": ("Controlled by `you`/`opponent`/`any` or a player spec.", None),
+    "convoked": ("The creatures that convoked the resolving spell (702.51c); true only.",
+                 "Convoke, improvise and delve"),
     "count": ("How many: an int or value, `all`, or `any`.", None),
     "created_with": ("Tokens created with the named permanent.",
                      'Tokens "created with this creature" — `created_with`'),

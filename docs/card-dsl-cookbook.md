@@ -5101,13 +5101,35 @@ them where it is sitting:
 
 #### Convoke, improvise and delve
 
-One field, three currencies, each paying {1} of the spell's **generic** cost:
-`"tap_creatures"` taps untapped creatures you control (convoke, 702.51),
-`"tap_artifacts"` taps untapped artifacts you control (improvise, 702.126), and
-`"exile_from_graveyard"` exiles cards from your graveyard (delve, 702.66). The
-card is one cast line; which permanents tap or which cards go is a
-`CHOOSE_OBJECTS` asked as the spell is paid for, tagged `convoke`, `improvise`
-or `delve` ([ADR 0020](adr/0020-convoke-is-one-line.md)).
+One field, three currencies: `"tap_creatures"` taps untapped creatures you
+control (convoke, 702.51), `"tap_artifacts"` taps untapped artifacts you
+control (improvise, 702.126), and `"exile_from_graveyard"` exiles cards from
+your graveyard (delve, 702.66). Each artifact or card pays {1} of the spell's
+**generic** cost; each convoking creature pays {1} **or one mana of its
+colour** (702.51a), so a black creature pays a `{B}` pip, or a hybrid pip with
+black in it, and a green one cannot. The card is one cast line; which
+permanents tap or which cards go is a `CHOOSE_OBJECTS` asked as the spell is
+paid for, tagged `convoke`, `improvise` or `delve`
+([ADR 0020](adr/0020-convoke-is-one-line.md)). Which symbol each creature pays
+is not asked: the engine takes the split that leaves the rest payable, and a
+pick with a creature left paying nothing is asked again.
+
+"Each creature that convoked this spell" (702.51c) is the selector key
+`{"convoked": true}`: the creatures tapped to pay for the resolving spell, as
+the cast recorded them. One that left the battlefield since is not among them
+(400.7), and a copy of the spell was convoked by nobody. The loader refuses
+the key on a card without `"pay_generic_with": "tap_creatures"`. `binding` is
+the near miss: the record is the cast's, not an op's `as`.
+
+```jsonc
+// Lethal Scheme -- "Convoke … Destroy target creature or planeswalker. Each
+//  creature that convoked this spell connives."
+"pay_generic_with": "tap_creatures",
+"spell_effects": [
+  { "op": "destroy", "objects": { "target": "t1" } },
+  { "op": "connive", "objects": { "convoked": true, "types": ["Creature"] } }
+]
+```
 
 ```jsonc
 // Kappa Cannoneer -- "Improvise (Your artifacts can help cast this spell. Each
@@ -5120,8 +5142,10 @@ to improvise cannot also be tapped for mana — the printed "after you're done
 activating mana abilities". A pick that taps the Sol Ring the rest of the cost
 needed is asked again. The type is read off derived characteristics, so an
 artifact creature counts for either keyword and an animated artifact land for
-both. None of them reaches a coloured pip: the saving goes through the same
-clamp as every cost reduction, and the ceiling is the spell's own generic cost.
+both, and a convoking creature's colour is its derived one. Improvise and delve
+never reach a coloured pip: their saving goes through the same clamp as every
+cost reduction, and their ceiling is the spell's own generic cost. Convoke's
+ceiling adds the pips a colour could pay.
 The near miss is `cost_reduction` with a count of artifacts (affinity), which
 lowers the price without tapping anything.
 
@@ -10891,9 +10915,10 @@ sentence) and beside `playable_free` (nothing is spent); its only value is
 
 "…and mana of any type can be spent to cast that spell" is the one clause in the
 engine that relaxes a **coloured** requirement, and nothing else could stand in
-for it. Every cost reduction there is — `spell_cost_reduction`, convoke, improvise, delve,
+for it. Every cost reduction there is — `spell_cost_reduction`, improvise, delve,
 emerge, the commander tax's negative twin — is clamped to the generic part
-precisely so that no pile of them can ever reach a pip; and `add_mana`'s "any
+precisely so that no pile of them can ever reach a pip; convoke pays a pip only
+the way mana of the creature's colour would; and `add_mana`'s "any
 type" is about what a permanent *produces*, not about what may be spent.
 
 `ManaCost.as_any_type` sums the coloured and hybrid pips into `generic`, which

@@ -21,8 +21,8 @@ from .division import divided_damage, fits_division
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext
 from .effects.selectors import resolve_pool
-from .enums import ActionKind, Keyword, Step, Zone
-from .mana import ManaCost, max_affordable_x, solve_payment
+from .enums import COLORLESS, ActionKind, Keyword, Step, Zone
+from .mana import SYMBOL_INDEX, ManaCost, max_affordable_x, solve_payment
 from .player_statics import (
     cast_lock_min_x,
     free_cast_permission,
@@ -1194,7 +1194,8 @@ FREE_COST = ManaCost.parse("")
 
 #: The ``pay_generic_with`` currencies that tap a permanent, and the card type
 #: each one taps: convoke a creature (702.51a), improvise an artifact
-#: (702.126a). Each tapped permanent pays for {1} of generic.
+#: (702.126a). Each tapped permanent pays for {1} of generic -- or, for a
+#: convoking creature, one mana of its colour (`convoke_payments`).
 PAY_GENERIC_TAP_TYPES: dict[str, str] = {
     "tap_creatures": "Creature",
     "tap_artifacts": "Artifact",
@@ -1221,14 +1222,125 @@ def pay_generic_tappers(state: GameState, pid: int, card: CardDef) -> list[int]:
     ]
 
 
+def convoke_colors(state: GameState, oid: int) -> frozenset[int]:
+    """The mana symbols a convoking creature may pay one of: its colours.
+
+    702.51a: "pays for {1} or one mana of that creature's color". Read off the
+    derived characteristics, so a creature painted blue pays a blue pip. A
+    colourless creature pays only {1}, and no creature pays a {C} pip --
+    colourless is not a colour.
+    """
+    return frozenset(
+        SYMBOL_INDEX[color] for color in chars(state, oid).colors if color != COLORLESS
+    )
+
+
+def convoke_pips(cost: ManaCost) -> int:
+    """How many symbols of ``cost`` a convoking creature could pay as a colour.
+
+    Every coloured pip, and every hybrid pip with a colour in it -- a white
+    creature pays ``{W/U}`` as white mana would. ``{C}`` is not among them.
+    """
+    colorless = SYMBOL_INDEX[COLORLESS]
+    return sum(n for i, n in enumerate(cost.colored) if i != colorless) + len(cost.hybrid)
+
+
+def convoke_payments(
+    cost: ManaCost, colors: Sequence[frozenset[int]], room: int
+) -> list[tuple[ManaCost, int]]:
+    """Every way these convoking creatures can each pay for one symbol of ``cost``.
+
+    One entry per distinct outcome: ``(the cost left, how many paid {1})``.
+    702.51a: each creature tapped pays for {1} -- at most ``room`` of them,
+    the generic part the mana cost and its surcharges have -- or for one mana
+    of its colour, which pays a coloured pip of that colour or a hybrid pip
+    with that colour in it. Every creature must pay *something*: a creature
+    whose colour has no pip left and for whom no generic remains is not tapped
+    for this spell at all, so an outcome that strands one is not an outcome.
+
+    Exhaustive, because the choices interact: a white-black creature paying
+    the only {B} leaves the {W} for the mono-white one, and the other way round
+    leaves it unpaid. Real costs carry a handful of pips, so the search is tiny,
+    and the visited set keeps two creatures of one colour from being searched
+    in both orders.
+    """
+    out: dict[tuple, tuple[ManaCost, int]] = {}
+    seen: set[tuple] = set()
+
+    def walk(index: int, colored: tuple[int, ...], hybrid: tuple, generic: int) -> None:
+        key = (index, colored, hybrid, generic)
+        if key in seen:
+            return
+        seen.add(key)
+        if index == len(colors):
+            outcome = (colored, hybrid, generic)
+            if outcome not in out:
+                out[outcome] = (
+                    dataclasses.replace(cost, colored=colored, hybrid=hybrid),
+                    generic,
+                )
+            return
+        for symbol in sorted(colors[index]):
+            if colored[symbol] > 0:
+                left = list(colored)
+                left[symbol] -= 1
+                walk(index + 1, tuple(left), hybrid, generic)
+            tried = set()
+            for at, pip in enumerate(hybrid):
+                if symbol in pip.symbols and pip not in tried:
+                    tried.add(pip)
+                    walk(index + 1, colored, hybrid[:at] + hybrid[at + 1 :], generic)
+        if generic < room:
+            walk(index + 1, colored, hybrid, generic + 1)
+
+    walk(0, tuple(cost.colored), tuple(cost.hybrid), 0)
+    return list(out.values())
+
+
+def _convoke_prices(
+    state: GameState, pid: int, card: CardDef, cost: ManaCost, spend: int, room: int
+) -> list[tuple[ManaCost, int]]:
+    """What ``cost`` could come down to with ``spend`` of ``pid``'s creatures convoking.
+
+    Legality's half of `convoke_payments`: the line does not know *which*
+    creatures will tap, so every way of choosing ``spend`` of them is tried,
+    one colour combination at a time -- two mono-black creatures are the same
+    choice. The game asks the player which ones, and `Game._ask_pay_generic`
+    then prices that pick through the same function.
+    """
+    groups: dict[frozenset[int], int] = {}
+    for other in pay_generic_tappers(state, pid, card):
+        colors = convoke_colors(state, other)
+        groups[colors] = groups.get(colors, 0) + 1
+    kinds = sorted(groups, key=sorted)
+    out: dict[tuple, tuple[ManaCost, int]] = {}
+
+    def choose(at: int, left: int, picked: list[frozenset[int]]) -> None:
+        if left == 0:
+            for reduced, generic in convoke_payments(cost, picked, room):
+                out.setdefault((reduced.colored, reduced.hybrid, generic), (reduced, generic))
+            return
+        if at == len(kinds):
+            return
+        for count in range(min(left, groups[kinds[at]]), -1, -1):
+            choose(at + 1, left - count, picked + [kinds[at]] * count)
+
+    choose(0, spend, [])
+    return list(out.values())
+
+
 def _pay_generic_ceiling(state: GameState, pid: int, oid: int, card: CardDef) -> int:
     """The most a convoke, improvise or delve line could usefully spend.
 
     Never more than the spell's own generic cost -- "pays for {1}" and a spell
     with two generic in it cannot absorb a third creature -- and never more
-    than the player actually has to spend.
+    than the player actually has to spend. Convoke also pays coloured pips
+    (702.51a), so its ceiling counts those as well.
     """
     generic = card.mana_cost.generic
+    if card.pay_generic_with == "tap_creatures":
+        payable = generic + convoke_pips(card.mana_cost)
+        return min(payable, len(pay_generic_tappers(state, pid, card)))
     if generic <= 0:
         return 0
     if card.pay_generic_with in PAY_GENERIC_TAP_TYPES:
@@ -1763,25 +1875,20 @@ def _cast_variant(
             if static.get("effect") == "spell_cost_reduction"
         ) or spell_mana_tax_targeted(state)  # Kasmina's surcharge is per tuple too
         # Convoke and delve reduce the generic part, exactly as a cost reduction
-        # does -- and go through the same clamp, so neither can make a spell free
-        # of its coloured pips.
-        discount += pay_generic
+        # does -- and go through the same clamp, so delve cannot make a spell
+        # free of its coloured pips. Convoke can pay them too (702.51a): each
+        # creature pays {1} *or* one mana of its colour, so a convoke line is
+        # priced at every way `pay_generic` creatures could split between the
+        # pips and the generic part, and a tuple any of them pays is offered.
+        prices = [(cost, pay_generic)]
+        if pay_generic and card.pay_generic_with == "tap_creatures" and convoke_pips(cost):
+            room = max(0, cost.generic + extra_generic - discount)
+            prices = _convoke_prices(state, pid, card, cost, pay_generic, room)
         if emerge_oid is not None:
             # The sacrifice pays for part of the spell. Generic-only and clamped by
             # `pay`, like every other reduction here.
             discount += state.card(emerge_oid).mana_value
 
-        # X is a *gate* here, not a value.  Legality asks only "is there any X this
-        # is castable at", and `game._cast` then asks the player which one -- so the
-        # action carries X = 0 and the forecast below is the floor.  Pinning it to
-        # the maximum, as this used to, meant every Fireball was cast for everything
-        # the player had and the choice was never offered at all.
-        if (
-            cost.x_count
-            and max_affordable_x(cost, pool, sources, extra_generic=extra_generic - discount)
-            < min_x
-        ):
-            continue
         if min_x and not cost.x_count:
             # A mana-value lock this line can only escape by announcing X, on a
             # price with no X to announce -- "without paying its mana cost"
@@ -1789,31 +1896,46 @@ def _cast_variant(
             continue
         x = 0
 
-        # Solved per target count for strive, once for everything else -- see
-        # `_priced_tuples`. `x` is 0 here, as the gate above explains.
-        priced = _priced_tuples(
-            state,
-            pid,
-            oid,
-            card,
-            tuples,
-            cost,
-            extra_generic - discount,
-            pool,
-            sources,
-            any_type=permission.playable_any_type and permission.playable_live(state.turn),
-            any_color=(permission.playable_any_color and permission.playable_live(state.turn))
-            or spends_any_color,
-            targeted_discount=targeted_discount,
-            discount_for=_discount_for,
-            # Priced per tuple, exactly, because "that target this creature" is
-            # a question about which target was chosen. The budget is what the
-            # Phyrexian pips this line already bought have left over.
-            life_tax_for=(
-                (lambda aimed: spell_life_tax(state, pid, card, aimed)) if taxed else None
-            ),
-            life_budget=(-1 if life_frozen else state.players[pid].life - phyrexian_life),
-        )
+        priced: list = []
+        offered: set = set()
+        for price, convoked in prices:
+            net = extra_generic - discount - convoked
+            # X is a *gate* here, not a value.  Legality asks only "is there any X
+            # this is castable at", and `game._cast` then asks the player which
+            # one -- so the action carries X = 0 and the forecast below is the
+            # floor.  Pinning it to the maximum, as this used to, meant every
+            # Fireball was cast for everything the player had and the choice was
+            # never offered at all.
+            if price.x_count and max_affordable_x(price, pool, sources, extra_generic=net) < min_x:
+                continue
+            # Solved per target count for strive, once for everything else -- see
+            # `_priced_tuples`. `x` is 0 here, as the gate above explains.
+            for targets, pays in _priced_tuples(
+                state,
+                pid,
+                oid,
+                card,
+                tuples,
+                price,
+                net,
+                pool,
+                sources,
+                any_type=permission.playable_any_type and permission.playable_live(state.turn),
+                any_color=(permission.playable_any_color and permission.playable_live(state.turn))
+                or spends_any_color,
+                targeted_discount=targeted_discount,
+                discount_for=_discount_for,
+                # Priced per tuple, exactly, because "that target this creature"
+                # is a question about which target was chosen. The budget is what
+                # the Phyrexian pips this line already bought have left over.
+                life_tax_for=(
+                    (lambda aimed: spell_life_tax(state, pid, card, aimed)) if taxed else None
+                ),
+                life_budget=(-1 if life_frozen else state.players[pid].life - phyrexian_life),
+            ):
+                if targets not in offered:
+                    offered.add(targets)
+                    priced.append((targets, pays))
         if not priced:
             continue
 

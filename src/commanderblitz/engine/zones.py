@@ -24,6 +24,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT
 from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
+from .structs import CONVOKED_BINDING
 from .temp_effects import end_redirects_to
 from .triggers import delayed_watches_departure, fire
 
@@ -317,6 +318,12 @@ def move_object(
         # battlefield)". It is not, and the object that may come back is a new
         # one (400.7) under the same oid. See `structs.DamageRedirect`.
         end_redirects_to(state, oid)
+        # "Each creature that convoked this spell" (702.51c) is that object,
+        # and the one that may come back under the same oid is not it.
+        for item in state.stack:
+            convoked = item.bindings.get(CONVOKED_BINDING)
+            if convoked and oid in convoked:
+                item.bindings[CONVOKED_BINDING] = [o for o in convoked if o != oid]
 
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
