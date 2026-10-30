@@ -2793,6 +2793,10 @@
   "crazed_skirge": {
     "zone": "battlefield"
   },
+  "creakwood_liege": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "creative_technique": {
     "graveyard_size": {
       "0": 4
@@ -9602,6 +9606,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ophiomancer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "opportunity": {
     "hand_size": {
       "0": 5
@@ -14313,6 +14321,10 @@
     },
     "zone": "battlefield"
   },
+  "trudge_garden": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "trusty_machete": {
     "zone": "battlefield"
   },
@@ -15719,6 +15731,33 @@
   "witch_s_familiar": {
     "zone": "battlefield"
   },
+  "witherbloom_campus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "witherbloom_charm": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
+  "witherbloom_command": {
+    "graveyard_size": {
+      "0": 5
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 37
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "withering_torment": {
     "life": {
       "0": 38
@@ -15795,6 +15834,13 @@
     "zone": "battlefield"
   },
   "xenobotanist": {
+    "zone": "battlefield"
+  },
+  "yahenni_undying_partisan": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "yargle_and_multani": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "woe_strider",
+  "name": "Woe Strider",
+  "oracle_text": "When this creature enters, create a 0/1 white Goat creature token.\nSacrifice another creature: Scry 1.\nEscape—{3}{B}{B}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with two +1/+1 counters on it.",
+  "blocked_sentences": [
+    "This creature escapes with two +1/+1 counters on it."
+  ],
+  "needs": [
+    {
+      "capability": "escape",
+      "kind": "engine",
+      "what": "a condition (e.g. `{\"escaped\": true}`) usable on a `self_enters_with_counters` replacement that is true only when this permanent's own resolution was a spell cast for the card's `graveyard_cost` (its escape cost) -- 702.138c-d \"escapes with\". Needs a per-cast stamp on the object, written by `stack._resolve_spell` from the stack item's flashback/graveyard_cost flag (not from `graveyard_permission`), and cleared on any arrival that is not that resolution, the way `cast_impending` is in `zones._enter_battlefield`",
+      "why_existing_wont_do": "The closest is `all: [{\"was_cast\": true}, {\"cast_from_graveyard\": true}]` on the replacement, but `obj.cast_from_graveyard` is `item.flashback or item.graveyard_permission is not None`, so a Woe Strider cast from the graveyard under another permission (Muldrotha, Gisa, a `cast_from_graveyard` static) for its normal mana cost would also enter with the two counters, which 702.138c forbids. `evoked`, `cost_option` and `kicked` read other cost choices, none the graveyard_cost. The other three lines are expressible: goat_0_1_w via create_token on self_enters, a sacrifice-another-creature cost with scry 1, and Escape as graveyard_cost {mana, exile_from_graveyard {count 4, exclude_self}} plus graveyard_cast: graveyard"
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "was_cast", "self_enters_with_counters"],
+  "confidence": "high"
+}

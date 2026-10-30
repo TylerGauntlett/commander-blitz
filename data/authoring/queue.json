@@ -55672,12 +55672,12 @@
     },
     "Creakwood Liege": {
       "edhrec_rank": 5136,
-      "gate": "template",
+      "gate": null,
       "name": "Creakwood Liege",
-      "reason": "no template for: Other black creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "9a05c8f9-e810-498d-ab51-632661dd000d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creakwood Safewright": {
@@ -193442,12 +193442,12 @@
     },
     "Ophiomancer": {
       "edhrec_rank": 663,
-      "gate": "template",
+      "gate": null,
       "name": "Ophiomancer",
-      "reason": "no template for: At the beginning of each upkeep, if you control no Snakes, create a 1/1 black Snake creatu",
+      "reason": "",
       "scryfall_id": "baf793b6-9612-43f3-9f1b-2e53e81cb89f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Opportunist": {
@@ -293492,12 +293492,12 @@
     },
     "Trudge Garden": {
       "edhrec_rank": 8902,
-      "gate": "template",
+      "gate": null,
       "name": "Trudge Garden",
-      "reason": "no template for: Whenever you gain life, you may pay {2}. If you do, create a 4/4 green Fungus Beast creatu",
+      "reason": "",
       "scryfall_id": "80dd8180-668a-41e4-a4e9-ebdd71345841",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "True Ancestry": {
@@ -317552,32 +317552,32 @@
     },
     "Witherbloom Campus": {
       "edhrec_rank": 6507,
-      "gate": "template",
+      "gate": null,
       "name": "Witherbloom Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "e5af06c8-86ab-4731-aa4a-2eec2c664488",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Witherbloom Charm": {
       "edhrec_rank": 5629,
-      "gate": "template",
+      "gate": null,
       "name": "Witherbloom Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "254437f7-7a8a-4b11-9cea-e8e7ea23c59e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Witherbloom Command": {
       "edhrec_rank": 8685,
-      "gate": "template",
+      "gate": null,
       "name": "Witherbloom Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "0d68dee5-56ff-45bb-a37e-9e2dfc07c5a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Witherbloom Pledgemage": {
@@ -320402,12 +320402,12 @@
     },
     "Yahenni, Undying Partisan": {
       "edhrec_rank": 1020,
-      "gate": "template",
+      "gate": null,
       "name": "Yahenni, Undying Partisan",
-      "reason": "no template for: Whenever a creature an opponent controls dies, put a +1/+1 counter on Yahenni",
+      "reason": "",
       "scryfall_id": "518b155a-cb84-48d3-9aba-07577f60f091",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yamabushi's Flame": {

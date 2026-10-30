@@ -31832,6 +31832,96 @@
     {
       "abilities": [
         {
+          "affects": {
+            "colors": [
+              "B"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other black creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              "G"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other green creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "worm_1_1_bg"
+                }
+              ],
+              "op": "may",
+              "prompt": "Create a 1/1 black and green Worm creature token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may create a 1/1 black and green Worm creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "creakwood_liege",
+      "mana_cost": "{1}{B/G}{B/G}{B/G}",
+      "name": "Creakwood Liege",
+      "oracle_text": "Other black creatures you control get +1/+1.\nOther green creatures you control get +1/+1.\nAt the beginning of your upkeep, you may create a 1/1 black and green Worm creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Horror"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -111185,6 +111275,58 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "snake_1_1_b_deathtouch"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each upkeep, if you control no Snakes, create a 1/1 black Snake creature token with deathtouch.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "exists": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Snake"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            },
+            "controller": "any",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ophiomancer",
+      "mana_cost": "{2}{B}",
+      "name": "Ophiomancer",
+      "oracle_text": "At the beginning of each upkeep, if you control no Snakes, create a 1/1 black Snake creature token with deathtouch.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -166047,6 +166189,51 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "fungus_beast_4_4_g_trample"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}"
+              },
+              "prompt": "Pay {2} to create a 4/4 Fungus Beast?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life, you may pay {2}. If you do, create a 4/4 green Fungus Beast creature token with trample.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "trudge_garden",
+      "mana_cost": "{2}{G}",
+      "name": "Trudge Garden",
+      "oracle_text": "Whenever you gain life, you may pay {2}. If you do, create a 4/4 green Fungus Beast creature token with trample.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -181502,6 +181689,340 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or {G}."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "witherbloom_campus",
+      "name": "Witherbloom Campus",
+      "oracle_text": "This land enters tapped.\n{T}: Add {B} or {G}.\n{4}, {T}: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "witherbloom_charm",
+      "mana_cost": "{B}{G}",
+      "name": "Witherbloom Charm",
+      "oracle_text": "Choose one —\n• You may sacrifice a permanent. If you do, draw two cards.\n• You gain 5 life.\n• Destroy target nonland permanent with mana value 2 or less.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "charm_sacrificed",
+                      "objects": {
+                        "controller": "you",
+                        "count": 1,
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    },
+                    {
+                      "condition": {
+                        "cmp": ">",
+                        "left": {
+                          "count": {
+                            "binding": "charm_sacrificed"
+                          }
+                        },
+                        "right": {
+                          "const": 0
+                        }
+                      },
+                      "op": "if",
+                      "then": [
+                        {
+                          "amount": {
+                            "const": 2
+                          },
+                          "op": "draw",
+                          "player": "you"
+                        }
+                      ]
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Sacrifice a permanent?"
+                }
+              ],
+              "label": "You may sacrifice a permanent. If you do, draw two cards."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 5
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "label": "You gain 5 life."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "withered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target nonland permanent with mana value 2 or less."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "withered",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "witherbloom_command",
+      "mana_cost": "{B}{G}",
+      "name": "Witherbloom Command",
+      "oracle_text": "Choose two —\n• Target player mills three cards, then you return a land card from your graveyard to your hand.\n• Destroy target noncreature, nonland permanent with mana value 2 or less.\n• Target creature gets -3/-1 until end of turn.\n• Target opponent loses 2 life and you gain 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 2,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "mill",
+                  "player": {
+                    "target": "miller"
+                  }
+                },
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Target player mills three cards, then you return a land card from your graveyard to your hand."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "trinket"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target noncreature, nonland permanent with mana value 2 or less."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shrunk"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": -3
+                  },
+                  "toughness": {
+                    "const": -1
+                  }
+                }
+              ],
+              "label": "Target creature gets -3/-1 until end of turn."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "target": "drained"
+                  }
+                },
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "gain_life",
+                  "player": "you"
+                }
+              ],
+              "label": "Target opponent loses 2 life and you gain 2 life."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "miller",
+          "kind": "player",
+          "mode": 0,
+          "selector": {
+            "controller": "any"
+          }
+        },
+        {
+          "count": 1,
+          "id": "trinket",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "not_types": [
+              "Creature",
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "shrunk",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "drained",
+          "kind": "player",
+          "mode": 3,
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -182593,6 +183114,82 @@
         "Scientist"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, put a +1/+1 counter on Yahenni.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice another creature: Yahenni gains indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "yahenni_undying_partisan",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "Yahenni, Undying Partisan",
+      "oracle_text": "Haste\nWhenever a creature an opponent controls dies, put a +1/+1 counter on Yahenni.\nSacrifice another creature: Yahenni gains indestructible until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Aetherborn",
+        "Vampire"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
