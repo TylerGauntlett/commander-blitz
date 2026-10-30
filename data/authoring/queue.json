@@ -96742,12 +96742,12 @@
     },
     "Flame On!": {
       "edhrec_rank": 19395,
-      "gate": "template",
+      "gate": null,
       "name": "Flame On!",
-      "reason": "no template for: Put X +1/+1 counters on target creature, where X is the number of noncreature, nonland car",
+      "reason": "",
       "scryfall_id": "7030f86d-d7e7-444d-9ed0-1758260926ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flame Rift": {
@@ -104732,12 +104732,12 @@
     },
     "Galvanic Iteration": {
       "edhrec_rank": 2930,
-      "gate": "template",
+      "gate": null,
       "name": "Galvanic Iteration",
-      "reason": "no template for: When you next cast an instant or sorcery spell this turn, copy that spell. You may choose ",
+      "reason": "",
       "scryfall_id": "4e148c83-09d1-4055-b1a6-5c624c67810d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galvanic Juggernaut": {
@@ -106772,12 +106772,12 @@
     },
     "Genesis Ultimatum": {
       "edhrec_rank": 3801,
-      "gate": "template",
+      "gate": null,
       "name": "Genesis Ultimatum",
-      "reason": "no template for: Look at the top five cards of your library. Put any number of permanent cards from among t",
+      "reason": "",
       "scryfall_id": "e7be1a2a-e4dc-4b08-b46b-275e07fbf61d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Genesis Wave": {
@@ -120982,12 +120982,12 @@
     },
     "H.E.R.B.I.E., Lovable Robot": {
       "edhrec_rank": 14872,
-      "gate": "template",
+      "gate": null,
       "name": "H.E.R.B.I.E., Lovable Robot",
-      "reason": "no template for: At the beginning of combat on your turn, if you've cast a noncreature spell this turn, sur",
+      "reason": "",
       "scryfall_id": "5e2f9f4c-dbdd-4da6-b08f-1f4d3fcb1328",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "HELIOS One": {
@@ -131202,12 +131202,12 @@
     },
     "Hull Breach": {
       "edhrec_rank": 2378,
-      "gate": "template",
+      "gate": null,
       "name": "Hull Breach",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "3ff49b0b-322b-4b98-8604-d6716f3bec39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hullbreacher": {
@@ -138362,12 +138362,12 @@
     },
     "Into the Time Vortex": {
       "edhrec_rank": 5377,
-      "gate": "template",
+      "gate": "residual",
       "name": "Into the Time Vortex",
-      "reason": "no template for: Cascade",
+      "reason": "printed text not represented: Rebound",
       "scryfall_id": "9c1763b6-c83b-4a76-af58-64c0a6418326",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Into the Void": {

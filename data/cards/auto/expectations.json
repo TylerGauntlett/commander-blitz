@@ -4532,6 +4532,13 @@
     },
     "zone": "graveyard"
   },
+  "flame_on": {
+    "target_pt_delta": {
+      "power": 0,
+      "toughness": 0
+    },
+    "zone": "exile"
+  },
   "flameborn_viron": {
     "zone": "battlefield"
   },
@@ -4906,6 +4913,9 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "galvanic_iteration": {
+    "zone": "graveyard"
+  },
   "gamble": {
     "graveyard_size": {
       "0": 4
@@ -5015,6 +5025,15 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "genesis_ultimatum": {
+    "graveyard_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "exile"
   },
   "genji_glove": {
     "battlefield_count": 33,
@@ -5686,6 +5705,10 @@
   "gyre_engineer": {
     "zone": "battlefield"
   },
+  "h_e_r_b_i_e_lovable_robot": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "h_e_r_b_i_e_scout_unit": {
     "zone": "battlefield"
   },
@@ -6178,6 +6201,10 @@
   "hulking_raptor": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "hull_breach": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "hullbreaker_horror": {
     "battlefield_count": 33,

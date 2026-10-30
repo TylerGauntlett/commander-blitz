@@ -50307,6 +50307,65 @@
       "colors": [
         "R"
       ],
+      "id": "flame_on",
+      "mana_cost": "{4}{R}",
+      "name": "Flame On!",
+      "oracle_text": "Put X +1/+1 counters on target creature, where X is the number of noncreature, nonland cards in your graveyard. It gains flying until end of turn.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "rebound": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "not_types": [
+                "Creature",
+                "Land"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "flying"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
       "id": "flameborn_viron",
       "mana_cost": "{4}{R}{R}",
       "name": "Flameborn Viron",
@@ -54198,6 +54257,54 @@
     },
     {
       "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "flashback": {
+        "mana": "{1}{U}{R}"
+      },
+      "id": "galvanic_iteration",
+      "mana_cost": "{U}{R}",
+      "name": "Galvanic Iteration",
+      "oracle_text": "When you next cast an instant or sorcery spell this turn, copy that spell. You may choose new targets for the copy.\nFlashback {1}{U}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "once_this_turn",
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "op": "delayed_trigger",
+          "text": "When you next cast an instant or sorcery spell this turn, copy that spell. You may choose new targets for the copy.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "binding": "subject",
+                "zone": "stack"
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -55181,6 +55288,49 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "exiles_itself": true,
+      "id": "genesis_ultimatum",
+      "mana_cost": "{G}{G}{U}{U}{U}{R}{R}",
+      "name": "Genesis Ultimatum",
+      "oracle_text": "Look at the top five cards of your library. Put any number of permanent cards from among them onto the battlefield and the rest into your hand. Exile Genesis Ultimatum.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "destination": "battlefield",
+          "objects": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "count": "any"
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to": "hand"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -63200,6 +63350,136 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, surveil 1.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "spells_cast_this_turn": {
+                  "filter": {
+                    "not_types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{1}, {T}: Add one mana of any color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "h_e_r_b_i_e_lovable_robot",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}",
+      "name": "H.E.R.B.I.E., Lovable Robot",
+      "oracle_text": "Flying\nAt the beginning of combat on your turn, if you've cast a noncreature spell this turn, surveil 1.\n{T}: Add {C}.\n{1}, {T}: Add one mana of any color.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Robot",
+        "Scout"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "h_e_r_b_i_e_scout_unit",
@@ -69359,6 +69639,121 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "hull_breach",
+      "mana_cost": "{R}{G}",
+      "name": "Hull Breach",
+      "oracle_text": "Choose one —\n• Destroy target artifact.\n• Destroy target enchantment.\n• Destroy target artifact and target enchantment.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "artifact"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "enchantment"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "both_artifact"
+                  },
+                  "op": "destroy"
+                },
+                {
+                  "objects": {
+                    "target": "both_enchantment"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact and target enchantment."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "artifact",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "enchantment",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "both_artifact",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "both_enchantment",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

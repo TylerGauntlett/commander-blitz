@@ -1,0 +1,30 @@
+{
+  "card": {
+    "id": "invisible_force_field",
+    "name": "Invisible Force Field",
+    "oracle_text": "Up to four target permanents you control gain indestructible until end of turn.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+    "mana_cost": "{1}{W}",
+    "types": ["Instant"],
+    "colors": ["W"],
+    "color_identity": ["W"],
+    "rebound": true,
+    "targets": [
+      {
+        "id": "t1",
+        "kind": "permanent",
+        "count": 4,
+        "up_to": true,
+        "selector": {"zone": "battlefield", "controller": "you"}
+      }
+    ],
+    "spell_effects": [
+      {
+        "op": "grant_keyword",
+        "keywords": ["indestructible"],
+        "duration": "until_end_of_turn",
+        "objects": {"target": "t1"}
+      }
+    ]
+  },
+  "expectation": {"zone": "exile", "granted": {"keywords": ["indestructible"], "count": 4}}
+}
