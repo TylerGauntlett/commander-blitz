@@ -1246,6 +1246,28 @@
       "is_token": true
     },
     {
+      "id": "worm_1_1_bg",
+      "name": "Worm Token",
+      "oracle_text": "1/1 black and green Worm creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Worm"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "zombie_army_0_0_b",
       "name": "Zombie Army Token",
       "oracle_text": "0/0 black Zombie Army creature token.",

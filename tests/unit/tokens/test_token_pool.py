@@ -1304,3 +1304,26 @@ class TestWitherbloomsPestGainsLifeWhenItDies:
         other = pool.get("insect_1_1_g")
         assert (other.power, other.toughness) == (1, 1)
         assert sorted(other.colors) == ["G"]
+
+
+class TestCreakwoodLiegesWormIsAPlainBlackAndGreen:
+    """Creakwood Liege: *"you may create a **1/1 black and green Worm**
+    creature token."*
+
+    The Pest is the same body in the same colours and still the wrong token:
+    it gains its controller life when it dies, and the Worm does nothing.
+    """
+
+    def test_it_is_a_plain_one_one_black_and_green_worm(self, pool):
+        worm = pool.get("worm_1_1_bg")
+        assert worm is not None and worm.is_token and worm.is_creature
+        assert (worm.power, worm.toughness) == (1, 1)
+        assert sorted(worm.colors) == ["B", "G"]
+        assert list(worm.types) == ["Creature"]
+        assert list(worm.subtypes) == ["Worm"]
+        assert not worm.keywords and not worm.abilities
+
+    def test_the_pest_is_still_a_separate_token(self, pool):
+        other = pool.get("pest_1_1_bg")
+        assert list(other.subtypes) == ["Pest"]
+        assert other.abilities
