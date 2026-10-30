@@ -1878,6 +1878,25 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'any_color' and 'any_type' are different printed "
                 f"sentences -- write the one the card says"
             )
+    if "any_type" in effect and op != "add_mana":
+        # "Mana of any type can be spent to cast a spell this way" (Klaw,
+        # Master of Sound; 609.4b) is a rider on a "you may play it" permission,
+        # as `any_color` is, and broader than it: "any type" names colourless
+        # too, so coloured mana pays ``{C}``. On a bare exile it would load,
+        # print its sentence and relax nothing. `add_mana`'s key of the same
+        # name is a different sentence about what a land produces.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'any_type' relaxes the cast a 'playable' permission "
+                f"grants, so it needs one (exile / look_at_top with 'playable', "
+                f"or grant_playable)"
+            )
+        if effect["any_type"] is not True:
+            raise DslError(f"{where}.any_type: the only value is true")
     if "playable_free" in effect:
         # "You may play them **without paying their mana costs**" is a rider on
         # a "you may play it" permission, as `any_color` is: on a bare exile it

@@ -66,6 +66,7 @@ LOOK_STEP_KEYS = frozenset(
         "playable_this_turn",
         "playable",
         "any_color",
+        "any_type",
         "face_down",
         "link",
     }
@@ -660,6 +661,10 @@ def _move_found(
                 obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = duration
+                # "Mana of any type can be spent to cast a spell this way"
+                # (Klaw, Master of Sound) -- `grant_playable`'s flag, read by
+                # the same cast path while the permission is live.
+                obj.playable_any_type = bool(spec.get("any_type"))
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
                 record_playable_source(ctx.state, oid, ctx.source_oid)

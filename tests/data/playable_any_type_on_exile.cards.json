@@ -1,0 +1,152 @@
+{
+  "_comment": "Cards that exist only for tests/unit/mana/test_playable_any_type_on_exile.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_sound_heist` is Klaw, Master of Sound's look-exile-permission with its 'mana of any type' rider as a free sorcery; `t_plain_heist` is the same without the rider, the counterfactual, and `t_tinted_heist` carries the narrower 'as though it were mana of any color' rider instead. `t_klaw_heist` is the same rider on a plain `exile`. The two draw spells are a {B}{B} and a {C} cost, one per edge of the waiver.",
+  "cards": [
+    {
+      "id": "t_sound_heist",
+      "name": "Test Sound Heist",
+      "oracle_text": "Look at the top card of each opponent's library, then exile it face down. You may play it for as long as it remains exiled. Mana of any type can be spent to cast a spell this way.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "each_opponent",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": "all"
+          },
+          "destination": "exile",
+          "face_down": true,
+          "playable": "while_exiled",
+          "any_type": true
+        }
+      ]
+    },
+    {
+      "id": "t_plain_heist",
+      "name": "Test Plain Heist",
+      "oracle_text": "Look at the top card of each opponent's library, then exile it face down. You may play it for as long as it remains exiled.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "each_opponent",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": "all"
+          },
+          "destination": "exile",
+          "face_down": true,
+          "playable": "while_exiled"
+        }
+      ]
+    },
+    {
+      "id": "t_tinted_heist",
+      "name": "Test Tinted Heist",
+      "oracle_text": "Look at the top card of each opponent's library, then exile it face down. You may play it for as long as it remains exiled. You may spend mana as though it were mana of any color to cast it.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "look_at_top",
+          "player": "each_opponent",
+          "amount": {
+            "const": 1
+          },
+          "objects": {
+            "count": "all"
+          },
+          "destination": "exile",
+          "face_down": true,
+          "playable": "while_exiled",
+          "any_color": true
+        }
+      ]
+    },
+    {
+      "id": "t_klaw_heist",
+      "name": "Test Klaw Heist",
+      "oracle_text": "Exile all cards from each opponent's hand. You may play them for as long as they remain exiled. Mana of any type can be spent to cast a spell this way.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "exile",
+          "objects": {
+            "zone": "hand",
+            "controller": "opponent",
+            "count": "all"
+          },
+          "playable": "while_exiled",
+          "any_type": true
+        }
+      ]
+    },
+    {
+      "id": "t_onyx_draw",
+      "name": "Test Onyx Draw",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{B}{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_void_draw",
+      "name": "Test Void Draw",
+      "oracle_text": "Draw a card.",
+      "mana_cost": "{C}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    }
+  ]
+}

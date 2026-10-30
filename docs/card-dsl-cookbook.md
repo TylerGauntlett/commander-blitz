@@ -10876,6 +10876,19 @@ walk offers nothing extra: nothing carries it that was not granted it.
 
 ### `any_type`
 
+```jsonc
+{ "op": "look_at_top", "player": { "binding": "event_player" }, "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "face_down": true,
+  "playable": "while_exiled", "any_type": true }        // Klaw, Master of Sound
+```
+
+The same key rides every op that writes a playable permission: `grant_playable`
+(Valigarmanda), and `exile` or `look_at_top` beside a `playable` duration
+("Mana of any type can be spent to cast a spell this way", Klaw). The loader
+refuses it without that permission, beside `any_color` (a different printed
+sentence) and beside `playable_free` (nothing is spent); its only value is
+`true`. `add_mana`'s `any_type` is a different key on a different op.
+
 "…and mana of any type can be spent to cast that spell" is the one clause in the
 engine that relaxes a **coloured** requirement, and nothing else could stand in
 for it. Every cost reduction there is — `spell_cost_reduction`, convoke, improvise, delve,
@@ -10890,9 +10903,11 @@ a generic cost of the same size. `{C}` goes with them — "any type" names the
 colourless type too — and `X` does not, being a number the caster chooses.
 
 The flag rides on the **card**, beside the permission it is printed next to, and
-is read only while that permission is live (`playable_turn == state.turn`).
-Not on the player and not on the turn: the caster's other spells that turn are
-paid for normally, which is what the printed "**that** spell" says.
+is read only while that permission is live (`playable_live`), and it leaves
+exile with the permission (400.7). Not on the player and not on the turn: the
+caster's other spells that turn are paid for normally, which is what the printed
+"**that** spell" says. A land taken this way is played with the land drop, never
+cast (305.1), so the flag has nothing to reach there.
 
 ### `any_color`
 
