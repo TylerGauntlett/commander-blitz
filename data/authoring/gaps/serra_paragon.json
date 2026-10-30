@@ -1,0 +1,24 @@
+{
+  "card_id": "serra_paragon",
+  "name": "Serra Paragon",
+  "oracle_text": "Flying\nOnce during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains \"When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life.\"",
+  "blocked_sentences": [
+    "Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains \"When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life.\""
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_play_shared_limit",
+      "kind": "static_effect",
+      "what": "a static graveyard play permission covering both land plays and permanent-spell casts (mana value 3 or less) from your graveyard, restricted to your turns, with ONE shared once-per-turn allowance across the two kinds of play",
+      "why_existing_wont_do": "`cast_from_graveyard` (with affects_spells and max_per_turn) and `play_lands_from_graveyard` are separate statics with separate ledgers; writing both would allow a land AND a spell each turn, twice what the card allows, and `play_lands_from_graveyard` carries no rate limit at all"
+    },
+    {
+      "capability": "graveyard_play_grants_ability",
+      "kind": "static_effect",
+      "what": "the permanent played or cast through that permission gains a quoted triggered ability (\"When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life\") that persists on the resulting permanent independently of the source",
+      "why_existing_wont_do": "`grant_ability` grants to objects chosen by an effect or a static filter over printed characteristics; nothing marks the object that used the graveyard permission and hands it an ability, and `cast_gains_keywords` / `mana_grant` give keywords only, not a triggered ability, and never to a land play"
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "play_lands_from_graveyard", "grant_ability"],
+  "confidence": "high"
+}

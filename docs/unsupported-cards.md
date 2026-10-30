@@ -10,14 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**108 cards** blocked by **90** capabilities.
+**116 cards** blocked by **96** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [spirit-3-2-rw](#spirit-3-2-rw) | 4 | 8925 | token |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
+| [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
@@ -32,7 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [batched-trigger-objects](#batched-trigger-objects) | 1 | 4348 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -41,6 +42,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
+| [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -58,8 +60,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
+| [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
+| [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
+| [illusion-x-x-u](#illusion-x-x-u) | 1 | 1206 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -92,7 +98,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [spirit-3-2-rw](#spirit-3-2-rw) | 1 | 12071 | token |
+| [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -268,6 +274,33 @@ Blocks **8** cards.
 
 </details>
 
+## spirit-3-2-rw
+
+Blocks **4** cards.
+
+- **(token)** a 3/2 red and white Spirit creature token
+  <br>Why the existing vocabulary won't do: token_ids holds only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; create_token's power/toughness overrides could size a 2/2 white Spirit to 3/2 but cannot make it red and white, and no other 3/2 red-and-white token exists. The rest of the sentence looks expressible: destroy all creatures with `as` binding the destroyed set, then create_token with amount counting that binding filtered to controller you and is_token false.
+- **(token)** a 3/2 red and white Spirit creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; none is a 3/2 red and white Spirit. The trigger itself (leaves_graveyard, batched) and the 'Spirits you control get +1/+0' buff static are both expressible
+- **(token)** a 3/2 red and white Spirit creature token
+  <br>Why the existing vocabulary won't do: token_ids holds only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; none is a 3/2 red and white Spirit, and the trigger itself is expressible as leaves_graveyard with batched: true
+- **(token)** a 3/2 red and white Spirit creature token (id spirit_3_2_rw)
+  <br>Why the existing vocabulary won't do: token_ids has only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w and no 3/2 red-white Spirit; a near token would change the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Quintorius, Loremaster** (rank 8925) — `quintorius_loremaster`
+  - At the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.
+  - {1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.
+- **Quintorius, Field Historian** (rank 9458) — `quintorius_field_historian`
+  - Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.
+- **Quintorius, History Chaser** (rank 10055) — `quintorius_history_chaser`
+  - Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.
+- **Ceaseless Conflict** (rank 12071) — `ceaseless_conflict`
+  - Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nontoken creature you controlled that was destroyed this way.
+
+</details>
+
 ## copy-exception-ability
 
 Blocks **3** cards.
@@ -287,6 +320,24 @@ Blocks **3** cards.
   - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
 - **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
   - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
+## batched-trigger-objects
+
+Blocks **2** cards.
+
+- **(trigger_event)** a batched `discard` trigger that binds every card of its simultaneous batch matching the filter (e.g. as `{"binding": "batch"}`), so the effect can choose one of them still in the graveyard -- here an optional `exile` of one of those nonland cards with `playable: "this_turn"` (cast only)
+  <br>Why the existing vocabulary won't do: `batched: true` on `discard` (Doctor Doom, King of Latveria) fires once per batch, but `triggers._queue` builds its bindings from the first matching event only (`event_bindings`); nothing exposes the other cards of the batch, so "one of them" can be written only as the first discarded card, which takes the choice away when two nonland cards are discarded together. An unbatched trigger would fire once per card and let you exile several, which is a different card
+- **(trigger_event)** a batched `leaves_graveyard` trigger that binds every card of its simultaneous batch (e.g. as `{"binding": "batch"}`, a list of oids like `attackers`), so the effect can be an optional `become_copy` with `objects: {"self_only": true}`, `copying` a choice among those cards filtered to `any_types: ["Artifact", "Creature"]`, `duration: "end_of_turn"` -- reading the cards in whatever zone they reached
+  <br>Why the existing vocabulary won't do: `batched: true` on `leaves_graveyard` (Spirit Mascot) fires once per batch, which covers the counter, but `triggers._queue` builds bindings from the first event of the batch only (`event_bindings` gives one `subject`); nothing exposes the other cards that left together, so "an artifact or creature card from among those cards" could only be written as the first card, which takes the choice away and misses an artifact or creature card that was not first. An unbatched trigger would put one counter per card, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Conspiracy Theorist** (rank 4348) — `conspiracy_theorist`
+  - Whenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn
+- **Spirit of Resilience** (rank 13273) — `spirit_of_resilience`
+  - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature, then you may have this creature become a copy of an artifact or creature card from among those cards until end of turn
 
 </details>
 
@@ -523,20 +574,6 @@ Blocks **1** card.
 
 </details>
 
-## batched-trigger-objects
-
-Blocks **1** card.
-
-- **(trigger_event)** a batched `discard` trigger that binds every card of its simultaneous batch matching the filter (e.g. as `{"binding": "batch"}`), so the effect can choose one of them still in the graveyard -- here an optional `exile` of one of those nonland cards with `playable: "this_turn"` (cast only)
-  <br>Why the existing vocabulary won't do: `batched: true` on `discard` (Doctor Doom, King of Latveria) fires once per batch, but `triggers._queue` builds its bindings from the first matching event only (`event_bindings`); nothing exposes the other cards of the batch, so "one of them" can be written only as the first discarded card, which takes the choice away when two nonland cards are discarded together. An unbatched trigger would fire once per card and let you exile several, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Conspiracy Theorist** (rank 4348) — `conspiracy_theorist`
-  - Whenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn
-
-</details>
-
 ## blocked-by-source
 
 Blocks **1** card.
@@ -650,6 +687,20 @@ Blocks **1** card.
 
 - **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
+
+</details>
+
+## copy-this-spell-on-resolution
+
+Blocks **1** card.
+
+- **(op)** a way for a resolving instant or sorcery's own spell_effects to copy that same spell ("you may copy this spell and may choose a new target for the copy"), with new_targets: copy_spell must be able to name the spell currently resolving, which stack.resolve_top has already popped off the stack before _resolve_spell runs its effects
+  <br>Why the existing vocabulary won't do: copy_spell (sid, target, new_targets) finds its original through _spell_named_by -> state.stack_item(sid), and the resolving spell is no longer on the stack (resolve_top pops it first), nor does the resolution context bind its own sid -- so a copy_spell inside spell_effects copies nothing. The cast_from_graveyard condition itself works. Moving the copy to a spell_cast trigger (the storm shape) would be a different card: the copy would exist even if the original is countered, and it would be made at cast rather than at resolution
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sevinne's Reclamation** (rank 338) — `sevinne_s_reclamation`
+  - If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.
 
 </details>
 
@@ -904,6 +955,21 @@ Blocks **1** card.
 
 </details>
 
+## free-cast-tuck-to-library-bottom
+
+Blocks **1** card.
+
+- **(replacement)** a rider on a free-cast permission granted to a card in exile (grant_playable / play_exiled with playable_free, playable_this_turn): if the spell cast that way would be put into a graveyard (resolving, countered or fizzling), it goes to the bottom of its owner's library instead
+  <br>Why the existing vocabulary won't do: grant_playable carries playable, playable_free, playable_this_turn, as_flashback and limit, and play_exiled carries as/exiles/objects, but none attaches a destination replacement to the resulting spell; as_flashback exiles rather than tucks, and tucks_itself is a card-level rider on the card's own printed text, not something granted to another card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Quintorius, Loremaster** (rank 8925) — `quintorius_loremaster`
+  - At the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.
+  - {1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.
+
+</details>
+
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -918,6 +984,34 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-play-grants-ability
+
+Blocks **1** card.
+
+- **(static_effect)** the permanent played or cast through that permission gains a quoted triggered ability ("When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life") that persists on the resulting permanent independently of the source
+  <br>Why the existing vocabulary won't do: `grant_ability` grants to objects chosen by an effect or a static filter over printed characteristics; nothing marks the object that used the graveyard permission and hands it an ability, and `cast_gains_keywords` / `mana_grant` give keywords only, not a triggered ability, and never to a land play
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serra Paragon** (rank 3531) — `serra_paragon`
+  - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+
+</details>
+
+## graveyard-play-shared-limit
+
+Blocks **1** card.
+
+- **(static_effect)** a static graveyard play permission covering both land plays and permanent-spell casts (mana value 3 or less) from your graveyard, restricted to your turns, with ONE shared once-per-turn allowance across the two kinds of play
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` (with affects_spells and max_per_turn) and `play_lands_from_graveyard` are separate statics with separate ledgers; writing both would allow a land AND a spell each turn, twice what the card allows, and `play_lands_from_graveyard` carries no rate limit at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Serra Paragon** (rank 3531) — `serra_paragon`
+  - Once during each of your turns, you may play a land from your graveyard or cast a permanent spell with mana value 3 or less from your graveyard. If you do, it gains "When this permanent is put into a graveyard from the battlefield, exile it and you gain 2 life."
+
+</details>
+
 ## greatest-mana-value-spells-cast-this-turn
 
 Blocks **1** card.
@@ -929,6 +1023,20 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
+
+</details>
+
+## illusion-x-x-u
+
+Blocks **1** card.
+
+- **(token)** an X/X blue Illusion creature token with no abilities (printed 0/0 base, sized by create_token's power/toughness), e.g. id illusion_x_x_u
+  <br>Why the existing vocabulary won't do: token_ids has illusion_1_1_u, illusion_1_1_u_flying and illusion_2_2_u_sac_when_targeted (fixed-size Illusions) and the X/X tokens shark_x_x_u_flying and dragon_illusion_x_x_r_flying_haste, which carry flying/haste or the wrong colour/subtype; none is a plain 0/0 blue Illusion. The rest of the line looks expressible: exile with until-style link, a leaves_battlefield trigger with for_each over {zone: exile, controller: any, exiled_with: self}, create_token with controller owner and power/toughness {mana_value_of: ...}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Skyclave Apparition** (rank 1206) — `skyclave_apparition`
+  - When this creature leaves the battlefield, the exiled card's owner creates an X/X blue Illusion creature token, where X is the mana value of the exiled card.
 
 </details>
 
@@ -1395,17 +1503,17 @@ Blocks **1** card.
 
 </details>
 
-## spirit-3-2-rw
+## static-commander-casts-this-game
 
 Blocks **1** card.
 
-- **(token)** a 3/2 red and white Spirit creature token
-  <br>Why the existing vocabulary won't do: token_ids holds only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; create_token's power/toughness overrides could size a 2/2 white Spirit to 3/2 but cannot make it red and white, and no other 3/2 red-and-white token exists. The rest of the sentence looks expressible: destroy all creatures with `as` binding the destroyed set, then create_token with amount counting that binding filtered to controller you and is_token false.
+- **(value)** the value leaf commander_casts_this_game ({"commander_casts_this_game": "you"}) admitted to static_value_keys, so a continuous buff's power/toughness can read the controller's count of commander casts from the command zone this game (characteristics._static_value and loader.statics._validate_static_value)
+  <br>Why the existing vocabulary won't do: commander_casts_this_game exists only in value_keys (effect amounts, resolved once); static_value_keys has greatest_commander_mana_value and spells_cast_this_turn but no commander-cast tally, and a one-shot pump or add_counters would miss Spirits that enter later and would not grow with later commander casts
 
 <details><summary>Cards waiting on this</summary>
 
-- **Ceaseless Conflict** (rank 12071) — `ceaseless_conflict`
-  - Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nontoken creature you controlled that was destroyed this way.
+- **Vanguard of the Restless** (rank 11948) — `vanguard_of_the_restless`
+  - Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game.
 
 </details>
 

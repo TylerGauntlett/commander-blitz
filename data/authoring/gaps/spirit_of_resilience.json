@@ -1,0 +1,19 @@
+{
+  "card_id": "spirit_of_resilience",
+  "name": "Spirit of Resilience",
+  "oracle_text": "Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature, then you may have this creature become a copy of an artifact or creature card from among those cards until end of turn.",
+  "blocked_sentences": [
+    "Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature, then you may have this creature become a copy of an artifact or creature card from among those cards until end of turn"
+  ],
+  "needs": [
+    {
+      "capability": "batched_trigger_objects",
+      "kind": "trigger_event",
+      "what": "a batched `leaves_graveyard` trigger that binds every card of its simultaneous batch (e.g. as `{\"binding\": \"batch\"}`, a list of oids like `attackers`), so the effect can be an optional `become_copy` with `objects: {\"self_only\": true}`, `copying` a choice among those cards filtered to `any_types: [\"Artifact\", \"Creature\"]`, `duration: \"end_of_turn\"` -- reading the cards in whatever zone they reached",
+      "why_existing_wont_do": "`batched: true` on `leaves_graveyard` (Spirit Mascot) fires once per batch, which covers the counter, but `triggers._queue` builds bindings from the first event of the batch only (`event_bindings` gives one `subject`); nothing exposes the other cards that left together, so \"an artifact or creature card from among those cards\" could only be written as the first card, which takes the choice away and misses an artifact or creature card that was not first. An unbatched trigger would put one counter per card, which is a different card",
+      "closest_existing": ["leaves_graveyard trigger with batched", "become_copy", "add_counters"]
+    }
+  ],
+  "closest_existing": ["batched", "become_copy"],
+  "confidence": "high"
+}

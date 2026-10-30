@@ -7691,9 +7691,17 @@
     },
     "zone": "battlefield"
   },
+  "lorehold_archivist_restore_relic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lorehold_campus": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "lorehold_charm": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "los_diablos_missile_base": {
     "life": {
@@ -8532,6 +8540,10 @@
   "mistvault_bridge": {
     "zone": "battlefield"
   },
+  "mistveil_plains": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "misty_rainforest": {
     "zone": "battlefield"
   },
@@ -8899,6 +8911,13 @@
     "zone": "battlefield"
   },
   "nakia_wakandan_operative": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "naktamun_lorespinner_wheel_of_fortune": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -9764,6 +9783,10 @@
   "perilous_landscape": {
     "zone": "battlefield"
   },
+  "perpetual_timepiece": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "persistent_petitioners": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10030,6 +10053,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "primary_research": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "primeval_herald": {
     "zone": "battlefield"
@@ -10577,6 +10607,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "relic_retriever": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "relic_sloth": {
     "zone": "battlefield"
   },
@@ -10584,6 +10618,10 @@
     "zone": "battlefield"
   },
   "reluctant_role_model": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "remorseful_cleric": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -11450,6 +11488,23 @@
   "seize_the_day": {
     "zone": "graveyard"
   },
+  "seize_the_spoils": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 38
+    },
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
   "sejiri_refuge": {
     "life": {
       "0": 41
@@ -11459,6 +11514,10 @@
     "zone": "battlefield"
   },
   "selesnya_signet": {
+    "zone": "battlefield"
+  },
+  "selfless_spirit": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "selfless_squire": {
@@ -12496,6 +12555,10 @@
     },
     "zone": "battlefield"
   },
+  "squee_goblin_nabob": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "squire": {
     "zone": "battlefield"
   },
@@ -13396,6 +13459,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "teshar_ancestor_s_apostle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thalakos_sentry": {
     "zone": "battlefield"
   },
@@ -13792,6 +13859,16 @@
     },
     "zone": "battlefield"
   },
+  "tocasia_s_welcome": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "tolaria_west": {
     "battlefield_count": 33,
     "hand_size": {
@@ -14015,6 +14092,10 @@
     "zone": "battlefield"
   },
   "turbulent_springs": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "turbulent_steppe": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14995,6 +15076,9 @@
   "watery_grave": {
     "zone": "battlefield"
   },
+  "wave_of_reckoning": {
+    "zone": "graveyard"
+  },
   "waveskimmer_aven": {
     "zone": "battlefield"
   },
@@ -15127,6 +15211,11 @@
   },
   "whispersilk_cloak": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "white_orchid_phantom": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "white_sun_s_twilight": {
