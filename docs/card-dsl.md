@@ -1175,15 +1175,15 @@ never fizzles and goes on the stack with nothing to exile.
   "selector": { "types": ["Creature"] } }
 ```
 
-Crackle with Power. The one computed `count` a **spell's** targets may carry, and
-the reason it is the only one is an ordering rule.
+Crackle with Power. One of the two computed `count`s a **spell's** targets may
+carry (the other is [sized by an additional cost](#targets-sized-by-an-additional-cost)),
+and the reason there are only two is an ordering rule.
 
 `_compile_targets` otherwise refuses a value-expression count on a card's own
-targets, because "a spell's are declared while it is being cast (601.2c), before
-X is chosen and before any additional cost is paid, so the expression would read
-0". That is right for `{"additional_paid": true}` — kicker is paid at 601.2h,
-long after — and wrong for X, because **601.2b announces X and 601.2c declares
-targets, in that order**.
+targets, because a spell's are declared while it is being cast (601.2c), before
+any additional cost is paid, so the expression would read 0. The exceptions are
+the numbers 601.2b has already announced when 601.2c declares targets: X, and how
+many times the additional cost will be paid.
 
 The engine runs them in that order. `Game._cast` asks `_ask_x`, then
 `_ask_modes`, then `_ask_mode_targets` — a target declaration made at cast time
@@ -1203,7 +1203,46 @@ targets are declared (601.2c)".
 
 Two refusals: `{"x": true}` on a card with no `{X}` in its mana cost (the spec
 would size to zero for ever — a spell that says it targets and never does), and
-every other computed count on a spell.
+every computed count on a spell but these two.
+
+### Targets sized by an additional cost
+
+```jsonc
+// Immoral Bargain: "As an additional cost to cast this spell, sacrifice X
+// creatures. Destroy X target nonland permanents."
+{ "additional_cost": { "sacrifice": { "controller": "you", "types": ["Creature"] } },
+  "additional_optional": true, "additional_repeatable": true,
+  "targets": [{ "id": "t1", "kind": "permanent", "count": { "additional_paid": true },
+                "selector": { "zone": "battlefield", "not_types": ["Land"] } }],
+  "spell_effects": [{ "op": "destroy", "objects": { "target": "t1" } }] }
+```
+
+`count: {"additional_paid": true}`, exactly that and nothing beside it in the
+expression, sizes a spell's target spec by the number of times its additional
+cost is paid. 601.2b announces that number one step before 601.2c declares the
+targets, so legality already knows it: each cast line carries it as
+`Action.additional_times`, and `casting._cast_variant` enumerates that line's
+targets from `targeting.additional_sized_targets` with the count in place.
+Sacrificing two offers exactly two targets; sacrificing none (107.3, X = 0) is a
+cast with no targets. A line whose X has too few legal targets is not offered,
+and each X's combinations are capped by `targeting.MAX_TARGET_OPTIONS` like any
+fixed count above one.
+
+Resolution keeps the printed expression, which is variable-size, so
+`filter_legal` hands the spec every remaining ref — the number the line declared,
+and the number a copy keeps (707.10). A resolution-time free cast (cascade,
+madness, suspend) pays no optional additional cost and declares no such target.
+
+Refused at load: the count on a card with no `additional_cost`, or with one that
+is neither `additional_optional` nor `additional_repeatable` (paid exactly once,
+it is `count: 1`); beside `up_to`, `optional`, `count_if_kicked` or `mode`, each
+a second size or a second moment for one spec; and anywhere but the last target,
+the variable-size rule. X is bounded by the board — the pool each payment
+draws from — and by `casting.MAX_ADDITIONAL_TIMES`, the cap on every repeatable
+cost ([rules-coverage.md](rules-coverage.md#simplified)).
+
+The near misses: `count: "any"` lets the caster destroy three permanents for one
+sacrifice, a strictly better card; a fixed `count` cannot follow the sacrifices.
 
 ### Plot
 

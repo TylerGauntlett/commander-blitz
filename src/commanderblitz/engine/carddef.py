@@ -175,11 +175,29 @@ class TargetSpec:
         targets." The one computed count a *spell* may carry, and it is legal
         for the reason every other computed count is not: 601.2b announces X
         and 601.2c chooses targets, in that order, so by the time the targets
-        are declared X is a number. `{"additional_paid": true}` reads a cost
-        paid at 601.2h and would still read zero here, which is what
-        `loader.targets._compile_targets` refuses.
+        are declared X is a number. A general value expression would still
+        read zero here, which is what `loader.targets._compile_targets`
+        refuses; :attr:`additional_sized` is the other exception.
         """
         return isinstance(self.count, dict) and bool(self.count.get("x"))
+
+    @property
+    def additional_sized(self) -> bool:
+        """Is this "**X** targets", X the times the additional cost is paid?
+
+        Immoral Bargain: "As an additional cost to cast this spell, sacrifice X
+        creatures. Destroy X target nonland permanents." Written
+        ``count: {"additional_paid": true}``, and legal on a *spell* for the
+        reason `x_sized` is: 601.2b announces how many times the additional
+        cost will be paid one step before 601.2c declares the targets. The
+        payment is later (601.2h), but the number is already fixed.
+
+        Each cast line carries that number as `Action.additional_times`, so
+        `casting._cast_variant` enumerates the line's targets from
+        `targeting.additional_sized_targets` with the count in place -- exactly
+        X targets for each X. Nothing reads the expression itself at cast time.
+        """
+        return isinstance(self.count, dict) and dict(self.count) == {"additional_paid": True}
 
 
 #: What a **bestowed** spell targets, fixed by rule 702.103a rather than by the

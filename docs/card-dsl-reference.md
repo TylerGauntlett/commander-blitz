@@ -299,7 +299,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 
 | Name | Description | Defined in |
 |---|---|---|
-| `additional_paid` | Whether (or how often) an additional cost was paid. | [Value expressions](card-dsl.md#value-expressions) |
+| `additional_paid` | Whether (or how often) an additional cost was paid; as a spell's target `count`, the targets each cast line declares. | [Targets sized by an additional cost](card-dsl.md#targets-sized-by-an-additional-cost) |
 | `attack_power_this_combat` | Total power of the player's attackers as declared this combat (pack tactics). | [Pack tactics — attackers' total power as declared](card-dsl.md#pack-tactics--attackers-total-power-as-declared) |
 | `attacked_this_turn` | 1 if the player attacked this turn, else 0 (raid). | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `attackers_this_turn` | How many creatures the player attacked with this turn. | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |

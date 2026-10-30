@@ -1623,6 +1623,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads 'additional_paid' but has no 'additional_cost', so it "
             f"would always read 0"
         )
+    if (
+        any(spec.additional_sized for spec in all_targets)
+        and not additional_optional
+        and not additional_repeatable
+    ):
+        # "Sacrifice X creatures. Destroy X target …" sizes the targets by a
+        # count the caster chooses. A mandatory cost paid exactly once has no
+        # count to choose: the spec is always one target, and 'count': 1 says so.
+        raise DslError(
+            f"{where}: a target sized by 'additional_paid' needs an additional cost "
+            f"that is 'additional_optional' or 'additional_repeatable' -- one paid "
+            f"exactly once is 'count': 1"
+        )
     # Strive: "This spell costs {1}{W} more to cast for each target beyond the
     # first." A cost *increase* (601.2f) whose size is the number of targets
     # declared at 601.2c, so it only means something beside a target list whose

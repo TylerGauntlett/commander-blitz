@@ -50,7 +50,7 @@ from .player_statics import (
 )
 from .primitives import cast_locked_zones, discard_cards, draw_cards, mill_cards
 from .sba import declare_win
-from .targeting import enumerate_target_tuples
+from .targeting import additional_sized_targets, enumerate_target_tuples
 from .zones import move_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -298,7 +298,9 @@ def _offer_cast(
     options = enumerate_target_tuples(
         state,
         pid,
-        card.targets,
+        # Madness and miracle offer no optional additional cost, so an
+        # additional-sized target is declared as paid zero times.
+        additional_sized_targets(card.targets, 0),
         oid,
         limit=1,
         size_cap=1 if card.strive is not None else None,

@@ -1,0 +1,53 @@
+{
+  "_comment": "Cards that exist only for tests/unit/targets/test_additional_sized_targets.py: Immoral Bargain's shape, a spell whose target count is the number of times its repeatable additional cost is paid. Never part of a deck list.",
+  "cards": [
+    {
+      "id": "t_immoral_bargain",
+      "name": "Test Immoral Bargain",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice X creatures.\nDestroy X target nonland permanents.",
+      "mana_cost": "{B}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": {
+            "additional_paid": true
+          },
+          "selector": {
+            "zone": "battlefield",
+            "not_types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "destroy",
+          "objects": {
+            "target": "t1"
+          }
+        }
+      ]
+    }
+  ]
+}

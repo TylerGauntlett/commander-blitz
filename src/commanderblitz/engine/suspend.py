@@ -37,7 +37,7 @@ from .mana import OTHER_PAYMENT, ManaCost
 from .objects import TIME_COUNTER
 from .player_statics import player_cant_cast_while_resolving
 from .primitives import cast_locked_zones
-from .targeting import enumerate_target_tuples
+from .targeting import additional_sized_targets, enumerate_target_tuples
 from .zones import exile, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -270,7 +270,9 @@ def cast_for_free(
     options = enumerate_target_tuples(
         state,
         pid,
-        card.targets,
+        # A free cast pays no optional additional cost, so an additional-sized
+        # target is declared as paid zero times.
+        additional_sized_targets(card.targets, 0),
         oid,
         limit=1,
         size_cap=1 if card.strive is not None else None,

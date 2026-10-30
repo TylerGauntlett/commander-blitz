@@ -554,7 +554,9 @@ PLAYER_SPECS: dict[str, Entry] = {
 }
 
 VALUES: dict[str, Entry] = {
-    "additional_paid": ("Whether (or how often) an additional cost was paid.", None),
+    "additional_paid": ("Whether (or how often) an additional cost was paid; as a spell's target "
+                        "`count`, the targets each cast line declares.",
+                        "Targets sized by an additional cost"),
     "attacked_this_turn": ("1 if the player attacked this turn, else 0 (raid).", H_ATTACKED),
     "attack_power_this_combat": ("Total power of the player's attackers as declared this combat (pack tactics).",
                                  "Pack tactics — attackers' total power as declared"),

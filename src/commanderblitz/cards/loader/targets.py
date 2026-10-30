@@ -108,13 +108,30 @@ def _compile_targets(
                 f"{where}: 'one_per_player' needs 'count': 'any' -- "
                 f"it caps a variable-size choice, and a fixed one has no room to cap"
             )
-        if on_spell and not isinstance(spec.count, (int, str)) and not spec.x_sized:
+        if (
+            on_spell
+            and not isinstance(spec.count, (int, str))
+            and not spec.x_sized
+            and not spec.additional_sized
+        ):
             raise DslError(
                 f"{where}.target[{spec.id}]: a computed 'count' only works on an "
                 f"ability's targets -- a spell's are declared while it is being "
                 f"cast (601.2c), before any additional cost is paid, so the "
-                f"expression would read 0. The one exception is {{\"x\": true}}: "
-                f"601.2b announces X *before* 601.2c chooses targets"
+                f"expression would read 0. The exceptions are {{\"x\": true}} and "
+                f"{{\"additional_paid\": true}}: 601.2b announces X and how many "
+                f"times the additional cost is paid *before* 601.2c chooses targets"
+            )
+        if on_spell and spec.additional_sized and (
+            spec.up_to or spec.optional or spec.count_if_kicked is not None or spec.mode is not None
+        ):
+            # "Destroy X target nonland permanents" is exactly X: the cast line
+            # substitutes the times it pays as a fixed count, and each of these
+            # would put a second size or a second moment on the same spec.
+            raise DslError(
+                f"{where}.target[{spec.id}]: 'count': {{\"additional_paid\": true}} is "
+                f"exactly the times the additional cost is paid -- it takes no "
+                f"'up_to', 'optional', 'count_if_kicked' or 'mode'"
             )
         if spec.x_sized and on_spell and not (mana_cost or "").count("{X}"):
             # "Each of X targets" on a card with no X to pay is a spec that

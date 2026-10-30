@@ -1873,7 +1873,7 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     from ..player_statics import cast_lock_min_x
     from ..primitives import cast_locked_zones
     from ..stack import free_cast_modes, push_spell
-    from ..targeting import describe_ref, enumerate_target_tuples
+    from ..targeting import additional_sized_targets, describe_ref, enumerate_target_tuples
     from .context import ask_mode, ask_targets, ask_x
 
     state = ctx.state
@@ -1915,7 +1915,13 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     tuples = [
         t
         for t in enumerate_target_tuples(
-            state, pid, card.targets, oid, size_cap=1 if card.strive is not None else None
+            state,
+            pid,
+            # No additional cost is offered on this path, so an additional-sized
+            # target is declared as paid zero times.
+            additional_sized_targets(card.targets, 0),
+            oid,
+            size_cap=1 if card.strive is not None else None,
         )
         if ceiling(extra_for(t)) >= min_x
     ]
