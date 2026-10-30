@@ -4624,6 +4624,14 @@
   "fighting_drake": {
     "zone": "battlefield"
   },
+  "final_act": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "finale_of_devastation": {
     "battlefield_count": 33,
     "granted": {
@@ -5707,6 +5715,13 @@
   "gorilla_warrior": {
     "zone": "battlefield"
   },
+  "gorma_the_gullet": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "gorn_captain": {
     "zone": "battlefield"
   },
@@ -5946,6 +5961,10 @@
     "zone": "graveyard"
   },
   "gutter_skulk": {
+    "zone": "battlefield"
+  },
+  "gyome_master_chef": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "gyre_engineer": {
@@ -15777,6 +15796,16 @@
     "zone": "graveyard"
   },
   "wizards_school": {
+    "zone": "battlefield"
+  },
+  "woe_strider": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "wojek_investigator": {
