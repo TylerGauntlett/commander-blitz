@@ -69871,6 +69871,136 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "keywords": [
+                "flying",
+                "double_strike",
+                "haste"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, Human Torch gains flying, double strike, and haste until end of turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "spells_cast_this_turn": {
+                  "filter": {
+                    "not_types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "duration": "this_turn",
+                  "effects": [
+                    {
+                      "amount": {
+                        "binding": "amount"
+                      },
+                      "op": "damage",
+                      "player": {
+                        "except": "you",
+                        "not": {
+                          "binding": "defender"
+                        }
+                      },
+                      "source_object": {
+                        "binding": "subject"
+                      }
+                    }
+                  ],
+                  "op": "delayed_trigger",
+                  "text": "Until end of turn, whenever he deals combat damage to an opponent, he deals that much damage to each other opponent.",
+                  "trigger": {
+                    "condition": {
+                      "cmp": "<",
+                      "left": {
+                        "player_count": {
+                          "except": "you",
+                          "not": {
+                            "binding": "defender"
+                          }
+                        }
+                      },
+                      "right": {
+                        "player_count": "each_opponent"
+                      }
+                    },
+                    "controller": "any",
+                    "event": "deals_combat_damage_to_player",
+                    "subject": {
+                      "binding": "self"
+                    }
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{R}{G}{W}{U}"
+              },
+              "player": "you",
+              "prompt": "Pay {R}{G}{W}{U}?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Human Torch attacks, you may pay {R}{G}{W}{U}. If you do, until end of turn, whenever he deals combat damage to an opponent, he deals that much damage to each other opponent.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "human_torch",
+      "mana_cost": "{3}{R}",
+      "name": "Human Torch",
+      "oracle_text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, Human Torch gains flying, double strike, and haste until end of turn.\nWhenever Human Torch attacks, you may pay {R}{G}{W}{U}. If you do, until end of turn, whenever he deals combat damage to an opponent, he deals that much damage to each other opponent.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -72975,6 +73105,47 @@
       "colors": [
         "W"
       ],
+      "id": "invisible_force_field",
+      "mana_cost": "{1}{W}",
+      "name": "Invisible Force Field",
+      "oracle_text": "Up to four target permanents you control gain indestructible until end of turn.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "rebound": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": 4,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
       "id": "invoke_the_divine",
       "mana_cost": "{2}{W}",
       "name": "Invoke the Divine",
@@ -73696,6 +73867,102 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "it_s_clobberin_time",
+      "mana_cost": "{2}{G}",
+      "name": "It's Clobberin' Time!",
+      "oracle_text": "Choose one —\n• Target creature you control deals damage equal to its power to target creature an opponent controls.\n• Destroy target artifact or enchantment.\nRebound",
+      "rebound": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "power_of": {
+                      "target": "clobberer"
+                    }
+                  },
+                  "objects": {
+                    "target": "clobbered"
+                  },
+                  "op": "damage",
+                  "source_object": {
+                    "target": "clobberer"
+                  }
+                }
+              ],
+              "label": "Target creature you control deals damage equal to its power to target creature an opponent controls."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "smashed"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact or enchantment."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "clobberer",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "clobbered",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "smashed",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -85154,6 +85421,114 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "ability": "lockjaw_teleport",
+              "op": "reflexive_trigger"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, put a +1/+1 counter on Lockjaw.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "spells_cast_this_turn": {
+                  "filter": {
+                    "not_types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "unblockable"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "id": "lockjaw_teleport",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, Lockjaw and up to one other target creature you control can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lockjaw_slobbering_teleporter",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Lockjaw, Slobbering Teleporter",
+      "oracle_text": "Vigilance\nAt the beginning of combat on your turn, if you've cast a noncreature spell this turn, put a +1/+1 counter on Lockjaw. When you do, Lockjaw and up to one other target creature you control can't be blocked this turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Inhuman",
+        "Dog",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "duration": "until_end_of_turn",
               "objects": {
                 "target": "t1"
@@ -91684,6 +92059,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player casts a noncreature spell, put a +1/+1 counter on Medusa.",
+          "trigger": {
+            "controller": "any",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "medusa_inhuman_queen",
+      "keywords": [
+        "reach",
+        "vigilance"
+      ],
+      "mana_cost": "{2}{G}",
+      "name": "Medusa, Inhuman Queen",
+      "oracle_text": "Reach, vigilance\nWhenever a player casts a noncreature spell, put a +1/+1 counter on Medusa.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Inhuman",
+        "Noble",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -93625,6 +94057,77 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "as": "exiled",
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "not_types": [
+                    "Land"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "exiled",
+                        "not_types": [
+                          "Land"
+                        ]
+                      },
+                      "op": "play_exiled"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Cast the exiled card without paying its mana cost?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts their first spell each turn, that player exiles the top card of their library. If it's a nonland card, you may cast it without paying its mana cost.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mind_s_dilation",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Mind's Dilation",
+      "oracle_text": "Whenever an opponent casts their first spell each turn, that player exiles the top card of their library. If it's a nonland card, you may cast it without paying its mana cost.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "amount": {
@@ -93796,6 +94299,56 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "copying": {
+                "target": "t1"
+              },
+              "duration": "end_of_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_copy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment",
+                  "Land"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}: This artifact becomes a copy of target artifact, creature, enchantment, or land until end of turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "mirage_mirror",
+      "mana_cost": "{3}",
+      "name": "Mirage Mirror",
+      "oracle_text": "{2}: This artifact becomes a copy of target artifact, creature, enchantment, or land until end of turn.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -94245,6 +94798,64 @@
         "Cat"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more tokens you control enter, you may draw a card.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "is_token": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mister_fantastic_reed_richards",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Mister Fantastic, Reed Richards",
+      "oracle_text": "Reach\nWhenever one or more tokens you control enter, you may draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -95163,6 +95774,43 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts their second spell each turn, you create a Treasure token.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "monologue_tax",
+      "mana_cost": "{2}{W}",
+      "name": "Monologue Tax",
+      "oracle_text": "Whenever an opponent casts their second spell each turn, you create a Treasure token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -101770,6 +102418,74 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "nova_flame",
+      "mana_cost": "{X}{2}{R}{R}",
+      "name": "Nova Flame",
+      "oracle_text": "Put X +1/+1 counters on target creature you control. It deals damage equal to its power to each other creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        },
+        {
+          "as": "dealer",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "snapshot"
+        },
+        {
+          "amount": {
+            "power_of": {
+              "target": "t1"
+            }
+          },
+          "objects": {
+            "count": "all",
+            "exclude_binding": "dealer",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage",
+          "source_object": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -108294,6 +109010,45 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "explore"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, it explores.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "path_of_discovery",
+      "mana_cost": "{3}{G}",
+      "name": "Path of Discovery",
+      "oracle_text": "Whenever a creature you control enters, it explores. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on the creature, then put the card back or put it into your graveyard.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{2}",
             "tap": true
@@ -114294,6 +115049,51 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "quantum_misalignment",
+      "mana_cost": "{4}{U}",
+      "name": "Quantum Misalignment",
+      "oracle_text": "Create a token that's a copy of target creature you control, except it isn't legendary.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "rebound": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "except_": {
+            "remove_supertypes": [
+              "Legendary"
+            ]
+          },
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -116961,6 +117761,44 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "recurring_insight",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Recurring Insight",
+      "oracle_text": "Draw cards equal to the number of cards in target opponent's hand.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "rebound": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "cards_in_hand": {
+              "target": "t1"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "opponent"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -117378,6 +118216,67 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "rejuvenating_springs",
+      "name": "Rejuvenating Springs",
+      "oracle_text": "This land enters tapped unless you have two or more opponents.\n{T}: Add {G} or {U}.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "player_count": "each_opponent"
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -126797,6 +127696,49 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "flashback": {
+        "mana": "{2}{R}"
+      },
+      "id": "seize_the_day",
+      "mana_cost": "{3}{R}",
+      "name": "Seize the Day",
+      "oracle_text": "Untap target creature. After this main phase, there is an additional combat phase followed by an additional main phase.\nFlashback {2}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "untap"
+        },
+        {
+          "extra_main": true,
+          "op": "extra_combat"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

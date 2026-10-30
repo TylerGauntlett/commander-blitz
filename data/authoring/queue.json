@@ -131272,12 +131272,12 @@
     },
     "Human Torch": {
       "edhrec_rank": 17580,
-      "gate": "template",
+      "gate": null,
       "name": "Human Torch",
-      "reason": "no template for: At the beginning of combat on your turn, if you've cast a noncreature spell this turn, gai",
+      "reason": "",
       "scryfall_id": "2b6f41b1-8180-4b7f-8366-c874a95e731e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Human Torch, Johnny Storm": {
@@ -139272,12 +139272,12 @@
     },
     "Invisible Force Field": {
       "edhrec_rank": 16994,
-      "gate": "template",
+      "gate": null,
       "name": "Invisible Force Field",
-      "reason": "no template for: Up to four target permanents you control gain indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "2ec8d667-079d-4232-9e70-812988432f50",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Invisible Stalker": {
@@ -140682,12 +140682,12 @@
     },
     "It's Clobberin' Time!": {
       "edhrec_rank": 18135,
-      "gate": "template",
+      "gate": null,
       "name": "It's Clobberin' Time!",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "2b2107a1-afe3-4a06-b3f5-e00f6f83d80b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Itazura, Lingering Wick": {
@@ -160502,12 +160502,12 @@
     },
     "Lockjaw, Slobbering Teleporter": {
       "edhrec_rank": 17249,
-      "gate": "template",
+      "gate": null,
       "name": "Lockjaw, Slobbering Teleporter",
-      "reason": "no template for: At the beginning of combat on your turn, if you've cast a noncreature spell this turn, put",
+      "reason": "",
       "scryfall_id": "d078d4f8-0769-4d9f-aec5-8094cd55f735",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Locthwain Gargoyle": {
@@ -170322,12 +170322,12 @@
     },
     "Medusa, Inhuman Queen": {
       "edhrec_rank": 20118,
-      "gate": "template",
+      "gate": null,
       "name": "Medusa, Inhuman Queen",
-      "reason": "no template for: Whenever a player casts a noncreature spell, put a +1/+1 counter on Medusa",
+      "reason": "",
       "scryfall_id": "3187ebab-8008-455c-a3c9-794a5b225b88",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Meek Attack": {
@@ -173902,12 +173902,12 @@
     },
     "Mind's Dilation": {
       "edhrec_rank": 2669,
-      "gate": "template",
+      "gate": null,
       "name": "Mind's Dilation",
-      "reason": "no template for: Whenever an opponent casts their first spell each turn, that player exiles the top card of",
+      "reason": "",
       "scryfall_id": "b9de3ca6-d62f-422b-a67f-199f535cb56f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mind's Eye": {
@@ -174762,12 +174762,12 @@
     },
     "Mirage Mirror": {
       "edhrec_rank": 1276,
-      "gate": "template",
+      "gate": null,
       "name": "Mirage Mirror",
-      "reason": "no template for: {2}: This artifact becomes a copy of target artifact, creature, enchantment, or land until",
+      "reason": "",
       "scryfall_id": "9c7b84e5-d08a-407a-b672-28a4cb54de22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mirage Mockery": {
@@ -176122,12 +176122,12 @@
     },
     "Mister Fantastic, Reed Richards": {
       "edhrec_rank": 8988,
-      "gate": "template",
+      "gate": null,
       "name": "Mister Fantastic, Reed Richards",
-      "reason": "no template for: Whenever one or more tokens you control enter, you may draw a card",
+      "reason": "",
       "scryfall_id": "0adf55a7-1e40-4756-a2e0-799271e6a3d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mister Gutsy": {
@@ -178322,12 +178322,12 @@
     },
     "Monologue Tax": {
       "edhrec_rank": 1142,
-      "gate": "template",
+      "gate": null,
       "name": "Monologue Tax",
-      "reason": "no template for: Whenever an opponent casts their second spell each turn, you create a Treasure token",
+      "reason": "",
       "scryfall_id": "7625bc1f-d76c-4354-988b-4b58e054a3b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Monomania": {
@@ -188942,12 +188942,12 @@
     },
     "Nova Flame": {
       "edhrec_rank": 17888,
-      "gate": "template",
+      "gate": null,
       "name": "Nova Flame",
-      "reason": "no template for: Put X +1/+1 counters on target creature you control. It deals damage equal to its power to",
+      "reason": "",
       "scryfall_id": "1b5f713f-6ad9-445e-ae4c-56250bb3aecb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nova Hellkite": {
@@ -198482,12 +198482,12 @@
     },
     "Path of Discovery": {
       "edhrec_rank": 3610,
-      "gate": "template",
+      "gate": null,
       "name": "Path of Discovery",
-      "reason": "no template for: Whenever a creature you control enters, it explores",
+      "reason": "",
       "scryfall_id": "4141559d-6f6d-4d1d-8052-90ccc4eee4ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Path of Mettle // Metzali, Tower of Triumph": {
@@ -211412,12 +211412,12 @@
     },
     "Quantum Misalignment": {
       "edhrec_rank": 1848,
-      "gate": "template",
+      "gate": null,
       "name": "Quantum Misalignment",
-      "reason": "no template for: Create a token that's a copy of target creature you control, except it isn't legendary",
+      "reason": "",
       "scryfall_id": "041351b5-e253-41ec-bc6d-579ae89d6396",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quantum Reduction": {
@@ -218342,12 +218342,12 @@
     },
     "Recurring Insight": {
       "edhrec_rank": 10472,
-      "gate": "template",
+      "gate": null,
       "name": "Recurring Insight",
-      "reason": "no template for: Draw cards equal to the number of cards in target opponent's hand",
+      "reason": "",
       "scryfall_id": "592bed07-73ce-4390-90b0-111ab2be2c77",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Recurring Nightmare": {
@@ -219502,12 +219502,12 @@
     },
     "Rejuvenating Springs": {
       "edhrec_rank": 142,
-      "gate": "template",
+      "gate": null,
       "name": "Rejuvenating Springs",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "a4540796-7d1b-4a1f-8870-0f6d0eaf6d94",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rejuvenation Chamber": {
@@ -239342,12 +239342,12 @@
     },
     "Seize the Day": {
       "edhrec_rank": 1641,
-      "gate": "template",
+      "gate": null,
       "name": "Seize the Day",
-      "reason": "no template for: Untap target creature. After this main phase, there is an additional combat phase followed",
+      "reason": "",
       "scryfall_id": "e2449983-c54c-49d8-8289-c591e465527e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seize the Initiative": {

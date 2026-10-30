@@ -1,0 +1,18 @@
+{
+  "card_id": "promise_of_loyalty",
+  "name": "Promise of Loyalty",
+  "oracle_text": "Each player puts a vow counter on a creature they control and sacrifices the rest. Each of those creatures can't attack you or planeswalkers you control for as long as it has a vow counter on it.",
+  "blocked_sentences": [
+    "Each of those creatures can't attack you or planeswalkers you control for as long as it has a vow counter on it."
+  ],
+  "needs": [
+    {
+      "capability": "vow_counter",
+      "kind": "op",
+      "what": "a per-creature attack prohibition installed by a resolving spell: the chosen creatures (a binding) can't attack the spell's controller or planeswalkers that player controls, lasting for as long as each creature has a vow counter on it (checked when attackers are declared, ending when the counter is removed or the creature leaves)",
+      "why_existing_wont_do": "The cant_attack_player op names players on both sides (attacker/defender), not specific creatures, and its duration is only this_turn or this_combat, never 'while it has a <kind> counter'. The cant_attack_you static is scoped to the seat of the permanent carrying it, so granting it to each opponent's creature via grant_ability would make 'you' mean that creature's own controller, not the caster. The cant_attack static has no defender in its question at all."
+    }
+  ],
+  "closest_existing": ["cant_attack_player", "cant_attack_you", "grant_ability"],
+  "confidence": "high"
+}

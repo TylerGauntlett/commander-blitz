@@ -1,0 +1,18 @@
+{
+  "card_id": "silver_surfer_galactus_s_herald",
+  "name": "Silver Surfer, Galactus's Herald",
+  "oracle_text": "Flying\nWhen Silver Surfer enters, you may search your library for a card named Galactus, Devourer of Worlds, reveal it, put it into your hand, then shuffle.\nWhenever Silver Surfer deals combat damage to a player, until the end of your next turn, target creature attacks that player each combat if able.",
+  "blocked_sentences": [
+    "Whenever Silver Surfer deals combat damage to a player, until the end of your next turn, target creature attacks that player each combat if able."
+  ],
+  "needs": [
+    {
+      "capability": "must_attack_player",
+      "kind": "op",
+      "what": "an attack requirement on a target creature that names a specific player it must attack (the player the trigger's combat damage was dealt to), enforced each combat until the end of the effect controller's next turn",
+      "why_existing_wont_do": "must_attack takes only objects and a duration of this_turn or next_combat, names no defender and cannot last 'until the end of your next turn' across every combat; goad forces attacks on a player OTHER than the goader and expires at the goader's next turn rather than its end; must_attack_planeswalker targets a planeswalker; the attacks_if_able static is a permanent self-filter with no defender or duration"
+    }
+  ],
+  "closest_existing": ["must_attack", "goad"],
+  "confidence": "high"
+}

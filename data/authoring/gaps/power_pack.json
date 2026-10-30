@@ -1,0 +1,19 @@
+{
+  "card_id": "power_pack",
+  "name": "Power Pack",
+  "oracle_text": "Flying, vigilance, trample, haste\nWhenever Power Pack deals combat damage to a player, exile target instant or sorcery card from your graveyard chosen at random. At the beginning of your next upkeep, you may cast that card without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+  "blocked_sentences": [
+    "At the beginning of your next upkeep, you may cast that card without paying its mana cost.",
+    "If that spell would be put into your graveyard, exile it instead."
+  ],
+  "needs": [
+    {
+      "capability": "free_cast_exiles_instead",
+      "kind": "op",
+      "what": "an `exiles: true` option on the free-cast ops (`play_exiled`, or `exile`'s `playable_free`) so a card cast without paying its mana cost from exile carries the stack-item replacement \"if that spell would be put into your graveyard, exile it instead\" (StackItem.exiles_instead), usable inside a `delay` with step upkeep and your_turn over the binding captured by the earlier `exile ... as`",
+      "why_existing_wont_do": "`cast_card` has `exiles` but always pays the card's mana cost (_cast_paying_mana_cost), so it cannot say \"without paying its mana cost\"; `play_exiled` and `suspend.cast_for_free` cast for free but take no `exiles` flag, so the spell would go to the graveyard after resolving; `exile`'s `playable_free` has no `your next upkeep` duration and no exile-instead rider either"
+    }
+  ],
+  "closest_existing": ["cast_card", "play_exiled", "delay"],
+  "confidence": "high"
+}

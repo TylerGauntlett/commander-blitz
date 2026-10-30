@@ -6213,6 +6213,10 @@
   "hullcarver": {
     "zone": "battlefield"
   },
+  "human_torch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "humble_budoka": {
     "zone": "battlefield"
   },
@@ -6470,6 +6474,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "invisible_force_field": {
+    "granted": {
+      "count": 4,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "exile"
+  },
   "invoke_the_divine": {
     "life": {
       "0": 44
@@ -6529,6 +6542,9 @@
   },
   "isolated_chapel": {
     "zone": "battlefield"
+  },
+  "it_s_clobberin_time": {
+    "zone": "exile"
   },
   "ixalli_s_lorekeeper": {
     "zone": "battlefield"
@@ -7444,6 +7460,10 @@
     },
     "zone": "battlefield"
   },
+  "lockjaw_slobbering_teleporter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "loki_s_scepter": {
     "zone": "battlefield"
   },
@@ -8028,6 +8048,10 @@
     },
     "zone": "battlefield"
   },
+  "medusa_inhuman_queen": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mek_leth_berserker": {
     "zone": "battlefield"
   },
@@ -8218,6 +8242,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mind_s_dilation": {
+    "zone": "battlefield"
+  },
   "mind_s_eye": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8232,6 +8259,10 @@
     "zone": "battlefield"
   },
   "minotaur_warrior": {
+    "zone": "battlefield"
+  },
+  "mirage_mirror": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mire_s_grasp": {
@@ -8283,6 +8314,13 @@
     "zone": "battlefield"
   },
   "mist_leopard": {
+    "zone": "battlefield"
+  },
+  "mister_fantastic_reed_richards": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "mistral_charger": {
@@ -8355,6 +8393,10 @@
     "zone": "battlefield"
   },
   "monoist_sentry": {
+    "zone": "battlefield"
+  },
+  "monologue_tax": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mons_s_goblin_raiders": {
@@ -8926,6 +8968,10 @@
       "0": 46
     }
   },
+  "nova_flame": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "noxious_ghoul": {
     "zone": "battlefield"
   },
@@ -9428,6 +9474,13 @@
     "zone": "battlefield"
   },
   "path_of_ancestry": {
+    "zone": "battlefield"
+  },
+  "path_of_discovery": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "patriot_shield_wielder": {
@@ -9972,6 +10025,10 @@
   "quaketusk_boar": {
     "zone": "battlefield"
   },
+  "quantum_misalignment": {
+    "battlefield_count": 33,
+    "zone": "exile"
+  },
   "queen_mother_ramonda": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10204,6 +10261,15 @@
     },
     "zone": "battlefield"
   },
+  "recurring_insight": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "exile"
+  },
   "red_elemental_blast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -10248,6 +10314,13 @@
     "life": {
       "0": 46
     }
+  },
+  "rejuvenating_springs": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "relentless_advance": {
     "battlefield_count": 33,
@@ -11103,6 +11176,9 @@
   "seizan_perverter_of_truth": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "seize_the_day": {
+    "zone": "graveyard"
   },
   "sejiri_refuge": {
     "life": {

@@ -1,0 +1,22 @@
+{
+  "card": {
+    "id": "terramorph",
+    "name": "Terramorph",
+    "oracle_text": "Search your library for a basic land card, put it onto the battlefield, then shuffle.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+    "mana_cost": "{3}{G}",
+    "types": ["Sorcery"],
+    "colors": ["G"],
+    "color_identity": ["G"],
+    "rebound": true,
+    "spell_effects": [
+      {
+        "op": "search_library",
+        "player": "you",
+        "count": 1,
+        "destination": "battlefield",
+        "selector": {"supertypes": ["Basic"], "types": ["Land"]}
+      }
+    ]
+  },
+  "expectation": {"zone": "exile", "battlefield_count": 33, "library_size": {"0": 39}}
+}
