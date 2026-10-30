@@ -39,6 +39,7 @@ PRECONS = {
     "fdc_wretched_ranks",
     "frc_multiverse_reforged",
     "msc_avengers_assemble",
+    "msc_doom_prevails",
     "msc_wakanda_forever",
 }
 

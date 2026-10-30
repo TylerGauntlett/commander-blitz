@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**95 cards** blocked by **78** capabilities.
+**87 cards** blocked by **69** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [convoke](#convoke) | 2 | 1330 | cost |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -34,19 +33,17 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
-| [convoked-creatures](#convoked-creatures) | 1 | 1330 | selector |
+| [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [discarded-this-turn](#discarded-this-turn) | 1 | 14475 | value |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [goaded-filter](#goaded-filter) | 1 | 13756 | selector |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -57,25 +54,19 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
-| [melee](#melee) | 1 | 17758 | keyword |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
-| [miracle](#miracle) | 1 | 10188 | static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
-| [next-spell-flash-permission](#next-spell-flash-permission) | 1 | 5481 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [playable-any-type-on-exile](#playable-any-type-on-exile) | 1 | 18793 | op |
-| [playable-until-next-exile](#playable-until-next-exile) | 1 | 15670 | value |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
-| [random-mode](#random-mode) | 1 | 14475 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -312,25 +303,6 @@ Blocks **2** cards.
 
 </details>
 
-## convoke
-
-Blocks **2** cards.
-
-- **(cost)** a card-level cost where each creature you tap while casting pays for {1} OR one mana of that creature's color (so a black creature can pay a {B} pip of {2}{B}{B}), claimed by the residual gate as the Convoke line
-  <br>Why the existing vocabulary won't do: pay_generic_with: "tap_creatures" pays only the generic part (casting.PAY_GENERIC_TAP_TYPES, and game.py notes no amount of convoking pays coloured pips); Convoke is not in keywords or card_level_cost_keys
-- **(cost)** a card-level cost where each creature you tap while casting pays for {1} OR one mana of that creature's color (so it can pay the {W} and {B} pips), claimed by the residual gate as the Convoke line
-  <br>Why the existing vocabulary won't do: pay_generic_with: "tap_creatures" pays only the generic part (a documented simplification in schema.py) and the residual gate does not accept it as Convoke; Convoke is not in keywords or card_level_cost_keys
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lethal Scheme** (rank 1330) — `lethal_scheme`
-  - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
-  - Destroy target creature or planeswalker. Each creature that convoked this spell connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)
-- **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
-  - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
-
-</details>
-
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -536,18 +508,17 @@ Blocks **1** card.
 
 </details>
 
-## convoked-creatures
+## convoke
 
 Blocks **1** card.
 
-- **(selector)** a selector for the creatures that were tapped to convoke the resolving spell (remembered on the spell object at cast time), so connive can take objects = each creature that convoked this spell
-  <br>Why the existing vocabulary won't do: connive takes objects but no selector key names the convoking creatures; paid_by matches remembered mana sources, not permanents tapped through pay_generic_with, and _ask_pay_generic does not record which creatures were tapped
+- **(cost)** a card-level cost where each creature you tap while casting pays for {1} OR one mana of that creature's color (so it can pay the {W} and {B} pips), claimed by the residual gate as the Convoke line
+  <br>Why the existing vocabulary won't do: pay_generic_with: "tap_creatures" pays only the generic part (a documented simplification in schema.py) and the residual gate does not accept it as Convoke; Convoke is not in keywords or card_level_cost_keys
 
 <details><summary>Cards waiting on this</summary>
 
-- **Lethal Scheme** (rank 1330) — `lethal_scheme`
+- **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
   - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
-  - Destroy target creature or planeswalker. Each creature that convoked this spell connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)
 
 </details>
 
@@ -619,20 +590,6 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
-
-</details>
-
-## discarded-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-player turn-ledger value or condition 'you discarded a card this turn' (count of cards the controller discarded this turn), usable as the condition that switches the random pick to a player choice
-  <br>Why the existing vocabulary won't do: value_keys has cards_to_graveyard_this_turn, cards_drawn_this_turn and greatest_discarded_by_a_player but nothing counting discards this turn; cards_to_graveyard_this_turn also counts dies/mills and misses discards to exile under replacement, and has_turn_flag only reads flags written by set_turn_flag
-
-<details><summary>Cards waiting on this</summary>
-
-- **Typhoid Mary, Fractured** (rank 14475) — `typhoid_mary_fractured`
-  - Whenever Typhoid Mary attacks, choose one at random. If you discarded a card this turn, you choose one instead.
 
 </details>
 
@@ -708,20 +665,6 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
-
-</details>
-
-## goaded-filter
-
-Blocks **1** card.
-
-- **(selector)** a trigger/selector filter key 'goaded' matching creatures that are currently goaded (GameObject.goaded_by non-empty), usable on the batched creatures_deal_combat_damage trigger together with a defending-player-is-an-opponent constraint, so 'whenever one or more goaded creatures deal combat damage to one of your opponents' fires once per batch
-  <br>Why the existing vocabulary won't do: goad op exists and the engine tracks GameObject.goaded_by, but neither trigger_filter_keys nor selector_keys has any key reading goaded status; creatures_deal_combat_damage can filter by controller/types/etc. only, and the goaded creatures are controlled by opponents so no controller filter isolates them
-
-<details><summary>Cards waiting on this</summary>
-
-- **Puppet Master, String Puller** (rank 13756) — `puppet_master_string_puller`
-  - Whenever one or more goaded creatures deal combat damage to one of your opponents, create a Treasure token.
 
 </details>
 
@@ -868,21 +811,6 @@ Blocks **1** card.
 
 </details>
 
-## melee
-
-Blocks **1** card.
-
-- **(keyword)** the melee keyword (702.121): a triggered ability 'whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat', grantable to other creatures via a static grant_keyword; underneath it needs a value counting the distinct opponents (players, plus controllers of attacked planeswalkers/battles per 702.121b) that any creature you control attacked in the current combat
-  <br>Why the existing vocabulary won't do: melee is not in keywords. A hand-written attacks trigger has no value for 'opponents you attacked this combat': attacked_this_turn counts which players attacked (raid), attackers_this_turn counts creatures, and player_count over {attacked_by: self} counts only seats this one creature attacked, this turn rather than this combat -- wrong whenever your creatures split across several opponents or there are two combats. Granting the trigger to other creatures would also need grant_ability of a self-referential attacks trigger, which a keyword would avoid.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Titania, Proud Pummeler** (rank 17758) — `titania_proud_pummeler`
-  - Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)
-  - Other creatures you control have melee.
-
-</details>
-
 ## merfolk-token
 
 Blocks **1** card.
@@ -894,20 +822,6 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
-
-</details>
-
-## miracle
-
-Blocks **1** card.
-
-- **(static_effect)** a player static (like grant_warp) that grants miracle with a given cost ({0}) to cards in its controller's hand matching an affects_spells filter (not_types: Land), so the draw-time miracle offer reads the granted cost when the card itself prints none
-  <br>Why the existing vocabulary won't do: miracle is only a card-level rider key the card prints about itself (replacements._miracle reads card.miracle and returns when it is None); grant_warp grants warp, not miracle, and granted_alternative_cost is an any-time alternative price, not one offered only when the card is the first drawn this turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Molecule Man** (rank 10188) — `molecule_man`
-  - Nonland cards in your hand have miracle {0}
 
 </details>
 
@@ -969,20 +883,6 @@ Blocks **1** card.
 
 </details>
 
-## next-spell-flash-permission
-
-Blocks **1** card.
-
-- **(op)** a one-shot flash permission consumed by the next matching spell cast this turn, whose spell filter can read the creature type chosen as the source entered (subtype = the permanent's chosen creature type)
-  <br>Why the existing vocabulary won't do: grant_flash_permission takes only duration, player and card 'types' (validated against KNOWN_TYPES, so no subtypes and no reference to a chosen type), and the FlashPermission it writes lasts for the whole duration rather than being used up by the next spell cast; the cast_as_though_flash static is continuous, not a single-use grant from an activated ability
-
-<details><summary>Cards waiting on this</summary>
-
-- **Progenitor's Icon** (rank 5481) — `progenitor_s_icon`
-  - {T}: The next spell of the chosen type you cast this turn can be cast as though it had flash
-
-</details>
-
 ## noted-mana-type
 
 Blocks **1** card.
@@ -1029,34 +929,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## playable-any-type-on-exile
-
-Blocks **1** card.
-
-- **(op)** an `any_type` rider on look_at_top's `playable` permission (destination exile, face_down, playable while_exiled), setting playable_any_type on the exiled card so mana of any type can be spent to cast it while the permission lasts
-  <br>Why the existing vocabulary won't do: look_at_top's options carry any_color but not any_type, and any_color is a different rule (it still demands colorless for {C}); only grant_playable sets playable_any_type, and op_look_at_top never reads any_type
-
-<details><summary>Cards waiting on this</summary>
-
-- **Klaw, Master of Sound** (rank 18793) — `klaw_master_of_sound`
-  - Mana of any type can be spent to cast a spell this way.
-
-</details>
-
-## playable-until-next-exile
-
-Blocks **1** card.
-
-- **(value)** a playable duration on exile/grant_playable that lasts until the same source exiles another card (the permission on the previously exiled card ends when this creature exiles a new one), so only the most recently exiled card with this source is playable
-  <br>Why the existing vocabulary won't do: playable_durations offers end_of_your_next_turn, later_turns, this_turn, while_exiled and your_next_end_step; while_exiled is strictly better than printed because earlier exiled cards would stay playable forever, and the others expire on a turn boundary rather than on the next exile by this source
-
-<details><summary>Cards waiting on this</summary>
-
-- **Superior Foes of Spider-Man** (rank 15670) — `superior_foes_of_spider_man`
-  - Whenever you cast a spell with mana value 4 or greater, you may exile the top card of your library. If you do, you may play that card until you exile another card with this creature.
 
 </details>
 
@@ -1127,20 +999,6 @@ Blocks **1** card.
 
 - **Gourmand's Talent** (rank 5861) — `gourmand_s_talent`
   - Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.
-
-</details>
-
-## random-mode
-
-Blocks **1** card.
-
-- **(op)** a choose_mode option (e.g. `random: true`, overridable by a condition such as `random_unless`) that picks the mode uniformly at random from the game's seeded RNG instead of asking the chooser
-  <br>Why the existing vocabulary won't do: choose_mode takes chooser/count/up_to/once_each/budget but always asks a player via ask_mode; `random` exists only on selectors and discard. roll_dice + if would be an approximation: rolling a die is a distinct game event that 'whenever you roll' cards see, and the card does not roll
-
-<details><summary>Cards waiting on this</summary>
-
-- **Typhoid Mary, Fractured** (rank 14475) — `typhoid_mary_fractured`
-  - Whenever Typhoid Mary attacks, choose one at random. If you discarded a card this turn, you choose one instead.
 
 </details>
 
