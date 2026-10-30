@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**116 cards** blocked by **96** capabilities.
+**112 cards** blocked by **94** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [spirit-3-2-rw](#spirit-3-2-rw) | 4 | 8925 | token |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -65,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
-| [illusion-x-x-u](#illusion-x-x-u) | 1 | 1206 | token |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -271,33 +269,6 @@ Blocks **8** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## spirit-3-2-rw
-
-Blocks **4** cards.
-
-- **(token)** a 3/2 red and white Spirit creature token
-  <br>Why the existing vocabulary won't do: token_ids holds only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; create_token's power/toughness overrides could size a 2/2 white Spirit to 3/2 but cannot make it red and white, and no other 3/2 red-and-white token exists. The rest of the sentence looks expressible: destroy all creatures with `as` binding the destroyed set, then create_token with amount counting that binding filtered to controller you and is_token false.
-- **(token)** a 3/2 red and white Spirit creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; none is a 3/2 red and white Spirit. The trigger itself (leaves_graveyard, batched) and the 'Spirits you control get +1/+0' buff static are both expressible
-- **(token)** a 3/2 red and white Spirit creature token
-  <br>Why the existing vocabulary won't do: token_ids holds only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; none is a 3/2 red and white Spirit, and the trigger itself is expressible as leaves_graveyard with batched: true
-- **(token)** a 3/2 red and white Spirit creature token (id spirit_3_2_rw)
-  <br>Why the existing vocabulary won't do: token_ids has only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w and no 3/2 red-white Spirit; a near token would change the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Quintorius, Loremaster** (rank 8925) — `quintorius_loremaster`
-  - At the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.
-  - {1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.
-- **Quintorius, Field Historian** (rank 9458) — `quintorius_field_historian`
-  - Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.
-- **Quintorius, History Chaser** (rank 10055) — `quintorius_history_chaser`
-  - Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.
-- **Ceaseless Conflict** (rank 12071) — `ceaseless_conflict`
-  - Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nontoken creature you controlled that was destroyed this way.
 
 </details>
 
@@ -1023,20 +994,6 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
-
-</details>
-
-## illusion-x-x-u
-
-Blocks **1** card.
-
-- **(token)** an X/X blue Illusion creature token with no abilities (printed 0/0 base, sized by create_token's power/toughness), e.g. id illusion_x_x_u
-  <br>Why the existing vocabulary won't do: token_ids has illusion_1_1_u, illusion_1_1_u_flying and illusion_2_2_u_sac_when_targeted (fixed-size Illusions) and the X/X tokens shark_x_x_u_flying and dragon_illusion_x_x_r_flying_haste, which carry flying/haste or the wrong colour/subtype; none is a plain 0/0 blue Illusion. The rest of the line looks expressible: exile with until-style link, a leaves_battlefield trigger with for_each over {zone: exile, controller: any, exiled_with: self}, create_token with controller owner and power/toughness {mana_value_of: ...}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Skyclave Apparition** (rank 1206) — `skyclave_apparition`
-  - When this creature leaves the battlefield, the exiled card's owner creates an X/X blue Illusion creature token, where X is the mana value of the exiled card.
 
 </details>
 

@@ -1453,6 +1453,27 @@
       "is_token": true
     },
     {
+      "id": "illusion_x_x_u",
+      "name": "Illusion Token",
+      "oracle_text": "X/X blue Illusion creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Illusion"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
       "id": "illusion_1_1_u_flying",
       "name": "Illusion",
       "oracle_text": "1/1 blue Illusion creature token with flying.",
@@ -2609,6 +2630,28 @@
         "W"
       ],
       "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "spirit_3_2_rw",
+      "name": "Spirit Token",
+      "oracle_text": "3/2 red and white Spirit creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 3,
+      "toughness": 2,
+      "colors": [
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "R",
         "W"
       ],
       "is_token": true
