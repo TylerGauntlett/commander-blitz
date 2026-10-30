@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 153 |
-| [Selectors](#selectors) | 67 |
+| [Selectors](#selectors) | 68 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 61 |
 | [Conditions](#conditions) | 32 |
