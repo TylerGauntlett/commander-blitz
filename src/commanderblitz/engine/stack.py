@@ -760,6 +760,24 @@ def resolve_top(state: GameState) -> Generator[Any, list[int]]:
         yield from _resolve_ability(state, item)
 
 
+def escaped(item: StackItem, card: CardDef | None) -> bool:
+    """Whether ``item`` was cast for its card's own **escape** cost (702.138d).
+
+    Escape is the card's graveyard-cost slot with escape's destination, so the
+    cast must have taken that slot (`item.flashback`) on a card whose slot is
+    escape and not flashback, jump-start or mayhem. `item.graveyard_permission`
+    is deliberately not read: a card cast from a graveyard under a permanent's
+    permission paid its mana cost, not its escape cost (702.138c).
+    """
+    return bool(
+        item.flashback
+        and card is not None
+        and card.flashback is not None
+        and not card.graveyard_cast_exiles
+        and not card.mayhem
+    )
+
+
 def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int]]:
     assert item.oid is not None
     obj = state.objects.get(item.oid)
@@ -872,6 +890,10 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # it schedules, the permanent it becomes -- can still ask who was promised
     # what, by which time the StackItem is gone.
     obj.cast_gift_to = item.gift_to
+    # Escape (702.138d), at the same moment: "if this spell escaped" can be
+    # an `if` inside `spell_effects`, and the permanent's "escapes with"
+    # replacement reads the same stamp, written again below before it lands.
+    obj.cast_escaped = escaped(item, card)
     obj.pending_face_down = item.face_down
 
     ctx = EffectContext(
@@ -925,6 +947,10 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # replacement that puts the time counters on reads it *as* the permanent
     # enters, and `zones._enter_battlefield` keeps it only for this arrival.
     obj.cast_impending = item.impending
+    # Escape (702.138c), for impending's reason: "escapes with two +1/+1
+    # counters" is a replacement read *as* the permanent enters, and only this
+    # arrival keeps the stamp.
+    obj.cast_escaped = escaped(item, card)
     # Mutate (702.140b): the spell does not become a permanent of its own, so
     # it never reaches `_place_after_resolution` -- it is merged into the one it
     # targeted instead, and which way round is the caster's choice.

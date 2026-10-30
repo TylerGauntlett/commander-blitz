@@ -5297,6 +5297,33 @@ resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
 
+**"Escapes with"** (702.138c-d) is "if this permanent escaped, it enters
+with…": a `self_enters_with_counters` replacement gated on the `escaped`
+condition.
+
+```jsonc
+// Woe Strider -- "This creature escapes with two +1/+1 counters on it."
+"replacements": [{
+  "event": "self_enters_with_counters", "counter": "+1/+1", "amount": 2,
+  "condition": { "escaped": true }
+}]
+```
+
+`escaped` is true of a spell cast for the card's own escape cost and of the
+permanent it resolves into, so it also answers Uro's "sacrifice it unless it
+escaped" in an enters trigger and "if this spell escaped" inside
+`spell_effects`. `stack._resolve_spell` writes `GameObject.cast_escaped` before
+the effects run and again just before the permanent lands, and
+`zones._enter_battlefield` clears it on every other arrival, so a reanimated or
+flickered permanent did not escape. The loader refuses it, anywhere on the card,
+unless the card has a `graveyard_cost` with `"graveyard_cast": "graveyard"`, and
+refuses a value that is not a boolean.
+
+The near miss is `cast_from_graveyard`, which is also true of a card cast out of
+a graveyard under another permission (Muldrotha, an Edgar-shaped
+`cast_from_graveyard` static). That cast pays the mana cost, not the escape
+cost, and an escape creature cast that way enters without its counters.
+
 **A card's own permission at its printed price** is not a graveyard cost. It is
 a `cast_from_graveyard` static that works from the graveyard:
 

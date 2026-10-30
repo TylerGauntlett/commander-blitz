@@ -1443,6 +1443,9 @@ def _enter_battlefield(
     # replacement below.
     if cause != "resolved":
         obj.cast_impending = False
+        # Escape (702.138c) asks the same thing of the same arrival: a
+        # permanent that escaped, left and came back did not escape this time.
+        obj.cast_escaped = False
     # A fresh arrival answers for nothing that happened before it.
     obj.left_with = ()
     # What it carried in, so the counters it enters with -- and only those --

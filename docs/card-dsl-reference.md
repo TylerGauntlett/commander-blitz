@@ -14,7 +14,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Selectors](#selectors) | 69 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 62 |
-| [Conditions](#conditions) | 32 |
+| [Conditions](#conditions) | 33 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 35 |
 | [Static effects](#static-effects) | 87 |
@@ -377,6 +377,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `combat_damage_by` | A player was dealt combat damage this turn by one of these subtypes (prowl). | [Conditions](card-dsl.md#conditions) |
 | `cost_option` | Which of the tiered additional costs was paid. | [Tiered, and reading back which price was paid](card-dsl.md#tiered-and-reading-back-which-price-was-paid) |
 | `entered_from` | The source entered from the named zone. | [Conditions](card-dsl.md#conditions) |
+| `escaped` | The source was cast for its escape cost (702.138c-d), or resolved from that spell. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `evoked` | The source was cast with evoke. | [Conditions](card-dsl.md#conditions) |
 | `exists` | A selector finds at least one object. | [Conditions](card-dsl.md#conditions) |
 | `gift_promised` | A gift was promised as this spell was cast. | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |

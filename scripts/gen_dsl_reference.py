@@ -647,6 +647,8 @@ CONDITIONS: dict[str, Entry] = {
     "cost_option": ("Which of the tiered additional costs was paid.", H_TIERED),
     "entered_from": ("The source entered from the named zone.", None),
     "evoked": ("The source was cast with evoke.", None),
+    "escaped": ("The source was cast for its escape cost (702.138c-d), or resolved from that spell.",
+                "Casting from the graveyard"),
     "impending": ("The permanent was cast for its impending cost (the rule's own reads).",
                   "Impending — a creature that is not one until it counts down"),
     "exists": ("A selector finds at least one object.", None),

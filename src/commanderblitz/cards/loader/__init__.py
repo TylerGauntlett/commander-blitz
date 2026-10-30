@@ -171,6 +171,7 @@ from .walk import (
     _mentions,
     _mentions_condition,
     _mentions_gift,
+    _mentions_key_anywhere,
     _mentions_kicked,
     _mentions_pair,
     _refuse_granted_chosen_qualities,
@@ -1920,6 +1921,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
         raise DslError(f"{where}: 'graveyard_cast' needs a 'graveyard_cost' to describe")
+    # Escape (702.138c-d): only a card with an escape cost can have escaped. A
+    # reader on any other card loads, prints "escapes with" and never fires --
+    # and on a flashback card it would fire for the wrong keyword.
+    if _mentions_key_anywhere(model, "escaped") and (
+        graveyard_spec is None or model.graveyard_cast != "graveyard"
+    ):
+        raise DslError(
+            f"{where}: reads the 'escaped' condition but has no escape cost -- "
+            f"give 'graveyard_cost' with \"graveyard_cast\": \"graveyard\""
+        )
     # Clash is two halves the same way kicker is, and half of it fails just as
     # silently. Every printed clash card reads "Clash with an opponent. If you
     # win, …", so a `clash` nothing reads is a spell that reveals two cards and

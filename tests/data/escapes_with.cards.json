@@ -1,0 +1,30 @@
+{
+  "_comment": "Shapes for tests/unit/keywords/test_escapes_with.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_woe_strider is Woe Strider's escape line and its 'escapes with two +1/+1 counters' rider on a vanilla 3/2 body. t_crypt_keeper (conditional_graveyard_cast.cards.json) is the other route out of the graveyard: a permission to cast it for its mana cost, which is not escaping.",
+  "cards": [
+    {
+      "id": "t_woe_strider",
+      "name": "Test Woe Strider",
+      "oracle_text": "Escape—{3}{B}{B}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with two +1/+1 counters on it.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Horror"],
+      "power": 3,
+      "toughness": 2,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "graveyard_cost": {
+        "mana": "{3}{B}{B}",
+        "exile_from_graveyard": {"count": 4, "exclude_self": true}
+      },
+      "graveyard_cast": "graveyard",
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": 2,
+          "condition": {"escaped": true}
+        }
+      ]
+    }
+  ]
+}

@@ -223,6 +223,25 @@ def _mentions_condition(model: CardModel, key: str) -> bool:
     return _mentions(model, lambda node: key in node)
 
 
+def _mentions_key_anywhere(model: CardModel, key: str) -> bool:
+    """Does ``key`` appear anywhere on this card, replacements and statics included?
+
+    `_mentions_condition` searches effects, targets and trigger conditions only.
+    A condition that is read mostly by a **replacement** -- `escaped`, whose
+    printed home is "escapes with" -- needs the whole card searched, which is
+    safe only for a key no other part of the schema spells.
+    """
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            return key in node or any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    return walk(model.model_dump(exclude_none=True))
+
+
 def _mentions_pair(model: CardModel, key: str, value: str) -> bool:
     """Does anything on this card carry ``{key: value}``?
 

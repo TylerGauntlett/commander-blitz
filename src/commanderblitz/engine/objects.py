@@ -734,6 +734,18 @@ class GameObject:
     #: resolution: a reanimated Overlord was not cast at all, and must not come
     #: back thinking it was cast for its impending cost.
     cast_impending: bool = False
+    #: Whether this object **escaped** (702.138c-d): the spell it is, or the
+    #: one it resolved from, was cast for the card's own escape cost -- its
+    #: `graveyard_cost` slot. `cast_impending`'s contract: written by
+    #: `stack._resolve_spell` before the spell's effects run and again just
+    #: before the permanent lands, and cleared by `zones._enter_battlefield` on
+    #: any other arrival.
+    #:
+    #: Not `cast_from_graveyard`, which is also true of a cast under somebody
+    #: else's permission (Muldrotha, a `cast_from_graveyard` static) for the
+    #: card's mana cost. That spell left a graveyard and did not escape, and
+    #: "escapes with two +1/+1 counters" must not fire for it.
+    cast_escaped: bool = False
     #: Whether this object is currently showing its **second castable face** --
     #: the Adventure half, the Aftermath half, one half of a split card.
     #: ``GameState.card_of`` reads it, exactly as it reads ``transformed``, so
