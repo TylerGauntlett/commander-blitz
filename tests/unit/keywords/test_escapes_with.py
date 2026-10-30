@@ -189,3 +189,65 @@ class TestTheLoader:
         )
         with pytest.raises(DslError, match="true or false"):
             compile_card(card)
+
+
+class TestThePrintedEscapeLinesAreClaimed:
+    """Gate 3's bookkeeping, where a correct escape card used to die.
+
+    `verify._covered` had no claimant for "Escape—{3}{B}{B}, Exile four other
+    cards from your graveyard." nor for "escapes with": Woe Strider loaded,
+    escaped and grew exactly as the classes above measure, and was still
+    rejected as half-implemented. Both claimants are the fields, not the
+    words, and strict on the price, as warp's and mayhem's are.
+    """
+
+    def _card(self, **extra) -> CardModel:
+        base = {
+            "id": "t_escape_residual",
+            "name": "Escape Residual",
+            "mana_cost": "{2}{B}",
+            "oracle_text": (
+                "Escape—{3}{B}{B}, Exile four other cards from your graveyard."
+                " (You may cast this card from your graveyard for its escape cost.)\n"
+                "This creature escapes with two +1/+1 counters on it."
+            ),
+            "types": ["Creature"],
+            "power": 3,
+            "toughness": 2,
+            "graveyard_cost": {
+                "mana": "{3}{B}{B}",
+                "exile_from_graveyard": {"count": 4, "exclude_self": True},
+            },
+            "graveyard_cast": "graveyard",
+            "replacements": [
+                {
+                    "event": "self_enters_with_counters",
+                    "counter": "+1/+1",
+                    "amount": 2,
+                    "condition": {"escaped": True},
+                }
+            ],
+        }
+        base.update(extra)
+        return CardModel.model_validate(base)
+
+    def _residual(self, **extra) -> str:
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = compile_card(self._card(**extra))
+        return residual_text(card, card.oracle_text)
+
+    def test_both_printed_lines_are_claimed(self):
+        assert self._residual() == ""
+
+    def test_a_cheaper_escape_cannot_claim_the_printed_one(self):
+        cheaper = {"mana": "{1}{B}", "exile_from_graveyard": {"count": 4, "exclude_self": True}}
+        assert "Escape" in self._residual(graveyard_cost=cheaper)
+
+    def test_fewer_exiled_cards_cannot_claim_the_printed_count(self):
+        fewer = {"mana": "{3}{B}{B}", "exile_from_graveyard": {"count": 2, "exclude_self": True}}
+        assert "Escape" in self._residual(graveyard_cost=fewer)
+
+    def test_an_ungated_counter_replacement_does_not_claim_escapes_with(self):
+        ungated = [{"event": "self_enters_with_counters", "counter": "+1/+1", "amount": 2}]
+        assert "escapes with" in self._residual(replacements=ungated)
