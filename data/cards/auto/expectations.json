@@ -881,6 +881,12 @@
       "graveyard"
     ]
   },
+  "assassin_s_trophy": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  },
   "assault_griffin": {
     "zone": "battlefield"
   },
@@ -1008,6 +1014,10 @@
     "zone": "battlefield"
   },
   "avian_changeling": {
+    "zone": "battlefield"
+  },
+  "awakening_zone": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "axebane_beast": {
@@ -1520,6 +1530,10 @@
     "zone": "battlefield"
   },
   "blor_the_impervious": {
+    "zone": "battlefield"
+  },
+  "blossoming_bogbeast": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blossoming_sands": {
@@ -2084,6 +2098,14 @@
   "castle_vantress": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "casualties_of_war": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "cat_warriors": {
     "zone": "battlefield"

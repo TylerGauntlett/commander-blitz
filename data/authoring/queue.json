@@ -15152,12 +15152,12 @@
     },
     "Assassin's Trophy": {
       "edhrec_rank": 123,
-      "gate": "template",
+      "gate": null,
       "name": "Assassin's Trophy",
-      "reason": "no template for: Destroy target permanent an opponent controls. Its controller may search their library for",
+      "reason": "",
       "scryfall_id": "aaf258fc-3ba4-4b83-bdbf-10a07e0b6c03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assassinate": {
@@ -18032,12 +18032,12 @@
     },
     "Awakening Zone": {
       "edhrec_rank": 1553,
-      "gate": "template",
+      "gate": null,
       "name": "Awakening Zone",
-      "reason": "no template for: At the beginning of your upkeep, you may create a 0/1 colorless Eldrazi Spawn creature tok",
+      "reason": "",
       "scryfall_id": "13724768-83d3-4da2-82d7-35787c4f9877",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Awakening of Vitu-Ghazi": {
@@ -29392,12 +29392,12 @@
     },
     "Blossoming Bogbeast": {
       "edhrec_rank": 4439,
-      "gate": "template",
+      "gate": null,
       "name": "Blossoming Bogbeast",
-      "reason": "no template for: Whenever this creature attacks, you gain 2 life. Then creatures you control gain trample a",
+      "reason": "",
       "scryfall_id": "764054f1-e848-4cee-b623-4861ce15c370",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blossoming Calm": {
@@ -40932,12 +40932,12 @@
     },
     "Casualties of War": {
       "edhrec_rank": 1767,
-      "gate": "template",
+      "gate": null,
       "name": "Casualties of War",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "2467f50a-bf45-4046-9086-1bfcf3438af4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cat Burglar": {

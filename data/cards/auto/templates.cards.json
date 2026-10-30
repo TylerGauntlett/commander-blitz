@@ -9220,6 +9220,64 @@
     },
     {
       "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "assassin_s_trophy",
+      "mana_cost": "{B}{G}",
+      "name": "Assassin's Trophy",
+      "oracle_text": "Destroy target permanent an opponent controls. Its controller may search their library for a basic land card, put it onto the battlefield, then shuffle.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "victim",
+          "op": "snapshot",
+          "target": "t1"
+        },
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "count": 1,
+          "destination": "battlefield",
+          "op": "search_library",
+          "player": {
+            "controller_of": "victim"
+          },
+          "selector": {
+            "supertypes": [
+              "Basic"
+            ],
+            "types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "W"
       ],
       "colors": [
@@ -10971,6 +11029,48 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": "you",
+                  "op": "create_token",
+                  "token": "eldrazi_spawn_0_1_c"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Create a 0/1 colorless Eldrazi Spawn creature token?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may create a 0/1 colorless Eldrazi Spawn creature token. It has \"Sacrifice this token: Add {C}.\"",
+          "trigger": {
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "awakening_zone",
+      "mana_cost": "{2}{G}",
+      "name": "Awakening Zone",
+      "oracle_text": "At the beginning of your upkeep, you may create a 0/1 colorless Eldrazi Spawn creature token. It has \"Sacrifice this token: Add {C}.\"",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -16736,6 +16836,77 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "life_gained_this_turn": "you"
+              },
+              "toughness": {
+                "life_gained_this_turn": "you"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you gain 2 life. Then creatures you control gain trample and get +X/+X until end of turn, where X is the amount of life you gained this turn.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "blossoming_bogbeast",
+      "mana_cost": "{4}{G}",
+      "name": "Blossoming Bogbeast",
+      "oracle_text": "Whenever this creature attacks, you gain 2 life. Then creatures you control gain trample and get +X/+X until end of turn, where X is the amount of life you gained this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Beast"
       ],
       "toughness": 3,
       "types": [
@@ -23280,6 +23451,150 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "casualties_of_war",
+      "mana_cost": "{2}{B}{B}{G}{G}",
+      "name": "Casualties of War",
+      "oracle_text": "Choose one or more —\n• Destroy target artifact.\n• Destroy target creature.\n• Destroy target enchantment.\n• Destroy target land.\n• Destroy target planeswalker.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "artifact"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "creature"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target creature."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "enchantment"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "land"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target land."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "planeswalker"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target planeswalker."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "artifact",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "creature",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "enchantment",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "land",
+          "kind": "permanent",
+          "mode": 3,
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "planeswalker",
+          "kind": "permanent",
+          "mode": 4,
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
