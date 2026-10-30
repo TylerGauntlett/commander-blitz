@@ -38,6 +38,7 @@ from .state import MAX_EXTRA_PHASES_PER_TURN
 from .structs import StackItem
 from .temp_effects import (
     arm_attack_requirements,
+    arm_attack_restrictions,
     clear_attack_marks,
     clear_attack_requirements,
     clear_attack_restrictions,
@@ -386,6 +387,9 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # attack Gideon Jura if able." This is that next turn: arm the marks
     # waiting on the untapping player, so they bite for exactly this turn.
     arm_attack_requirements(state, player.pid)
+    # "That player can't attack you … during their next turn" (Willie
+    # Lumpkin, Postman): the same "next turn" of the same player, armed here.
+    arm_attack_restrictions(state, player.pid)
     # "Until your next turn, up to one target creature gets -2/-1." (Liliana,
     # the Last Hope.) The pumps, keyword grants, animations and ability locks a
     # loyalty ability stretched past cleanup -- the same clock as the tables
@@ -752,6 +756,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # this restriction belongs to no permanent at all -- Call for Aid is a
     # sorcery, and the seat it restricts is its own caster's.
     clear_attack_restrictions(state, "this_turn")
+    clear_attack_restrictions(state, "attacker_next_turn")
     # "…can't block **this turn**." Beside it and for the same reason: Aragorn's
     # global clause is a continuous effect owned by no permanent, so
     # `clear_until_eot` -- which walks the battlefield -- has nothing to find.

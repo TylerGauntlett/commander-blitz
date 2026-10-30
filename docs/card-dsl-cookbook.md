@@ -4173,6 +4173,16 @@ combat's restriction went with the combat that bought it. `this_turn` is cleared
 at cleanup beside `clear_until_eot`, because Call for Aid resolves in a main
 phase and means the whole turn, extra combats included.
 
+The third duration, `attacker_next_turn`, is "that player can't attack you or
+permanents you control **during their next turn**" (Willie Lumpkin, Postman,
+with `planeswalkers: true`). It is pending from resolution
+(`AttackRestriction.in_force_turn` is `None`), armed by the attacker's next
+untap step, in force for that turn only and dropped at its cleanup. Keyed to the
+attacker rather than a turn number, so an extra turn or an elimination moves it
+with the seat. `this_turn` or `this_combat` would have run out on the turn the
+trigger resolved, and `delay` fires on a step or its controller's own turn,
+never a named other player's.
+
 Three things it deliberately does **not** do:
 
 | | |

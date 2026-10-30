@@ -569,7 +569,10 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     ``defender``  the player who may not be attacked -- the mirror image of the
                   above on those two cards, which is exactly why both had to be
                   spelled out rather than one inferred as "the other one".
-    ``duration``  ``this_turn`` or ``this_combat``. Required, not defaulted: see
+    ``duration``  ``this_turn``, ``this_combat`` or ``attacker_next_turn``
+                  ("…during their next turn", Willie Lumpkin, Postman: pending
+                  until the attacker's next untap step, gone at that turn's
+                  cleanup). Required, not defaulted: see
                   `structs.AttackRestriction`.
 
     Both selectors are full player specs and may name several players, in which

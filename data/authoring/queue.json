@@ -315802,12 +315802,12 @@
     },
     "Willie Lumpkin, Postman": {
       "edhrec_rank": 15818,
-      "gate": "template",
+      "gate": null,
       "name": "Willie Lumpkin, Postman",
-      "reason": "no template for: Willie Lumpkin can't be blocked",
+      "reason": "",
       "scryfall_id": "2021033b-ccad-4cb0-9528-357a3c726008",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Willow Dryad": {

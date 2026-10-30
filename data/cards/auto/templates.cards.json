@@ -171364,6 +171364,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "blockers": {
+            "controller": "any"
+          },
+          "effect": "block_restriction",
+          "kind": "static",
+          "text": "Willie Lumpkin can't be blocked."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "binding": "defender"
+                  }
+                },
+                {
+                  "attacker": {
+                    "binding": "defender"
+                  },
+                  "defender": "you",
+                  "duration": "attacker_next_turn",
+                  "op": "cant_attack_player",
+                  "planeswalkers": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "binding": "defender"
+              },
+              "prompt": "Draw a card? If you do, you can't attack Willie Lumpkin's controller or their permanents during your next turn."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Willie Lumpkin deals combat damage to an opponent, you draw a card and that player may draw a card. If they do, that player can't attack you or permanents you control during their next turn.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "willie_lumpkin_postman",
+      "mana_cost": "{W}{U}",
+      "name": "Willie Lumpkin, Postman",
+      "oracle_text": "Willie Lumpkin can't be blocked.\nWhenever Willie Lumpkin deals combat damage to an opponent, you draw a card and that player may draw a card. If they do, that player can't attack you or permanents you control during their next turn.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

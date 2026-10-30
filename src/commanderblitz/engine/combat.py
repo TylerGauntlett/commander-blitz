@@ -417,6 +417,9 @@ def _attack_prohibited(
         for restriction in state.attack_restrictions:
             if restriction.attacker != obj.controller or restriction.defender != defender:
                 continue
+            # "…during their next turn" (Willie Lumpkin): pending until then.
+            if not restriction.in_force(state.turn):
+                continue
             if restriction.walker_subtypes:
                 # "…can't attack Jaces you control": the seat and every other
                 # permanent stay attackable, and only a walker that *is* one of

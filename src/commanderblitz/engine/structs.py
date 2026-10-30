@@ -168,10 +168,13 @@ class TempEffect:
         }
 
 
-#: The two durations an :class:`AttackRestriction` can carry, and the printed
+#: The durations an :class:`AttackRestriction` can carry, and the printed
 #: sentence each one is.  Kept beside the class rather than as an enum because
 #: every other duration in the DSL is a bare string a card file writes.
-ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat")
+#: ``attacker_next_turn`` is "that player can't attack you **during their next
+#: turn**" (Willie Lumpkin, Postman): pending until the attacker's next untap
+#: step, in force for that turn, gone at its cleanup.
+ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn")
 
 #: The durations a control change can carry -- Captivating Vampire's steal, Act
 #: of Treason's, and Stilt-Man, Towering Terror's "…until the end of your next
@@ -258,6 +261,18 @@ class AttackRestriction:
     #: battlefield, because a resolved one-shot effect does not care what
     #: happens to the card that made it.
     source: int | None = None
+    #: An ``attacker_next_turn`` restriction's turn: ``None`` while it is
+    #: pending, then the number of the attacker's next turn, written by
+    #: `temp_effects.arm_attack_restrictions` in their untap step. Keyed to
+    #: the player rather than projected as a number, for detain's reason: an
+    #: elimination or an extra turn moves "their next turn".
+    in_force_turn: int | None = None
+
+    def in_force(self, turn: int) -> bool:
+        """Does this restriction bite during ``turn``?"""
+        if self.duration != "attacker_next_turn":
+            return True
+        return self.in_force_turn == turn
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -267,6 +282,7 @@ class AttackRestriction:
             "planeswalkers": self.planeswalkers,
             "walker_subtypes": list(self.walker_subtypes),
             "source": self.source,
+            "in_force_turn": self.in_force_turn,
         }
 
 

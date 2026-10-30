@@ -7,6 +7,7 @@ rule, ``_expired``.
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .characteristics import _matches, printed_creature_types
@@ -108,16 +109,42 @@ def restrict_attack(
 def clear_attack_restrictions(state: GameState, duration: str) -> None:
     """Drop every attack restriction of one duration -- its wearing-off.
 
-    Called from two places, one per duration: `turn._cleanup_step` for
-    ``this_turn`` and `combat.end_combat` for ``this_combat``.  Split by duration
-    rather than cleared wholesale at either point, because a turn-scoped
-    restriction has to survive the combat it was cast before -- Call for Aid is
-    cast in a precombat main phase and means the *whole* turn, extra combats
-    included.
+    Called from two places: `turn._cleanup_step` for ``this_turn`` and
+    ``attacker_next_turn``, and `combat.end_combat` for ``this_combat``.  Split
+    by duration rather than cleared wholesale at either point, because a
+    turn-scoped restriction has to survive the combat it was cast before -- Call
+    for Aid is cast in a precombat main phase and means the *whole* turn, extra
+    combats included.
+
+    ``attacker_next_turn`` drops only the entries in force *this* turn: one
+    still pending -- installed this turn, for the attacker's next one -- has
+    not begun yet.
     """
     if not state.attack_restrictions:
         return
-    state.attack_restrictions = [r for r in state.attack_restrictions if r.duration != duration]
+    state.attack_restrictions = [
+        r
+        for r in state.attack_restrictions
+        if r.duration != duration
+        or (duration == "attacker_next_turn" and r.in_force_turn != state.turn)
+    ]
+
+
+def arm_attack_restrictions(state: GameState, player: int) -> None:
+    """Start every pending ``attacker_next_turn`` restriction on ``player``.
+
+    Called from `turn._untap_step` for the untapping player: "during their
+    next turn" is this turn. Pending entries are frozen, so each is replaced
+    by its armed copy.
+    """
+    if not state.attack_restrictions:
+        return
+    state.attack_restrictions = [
+        replace(r, in_force_turn=state.turn)
+        if r.duration == "attacker_next_turn" and r.attacker == player and r.in_force_turn is None
+        else r
+        for r in state.attack_restrictions
+    ]
 
 
 def goad_creature(state: GameState, oid: int, player: int, *, permanent: bool = False) -> bool:

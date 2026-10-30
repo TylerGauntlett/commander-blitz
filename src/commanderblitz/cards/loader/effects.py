@@ -1468,7 +1468,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             if "duration" not in effect:
                 raise DslError(
                     f"{where}: cant_attack_player needs a 'duration' "
-                    f"(implemented: 'this_turn', 'this_combat')"
+                    f"(implemented: {list(ATTACK_RESTRICTION_DURATIONS)})"
                 )
             if str(effect["duration"]) not in ATTACK_RESTRICTION_DURATIONS:
                 raise DslError(

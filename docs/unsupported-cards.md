@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**93 cards** blocked by **74** capabilities.
+**92 cards** blocked by **73** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attacking-bound-player](#attacking-bound-player) | 1 | 20128 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
-| [cant-attack-player-next-turn](#cant-attack-player-next-turn) | 1 | 15818 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -498,20 +497,6 @@ Blocks **1** card.
 - **Goblin Snowman** (rank 21010) — `goblin_snowman`
   - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
   - {T}: This creature deals 1 damage to target creature it's blocking.
-
-</details>
-
-## cant-attack-player-next-turn
-
-Blocks **1** card.
-
-- **(op)** a `cant_attack_player` duration meaning "during the ATTACKER's next turn" -- the prohibition is pending from resolution, switches on when that player's next turn begins and ends at that turn's cleanup, closing the defender's seat and every permanent the defender controls (planeswalkers and battles, i.e. `planeswalkers: true` widened to all attackable permanents)
-  <br>Why the existing vocabulary won't do: `cant_attack_player` takes only `ATTACK_RESTRICTION_DURATIONS` = (`this_turn`, `this_combat`), and the trigger resolves on Willie's controller's turn, so either clock has expired before the damaged opponent ever declares attackers. Wrapping it in `delay` does not fix the clock: `delay` fires at the next occurrence of a step (or the controller's own with `your_turn`), not at a named other player's next turn, so in multiplayer it would lock the wrong turn. `must_attack_planeswalker` has the right 'that player's next turn' pending mark but is a requirement, not a prohibition. The rest of the line (unblockable static, draw, `may` draw by `event_player` with an `if` on it) is expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Willie Lumpkin, Postman** (rank 15818) — `willie_lumpkin_postman`
-  - Whenever Willie Lumpkin deals combat damage to an opponent, you draw a card and that player may draw a card. If they do, that player can't attack you or permanents you control during their next turn.
 
 </details>
 
