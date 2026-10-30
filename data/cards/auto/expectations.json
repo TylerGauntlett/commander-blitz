@@ -6972,6 +6972,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "klaw_master_of_sound": {
+    "zone": "battlefield"
+  },
   "knight_errant": {
     "zone": "battlefield"
   },

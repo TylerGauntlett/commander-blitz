@@ -150312,12 +150312,12 @@
     },
     "Klaw, Master of Sound": {
       "edhrec_rank": 18793,
-      "gate": "template",
+      "gate": null,
       "name": "Klaw, Master of Sound",
-      "reason": "no template for: Whenever you play a card from exile, Klaw gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "5c589d94-7cea-4d4c-91a8-4d939634a5e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Klaw, Sonic Subjugator": {
