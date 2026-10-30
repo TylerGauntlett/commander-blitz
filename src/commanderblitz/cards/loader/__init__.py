@@ -1557,11 +1557,31 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_optional = True
         additional_repeatable = True
 
-    escalate = ManaCost.parse(model.escalate) if model.escalate else None
-    if escalate is not None:
-        if escalate.x_count or escalate.mana_value() == 0:
+    # Escalate's cost is a mana string ("Escalate {G}") or a full cost
+    # ("Escalate--Tap an untapped creature you control"): either way one
+    # payment per mode beyond the first, and the same desugaring below.
+    escalate = None
+    if model.escalate is not None:
+        escalate_model = (
+            CostModel(mana=model.escalate) if isinstance(model.escalate, str) else model.escalate
+        )
+        if escalate_model.mana_reduction or escalate_model.tap or escalate_model.untap:
+            # A reduction is folded nowhere (additional_cost's refusal above),
+            # and a spell on the stack has no {T} to pay -- either would load
+            # clean and be ignored.
             raise DslError(
-                f"{where}: escalate {model.escalate!r} must be a fixed, non-free mana cost"
+                f"{where}.escalate: 'mana_reduction', 'tap' and 'untap' mean "
+                f"nothing on a spell's escalate cost"
+            )
+        escalate = _compile_cost(escalate_model, f"{where}.escalate")
+        if escalate.mana.x_count or (
+            escalate.charges_nothing() and escalate.mana.mana_value() == 0
+        ):
+            # Free and repeatable is every mode for nothing; X would have to
+            # be announced once per payment.
+            raise DslError(
+                f"{where}: escalate {model.escalate!r} must be a fixed cost that "
+                f"charges something"
             )
         if additional_cost is not None or model.additional_optional or model.additional_repeatable:
             # Escalate *is* the additional cost, desugared below; a second one
@@ -1579,7 +1599,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'escalate' needs the spell's effects to be one top-level "
                 f"'choose_mode' with 'or_more'"
             )
-        additional_cost = _compile_cost(CostModel(mana=model.escalate), f"{where}.escalate")
+        additional_cost = escalate
         additional_optional = True
         additional_repeatable = True
 

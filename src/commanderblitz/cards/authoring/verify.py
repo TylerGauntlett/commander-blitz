@@ -1657,9 +1657,14 @@ def _covered(card: CardDef, line: str) -> bool:
     # "Escalate {G} (Pay this cost for each mode chosen beyond the first.)" --
     # multikicker's shape and its strictness: `card.escalate` is set only once
     # the loader has desugared it beside a one-or-more modal spell, and the
-    # symbols on the line have to be the ones charged.
+    # symbols on the line have to be the ones charged. A non-mana escalate
+    # ("Escalate—Tap an untapped creature you control") has no symbols to
+    # compare, so it is never claimed here; the spell's `spell_effects` claim
+    # its every line, and gate 5 is the witness for what the payment is.
     if card.escalate is not None and stripped.lower().startswith("escalate "):
-        return _declares_printed_cost(stripped[len("escalate ") :], card.escalate)
+        if not card.escalate.charges_nothing():
+            return False
+        return _declares_printed_cost(stripped[len("escalate ") :], card.escalate.mana)
 
     # "Strive — This spell costs {1}{W} more to cast for each target beyond the
     # first." Multikicker's shape: a card-level price charged inside

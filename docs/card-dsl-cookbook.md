@@ -5556,25 +5556,37 @@ payment.
 "spell_effects": [ { "op": "choose_mode", "count": 1, "or_more": true, "modes": [ … ] } ]
 ```
 
-702.120a, and multikicker's desugaring: `additional_cost: {mana: "{G}"}`,
-`additional_optional` and `additional_repeatable`, so legality offers one cast
-line per number of payments. Two readers tie that number to the modes:
+```jsonc
+// Collective Effort: "Escalate—Tap an untapped creature you control. …"
+"escalate": { "tap_permanents": { "types": ["Creature"] } },
+```
+
+702.120a, and multikicker's desugaring: `escalate` is a mana string or a full
+cost object, compiled to `additional_cost` with `additional_optional` and
+`additional_repeatable`, so legality offers one cast line per number of
+payments. Two readers tie that number to the modes:
 `casting._additional_ceiling` offers at most one payment per mode beyond the
 first (per 601.2b's selectable modes, when a mode-owned target has nothing to
-aim at), and `Game._cast` makes the cast choose **exactly** one mode more than
-it paid for. The near misses each price something else: `spree` charges the
-first mode too, a plain `or_more` takes every mode for the printed cost, and
-multikicker counts payments nothing ties to the modes.
+aim at) and no more payments than the board can make (`_repeatable_payments`
+counts the untapped permanents, sacrifice fodder or cards in hand each payment
+consumes), and `Game._cast` makes the cast choose **exactly** one mode more than
+it paid for. Each payment of a non-mana escalate is its own: a creature tapped
+for the first is out of the pool for the second. The near misses each price
+something else: `spree` charges the first mode too, a plain `or_more` takes
+every mode for the printed cost, and multikicker counts payments nothing ties to
+the modes.
 
-The loader refuses escalate beside any other additional cost or `spree`, a free
-or X escalate, and a spell whose effects are not one top-level `choose_mode`
-with `or_more`.
+The loader refuses escalate beside any other additional cost or `spree`, an X
+escalate or one that charges nothing, `tap`, `untap` or `mana_reduction` in it
+(a spell has no `{T}`, and nothing folds a reduction), and a spell whose effects
+are not one top-level `choose_mode` with `or_more`.
 
 The residual-gate claimant is narrower than `kicker`'s. It fires only when the
 loader has actually desugared the cost, and it checks that the **symbols printed
 on the line are the symbols charged** — a card declaring `multikicker: "{1}"`
 cannot claim a printed "Multikicker {2}{R}", and a line whose cost will not parse
-stays residual.
+stays residual. A non-mana escalate is never claimed there; its spell's
+`spell_effects` claim the line and gate 5 witnesses the payments.
 
 #### Strive
 

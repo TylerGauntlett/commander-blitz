@@ -1,0 +1,27 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_escalate_non_mana.py. t_esc_tap_spell is a three-mode sorcery whose escalate taps an untapped creature you control.",
+  "cards": [
+    {
+      "id": "t_esc_tap_spell",
+      "name": "Test Escalate Tap Spell",
+      "oracle_text": "Escalate—Tap an untapped creature you control. (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• You gain 3 life.\n• Draw a card.\n• You lose 1 life.",
+      "mana_cost": "{G}",
+      "types": ["Sorcery"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "escalate": {"tap_permanents": {"types": ["Creature"]}},
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "or_more": true,
+          "modes": [
+            {"label": "You gain 3 life.", "effects": [{"op": "gain_life", "amount": {"const": 3}}]},
+            {"label": "Draw a card.", "effects": [{"op": "draw", "amount": {"const": 1}}]},
+            {"label": "You lose 1 life.", "effects": [{"op": "lose_life", "amount": {"const": 1}, "player": "you"}]}
+          ]
+        }
+      ]
+    }
+  ]
+}

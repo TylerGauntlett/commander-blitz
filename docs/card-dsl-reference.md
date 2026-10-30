@@ -753,7 +753,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `cost_reduction` | This spell costs less to cast. | [Cost reduction](card-dsl-cookbook.md#cost-reduction) |
 | `dredge` | Dredge N. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `emerge` | Emerge cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
-| `escalate` | Escalate cost, paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |
+| `escalate` | Escalate cost (mana or a full cost), paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |
 | `evoke` | Evoke cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `flashback` | Flashback cost. | [Flashback](card-dsl-cookbook.md#flashback) |
 | `foretell` | Foretell cost. | [Foretell](card-dsl-cookbook.md#foretell) |

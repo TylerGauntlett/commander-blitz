@@ -1401,12 +1401,15 @@ class CardModel(BaseModel):
     #: action and ``{"kicked": true}`` can only answer yes or no, never how many.
     #: Give one or the other, not both spellings of the same slot.
     multikicker: str | None = None
-    #: **Escalate {G}** (702.120a): the mana charged once for each mode chosen
+    #: **Escalate {G}** (702.120a): the cost charged once for each mode chosen
     #: beyond the first, on a spell whose effect tree is one top-level
-    #: ``choose_mode`` with ``or_more``. Desugared like ``multikicker`` -- a
-    #: repeatable optional additional cost -- with the number of times paid
-    #: fixing how many modes the cast chooses (601.2b, then 601.2f).
-    escalate: str | None = None
+    #: ``choose_mode`` with ``or_more``. A mana string, or a full cost for a
+    #: printed non-mana escalate ("Escalate--Tap an untapped creature you
+    #: control" is ``{"tap_permanents": {"types": ["Creature"]}}``). Desugared
+    #: like ``multikicker`` -- a repeatable optional additional cost -- with the
+    #: number of times paid fixing how many modes the cast chooses (601.2b,
+    #: then 601.2f).
+    escalate: str | CostModel | None = None
     #: **Strive** (Journey into Nyx): "This spell costs {1}{W} more to cast for
     #: each target beyond the first." The mana string charged once per target
     #: past the first, on a card whose one target spec is ``count: "any"``. A

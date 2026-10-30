@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**91 cards** blocked by **72** capabilities.
+**90 cards** blocked by **72** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,7 +20,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [escalate-non-mana](#escalate-non-mana) | 2 | 3199 | cost |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -40,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -303,25 +303,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## escalate-non-mana
-
-Blocks **2** cards.
-
-- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"discard": 1}), charged once per mode chosen beyond the first, with the same mode-count tie that mana escalate has (casting._additional_ceiling and Game._cast's `exactly`); the discarded card must not be the spell itself (601.2a)
-  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse and desugars it to CostModel(mana=...), and rejects a free (mana value 0) escalate, so "Discard a card" cannot be written there. Hand-desugaring to additional_cost {discard: 1} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of discards to the number of modes, so a plain `or_more` choose_mode would take every mode for one or zero discards. `spree` prices each mode individually including the first.
-- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"tap_permanents": {"types": ["Creature"]}} -- tap an untapped creature you control), charged once per mode chosen beyond the first with a distinct creature each time, tied to the mode count the way mana escalate is (casting._additional_ceiling and Game._cast's `exactly`)
-  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse, desugars it to CostModel(mana=...), and refuses a free (mana value 0) escalate, so "Tap an untapped creature you control" cannot be written there. Hand-desugaring to additional_cost {tap_permanents: ...} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of taps to the number of modes, so a plain `or_more` choose_mode would take every mode for zero taps. `spree` prices every mode, the first included.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Collective Effort** (rank 3199) — `collective_effort`
-  - Escalate—Tap an untapped creature you control. (Pay this cost for each mode chosen beyond the first.)
-- **Collective Brutality** (rank 11817) — `collective_brutality`
-  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
-  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 
 </details>
 
@@ -612,6 +593,21 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## escalate-non-mana
+
+Blocks **1** card.
+
+- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"discard": 1}), charged once per mode chosen beyond the first, with the same mode-count tie that mana escalate has (casting._additional_ceiling and Game._cast's `exactly`); the discarded card must not be the spell itself (601.2a)
+  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse and desugars it to CostModel(mana=...), and rejects a free (mana value 0) escalate, so "Discard a card" cannot be written there. Hand-desugaring to additional_cost {discard: 1} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of discards to the number of modes, so a plain `or_more` choose_mode would take every mode for one or zero discards. `spree` prices each mode individually including the first.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Brutality** (rank 11817) — `collective_brutality`
+  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
+  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
 
 </details>
 

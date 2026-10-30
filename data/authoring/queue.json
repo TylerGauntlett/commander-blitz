@@ -50002,12 +50002,12 @@
     },
     "Collective Effort": {
       "edhrec_rank": 3199,
-      "gate": "template",
+      "gate": null,
       "name": "Collective Effort",
-      "reason": "no template for: Escalate—Tap an untapped creature you control",
+      "reason": "",
       "scryfall_id": "7a0c3645-2006-452c-87c1-6e9f24fcfb87",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Collective Inferno": {

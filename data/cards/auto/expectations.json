@@ -2432,6 +2432,10 @@
   "cold_water_snapper": {
     "zone": "battlefield"
   },
+  "collective_effort": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "collective_resistance": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"

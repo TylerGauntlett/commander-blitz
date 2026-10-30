@@ -27472,6 +27472,121 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "escalate": {
+        "tap_permanents": {
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "collective_effort",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Collective Effort",
+      "oracle_text": "Escalate—Tap an untapped creature you control. (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Destroy target creature with power 4 or greater.\n• Destroy target enchantment.\n• Put a +1/+1 counter on each creature target player controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "big"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target creature with power 4 or greater."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "enchantment"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target enchantment."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "controller": {
+                      "target": "who"
+                    },
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "label": "Put a +1/+1 counter on each creature target player controls."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "id": "big",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "power": {
+              "op": ">=",
+              "value": {
+                "const": 4
+              }
+            },
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "id": "enchantment",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "who",
+          "kind": "player",
+          "mode": 2,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [

@@ -976,7 +976,7 @@ CARD_LEVEL_COSTS: dict[str, Entry] = {
     "mayhem": ("Mayhem cost: castable from the graveyard if discarded this turn.", "Mayhem"),
     "morph": ("Morph cost.", H_MORPH),
     "multikicker": ("Multikicker cost.", "Multikicker"),
-    "escalate": ("Escalate cost, paid once per mode beyond the first.", "Escalate"),
+    "escalate": ("Escalate cost (mana or a full cost), paid once per mode beyond the first.", "Escalate"),
     "mutate": ("Mutate cost.", "Mutate — two cards, one permanent, and one synthesised `CardDef`"),
     "overload": ("Overload cost.", "Overload"),
     "pay_generic_with": ("Convoke, improvise or delve: what may pay generic mana.",
