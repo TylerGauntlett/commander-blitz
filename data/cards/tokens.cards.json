@@ -1099,6 +1099,30 @@
       "is_token": true
     },
     {
+      "id": "fungus_beast_4_4_g_trample",
+      "name": "Fungus Beast Token",
+      "oracle_text": "4/4 green Fungus Beast creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Fungus",
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "trample"
+      ]
+    },
+    {
       "id": "germ_0_0_b",
       "name": "Germ Token",
       "oracle_text": "0/0 black Phyrexian Germ creature token.",

@@ -1346,3 +1346,27 @@ class TestOphiomancersSnakeHasDeathtouch:
         assert list(snake.subtypes) == ["Snake"]
         assert "deathtouch" in snake.keywords and len(snake.keywords) == 1
         assert not snake.abilities
+
+
+class TestTrudgeGardensFungusBeastHasTrample:
+    """Trudge Garden: *"create a **4/4 green Fungus Beast** creature token with
+    **trample**."*
+
+    Two near misses, neither of them it: `beast_4_4_g` is the body without
+    trample, and `rhino_4_4_g_trample` is the body and keyword on a Rhino.
+    """
+
+    def test_it_is_a_four_four_green_fungus_beast_with_trample(self, pool):
+        token = pool.get("fungus_beast_4_4_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Fungus", "Beast"]
+        assert "trample" in token.keywords and len(token.keywords) == 1
+        assert not token.abilities
+
+    def test_the_plain_beast_is_still_a_separate_token(self, pool):
+        other = pool.get("beast_4_4_g")
+        assert (other.power, other.toughness) == (4, 4)
+        assert "trample" not in other.keywords
