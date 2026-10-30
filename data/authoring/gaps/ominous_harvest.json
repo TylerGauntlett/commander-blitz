@@ -1,0 +1,18 @@
+{
+  "card_id": "ominous_harvest",
+  "name": "Ominous Harvest",
+  "oracle_text": "Gravestorm (When you cast this spell, copy it for each permanent put into a graveyard from the battlefield this turn.)\nTarget player draws a card and loses 1 life.",
+  "blocked_sentences": [
+    "Gravestorm (When you cast this spell, copy it for each permanent put into a graveyard from the battlefield this turn.)"
+  ],
+  "needs": [
+    {
+      "capability": "gravestorm",
+      "kind": "value",
+      "what": "a turn ledger value counting permanents (tokens included, 702.69a) put into any graveyard from the battlefield this turn, to feed `copy_spell.amount` on a self `spell_cast` trigger with `active_zones: [\"stack\"]`",
+      "why_existing_wont_do": "`cards_to_graveyard_this_turn` counts cards put into a graveyard from ANY zone (discards, mills, resolved instants and sorceries all inflate it) and excludes tokens, which do count for gravestorm; `creatures_died_this_turn` counts only creatures, missing artifacts, enchantments, lands and planeswalkers. Either would make the copy count silently wrong"
+    }
+  ],
+  "closest_existing": ["cards_to_graveyard_this_turn", "creatures_died_this_turn", "copy_spell"],
+  "confidence": "high"
+}

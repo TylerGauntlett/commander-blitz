@@ -9511,6 +9511,13 @@
   "ogre_warrior": {
     "zone": "battlefield"
   },
+  "ohran_frostfang": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ojer_pakpatiq_deepest_epoch_temple_of_cyclical_time": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9872,6 +9879,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "pawn_of_ulamog": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "peace_strider": {
     "life": {
       "0": 43
@@ -9938,6 +9949,19 @@
     "zone": "battlefield"
   },
   "persistent_petitioners": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "pest_infestation": {
+    "battlefield_count": 60,
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 28,
+      "id": "pest_1_1_bg"
+    },
+    "zone": "graveyard"
+  },
+  "pest_rescuer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

@@ -191542,12 +191542,12 @@
     },
     "Ohran Frostfang": {
       "edhrec_rank": 445,
-      "gate": "template",
+      "gate": null,
       "name": "Ohran Frostfang",
-      "reason": "no template for: Attacking creatures you control have deathtouch",
+      "reason": "",
       "scryfall_id": "55fb93e6-d057-4b70-ad12-e98291fd4a2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ohran Viper": {
@@ -198942,12 +198942,12 @@
     },
     "Pawn of Ulamog": {
       "edhrec_rank": 1557,
-      "gate": "template",
+      "gate": null,
       "name": "Pawn of Ulamog",
-      "reason": "no template for: Whenever this creature or another nontoken creature you control dies, you may create a 0/1",
+      "reason": "",
       "scryfall_id": "c1b0377c-efd6-4fab-89f0-b219ca2c4c22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pawpatch Formation": {
@@ -200222,12 +200222,12 @@
     },
     "Pest Infestation": {
       "edhrec_rank": 1114,
-      "gate": "template",
+      "gate": null,
       "name": "Pest Infestation",
-      "reason": "no template for: Destroy up to X target artifacts and/or enchantments. Create twice X 1/1 black and green P",
+      "reason": "",
       "scryfall_id": "c9b8626d-d3d8-4460-9adf-112f48f173f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pest Mascot": {
@@ -200242,12 +200242,12 @@
     },
     "Pest Rescuer": {
       "edhrec_rank": 7037,
-      "gate": "template",
+      "gate": null,
       "name": "Pest Rescuer",
-      "reason": "no template for: At the beginning of each upkeep, if you don't control a Pest creature token, create a 1/1 ",
+      "reason": "",
       "scryfall_id": "1f2a066a-7bcd-4e9d-8e52-0769cd6c8124",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pest Summoning": {
