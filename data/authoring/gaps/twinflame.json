@@ -1,0 +1,23 @@
+{
+  "card_id": "twinflame",
+  "name": "Twinflame",
+  "oracle_text": "Strive — This spell costs {2}{R} more to cast for each target beyond the first.\nChoose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step.",
+  "blocked_sentences": [
+    "Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step"
+  ],
+  "needs": [
+    {
+      "capability": "copy_exception_ability",
+      "kind": "op",
+      "what": "copy_permanent's `except_` honouring `add_keywords` (707.9b): \"create a token that's a copy of that creature, except it has haste\" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste",
+      "why_existing_wont_do": "copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for \"that token gains haste\" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: \"{2}{R}\"` with a `count: \"any\"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter)."
+    }
+  ],
+  "closest_existing": [
+    "copy_permanent",
+    "grant_keyword",
+    "strive",
+    "delay"
+  ],
+  "confidence": "low"
+}

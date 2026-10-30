@@ -499,7 +499,9 @@ def op_must_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
                   players are several requirements.
     ``duration``  ``end_of_your_next_turn`` (required): the effect
                   controller's next turn's cleanup ends it, `TempEffect`'s
-                  clock for the same words.
+                  clock for the same words; or ``this_turn``, ended by this
+                  turn's cleanup (Furygale Flocking's tokens "attack that
+                  opponent this turn if able").
 
     Why not the near misses: `must_attack` names no defender and is spent
     after one combat; goad points *away* from a player and ends at the
@@ -513,7 +515,12 @@ def op_must_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     for oid in resolve_pool(ctx, spec.get("objects") or {}):
         for defender in defenders:
             require_attack_player(
-                ctx.state, oid, defender, ctx.controller, source=ctx.source_oid
+                ctx.state,
+                oid,
+                defender,
+                ctx.controller,
+                source=ctx.source_oid,
+                this_turn=duration == "this_turn",
             )
     yield from ()
 

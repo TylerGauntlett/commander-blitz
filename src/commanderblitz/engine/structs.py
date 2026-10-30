@@ -288,7 +288,7 @@ class AttackRestriction:
 
 #: The durations an :class:`AttackMark` can carry. Spelled the way
 #: `CONTROL_DURATIONS` spells the same clock, because it is the same clock.
-ATTACK_MARK_DURATIONS = ("end_of_your_next_turn",)
+ATTACK_MARK_DURATIONS = ("end_of_your_next_turn", "this_turn")
 
 
 @dataclass(frozen=True)
@@ -340,9 +340,14 @@ class AttackMark:
     planeswalkers: bool = False
     #: "For as long as it has a <kind> counter on it": the counter kind.
     while_counter: str | None = None
+    #: "…attack that opponent this turn if able": the cleanup of the turn the
+    #: mark was made in ends it, whoever's turn that is.
+    this_turn: bool = False
 
     def ends_now(self, active_player: int, turn: int) -> bool:
         """Is the cleanup step of this turn the end of the mark's duration?"""
+        if self.this_turn:
+            return True
         if self.until_end_of_turn_of is None:
             return False
         return self.until_end_of_turn_of == active_player and self.since_turn < turn
@@ -356,6 +361,7 @@ class AttackMark:
             "prohibition": self.prohibition,
             "planeswalkers": self.planeswalkers,
             "while_counter": self.while_counter,
+            "this_turn": self.this_turn,
         }
 
 

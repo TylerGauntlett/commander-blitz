@@ -660,6 +660,32 @@
       ]
     },
     {
+      "id": "dragon_illusion_x_x_r_flying_haste",
+      "name": "Dragon Illusion Token",
+      "oracle_text": "X/X red Dragon Illusion creature token with flying and haste.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon",
+        "Illusion"
+      ],
+      "power": 0,
+      "toughness": 0,
+      "variable_pt": true,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying",
+        "haste"
+      ]
+    },
+    {
       "id": "drake_2_2_u_flying",
       "name": "Drake Token",
       "oracle_text": "2/2 blue Drake creature token with flying.",
@@ -742,6 +768,28 @@
       ]
     },
     {
+      "id": "elemental_1_1_ur",
+      "name": "Elemental Token",
+      "oracle_text": "1/1 blue and red Elemental creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
+      "is_token": true
+    },
+    {
       "id": "elemental_2_2_g",
       "name": "Elemental Token",
       "oracle_text": "2/2 green Elemental creature token.",
@@ -758,6 +806,53 @@
       ],
       "color_identity": [
         "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elemental_3_3_ur_flying",
+      "name": "Elemental Token",
+      "oracle_text": "3/3 blue and red Elemental creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "flying"
+      ]
+    },
+    {
+      "id": "elemental_4_4_ur",
+      "name": "Elemental Token",
+      "oracle_text": "4/4 blue and red Elemental creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "U",
+        "R"
+      ],
+      "color_identity": [
+        "U",
+        "R"
       ],
       "is_token": true
     },
@@ -1063,6 +1158,28 @@
       ],
       "color_identity": [
         "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "phyrexian_myr_2_1_u_artifact",
+      "name": "Phyrexian Myr Token",
+      "oracle_text": "2/1 blue Phyrexian Myr artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Phyrexian",
+        "Myr"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
       ],
       "is_token": true
     },

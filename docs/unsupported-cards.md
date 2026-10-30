@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**87 cards** blocked by **69** capabilities.
+**100 cards** blocked by **83** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,6 +20,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [copy-exception-ability](#copy-exception-ability) | 2 | 1261 | op |
+| [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -27,24 +29,32 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
+| [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
+| [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
+| [exile-until](#exile-until) | 1 | 2297 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -53,9 +63,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
+| [mana-spent-trigger](#mana-spent-trigger) | 1 | 3830 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
-| [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 16968 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -69,14 +79,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
+| [retrace](#retrace) | 1 | 5451 | engine |
+| [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
+| [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -303,6 +317,42 @@ Blocks **2** cards.
 
 </details>
 
+## copy-exception-ability
+
+Blocks **2** cards.
+
+- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
+  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
+- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
+  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twinflame** (rank 1261) — `twinflame`
+  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
+- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
+  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
+## mode-owned-variable-targets
+
+Blocks **2** cards.
+
+- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
+  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
+- **(engine)** a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "any", count: 2, up_to: true` owned by mode 1 -- so "deals 1 damage to each of one or two targets" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets
+  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list
+
+<details><summary>Cards waiting on this</summary>
+
+- **Prismari Charm** (rank 6294) — `prismari_charm`
+  - • Prismari Charm deals 1 damage to each of one or two targets.
+- **Blessed Alliance** (rank 16968) — `blessed_alliance`
+  - • Untap up to two target creatures.
+
+</details>
+
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -420,6 +470,20 @@ Blocks **1** card.
 
 </details>
 
+## adventure-half-in-index
+
+Blocks **1** card.
+
+- **(engine)** scripts/build_card_index.py must carry an Adventure's spell half. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet shows only the creature half (Flash, Flying, the blocking line) and `back_face: {}`; Petty Theft ('Return target nonland permanent an opponent controls to its owner's hand.') is nowhere in the packet or the residual gate.
+  <br>Why the existing vocabulary won't do: The engine already casts an Adventure through `second_face` with `adventure: true` (the cookbook's own example is this card), so the gap is the index, not the rules. Fixing it means rebuilding cards.sqlite, which today pulls a newer Scryfall bundle; that refresh moves every EDHREC rank and some oracle text, and is its own change rather than a rider on a deck batch. Filed by the main agent from the worker's note.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
+  - This creature can block only creatures with flying.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -460,6 +524,20 @@ Blocks **1** card.
 - **Goblin Snowman** (rank 21010) — `goblin_snowman`
   - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
   - {T}: This creature deals 1 damage to target creature it's blocking.
+
+</details>
+
+## can-block-only
+
+Blocks **1** card.
+
+- **(static_effect)** a static on a creature restricting which attackers IT may block, by a filter over the attacker ("this creature can block only creatures with flying"): an `affects` naming the blocker (self_only) and an `attackers` filter (e.g. keywords: [flying]) read on the attacker's derived characteristics in combat.can_block
+  <br>Why the existing vocabulary won't do: `block_restriction` is the mirror image: it sits on the ATTACKER and filters which blockers may block it (block_restrictions(state, attacker_oid) matches `affects` against the attacker). `cant_block` forbids blocking outright with no attacker filter. No keyword covers it (shadow is two-way and about shadow only). combat.can_block has no check of a blocker-side static against the attacker's qualities
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
+  - This creature can block only creatures with flying.
 
 </details>
 
@@ -519,6 +597,20 @@ Blocks **1** card.
 
 - **Order of Sacred Dusk** (rank 11110) — `order_of_sacred_dusk`
   - Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)
+
+</details>
+
+## copy-for-each-other-target
+
+Blocks **1** card.
+
+- **(op)** an op that copies the triggering spell once for each other object that spell could legally target (here: each other creature the caster controls), with the copies controlled by the spell's caster and each copy's single target set to a different one of those objects (the Precursor Golem / Ink-Treader Nephilim / Zada / Radiate pattern)
+  <br>Why the existing vocabulary won't do: copy_spell takes amount, controller and new_targets, but new_targets lets the copier choose new targets freely; nothing iterates over the spell's legal targets and binds each copy to a distinct one, and for_each cannot pass its loop object into a copy's target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
+  - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
 
 </details>
 
@@ -593,6 +685,34 @@ Blocks **1** card.
 
 </details>
 
+## divided-damage-any-target
+
+Blocks **1** card.
+
+- **(engine)** damage `divided` over a target spec of kind "any" (creatures, planeswalkers, battles AND players), so the 601.2d announcement offers players a share and resolution deals each player target its share
+  <br>Why the existing vocabulary won't do: `damage` with `divided` exists, but `Game._ask_damage_division` keeps only declared refs with `kind == "object"` and `ops_life._damage_divided` deals each share through `damage_permanent`, so a player chosen as one of the 'any number of targets' would receive no damage at all. It works only for permanent-only specs (Monstrous Onslaught's 'target creatures'); restricting this card to permanents would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Magma Opus** (rank 5125) — `magma_opus`
+  - Magma Opus deals 4 damage divided as you choose among any number of targets.
+
+</details>
+
+## elemental-x-x-ur-flying-haste
+
+Blocks **1** card.
+
+- **(token)** an X/X blue and red Elemental creature token with flying and haste (power/toughness set by create_token's power/toughness)
+  <br>Why the existing vocabulary won't do: token_ids has elemental_3_3_ur_flying (no haste), elemental_1_1_ur and elemental_4_4_ur (no flying/haste) and dragon_illusion_x_x_r_flying_haste (wrong colour and types); none is a blue-red Elemental with flying and haste
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
+  - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
+
+</details>
+
 ## escalate-non-mana
 
 Blocks **1** card.
@@ -639,6 +759,20 @@ Blocks **1** card.
 
 </details>
 
+## exile-until
+
+Blocks **1** card.
+
+- **(op)** an op that, for each selected player, exiles cards one at a time from the top of that player's own library until a card matching a selector (here: nonland) is exiled, moving EVERY card walked past (lands included) to exile, and binds all the cards exiled this way (per-player accumulated) with `as` so later ops can read them
+  <br>Why the existing vocabulary won't do: `reveal_until` stops at a selector match but moves only the match to `destination`; the cards walked past go to the library bottom (`rest_to_bottom`) or get shuffled in (`shuffle_rest`), never to exile, and its binding holds only the matches. `cascade` exiles the whole walk but only from the controller's library, with a hardcoded mana-value ceiling and bottoms the rest. `exile_until` is a different sentence (exile until the source leaves). A `for_each_player` + `repeat_while` + `look_at_top` (amount 1, destination exile) loop would be a hand-built approximation with a 100-iteration guard and a look/choice on each card, not a public walk.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Plargg and Nassari** (rank 2297) — `plargg_and_nassari`
+  - At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card.
+
+</details>
+
 ## extra-turn
 
 Blocks **1** card.
@@ -668,6 +802,25 @@ Blocks **1** card.
 
 </details>
 
+## fixed-piles-opponent-chooses
+
+Blocks **1** card.
+
+- **(op)** an op that exiles two fixed piles from the top of your library (the first N cards face down, the next N face up), has an opponent choose one pile, puts the chosen pile into its owner's graveyard, then lets you cast one spell from the other pile without paying its mana cost and puts the remainder of that pile into your hand
+  <br>Why the existing vocabulary won't do: two_piles (amount, to, other) is Fact or Fiction: one revealed group that an opponent SEPARATES, with fixed destinations and no face-down pile, no opponent-chooses-a-pre-made-pile step and no free cast from the kept pile. look_at_top has cast_free and rest_to but no second pile and no opponent choice; exile with playable_free grants a lasting permission rather than a single cast now with the rest going to hand
+
+<details><summary>Cards waiting on this</summary>
+
+- **Abstract Performance** (rank 12369) — `abstract_performance`
+  - Exile the top four cards of your library in a face-down pile, then exile the top four cards of your library in a face-up pile.
+  - An opponent chooses one of those piles.
+  - Put that pile into your graveyard.
+  - Look at the cards in the other pile.
+  - You may cast a spell from among them without paying its mana cost.
+  - Put the rest into your hand.
+
+</details>
+
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -679,6 +832,20 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## greatest-mana-value-spells-cast-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value reading the greatest printed mana value among the spells a player cast this turn that match a filter (here instant and sorcery spells you've cast), read off TurnLedger.spells_cast_ids like spells_cast_this_turn's filter form; e.g. extreme_value accepting a spells_cast_this_turn source in place of objects
+  <br>Why the existing vocabulary won't do: spells_cast_this_turn with a filter only counts the matching spells, and extreme_value only resolves an `objects` pool of objects in zones -- resolved instants and sorceries have left the stack, so neither yields their greatest mana value
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
+  - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
 
 </details>
 
@@ -797,6 +964,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-spent-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a rider on a mana ability that tags the mana it makes and creates a triggered ability ('When you spend this mana to cast <spell filter>, <effects>') which fires when that tagged mana is spent on a spell matching the filter -- here `is_commander: true` -- with ordinary effects on the stack (scry X, X = `commander_casts_this_game: you`, counted after this cast). The same capability covers Gilanra, Caller of Wirewood, Lapis/Jade Orb of Dragonkind and Scaled Nurturer, whose shipped auto entries currently drop the trigger clause
+  <br>Why the existing vocabulary won't do: A mana ability may hold only add_mana plus the riders add_counters/add_poison/damage/gain_life/lose_life/remove_counters, which happen on activation rather than when the mana is spent and cannot be filtered by the spell it pays for; mana_grant only hands keywords to the permanent the spell becomes; mana_uncounterable only makes that spell uncounterable; mana_restriction narrows what the mana may buy; and no trigger_event observes mana being spent (spell_cast cannot tell which mana paid for the spell). The value commander_casts_this_game already exists, so only the trigger is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Study Hall** (rank 3830) — `study_hall`
+  - {1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry X, where X is the number of times it's been cast from the command zone this game.
+
+</details>
+
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -822,20 +1003,6 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
-
-</details>
-
-## mode-owned-variable-targets
-
-Blocks **1** card.
-
-- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
-  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blessed Alliance** (rank 16968) — `blessed_alliance`
-  - • Untap up to two target creatures.
 
 </details>
 
@@ -1030,6 +1197,34 @@ Blocks **1** card.
 
 </details>
 
+## retrace
+
+Blocks **1** card.
+
+- **(engine)** the residual gate (authoring/verify.py `_covered`) must claim a printed keyword line 'Retrace (<reminder>)' when the card has `retrace: true` with its land-discard retrace_cost. Today it only claims Dragon Man's bare sentence via `_GRAVEYARD_ADDITIONAL_LINE` (a fullmatch, so the 'retrace (' prefix and ')' suffix defeat it). The engine side already works: the card {cascade triggered ability on the stack + retrace: true, no spell_effects} passes gates 1-4 and 6 and fails only at residual with 'printed text not represented: Retrace'
+  <br>Why the existing vocabulary won't do: `retrace: true` is the right field and loads, but no ability can claim the line (retrace is a card-level cost, not an ability, and not a loadable keyword). Spitting Image passes only because its non-empty `spell_effects` claims every line of an instant/sorcery; Throes of Chaos has no spell effect, and padding `spell_effects` with `noop` to dodge the gate would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Throes of Chaos** (rank 5451) — `throes_of_chaos`
+  - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
+
+</details>
+
+## sandbox-graveyard-spell-prop
+
+Blocks **1** card.
+
+- **(engine)** a verification-sandbox prop: an instant or sorcery card in player 0's graveyard, swapped in (like swap_in_legendary_body / swap_in_artifact_body) only for a card whose required card_in_graveyard target selects Instant or Sorcery, so a mandatory 'target instant or sorcery card from your graveyard' spell is castable at gate 4
+  <br>Why the existing vocabulary won't do: The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller you), exile as 'banked', pump of creatures you control with power {mana_value_of: {binding: banked}}, and a this_turn delayed_trigger on deals_combat_damage_to_player (controller you) whose effect is cast_copy {objects: {binding: banked}, optional: true}. It passes schema, compile and residual, then fails gate 4 'not playable in the sandbox' because OWN_GRAVEYARD_ROLES is (small_creature, flier) and no instant or sorcery card is ever in the graveyard, so a required target has no legal choice (601.2c). Marking the target optional (as mizzix_s_mastery does) would describe a different card. With OWN_GRAVEYARD_ROLES patched in memory to include noncreature_spell (Anticipate, MV 2) the same answer passes gate 4 and resolves with graveyard_size {0: 2}.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Surge to Victory** (rank 5082) — `surge_to_victory`
+  - Exile target instant or sorcery card from your graveyard.
+
+</details>
+
 ## search-aura-attached
 
 Blocks **1** card.
@@ -1071,6 +1266,20 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
+
+</details>
+
+## self-suspend-on-resolution
+
+Blocks **1** card.
+
+- **(engine)** a card-level resolution rider for an instant or sorcery, beside exiles_itself: 'as this spell resolves, exile it with N time counters on it' -- the spell goes to exile instead of the graveyard and is made suspended (suspend.make_suspended with N counters, suspended_by its owner) so the upkeep tick and the free cast recur. Shared by the Rousing Refrain / Arc Blade / Lotus Blossom-style self-suspending spells, e.g. a rider like `suspends_itself: 3`
+  <br>Why the existing vocabulary won't do: The `suspend` op (op_suspend) only works on a target or binding; called on the spell itself from spell_effects, it would exile the card off the stack mid-resolution, and stack._resolve_spell then unconditionally calls _place_after_resolution, which moves it on to the graveyard (resetting the suspended mark) -- the same reason exiles_itself exists as a rider rather than an `exile` op. `exiles_itself` exiles without time counters or the suspended mark, so the card would never come back; the card-level `suspend` key covers only the cast-from-hand alternative, not the resolution exile.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rousing Refrain** (rank 2750) — `rousing_refrain`
+  - Exile Rousing Refrain with three time counters on it.
 
 </details>
 
@@ -1142,6 +1351,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## targets-only-self
+
+Blocks **1** card.
+
+- **(trigger_event)** a spell_cast trigger filter matching an instant or sorcery spell whose every target is this permanent (a single target, the source), with the caster of that spell bound as the copying player
+  <br>Why the existing vocabulary won't do: spell_cast's trigger_filter_keys read the spell's own characteristics, not its targets; becomes_target with targeted_by fires on any spell or ability that targets this creature among others and on copies, so it cannot say 'casts ... that targets only this creature'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
+  - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
 
 </details>
 

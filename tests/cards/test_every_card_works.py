@@ -784,7 +784,10 @@ def _satisfy_the_activation_condition(game: Game, registry, ability, oid: int) -
         match = _fodder_for(registry, {"types": ["Instant"]} if filt else {})
         if match is None:
             return
-        for _ in range(int(right["const"])):
+        # Hall of Oracles' "if you've cast an instant or sorcery spell this
+        # turn" is ``> 0``: a strict comparison needs one cast past the number.
+        wanted = int(right["const"]) + (1 if condition.get("cmp") == ">" else 0)
+        for _ in range(wanted):
             game.state.emit(EventType.SPELL_CAST, player=0, card=match.id)
         return
 

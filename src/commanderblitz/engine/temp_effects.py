@@ -1230,12 +1230,16 @@ def require_attack_player(
     defender: int,
     clock: int,
     source: int | None = None,
+    *,
+    this_turn: bool = False,
 ) -> bool:
     """ "Until the end of your next turn, target creature attacks that player
     each combat if able." One rules-relevant thing: it writes the mark.
 
     ``clock`` is "your" -- the seat whose next turn's cleanup ends the mark
-    (`structs.AttackMark`). Refused, returning ``False``, for a creature no
+    (`structs.AttackMark`). With ``this_turn`` the mark ends in this turn's
+    cleanup instead ("…attack that opponent this turn if able") and carries no
+    seat's clock. Refused, returning ``False``, for a creature no
     longer on the battlefield and for a defender out of the game. A defender
     who controls the creature is *not* refused: control can change before the
     combat the mark is about, and until then it simply cannot be obeyed.
@@ -1249,7 +1253,11 @@ def require_attack_player(
     if not state.is_alive(defender):
         return False
     mark = AttackMark(
-        defender=defender, until_end_of_turn_of=clock, since_turn=state.turn, source=source
+        defender=defender,
+        until_end_of_turn_of=None if this_turn else clock,
+        since_turn=state.turn,
+        source=source,
+        this_turn=this_turn,
     )
     obj.attack_marks = [
         m for m in obj.attack_marks if m.prohibition or m.defender != defender

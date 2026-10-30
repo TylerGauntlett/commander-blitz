@@ -1144,3 +1144,83 @@ class TestTheFantasticarsConstructsAreFourFourHastyFliers:
         construct = pool.get("construct_0_0_c_artifact_buff")
         assert (construct.power, construct.toughness) == (0, 0)
         assert not construct.keywords
+
+
+class TestPrismariElementalsAreBlueAndRed:
+    """Prismari Pianist, Furygale Flocking, Magma Opus and Resculpt: *"a 1/1
+    blue and red Elemental"*, *"two 3/3 blue and red Elemental creature tokens
+    with flying"*, *"a 4/4 blue and red Elemental creature token."*
+
+    `elemental_2_2_g` is the pool's other Elemental: green, so a count of blue
+    or red permanents would not see it, and the wrong size for all three.
+    """
+
+    @pytest.mark.parametrize(
+        ("token_id", "size", "keywords"),
+        [
+            ("elemental_1_1_ur", (1, 1), []),
+            ("elemental_3_3_ur_flying", (3, 3), ["flying"]),
+            ("elemental_4_4_ur", (4, 4), []),
+        ],
+    )
+    def test_each_is_a_blue_and_red_elemental_of_its_size(self, pool, token_id, size, keywords):
+        token = pool.get(token_id)
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == size
+        assert sorted(token.colors) == ["R", "U"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert sorted(token.keywords) == keywords
+        assert not token.abilities
+
+    def test_the_green_elemental_is_still_a_separate_token(self, pool):
+        elemental = pool.get("elemental_2_2_g")
+        assert sorted(elemental.colors) == ["G"]
+
+
+class TestBrudicladsMyrIsATwoOneBluePhyrexianArtifact:
+    """Brudiclad, Telchor Engineer: *"create a 2/1 blue Phyrexian Myr artifact
+    creature token."*
+
+    `myr_1_1_c` is a colorless 1/1 Myr with no Phyrexian type, so it is the
+    wrong body and colour for every token Brudiclad then turns into its copy.
+    """
+
+    def test_it_is_a_two_one_blue_phyrexian_myr_artifact(self, pool):
+        token = pool.get("phyrexian_myr_2_1_u_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 1)
+        assert sorted(token.colors) == ["U"]
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert sorted(token.subtypes) == ["Myr", "Phyrexian"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_colorless_myr_is_still_a_separate_token(self, pool):
+        myr = pool.get("myr_1_1_c")
+        assert (myr.power, myr.toughness) == (1, 1)
+        assert not myr.colors
+
+
+class TestManaformHellkitesDragonIsAnXXHastyFlier:
+    """Manaform Hellkite: *"create an X/X red Dragon Illusion creature token
+    with flying and haste, where X is the amount of mana spent."*
+
+    `dragon_4_4_r_flying` is a fixed 4/4 with no haste and no Illusion type;
+    `shark_x_x_u_flying` is the pool's other X/X flier, blue and a Shark.
+    """
+
+    def test_it_is_a_variable_red_dragon_illusion_with_flying_and_haste(self, pool):
+        token = pool.get("dragon_illusion_x_x_r_flying_haste")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.variable_pt
+        assert (token.power, token.toughness) == (0, 0)
+        assert sorted(token.colors) == ["R"]
+        assert list(token.types) == ["Creature"]
+        assert sorted(token.subtypes) == ["Dragon", "Illusion"]
+        assert sorted(token.keywords) == ["flying", "haste"]
+        assert not token.abilities
+
+    def test_the_fixed_dragon_is_still_a_separate_token(self, pool):
+        dragon = pool.get("dragon_4_4_r_flying")
+        assert not dragon.variable_pt
+        assert "haste" not in dragon.keywords

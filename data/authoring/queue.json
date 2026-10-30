@@ -3002,12 +3002,12 @@
     },
     "Aether Gale": {
       "edhrec_rank": 3678,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Gale",
-      "reason": "no template for: Return six target nonland permanents to their owners' hands",
+      "reason": "",
       "scryfall_id": "4e336e87-e5af-46a0-8caf-5d9ad8d671fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Gust": {
@@ -32852,12 +32852,12 @@
     },
     "Braingeyser": {
       "edhrec_rank": 11593,
-      "gate": "template",
+      "gate": null,
       "name": "Braingeyser",
-      "reason": "no template for: Target player draws X cards",
+      "reason": "",
       "scryfall_id": "25e1ff5d-0ba5-4055-9a1d-42ed65c11485",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brainspoil": {
@@ -35582,12 +35582,12 @@
     },
     "Brudiclad, Telchor Engineer": {
       "edhrec_rank": 2116,
-      "gate": "template",
+      "gate": null,
       "name": "Brudiclad, Telchor Engineer",
-      "reason": "no template for: Creature tokens you control have haste",
+      "reason": "",
       "scryfall_id": "d24bf1df-5087-4ad6-a1aa-4eda2340cd8b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bruenor Battlehammer": {
@@ -55712,12 +55712,12 @@
     },
     "Creative Technique": {
       "edhrec_rank": 4885,
-      "gate": "template",
+      "gate": null,
       "name": "Creative Technique",
-      "reason": "no template for: Demonstrate",
+      "reason": "",
       "scryfall_id": "c0b5ba5f-ac25-4134-91c1-9677ba86576c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creature Bond": {
@@ -58462,12 +58462,12 @@
     },
     "Curiosity Crafter": {
       "edhrec_rank": 1723,
-      "gate": "template",
+      "gate": null,
       "name": "Curiosity Crafter",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "930d830b-5e6a-422a-806e-fd7275517deb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curious Altisaur": {
@@ -60392,12 +60392,12 @@
     },
     "Dance with Calamity": {
       "edhrec_rank": 4364,
-      "gate": "template",
+      "gate": null,
       "name": "Dance with Calamity",
-      "reason": "no template for: Shuffle your library. As many times as you choose, you may exile the top card of your libr",
+      "reason": "",
       "scryfall_id": "69f34a40-30f8-4fdd-bb21-79171ba2f00d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dance with Devils": {
@@ -67772,12 +67772,12 @@
     },
     "Determined Iteration": {
       "edhrec_rank": 3938,
-      "gate": "template",
+      "gate": null,
       "name": "Determined Iteration",
-      "reason": "no template for: At the beginning of combat on your turn, populate. The token created this way gains haste.",
+      "reason": "",
       "scryfall_id": "d95490fe-44f2-4f83-b587-b0df402d38ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Detonate": {
@@ -68602,12 +68602,12 @@
     },
     "Dig Through Time": {
       "edhrec_rank": 618,
-      "gate": "template",
+      "gate": null,
       "name": "Dig Through Time",
-      "reason": "no template for: Delve",
+      "reason": "",
       "scryfall_id": "87c899c1-401f-4090-8f71-307e7106cdf2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dig Up": {
@@ -69442,12 +69442,12 @@
     },
     "Dirgur Focusmage // Braingeyser": {
       "edhrec_rank": 10082,
-      "gate": "template",
+      "gate": null,
       "name": "Dirgur Focusmage // Braingeyser",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "7bdabeba-0cfb-4953-b725-50a48164a044",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dirgur Island Dragon // Skimming Strike": {
@@ -90012,12 +90012,12 @@
     },
     "Faerie Mastermind": {
       "edhrec_rank": 309,
-      "gate": "template",
+      "gate": null,
       "name": "Faerie Mastermind",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, you draw a card",
+      "reason": "",
       "scryfall_id": "bc9a7599-3c7d-4b83-bff3-e3d1f20f1b0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Faerie Mechanist": {
@@ -103762,12 +103762,12 @@
     },
     "Furygale Flocking": {
       "edhrec_rank": 11062,
-      "gate": "template",
+      "gate": null,
       "name": "Furygale Flocking",
-      "reason": "no template for: This spell costs {1} less to cast for each instant and sorcery card in your graveyard",
+      "reason": "",
       "scryfall_id": "a967af7a-03ed-4858-9c26-66f2cb706b02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Furystoke Giant": {
@@ -104362,12 +104362,12 @@
     },
     "Galazeth Prismari": {
       "edhrec_rank": 5720,
-      "gate": "template",
+      "gate": null,
       "name": "Galazeth Prismari",
-      "reason": "no template for: When enters, create a Treasure token",
+      "reason": "",
       "scryfall_id": "abdd3b41-6bdd-4b35-998c-0358ba72ca12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gale Force": {
@@ -121522,12 +121522,12 @@
     },
     "Hall of Oracles": {
       "edhrec_rank": 5584,
-      "gate": "template",
+      "gate": null,
       "name": "Hall of Oracles",
-      "reason": "no template for: {T}: Put a +1/+1 counter on target creature. Activate only as a sorcery and only if you've",
+      "reason": "",
       "scryfall_id": "c29b896e-eee0-4f40-89b8-89262dae44e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hall of Storm Giants": {
@@ -137652,12 +137652,12 @@
     },
     "Inspired Skypainter // Maestro's Gift": {
       "edhrec_rank": 12675,
-      "gate": "template",
+      "gate": null,
       "name": "Inspired Skypainter // Maestro's Gift",
-      "reason": "no template for: When this creature enters and whenever one or more creature tokens you control deal combat",
+      "reason": "",
       "scryfall_id": "29d2186c-c5fb-4439-95c6-ffe46b6dded9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspired Sphinx": {
@@ -156382,12 +156382,12 @@
     },
     "Leitmotif Composer": {
       "edhrec_rank": 14398,
-      "gate": "template",
+      "gate": null,
       "name": "Leitmotif Composer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, draw a card",
+      "reason": "",
       "scryfall_id": "04c9c969-4f63-4c16-a1e9-c9a9e05488b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lembas": {
@@ -166472,12 +166472,12 @@
     },
     "Manaform Hellkite": {
       "edhrec_rank": 5523,
-      "gate": "template",
+      "gate": null,
       "name": "Manaform Hellkite",
-      "reason": "no template for: Whenever you cast a noncreature spell, create an X/X red Dragon Illusion creature token wi",
+      "reason": "",
       "scryfall_id": "0a559655-0967-41b9-8248-170f95c05f84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Managorger Hydra": {
@@ -207482,12 +207482,12 @@
     },
     "Prismari Campus": {
       "edhrec_rank": 5603,
-      "gate": "template",
+      "gate": null,
       "name": "Prismari Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "7c464dee-dd89-4955-ae40-8bb74e9ff42a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prismari Charm": {
@@ -207502,22 +207502,22 @@
     },
     "Prismari Command": {
       "edhrec_rank": 1108,
-      "gate": "template",
+      "gate": null,
       "name": "Prismari Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "372d0c0b-439c-413f-aac4-5174c75aadb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prismari Pianist": {
       "edhrec_rank": 10469,
-      "gate": "template",
+      "gate": null,
       "name": "Prismari Pianist",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, create a 1/1 blue and red Elemental creatur",
+      "reason": "",
       "scryfall_id": "6d3bfd1b-8ea8-43ad-8785-af29c807c935",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prismari Pledgemage": {
@@ -218692,12 +218692,12 @@
     },
     "Redoubled Stormsinger": {
       "edhrec_rank": 3338,
-      "gate": "template",
+      "gate": null,
       "name": "Redoubled Stormsinger",
-      "reason": "no template for: Whenever this creature attacks, for each creature token you control that entered this turn",
+      "reason": "",
       "scryfall_id": "fc5fcb5e-091e-4f47-9c74-9e187a9e0e5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redress Fate": {
@@ -220252,12 +220252,12 @@
     },
     "Renegade Bull": {
       "edhrec_rank": 14766,
-      "gate": "template",
+      "gate": null,
       "name": "Renegade Bull",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, this creature gets +X/+0 until end of turn,",
+      "reason": "",
       "scryfall_id": "aa23e922-f44b-4af8-8ce0-bc1bc1e65bad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Renegade Demon": {
@@ -220722,12 +220722,12 @@
     },
     "Replication Technique": {
       "edhrec_rank": 4337,
-      "gate": "template",
+      "gate": null,
       "name": "Replication Technique",
-      "reason": "no template for: Demonstrate",
+      "reason": "",
       "scryfall_id": "b3149976-2811-4bbd-af1e-d59016bb0754",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Repopulate": {
@@ -221072,12 +221072,12 @@
     },
     "Resculpt": {
       "edhrec_rank": 884,
-      "gate": "template",
+      "gate": null,
       "name": "Resculpt",
-      "reason": "no template for: Exile target artifact or creature. Its controller creates a 4/4 blue and red Elemental cre",
+      "reason": "",
       "scryfall_id": "5443f46d-03f9-468e-a78d-a059529b1151",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Research // Development": {
@@ -224372,12 +224372,12 @@
     },
     "Rionya, Fire Dancer": {
       "edhrec_rank": 2902,
-      "gate": "template",
+      "gate": null,
       "name": "Rionya, Fire Dancer",
-      "reason": "no template for: At the beginning of combat on your turn, create X tokens that are copies of another target",
+      "reason": "",
       "scryfall_id": "086e68b5-0f89-46d0-9a04-7f8658a9ab53",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riot Control": {
@@ -225172,12 +225172,12 @@
     },
     "Rite of Replication": {
       "edhrec_rank": 907,
-      "gate": "template",
+      "gate": null,
       "name": "Rite of Replication",
-      "reason": "no template for: Kicker {5}",
+      "reason": "",
       "scryfall_id": "5032d71d-d9f8-498c-97d1-271c2e9c1c47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rite of Ruin": {
@@ -227332,12 +227332,12 @@
     },
     "Rootha, Mercurial Artist": {
       "edhrec_rank": 13249,
-      "gate": "template",
+      "gate": null,
       "name": "Rootha, Mercurial Artist",
-      "reason": "no template for: {2}, Return Rootha to its owner's hand: Copy target instant or sorcery spell you control. ",
+      "reason": "",
       "scryfall_id": "289abc0f-2ab9-48a7-a19b-a3630b014637",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rooting Kavu": {
@@ -257402,12 +257402,12 @@
     },
     "Spectacle Summit": {
       "edhrec_rank": 9327,
-      "gate": "template",
+      "gate": null,
       "name": "Spectacle Summit",
-      "reason": "no template for: {2}{U}{R}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "a0a66f7b-eab4-45da-8895-c2c2c7eb05f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectacular Pileup": {
@@ -266212,12 +266212,12 @@
     },
     "Stormcatch Mentor": {
       "edhrec_rank": 938,
-      "gate": "template",
+      "gate": null,
       "name": "Stormcatch Mentor",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "f1bbb5ad-a293-48f3-a3d0-7ac85a7b8467",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormchaser Chimera": {
@@ -286082,12 +286082,12 @@
     },
     "Thunderclap Drake": {
       "edhrec_rank": 2128,
-      "gate": "template",
+      "gate": null,
       "name": "Thunderclap Drake",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "313fed71-cfbe-4c83-9437-ac14b2cb159b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thunderclap Wyvern": {
@@ -291882,12 +291882,12 @@
     },
     "Treasure Cruise": {
       "edhrec_rank": 626,
-      "gate": "template",
+      "gate": null,
       "name": "Treasure Cruise",
-      "reason": "no template for: Delve",
+      "reason": "",
       "scryfall_id": "42c45880-15c7-4259-8066-c04d031d8216",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treasure Dredger": {
@@ -294232,12 +294232,12 @@
     },
     "Turbulent Springs": {
       "edhrec_rank": 4369,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Springs",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "526d3add-b87f-42ba-957b-879fb8fea792",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Steppe": {
@@ -307292,12 +307292,12 @@
     },
     "Volcanic Salvo": {
       "edhrec_rank": 9105,
-      "gate": "template",
+      "gate": null,
       "name": "Volcanic Salvo",
-      "reason": "no template for: This spell costs {X} less to cast, where X is the total power of creatures you control",
+      "reason": "",
       "scryfall_id": "fdd9dda5-0386-45a4-aec1-853137281934",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Volcanic Spite": {
@@ -307342,12 +307342,12 @@
     },
     "Volcanic Torrent": {
       "edhrec_rank": 4029,
-      "gate": "template",
+      "gate": null,
       "name": "Volcanic Torrent",
-      "reason": "no template for: Cascade",
+      "reason": "",
       "scryfall_id": "bddd4336-ef03-4c4e-9992-02a0548d2d6f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Volcanic Upheaval": {

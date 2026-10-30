@@ -1,0 +1,18 @@
+{
+  "card_id": "plargg_and_nassari",
+  "name": "Plargg and Nassari",
+  "oracle_text": "At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card. An opponent chooses a nonland card exiled this way. You may cast up to two spells from among the other cards exiled this way without paying their mana costs.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card."
+  ],
+  "needs": [
+    {
+      "capability": "exile_until",
+      "kind": "op",
+      "what": "an op that, for each selected player, exiles cards one at a time from the top of that player's own library until a card matching a selector (here: nonland) is exiled, moving EVERY card walked past (lands included) to exile, and binds all the cards exiled this way (per-player accumulated) with `as` so later ops can read them",
+      "why_existing_wont_do": "`reveal_until` stops at a selector match but moves only the match to `destination`; the cards walked past go to the library bottom (`rest_to_bottom`) or get shuffled in (`shuffle_rest`), never to exile, and its binding holds only the matches. `cascade` exiles the whole walk but only from the controller's library, with a hardcoded mana-value ceiling and bottoms the rest. `exile_until` is a different sentence (exile until the source leaves). A `for_each_player` + `repeat_while` + `look_at_top` (amount 1, destination exile) loop would be a hand-built approximation with a 100-iteration guard and a look/choice on each card, not a public walk."
+    }
+  ],
+  "closest_existing": ["reveal_until", "cascade", "repeat_while", "play_exiled"],
+  "confidence": "high"
+}

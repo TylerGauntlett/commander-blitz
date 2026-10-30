@@ -1,0 +1,22 @@
+{
+  "card_id": "rousing_refrain",
+  "name": "Rousing Refrain",
+  "oracle_text": "Add {R} for each card in target opponent's hand. Until end of turn, you don't lose this mana as steps and phases end. Exile Rousing Refrain with three time counters on it.\nSuspend 3—{1}{R} (Rather than cast this card from your hand, you may pay {1}{R} and exile it with three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)",
+  "blocked_sentences": [
+    "Exile Rousing Refrain with three time counters on it."
+  ],
+  "needs": [
+    {
+      "capability": "self_suspend_on_resolution",
+      "kind": "engine",
+      "what": "a card-level resolution rider for an instant or sorcery, beside exiles_itself: 'as this spell resolves, exile it with N time counters on it' -- the spell goes to exile instead of the graveyard and is made suspended (suspend.make_suspended with N counters, suspended_by its owner) so the upkeep tick and the free cast recur. Shared by the Rousing Refrain / Arc Blade / Lotus Blossom-style self-suspending spells, e.g. a rider like `suspends_itself: 3`",
+      "why_existing_wont_do": "The `suspend` op (op_suspend) only works on a target or binding; called on the spell itself from spell_effects, it would exile the card off the stack mid-resolution, and stack._resolve_spell then unconditionally calls _place_after_resolution, which moves it on to the graveyard (resetting the suspended mark) -- the same reason exiles_itself exists as a rider rather than an `exile` op. `exiles_itself` exiles without time counters or the suspended mark, so the card would never come back; the card-level `suspend` key covers only the cast-from-hand alternative, not the resolution exile."
+    }
+  ],
+  "closest_existing": [
+    "exiles_itself",
+    "suspend",
+    "rebound"
+  ],
+  "confidence": "high"
+}

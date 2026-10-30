@@ -1,0 +1,23 @@
+{
+  "card_id": "abstract_performance",
+  "name": "Abstract Performance",
+  "oracle_text": "Exile the top four cards of your library in a face-down pile, then exile the top four cards of your library in a face-up pile. An opponent chooses one of those piles. Put that pile into your graveyard. Look at the cards in the other pile. You may cast a spell from among them without paying its mana cost. Put the rest into your hand.",
+  "blocked_sentences": [
+    "Exile the top four cards of your library in a face-down pile, then exile the top four cards of your library in a face-up pile.",
+    "An opponent chooses one of those piles.",
+    "Put that pile into your graveyard.",
+    "Look at the cards in the other pile.",
+    "You may cast a spell from among them without paying its mana cost.",
+    "Put the rest into your hand."
+  ],
+  "needs": [
+    {
+      "capability": "fixed_piles_opponent_chooses",
+      "kind": "op",
+      "what": "an op that exiles two fixed piles from the top of your library (the first N cards face down, the next N face up), has an opponent choose one pile, puts the chosen pile into its owner's graveyard, then lets you cast one spell from the other pile without paying its mana cost and puts the remainder of that pile into your hand",
+      "why_existing_wont_do": "two_piles (amount, to, other) is Fact or Fiction: one revealed group that an opponent SEPARATES, with fixed destinations and no face-down pile, no opponent-chooses-a-pre-made-pile step and no free cast from the kept pile. look_at_top has cast_free and rest_to but no second pile and no opponent choice; exile with playable_free grants a lasting permission rather than a single cast now with the rest going to hand"
+    }
+  ],
+  "closest_existing": ["two_piles", "look_at_top", "cast_card"],
+  "confidence": "high"
+}

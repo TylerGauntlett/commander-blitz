@@ -1,0 +1,14 @@
+{
+  "card_id": "throes_of_chaos",
+  "name": "Throes of Chaos",
+  "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+  "blocked_sentences": ["Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)"],
+  "needs": [{
+    "capability": "retrace",
+    "kind": "engine",
+    "what": "the residual gate (authoring/verify.py `_covered`) must claim a printed keyword line 'Retrace (<reminder>)' when the card has `retrace: true` with its land-discard retrace_cost. Today it only claims Dragon Man's bare sentence via `_GRAVEYARD_ADDITIONAL_LINE` (a fullmatch, so the 'retrace (' prefix and ')' suffix defeat it). The engine side already works: the card {cascade triggered ability on the stack + retrace: true, no spell_effects} passes gates 1-4 and 6 and fails only at residual with 'printed text not represented: Retrace'",
+    "why_existing_wont_do": "`retrace: true` is the right field and loads, but no ability can claim the line (retrace is a card-level cost, not an ability, and not a loadable keyword). Spitting Image passes only because its non-empty `spell_effects` claims every line of an instant/sorcery; Throes of Chaos has no spell effect, and padding `spell_effects` with `noop` to dodge the gate would be an approximation"
+  }],
+  "closest_existing": ["retrace", "graveyard_additional_cost", "cascade"],
+  "confidence": "high"
+}
