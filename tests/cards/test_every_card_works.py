@@ -19,6 +19,7 @@ import pytest
 from commanderblitz.cards.authoring.verify import (
     check_expectation,
     swap_in_artifact_body,
+    swap_in_legendary_body,
     swap_in_tribal_body,
 )
 from commanderblitz.cards.registry import CardRegistry
@@ -107,7 +108,11 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     # and died. `swap_in_artifact_body` trades the second creature for a quiet
     # artifact creature, again only for a card that needs it.
     under_test = registry.get(card_id) if card_id in registry else None
+    # Ultimate Nullification sacrifices a legendary creature to be cast, and
+    # this board's creatures are nonlegendary; `swap_in_legendary_body` is the
+    # tribal swap's twin, shared for the same reason.
     board = swap_in_tribal_body(registry, list(OWN_BOARD), under_test)
+    board = swap_in_legendary_body(registry, board, under_test)
     builder.battlefield(0, swap_in_artifact_body(registry, board, under_test))
     builder.battlefield(1, OPPONENT_BOARD)
     builder.graveyard(0, OWN_GRAVEYARD)

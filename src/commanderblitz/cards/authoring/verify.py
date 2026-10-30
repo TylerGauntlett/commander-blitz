@@ -304,7 +304,8 @@ def _own_board(registry: CardRegistry, card: CardDef | None) -> list[str]:
     (:func:`swap_in_artifact_body`).
     """
     props = _props(registry, OWN_BOARD_ROLES)
-    return swap_in_artifact_body(registry, swap_in_tribal_body(registry, props, card), card)
+    board = swap_in_legendary_body(registry, swap_in_tribal_body(registry, props, card), card)
+    return swap_in_artifact_body(registry, board, card)
 
 
 def quiet_tribal_body(registry: CardRegistry, subtype: str) -> str | None:
@@ -348,6 +349,65 @@ def swap_in_tribal_body(
     if subtype is None or not board:
         return board
     pick = quiet_tribal_body(registry, subtype)
+    if pick is None:
+        return board
+    return [pick, *board[1:]]
+
+
+def sacrifice_cost_wants_legendary(card: CardDef | None) -> bool:
+    """Does this card's additional cost sacrifice a **legendary** creature?
+
+    "As an additional cost to cast this spell, sacrifice a legendary creature"
+    -- Ultimate Nullification. Read off the compiled cost, as
+    :func:`tribal_cost_subtype` reads its tribe, so the question asked is the
+    one the payment solver will ask.
+    """
+    if card is None or card.additional_cost is None:
+        return False
+    pool = card.additional_cost.sacrifice
+    return bool(pool) and "Legendary" in (pool.get("supertypes") or ())
+
+
+def quiet_legendary_body(registry: CardRegistry) -> str | None:
+    """The quietest legendary creature in this pool, or None if it has none.
+
+    The `legendary_creature` role's floor -- no activated or triggered
+    ability, either of which could act during the drive -- and then the
+    fewest abilities, the fewest keywords and the id, so the position is
+    identical run to run. Not :func:`quiet_tribal_body`'s "no abilities at
+    all": the hand-written pool `--collect` verifies against has no legendary
+    creature without one, and the body is sacrificed as the spell is cast, so
+    a static of its own applies only before the card under test is on the
+    stack.
+    """
+    match = sorted(
+        (
+            c
+            for c in registry
+            if _ROLES["legendary_creature"](c) and (c.toughness or 0) > 0
+        ),
+        key=lambda c: (len(c.abilities), len(c.keywords), c.id),
+    )
+    return match[0].id if match else None
+
+
+def swap_in_legendary_body(
+    registry: CardRegistry, board: list[str], card: CardDef | None
+) -> list[str]:
+    """``board`` with its first creature swapped for a legendary one, if ``card`` needs it.
+
+    Your creatures are nonlegendary -- the opponent's is the position's one
+    legendary permanent -- so a spell whose additional cost sacrifices a
+    legendary creature is never offered, and gate 4 reports "not playable in
+    the sandbox": the harness naming a shape the position cannot represent, not
+    a verdict about the card. The prop is added and the gate left alone, on
+    :func:`swap_in_tribal_body`'s terms: **only** for a card
+    :func:`sacrifice_cost_wants_legendary` says needs it, a swap so the boards
+    stay 32 and 6, and the board untouched when the pool has no quiet body.
+    """
+    if not sacrifice_cost_wants_legendary(card) or not board:
+        return board
+    pick = quiet_legendary_body(registry)
     if pick is None:
         return board
     return [pick, *board[1:]]

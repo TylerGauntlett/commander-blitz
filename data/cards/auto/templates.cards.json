@@ -159183,6 +159183,56 @@
       ]
     },
     {
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "count": 1,
+          "supertypes": [
+            "Legendary"
+          ],
+          "types": [
+            "Creature"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ultimate_nullification",
+      "mana_cost": "{4}{W}",
+      "name": "Ultimate Nullification",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice a legendary creature.\nExile all creatures and graveyards. Put Ultimate Nullification on the bottom of its owner's library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
+        },
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "zone": "graveyard"
+          },
+          "op": "exile"
+        }
+      ],
+      "tucks_itself": "bottom",
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [

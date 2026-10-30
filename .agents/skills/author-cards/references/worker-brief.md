@@ -107,7 +107,7 @@ It is checked by casting your card in one fixed position and reading the board.
 | | |
 |---|---|
 | You are player 0, at **40 life**; the opponent is player 1, at **40 life** |
-| Your battlefield | **32 permanents** — 30 lands (6 each of Plains, Island, Swamp, Mountain, Forest) + 2 creatures, none of them an artifact — except for a card that is not an artifact and whose own toughness is the number of artifacts you control: one creature is then an artifact creature, so such a card counts **1** |
+| Your battlefield | **32 permanents** — 30 lands (6 each of Plains, Island, Swamp, Mountain, Forest) + 2 creatures, none of them an artifact — except for a card that is not an artifact and whose own toughness is the number of artifacts you control: one creature is then an artifact creature, so such a card counts **1**; and for a card whose additional cost sacrifices a legendary creature, one creature is then legendary (and is gone once you have cast it) |
 | Opponent's battlefield | **6 permanents** — a **legendary** creature, a flier, an artifact, an enchantment, a Forest and an Island |
 | Your hand | the card under test **and one spare Forest** — so `hand_size` is **1** after you cast it, not 0. The Forest is deliberate: a card can never discard itself to pay its own additional cost (601.2a), so a hand of one would make every mandatory "as an additional cost, discard a card" unplayable. Every `hand_size` you assert counts it |
 | Your library | **40 cards** — basic lands, except **index 1, which is an instant or sorcery** (a targetless one, placed there by `build_sandbox` so a card that draws twice does not deck you). So a tutor for an instant or sorcery **finds it**: `library_size` 39 and `hand_size` 2, not 40 and 1 |

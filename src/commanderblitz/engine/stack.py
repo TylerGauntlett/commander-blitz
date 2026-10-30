@@ -1030,10 +1030,16 @@ def _place_after_resolution(
     # `op_put_on_top` makes and for its stated reason: the card says "seventh",
     # and a card tucked sixth is drawn a turn early, which is the whole of what
     # the depth buys.
+    #
+    # `"bottom"` is "put <this card> on the bottom of its owner's library"
+    # (Ultimate Nullification). No ordinal names the bottom of a library whose
+    # size varies, and none is needed: a library move with no index appends,
+    # which is the bottom.
     tuck_to = None
     if card.tucks_itself is not None and destination is Zone.GRAVEYARD:
         destination = Zone.LIBRARY
-        tuck_to = max(0, card.tucks_itself - 1)
+        if card.tucks_itself != "bottom":
+            tuck_to = max(0, int(card.tucks_itself) - 1)
     # `granted_rebound` beside the printed flag, and the disjunction is the
     # whole of Ojer Pakpatiq's "it gains rebound": a spell that prints rebound
     # and a spell that was handed it are the same spell from here on. Both are

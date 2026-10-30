@@ -991,7 +991,10 @@ FACE_KEYS: dict[str, Entry] = {
 
 RIDER_KEYS: dict[str, Entry] = {
     "exiles_itself": ("Exile this card as it resolves.", '"Exile <this card>." -- a spell that exiles itself'),
-    "tucks_itself": ("Put this card Nth from the top of its owner's library as it resolves.", None),
+    "tucks_itself": (
+        "Put this card Nth from the top, or on the bottom, of its owner's library as it resolves.",
+        "\"Put <this card> into its owner's library\" -- tucks_itself",
+    ),
     "uncounterable": ("This spell can't be countered.", H_CANT_COUNTER),
     "rebound": ("Rebound.", "Rebound"),
     "split_second": ("Split second.", None),

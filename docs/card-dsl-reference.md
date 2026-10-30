@@ -1020,7 +1020,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | Name | Description | Defined in |
 |---|---|---|
 | `exiles_itself` | Exile this card as it resolves. | ["Exile <this card>." -- a spell that exiles itself](card-dsl-cookbook.md#exile-this-card----a-spell-that-exiles-itself) |
-| `tucks_itself` | Put this card Nth from the top of its owner's library as it resolves. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `tucks_itself` | Put this card Nth from the top, or on the bottom, of its owner's library as it resolves. | ["Put <this card> into its owner's library" -- tucks_itself](card-dsl-cookbook.md#put-this-card-into-its-owners-library----tucks_itself) |
 | `uncounterable` | This spell can't be countered. | ["This spell can't be countered"](card-dsl-cookbook.md#this-spell-cant-be-countered) |
 | `rebound` | Rebound. | [Rebound](card-dsl-cookbook.md#rebound) |
 | `split_second` | Split second. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |

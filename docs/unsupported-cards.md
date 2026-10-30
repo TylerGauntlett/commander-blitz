@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**100 cards** blocked by **81** capabilities.
+**99 cards** blocked by **80** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -90,7 +90,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
-| [tucks-itself-bottom](#tucks-itself-bottom) | 1 | 23471 | engine |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [vow-counter](#vow-counter) | 1 | 955 | op |
@@ -1341,20 +1340,6 @@ Blocks **1** card.
 
 - **Teval's Judgment** (rank 1802) — `teval_s_judgment`
   - • Create a 2/2 black Zombie Druid creature token.
-
-</details>
-
-## tucks-itself-bottom
-
-Blocks **1** card.
-
-- **(engine)** a card-level rider (or a bottom form of tucks_itself) that, as the instant or sorcery resolves, puts the spell on the BOTTOM of its owner's library instead of into its graveyard
-  <br>Why the existing vocabulary won't do: tucks_itself is an ordinal counted from the top (Approach of the Second Sun's 'seventh from the top'), and _place_after_resolution converts it to an insert index from the top, so no value says 'bottom' of a library whose size varies; put_on_top has bottom: true but it moves objects during resolution, while the spell is still on the stack and is then unconditionally placed by _place_after_resolution, so pointing it at the spell itself is not a supported or gated path
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ultimate Nullification** (rank 23471) — `ultimate_nullification`
-  - Put Ultimate Nullification on the bottom of its owner's library.
 
 </details>
 

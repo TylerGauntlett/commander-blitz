@@ -1291,7 +1291,11 @@ class CardModel(BaseModel):
     #: nothing -- `_place_after_resolution` runs after `spell_effects` and
     #: moves a nonpermanent to the graveyard unconditionally -- which is the
     #: same reason `exiles_itself` is a rider and not an op.
-    tucks_itself: int | None = None
+    #:
+    #: ``"bottom"`` is "put <this card> on the bottom of its owner's library"
+    #: (Ultimate Nullification): no ordinal names the bottom of a library
+    #: whose size varies.
+    tucks_itself: int | Literal["bottom"] | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text

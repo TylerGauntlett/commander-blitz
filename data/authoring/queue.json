@@ -296112,12 +296112,12 @@
     },
     "Ultimate Nullification": {
       "edhrec_rank": 23471,
-      "gate": "template",
+      "gate": null,
       "name": "Ultimate Nullification",
-      "reason": "no template for: As an additional cost to cast this spell, sacrifice a legendary creature",
+      "reason": "",
       "scryfall_id": "3c27ca1c-8f2d-4ac8-aef1-bb6201763392",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ultimate Price": {

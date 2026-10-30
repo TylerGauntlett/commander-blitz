@@ -1373,6 +1373,28 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: 'exiles_itself' only means anything on an instant or "
             f"sorcery -- a permanent spell enters the battlefield instead"
         )
+    if model.tucks_itself is not None:
+        # The ordinal counts from 1, as `put_on_top`'s `from_top` does: a 0
+        # would clamp silently to the top, a card drawn a turn early.
+        if model.tucks_itself != "bottom" and model.tucks_itself < 1:
+            raise DslError(
+                f"{where}: 'tucks_itself' is a depth counted from 1 (first from "
+                f"the top), or 'bottom'"
+            )
+        # Rebound's guard, for its reason: the rider replaces the graveyard,
+        # and a permanent spell enters the battlefield instead.
+        if set(model.types) & {
+            "Creature",
+            "Land",
+            "Artifact",
+            "Enchantment",
+            "Planeswalker",
+            "Battle",
+        }:
+            raise DslError(
+                f"{where}: 'tucks_itself' only means anything on an instant or "
+                f"sorcery -- a permanent spell enters the battlefield instead"
+            )
     if model.exiles_itself and model.rebound:
         # Both replace the graveyard with exile, and rebound also promises the
         # card back at the next upkeep. Written together, whichever the code
