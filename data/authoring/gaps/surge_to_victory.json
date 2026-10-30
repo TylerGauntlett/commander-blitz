@@ -1,0 +1,38 @@
+{
+  "card_id": "surge_to_victory",
+  "name": "Surge to Victory",
+  "oracle_text": "Exile target instant or sorcery card from your graveyard. Creatures you control get +X/+0 until end of turn, where X is that card's mana value. Whenever a creature you control deals combat damage to a player this turn, copy the exiled card. You may cast the copy without paying its mana cost.",
+  "blocked_sentences": [
+    "Exile target instant or sorcery card from your graveyard."
+  ],
+  "needs": [{
+    "capability": "sandbox_graveyard_spell_prop",
+    "kind": "engine",
+    "what": "a verification-sandbox prop: an instant or sorcery card in player 0's graveyard, swapped in (like swap_in_legendary_body / swap_in_artifact_body) only for a card whose required card_in_graveyard target selects Instant or Sorcery, so a mandatory 'target instant or sorcery card from your graveyard' spell is castable at gate 4",
+    "why_existing_wont_do": "The DSL already says the whole card: a card_in_graveyard target (any_types Instant/Sorcery, controller you), exile as 'banked', pump of creatures you control with power {mana_value_of: {binding: banked}}, and a this_turn delayed_trigger on deals_combat_damage_to_player (controller you) whose effect is cast_copy {objects: {binding: banked}, optional: true}. It passes schema, compile and residual, then fails gate 4 'not playable in the sandbox' because OWN_GRAVEYARD_ROLES is (small_creature, flier) and no instant or sorcery card is ever in the graveyard, so a required target has no legal choice (601.2c). Marking the target optional (as mizzix_s_mastery does) would describe a different card. With OWN_GRAVEYARD_ROLES patched in memory to include noncreature_spell (Anticipate, MV 2) the same answer passes gate 4 and resolves with graveyard_size {0: 2}.",
+    "draft_card": {
+      "id": "surge_to_victory",
+      "name": "Surge to Victory",
+      "mana_cost": "{4}{R}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "targets": [{
+        "id": "t1", "kind": "card_in_graveyard", "count": 1,
+        "selector": {"any_types": ["Instant", "Sorcery"], "controller": "you", "zone": "graveyard"}
+      }],
+      "spell_effects": [
+        {"op": "exile", "as": "banked", "objects": {"target": "t1"}},
+        {"op": "pump", "duration": "until_end_of_turn",
+         "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"], "count": "all"},
+         "power": {"mana_value_of": {"binding": "banked"}}, "toughness": {"const": 0}},
+        {"op": "delayed_trigger", "duration": "this_turn",
+         "text": "Whenever a creature you control deals combat damage to a player this turn, copy the exiled card. You may cast the copy without paying its mana cost.",
+         "trigger": {"event": "deals_combat_damage_to_player", "controller": "you"},
+         "effects": [{"op": "cast_copy", "objects": {"binding": "banked"}, "optional": true}]}
+      ]
+    }
+  }],
+  "closest_existing": ["mizzix_s_mastery", "renegade_bull", "hunter_s_insight"],
+  "confidence": "high"
+}

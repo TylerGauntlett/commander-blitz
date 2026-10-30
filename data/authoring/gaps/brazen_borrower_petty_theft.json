@@ -5,12 +5,23 @@
   "blocked_sentences": [
     "This creature can block only creatures with flying."
   ],
-  "needs": [{
-    "capability": "can_block_only",
-    "kind": "static_effect",
-    "what": "a static on a creature restricting which attackers IT may block, by a filter over the attacker (\"this creature can block only creatures with flying\"): an `affects` naming the blocker (self_only) and an `attackers` filter (e.g. keywords: [flying]) read on the attacker's derived characteristics in combat.can_block",
-    "why_existing_wont_do": "`block_restriction` is the mirror image: it sits on the ATTACKER and filters which blockers may block it (block_restrictions(state, attacker_oid) matches `affects` against the attacker). `cant_block` forbids blocking outright with no attacker filter. No keyword covers it (shadow is two-way and about shadow only). combat.can_block has no check of a blocker-side static against the attacker's qualities"
-  }],
-  "closest_existing": ["block_restriction", "cant_block"],
+  "needs": [
+    {
+      "capability": "can_block_only",
+      "kind": "static_effect",
+      "what": "a static on a creature restricting which attackers IT may block, by a filter over the attacker (\"this creature can block only creatures with flying\"): an `affects` naming the blocker (self_only) and an `attackers` filter (e.g. keywords: [flying]) read on the attacker's derived characteristics in combat.can_block",
+      "why_existing_wont_do": "`block_restriction` is the mirror image: it sits on the ATTACKER and filters which blockers may block it (block_restrictions(state, attacker_oid) matches `affects` against the attacker). `cant_block` forbids blocking outright with no attacker filter. No keyword covers it (shadow is two-way and about shadow only). combat.can_block has no check of a blocker-side static against the attacker's qualities"
+    },
+    {
+      "capability": "adventure_half_in_index",
+      "kind": "engine",
+      "what": "scripts/build_card_index.py must carry an Adventure's spell half. The catalog row's layout is `adventure`, which the builder keeps out of both `_HALVES_LAYOUTS` and `_TWO_FACED_LAYOUTS`, so the packet shows only the creature half (Flash, Flying, the blocking line) and `back_face: {}`; Petty Theft ('Return target nonland permanent an opponent controls to its owner's hand.') is nowhere in the packet or the residual gate.",
+      "why_existing_wont_do": "The engine already casts an Adventure through `second_face` with `adventure: true` (the cookbook's own example is this card), so the gap is the index, not the rules. Fixing it means rebuilding cards.sqlite, which today pulls a newer Scryfall bundle; that refresh moves every EDHREC rank and some oracle text, and is its own change rather than a rider on a deck batch. Filed by the main agent from the worker's note."
+    }
+  ],
+  "closest_existing": [
+    "block_restriction",
+    "cant_block"
+  ],
   "confidence": "high"
 }

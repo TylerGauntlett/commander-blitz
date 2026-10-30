@@ -4960,6 +4960,14 @@
   "furycalm_snarl": {
     "zone": "battlefield"
   },
+  "furygale_flocking": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 2,
+      "id": "elemental_3_3_ur_flying"
+    },
+    "zone": "graveyard"
+  },
   "fusion_elemental": {
     "zone": "battlefield"
   },
@@ -10531,6 +10539,11 @@
   "renegade_troops": {
     "zone": "battlefield"
   },
+  "replication_technique": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "reprieve": {
     "hand_size": {
       "0": 2,
@@ -10896,6 +10909,13 @@
     "zone": "battlefield"
   },
   "rootbreaker_wurm": {
+    "zone": "battlefield"
+  },
+  "rootha_mercurial_artist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "rootrider_faun": {
@@ -12263,6 +12283,13 @@
     },
     "zone": "battlefield"
   },
+  "spectacle_summit": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "spectator_seating": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12571,6 +12598,13 @@
     "zone": "battlefield"
   },
   "stormcarved_coast": {
+    "zone": "battlefield"
+  },
+  "stormcatch_mentor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "stormchaser_mage": {
@@ -13598,6 +13632,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "thunderclap_drake": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "thundering_falls": {
     "zone": "battlefield"
   },
@@ -13828,6 +13869,15 @@
   "treasonous_ogre": {
     "zone": "battlefield"
   },
+  "treasure_cruise": {
+    "hand_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
+  },
   "tree_monkey": {
     "zone": "battlefield"
   },
@@ -13897,6 +13947,10 @@
     "zone": "battlefield"
   },
   "turbulent_shore": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "turbulent_springs": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -14623,6 +14677,13 @@
   },
   "volcanic_island": {
     "zone": "battlefield"
+  },
+  "volcanic_salvo": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "zone": "graveyard"
   },
   "volcanic_strength": {
     "zone": [

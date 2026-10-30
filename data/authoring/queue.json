@@ -103762,12 +103762,12 @@
     },
     "Furygale Flocking": {
       "edhrec_rank": 11062,
-      "gate": "template",
+      "gate": null,
       "name": "Furygale Flocking",
-      "reason": "no template for: This spell costs {1} less to cast for each instant and sorcery card in your graveyard",
+      "reason": "",
       "scryfall_id": "a967af7a-03ed-4858-9c26-66f2cb706b02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Furystoke Giant": {
@@ -220722,12 +220722,12 @@
     },
     "Replication Technique": {
       "edhrec_rank": 4337,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Replication Technique",
-      "reason": "your battlefield is 34, expected 33",
+      "reason": "",
       "scryfall_id": "b3149976-2811-4bbd-af1e-d59016bb0754",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Repopulate": {
@@ -227332,12 +227332,12 @@
     },
     "Rootha, Mercurial Artist": {
       "edhrec_rank": 13249,
-      "gate": "template",
+      "gate": null,
       "name": "Rootha, Mercurial Artist",
-      "reason": "no template for: {2}, Return Rootha to its owner's hand: Copy target instant or sorcery spell you control. ",
+      "reason": "",
       "scryfall_id": "289abc0f-2ab9-48a7-a19b-a3630b014637",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rooting Kavu": {
@@ -257402,12 +257402,12 @@
     },
     "Spectacle Summit": {
       "edhrec_rank": 9327,
-      "gate": "template",
+      "gate": null,
       "name": "Spectacle Summit",
-      "reason": "no template for: {2}{U}{R}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "a0a66f7b-eab4-45da-8895-c2c2c7eb05f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spectacular Pileup": {
@@ -266212,12 +266212,12 @@
     },
     "Stormcatch Mentor": {
       "edhrec_rank": 938,
-      "gate": "template",
+      "gate": null,
       "name": "Stormcatch Mentor",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "f1bbb5ad-a293-48f3-a3d0-7ac85a7b8467",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stormchaser Chimera": {
@@ -286082,12 +286082,12 @@
     },
     "Thunderclap Drake": {
       "edhrec_rank": 2128,
-      "gate": "template",
+      "gate": null,
       "name": "Thunderclap Drake",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "313fed71-cfbe-4c83-9437-ac14b2cb159b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thunderclap Wyvern": {
@@ -291882,12 +291882,12 @@
     },
     "Treasure Cruise": {
       "edhrec_rank": 626,
-      "gate": "template",
+      "gate": null,
       "name": "Treasure Cruise",
-      "reason": "no template for: Delve",
+      "reason": "",
       "scryfall_id": "42c45880-15c7-4259-8066-c04d031d8216",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Treasure Dredger": {
@@ -294232,12 +294232,12 @@
     },
     "Turbulent Springs": {
       "edhrec_rank": 4369,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Springs",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "526d3add-b87f-42ba-957b-879fb8fea792",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Steppe": {
@@ -307292,12 +307292,12 @@
     },
     "Volcanic Salvo": {
       "edhrec_rank": 9105,
-      "gate": "template",
+      "gate": null,
       "name": "Volcanic Salvo",
-      "reason": "no template for: This spell costs {X} less to cast, where X is the total power of creatures you control",
+      "reason": "",
       "scryfall_id": "fdd9dda5-0386-45a4-aec1-853137281934",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Volcanic Spite": {
@@ -307342,12 +307342,12 @@
     },
     "Volcanic Torrent": {
       "edhrec_rank": 4029,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Volcanic Torrent",
-      "reason": "no template for: Cascade",
+      "reason": "player 0 library_size is 38, expected 39",
       "scryfall_id": "bddd4336-ef03-4c4e-9992-02a0548d2d6f",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Volcanic Upheaval": {

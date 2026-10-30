@@ -54707,6 +54707,66 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "cost_reduction": {
+        "count": {
+          "any_types": [
+            "Instant",
+            "Sorcery"
+          ],
+          "controller": "you",
+          "zone": "graveyard"
+        }
+      },
+      "id": "furygale_flocking",
+      "mana_cost": "{8}{R}{R}",
+      "name": "Furygale Flocking",
+      "oracle_text": "This spell costs {1} less to cast for each instant and sorcery card in your graveyard.\nFor each opponent, create two 3/3 blue and red Elemental creature tokens with flying that attack that opponent this turn if able. They gain haste until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "as": "flock",
+              "op": "create_token",
+              "token": "elemental_3_3_ur_flying"
+            },
+            {
+              "defender": {
+                "binding": "each_player"
+              },
+              "duration": "this_turn",
+              "objects": {
+                "binding": "flock"
+              },
+              "op": "must_attack_player"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "binding": "flock"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "B",
         "G",
         "R",
@@ -121438,6 +121498,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "new_targets": true,
+                  "op": "copy_spell"
+                },
+                {
+                  "as": "demonstrated",
+                  "op": "choose_player",
+                  "players": "each_opponent",
+                  "prompt": "Choose an opponent to also copy it"
+                },
+                {
+                  "controller": {
+                    "binding": "demonstrated"
+                  },
+                  "new_targets": true,
+                  "op": "copy_spell"
+                }
+              ],
+              "op": "may",
+              "prompt": "Demonstrate?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it. Players may choose new targets for their copies.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "replication_technique",
+      "mana_cost": "{4}{U}",
+      "name": "Replication Technique",
+      "oracle_text": "Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it. Players may choose new targets for their copies.)\nCreate a token that's a copy of target permanent you control.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -125013,6 +125148,67 @@
         "Wurm"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "return_to_hand": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_spell",
+              "target": "spell"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "spell",
+              "kind": "spell",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{2}, Return Rootha to its owner's hand: Copy target instant or sorcery spell you control. You may choose new targets for the copy."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "rootha_mercurial_artist",
+      "mana_cost": "{1}{U}{R}",
+      "name": "Rootha, Mercurial Artist",
+      "oracle_text": "{2}, Return Rootha to its owner's hand: Copy target instant or sorcery spell you control. You may choose new targets for the copy.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -140517,6 +140713,75 @@
                 {
                   "effects": [
                     {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or {R}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{U}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}{R}, {T}: Surveil 1."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "spectacle_summit",
+      "name": "Spectacle Summit",
+      "oracle_text": "This land enters tapped.\n{T}: Add {U} or {R}.\n{2}{U}{R}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
                       "mana": "{R}",
                       "op": "add_mana"
                     }
@@ -144075,6 +144340,78 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "stormcatch_mentor",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{U}{R}",
+      "name": "Stormcatch Mentor",
+      "oracle_text": "Haste\nProwess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nInstant and sorcery spells you cast cost {1} less to cast.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Otter",
+        "Wizard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -157529,6 +157866,90 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        },
+        {
+          "cost": {
+            "mana": "{2}{U}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "duration": "once_this_turn",
+              "effects": [
+                {
+                  "amount": {
+                    "commander_casts_this_game": "you"
+                  },
+                  "new_targets": true,
+                  "op": "copy_spell"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When you next cast an instant or sorcery spell this turn, copy it for each time you've cast your commander from the command zone this game. You may choose new targets for the copies.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "any_types": [
+                      "Instant",
+                      "Sorcery"
+                    ],
+                    "binding": "subject",
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}, Sacrifice this creature: When you next cast an instant or sorcery spell this turn, copy it for each time you've cast your commander from the command zone this game. You may choose new targets for the copies."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "thunderclap_drake",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Thunderclap Drake",
+      "oracle_text": "Flying\nInstant and sorcery spells you cast cost {1} less to cast.\n{2}{U}, Sacrifice this creature: When you next cast an instant or sorcery spell this turn, copy it for each time you've cast your commander from the command zone this game. You may choose new targets for the copies.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Drake"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -159979,6 +160400,32 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "treasure_cruise",
+      "mana_cost": "{7}{U}",
+      "name": "Treasure Cruise",
+      "oracle_text": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nDraw three cards.",
+      "pay_generic_with": "exile_from_graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -160989,6 +161436,77 @@
       "subtypes": [
         "Plains",
         "Island"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {U} or {R}.)"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [],
+      "id": "turbulent_springs",
+      "name": "Turbulent Springs",
+      "oracle_text": "({T}: Add {U} or {R}.)\nThis land enters tapped unless your opponents control eight or more lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "opponent",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 8
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Island",
+        "Mountain"
       ],
       "types": [
         "Land"
@@ -169251,6 +169769,54 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "cost_reduction": {
+        "total_power": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "id": "volcanic_salvo",
+      "mana_cost": "{10}{R}{R}",
+      "name": "Volcanic Salvo",
+      "oracle_text": "This spell costs {X} less to cast, where X is the total power of creatures you control.\nVolcanic Salvo deals 6 damage to each of up to two target creatures and/or planeswalkers.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 6
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
