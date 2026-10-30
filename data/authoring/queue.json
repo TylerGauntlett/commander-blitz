@@ -220252,12 +220252,12 @@
     },
     "Renegade Bull": {
       "edhrec_rank": 14766,
-      "gate": "template",
+      "gate": null,
       "name": "Renegade Bull",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, this creature gets +X/+0 until end of turn,",
+      "reason": "",
       "scryfall_id": "aa23e922-f44b-4af8-8ce0-bc1bc1e65bad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Renegade Demon": {
@@ -220722,12 +220722,12 @@
     },
     "Replication Technique": {
       "edhrec_rank": 4337,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Replication Technique",
-      "reason": "no template for: Demonstrate",
+      "reason": "your battlefield is 34, expected 33",
       "scryfall_id": "b3149976-2811-4bbd-af1e-d59016bb0754",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Repopulate": {
@@ -221072,12 +221072,12 @@
     },
     "Resculpt": {
       "edhrec_rank": 884,
-      "gate": "template",
+      "gate": null,
       "name": "Resculpt",
-      "reason": "no template for: Exile target artifact or creature. Its controller creates a 4/4 blue and red Elemental cre",
+      "reason": "",
       "scryfall_id": "5443f46d-03f9-468e-a78d-a059529b1151",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Research // Development": {
@@ -224372,12 +224372,12 @@
     },
     "Rionya, Fire Dancer": {
       "edhrec_rank": 2902,
-      "gate": "template",
+      "gate": null,
       "name": "Rionya, Fire Dancer",
-      "reason": "no template for: At the beginning of combat on your turn, create X tokens that are copies of another target",
+      "reason": "",
       "scryfall_id": "086e68b5-0f89-46d0-9a04-7f8658a9ab53",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riot Control": {
@@ -225172,12 +225172,12 @@
     },
     "Rite of Replication": {
       "edhrec_rank": 907,
-      "gate": "template",
+      "gate": null,
       "name": "Rite of Replication",
-      "reason": "no template for: Kicker {5}",
+      "reason": "",
       "scryfall_id": "5032d71d-d9f8-498c-97d1-271c2e9c1c47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rite of Ruin": {

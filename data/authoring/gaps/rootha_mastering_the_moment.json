@@ -1,0 +1,24 @@
+{
+  "card_id": "rootha_mastering_the_moment",
+  "name": "Rootha, Mastering the Moment",
+  "oracle_text": "At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn."
+  ],
+  "needs": [
+    {
+      "capability": "greatest_mana_value_spells_cast_this_turn",
+      "kind": "value",
+      "what": "a value reading the greatest printed mana value among the spells a player cast this turn that match a filter (here instant and sorcery spells you've cast), read off TurnLedger.spells_cast_ids like spells_cast_this_turn's filter form; e.g. extreme_value accepting a spells_cast_this_turn source in place of objects",
+      "why_existing_wont_do": "spells_cast_this_turn with a filter only counts the matching spells, and extreme_value only resolves an `objects` pool of objects in zones -- resolved instants and sorceries have left the stack, so neither yields their greatest mana value"
+    },
+    {
+      "capability": "elemental_x_x_ur_flying_haste",
+      "kind": "token",
+      "what": "an X/X blue and red Elemental creature token with flying and haste (power/toughness set by create_token's power/toughness)",
+      "why_existing_wont_do": "token_ids has elemental_3_3_ur_flying (no haste), elemental_1_1_ur and elemental_4_4_ur (no flying/haste) and dragon_illusion_x_x_r_flying_haste (wrong colour and types); none is a blue-red Elemental with flying and haste"
+    }
+  ],
+  "closest_existing": ["extreme_value", "spells_cast_this_turn", "elemental_3_3_ur_flying"],
+  "confidence": "high"
+}

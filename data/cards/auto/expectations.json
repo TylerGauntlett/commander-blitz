@@ -10521,6 +10521,10 @@
   "rendmaw_creaking_nest": {
     "zone": "battlefield"
   },
+  "renegade_bull": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "renegade_demon": {
     "zone": "battlefield"
   },
@@ -10551,6 +10555,15 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "resculpt": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 1,
+      "id": "elemental_4_4_ur"
+    },
+    "zone": "graveyard"
   },
   "research_thief": {
     "battlefield_count": 33,
@@ -10737,6 +10750,10 @@
   "ringwarden_owl": {
     "zone": "battlefield"
   },
+  "rionya_fire_dancer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "riot_devils": {
     "zone": "battlefield"
   },
@@ -10802,6 +10819,10 @@
       "1": 40
     },
     "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
+  "rite_of_replication": {
+    "battlefield_count": 37,
     "zone": "graveyard"
   },
   "ritual_of_rejuvenation": {
