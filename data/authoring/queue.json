@@ -134342,12 +134342,12 @@
     },
     "Immoral Bargain": {
       "edhrec_rank": 7425,
-      "gate": "template",
+      "gate": null,
       "name": "Immoral Bargain",
-      "reason": "no template for: As an additional cost to cast this spell, sacrifice X creatures",
+      "reason": "",
       "scryfall_id": "9d475a98-4561-4cbc-bd60-c3bfc33725be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Immortal Coil": {
@@ -141622,12 +141622,12 @@
     },
     "Jadar, Ghoulcaller of Nephalia": {
       "edhrec_rank": 1346,
-      "gate": "template",
+      "gate": null,
       "name": "Jadar, Ghoulcaller of Nephalia",
-      "reason": "no template for: At the beginning of your end step, if you control no creatures with decayed, create a 2/2 ",
+      "reason": "",
       "scryfall_id": "49d5d62b-72ed-446a-b280-ad04c38bdd0c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jaddi Lifestrider": {

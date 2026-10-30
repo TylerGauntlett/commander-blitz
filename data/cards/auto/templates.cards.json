@@ -75114,6 +75114,57 @@
       ]
     },
     {
+      "additional_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "types": [
+            "Creature"
+          ]
+        }
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "immoral_bargain",
+      "mana_cost": "{1}{B}{G}",
+      "name": "Immoral Bargain",
+      "oracle_text": "As an additional cost to cast this spell, sacrifice X creatures.\nDestroy X target nonland permanents.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "additional_paid": true
+          },
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -78944,6 +78995,61 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "zombie_2_2_b_decayed"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you control no creatures with decayed, create a 2/2 black Zombie creature token with decayed.",
+          "trigger": {
+            "condition": {
+              "not": {
+                "exists": {
+                  "controller": "you",
+                  "keywords": [
+                    "decayed"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "jadar_ghoulcaller_of_nephalia",
+      "mana_cost": "{1}{B}",
+      "name": "Jadar, Ghoulcaller of Nephalia",
+      "oracle_text": "At the beginning of your end step, if you control no creatures with decayed, create a 2/2 black Zombie creature token with decayed. (It can't block. When it attacks, sacrifice it at end of combat.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {

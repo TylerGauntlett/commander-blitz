@@ -6587,6 +6587,14 @@
       "graveyard"
     ]
   },
+  "immoral_bargain": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "imperial_outrider": {
     "zone": "battlefield"
   },
@@ -6885,6 +6893,13 @@
     "zone": "battlefield"
   },
   "jackhammer": {
+    "zone": "battlefield"
+  },
+  "jadar_ghoulcaller_of_nephalia": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "jade_orb_of_dragonkind": {
