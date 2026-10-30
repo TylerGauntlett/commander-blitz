@@ -10,17 +10,17 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**100 cards** blocked by **83** capabilities.
+**108 cards** blocked by **90** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [copy-exception-ability](#copy-exception-ability) | 2 | 1261 | op |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
@@ -32,19 +32,24 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [batched-trigger-objects](#batched-trigger-objects) | 1 | 4348 | trigger_event |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
+| [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
+| [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
+| [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
@@ -87,6 +92,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [spirit-3-2-rw](#spirit-3-2-rw) | 1 | 12071 | token |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -94,6 +100,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
+| [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
@@ -261,6 +268,28 @@ Blocks **8** cards.
 
 </details>
 
+## copy-exception-ability
+
+Blocks **3** cards.
+
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` becomes `copy_overrides`, which characteristics._compute reads only for power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
+- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
+  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
+- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
+  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twinflame** (rank 1261) — `twinflame`
+  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
+- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
+  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
+- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
+  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
 ## cast-as-though-flash
 
 Blocks **2** cards.
@@ -314,24 +343,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## copy-exception-ability
-
-Blocks **2** cards.
-
-- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
-  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
-- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
-  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Twinflame** (rank 1261) — `twinflame`
-  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
-- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
-  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
 
 </details>
 
@@ -512,6 +523,20 @@ Blocks **1** card.
 
 </details>
 
+## batched-trigger-objects
+
+Blocks **1** card.
+
+- **(trigger_event)** a batched `discard` trigger that binds every card of its simultaneous batch matching the filter (e.g. as `{"binding": "batch"}`), so the effect can choose one of them still in the graveyard -- here an optional `exile` of one of those nonland cards with `playable: "this_turn"` (cast only)
+  <br>Why the existing vocabulary won't do: `batched: true` on `discard` (Doctor Doom, King of Latveria) fires once per batch, but `triggers._queue` builds its bindings from the first matching event only (`event_bindings`); nothing exposes the other cards of the batch, so "one of them" can be written only as the first discarded card, which takes the choice away when two nonland cards are discarded together. An unbatched trigger would fire once per card and let you exile several, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Conspiracy Theorist** (rank 4348) — `conspiracy_theorist`
+  - Whenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn
+
+</details>
+
 ## blocked-by-source
 
 Blocks **1** card.
@@ -552,6 +577,20 @@ Blocks **1** card.
 
 - **Hexing Squelcher** (rank 717) — `hexing_squelcher`
   - Spells you control can't be countered.
+
+</details>
+
+## cards-exiled-trigger
+
+Blocks **1** card.
+
+- **(trigger_event)** a batched zone-change trigger event that fires once per event when one or more of your cards are put into exile from your library and/or your graveyard (from_zones: library, graveyard; to exile), whatever caused the exile
+  <br>Why the existing vocabulary won't do: No trigger event watches cards moving into exile. leaves_graveyard covers only the graveyard half and fires for any destination, and nothing watches cards leaving the library; the trigger keys to_zones/from_zones are loader-restricted to leaves_battlefield destinations and spell_cast/land_played origins respectively
+
+<details><summary>Cards waiting on this</summary>
+
+- **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
+  - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
 
 </details>
 
@@ -611,6 +650,36 @@ Blocks **1** card.
 
 - **Mirrorwing Dragon** (rank 8216) — `mirrorwing_dragon`
   - Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for each other creature they control that the spell could target. Each copy targets a different one of those creatures.
+
+</details>
+
+## cost-reduction-by-cast-zone
+
+Blocks **1** card.
+
+- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from, e.g. except_zones: ["hand"] (or zones: ["graveyard", "exile", "library", "command"]), so "spells you cast from anywhere other than your hand cost {2} less" discounts graveyard, exile, library-top and command-zone casts but not hand casts
+  <br>Why the existing vocabulary won't do: spell_cost_reduction (player_statics.spell_cost_reduction) is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never sees the zone the spell is cast from, and affects_spells has no zones/except_zones key. except_zones exists only on cant_cast_spells_from_zones, which forbids rather than discounts. A plain spell_cost_reduction with no zone filter would also discount hand casts, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Advanced Reconstruction** (rank 10245) — `advanced_reconstruction`
+  - Spells you cast from anywhere other than your hand cost {2} less to cast.
+
+</details>
+
+## council-s-dilemma
+
+Blocks **1** card.
+
+- **(decision)** a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)
+  <br>Why the existing vocabulary won't do: choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fateful Tempest** (rank 15065) — `fateful_tempest`
+  - Council's dilemma — Starting with you, each player votes for past or present.
+  - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
+  - Exile the top card of your library for each present vote.
 
 </details>
 
@@ -696,6 +765,20 @@ Blocks **1** card.
 
 - **Magma Opus** (rank 5125) — `magma_opus`
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
+
+</details>
+
+## echo
+
+Blocks **1** card.
+
+- **(keyword)** Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost
+  <br>Why the existing vocabulary won't do: No echo key in card_level_cost_keys or keywords. An `upkeep` trigger with `may` pay {3}{W}{W} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep': `entered_this_turn` is false by the next upkeep, and a `set_flag` on self_enters has no op to clear it after the first upkeep and misses control changes (gain_control), so the permanent would be asked to pay echo every upkeep or never
+
+<details><summary>Cards waiting on this</summary>
+
+- **Karmic Guide** (rank 961) — `karmic_guide`
+  - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
 
 </details>
 
@@ -1312,6 +1395,20 @@ Blocks **1** card.
 
 </details>
 
+## spirit-3-2-rw
+
+Blocks **1** card.
+
+- **(token)** a 3/2 red and white Spirit creature token
+  <br>Why the existing vocabulary won't do: token_ids holds only spirit_1_1_c, spirit_1_1_w_flying and spirit_2_2_w; create_token's power/toughness overrides could size a 2/2 white Spirit to 3/2 but cannot make it red and white, and no other 3/2 red-and-white token exists. The rest of the sentence looks expressible: destroy all creatures with `as` binding the destroyed set, then create_token with amount counting that binding filtered to controller you and is_token false.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ceaseless Conflict** (rank 12071) — `ceaseless_conflict`
+  - Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nontoken creature you controlled that was destroyed this way.
+
+</details>
+
 ## target-ability-on-stack
 
 Blocks **1** card.
@@ -1407,6 +1504,20 @@ Blocks **1** card.
 
 - **Teval's Judgment** (rank 1802) — `teval_s_judgment`
   - • Create a 2/2 black Zombie Druid creature token.
+
+</details>
+
+## total-mana-value-selection
+
+Blocks **1** card.
+
+- **(op)** a `total_mana_value` cap on look_at_top's pick (and search_library/reveal_until): choose any number of cards from the looked-at window whose combined mana value is at most N, e.g. look_at_top amount 7, selector nonland permanent, destination battlefield, up to any number, total_mana_value 4, rest_to_bottom
+  <br>Why the existing vocabulary won't do: total_mana_value exists only as a target_keys entry (targeting.py _within_total) and in cost_reduction; library cards in a look_at_top window are not targets, and look_at_top's pick_from_pool takes a fixed count from the selector with no running budget. choose_mode's `budget` prices modes, not cards. A per-card mana_value <= 4 selector is a strictly better card (could put several 4-drops).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ao, the Dawn Sky** (rank 4244) — `ao_the_dawn_sky`
+  - • Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.
 
 </details>
 

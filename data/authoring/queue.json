@@ -8552,12 +8552,12 @@
     },
     "Angel of Indemnity": {
       "edhrec_rank": 3419,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Indemnity",
-      "reason": "no template for: When this creature enters, return target permanent card with mana value 4 or less from you",
+      "reason": "",
       "scryfall_id": "41163f43-7357-4bbc-a1e7-9c8070135c93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angel of Invention": {
@@ -16192,12 +16192,12 @@
     },
     "Augusta, Order Returned": {
       "edhrec_rank": 12410,
-      "gate": "template",
+      "gate": null,
       "name": "Augusta, Order Returned",
-      "reason": "no template for: Whenever Augusta attacks, each player exiles a card from their graveyard. When one or more",
+      "reason": "",
       "scryfall_id": "11dee8bb-a19a-44a7-aa19-55cdd3a0bcf6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aunt May": {
@@ -19382,12 +19382,12 @@
     },
     "Balefire Liege": {
       "edhrec_rank": 4889,
-      "gate": "template",
+      "gate": null,
       "name": "Balefire Liege",
-      "reason": "no template for: Other red creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "6f236f33-f6d2-4b07-a69d-42165670bd45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baleful Ammit": {
@@ -25482,12 +25482,12 @@
     },
     "Bitterthorn, Nissa's Animus": {
       "edhrec_rank": 2048,
-      "gate": "template",
+      "gate": null,
       "name": "Bitterthorn, Nissa's Animus",
-      "reason": "no template for: Living weapon",
+      "reason": "",
       "scryfall_id": "926cbd68-3b66-4ccc-a7c9-fb20e38a3126",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bituminous Blast": {
@@ -76272,12 +76272,12 @@
     },
     "Drumbellower": {
       "edhrec_rank": 1933,
-      "gate": "template",
+      "gate": null,
       "name": "Drumbellower",
-      "reason": "no template for: Untap all creatures you control during each other player's untap step",
+      "reason": "",
       "scryfall_id": "c19e0ebf-ca94-4684-8b2c-68e592b65a24",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drumhunter": {
@@ -87722,12 +87722,12 @@
     },
     "Excava, the Risen Past": {
       "edhrec_rank": 11681,
-      "gate": "template",
+      "gate": null,
       "name": "Excava, the Risen Past",
-      "reason": "no template for: Whenever Excava attacks, return up to one target artifact, creature, or non-Aura enchantme",
+      "reason": "",
       "scryfall_id": "d47ebf19-b3fa-48a2-851a-254d32b0305a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Excavated Wall": {
@@ -119802,12 +119802,12 @@
     },
     "Guardian Scalelord": {
       "edhrec_rank": 4756,
-      "gate": "template",
+      "gate": null,
       "name": "Guardian Scalelord",
-      "reason": "no template for: Backup 1",
+      "reason": "",
       "scryfall_id": "8415c0b3-9bf7-4c45-a215-4a73f1a42cbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guardian Seraph": {
@@ -119862,12 +119862,12 @@
     },
     "Guardian of Faith": {
       "edhrec_rank": 1951,
-      "gate": "template",
+      "gate": null,
       "name": "Guardian of Faith",
-      "reason": "no template for: When this creature enters, any number of other target creatures you control phase out",
+      "reason": "",
       "scryfall_id": "037739cd-e05c-4aae-9123-f924e420010c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guardian of Ghirapur": {
@@ -145502,12 +145502,12 @@
     },
     "Kami of Ancient Law": {
       "edhrec_rank": 14542,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of Ancient Law",
-      "reason": "no template for: Sacrifice this creature: Destroy target enchantment",
+      "reason": "",
       "scryfall_id": "4edbce98-bfc1-4c66-bd04-16100d9e22d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of Celebration": {
@@ -149602,12 +149602,12 @@
     },
     "Kirol, History Buff // Pack a Punch": {
       "edhrec_rank": 14856,
-      "gate": "template",
+      "gate": null,
       "name": "Kirol, History Buff // Pack a Punch",
-      "reason": "no template for: Whenever one or more cards leave your graveyard, Kirol becomes prepared",
+      "reason": "",
       "scryfall_id": "676ba521-66e4-42cf-a315-70d03cb7334e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kirri, Talented Sprout": {
@@ -161462,12 +161462,12 @@
     },
     "Lorehold Campus": {
       "edhrec_rank": 7279,
-      "gate": "template",
+      "gate": null,
       "name": "Lorehold Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "b6ad08da-c9e8-4061-a4a6-032d6957a403",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lorehold Charm": {
@@ -161902,12 +161902,12 @@
     },
     "Lotus Field": {
       "edhrec_rank": 904,
-      "gate": "template",
+      "gate": null,
       "name": "Lotus Field",
-      "reason": "no template for: When this land enters, sacrifice two lands",
+      "reason": "",
       "scryfall_id": "ee5ac47c-e8b6-400e-b91e-a7cd0f952cf1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lotus Guardian": {

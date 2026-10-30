@@ -435,6 +435,13 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "angel_of_indemnity": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "angel_of_invention": {
     "battlefield_count": 33,
     "counters": {
@@ -895,6 +902,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "augusta_order_returned": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "auntie_s_hovel": {
     "zone": "battlefield"
   },
@@ -1052,6 +1063,13 @@
     "zone": "battlefield"
   },
   "balduvian_bears": {
+    "zone": "battlefield"
+  },
+  "balefire_liege": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "baleful_mastery": {
@@ -1335,6 +1353,14 @@
     "zone": "graveyard"
   },
   "bitterbow_sharpshooters": {
+    "zone": "battlefield"
+  },
+  "bitterthorn_nissa_s_animus": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "germ_0_0_b"
+    },
     "zone": "battlefield"
   },
   "black_bolt_inhuman_king": {
@@ -3630,6 +3656,10 @@
   "druid_of_the_cowl": {
     "zone": "battlefield"
   },
+  "drumbellower": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dryad_arbor": {
     "zone": "battlefield"
   },
@@ -4118,6 +4148,10 @@
     "zone": "battlefield"
   },
   "excalibur_sword_of_eden": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "excava_the_risen_past": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5779,6 +5813,13 @@
   "guardian_lions": {
     "zone": "battlefield"
   },
+  "guardian_of_faith": {
+    "zone": "battlefield"
+  },
+  "guardian_scalelord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "guardians_of_akrasa": {
     "zone": "battlefield"
   },
@@ -6892,6 +6933,11 @@
   "kalonian_tusker": {
     "zone": "battlefield"
   },
+  "kami_of_ancient_law": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "kami_of_old_stone": {
     "zone": "battlefield"
   },
@@ -7133,6 +7179,10 @@
     "zone": "battlefield"
   },
   "kiora_the_crashing_wave": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kirol_history_buff_pack_a_punch": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -7641,6 +7691,10 @@
     },
     "zone": "battlefield"
   },
+  "lorehold_campus": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "los_diablos_missile_base": {
     "life": {
       "0": 41
@@ -7682,6 +7736,16 @@
   },
   "lotus_cobra": {
     "zone": "battlefield"
+  },
+  "lotus_field": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
   },
   "lotus_guardian": {
     "zone": "battlefield"

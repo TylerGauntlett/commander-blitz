@@ -1,0 +1,18 @@
+{
+  "card_id": "karmic_guide",
+  "name": "Karmic Guide",
+  "oracle_text": "Flying, protection from black\nEcho {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)\nWhen this creature enters, return target creature card from your graveyard to the battlefield.",
+  "blocked_sentences": [
+    "Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)"
+  ],
+  "needs": [
+    {
+      "capability": "echo",
+      "kind": "keyword",
+      "what": "Echo {cost}: a card-level keyword (702.30) that gives the permanent an upkeep trigger with an intervening-if 'this came under your control since the beginning of your last upkeep' (true after it enters or after a change of control, false once that upkeep has passed), which sacrifices it unless its controller pays the echo mana cost",
+      "why_existing_wont_do": "No echo key in card_level_cost_keys or keywords. An `upkeep` trigger with `may` pay {3}{W}{W} else `sacrifice` is writable, but no condition_key reads 'came under your control since your last upkeep': `entered_this_turn` is false by the next upkeep, and a `set_flag` on self_enters has no op to clear it after the first upkeep and misses control changes (gain_control), so the permanent would be asked to pay echo every upkeep or never"
+    }
+  ],
+  "closest_existing": ["upkeep", "may", "sacrifice", "set_flag", "has_flag"],
+  "confidence": "high"
+}

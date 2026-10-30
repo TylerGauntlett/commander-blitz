@@ -1,0 +1,18 @@
+{
+  "card_id": "advanced_reconstruction",
+  "name": "Advanced Reconstruction",
+  "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of your first main phase, mill a card, then exile a card from your graveyard at random. You may play the exiled card this turn.\n{1}{R}: Level 2\nWhenever one or more cards leave your graveyard, this Class deals 2 damage to each opponent.\n{1}{R}: Level 3\nSpells you cast from anywhere other than your hand cost {2} less to cast.",
+  "blocked_sentences": [
+    "Spells you cast from anywhere other than your hand cost {2} less to cast."
+  ],
+  "needs": [
+    {
+      "capability": "cost_reduction_by_cast_zone",
+      "kind": "static_effect",
+      "what": "a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from, e.g. except_zones: [\"hand\"] (or zones: [\"graveyard\", \"exile\", \"library\", \"command\"]), so \"spells you cast from anywhere other than your hand cost {2} less\" discounts graveyard, exile, library-top and command-zone casts but not hand casts",
+      "why_existing_wont_do": "spell_cost_reduction (player_statics.spell_cost_reduction) is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never sees the zone the spell is cast from, and affects_spells has no zones/except_zones key. except_zones exists only on cant_cast_spells_from_zones, which forbids rather than discounts. A plain spell_cost_reduction with no zone filter would also discount hand casts, which is a different card"
+    }
+  ],
+  "closest_existing": ["spell_cost_reduction", "cant_cast_spells_from_zones"],
+  "confidence": "high"
+}

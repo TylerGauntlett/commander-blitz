@@ -1,0 +1,20 @@
+{
+  "card_id": "fateful_tempest",
+  "name": "Fateful Tempest",
+  "oracle_text": "Council's dilemma — Starting with you, each player votes for past or present. You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way. Exile the top card of your library for each present vote. Until the end of your next turn, you may play the exiled cards.",
+  "blocked_sentences": [
+    "Council's dilemma — Starting with you, each player votes for past or present.",
+    "You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.",
+    "Exile the top card of your library for each present vote."
+  ],
+  "needs": [
+    {
+      "capability": "council_s_dilemma",
+      "kind": "decision",
+      "what": "a voting op: starting with the controller and proceeding in turn order, each player chooses one of N named options (here 'past' or 'present'); the op binds the vote tally per option (e.g. as: 'votes' giving {binding: 'votes.past'} / {binding: 'votes.present'}) so later effects in the same spell can use each count as an amount. Each player's vote must be visible to the players voting after them (Council's dilemma / Will of the council)",
+      "why_existing_wont_do": "choose_mode is one chooser picking modes, not every player casting a public vote with a per-option tally; for_each_player + choose_mode cannot accumulate a count per chosen option into a value, and value_keys has no vote count. Also needed: the damage amount is the total mana value of the cards milled this way, which needs mill's `as` binding to be readable as a sum of mana values (mana_value_of over the binding) -- unverified, but the vote tally is the hard blocker"
+    }
+  ],
+  "closest_existing": ["choose_mode", "for_each_player", "join_forces"],
+  "confidence": "high"
+}

@@ -1,0 +1,16 @@
+{
+  "card_id": "ao_the_dawn_sky",
+  "name": "Ao, the Dawn Sky",
+  "oracle_text": "Flying, vigilance\nWhen Ao dies, choose one —\n• Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.\n• Put two +1/+1 counters on each permanent you control that's a creature or Vehicle.",
+  "blocked_sentences": [
+    "• Look at the top seven cards of your library. Put any number of nonland permanent cards with total mana value 4 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order."
+  ],
+  "needs": [{
+    "capability": "total_mana_value_selection",
+    "kind": "op",
+    "what": "a `total_mana_value` cap on look_at_top's pick (and search_library/reveal_until): choose any number of cards from the looked-at window whose combined mana value is at most N, e.g. look_at_top amount 7, selector nonland permanent, destination battlefield, up to any number, total_mana_value 4, rest_to_bottom",
+    "why_existing_wont_do": "total_mana_value exists only as a target_keys entry (targeting.py _within_total) and in cost_reduction; library cards in a look_at_top window are not targets, and look_at_top's pick_from_pool takes a fixed count from the selector with no running budget. choose_mode's `budget` prices modes, not cards. A per-card mana_value <= 4 selector is a strictly better card (could put several 4-drops)."
+  }],
+  "closest_existing": ["look_at_top", "target total_mana_value"],
+  "confidence": "high"
+}
