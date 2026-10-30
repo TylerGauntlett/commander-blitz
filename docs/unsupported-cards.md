@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**112 cards** blocked by **94** capabilities.
+**116 cards** blocked by **97** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,6 +22,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
@@ -53,7 +54,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
-| [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -72,12 +72,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
-| [mana-spent-trigger](#mana-spent-trigger) | 1 | 3830 | trigger_event |
+| [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
+| [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -88,7 +89,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
+| [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
+| [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
@@ -365,6 +368,26 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## escape
+
+Blocks **2** cards.
+
+- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
+  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
+- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
+  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
+- **(engine)** a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand
+  <br>Why the existing vocabulary won't do: Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Underworld Breach** (rank 388) — `underworld_breach`
+  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
+- **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
+  - When Uro enters, sacrifice it unless it escaped.
 
 </details>
 
@@ -833,22 +856,6 @@ Blocks **1** card.
 
 </details>
 
-## escape
-
-Blocks **1** card.
-
-- **(static_effect)** an additional-cost rider on the `cast_from_graveyard` static -- a Cost charged on top of the granted spell's own mana cost, drawn from `cost_keys`, so this card's static can carry `exile_from_graveyard: {"count": 3, "exclude_self": true}`. It must be priced and paid by `legality.graveyard_cast_permission` / `Game._cast` at the moment the granted spell is cast (the way `chosen_additional` charges a card's own `additional_cost`), and `exclude_self` has to mean the card being escaped, not the permanent granting the permission -- otherwise a three-card graveyard pays for the escape with the escaping card itself.
-  <br>Why the existing vocabulary won't do: `cast_from_graveyard` is the only static that lets a card out of a graveyard and it grants the cast at the card's printed cost with no price attached. Its whole rider vocabulary is `enters_tapped`, `arrived_this_turn_from` and `affects_spells`; the one cost field on any permission static is `pay_life_instead`, which belongs to `cast_from_library_top`, swaps mana for life rather than adding to it, and cannot express an exile. The card-level `graveyard_cost` / `flashback` slot *is* escape and does carry `exile_from_graveyard` with `exclude_self` -- but it is a field on the escaping card itself, set at load time, and Underworld Breach hands escape to cards it has never seen. There is no op or static that writes a cost onto another card, and `grant_keyword` knows only the 34 ability keywords, none of which is escape.
-- **(static_effect)** an unbounded `cast_from_graveyard` permission -- `static_max_per_turn` made optional (or given an explicit unlimited spelling) for permissions whose price is itself the rate limit, with `legality.graveyard_cast_permission` skipping the `GRAVEYARD_CAST_SLOT` ledger check instead of defaulting `cap` to 1. Underworld Breach prints no cap at all; the three exiled cards per cast are the whole brake.
-  <br>Why the existing vocabulary won't do: The loader hard-refuses `cast_from_graveyard` without `static_max_per_turn` (`if not model.static_max_per_turn`), on the stated grounds that a permission with no rate limit is an unbounded engine rather than a printed line -- which is true of Edgar, Master Machinist's "once during each of your turns" and exactly false of this card. Every accepted value is a finite integer, so any number I could write would be a cap this card does not print: the card is a storm/loop enabler and an invented ceiling is the approximation, not a rounding of one.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Underworld Breach** (rank 388) — `underworld_breach`
-  - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
-
-</details>
-
 ## exile-target-spell
 
 Blocks **1** card.
@@ -1112,17 +1119,17 @@ Blocks **1** card.
 
 </details>
 
-## mana-spent-trigger
+## mana-spent-trigger-on-activation
 
 Blocks **1** card.
 
-- **(trigger_event)** a rider on a mana ability that tags the mana it makes and creates a triggered ability ('When you spend this mana to cast <spell filter>, <effects>') which fires when that tagged mana is spent on a spell matching the filter -- here `is_commander: true` -- with ordinary effects on the stack (scry X, X = `commander_casts_this_game: you`, counted after this cast). The same capability covers Gilanra, Caller of Wirewood, Lapis/Jade Orb of Dragonkind and Scaled Nurturer, whose shipped auto entries currently drop the trigger clause
-  <br>Why the existing vocabulary won't do: A mana ability may hold only add_mana plus the riders add_counters/add_poison/damage/gain_life/lose_life/remove_counters, which happen on activation rather than when the mana is spent and cannot be filtered by the spell it pays for; mana_grant only hands keywords to the permanent the spell becomes; mana_uncounterable only makes that spell uncounterable; mana_restriction narrows what the mana may buy; and no trigger_event observes mana being spent (spell_cast cannot tell which mana paid for the spell). The value commander_casts_this_game already exists, so only the trigger is missing
+- **(trigger_event)** mana_spent_trigger must also fire when the tagged mana pays the cost of a non-mana activated ability, binding that ability on the stack as `subject` so the rider can `copy_ability` it (and `copy_spell` it with `new_targets` when it paid for a spell)
+  <br>Why the existing vocabulary won't do: mana_spent_trigger is spell-only: costs.pay_mana queues the rider via _queue_spend_triggers only when record_colors_on is set, which only the spell-cast paths (game.py cast, ops_cards cast) pass; an activated ability's mana payment never checks spend tags, so the 'or activate an ability' half would silently do nothing. The rider also has no way to branch between copy_spell and copy_ability on what `subject` is
 
 <details><summary>Cards waiting on this</summary>
 
-- **Study Hall** (rank 3830) — `study_hall`
-  - {1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry X, where X is the number of times it's been cast from the command zone this game.
+- **Sunken Palace** (rank 4444) — `sunken_palace`
+  - {1}{U}, {T}, Exile seven cards from your graveyard: Add {U}. When you spend this mana to cast a spell or activate an ability, copy that spell or ability. You may choose new targets for the copy
 
 </details>
 
@@ -1195,6 +1202,20 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
+
+</details>
+
+## not-keywords-trigger-filter
+
+Blocks **1** card.
+
+- **(selector)** `not_keywords` in a trigger filter (TRIGGER_FILTER_KEYS / triggers.matches_card_filter), answered from the dying creature's last-known keywords, so a `creature_dies` trigger can say "another Zombie you control dies, if it didn't have decayed" -- filter {controller: you, subtypes: [Zombie], exclude_self: true, not_keywords: [decayed]}
+  <br>Why the existing vocabulary won't do: trigger_filter_keys carries `keywords` but not its negation `not_keywords` (validate_trigger_filter refuses it), and matches_card_filter reads the printed card face only, so a creature that was granted decayed would not be seen either. A trigger `condition` has no last-known-keywords value (value_keys has counters_had, power_had, toughness_had but no keywords_had), and an `exists` over the subject reads a creature that has already left the battlefield. Dropping the clause would make every decayed token that dies replace itself forever.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wilhelt, the Rotcleaver** (rank 2687) — `wilhelt_the_rotcleaver`
+  - Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zombie creature token with decayed
 
 </details>
 
@@ -1345,6 +1366,21 @@ Blocks **1** card.
 
 </details>
 
+## replace-dies-link
+
+Blocks **1** card.
+
+- **(replacement)** a `replace_dies` static whose exile records the replacement's source as the exiler (607.2a) -- e.g. a `link: true` flag on the static that makes zones.move_object call `link_exiled(state, oid, rider_source)` after the card lands in exile, so a later `exiled_with: "self"` selector on the same permanent ("creature cards exiled with Gisa") finds the cards its own replacement exiled; the upkeep trigger is then an `upkeep` trigger with `put_onto_battlefield` (controller you) over `{zone: exile, controller: any, exiled_with: self, types: [Creature]}` plus a permanent `grant_keyword` of `decayed` on the bound result
+  <br>Why the existing vocabulary won't do: `replace_dies` with `destination: "exile"` (Kalitas) expresses the first sentence, but `_dies_replacement` returns only a rider of (source oid, controller, and_create tokens) and move_object uses it solely to create tokens -- it never calls `link_exiled`, so the exiled card's `exiled_by` stays unset and `exiled_with: "self"` would match nothing. Writing the static unlinked and the upkeep trigger over all exiled creature cards would steal cards exiled by any other effect, which is a different card; and a `creature_dies` trigger that exiles cannot replace the death (614.6). The upkeep put_onto_battlefield and decayed grant are otherwise expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gisa, Glorious Resurrector** (rank 2740) — `gisa_glorious_resurrector`
+  - If a creature an opponent controls would die, exile it instead.
+  - At the beginning of your upkeep, put all creature cards exiled with Gisa onto the battlefield under your control. They gain decayed.
+
+</details>
+
 ## retrace
 
 Blocks **1** card.
@@ -1356,6 +1392,20 @@ Blocks **1** card.
 
 - **Throes of Chaos** (rank 5451) — `throes_of_chaos`
   - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
+
+</details>
+
+## sacrificed-source-counters
+
+Blocks **1** card.
+
+- **(value)** A value that reads how many counters of a kind were on an object sacrificed as an activation cost, as last-known information (608.2h) -- e.g. the `sacrifice` cost's `as` snapshot recording the object's counters, and a value such as `{"counters_on": {"counter": "corpse", "objects": {"binding": "sacrificed"}}}` (or a `counters_had` that reads that binding) answering from it. Used as the `amount` of `create_token` with token `zombie_2_2_b_decayed`.
+  <br>Why the existing vocabulary won't do: `counters_on` reads the live object, and the self-sacrifice cost is paid before the ability resolves, so the artifact is a graveyard card whose counters `reset_permanent_state` has already emptied -- it always reads 0. The cost's `as` binding is a `zones.snapshot`, which records power/toughness/types/colors but no counters. `counters_had` reads only the dies-trigger's `had_counters` binding, which an activated ability never gets. The `snapshot` op runs at resolution, after the source has left. The token itself exists (`zombie_2_2_b_decayed`), and the corpse-counter trigger is expressible (`creature_dies` + `add_counters`).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crowded Crypt** (rank 2403) — `crowded_crypt`
+  - {4}{B}{B}, {T}, Sacrifice this artifact: Create a 2/2 black Zombie creature token with decayed for each corpse counter on this artifact.
 
 </details>
 

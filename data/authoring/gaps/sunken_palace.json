@@ -1,0 +1,18 @@
+{
+  "card_id": "sunken_palace",
+  "name": "Sunken Palace",
+  "oracle_text": "This land enters tapped.\n{T}: Add {U}.\n{1}{U}, {T}, Exile seven cards from your graveyard: Add {U}. When you spend this mana to cast a spell or activate an ability, copy that spell or ability. You may choose new targets for the copy. (Mana abilities can't be copied.)",
+  "blocked_sentences": [
+    "{1}{U}, {T}, Exile seven cards from your graveyard: Add {U}. When you spend this mana to cast a spell or activate an ability, copy that spell or ability. You may choose new targets for the copy"
+  ],
+  "needs": [
+    {
+      "capability": "mana_spent_trigger_on_activation",
+      "kind": "trigger_event",
+      "what": "mana_spent_trigger must also fire when the tagged mana pays the cost of a non-mana activated ability, binding that ability on the stack as `subject` so the rider can `copy_ability` it (and `copy_spell` it with `new_targets` when it paid for a spell)",
+      "why_existing_wont_do": "mana_spent_trigger is spell-only: costs.pay_mana queues the rider via _queue_spend_triggers only when record_colors_on is set, which only the spell-cast paths (game.py cast, ops_cards cast) pass; an activated ability's mana payment never checks spend tags, so the 'or activate an ability' half would silently do nothing. The rider also has no way to branch between copy_spell and copy_ability on what `subject` is"
+    }
+  ],
+  "closest_existing": ["mana_spent_trigger", "copy_spell", "copy_ability"],
+  "confidence": "high"
+}

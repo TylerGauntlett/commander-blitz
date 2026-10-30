@@ -6461,6 +6461,12 @@
   "hulk_bruce_banner": {
     "zone": "battlefield"
   },
+  "hulk_s_thunderclap": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "hulkbuster_armor": {
     "battlefield_count": 33,
     "zone": "battlefield"

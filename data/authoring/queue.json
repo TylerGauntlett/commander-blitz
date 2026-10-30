@@ -131042,12 +131042,12 @@
     },
     "Hulk's Thunderclap": {
       "edhrec_rank": 20956,
-      "gate": "template",
+      "gate": null,
       "name": "Hulk's Thunderclap",
-      "reason": "no template for: As an additional cost to cast this spell, you may behold a Gamma creature",
+      "reason": "",
       "scryfall_id": "ddd8d212-dc93-4986-9907-c7d37092f68f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hulk, Always Angry": {
