@@ -1227,6 +1227,43 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "aether_gale",
+      "mana_cost": "{3}{U}{U}",
+      "name": "Aether Gale",
+      "oracle_text": "Return six target nonland permanents to their owners' hands.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_to_hand"
+        }
+      ],
+      "targets": [
+        {
+          "count": 6,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -30656,6 +30693,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "op": "copy_spell"
+                },
+                {
+                  "as": "demonstrated",
+                  "op": "choose_player",
+                  "players": "each_opponent",
+                  "prompt": "Choose an opponent to also copy it"
+                },
+                {
+                  "controller": {
+                    "binding": "demonstrated"
+                  },
+                  "op": "copy_spell"
+                }
+              ],
+              "op": "may",
+              "prompt": "Demonstrate?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "creative_technique",
+      "mana_cost": "{4}{R}",
+      "name": "Creative Technique",
+      "oracle_text": "Demonstrate (When you cast this spell, you may copy it. If you do, choose an opponent to also copy it.)\nShuffle your library, then reveal cards from the top of it until you reveal a nonland card. Exile that card and put the rest on the bottom of your library in a random order. You may cast the exiled card without paying its mana cost.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "shuffle",
+          "player": "you"
+        },
+        {
+          "as": "revealed_hit",
+          "destination": "exile",
+          "objects": {
+            "not_types": [
+              "Land"
+            ]
+          },
+          "op": "reveal_until",
+          "player": "you",
+          "rest_to_bottom": true
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "revealed_hit"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "op": "may",
+          "prompt": "Cast the exiled card without paying its mana cost?"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -32293,6 +32413,62 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "no_hand_limit",
+          "kind": "static",
+          "text": "You have no maximum hand size."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature token you control deals combat damage to a player, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "is_token": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "curiosity_crafter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Curiosity Crafter",
+      "oracle_text": "Flying\nYou have no maximum hand size.\nWhenever a creature token you control deals combat damage to a player, draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Wizard"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {

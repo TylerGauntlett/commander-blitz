@@ -87,6 +87,14 @@
   "aeronaut_s_wings": {
     "zone": "battlefield"
   },
+  "aether_gale": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 2,
+    "zone": "graveyard"
+  },
   "aether_spellbomb": {
     "battlefield_count": 33,
     "hand_size": {
@@ -2713,6 +2721,12 @@
   "crazed_skirge": {
     "zone": "battlefield"
   },
+  "creative_technique": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
+  },
   "creeping_renaissance": {
     "hand_size": {
       "0": 1
@@ -2834,6 +2848,13 @@
   },
   "curiosity": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "curiosity_crafter": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "curious_altisaur": {

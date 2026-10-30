@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**87 cards** blocked by **69** capabilities.
+**90 cards** blocked by **72** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -30,6 +30,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -44,6 +45,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -62,6 +64,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [phyrexian-myr-2-1-u-token](#phyrexian-myr-2-1-u-token) | 1 | 2116 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
@@ -463,6 +466,20 @@ Blocks **1** card.
 
 </details>
 
+## can-block-only
+
+Blocks **1** card.
+
+- **(static_effect)** a static on a creature restricting which attackers IT may block, by a filter over the attacker ("this creature can block only creatures with flying"): an `affects` naming the blocker (self_only) and an `attackers` filter (e.g. keywords: [flying]) read on the attacker's derived characteristics in combat.can_block
+  <br>Why the existing vocabulary won't do: `block_restriction` is the mirror image: it sits on the ATTACKER and filters which blockers may block it (block_restrictions(state, attacker_oid) matches `affects` against the attacker). `cant_block` forbids blocking outright with no attacker filter. No keyword covers it (shadow is two-way and about shadow only). combat.can_block has no check of a blocker-side static against the attacker's qualities
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
+  - This creature can block only creatures with flying.
+
+</details>
+
 ## cant-be-countered
 
 Blocks **1** card.
@@ -665,6 +682,25 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
+
+</details>
+
+## fixed-piles-opponent-chooses
+
+Blocks **1** card.
+
+- **(op)** an op that exiles two fixed piles from the top of your library (the first N cards face down, the next N face up), has an opponent choose one pile, puts the chosen pile into its owner's graveyard, then lets you cast one spell from the other pile without paying its mana cost and puts the remainder of that pile into your hand
+  <br>Why the existing vocabulary won't do: two_piles (amount, to, other) is Fact or Fiction: one revealed group that an opponent SEPARATES, with fixed destinations and no face-down pile, no opponent-chooses-a-pre-made-pile step and no free cast from the kept pile. look_at_top has cast_free and rest_to but no second pile and no opponent choice; exile with playable_free grants a lasting permission rather than a single cast now with the rest going to hand
+
+<details><summary>Cards waiting on this</summary>
+
+- **Abstract Performance** (rank 12369) — `abstract_performance`
+  - Exile the top four cards of your library in a face-down pile, then exile the top four cards of your library in a face-up pile.
+  - An opponent chooses one of those piles.
+  - Put that pile into your graveyard.
+  - Look at the cards in the other pile.
+  - You may cast a spell from among them without paying its mana cost.
+  - Put the rest into your hand.
 
 </details>
 
@@ -929,6 +965,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## phyrexian-myr-2-1-u-token
+
+Blocks **1** card.
+
+- **(token)** a 2/1 blue Phyrexian Myr artifact creature token (suggested id phyrexian_myr_2_1_u)
+  <br>Why the existing vocabulary won't do: token_ids has myr_1_1_c (a 1/1 colorless Myr artifact creature) and phyrexian_0_0_c_artifact, but no 2/1 blue Phyrexian Myr; substituting either changes power, color and subtypes. The rest of the line looks expressible once the token exists: begin_combat trigger on your turn, then a may wrapping choose_permanents (is_token, controller you, as chosen) and become_copy over the other tokens you control (exclude_binding chosen) copying the binding, permanent duration.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Brudiclad, Telchor Engineer** (rank 2116) — `brudiclad_telchor_engineer`
+  - At the beginning of combat on your turn, create a 2/1 blue Phyrexian Myr artifact creature token. Then you may choose a token you control. If you do, each other token you control becomes a copy of that token.
 
 </details>
 

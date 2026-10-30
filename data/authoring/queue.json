@@ -3002,12 +3002,12 @@
     },
     "Aether Gale": {
       "edhrec_rank": 3678,
-      "gate": "template",
+      "gate": null,
       "name": "Aether Gale",
-      "reason": "no template for: Return six target nonland permanents to their owners' hands",
+      "reason": "",
       "scryfall_id": "4e336e87-e5af-46a0-8caf-5d9ad8d671fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aether Gust": {
@@ -55712,12 +55712,12 @@
     },
     "Creative Technique": {
       "edhrec_rank": 4885,
-      "gate": "template",
+      "gate": null,
       "name": "Creative Technique",
-      "reason": "no template for: Demonstrate",
+      "reason": "",
       "scryfall_id": "c0b5ba5f-ac25-4134-91c1-9677ba86576c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creature Bond": {
@@ -58462,12 +58462,12 @@
     },
     "Curiosity Crafter": {
       "edhrec_rank": 1723,
-      "gate": "template",
+      "gate": null,
       "name": "Curiosity Crafter",
-      "reason": "no template for: You have no maximum hand size",
+      "reason": "",
       "scryfall_id": "930d830b-5e6a-422a-806e-fd7275517deb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curious Altisaur": {
