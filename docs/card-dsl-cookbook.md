@@ -9072,6 +9072,30 @@ spell, so every other spell is a permanent spell.
 - Not `free_cast_permission`, which waives the cost rather than replacing it,
   and not `alternative_cost`, which only the card that prints it has.
 
+## A player losing all counters
+
+"Each opponent loses all counters" -- Final Act's fifth mode. Every counter of
+every kind on each named player (122.1):
+
+```jsonc
+{ "op": "lose_all_player_counters", "player": "each_opponent" }
+```
+
+`player` is required and is any player spec (`each_opponent`, `each_player`,
+`target`, ...). The kinds are `player.PLAYER_COUNTER_KINDS` -- poison and
+energy -- so the card says "all" once and needs no edit when the player model
+carries another kind. Each kind comes off through
+`primitives.remove_player_counters`, which bumps the characteristic cache (a
+corrupted static re-reads at once) and fires `counter_removed` with `player`,
+`counter`, `amount` and `total` for each kind that was there.
+
+- The loader refuses a missing `player`, and a `counter`, `kinds` or `amount`
+  key, which this op would ignore.
+- Not `remove_counters`, which takes one named kind off **objects**; a player is
+  not one. "Loses all poison counters" (one kind) is a different sentence this
+  op does not write.
+- Not a `pay_energy` cost: paying is a cost, this is an effect.
+
 ## Aura swap — an exchange, not two moves
 
 ```jsonc

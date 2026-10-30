@@ -1213,6 +1213,40 @@ def pay_energy(state: GameState, pid: int, amount: int, *, source: int | None = 
     )
 
 
+def remove_player_counters(
+    state: GameState, pid: int, kind: str, amount: int, *, source: int | None = None
+) -> int:
+    """Take up to ``amount`` counters of ``kind`` off a player, and return how many.
+
+    The removal funnel for a player's counters, `remove_counters`' twin: an
+    effect that takes them away (Final Act's "each opponent loses all
+    counters") comes through here rather than writing the field. No counter
+    replacement reads it -- 122.8 and every replacement the engine models are
+    about counters being *put* -- and paying energy is a cost, which is
+    `pay_energy`'s. ``kind`` is one of `player.PLAYER_COUNTER_KINDS`.
+
+    Fires COUNTER_REMOVED with ``player`` set, ``counter``, the ``amount`` that
+    came off and the ``total`` left; nothing fires when there was none.
+    """
+    player = state.players[pid]
+    taken = min(max(amount, 0), getattr(player, kind))
+    if taken <= 0:
+        return 0
+    setattr(player, kind, getattr(player, kind) - taken)
+    # A poison count is a static-condition input (corrupted), cached per
+    # `char_version` -- `add_poison`'s reason, on the way down.
+    state.bump_chars()
+    state.emit(
+        EventType.COUNTER_REMOVED,
+        player=pid,
+        source=source,
+        counter=kind,
+        amount=taken,
+        total=getattr(player, kind),
+    )
+    return taken
+
+
 def add_counters(
     state: GameState,
     oid: int,

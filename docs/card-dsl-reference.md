@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 155 |
+| [Effect ops](#effect-ops) | 156 |
 | [Selectors](#selectors) | 69 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 62 |
@@ -153,6 +153,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `fight` | Life & damage |  | Two creatures fight. | [fight](card-dsl-cookbook.md#fight) |
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
 | `lock_life_total` | Life & damage |  | A player's life total can't change for a duration. | ["Your life total can't change"](card-dsl-cookbook.md#your-life-total-cant-change) |
+| `lose_all_player_counters` | Life & damage |  | Each named player loses every counter of every kind. | [A player losing all counters](card-dsl-cookbook.md#a-player-losing-all-counters) |
 | `lose_life` | Life & damage | yes | A player loses N life; `as` records how much. | [Effect ops](card-dsl.md#effect-ops) |
 | `prevent_combat_damage` | Life & damage |  | Prevent combat damage this turn, optionally only from sources matching `by`. | [Fog — combat damage prevented by its source](card-dsl-cookbook.md#fog--combat-damage-prevented-by-its-source) |
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn. | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
