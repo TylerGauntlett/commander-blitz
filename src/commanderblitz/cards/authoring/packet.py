@@ -103,6 +103,10 @@ CARD_LEVEL_COST_KEYS = (
     "flashback",
     "foretell",
     "gift",  # str; the noun phrase promised
+    #: "You may cast this card from your graveyard by discarding a card in
+    #: addition to paying its other costs": a Cost paid on top of the printed
+    #: price from the graveyard. Retrace is this with a land card.
+    "graveyard_additional_cost",
     #: ``{"cost": "{2}{W}{W}", "counters": 4}`` -- "Impending 4—{2}{W}{W}". The
     #: time counters, "isn't a creature" and the end-step tick are the rule's;
     #: the card writes none of them.

@@ -38627,6 +38627,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "extreme_value": {
+              "objects": {
+                "union": [
+                  {
+                    "controller": "you",
+                    "not_types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  {
+                    "controller": "you",
+                    "not_types": [
+                      "Creature"
+                    ],
+                    "zone": "graveyard"
+                  }
+                ]
+              },
+              "of": "mana_value",
+              "pick": "greatest"
+            }
+          },
+          "text": "Dragon Man's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard.",
+          "toughness": {
+            "const": 5
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "graveyard_additional_cost": {
+        "discard": 1
+      },
+      "id": "dragon_man_reformed_robot",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{U}",
+      "name": "Dragon Man, Reformed Robot",
+      "oracle_text": "Flying\nDragon Man's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard.\nYou may cast this card from your graveyard by discarding a card in addition to paying its other costs.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Dragon",
+        "Robot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

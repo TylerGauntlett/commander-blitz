@@ -1520,6 +1520,14 @@ class CardModel(BaseModel):
     #: land card in addition to paying its other costs."  A whole extra way to
     #: cast the card, so it is a card-level field rather than an ability.
     retrace: bool = False
+    #: "You may cast this card from your graveyard **by discarding a card** in
+    #: addition to paying its other costs." -- Dragon Man, Reformed Robot.
+    #: Retrace's shape with the card's own additional cost: castable from the
+    #: graveyard at the printed price plus this cost, paid after the mana
+    #: (601.2g). ``retrace: true`` is this field with "discard a land card", so
+    #: the two are never given together; nor beside a `graveyard_cost`, which
+    #: is an *alternative* price from the same zone.
+    graveyard_additional_cost: CostModel | None = None
     #: Ascend: "If you control ten or more permanents, you get the
     #: city's blessing for the rest of the game." A bare keyword with
     #: no parameters, so a card-level flag rather than an ability.

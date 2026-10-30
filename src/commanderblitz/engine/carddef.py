@@ -1405,8 +1405,16 @@ class CardDef:
     #: variant goes on that variant's own cost node instead, as
     #: `Cost.mana_reduction`.
     cost_reduction: Mapping[str, Any] | None = None
-    #: Retrace: castable from the graveyard for its cost plus a discarded land.
+    #: Castable from the graveyard at its printed cost plus `retrace_cost`:
+    #: Retrace's discarded land card, or a card's own
+    #: ``graveyard_additional_cost`` (Dragon Man, Reformed Robot's "by
+    #: discarding a card"). Read by `casting` (the line) and `Game._cast` (the
+    #: payment, after the mana).
     retrace: bool = False
+    #: The additional cost of casting this from the graveyard under `retrace`.
+    retrace_cost: Cost = field(
+        default_factory=lambda: Cost(discard=1, discard_selector={"types": ["Land"]})
+    )
     #: Ascend. Deliberately *not* a `Keyword`: the enum's members are
     #: read by `grant_keyword` and the evasion checks off derived
     #: characteristics, and Ascend is neither granted nor evasive --
@@ -1511,11 +1519,6 @@ class CardDef:
         if gift_promised and self.gift_targets is not None:
             return self.gift_targets
         return self.targets
-
-    @property
-    def retrace_cost(self) -> Cost:
-        """The additional cost of casting this from the graveyard."""
-        return Cost(discard=1, discard_selector={"types": ["Land"]})
 
     # -- type predicates ----------------------------------------------------
 

@@ -1879,10 +1879,43 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             _validate_cost_reduction(
                 flashback.mana_reduction, f"{where}.graveyard_cost.mana_reduction"
             )
-        if model.retrace:
+        if model.retrace or model.graveyard_additional_cost is not None:
             # Both widen legality to the graveyard and each replaces the other's
             # answer to "what does it cost from there".
-            raise DslError(f"{where}: a card may not have both a graveyard cost and 'retrace'")
+            raise DslError(
+                f"{where}: a card may not have both a graveyard cost and 'retrace' "
+                f"or 'graveyard_additional_cost'"
+            )
+    # Retrace and its generalisation: the printed price from the graveyard plus
+    # an additional cost. One engine slot (`CardDef.retrace` and its
+    # `retrace_cost`), two spellings -- the keyword's land discard, or the
+    # card's own cost.
+    retrace_cost = None
+    if model.graveyard_additional_cost is not None:
+        extra_cost = model.graveyard_additional_cost
+        if model.retrace:
+            raise DslError(
+                f"{where}: 'retrace' is 'graveyard_additional_cost' with a land "
+                f"discard -- give one or the other"
+            )
+        if extra_cost.mana_reduction or extra_cost.x_value or extra_cost.tap or extra_cost.untap:
+            # Nothing prices a reduction or an X here, and a card in a
+            # graveyard has no {T} to pay: each would load and be ignored.
+            raise DslError(
+                f"{where}.graveyard_additional_cost: 'mana_reduction', 'x_value', "
+                f"'tap' and 'untap' mean nothing on a cast from the graveyard"
+            )
+        retrace_cost = _compile_cost(extra_cost, f"{where}.graveyard_additional_cost")
+        if retrace_cost.mana.x_count or (
+            retrace_cost.charges_nothing() and retrace_cost.mana.mana_value() == 0
+        ):
+            # Free would be Gravecrawler's permission under a misleading name
+            # (a `cast_from_graveyard` static), and X would have nobody to
+            # announce it.
+            raise DslError(
+                f"{where}: 'graveyard_additional_cost' must be a fixed cost that "
+                f"charges something"
+            )
     if graveyard_spec is None and model.graveyard_cast != "exile":
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
@@ -2090,7 +2123,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         melds_into=model.melds_into,
         emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
-        retrace=model.retrace,
+        retrace=model.retrace or retrace_cost is not None,
+        **({"retrace_cost": retrace_cost} if retrace_cost is not None else {}),
         flashback=flashback,
         evoke_label=model.evoke_label,
         warp=warp,

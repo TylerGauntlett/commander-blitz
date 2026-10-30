@@ -73162,12 +73162,12 @@
     },
     "Dragon Man, Reformed Robot": {
       "edhrec_rank": 25385,
-      "gate": "template",
+      "gate": null,
       "name": "Dragon Man, Reformed Robot",
-      "reason": "no template for: Dragon Man's power is equal to the greatest mana value among noncreature permanents you co",
+      "reason": "",
       "scryfall_id": "527e930b-b233-432c-a0dc-73c68ea3f686",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dragon Mantle": {

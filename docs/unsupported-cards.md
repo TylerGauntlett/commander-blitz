@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**88 cards** blocked by **70** capabilities.
+**87 cards** blocked by **69** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -45,7 +45,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
-| [graveyard-cast-additional-discard](#graveyard-cast-additional-discard) | 1 | 25385 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -680,20 +679,6 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
-
-</details>
-
-## graveyard-cast-additional-discard
-
-Blocks **1** card.
-
-- **(cost)** a card-level permission to cast this card from its owner's graveyard at its printed cost plus an additional cost of discarding a card of any type -- retrace's shape (601.2b/601.2g, the discard paid after the mana) with the discard filter opened from 'a land card' to 'a card', e.g. a `retrace` that takes the discard selector, or a graveyard-cast permission carrying an `additional_cost`
-  <br>Why the existing vocabulary won't do: `retrace` is a bare flag whose cost is fixed in `CardDef.retrace_cost` as discarding a *land* card, so it would refuse a nonland discard the card allows; `graveyard_cost`/`flashback` is an *alternative* cost replacing the mana cost, which changes what the cast is (no other alternative cost, such as a free-cast permission, could be applied, and cost-reading effects see an alternative cost); a `cast_from_graveyard` static with `active_zones: ["graveyard"]` (Gravecrawler) grants the cast at the printed price but carries no additional cost. The power line is expressible with the static `extreme_value` leaf.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dragon Man, Reformed Robot** (rank 25385) — `dragon_man_reformed_robot`
-  - You may cast this card from your graveyard by discarding a card in addition to paying its other costs.
 
 </details>
 

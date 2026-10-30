@@ -5138,6 +5138,7 @@ them where it is sitting:
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
 "pay_generic_with": "tap_creatures"         // convoke; "tap_artifacts" is improvise, "exile_from_graveyard" delve
 "retrace": true                             // cast from the graveyard, discarding a land
+"graveyard_additional_cost": { "discard": 1 } // …or paying any other cost on top (Dragon Man)
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards
 "graveyard_cast_transformed": true          // disturb: it comes back as its back face
@@ -5158,6 +5159,31 @@ them where it is sitting:
 "multikicker": "{1}{W}"                     // …the printed name for exactly those three
 "strive": "{1}{W}"                          // costs this much more per target beyond the first
 ```
+
+#### Retrace and "by discarding a card"
+
+```jsonc
+// Dragon Man, Reformed Robot: "You may cast this card from your graveyard by
+// discarding a card in addition to paying its other costs."
+"graveyard_additional_cost": { "discard": 1 }
+```
+
+Retrace's permission with the card's own additional cost. Both compile to one
+engine slot: `CardDef.retrace`, with `retrace_cost` the price paid on top of the
+printed mana cost from the graveyard — "discard a land card" for `retrace: true`
+(702.81a), the given cost otherwise. Legality offers the line only while that
+cost is payable, and `Game._cast` charges it after the mana (601.2g), so a land
+tapped for the spell may still be the card discarded. The card goes wherever it
+normally would afterwards; nothing exiles it.
+
+The loader refuses the field beside `retrace` (the keyword *is* this field with
+a land discard) or a `graveyard_cost`, a cost that charges nothing or has an X,
+and `tap`, `untap`, `mana_reduction` or `x_value` in it. The near misses each
+price something else: `graveyard_cost` is an *alternative* cost that replaces
+the mana cost, and a `cast_from_graveyard` static with `active_zones:
+["graveyard"]` (Gravecrawler) grants the printed price with nothing added. A
+permanent's printed line is claimed by the residual gate only when the discard
+it names is the one charged.
 
 #### Convoke, improvise and delve
 

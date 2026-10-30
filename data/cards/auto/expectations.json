@@ -3438,6 +3438,10 @@
   "dragon_bell_monk": {
     "zone": "battlefield"
   },
+  "dragon_man_reformed_robot": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dragon_moose": {
     "zone": "battlefield"
   },

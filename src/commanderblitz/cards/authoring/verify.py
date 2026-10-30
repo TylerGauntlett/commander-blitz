@@ -1541,6 +1541,14 @@ def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     )
 
 
+#: "You may cast this card from your graveyard by discarding a [land] card in
+#: addition to paying its other costs." The noun, when printed, is the card
+#: type the discard is narrowed to.
+_GRAVEYARD_ADDITIONAL_LINE = re.compile(
+    r"you may cast (?:~|this card) from your graveyard by discarding an? "
+    r"(?:(\w+) )?card in addition to paying its other costs"
+)
+
 _TOXIC_PART = re.compile(r"toxic (\d+)")
 
 
@@ -1676,6 +1684,21 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.strive is not None and stripped.lower().startswith("strive"):
         match = _STRIVE_LINE.search(stripped)
         return match is not None and _declares_printed_cost(match.group(1), card.strive)
+
+    # "You may cast this card from your graveyard by discarding a card in
+    # addition to paying its other costs." (Dragon Man, Reformed Robot) is
+    # `graveyard_additional_cost` -- retrace's card-level permission, which no
+    # ability could honestly carry. Strict on the cost: the printed discard
+    # has to be the one charged, so a card discarding "a land card" cannot
+    # claim "discarding a card", and any other printed cost stays residual.
+    if card.retrace:
+        match = _GRAVEYARD_ADDITIONAL_LINE.fullmatch(folded_line.lower())
+        if match is not None:
+            noun = match.group(1)
+            wanted = Cost(discard=1) if noun is None else Cost(
+                discard=1, discard_selector={"types": [noun.capitalize()]}
+            )
+            return card.retrace_cost == wanted
 
     # "Ascend (If you control ten or more permanents…)" is a *state trigger*
     # checked in the state-based-action pass, not an ability: it uses no stack
