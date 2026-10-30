@@ -1,0 +1,25 @@
+{
+  "card_id": "immoral_bargain",
+  "name": "Immoral Bargain",
+  "oracle_text": "As an additional cost to cast this spell, sacrifice X creatures.\nDestroy X target nonland permanents.",
+  "blocked_sentences": [
+    "As an additional cost to cast this spell, sacrifice X creatures.",
+    "Destroy X target nonland permanents."
+  ],
+  "needs": [
+    {
+      "capability": "spell_target_count_from_additional_cost",
+      "kind": "engine",
+      "what": "a spell's own card-level target spec whose count is exactly the number of times its repeatable additional cost was paid (here {\"additional_paid\": true}, the number of creatures sacrificed, 0 included), fixed per cast line so legality enumerates X target nonland permanents for each X the board can pay",
+      "why_existing_wont_do": "TargetModel.count accepts a value expression only on an ability's targets; loader.targets._compile_targets refuses one on a card's own targets because a spell's targets are enumerated before the additional cost is paid and would read zero. count: \"any\" lets the caster pick a target count unrelated to the sacrifices (strictly better card), and a fixed count with additional_repeatable cannot tie the two together"
+    },
+    {
+      "capability": "sacrifice_x_additional_cost",
+      "kind": "cost",
+      "what": "an additional cost 'sacrifice X creatures' where X may be 0 and is bounded only by the creatures you control, read back by the effect as X",
+      "why_existing_wont_do": "additional_cost {sacrifice: Creature} with additional_repeatable and additional_optional is the nearest shape (Plumb the Forbidden), but casting.MAX_ADDITIONAL_TIMES caps repeats, so X above that cap is unreachable; on its own it is expressible, but it is useless without the target count above"
+    }
+  ],
+  "closest_existing": ["additional_repeatable", "additional_optional", "additional_paid", "destroy"],
+  "confidence": "high"
+}

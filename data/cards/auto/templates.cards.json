@@ -65615,6 +65615,61 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{B}{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{B}{G}, {T}, Sacrifice a creature: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "grim_backwoods",
+      "name": "Grim Backwoods",
+      "oracle_text": "{T}: Add {C}.\n{2}{B}{G}, {T}, Sacrifice a creature: Draw a card.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -68249,6 +68304,83 @@
       ],
       "toughness": 5,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, you gain 2 life.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "not_types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{G}, Sacrifice this creature: Exile target noncreature artifact or noncreature enchantment."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "haywire_mite",
+      "mana_cost": "{1}",
+      "name": "Haywire Mite",
+      "oracle_text": "When this creature dies, you gain 2 life.\n{G}, Sacrifice this creature: Exile target noncreature artifact or noncreature enchantment.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 1,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },

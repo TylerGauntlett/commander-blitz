@@ -5855,6 +5855,10 @@
   "griffin_sentinel": {
     "zone": "battlefield"
   },
+  "grim_backwoods": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "grim_initiate": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6068,6 +6072,10 @@
     "zone": "battlefield"
   },
   "hawkeye_clint_barton": {
+    "zone": "battlefield"
+  },
+  "haywire_mite": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "hazoret_s_monument": {

@@ -118062,12 +118062,12 @@
     },
     "Grim Backwoods": {
       "edhrec_rank": 2031,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Backwoods",
-      "reason": "no template for: {2}{B}{G}, {T}, Sacrifice a creature: Draw a card",
+      "reason": "",
       "scryfall_id": "606c5f42-fe5f-4dcd-b8f4-b67beabe3f0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Bauble": {
@@ -123922,12 +123922,12 @@
     },
     "Haywire Mite": {
       "edhrec_rank": 691,
-      "gate": "template",
+      "gate": null,
       "name": "Haywire Mite",
-      "reason": "no template for: When this creature dies, you gain 2 life",
+      "reason": "",
       "scryfall_id": "6f813bc3-6d81-4555-8e4b-6ecd9a6757b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hazard of the Dunes": {
