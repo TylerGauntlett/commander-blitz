@@ -1,0 +1,841 @@
+{
+  "id": "msc_the_fantastic_four",
+  "name": "The Fantastic Four",
+  "commanders": [
+    "invisible_woman"
+  ],
+  "color_identity": [
+    "G",
+    "R",
+    "U",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "MSC",
+    "set_name": "Marvel Super Heroes Commander",
+    "date": "2026-06-26"
+  },
+  "notes": "Marvel Super Heroes Commander precon, card for card (https://mtgjson.com/api/v5/decks/TheFantasticFour_MSC.json).",
+  "tags": [
+    "Spellslinger",
+    "Copies",
+    "Card draw",
+    "Ramp"
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 4,
+    "interaction": 3,
+    "resilience": 3,
+    "pilot": 4
+  },
+  "strategy": "Every member of the Fantastic Four wakes up at the beginning of combat if you've cast a noncreature spell this turn: Invisible Woman makes a Wall, Mister Fantastic draws, Human Torch gains flying, double strike and haste, and The Thing takes four +1/+1 counters. So the deck casts a cheap spell before combat every turn, with Valeria Richards making those spells cheaper and drawing on the first, and Cosmic Crucible copying one each turn. Paying {R}{G}{W}{U} on the attack turns each hero into a finisher: an unblockable pump, damage to every opponent, or doubled counters, and Mister Fantastic copies those triggers twice. Cultivate, Three Visits, Farseek and Genesis Ultimatum fix all four colors, First Family refills the hand, Franklin Richards discovers a free spell each combat, and Galactus arrives with Silver Surfer to exile a permanent and keep the table's biggest life total honest.",
+  "signature": [
+    {
+      "card_id": "invisible_woman",
+      "why": "A Wall every combat after a noncreature spell, and an unblockable pump for each creature you control."
+    },
+    {
+      "card_id": "the_thing",
+      "why": "Four +1/+1 counters each combat, and on the attack doubles every counter on your team."
+    },
+    {
+      "card_id": "valeria_richards_precocious",
+      "why": "Noncreature spells cost {1} less, and the first each turn draws a card."
+    },
+    {
+      "card_id": "cosmic_crucible",
+      "why": "Four mana in your first main phase and a free copy of a noncreature spell each turn."
+    }
+  ],
+  "archetype": "spellslinger",
+  "printings": {
+    "alicia_masters_skilled_sculptor": {
+      "scryfall_id": "3db94749-340c-4454-a15d-ba6353e0c4a4",
+      "artist": "Erion Makuo",
+      "set_code": "msc",
+      "collector_number": "48"
+    },
+    "annie_joins_up": {
+      "scryfall_id": "e86ccaf7-9686-415f-b1e1-3d574fbdf34b",
+      "artist": "Nanna Marie Steffensen",
+      "set_code": "msc",
+      "collector_number": "281"
+    },
+    "arcane_signet": {
+      "scryfall_id": "1bbc3ce9-f3df-41b4-b238-37319546c595",
+      "artist": "Vilhelmas Banys",
+      "set_code": "msc",
+      "collector_number": "192"
+    },
+    "baxter_building": {
+      "scryfall_id": "1abc652f-8e9d-4df7-bc4e-d8b515a40fec",
+      "artist": "Paulius Daščioras",
+      "set_code": "msh",
+      "collector_number": "261"
+    },
+    "black_bolt_inhuman_king": {
+      "scryfall_id": "0d484566-6816-4535-a754-dbda8073ae73",
+      "artist": "Irvin Rodriguez",
+      "set_code": "msc",
+      "collector_number": "76"
+    },
+    "bovine_intervention": {
+      "scryfall_id": "9fe4ad5a-3337-467a-b857-7297085da11f",
+      "artist": "Nanna Marie Steffensen",
+      "set_code": "msc",
+      "collector_number": "123"
+    },
+    "canopy_vista": {
+      "scryfall_id": "369e6485-fbc7-45f9-ac9d-2e26dd94f2d5",
+      "artist": "Anthony Devine",
+      "set_code": "msc",
+      "collector_number": "227"
+    },
+    "chromatic_lantern": {
+      "scryfall_id": "693da13a-49af-4f7e-b247-36b454fb31a0",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "msc",
+      "collector_number": "195"
+    },
+    "cinder_glade": {
+      "scryfall_id": "ec93087a-5728-40e8-8625-a1d175d5252c",
+      "artist": "Pace Wilder",
+      "set_code": "msc",
+      "collector_number": "230"
+    },
+    "cleansing_nova": {
+      "scryfall_id": "670e4457-927e-42ed-a36f-28b60c2f7566",
+      "artist": "Vlad Petruchik",
+      "set_code": "msc",
+      "collector_number": "124"
+    },
+    "clever_concealment": {
+      "scryfall_id": "41d45a8a-ea1d-4fbc-86d2-5d6340f3b639",
+      "artist": "Jurijus Chitrovas",
+      "set_code": "msc",
+      "collector_number": "125"
+    },
+    "clifftop_retreat": {
+      "scryfall_id": "4a7f7767-1959-4812-8654-0a22634096b1",
+      "artist": "Arthur Yuan",
+      "set_code": "msc",
+      "collector_number": "231"
+    },
+    "collective_effort": {
+      "scryfall_id": "d9138f86-34dc-46d2-99f4-18eb3b26c253",
+      "artist": "Jurijus Chitrovas",
+      "set_code": "msc",
+      "collector_number": "126"
+    },
+    "command_tower": {
+      "scryfall_id": "d24f611b-87b1-4406-9829-1b663f52fcb6",
+      "artist": "Paulius Daščioras",
+      "set_code": "msc",
+      "collector_number": "234"
+    },
+    "cosmic_crucible": {
+      "scryfall_id": "7436364b-5604-44c8-b539-9b7c3221ccdf",
+      "artist": "Mintautas Šukys",
+      "set_code": "msc",
+      "collector_number": "79"
+    },
+    "council_of_reeds": {
+      "scryfall_id": "a0d824ea-75d2-4de5-923b-813bba44e80b",
+      "artist": "Vlad Petruchik",
+      "set_code": "msc",
+      "collector_number": "28"
+    },
+    "crystal_inhuman_princess": {
+      "scryfall_id": "1e9aec49-08d7-4fc8-87dd-69ab8910688a",
+      "artist": "Darius Zablockis",
+      "set_code": "msc",
+      "collector_number": "80"
+    },
+    "cultivate": {
+      "scryfall_id": "e60deb92-f7dd-4f4e-9036-e47dd586f985",
+      "artist": "Darius Zablockis",
+      "set_code": "msc",
+      "collector_number": "172"
+    },
+    "cut_a_deal": {
+      "scryfall_id": "088388a6-1cc3-4782-91af-504e70f40a97",
+      "artist": "Nanna Marie Steffensen",
+      "set_code": "msc",
+      "collector_number": "127"
+    },
+    "deep_analysis": {
+      "scryfall_id": "1a297bae-f259-4fc7-b76a-285f972d69e3",
+      "artist": "Michael MacRae",
+      "set_code": "msc",
+      "collector_number": "149"
+    },
+    "dragon_man_reformed_robot": {
+      "scryfall_id": "527e930b-b233-432c-a0dc-73c68ea3f686",
+      "artist": "Gintas Galvanauskas",
+      "set_code": "msc",
+      "collector_number": "82"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "c0318a48-30e4-4ef7-be3d-5e561c5ce428",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "msc",
+      "collector_number": "240"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "8853ff94-bf44-4cfd-9d3a-0743c361fb0d",
+      "artist": "David Szabo",
+      "set_code": "msc",
+      "collector_number": "241"
+    },
+    "expressive_iteration": {
+      "scryfall_id": "96f866ec-a163-4095-b088-d93fa0b6f6f7",
+      "artist": "Rimas Valeikis",
+      "set_code": "msc",
+      "collector_number": "183"
+    },
+    "fabled_passage": {
+      "scryfall_id": "62ef854d-ec9e-443d-a4ba-4b2875ed3fe7",
+      "artist": "Mintautas Šukys",
+      "set_code": "msc",
+      "collector_number": "242"
+    },
+    "fantastic_elasticity": {
+      "scryfall_id": "35521ad2-f701-48d6-8686-537ef1f079da",
+      "artist": "Mintautas Šukys",
+      "set_code": "msc",
+      "collector_number": "30"
+    },
+    "farseek": {
+      "scryfall_id": "c1aac0f5-1d01-4673-b8d3-878d9a1d423c",
+      "artist": "Rimas Valeikis",
+      "set_code": "msc",
+      "collector_number": "173"
+    },
+    "first_family": {
+      "scryfall_id": "96679821-f850-4de1-b5f9-21e0681647ee",
+      "artist": "Viktor Fetsch",
+      "set_code": "msc",
+      "collector_number": "83"
+    },
+    "flame_on": {
+      "scryfall_id": "7030f86d-d7e7-444d-9ed0-1758260926ed",
+      "artist": "Rafater",
+      "set_code": "msc",
+      "collector_number": "51"
+    },
+    "forest": {
+      "scryfall_id": "22463284-2478-4b1e-9a37-6dd2383266cf",
+      "artist": "Domenico Cava",
+      "set_code": "msh",
+      "collector_number": "295"
+    },
+    "franklin_richards_ascendant": {
+      "scryfall_id": "0957b296-c34d-4193-9fe7-a339533ac121",
+      "artist": "Julia Vasilyeva",
+      "set_code": "msc",
+      "collector_number": "52"
+    },
+    "galactus_devourer_of_worlds": {
+      "scryfall_id": "3a9df9dd-a480-406c-ba28-94895fbfb574",
+      "artist": "Piotr Dura",
+      "set_code": "msc",
+      "collector_number": "8"
+    },
+    "galvanic_iteration": {
+      "scryfall_id": "4e148c83-09d1-4055-b1a6-5c624c67810d",
+      "artist": "Eglė Mosakaitė",
+      "set_code": "msc",
+      "collector_number": "184"
+    },
+    "genesis_ultimatum": {
+      "scryfall_id": "ef2a26fe-ce75-45e2-b0c8-bb6ddb80abd9",
+      "artist": "Mintautas Šukys",
+      "set_code": "msc",
+      "collector_number": "283"
+    },
+    "glacial_fortress": {
+      "scryfall_id": "d673a2d5-0c61-48dc-8c8d-06f0c7b6b8bf",
+      "artist": "Eugene Maslovski",
+      "set_code": "msc",
+      "collector_number": "248"
+    },
+    "h_e_r_b_i_e_lovable_robot": {
+      "scryfall_id": "5e2f9f4c-dbdd-4da6-b08f-1f4d3fcb1328",
+      "artist": "Nanna Marie Steffensen",
+      "set_code": "msc",
+      "collector_number": "106"
+    },
+    "hinterland_harbor": {
+      "scryfall_id": "892451a1-5527-4857-84f8-62028d147489",
+      "artist": "Pace Wilder",
+      "set_code": "msc",
+      "collector_number": "250"
+    },
+    "hull_breach": {
+      "scryfall_id": "3ff49b0b-322b-4b98-8604-d6716f3bec39",
+      "artist": "Alexander Skripnikov",
+      "set_code": "msc",
+      "collector_number": "185"
+    },
+    "human_torch": {
+      "scryfall_id": "bf7b63ef-c7b4-4001-b64a-c7443f5268ba",
+      "artist": "Vilhelmas Banys",
+      "set_code": "msc",
+      "collector_number": "3"
+    },
+    "into_the_time_vortex": {
+      "scryfall_id": "9c1763b6-c83b-4a76-af58-64c0a6418326",
+      "artist": "Rimas Valeikis",
+      "set_code": "msc",
+      "collector_number": "165"
+    },
+    "invisible_force_field": {
+      "scryfall_id": "7b05925b-ac8f-4ca5-9c9d-5e4e408c9f1d",
+      "artist": "Erikas Perl",
+      "set_code": "msc",
+      "collector_number": "19"
+    },
+    "invisible_woman": {
+      "scryfall_id": "d8e13ecb-98be-4d9b-86a2-24eaa98f7f0d",
+      "artist": "Erikas Perl",
+      "set_code": "msc",
+      "collector_number": "1"
+    },
+    "island": {
+      "scryfall_id": "5a74175b-2418-4226-8435-1490532e644f",
+      "artist": "Raymond Bonilla",
+      "set_code": "msh",
+      "collector_number": "289"
+    },
+    "it_s_clobberin_time": {
+      "scryfall_id": "7665948b-23d0-4b06-a32a-bfab8009b04f",
+      "artist": "Thomas Chamberlain-Keen",
+      "set_code": "msc",
+      "collector_number": "66"
+    },
+    "lightning_greaves": {
+      "scryfall_id": "b61634ae-05be-4b56-8ebb-9d4ade902e42",
+      "artist": "Darius Zablockis",
+      "set_code": "msc",
+      "collector_number": "202"
+    },
+    "lockjaw_slobbering_teleporter": {
+      "scryfall_id": "e273f4e6-4691-4cb3-89e2-9b1ab45a2bc0",
+      "artist": "Thomas Chamberlain-Keen",
+      "set_code": "msc",
+      "collector_number": "36"
+    },
+    "medusa_inhuman_queen": {
+      "scryfall_id": "3187ebab-8008-455c-a3c9-794a5b225b88",
+      "artist": "Irvin Rodriguez",
+      "set_code": "msc",
+      "collector_number": "68"
+    },
+    "mind_s_dilation": {
+      "scryfall_id": "b9de3ca6-d62f-422b-a67f-199f535cb56f",
+      "artist": "Rafater",
+      "set_code": "msc",
+      "collector_number": "277"
+    },
+    "mirage_mirror": {
+      "scryfall_id": "e516bc14-749c-4da6-b5d3-cb5c16316e0c",
+      "artist": "Sveta Pikul",
+      "set_code": "msc",
+      "collector_number": "206"
+    },
+    "mister_fantastic": {
+      "scryfall_id": "f1d80509-ece1-4b6d-bfe5-c6d003f581cf",
+      "artist": "Gintas Galvanauskas",
+      "set_code": "msc",
+      "collector_number": "2"
+    },
+    "mister_fantastic_reed_richards": {
+      "scryfall_id": "17ef068b-61fc-443d-97b0-1e41f2622425",
+      "artist": "Rimas Valeikis",
+      "set_code": "msh",
+      "collector_number": "66"
+    },
+    "monologue_tax": {
+      "scryfall_id": "ee68d390-11cb-4617-a9ee-6e8cf7ff0e55",
+      "artist": "Vilhelmas Banys",
+      "set_code": "msc",
+      "collector_number": "139"
+    },
+    "mountain": {
+      "scryfall_id": "4bdbae27-9a55-485f-a1fc-3fa988184e9d",
+      "artist": "Rockey Chen",
+      "set_code": "msh",
+      "collector_number": "293"
+    },
+    "namor_atlantean_king": {
+      "scryfall_id": "6b06f1aa-53f1-49e1-b9f7-e4b489ef7d55",
+      "artist": "Mintautas Šukys",
+      "set_code": "msc",
+      "collector_number": "88"
+    },
+    "negative_zone_portal": {
+      "scryfall_id": "16fa4f17-972b-4a35-8dd6-88ee9b2ea2ce",
+      "artist": "Vilhelmas Banys",
+      "set_code": "msc",
+      "collector_number": "111"
+    },
+    "nova_flame": {
+      "scryfall_id": "1b5f713f-6ad9-445e-ae4c-56250bb3aecb",
+      "artist": "Erikas Perl",
+      "set_code": "msc",
+      "collector_number": "57"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "836b8f52-10d2-4716-9f7b-38fb23bc68de",
+      "artist": "Ben Harvey",
+      "set_code": "msc",
+      "collector_number": "254"
+    },
+    "path_of_discovery": {
+      "scryfall_id": "8063528c-7347-4757-8254-5aa3e4b61c6f",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "msc",
+      "collector_number": "179"
+    },
+    "path_to_exile": {
+      "scryfall_id": "95ca89ea-1200-4bb4-ae4b-af35d3ccd35b",
+      "artist": "Nino Is",
+      "set_code": "msc",
+      "collector_number": "141"
+    },
+    "plains": {
+      "scryfall_id": "5f029c91-f20b-4aa5-a7d9-dd6ddef1c877",
+      "artist": "Domenico Cava",
+      "set_code": "msh",
+      "collector_number": "287"
+    },
+    "power_pack": {
+      "scryfall_id": "04f8aa71-f27b-48b3-9146-b9e785555428",
+      "artist": "Billy Christian",
+      "set_code": "msc",
+      "collector_number": "90"
+    },
+    "prairie_stream": {
+      "scryfall_id": "b2e133b4-2263-4ac2-8d16-7bf307d5e104",
+      "artist": "Rockey Chen",
+      "set_code": "msc",
+      "collector_number": "257"
+    },
+    "promise_of_loyalty": {
+      "scryfall_id": "dcca54de-3b2e-4801-bb66-3809382d6f01",
+      "artist": "Sveta Pikul",
+      "set_code": "msc",
+      "collector_number": "142"
+    },
+    "quantum_misalignment": {
+      "scryfall_id": "561caecd-e065-48f6-8fde-85b938794ed3",
+      "artist": "Alexander Skripnikov",
+      "set_code": "msc",
+      "collector_number": "152"
+    },
+    "radiant_summit": {
+      "scryfall_id": "81b619cc-900c-4d65-83da-8b9dcb370984",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "msc",
+      "collector_number": "258"
+    },
+    "recurring_insight": {
+      "scryfall_id": "a3b0c460-1a5f-4e22-a594-34905117169c",
+      "artist": "Gintas Galvanauskas",
+      "set_code": "msc",
+      "collector_number": "154"
+    },
+    "rejuvenating_springs": {
+      "scryfall_id": "c4565a7b-a0ed-4a7f-ad48-7745c56d141b",
+      "artist": "Sveta Pikul",
+      "set_code": "msc",
+      "collector_number": "260"
+    },
+    "rootbound_crag": {
+      "scryfall_id": "42d174e5-b8c2-45eb-8e08-1b94fc27cbee",
+      "artist": "Eugene Maslovski",
+      "set_code": "msc",
+      "collector_number": "261"
+    },
+    "scorched_geyser": {
+      "scryfall_id": "43abdfba-0a55-4b8a-858e-3372ee40a579",
+      "artist": "Maxim Ruabtsev",
+      "set_code": "msc",
+      "collector_number": "264"
+    },
+    "seize_the_day": {
+      "scryfall_id": "9cb5d064-f474-4db9-b349-b9f71c587742",
+      "artist": "Michael MacRae",
+      "set_code": "msc",
+      "collector_number": "166"
+    },
+    "silver_surfer_galactus_s_herald": {
+      "scryfall_id": "b463462f-8044-4e57-b96e-408a9f4e0974",
+      "artist": "Irvin Rodriguez",
+      "set_code": "msc",
+      "collector_number": "10"
+    },
+    "sodden_verdure": {
+      "scryfall_id": "0a451ab5-6244-48a0-a638-07da72b156b5",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "msc",
+      "collector_number": "267"
+    },
+    "sol_ring": {
+      "scryfall_id": "5bef0790-aa1b-4144-8391-338e59e86115",
+      "artist": "Pace Wilder",
+      "set_code": "msc",
+      "collector_number": "212"
+    },
+    "sulfur_falls": {
+      "scryfall_id": "c762f475-7e58-4477-839b-b3c55434b88f",
+      "artist": "Piotr Dura",
+      "set_code": "msc",
+      "collector_number": "269"
+    },
+    "sunpetal_grove": {
+      "scryfall_id": "e83092ee-4a90-4eac-915f-3fd01b7d9bd0",
+      "artist": "Rafater",
+      "set_code": "msc",
+      "collector_number": "272"
+    },
+    "taunt_from_the_rampart": {
+      "scryfall_id": "ad79ee29-dd86-484f-bd70-8ecd9d90ef75",
+      "artist": "Thomas Chamberlain-Keen",
+      "set_code": "msc",
+      "collector_number": "188"
+    },
+    "terramorph": {
+      "scryfall_id": "1389d46e-956d-4be6-a519-9c8338007715",
+      "artist": "Eglė Mosakaitė",
+      "set_code": "msc",
+      "collector_number": "180"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "a81f924b-0527-4311-8120-9bfff71524f6",
+      "artist": "Arthur Yuan",
+      "set_code": "msc",
+      "collector_number": "273"
+    },
+    "the_fantasticar": {
+      "scryfall_id": "ed0beb69-8441-4104-9990-81bd82f81f9a",
+      "artist": "Maxim Ruabtsev",
+      "set_code": "msc",
+      "collector_number": "104"
+    },
+    "the_thing": {
+      "scryfall_id": "ba5167e4-27b1-4f55-8282-7b5bd6de611a",
+      "artist": "Darius Zablockis",
+      "set_code": "msc",
+      "collector_number": "4"
+    },
+    "three_visits": {
+      "scryfall_id": "99bf792f-963e-4509-8d3c-7db129c6a77f",
+      "artist": "Eugene Maslovski",
+      "set_code": "msc",
+      "collector_number": "181"
+    },
+    "tragic_arrogance": {
+      "scryfall_id": "956d4728-e7a3-43f4-a350-86eca1b95d06",
+      "artist": "Rimas Valeikis",
+      "set_code": "msc",
+      "collector_number": "144"
+    },
+    "ultimate_nullification": {
+      "scryfall_id": "3c27ca1c-8f2d-4ac8-aef1-bb6201763392",
+      "artist": "Erikas Perl",
+      "set_code": "msc",
+      "collector_number": "26"
+    },
+    "unstable_molecule_suit": {
+      "scryfall_id": "5e24bfd5-1bc1-4c4b-9268-8e3b9829784d",
+      "artist": "Jurijus Chitrovas",
+      "set_code": "msc",
+      "collector_number": "116"
+    },
+    "valeria_richards_precocious": {
+      "scryfall_id": "5e0c357b-c5e8-4082-b1ec-85d40d10524c",
+      "artist": "Justyna Dura",
+      "set_code": "msc",
+      "collector_number": "38"
+    },
+    "whirlwind_of_thought": {
+      "scryfall_id": "a3069683-0ff5-49e5-b7ae-f5bd40a4a32f",
+      "artist": "Viktor Fetsch",
+      "set_code": "msc",
+      "collector_number": "190"
+    },
+    "willie_lumpkin_postman": {
+      "scryfall_id": "2021033b-ccad-4cb0-9528-357a3c726008",
+      "artist": "Gintas Galvanauskas",
+      "set_code": "msc",
+      "collector_number": "101"
+    }
+  },
+  "cards": [
+    {
+      "id": "alicia_masters_skilled_sculptor"
+    },
+    {
+      "id": "annie_joins_up"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "baxter_building"
+    },
+    {
+      "id": "black_bolt_inhuman_king"
+    },
+    {
+      "id": "bovine_intervention"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "chromatic_lantern"
+    },
+    {
+      "id": "cinder_glade"
+    },
+    {
+      "id": "cleansing_nova"
+    },
+    {
+      "id": "clever_concealment"
+    },
+    {
+      "id": "clifftop_retreat"
+    },
+    {
+      "id": "collective_effort"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "cosmic_crucible"
+    },
+    {
+      "id": "council_of_reeds"
+    },
+    {
+      "id": "crystal_inhuman_princess"
+    },
+    {
+      "id": "cultivate"
+    },
+    {
+      "id": "cut_a_deal"
+    },
+    {
+      "id": "deep_analysis"
+    },
+    {
+      "id": "dragon_man_reformed_robot"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "expressive_iteration"
+    },
+    {
+      "id": "fabled_passage"
+    },
+    {
+      "id": "fantastic_elasticity"
+    },
+    {
+      "id": "farseek"
+    },
+    {
+      "id": "first_family"
+    },
+    {
+      "id": "flame_on"
+    },
+    {
+      "id": "forest",
+      "qty": 5
+    },
+    {
+      "id": "franklin_richards_ascendant"
+    },
+    {
+      "id": "galactus_devourer_of_worlds"
+    },
+    {
+      "id": "galvanic_iteration"
+    },
+    {
+      "id": "genesis_ultimatum"
+    },
+    {
+      "id": "glacial_fortress"
+    },
+    {
+      "id": "h_e_r_b_i_e_lovable_robot"
+    },
+    {
+      "id": "hinterland_harbor"
+    },
+    {
+      "id": "hull_breach"
+    },
+    {
+      "id": "human_torch"
+    },
+    {
+      "id": "into_the_time_vortex"
+    },
+    {
+      "id": "invisible_force_field"
+    },
+    {
+      "id": "island",
+      "qty": 4
+    },
+    {
+      "id": "it_s_clobberin_time"
+    },
+    {
+      "id": "lightning_greaves"
+    },
+    {
+      "id": "lockjaw_slobbering_teleporter"
+    },
+    {
+      "id": "medusa_inhuman_queen"
+    },
+    {
+      "id": "mind_s_dilation"
+    },
+    {
+      "id": "mirage_mirror"
+    },
+    {
+      "id": "mister_fantastic"
+    },
+    {
+      "id": "mister_fantastic_reed_richards"
+    },
+    {
+      "id": "monologue_tax"
+    },
+    {
+      "id": "mountain",
+      "qty": 3
+    },
+    {
+      "id": "namor_atlantean_king"
+    },
+    {
+      "id": "negative_zone_portal"
+    },
+    {
+      "id": "nova_flame"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "path_of_discovery"
+    },
+    {
+      "id": "path_to_exile"
+    },
+    {
+      "id": "plains",
+      "qty": 5
+    },
+    {
+      "id": "power_pack"
+    },
+    {
+      "id": "prairie_stream"
+    },
+    {
+      "id": "promise_of_loyalty"
+    },
+    {
+      "id": "quantum_misalignment"
+    },
+    {
+      "id": "radiant_summit"
+    },
+    {
+      "id": "recurring_insight"
+    },
+    {
+      "id": "rejuvenating_springs"
+    },
+    {
+      "id": "rootbound_crag"
+    },
+    {
+      "id": "scorched_geyser"
+    },
+    {
+      "id": "seize_the_day"
+    },
+    {
+      "id": "silver_surfer_galactus_s_herald"
+    },
+    {
+      "id": "sodden_verdure"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sulfur_falls"
+    },
+    {
+      "id": "sunpetal_grove"
+    },
+    {
+      "id": "taunt_from_the_rampart"
+    },
+    {
+      "id": "terramorph"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "the_fantasticar"
+    },
+    {
+      "id": "the_thing"
+    },
+    {
+      "id": "three_visits"
+    },
+    {
+      "id": "tragic_arrogance"
+    },
+    {
+      "id": "ultimate_nullification"
+    },
+    {
+      "id": "unstable_molecule_suit"
+    },
+    {
+      "id": "valeria_richards_precocious"
+    },
+    {
+      "id": "whirlwind_of_thought"
+    },
+    {
+      "id": "willie_lumpkin_postman"
+    }
+  ]
+}
