@@ -51,7 +51,7 @@ each heading; this table is generated from them.
 | Item | Effort | Impact | Depends on | Unlocks |
 |---|---|---|---|---:|
 | [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) | L | high | Divided damage that may hit players | 0 |
-| [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
+| [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Witherbloom Pestilence (Secrets of Strixhaven Commander)](#witherbloom-pestilence-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
 | [Silverquill Influence (Secrets of Strixhaven Commander)](#silverquill-influence-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
 | [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) | L | high | nothing | 0 |
@@ -148,6 +148,7 @@ each heading; this table is generated from them.
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
 | [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) | M | medium | nothing | 0 |
@@ -162,8 +163,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander).
 
 **Ready now, best first:**
 
@@ -262,16 +261,18 @@ same list, and `/extend-roadmap` starts at the top of it.
 93. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 94. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
 95. [Replays and sharing](#replays-and-sharing) — M, medium
-96. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-97. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-98. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-99. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-100. [Archidekt import](#archidekt-import) — S, low
-101. [Sound](#sound) — S, low
+96. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+97. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+98. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+99. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+100. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+101. [Archidekt import](#archidekt-import) — S, low
+102. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
 - [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players)
+- [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -492,6 +493,71 @@ gates pass.
   (601.2d) without changing what is announced or when, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
 
+### Voting: will of the council and council's dilemma
+
+Effort **M** · Impact **medium**, every voting card waits on it, Fateful Tempest in the Lorehold Spirit precon and Council's Judgment among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Voting (701.38) is absent. [rules-coverage.md](rules-coverage.md#not-implemented)
+lists "Voting — will of the council, council's dilemma" as not implemented, and
+the shipped decks avoid it. The nearest shapes in
+`engine/effects/ops_control.py` each miss one half of it: `join_forces` asks
+every player in turn order starting with the controller, which is the order a
+vote is cast in, but it adds up mana paid rather than tallying named choices;
+`choose_mode` and `ask_mode` in `engine/effects/context.py` let one chooser
+pick among labelled options, but bind no per-option count a later effect can
+read. `for_each_player` around `choose_mode` asks the right people and keeps
+nothing.
+
+So every "each player votes for A or B" card is unwritable. Fateful Tempest,
+in the Lorehold Spirit precon, is the card that found it; Council's Judgment,
+Tivit, Seller of Secrets and the Conspiracy council cards are the same
+sentence. Its gap record is `data/authoring/gaps/fateful_tempest.json`.
+
+#### The change
+
+1. A `vote` op in `engine/effects/ops_control.py`: starting with the
+   controller and in turn order (`GameState.turn_order`, as `join_forces`
+   walks it), each player in the game chooses one of the spec's named options
+   through `ask_mode`, with the votes so far in the decision's `context` so a
+   later voter sees them (701.38a). It binds the tally under `as`, one count
+   per option, read back as `{"binding": "<as>.<option>"}`, and the winners
+   (the options with the most votes, all of them on a tie) for will of the
+   council's "if X gets more votes or the vote is tied".
+2. A `vote_cast` event emitted per vote, so "whenever a player votes" has an
+   event to name later, without adding that trigger now.
+3. `cards.loader`'s `_validate_effect` refuses a `vote` with fewer than two
+   options or a missing `as`; the verifier's auto-answer table already answers
+   `CHOOSE_MODE`, so the behaviour gate needs nothing new.
+4. Harvest: Fateful Tempest, then the catalog's other voting cards through the
+   template tier with `--retry` and one `/author-cards` wave.
+
+It does not add extra votes (Brago's Representative, Grudge Keeper's
+"whenever a player votes") or vote-changing effects; those are additions on
+the `vote_cast` event once the op exists.
+
+#### Gate
+
+A unit test under `tests/unit/` for `vote`: players asked in turn order from
+the controller, each later voter's decision carrying the earlier votes, the
+tally bound per option, the tie reported as every leading option, an eliminated
+player not asked, and the loader refusing a one-option vote. Fateful Tempest's
+six gates pass.
+
+#### Open questions
+
+- **Where a vote is asked.** `ask_mode` per voter, or a decision kind of its
+  own? Recommended: `ask_mode` with a `purpose: "vote"` tag, because the
+  client and the CPUs already answer a labelled choice and a new decision kind
+  would need its frontend label, its auto-answer and an e2e path for no new
+  rule.
+- **How the CPUs vote.** Recommended: the heuristic agent's existing label
+  answer for now, with the `purpose` tag left for a strategy to read; voting
+  well is a CPU item, not a rules one.
+- **Is it an ADR.** Recommended: no; it is an additive op, and the line in
+  rules-coverage.md moves from "not implemented" to the implemented table.
+
 ## Decks
 
 ### Prismari Artistry (Secrets of Strixhaven Commander)
@@ -568,7 +634,7 @@ whole-game test able to draw the deck.
 
 ### Lorehold Spirit (Secrets of Strixhaven Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma).
 
 #### Today
 
