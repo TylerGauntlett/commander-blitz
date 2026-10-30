@@ -1362,7 +1362,7 @@ class TestTrudgeGardensFungusBeastHasTrample:
         assert (token.power, token.toughness) == (4, 4)
         assert sorted(token.colors) == ["G"]
         assert list(token.types) == ["Creature"]
-        assert list(token.subtypes) == ["Fungus", "Beast"]
+        assert sorted(token.subtypes) == ["Beast", "Fungus"]
         assert "trample" in token.keywords and len(token.keywords) == 1
         assert not token.abilities
 
