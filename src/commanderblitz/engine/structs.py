@@ -1570,6 +1570,12 @@ class EnteredPermanent:
     types: frozenset[str] = frozenset()
     subtypes: frozenset[str] = frozenset()
     colors: frozenset[str] = frozenset()
+    #: Whether the arrival was a token (111.1). "Nontoken creatures you had
+    #: enter the battlefield under your control this turn" -- Gyome, Master
+    #: Chef -- asks it after the fact, and a token that has since left has been
+    #: popped out of `state.objects` (704.5d), so the answer has to travel with
+    #: the record like every other clause the filter reads.
+    is_token: bool = False
     #: The `state.event_batch` the arrival belonged to -- which permanents
     #: entered **together**. Giada, Font of Hope counts "each Angel you
     #: *already* control", and an Angel arriving in the same event is not one
@@ -1584,6 +1590,7 @@ class EnteredPermanent:
         not_types: Iterable[str] = (),
         subtypes: Iterable[str] = (),
         colors: Iterable[str] = (),
+        is_token: bool | None = None,
     ) -> bool:
         """Does this arrival answer a card's filter?
 
@@ -1591,7 +1598,9 @@ class EnteredPermanent:
         a card author who knows one knows the other: ``types`` is all-of ("an
         artifact creature" is both), ``not_types`` none-of ("two or more
         **nonland** permanents", Celebration), ``subtypes`` and ``colors`` are
-        any-of ("a Human or an Elf").  A clause left out filters nothing.
+        any-of ("a Human or an Elf").  ``is_token`` is the selector's boolean:
+        ``False`` is "nontoken", ``True`` is "token", and ``None`` (the clause
+        left out) asks neither.  A clause left out filters nothing.
         """
         if self.controller not in set(controllers):
             return False
@@ -1602,6 +1611,8 @@ class EnteredPermanent:
         if subtypes and not (set(subtypes) & self.subtypes):
             return False
         if colors and not (set(colors) & self.colors):
+            return False
+        if is_token is not None and self.is_token != is_token:
             return False
         return True
 

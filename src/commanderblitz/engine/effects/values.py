@@ -652,6 +652,7 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                 not_types=spec.get("not_types") or (),
                 subtypes=spec.get("subtypes") or (),
                 colors=spec.get("colors") or (),
+                is_token=spec.get("is_token"),
             )
         )
     if "damage_taken_this_turn" in expr:
@@ -1237,9 +1238,10 @@ def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = 
 
 #: What ``{"permanents_entered_this_turn": {...}}`` may filter on. Every clause
 #: is one the snapshot can honestly answer -- `EnteredPermanent` carries exactly
-#: these characteristics, taken as the permanent arrived.
+#: these characteristics, taken as the permanent arrived, and whether it was a
+#: token.
 ENTERED_FILTER_KEYS = frozenset(
-    {"controller", "types", "not_types", "subtypes", "colors", "exclude_self"}
+    {"controller", "types", "not_types", "subtypes", "colors", "is_token", "exclude_self"}
 )
 
 
@@ -1333,6 +1335,10 @@ def validate_entered_filter(spec: Any, where: str) -> None:
         # Truthiness would make `"false"` -- a non-empty string -- exclude the
         # source, quietly turning "a Human entered" into "another Human did".
         raise DslError(f"{where}.exclude_self: must be true or false")
+    if "is_token" in spec and not isinstance(spec["is_token"], bool):
+        # The same trap one key over: `"false"` is truthy, and Gyome's
+        # "nontoken creatures" would count only the tokens.
+        raise DslError(f"{where}.is_token: must be true or false")
 
 
 def validate_half(spec: Any, where: str) -> None:

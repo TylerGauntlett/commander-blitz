@@ -1722,6 +1722,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
                 not_types=spec.get("not_types") or (),
                 subtypes=spec.get("subtypes") or (),
                 colors=spec.get("colors") or (),
+                is_token=spec.get("is_token"),
             )
         )
     if "counters_on" in expr:

@@ -884,6 +884,7 @@ class GameState:
                         types=frozenset(c.types),
                         subtypes=frozenset(c.subtypes),
                         colors=frozenset(c.colors),
+                        is_token=bool(obj.is_token),
                         batch=int(data.get("batch", -1)),
                     )
                 )

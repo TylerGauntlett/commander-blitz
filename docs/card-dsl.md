@@ -1712,7 +1712,8 @@ The only ledger value that takes a **filter** rather than a player spec, because
 the printed sentence asks *which* permanents entered and not how many did. The
 clauses are the selector language's, spelled the same way: `controller` (a player
 spec), `types` (all-of), `not_types` (none-of — Celebration's "two or more
-**nonland** permanents"), `subtypes` and `colors` (any-of), and `exclude_self`.
+**nonland** permanents"), `subtypes` and `colors` (any-of), `is_token`, and
+`exclude_self`.
 `not_types` is not a list of every other card type written into `types`: that
 is all-of, so it would count only permanents that were all of them at once, and
 an any-of spelling would still count an artifact land.
@@ -1726,16 +1727,30 @@ an any-of spelling would still count an artifact land.
 `controller` is **required** — omitted, it would silently count the opponents'
 arrivals too. Say `"all"` when a card really does mean anybody's.
 
+**`is_token: false` is the printed word "nontoken"**, and `true` is "token"; it
+must be a boolean. Gyome, Master Chef counts "nontoken creatures you had enter
+the battlefield under your control this turn":
+
+```jsonc
+{ "permanents_entered_this_turn":
+    { "controller": "you", "types": ["Creature"], "is_token": false } }
+```
+
+Left out, every creature token made this turn is counted too. The near miss is
+`{"count": {"zone": "battlefield", "is_token": false, "entered_this_turn": true}}`,
+which forgets a creature that entered and was sacrificed before the end step.
+
 **`exclude_self` is the printed word "another".** Éowyn is herself a Human and
 may well have entered this turn, so without it her own arrival satisfies her own
 trigger. It matches on the recorded arrival's *oid*, so it excludes her rather
 than everything shaped like her.
 
 The record is `TurnLedger.permanents_entered`, a snapshot per arrival taken from
-**derived** characteristics as the permanent entered — so a changeling and a
-creature a static had made a Human both count, and so the entry survives the
-permanent leaving. That last part is the point: a Human that entered and died
-this turn still entered, and there is nothing left on the board to ask.
+**derived** characteristics and the token flag as the permanent entered — so a
+changeling and a creature a static had made a Human both count, and so the entry
+survives the permanent leaving. That last part is the point: a Human that
+entered and died this turn still entered, and there is nothing left on the board
+to ask.
 
 #### `has_counters` — "with counters on them"
 
