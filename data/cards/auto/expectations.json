@@ -10207,6 +10207,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "priest_of_forgotten_gods": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "priest_of_titania": {
     "zone": "battlefield"
   },
@@ -11019,6 +11026,17 @@
     "zone": "battlefield"
   },
   "rib_cage_spider": {
+    "zone": "battlefield"
+  },
+  "ribtruss_roaster": {
+    "battlefield_count": 31,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 4
+    },
     "zone": "battlefield"
   },
   "riders_of_rohan": {
@@ -12396,6 +12414,13 @@
   "smoldering_marsh": {
     "zone": "battlefield"
   },
+  "smothering_abomination": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "smothering_tithe": {
     "battlefield_count": 33,
     "hand_size": {
@@ -12722,6 +12747,16 @@
       "0": 48
     }
   },
+  "springbloom_druid": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
   "springheart_nantuko": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12839,6 +12874,10 @@
     "zone": "battlefield"
   },
   "steeple_roc": {
+    "zone": "battlefield"
+  },
+  "stensian_sanguinist_exsanguinate": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sterling_hound": {
@@ -13457,6 +13496,10 @@
     "life": {
       "0": 41
     }
+  },
+  "teacher_s_pest": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "teferi_master_of_time": {
     "battlefield_count": 33,

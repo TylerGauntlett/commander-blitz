@@ -88812,12 +88812,12 @@
     },
     "Exsanguinate": {
       "edhrec_rank": 283,
-      "gate": "template",
+      "gate": null,
       "name": "Exsanguinate",
-      "reason": "no template for: Each opponent loses X life. You gain life equal to the life lost this way",
+      "reason": "",
       "scryfall_id": "333c8e71-fe90-408c-aabd-c5b7d83d0f03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exsanguinator Cavalry": {
@@ -206762,12 +206762,12 @@
     },
     "Priest of Forgotten Gods": {
       "edhrec_rank": 1401,
-      "gate": "template",
+      "gate": null,
       "name": "Priest of Forgotten Gods",
-      "reason": "no template for: {T}, Sacrifice two other creatures: Any number of target players each lose 2 life and sacr",
+      "reason": "",
       "scryfall_id": "363f8761-91a7-47e8-9e15-3b73d59bc020",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of Gix": {
@@ -223412,12 +223412,12 @@
     },
     "Ribtruss Roaster": {
       "edhrec_rank": 7622,
-      "gate": "template",
+      "gate": null,
       "name": "Ribtruss Roaster",
-      "reason": "no template for: Devour 1",
+      "reason": "",
       "scryfall_id": "8217100d-8244-4565-97bd-6c0f38c3e2f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Richard Garfield, Ph.D.": {
@@ -253102,12 +253102,12 @@
     },
     "Smothering Abomination": {
       "edhrec_rank": 3782,
-      "gate": "template",
+      "gate": null,
       "name": "Smothering Abomination",
-      "reason": "no template for: At the beginning of your upkeep, sacrifice a creature",
+      "reason": "",
       "scryfall_id": "aac33238-e4bd-4c72-aecc-9905232c3ab4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smothering Tithe": {
@@ -261232,12 +261232,12 @@
     },
     "Springbloom Druid": {
       "edhrec_rank": 770,
-      "gate": "template",
+      "gate": null,
       "name": "Springbloom Druid",
-      "reason": "no template for: When this creature enters, you may sacrifice a land. If you do, search your library for up",
+      "reason": "",
       "scryfall_id": "17d67b88-3f76-401f-b04a-f2bcaab4aa97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Springheart Nantuko": {
@@ -264122,12 +264122,12 @@
     },
     "Stensian Sanguinist // Exsanguinate": {
       "edhrec_rank": 5534,
-      "gate": "template",
+      "gate": null,
       "name": "Stensian Sanguinist // Exsanguinate",
-      "reason": "no template for: Whenever you attack, target creature gains deathtouch until end of turn. Whenever that cre",
+      "reason": "",
       "scryfall_id": "66d88104-c69d-4349-a4ae-4a3d855a3536",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Step Between Worlds": {
@@ -276002,12 +276002,12 @@
     },
     "Teacher's Pest": {
       "edhrec_rank": 7138,
-      "gate": "template",
+      "gate": null,
       "name": "Teacher's Pest",
-      "reason": "no template for: Whenever this creature attacks, you gain 1 life",
+      "reason": "",
       "scryfall_id": "eaa358ac-761d-4507-aa15-3d4684027207",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teachings of the Archaics": {
