@@ -41902,12 +41902,12 @@
     },
     "Ceaseless Conflict": {
       "edhrec_rank": 12071,
-      "gate": "template",
+      "gate": null,
       "name": "Ceaseless Conflict",
-      "reason": "no template for: Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nont",
+      "reason": "",
       "scryfall_id": "a0e18f74-7fa6-4e3a-bc80-390a25055205",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ceaseless Searblades": {
@@ -212272,22 +212272,22 @@
     },
     "Quintorius, Field Historian": {
       "edhrec_rank": 9458,
-      "gate": "template",
+      "gate": null,
       "name": "Quintorius, Field Historian",
-      "reason": "no template for: Spirits you control get +1/+0",
+      "reason": "",
       "scryfall_id": "8e3c7f00-e997-4b07-98af-45b9ea35d2d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quintorius, History Chaser": {
       "edhrec_rank": 10055,
-      "gate": "template",
+      "gate": null,
       "name": "Quintorius, History Chaser",
-      "reason": "no template for: Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creatur",
+      "reason": "",
       "scryfall_id": "0742f19d-179c-43c4-ab95-4160c56b4384",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quintorius, Loremaster": {
@@ -250412,12 +250412,12 @@
     },
     "Skyclave Apparition": {
       "edhrec_rank": 1206,
-      "gate": "template",
+      "gate": null,
       "name": "Skyclave Apparition",
-      "reason": "no template for: When this creature enters, exile up to one target nonland, nontoken permanent you don't co",
+      "reason": "",
       "scryfall_id": "e671de25-c47c-48a1-919b-6aa30dab142f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyclave Cleric // Skyclave Basilica": {

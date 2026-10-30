@@ -24030,6 +24030,48 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ceaseless_conflict",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Ceaseless Conflict",
+      "oracle_text": "Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nontoken creature you controlled that was destroyed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "destroyed",
+              "controller": "you",
+              "is_token": false
+            }
+          },
+          "op": "create_token",
+          "player": "you",
+          "token": "spirit_3_2_rw"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -119514,6 +119556,169 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Spirits you control get +1/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_3_2_rw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "quintorius_field_historian",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Quintorius, Field Historian",
+      "oracle_text": "Spirits you control get +1/+0.\nWhenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elephant",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "spirit_3_2_rw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard"
+          }
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "mill",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "discard": 1
+              },
+              "player": "you",
+              "prompt": "Discard a card to draw two cards, then mill a card?"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: You may discard a card. If you do, draw two cards, then mill a card."
+        },
+        {
+          "cost": {
+            "loyalty": -4
+          },
+          "effects": [
+            {
+              "keywords": [
+                "double_strike",
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Spirit"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "−4: Spirits you control gain double strike and vigilance until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "quintorius_history_chaser",
+      "loyalty": 5,
+      "mana_cost": "{2}{R}{W}",
+      "name": "Quintorius, History Chaser",
+      "oracle_text": "Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.\n+1: You may discard a card. If you do, draw two cards, then mill a card.\n−4: Spirits you control gain double strike and vigilance until end of turn.\nQuintorius, History Chaser can be your commander.",
+      "source": "auto",
+      "subtypes": [
+        "Quintorius"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -138916,6 +139121,109 @@
         "Soldier"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "is_token": false,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile up to one target nonland, nontoken permanent you don't control with mana value 4 or less.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": {
+                    "owner_of": "each"
+                  },
+                  "op": "create_token",
+                  "power": {
+                    "mana_value_of": {
+                      "binding": "each"
+                    }
+                  },
+                  "token": "illusion_x_x_u",
+                  "toughness": {
+                    "mana_value_of": {
+                      "binding": "each"
+                    }
+                  }
+                }
+              ],
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, the exiled card's owner creates an X/X blue Illusion creature token, where X is the mana value of the exiled card.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "skyclave_apparition",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Skyclave Apparition",
+      "oracle_text": "When this creature enters, exile up to one target nonland, nontoken permanent you don't control with mana value 4 or less.\nWhen this creature leaves the battlefield, the exiled card's owner creates an X/X blue Illusion creature token, where X is the mana value of the exiled card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Spirit"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

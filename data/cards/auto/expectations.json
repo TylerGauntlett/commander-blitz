@@ -2148,6 +2148,15 @@
   "caves_of_koilos": {
     "zone": "battlefield"
   },
+  "ceaseless_conflict": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 4,
+    "tokens": {
+      "count": 2,
+      "id": "spirit_3_2_rw"
+    },
+    "zone": "graveyard"
+  },
   "celes_rune_knight": {
     "battlefield_count": 33,
     "hand_size": {
@@ -10314,6 +10323,18 @@
   "quilled_slagwurm": {
     "zone": "battlefield"
   },
+  "quintorius_field_historian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "quintorius_history_chaser": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
+  },
   "quirion_trailblazer": {
     "zone": "battlefield"
   },
@@ -12084,6 +12105,11 @@
     "zone": "battlefield"
   },
   "skyblade_of_the_legion": {
+    "zone": "battlefield"
+  },
+  "skyclave_apparition": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "skyclave_cleric_skyclave_basilica": {
