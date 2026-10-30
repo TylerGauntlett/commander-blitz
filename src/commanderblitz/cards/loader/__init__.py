@@ -1373,6 +1373,28 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: 'exiles_itself' only means anything on an instant or "
             f"sorcery -- a permanent spell enters the battlefield instead"
         )
+    if model.tucks_itself is not None:
+        # The ordinal counts from 1, as `put_on_top`'s `from_top` does: a 0
+        # would clamp silently to the top, a card drawn a turn early.
+        if model.tucks_itself != "bottom" and model.tucks_itself < 1:
+            raise DslError(
+                f"{where}: 'tucks_itself' is a depth counted from 1 (first from "
+                f"the top), or 'bottom'"
+            )
+        # Rebound's guard, for its reason: the rider replaces the graveyard,
+        # and a permanent spell enters the battlefield instead.
+        if set(model.types) & {
+            "Creature",
+            "Land",
+            "Artifact",
+            "Enchantment",
+            "Planeswalker",
+            "Battle",
+        }:
+            raise DslError(
+                f"{where}: 'tucks_itself' only means anything on an instant or "
+                f"sorcery -- a permanent spell enters the battlefield instead"
+            )
     if model.exiles_itself and model.rebound:
         # Both replace the graveyard with exile, and rebound also promises the
         # card back at the next upkeep. Written together, whichever the code
@@ -1535,11 +1557,31 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         additional_optional = True
         additional_repeatable = True
 
-    escalate = ManaCost.parse(model.escalate) if model.escalate else None
-    if escalate is not None:
-        if escalate.x_count or escalate.mana_value() == 0:
+    # Escalate's cost is a mana string ("Escalate {G}") or a full cost
+    # ("Escalate--Tap an untapped creature you control"): either way one
+    # payment per mode beyond the first, and the same desugaring below.
+    escalate = None
+    if model.escalate is not None:
+        escalate_model = (
+            CostModel(mana=model.escalate) if isinstance(model.escalate, str) else model.escalate
+        )
+        if escalate_model.mana_reduction or escalate_model.tap or escalate_model.untap:
+            # A reduction is folded nowhere (additional_cost's refusal above),
+            # and a spell on the stack has no {T} to pay -- either would load
+            # clean and be ignored.
             raise DslError(
-                f"{where}: escalate {model.escalate!r} must be a fixed, non-free mana cost"
+                f"{where}.escalate: 'mana_reduction', 'tap' and 'untap' mean "
+                f"nothing on a spell's escalate cost"
+            )
+        escalate = _compile_cost(escalate_model, f"{where}.escalate")
+        if escalate.mana.x_count or (
+            escalate.charges_nothing() and escalate.mana.mana_value() == 0
+        ):
+            # Free and repeatable is every mode for nothing; X would have to
+            # be announced once per payment.
+            raise DslError(
+                f"{where}: escalate {model.escalate!r} must be a fixed cost that "
+                f"charges something"
             )
         if additional_cost is not None or model.additional_optional or model.additional_repeatable:
             # Escalate *is* the additional cost, desugared below; a second one
@@ -1557,7 +1599,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'escalate' needs the spell's effects to be one top-level "
                 f"'choose_mode' with 'or_more'"
             )
-        additional_cost = _compile_cost(CostModel(mana=model.escalate), f"{where}.escalate")
+        additional_cost = escalate
         additional_optional = True
         additional_repeatable = True
 
@@ -1837,10 +1879,43 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             _validate_cost_reduction(
                 flashback.mana_reduction, f"{where}.graveyard_cost.mana_reduction"
             )
-        if model.retrace:
+        if model.retrace or model.graveyard_additional_cost is not None:
             # Both widen legality to the graveyard and each replaces the other's
             # answer to "what does it cost from there".
-            raise DslError(f"{where}: a card may not have both a graveyard cost and 'retrace'")
+            raise DslError(
+                f"{where}: a card may not have both a graveyard cost and 'retrace' "
+                f"or 'graveyard_additional_cost'"
+            )
+    # Retrace and its generalisation: the printed price from the graveyard plus
+    # an additional cost. One engine slot (`CardDef.retrace` and its
+    # `retrace_cost`), two spellings -- the keyword's land discard, or the
+    # card's own cost.
+    retrace_cost = None
+    if model.graveyard_additional_cost is not None:
+        extra_cost = model.graveyard_additional_cost
+        if model.retrace:
+            raise DslError(
+                f"{where}: 'retrace' is 'graveyard_additional_cost' with a land "
+                f"discard -- give one or the other"
+            )
+        if extra_cost.mana_reduction or extra_cost.x_value or extra_cost.tap or extra_cost.untap:
+            # Nothing prices a reduction or an X here, and a card in a
+            # graveyard has no {T} to pay: each would load and be ignored.
+            raise DslError(
+                f"{where}.graveyard_additional_cost: 'mana_reduction', 'x_value', "
+                f"'tap' and 'untap' mean nothing on a cast from the graveyard"
+            )
+        retrace_cost = _compile_cost(extra_cost, f"{where}.graveyard_additional_cost")
+        if retrace_cost.mana.x_count or (
+            retrace_cost.charges_nothing() and retrace_cost.mana.mana_value() == 0
+        ):
+            # Free would be Gravecrawler's permission under a misleading name
+            # (a `cast_from_graveyard` static), and X would have nobody to
+            # announce it.
+            raise DslError(
+                f"{where}: 'graveyard_additional_cost' must be a fixed cost that "
+                f"charges something"
+            )
     if graveyard_spec is None and model.graveyard_cast != "exile":
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
@@ -2048,7 +2123,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         melds_into=model.melds_into,
         emerge=emerge,
         cost_reduction=dict(model.cost_reduction) if model.cost_reduction else None,
-        retrace=model.retrace,
+        retrace=model.retrace or retrace_cost is not None,
+        **({"retrace_cost": retrace_cost} if retrace_cost is not None else {}),
         flashback=flashback,
         evoke_label=model.evoke_label,
         warp=warp,
@@ -2532,6 +2608,14 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
         validate_trigger_filter(model.trigger.filter, f"{where}.trigger.filter")
+        if isinstance((model.trigger.filter or {}).get("attacking_player"), dict):
+            # Nothing is bound when a trigger filter is asked, so "attacking
+            # the player in binding X" would match nothing and the trigger
+            # would never fire.
+            raise DslError(
+                f"{where}.trigger.filter: attacking_player takes a word here "
+                f"(nothing is bound yet), not a binding"
+            )
         shares =(model.trigger.filter or {}).get("shares_a_creature_type_with")
         if shares is not None and shares != "self":
             # Nothing is bound when a trigger filter is asked, so a binding name
@@ -4704,6 +4788,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'or_planeswalkers' only means anything on an attack_tax, "
             f"not on {model.effect!r}"
         )
+    if model.defending is not None and model.effect != "attacks_if_able":
+        # "...attacks <that player> each combat if able" is a clause of the
+        # attack requirement and of nothing else; on any other static it would
+        # load, print and change nothing.
+        raise DslError(
+            f"{where}: 'defending' only means anything on an attacks_if_able, "
+            f"not on {model.effect!r}"
+        )
     if model.player_only and model.effect != "cant_attack_you":
         # "...can't attack you" with the walkers left open is a clause of the
         # wall and of nothing else; `attack_tax` already reaches only the
@@ -4859,6 +4951,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"can't be put on (\"-1/-1\")"
             )
         _check_counter_kind(model.counter, f"{where}.counter")
+
+    if model.effect == "legend_rule_exemption":
+        # Council of Reeds: "The legend rule doesn't apply to creatures you
+        # control." No filter would lift the rule for every permanent on the
+        # table, including the opponents', which no printed card of this shape
+        # says; Mirror Gallery's "doesn't apply" is written `controller: any`.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: legend_rule_exemption needs 'affects' naming the "
+                f"permanents the legend rule doesn't apply to -- Council of "
+                f"Reeds says creatures you control"
+            )
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: legend_rule_exemption is an exemption, not a "
+                f"quantity; it takes 'affects' and an optional 'condition'"
+            )
 
     if model.effect == "enters_with_additional_counters":
         # Oath of Gideon: "Each planeswalker you control enters with an
@@ -5260,6 +5369,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["or_planeswalkers"] = True
     if model.player_only:
         static["player_only"] = True
+    if model.defending is not None:
+        static["defending"] = model.defending
     if model.effect in ("spell_cost_increase", "granted_alternative_cost"):
         # Pruned like the two above, so the mapping `player_statics.spell_life_tax`
         # and `player_statics.granted_alternative_cost` read carries nothing the

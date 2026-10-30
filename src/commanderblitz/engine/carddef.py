@@ -1281,8 +1281,9 @@ class CardDef:
     #: Approach of the Second Sun's "seventh from the top". The eighth rider
     #: on the resolution slot, and the only one whose destination is a library
     #: and whose value is a depth rather than a flag. The printed ordinal,
-    #: counting from 1.
-    tucks_itself: int | None = None
+    #: counting from 1, or ``"bottom"`` for "on the bottom of its owner's
+    #: library" (Ultimate Nullification).
+    tucks_itself: int | str | None = None
     #: **Overload**. A third cast variant, and the only one that changes what
     #: the spell *targets* rather than what it costs: an overloaded spell is put
     #: on the stack with no targets at all, and the card branches on
@@ -1322,12 +1323,14 @@ class CardDef:
     #: under, so the residual gate can say which printed line the cost claims and
     #: check that the symbols on that line are the ones actually charged.
     multikicker: ManaCost | None = None
-    #: **Escalate {G}** (702.120a). Desugared by the loader into the
+    #: **Escalate** (702.120a): the cost of one mode beyond the first -- mana
+    #: ("Escalate {G}") or anything else a `Cost` holds ("Escalate--Tap an
+    #: untapped creature you control"). Desugared by the loader into the
     #: repeatable optional additional cost above, like multikicker; this one is
     #: read too, by `casting._additional_ceiling` (at most one payment per mode
-    #: beyond the first) and `Game._cast` (the cast chooses exactly one mode
-    #: more than it paid for).
-    escalate: ManaCost | None = None
+    #: beyond the first, and no more than the board can pay) and `Game._cast`
+    #: (the cast chooses exactly one mode more than it paid for).
+    escalate: Cost | None = None
     #: **Strive**: the mana added to the spell's total cost once for each target
     #: beyond the first (601.2f). Read by `casting.strive_surcharge`, which both
     #: legality and `Game._cast` price through, so the line offered and the
@@ -1402,8 +1405,16 @@ class CardDef:
     #: variant goes on that variant's own cost node instead, as
     #: `Cost.mana_reduction`.
     cost_reduction: Mapping[str, Any] | None = None
-    #: Retrace: castable from the graveyard for its cost plus a discarded land.
+    #: Castable from the graveyard at its printed cost plus `retrace_cost`:
+    #: Retrace's discarded land card, or a card's own
+    #: ``graveyard_additional_cost`` (Dragon Man, Reformed Robot's "by
+    #: discarding a card"). Read by `casting` (the line) and `Game._cast` (the
+    #: payment, after the mana).
     retrace: bool = False
+    #: The additional cost of casting this from the graveyard under `retrace`.
+    retrace_cost: Cost = field(
+        default_factory=lambda: Cost(discard=1, discard_selector={"types": ["Land"]})
+    )
     #: Ascend. Deliberately *not* a `Keyword`: the enum's members are
     #: read by `grant_keyword` and the evasion checks off derived
     #: characteristics, and Ascend is neither granted nor evasive --
@@ -1508,11 +1519,6 @@ class CardDef:
         if gift_promised and self.gift_targets is not None:
             return self.gift_targets
         return self.targets
-
-    @property
-    def retrace_cost(self) -> Cost:
-        """The additional cost of casting this from the graveyard."""
-        return Cost(discard=1, discard_selector={"types": ["Land"]})
 
     # -- type predicates ----------------------------------------------------
 

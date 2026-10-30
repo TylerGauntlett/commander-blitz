@@ -1989,6 +1989,25 @@ counter on a permanent, and is untouched. `affects` and `counter` are both
 required. **Not** `replace_counters` with `counter_multiplier: 0`, which the
 loader refuses because a prevention is a different sentence.
 
+### `legend_rule_exemption` — the legend rule doesn't apply
+
+"The \"legend rule\" doesn't apply to creatures you control." — Council of
+Reeds
+
+```jsonc
+{"kind": "static",
+ "text": "The \"legend rule\" doesn't apply to creatures you control.",
+ "effect": "legend_rule_exemption",
+ "affects": {"controller": "you", "types": ["Creature"]}}
+```
+
+`sba._legend_rule` asks `player_statics.legend_rule_exempt` of each legendary
+permanent and leaves a matching one out of 704.5j's per-name grouping: two
+matching namesakes both stay, and a matching permanent never sends a
+non-matching namesake to the graveyard. `affects` is required and `amount` is
+refused. **Not** `copy_permanent`'s `remove_supertypes: ["Legendary"]`, which
+makes the copy nonlegendary — a different card for every "legendary" reader.
+
 ### `enters_with_additional_counters` — a static about other arrivals
 
 "Each planeswalker you control enters with an additional loyalty counter on
@@ -4154,6 +4173,16 @@ combat's restriction went with the combat that bought it. `this_turn` is cleared
 at cleanup beside `clear_until_eot`, because Call for Aid resolves in a main
 phase and means the whole turn, extra combats included.
 
+The third duration, `attacker_next_turn`, is "that player can't attack you or
+permanents you control **during their next turn**" (Willie Lumpkin, Postman,
+with `planeswalkers: true`). It is pending from resolution
+(`AttackRestriction.in_force_turn` is `None`), armed by the attacker's next
+untap step, in force for that turn only and dropped at its cleanup. Keyed to the
+attacker rather than a turn number, so an extra turn or an elimination moves it
+with the seat. `this_turn` or `this_combat` would have run out on the turn the
+trigger resolved, and `delay` fires on a step or its controller's own turn,
+never a named other player's.
+
 Three things it deliberately does **not** do:
 
 | | |
@@ -4234,6 +4263,37 @@ otherwise have "Done attacking" withheld with no `ADD_ATTACKER` to offer.
 if able" is a per-creature restriction on *which* defender, and unlike this one
 it does reach planeswalkers, which is why `attack_target_forbidden` is told which
 kind of attack it is being asked about rather than inferring it.
+
+
+### `objects` — "those creatures can't attack you … for as long as it has a vow counter"
+
+    Promise of Loyalty — "Each player puts a vow counter on a creature they
+    control and sacrifices the rest. Each of those creatures can't attack you or
+    planeswalkers you control for as long as it has a vow counter on it."
+
+```jsonc
+{ "op": "cant_attack_player", "objects": { "binding": "kept" },
+  "defender": "you", "duration": "while_counter", "counter": "vow",
+  "planeswalkers": true }
+```
+
+`objects` in place of `attacker` names **creatures** instead of a player, and
+each one carries the prohibition itself as a `structs.AttackMark`, read beside
+the table in `combat._attack_prohibited`. So it follows the creature to a new
+controller, and a creature that leaves and returns is a new object without it
+(400.7). `planeswalkers` means what it means on the table: the defender's
+planeswalkers and battles are closed as well.
+
+The creature form has one clock, `while_counter`, with `counter` naming the
+kind: the mark stands while the creature has one and is dropped when the last
+one goes (`GameObject.remove_counter`), so a counter put back later does not
+revive it (611.2b). A creature without the counter at resolution gets nothing.
+The loader refuses `objects` beside `attacker`, any other `duration` with
+`objects`, a missing `counter`, and `while_counter` without `objects`.
+
+The `cant_attack_you` static is the near miss and is scoped to the seat of the
+permanent printing it: granted to another player's creature, "you" would be
+that creature's own controller.
 
 ## Goad
 
@@ -5078,6 +5138,7 @@ them where it is sitting:
 "emerge_subtype": "Goblin"                  // offering: only that type may be eaten
 "pay_generic_with": "tap_creatures"         // convoke; "tap_artifacts" is improvise, "exile_from_graveyard" delve
 "retrace": true                             // cast from the graveyard, discarding a land
+"graveyard_additional_cost": { "discard": 1 } // …or paying any other cost on top (Dragon Man)
 "graveyard_cost": { "mana": "{1}{U}", "pay_life": 3 }  // cast from the graveyard
 "graveyard_cast": "exile"                   // …and where it goes afterwards
 "graveyard_cast_transformed": true          // disturb: it comes back as its back face
@@ -5098,6 +5159,31 @@ them where it is sitting:
 "multikicker": "{1}{W}"                     // …the printed name for exactly those three
 "strive": "{1}{W}"                          // costs this much more per target beyond the first
 ```
+
+#### Retrace and "by discarding a card"
+
+```jsonc
+// Dragon Man, Reformed Robot: "You may cast this card from your graveyard by
+// discarding a card in addition to paying its other costs."
+"graveyard_additional_cost": { "discard": 1 }
+```
+
+Retrace's permission with the card's own additional cost. Both compile to one
+engine slot: `CardDef.retrace`, with `retrace_cost` the price paid on top of the
+printed mana cost from the graveyard — "discard a land card" for `retrace: true`
+(702.81a), the given cost otherwise. Legality offers the line only while that
+cost is payable, and `Game._cast` charges it after the mana (601.2g), so a land
+tapped for the spell may still be the card discarded. The card goes wherever it
+normally would afterwards; nothing exiles it.
+
+The loader refuses the field beside `retrace` (the keyword *is* this field with
+a land discard) or a `graveyard_cost`, a cost that charges nothing or has an X,
+and `tap`, `untap`, `mana_reduction` or `x_value` in it. The near misses each
+price something else: `graveyard_cost` is an *alternative* cost that replaces
+the mana cost, and a `cast_from_graveyard` static with `active_zones:
+["graveyard"]` (Gravecrawler) grants the printed price with nothing added. A
+permanent's printed line is claimed by the residual gate only when the discard
+it names is the one charged.
 
 #### Convoke, improvise and delve
 
@@ -5496,25 +5582,37 @@ payment.
 "spell_effects": [ { "op": "choose_mode", "count": 1, "or_more": true, "modes": [ … ] } ]
 ```
 
-702.120a, and multikicker's desugaring: `additional_cost: {mana: "{G}"}`,
-`additional_optional` and `additional_repeatable`, so legality offers one cast
-line per number of payments. Two readers tie that number to the modes:
+```jsonc
+// Collective Effort: "Escalate—Tap an untapped creature you control. …"
+"escalate": { "tap_permanents": { "types": ["Creature"] } },
+```
+
+702.120a, and multikicker's desugaring: `escalate` is a mana string or a full
+cost object, compiled to `additional_cost` with `additional_optional` and
+`additional_repeatable`, so legality offers one cast line per number of
+payments. Two readers tie that number to the modes:
 `casting._additional_ceiling` offers at most one payment per mode beyond the
 first (per 601.2b's selectable modes, when a mode-owned target has nothing to
-aim at), and `Game._cast` makes the cast choose **exactly** one mode more than
-it paid for. The near misses each price something else: `spree` charges the
-first mode too, a plain `or_more` takes every mode for the printed cost, and
-multikicker counts payments nothing ties to the modes.
+aim at) and no more payments than the board can make (`_repeatable_payments`
+counts the untapped permanents, sacrifice fodder or cards in hand each payment
+consumes), and `Game._cast` makes the cast choose **exactly** one mode more than
+it paid for. Each payment of a non-mana escalate is its own: a creature tapped
+for the first is out of the pool for the second. The near misses each price
+something else: `spree` charges the first mode too, a plain `or_more` takes
+every mode for the printed cost, and multikicker counts payments nothing ties to
+the modes.
 
-The loader refuses escalate beside any other additional cost or `spree`, a free
-or X escalate, and a spell whose effects are not one top-level `choose_mode`
-with `or_more`.
+The loader refuses escalate beside any other additional cost or `spree`, an X
+escalate or one that charges nothing, `tap`, `untap` or `mana_reduction` in it
+(a spell has no `{T}`, and nothing folds a reduction), and a spell whose effects
+are not one top-level `choose_mode` with `or_more`.
 
 The residual-gate claimant is narrower than `kicker`'s. It fires only when the
 loader has actually desugared the cost, and it checks that the **symbols printed
 on the line are the symbols charged** — a card declaring `multikicker: "{1}"`
 cannot claim a printed "Multikicker {2}{R}", and a line whose cost will not parse
-stays residual.
+stays residual. A non-mana escalate is never claimed there; its spell's
+`spell_effects` claim the line and gate 5 witnesses the payments.
 
 #### Strive
 
@@ -5621,6 +5719,11 @@ that cast is itself a cast and would otherwise re-arm the card as it resolved.
 **may** cast", and its targets are the first legal tuple rather than a choice.
 Both because the upkeep tick runs from the turn structure, which cannot stop to
 ask.
+
+The rider claims the printed "Rebound (…)" line for the residual gate, so a
+spell whose only text is keyword lines needs no `spell_effects` to carry it.
+Into the Time Vortex is cascade and rebound: the cascade line is a `cascade`
+trigger with `active_zones: ["stack"]`, and the rebound line is this flag.
 
 #### Splice
 
@@ -9987,6 +10090,49 @@ during that turn each of the player's creatures that can attack must, and
 forbids the walker ("if able"). Beside goad, 508.1d is a count: each target is
 scored by the requirements an attack on it obeys and only the best are offered.
 
+## "…attacks that player each combat if able"
+
+```jsonc
+// Galactus, Devourer of Worlds: "Galactus attacks an opponent with the most life
+//   among your opponents each combat if able unless you control a creature
+//   named Silver Surfer, Galactus's Herald."
+{ "kind": "static", "effect": "attacks_if_able",
+  "affects": { "self_only": true }, "defending": "opponent_most_life",
+  "condition": { "not": { "exists": { "controller": "you", "types": ["Creature"],
+                                      "name": "Silver Surfer, Galactus's Herald" } } } }
+
+// Silver Surfer, Galactus's Herald: "…until the end of your next turn, target
+//   creature attacks that player each combat if able."
+{ "op": "must_attack_player", "objects": { "target": "t1" },
+  "defender": { "binding": "defender" }, "duration": "end_of_your_next_turn" }
+```
+
+An attack requirement that names **whom** to attack, in two lifetimes. The
+static's `defending` is read live, relative to the static's controller:
+`opponent_most_life` is every opponent tied for the most life among that
+player's opponents, and the attacking player picks among the tied. The op
+writes a `structs.AttackMark` on each creature, naming each player `defender`
+resolves to; `end_of_your_next_turn` is the only `duration` and ends it in the
+cleanup of the effect controller's next turn, `TempEffect`'s clock for those
+words. The mark ends with the creature (400.7) and with either seat leaving.
+
+Both are read by `combat.required_attack_defenders`, so they are one
+requirement to `attack_required` and to 508.1d's count beside goad and Gideon
+Jura's walker:
+
+- Only an attack on the named **player** obeys it. Attacking a planeswalker or
+  battle that player controls is not attacking them (506.2).
+- "If able": the named seats are narrowed to those the creature may attack, and
+  a requirement left with none compels nothing. It never becomes "attack
+  somebody else": Galactus walled off from the top seat by a `cant_attack_you`
+  may stay home.
+- Without `defending`, `attacks_if_able` is the plain requirement that any
+  attack obeys. `defending` on any other static is a load error, and so is a
+  `must_attack_player` without `objects`, `defender` or the `duration`.
+
+`must_attack` is the near miss and names no defender, and is spent after one
+combat; goad points *away* from a player.
+
 ## "Whenever you attack"
 
 ```jsonc
@@ -10102,6 +10248,21 @@ in a `condition` it is asked again on resolution. Dethrone, which has no "if",
 is the trigger's `defending: "most_life"` instead. Battles are not attackable in
 this engine; when they are, a creature attacking one belongs outside this key too.
 
+`{"binding": name}` is the one non-word form: the creature is attacking the
+**seat** that binding holds. Namor, Atlantean King's "other creatures you
+control attacking **that player** get +2/+0" is the `defender` of its own
+`attacks` event:
+
+```jsonc
+{ "op": "pump", "power": {"const": 2}, "toughness": {"const": 0},
+  "objects": { "controller": "you", "types": ["Creature"], "exclude_self": true,
+               "attacking_player": { "binding": "defender" } } }
+```
+
+`"opponent"` is the near miss and pumps creatures sent at every opponent in a
+pod. Only a binding is taken, and a trigger filter refuses it: nothing is bound
+when a trigger filter is asked, so it would match nothing.
+
 ## An additional combat phase
 
 ```jsonc
@@ -10201,6 +10362,25 @@ it back.
 `state.stack` by the time its effects run, so `{"zone": "stack", "self_only":
 true}` reaches nothing and the printed line would load cleanly and do nothing.
 `exile_self` is a **cost** key and is a different sentence again.
+
+## "Put <this card> into its owner's library" -- tucks_itself
+
+```jsonc
+"tucks_itself": 7          // Approach of the Second Sun: "seventh from the top"
+"tucks_itself": "bottom"   // Ultimate Nullification: "on the bottom of its owner's library"
+```
+
+`exiles_itself`'s shape with a library for the destination: a card-level rider
+on the slot `stack._place_after_resolution` picks, replacing only the
+**graveyard**. A number is the printed ordinal counted from 1, converted to an
+index the way `put_on_top`'s `from_top` is; `"bottom"` is the bottom, which no
+ordinal can name in a library whose size varies. The loader refuses a depth
+below 1 and refuses the rider on a permanent card, which enters the
+battlefield and never reaches it.
+
+**Not `put_on_top` in the card's own effects**, with or without `bottom: true`:
+the spell is already off `state.stack` while its effects run and is then moved
+to the graveyard regardless, so the printed line would load and do nothing.
 
 ## Airbend — "exile them, and their owners may cast them for {2}"
 
@@ -12445,6 +12625,29 @@ otherwise get quietly wrong:
 
 At a pod the op asks which opponent to clash with; in a duel there is one
 opponent and `ask_player` does not stop to ask.
+
+## Flipping a coin
+
+### `flip_coin` — won or lost
+
+Rule 705. `flip_coin` flips one coin for the controller and runs `effects` if
+they win the flip and `else` if they lose it; at least one is required.
+
+```jsonc
+// Negative Zone Portal — "flip a coin. If you lose the flip, sacrifice this
+// artifact and return a card exiled with it at random to its owner's hand."
+{ "op": "flip_coin",
+  "else": [ { "op": "sacrifice", "objects": { "self_only": true } },
+            { "op": "return_to_hand",
+              "objects": { "zone": "exile", "exiled_with": "self",
+                           "count": 1, "random": true } } ] }
+```
+
+The outcome comes from the engine's seeded `Rng`, and one `coin_flipped` event
+carries `won` for the log. **Not** `roll_dice` with `sides: 2`: a coin is not a
+die, so a d2 would answer "whenever you roll one or more dice" and nothing that
+asks about a coin. **Not** `choose_mode` with `random`, which picks a mode rather
+than deciding a won or lost flip.
 
 ## Rolling dice
 

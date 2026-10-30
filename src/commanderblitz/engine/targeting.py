@@ -191,26 +191,26 @@ def _ability_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> b
     `types` clause -- the same class of silently-inert selector `_spell_matches`
     was itself written to stop.
 
-    So exactly one clause is honoured, and it is the one every printed card in
-    this family carries: ``controller`` -- "an ability **you control**" (Peter
-    Parker's Camera, Lithoform Engine, Strionic Resonator). The loader refuses
-    every other key on such a spec, so a clause that cannot be answered here is a
-    load error rather than a restriction the card does not have.
-
-    **"Triggered ability" alone is deliberately not expressible**, and that is a
-    refusal rather than an omission. Strionic Resonator copies a *triggered*
-    ability only, where the Camera and the Engine take either -- but
-    `StackItem.kind` is ``"ability"`` for both, and nothing on the item records
-    which it was. Guessing from `bindings` would be wrong, since an activated
-    ability's cost writes bindings too (`costs.bind_paid_object`). A card needing
-    that distinction needs a field first, and is a gap record until it has one.
+    So exactly two clauses are honoured, the two this family of printed cards
+    carries: ``controller`` -- "an ability **you control**" (Peter Parker's
+    Camera, Lithoform Engine, Strionic Resonator) -- and ``ability_kind`` --
+    "target **triggered** ability" (Strionic Resonator, Mister Fantastic),
+    read off `StackItem.ability_kind`, which is recorded as the ability goes on
+    the stack. Guessing it from `bindings` would be wrong, since an activated
+    ability's cost writes bindings too (`costs.bind_paid_object`). The loader
+    refuses every other key on such a spec, so a clause that cannot be
+    answered here is a load error rather than a restriction the card does not
+    have. Both `candidates` and `still_legal` ask this, so an ability that no
+    longer matches on resolution is an illegal target there too.
     """
-    who = dict(spec.selector).get("controller")
+    selector = dict(spec.selector)
+    who = selector.get("controller")
     if who == "you" and item.controller != ctx.controller:
         return False
     if who == "opponent" and item.controller == ctx.controller:
         return False
-    return True
+    wanted = selector.get("ability_kind")
+    return wanted is None or item.ability_kind == wanted
 
 
 def _spell_matches(ctx: EffectContext, item: StackItem, spec: TargetSpec) -> bool:

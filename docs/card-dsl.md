@@ -398,9 +398,11 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
+### Copying an ability on the stack
+
 `copy_ability` is "copy target activated or triggered ability you control. You
-may choose new targets for the copy" (Strionic Resonator, Lithoform Engine,
-Peter Parker's Camera) — 706.10 for an **ability**:
+may choose new targets for the copy" (Lithoform Engine, Peter Parker's Camera)
+— 706.10 for an **ability**:
 
 ```jsonc
 { "op": "copy_ability", "target": "t1", "new_targets": true }
@@ -408,12 +410,21 @@ Peter Parker's Camera) — 706.10 for an **ability**:
 //                               "selector": { "controller": "you" } }
 ```
 
+An `ability_on_stack` target's selector reads exactly two clauses: `controller`
+and `ability_kind`, which is `"triggered"` or `"activated"` — "copy target
+**triggered** ability you control" (Strionic Resonator, Mister Fantastic) is
+`{ "controller": "you", "ability_kind": "triggered" }`. The kind is recorded on
+the stack item as the ability is put there, and both the target's candidates
+and its re-check on resolution read it. The loader refuses any other clause on
+such a target, and `ability_kind` on any other selector. "Copy … twice" is two
+`copy_ability` effects on the same target, each with its own `new_targets`.
+
 It is a different op from `copy_spell` because the two copy different kinds of
 object: `copy_spell` written for an ability loads clean and does nothing. The
 copy keeps every field of the original, including the `bindings` the trigger
-captured and the announced `x`, and goes on top of the stack. `new_targets` is
-offered from the **ability's** own target specs, not the card's; the loader
-accepts it on `copy_spell` and `copy_ability` only.
+captured, the announced `x` and its ability kind, and goes on top of the stack.
+`new_targets` is offered from the **ability's** own target specs, not the
+card's; the loader accepts it on `copy_spell` and `copy_ability` only.
 
 ### Proliferate — a choice over permanents and players
 
@@ -454,7 +465,7 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
   "not_supertypes": ["Basic"],    // "target NONBASIC land" -- see below
   "colors": ["B"], "keywords": ["flying"],
   "tapped": false, "attacking": true, "blocking": false,
-  "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"
+  "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"|{"binding": name}
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
   "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
@@ -1137,6 +1148,25 @@ nothing.
 An unaffordable price is never offered: 118.4 forbids paying life you do not have,
 so `can_pay` is asked first rather than showing a question whose "yes" cannot be
 honoured.
+
+### "Target … chosen at random"
+
+```jsonc
+// Power Pack: "exile target instant or sorcery card from your graveyard
+// chosen at random"
+{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+  "selector": { "owner": "you", "any_types": ["Instant", "Sorcery"], "random": true } }
+```
+
+Still a target: chosen as the triggered ability goes on the stack (603.3d),
+re-checked on resolution, and an ability with no legal candidate is not put on
+the stack. Only the chooser changes — the seeded `state.rng` picks uniformly
+among the legal candidates (`stack._random_trigger_targets`). The loader
+allows `random` only on a **triggered** ability's one target spec, with a
+fixed `count` and no `mode`, `optional` or `up_to`: a spell's and an activated
+ability's targets are chosen in legality, where nothing would read the clause.
+The near miss is an untargeted `exile` with `random` in its `objects`, which
+never fizzles and goes on the stack with nothing to exile.
 
 ### "Each of X targets"
 
@@ -3089,9 +3119,26 @@ than three because `count` fails them in **opposite** directions:
 
 No selector, however filtered, reaches any of those numbers — `count` counts
 matches, and these count the distinct values those matches hold. `of` is `power`,
-`basic_land_type` or `card_type`, and nothing else: each has a printed card
-behind it, and a misspelling is a load error rather than a silent fall back to
-powers.
+`basic_land_type`, `card_type` or `color`, and nothing else: each has a printed
+card behind it, and a misspelling is a load error rather than a silent fall back
+to powers.
+
+`color` counts the five colors (105.1) among the pool's derived colors;
+colorless counts none (105.2c). It alone takes `spells_cast_this_turn`, a player
+spec whose casts this turn join the pool — First Family's "the number of colors
+among permanents you control **and spells you've cast this turn**":
+
+```jsonc
+{ "distinct": { "of": "color",
+                "objects": { "zone": "battlefield", "controller": "you" },
+                "spells_cast_this_turn": "you" } }
+```
+
+A cast contributes the printed colors of the face `TurnLedger.spells_cast_ids`
+recorded, the reading `spells_cast_this_turn`'s `filter` takes, because most of
+those spells have left the stack; the spell being resolved is among them. The
+key is refused on any other `of`. **Not** `each_color_among`, which loops once
+per color and has no way to reach a resolved spell.
 
 Domain and coven read **derived** characteristics — an anthem changes who has
 coven, "all lands are Islands" changes what counts for domain — which is also
@@ -5141,7 +5188,25 @@ smaller than the effect-side `value_keys`:
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
+| `{"extreme_value": {"of": "mana_value", "pick": …, "objects": …}}` | the greatest (or least) printed mana value among the objects a counting filter, or a `union` of them, finds; 0 with none — `"mana_value"` only (Dragon Man, Reformed Robot) |
 | `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
+
+`extreme_value` is the effect side's leaf held to a printed number. Dragon Man,
+Reformed Robot's "power is equal to the greatest mana value among noncreature
+permanents you control and noncreature cards in your graveyard" is a `set_pt`
+static whose `power` spans two zones, so `objects` takes a `union` of counting
+filters, each held to the static filter rules for its zone, and an object two
+branches find counts once:
+
+```jsonc
+{ "extreme_value": { "of": "mana_value", "pick": "greatest", "objects": { "union": [
+    { "zone": "battlefield", "controller": "you", "not_types": ["Creature"] },
+    { "zone": "graveyard",   "controller": "you", "not_types": ["Creature"] } ] } } }
+```
+
+`of: "power"` is refused: a power is a layer's output, and a static sized by one
+would depend on another static. `count` is the near miss and says how many,
+never how big; `greatest_commander_mana_value` reaches commanders only.
 
 `permanents_entered_this_turn` is the leaf whose near miss is worst. Kinbinding
 reads "Creatures you control get +X/+X, where X is the number of creatures that

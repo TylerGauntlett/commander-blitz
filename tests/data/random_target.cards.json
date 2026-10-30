@@ -1,0 +1,30 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_random_target.py. t_rt_digger's upkeep trigger exiles a target instant or sorcery card from your graveyard chosen at random -- Power Pack's target, on a trigger the test can fire directly.",
+  "cards": [
+    {
+      "id": "t_rt_digger",
+      "name": "Test Random Digger",
+      "oracle_text": "At the beginning of your upkeep, exile target instant or sorcery card from your graveyard chosen at random.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, exile target instant or sorcery card from your graveyard chosen at random.",
+          "trigger": {"event": "upkeep", "controller": "you"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "count": 1,
+              "selector": {"owner": "you", "zone": "graveyard", "any_types": ["Instant", "Sorcery"], "random": true}
+            }
+          ],
+          "effects": [{"op": "exile", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

@@ -178,7 +178,10 @@ SELECTOR_KEYS = frozenset(
         #: (some player, never a planeswalker), relative to the ability's
         #: controller, or `"most_life"`: the player with the most life or tied
         #: for it (Scourge of the Throne's "if it's attacking the player with
-        #: the most life").
+        #: the most life"). ``{"binding": name}`` is the seat a binding holds --
+        #: Namor, Atlantean King's "creatures you control attacking **that
+        #: player**", the `defender` of its own `attacks` event; refused in a
+        #: trigger filter, where nothing is bound yet.
         "attacking_player",
         #: "Untap all creatures that **attacked this turn**" -- Relentless
         #: Assault, Aggravated Assault, Seize the Day. Not `attacking`, which is
@@ -348,6 +351,13 @@ SELECTOR_KEYS = frozenset(
         "target",
         "binding",
         "object_kind",
+        #: "Copy target **triggered** ability you control" -- Strionic
+        #: Resonator, Mister Fantastic. ``"triggered"`` or ``"activated"``,
+        #: read off `StackItem.ability_kind` by `targeting._ability_matches`,
+        #: and so meaningful only on an ``ability_on_stack`` target's
+        #: selector: `validate_selector` refuses it anywhere else, where no
+        #: matcher would read it.
+        "ability_kind",
         "name",
         #: "…search your library for up to five Dragon cards **not named
         #: Tiamat**" -- the negation twin of `name`, and the one the `not_*`
@@ -1059,10 +1069,22 @@ def matches(
         selector["attacking"]
     ):
         return False
-    if (who := selector.get("attacking_player")) is not None and not attacking_player_matches(
-        combat, oid, str(who), ctx.controller, state
-    ):
-        return False
+    if (who := selector.get("attacking_player")) is not None:
+        if isinstance(who, Mapping):
+            # "…creatures you control attacking **that player**" (Namor,
+            # Atlantean King): the seat a binding holds -- the `defender` of
+            # the trigger's own `attacks` event -- read the way the words are,
+            # a player and never a planeswalker or battle they control (506.2).
+            seats = set(select_players(ctx, who))
+            if not (
+                combat is not None
+                and combat.attacking(oid)
+                and oid not in combat.attacking_permanent
+                and combat.attackers[oid] in seats
+            ):
+                return False
+        elif not attacking_player_matches(combat, oid, str(who), ctx.controller, state):
+            return False
     if "blocked" in selector:
         # "…an **unblocked** attacking creature you control" -- ninjutsu. Not
         # the negation of `blocking`, which is about a *blocker*: this asks
@@ -1572,6 +1594,14 @@ def validate_selector(selector: Any, where: str) -> None:
     unknown = set(selector) - SELECTOR_KEYS
     if unknown:
         raise DslError(f"{where}: unknown selector keys {sorted(unknown)}")
+    if "ability_kind" in selector:
+        # `loader.targets._compile_target` lifts it off an `ability_on_stack`
+        # spec before calling this; anywhere else no matcher reads it, and a
+        # pool of permanents or cards has no ability kind to be asked.
+        raise DslError(
+            f"{where}: 'ability_kind' narrows an 'ability_on_stack' target and "
+            f"means nothing on any other selector"
+        )
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")
@@ -1666,11 +1696,23 @@ def validate_selector(selector: Any, where: str) -> None:
     # A bare `true` is the tempting spelling -- it is how `attacking` is written
     # -- and it would name nobody: the key is *which* player, and a boolean read
     # as a word matches no branch, so every creature would silently fail it.
+    # `{"binding": name}` is the one other form: the seat a binding holds,
+    # "attacking **that player**". Only a binding, because every other player
+    # spec is relative to nothing combat knows about.
     who = selector.get("attacking_player")
-    if who is not None and (not isinstance(who, str) or who not in ATTACKING_PLAYER_WORDS):
+    if (
+        who is not None
+        and not (isinstance(who, str) and who in ATTACKING_PLAYER_WORDS)
+        and not (
+            isinstance(who, Mapping)
+            and set(who) == {"binding"}
+            and isinstance(who["binding"], str)
+        )
+    ):
         raise DslError(
             f"{where}: 'attacking_player' names whom the creature attacks -- one of "
-            f"{list(ATTACKING_PLAYER_WORDS)}; use 'attacking' for true/false"
+            f"{list(ATTACKING_PLAYER_WORDS)} or {{'binding': <name>}} for the seat a "
+            f"binding holds; use 'attacking' for true/false"
         )
     if "mana_cost" in selector:
         validate_printed_cost_list(selector["mana_cost"], where)

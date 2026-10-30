@@ -865,6 +865,14 @@ class AbilityModel(BaseModel):
     #: planeswalkers you control" out loud; a sentence naming only "you" is
     #: 506.2's reading, under which attacking a walker is not attacking you.
     player_only: bool = False
+    #: ``attacks_if_able``: whom the creature must attack, relative to the
+    #: static's controller -- Galactus, Devourer of Worlds' "attacks **an
+    #: opponent with the most life among your opponents** each combat if able"
+    #: is ``"opponent_most_life"``. Omitted, the requirement names nobody and
+    #: any attack obeys it. With it, only an attack on one of those players
+    #: does -- not on a planeswalker or battle they control (506.2) -- and
+    #: while none of them can be attacked it compels nothing.
+    defending: Literal["opponent_most_life"] | None = None
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no
@@ -1291,7 +1299,11 @@ class CardModel(BaseModel):
     #: nothing -- `_place_after_resolution` runs after `spell_effects` and
     #: moves a nonpermanent to the graveyard unconditionally -- which is the
     #: same reason `exiles_itself` is a rider and not an op.
-    tucks_itself: int | None = None
+    #:
+    #: ``"bottom"`` is "put <this card> on the bottom of its owner's library"
+    #: (Ultimate Nullification): no ordinal names the bottom of a library
+    #: whose size varies.
+    tucks_itself: int | Literal["bottom"] | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text
@@ -1389,12 +1401,15 @@ class CardModel(BaseModel):
     #: action and ``{"kicked": true}`` can only answer yes or no, never how many.
     #: Give one or the other, not both spellings of the same slot.
     multikicker: str | None = None
-    #: **Escalate {G}** (702.120a): the mana charged once for each mode chosen
+    #: **Escalate {G}** (702.120a): the cost charged once for each mode chosen
     #: beyond the first, on a spell whose effect tree is one top-level
-    #: ``choose_mode`` with ``or_more``. Desugared like ``multikicker`` -- a
-    #: repeatable optional additional cost -- with the number of times paid
-    #: fixing how many modes the cast chooses (601.2b, then 601.2f).
-    escalate: str | None = None
+    #: ``choose_mode`` with ``or_more``. A mana string, or a full cost for a
+    #: printed non-mana escalate ("Escalate--Tap an untapped creature you
+    #: control" is ``{"tap_permanents": {"types": ["Creature"]}}``). Desugared
+    #: like ``multikicker`` -- a repeatable optional additional cost -- with the
+    #: number of times paid fixing how many modes the cast chooses (601.2b,
+    #: then 601.2f).
+    escalate: str | CostModel | None = None
     #: **Strive** (Journey into Nyx): "This spell costs {1}{W} more to cast for
     #: each target beyond the first." The mana string charged once per target
     #: past the first, on a card whose one target spec is ``count: "any"``. A
@@ -1505,6 +1520,14 @@ class CardModel(BaseModel):
     #: land card in addition to paying its other costs."  A whole extra way to
     #: cast the card, so it is a card-level field rather than an ability.
     retrace: bool = False
+    #: "You may cast this card from your graveyard **by discarding a card** in
+    #: addition to paying its other costs." -- Dragon Man, Reformed Robot.
+    #: Retrace's shape with the card's own additional cost: castable from the
+    #: graveyard at the printed price plus this cost, paid after the mana
+    #: (601.2g). ``retrace: true`` is this field with "discard a land card", so
+    #: the two are never given together; nor beside a `graveyard_cost`, which
+    #: is an *alternative* price from the same zone.
+    graveyard_additional_cost: CostModel | None = None
     #: Ascend: "If you control ten or more permanents, you get the
     #: city's blessing for the rest of the game." A bare keyword with
     #: no parameters, so a card-level flag rather than an ability.

@@ -580,6 +580,80 @@ class TestTheArtifactProp:
         assert not pick.is_token
 
 
+class TestTheLegendarySacrificeProp:
+    """A spell that sacrifices a legendary creature to be cast needs one to sacrifice.
+
+    Your creatures are nonlegendary, so Ultimate Nullification's "As an
+    additional cost to cast this spell, sacrifice a legendary creature" was
+    never offered and failed gate 4 as "not playable in the sandbox". The prop
+    was added rather than the gate relaxed, and only for a card that needs it.
+    """
+
+    SACRIFICER = {
+        "id": "auto_test_legend_sacrificer",
+        "name": "Auto Test Legend Sacrificer",
+        "oracle_text": (
+            "As an additional cost to cast this spell, sacrifice a legendary creature.\n"
+            "You gain 1 life."
+        ),
+        "mana_cost": "{W}",
+        "types": ["Sorcery"],
+        "additional_cost": {
+            "sacrifice": {
+                "controller": "you",
+                "count": 1,
+                "types": ["Creature"],
+                "supertypes": ["Legendary"],
+                "zone": "battlefield",
+            }
+        },
+        "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}],
+    }
+
+    def _merged(self, pool: CardRegistry, payload: dict) -> tuple[CardRegistry, object]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        return V.CardRegistry({**{c.id: c for c in pool}, card.id: card}), card
+
+    def _own_legends(self, game) -> list:
+        return [
+            o
+            for o in game.state.battlefield_objects(0)
+            if "Legendary" in game.state.registry.get(o.def_id).supertypes
+        ]
+
+    def test_it_is_cast_against_a_legend_of_yours(self, hand_written):
+        merged, card = self._merged(hand_written, self.SACRIFICER)
+        game = V.build_sandbox(merged, card.id)
+        legends = self._own_legends(game)
+        assert len(legends) == 1
+        assert merged.get(legends[0].def_id).is_creature
+
+    def test_the_cost_is_paid_with_it(self, hand_written):
+        merged, card = self._merged(hand_written, self.SACRIFICER)
+        game, oid, _, _ = V._cast(merged, card)
+        assert game.state.objects[oid].zone is V.Zone.GRAVEYARD
+        assert not self._own_legends(game)
+
+    def test_a_card_without_the_cost_sees_no_legend_of_yours(self, hand_written):
+        payload = {**self.SACRIFICER, "id": "auto_test_no_legend_cost"}
+        payload.pop("additional_cost")
+        merged, card = self._merged(hand_written, payload)
+        assert not V.sacrifice_cost_wants_legendary(card)
+        assert not self._own_legends(V.build_sandbox(merged, card.id))
+
+    def test_the_boards_are_still_the_documented_sizes(self, hand_written):
+        merged, card = self._merged(hand_written, self.SACRIFICER)
+        game = V.build_sandbox(merged, card.id)
+        assert len(game.state.battlefield_objects(0)) == 32
+        assert len(game.state.battlefield_objects(1)) == 6
+
+    def test_the_prop_acts_on_nothing(self, hand_written):
+        """No activated or triggered ability, the `legendary_creature` role's floor."""
+        pick = hand_written.get(V.quiet_legendary_body(hand_written))
+        assert pick.is_creature and "Legendary" in pick.supertypes
+        assert not [a for a in pick.abilities if a.is_activated or a.is_triggered]
+
+
 class TestThePacketCarriesTheWholeVocabulary:
     """A worker sees only its packet, so an omission there reads as an absence.
 

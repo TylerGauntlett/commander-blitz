@@ -374,6 +374,45 @@ def _validate_static_condition(condition: Any, where: str) -> None:
             _validate_static_value(condition[side], f"{where}.{side}")
 
 
+def _validate_static_extreme_value(spec: Any, where: str) -> None:
+    """Dragon Man, Reformed Robot: "power is equal to the greatest mana value
+    among noncreature permanents you control and noncreature cards in your
+    graveyard."
+
+    The effect side's `extreme_value`, narrowed to what a static may read. A
+    printed mana value is a pipeline input on `mana_symbols`' terms, so ``of`` is
+    ``mana_value`` and nothing else: a power or toughness is a layer's output,
+    and an anthem sized by one would depend on another static. ``objects`` is a
+    static counting filter, or a ``union`` of them for a pool that spans zones.
+    """
+    if not isinstance(spec, Mapping):
+        raise DslError(f"{where}: must be an object")
+    if unknown := set(spec) - {"of", "pick", "objects"}:
+        raise DslError(f"{where}: unsupported keys {sorted(unknown)}")
+    if spec.get("of", "mana_value") != "mana_value":
+        raise DslError(
+            f"{where}.of: a static can only read 'mana_value' -- a printed number; "
+            f"power and toughness are layer outputs, got {spec.get('of')!r}"
+        )
+    if spec.get("pick", "greatest") not in ("greatest", "least"):
+        raise DslError(f"{where}.pick: 'greatest' or 'least', got {spec.get('pick')!r}")
+    objects = spec.get("objects")
+    if not isinstance(objects, Mapping) or not objects:
+        # An empty filter is every permanent on the table, opponents' included.
+        raise DslError(f"{where}: needs 'objects', a counting filter or a 'union' of them")
+    if "union" in objects:
+        branches = objects["union"]
+        if set(objects) != {"union"} or not isinstance(branches, list) or len(branches) < 2:
+            raise DslError(
+                f"{where}.objects.union: a list of at least two counting filters "
+                f"and nothing beside it"
+            )
+        for i, branch in enumerate(branches):
+            _validate_static_count_filter(branch, f"{where}.objects.union[{i}]")
+        return
+    _validate_static_count_filter(objects, f"{where}.objects")
+
+
 def _validate_static_value(value: Any, where: str) -> None:
     """Static abilities allow ``const``, ``count`` and the per-player leaves."""
     if isinstance(value, int):
@@ -435,6 +474,8 @@ def _validate_static_value(value: Any, where: str) -> None:
                 f"{where}.greatest_commander_mana_value: a static can only ask "
                 f"about 'you' (your commanders), got {who!r}"
             )
+    if "extreme_value" in value:
+        _validate_static_extreme_value(value["extreme_value"], f"{where}.extreme_value")
     if "permanents_entered_this_turn" in value:
         # Kinbinding: "Creatures you control get +X/+X, where X is the number of
         # creatures that entered the battlefield under your control this turn."

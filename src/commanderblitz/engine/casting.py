@@ -16,7 +16,15 @@ from .actions import Action
 from .carddef import BESTOW_TARGET, MUTATE_TARGET, CardDef, Cost, TargetSpec
 from .characteristics import _battlefield_statics, chars
 from .cost_reduction import cost_reduction, variant_reduction
-from .costs import can_pay, commander_cost, life_cost, mana_sources, spell_purpose, zone_of
+from .costs import (
+    _tap_cost_pool,
+    can_pay,
+    commander_cost,
+    life_cost,
+    mana_sources,
+    spell_purpose,
+    zone_of,
+)
 from .division import divided_damage, fits_division
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext
@@ -1140,10 +1148,14 @@ def _additional_ceiling(
         # Escalate (702.120a): one payment per mode chosen beyond the first, so
         # at most one fewer than the modes the cast can choose -- 601.2b's
         # selectable ones, when a mode-owned target has nothing to point at.
+        # A non-mana escalate is also bounded by the board: each payment taps,
+        # sacrifices or discards something of its own, so two untapped
+        # creatures pay for two modes beyond the first and not three.
         modal = card.cast_time_modes
         selectable = selectable_modes(state, pid, card, oid)
         modes = len(modal.get("modes") or ()) if selectable is None else len(selectable)
-        return max(0, min(MAX_ADDITIONAL_TIMES, modes - 1))
+        payments = _repeatable_payments(state, pid, oid, card)
+        return max(0, min(MAX_ADDITIONAL_TIMES, modes - 1, payments))
     if not card.additional_repeatable:
         return 1
     # A repeatable cost is paid once *per line*, so the ceiling has to know how
@@ -1176,6 +1188,11 @@ def _repeatable_payments(state: GameState, pid: int, oid: int, card: CardDef) ->
     for selector in (cost.sacrifice, cost.return_to_hand, cost.exile_from_graveyard):
         if selector is not None:
             limits.append(len(resolve_pool(ctx, selector)))
+    if cost.tap_permanents is not None and cost.tap_permanents.get("total_power") is None:
+        # Each payment taps its own permanents, and a tapped one is out of the
+        # pool for the next -- Collective Effort's creatures are distinct.
+        per = int(cost.tap_permanents.get("count", 1) or 1)
+        limits.append(len(_tap_cost_pool(state, pid, cost, oid)) // per)
     if cost.discard:
         limits.append(len(state.players[pid].hand) // max(1, cost.discard))
     if cost.pay_life:

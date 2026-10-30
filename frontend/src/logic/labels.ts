@@ -385,6 +385,13 @@ export function describeEvent(
      * changes no characteristic, so without this line the Treasures appear from
      * nowhere and their number looks arbitrary.
      */
+    /*
+     * A coin flip (rule 705). Won or lost is the whole line: what follows --
+     * Negative Zone Portal sacrificing itself on a loss -- turns on it, and a
+     * flip moves no card, so nothing else in the log would say why.
+     */
+    case "coin_flipped":
+      return `${who} ${v("flip", "flips")} a coin and ${event.data.won ? v("win", "wins") : v("lose", "loses")}`;
     case "dice_rolled": {
       const results = Array.isArray(event.data.results) ? event.data.results : [];
       const sides = typeof event.data.sides === "number" ? event.data.sides : 6;

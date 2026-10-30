@@ -40,6 +40,7 @@ PRECONS = {
     "frc_multiverse_reforged",
     "msc_avengers_assemble",
     "msc_doom_prevails",
+    "msc_the_fantastic_four",
     "msc_wakanda_forever",
 }
 

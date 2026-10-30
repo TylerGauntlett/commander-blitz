@@ -1,0 +1,18 @@
+{
+  "_comment": "Cards that exist only for tests/unit/zones/test_tucks_itself_bottom.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tucks_itself_bottom` is the `tucks_itself: \"bottom\"` rider on a sorcery that also gains 2 life, so the test can see both that the effects ran and where the card went.",
+  "cards": [
+    {
+      "id": "t_tucks_itself_bottom",
+      "name": "Test Tucks Itself Bottom",
+      "oracle_text": "You gain 2 life. Put Test Tucks Itself Bottom on the bottom of its owner's library.",
+      "mana_cost": "{1}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "tucks_itself": "bottom",
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 2 } }
+      ]
+    }
+  ]
+}

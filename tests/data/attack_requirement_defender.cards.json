@@ -1,0 +1,59 @@
+{
+  "_comment": "Cards for tests/unit/combat/test_attack_requirement_defender.py. `t_hungry_titan` is Galactus, Devourer of Worlds' third line alone on a vanilla body: an `attacks_if_able` static naming `defending: opponent_most_life`, switched off while its controller controls a creature named `Test Herald` (`t_test_herald`). `t_hungry_brute` is the near miss -- the same requirement without `defending`, which any attack obeys.",
+  "cards": [
+    {
+      "id": "t_hungry_titan",
+      "name": "Test Hungry Titan",
+      "oracle_text": "Test Hungry Titan attacks an opponent with the most life among your opponents each combat if able unless you control a creature named Test Herald.",
+      "mana_cost": "{4}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Giant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Hungry Titan attacks an opponent with the most life among your opponents each combat if able unless you control a creature named Test Herald.",
+          "effect": "attacks_if_able",
+          "affects": {"self_only": true},
+          "defending": "opponent_most_life",
+          "condition": {"not": {"exists": {"controller": "you", "types": ["Creature"], "name": "Test Herald"}}}
+        }
+      ]
+    },
+    {
+      "id": "t_hungry_brute",
+      "name": "Test Hungry Brute",
+      "oracle_text": "Test Hungry Brute attacks each combat if able.",
+      "mana_cost": "{4}{R}",
+      "types": ["Creature"],
+      "subtypes": ["Giant"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 5,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Hungry Brute attacks each combat if able.",
+          "effect": "attacks_if_able",
+          "affects": {"self_only": true}
+        }
+      ]
+    },
+    {
+      "id": "t_test_herald",
+      "name": "Test Herald",
+      "oracle_text": "",
+      "mana_cost": "{1}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Alien"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 2
+    }
+  ]
+}

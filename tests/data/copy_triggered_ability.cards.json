@@ -1,0 +1,51 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_copy_triggered_ability.py. t_resonator copies a target triggered ability you control (Strionic Resonator's target); t_upkeep_gainer has a triggered ability with no target, so its copy can be counted. The activated near side is t_gainer in copy_ability.cards.json.",
+  "cards": [
+    {
+      "id": "t_resonator",
+      "name": "Test Resonator",
+      "oracle_text": "{2}, {T}: Copy target triggered ability you control. You may choose new targets for the copy.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}, {T}: Copy target triggered ability you control. You may choose new targets for the copy.",
+          "cost": {"mana": "{2}", "tap": true},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "count": 1,
+              "selector": {"controller": "you", "ability_kind": "triggered"}
+            }
+          ],
+          "effects": [
+            {"op": "copy_ability", "target": "t1", "new_targets": true}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_upkeep_gainer",
+      "name": "Test Upkeep Gainer",
+      "oracle_text": "At the beginning of your upkeep, you gain 2 life.",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you gain 2 life.",
+          "trigger": {"event": "upkeep", "controller": "you"},
+          "effects": [
+            {"op": "gain_life", "player": "you", "amount": {"const": 2}}
+          ]
+        }
+      ]
+    }
+  ]
+}

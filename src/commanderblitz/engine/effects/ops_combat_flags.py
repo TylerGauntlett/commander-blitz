@@ -14,6 +14,7 @@ from ..objects import PLUS_ONE
 from ..player_statics import proliferate_times
 from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
+    ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
@@ -21,12 +22,14 @@ from ..structs import (
     TargetRef,
 )
 from ..temp_effects import (
+    forbid_attack_while_counter,
     forbid_block,
     forbid_sacrifice,
     goad_creature,
     grant_cant_be_sacrificed,
     make_unblockable,
     require_attack_on,
+    require_attack_player,
     restrict_attack,
 )
 from .board_helpers import (
@@ -476,6 +479,45 @@ def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("must_attack_player")
+def op_must_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until the end of your next turn, target creature attacks **that player**
+    each combat if able." (Silver Surfer, Galactus's Herald.)
+
+    A requirement naming the **defending player**, written on each creature in
+    ``objects`` as a `structs.AttackMark` and read live by
+    `combat.required_attack_defenders` -- the same reader as the
+    `attacks_if_able` static's ``defending``, so the one-shot and the
+    continuous form are one requirement to 508.1d. It is obeyed only by
+    attacking that player, not a planeswalker or battle they control (506.2),
+    and while that seat cannot be attacked it compels nothing at all ("if
+    able"): the creature is not sent at somebody else instead.
+
+    ``objects``   the creatures, chosen at resolution (required).
+    ``defender``  the player to attack -- ``{"binding": "defender"}`` for
+                  "that player" on a combat-damage trigger (required). Several
+                  players are several requirements.
+    ``duration``  ``end_of_your_next_turn`` (required): the effect
+                  controller's next turn's cleanup ends it, `TempEffect`'s
+                  clock for the same words.
+
+    Why not the near misses: `must_attack` names no defender and is spent
+    after one combat; goad points *away* from a player and ends at the
+    goader's next turn rather than its end; `must_attack_planeswalker` names a
+    walker and binds a player's creatures, not a creature.
+    """
+    duration = str(spec.get("duration", ""))
+    if duration not in ATTACK_MARK_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown must_attack_player duration {duration!r}")
+    defenders = _players(ctx, spec.get("defender"))
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        for defender in defenders:
+            require_attack_player(
+                ctx.state, oid, defender, ctx.controller, source=ctx.source_oid
+            )
+    yield from ()
+
+
 @register("must_attack_planeswalker")
 def op_must_attack_planeswalker(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "During target opponent's next turn, creatures that player controls
@@ -527,7 +569,10 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     ``defender``  the player who may not be attacked -- the mirror image of the
                   above on those two cards, which is exactly why both had to be
                   spelled out rather than one inferred as "the other one".
-    ``duration``  ``this_turn`` or ``this_combat``. Required, not defaulted: see
+    ``duration``  ``this_turn``, ``this_combat`` or ``attacker_next_turn``
+                  ("…during their next turn", Willie Lumpkin, Postman: pending
+                  until the attacker's next untap step, gone at that turn's
+                  cleanup). Required, not defaulted: see
                   `structs.AttackRestriction`.
 
     Both selectors are full player specs and may name several players, in which
@@ -562,9 +607,34 @@ def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     Nothing is written on any permanent, and that is the point: a resolving
     sorcery leaves no source on the battlefield to hang a static off, which is
     the first of the three reasons the `cant_attack` static could not do this job.
+
+    ``objects`` in place of ``attacker`` names **creatures** rather than a
+    player: Promise of Loyalty's "each of those creatures can't attack you or
+    planeswalkers you control for as long as it has a vow counter on it". Its
+    one duration is ``while_counter``, with ``counter`` naming the kind, and
+    each creature carries the prohibition itself (`structs.AttackMark`) -- so a
+    creature that changes hands still may not attack ``defender``, and one that
+    leaves is a new object (400.7). A creature without the counter gets nothing:
+    its duration is already over.
     """
 
     duration = str(spec.get("duration", "this_turn"))
+    if "objects" in spec:
+        counter = str(spec.get("counter", ""))
+        walkers = bool(spec.get("planeswalkers", False))
+        defenders = _players(ctx, spec.get("defender"))
+        for oid in resolve_pool(ctx, spec.get("objects") or {}):
+            for defender in defenders:
+                forbid_attack_while_counter(
+                    ctx.state,
+                    oid,
+                    defender,
+                    counter,
+                    planeswalkers=walkers,
+                    source=ctx.source_oid,
+                )
+        yield from ()
+        return
     if duration not in ATTACK_RESTRICTION_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown cant_attack_player duration {duration!r}")
     planeswalkers = bool(spec.get("planeswalkers", False))

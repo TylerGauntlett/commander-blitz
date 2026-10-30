@@ -314,6 +314,7 @@ def push_activated_ability(
         def_id=card.id,
         source_oid=source_oid,
         ability_index=stored_index,
+        ability_kind="activated",
         granted_by=granted_by,
         granted_def_id=granted_def_id,
         targets=tuple(targets),
@@ -430,6 +431,7 @@ def push_triggered_ability(
         def_id=def_id,
         source_oid=trig.source_oid,
         ability_index=trig.ability_index,
+        ability_kind="triggered",
         bindings=dict(trig.bindings),
         x=int(trig.bindings.get("x", 0) or 0),
         description=trig.description,
@@ -598,6 +600,35 @@ def _choose_each_target(
     return tuple(chosen)
 
 
+def _random_trigger_targets(
+    state: GameState, trig: TriggerInstance, spec: TargetSpec
+) -> tuple[TargetRef, ...]:
+    """"…target instant or sorcery card from your graveyard **chosen at
+    random**" -- Power Pack.
+
+    Still a target (115.1): chosen as the ability goes on the stack (603.3d),
+    re-checked on resolution, and an ability with no legal one is never put on
+    the stack. Only *who* chooses changes -- nobody does; the game's seeded
+    rng picks uniformly among the legal candidates, so a replay draws the same
+    card. The loader allows it only as a triggered ability's one fixed-size
+    spec, so there is no other spec to combine with and no size to ask.
+    """
+    count = spec.count if isinstance(spec.count, int) else 1
+    single = replace(spec, count=1, optional=False, up_to=False)
+    candidates = [
+        combo[0]
+        for combo in enumerate_target_tuples(
+            state, trig.controller, [single], trig.source_oid, bindings=trig.bindings,
+            limit=10_000,
+        )
+        if combo
+    ]
+    if len(candidates) < count:
+        # Exactly N with fewer than N legal: the ability has no legal tuple.
+        return ()
+    return tuple(state.rng.shuffled(candidates)[:count])
+
+
 def _choose_trigger_targets(
     state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
 ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
@@ -614,6 +645,9 @@ def _choose_trigger_targets(
     "when this dies, it deals damage to *its controller*" has one legal tuple
     and asking would be a decision with a single button.
     """
+
+    if any(spec.selector.get("random") for spec in specs):
+        return _random_trigger_targets(state, trig, specs[0])
 
     picked = yield from _choose_each_target(state, trig, specs)
     if picked is not None:
@@ -1030,10 +1064,16 @@ def _place_after_resolution(
     # `op_put_on_top` makes and for its stated reason: the card says "seventh",
     # and a card tucked sixth is drawn a turn early, which is the whole of what
     # the depth buys.
+    #
+    # `"bottom"` is "put <this card> on the bottom of its owner's library"
+    # (Ultimate Nullification). No ordinal names the bottom of a library whose
+    # size varies, and none is needed: a library move with no index appends,
+    # which is the bottom.
     tuck_to = None
     if card.tucks_itself is not None and destination is Zone.GRAVEYARD:
         destination = Zone.LIBRARY
-        tuck_to = max(0, card.tucks_itself - 1)
+        if card.tucks_itself != "bottom":
+            tuck_to = max(0, int(card.tucks_itself) - 1)
     # `granted_rebound` beside the printed flag, and the disjunction is the
     # whole of Ojer Pakpatiq's "it gains rebound": a spell that prints rebound
     # and a spell that was handed it are the same spell from here on. Both are

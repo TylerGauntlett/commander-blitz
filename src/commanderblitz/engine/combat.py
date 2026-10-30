@@ -31,6 +31,7 @@ from .player_statics import (
     block_alone_forbidden,
     block_forbidden,
     block_tax,
+    static_attack_defenders,
 )
 from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
 from .structs import CombatState
@@ -109,8 +110,14 @@ def can_attack(state: GameState, oid: int) -> bool:
     # `cant_attack_you` is the second thing that can empty both lists -- an
     # Inkling in a two-player game whose only opponent has a Combat Calligrapher
     # has nowhere legal to swing -- so it joins the cheap guard rather than
-    # relying on the one already there.
-    if (state.attack_restrictions or any_defender_attack_prohibition(state)) and not (
+    # relying on the one already there. A creature's own prohibition mark
+    # (Promise of Loyalty) is the third, and is on the creature, so asking is
+    # free.
+    if (
+        state.attack_restrictions
+        or any(m.prohibition for m in obj.attack_marks)
+        or any_defender_attack_prohibition(state)
+    ) and not (
         legal_defenders(state, oid) or legal_permanent_defenders(state, oid)
     ):
         return False
@@ -217,11 +224,14 @@ def attack_required(state: GameState, oid: int) -> bool:
     # All three are "…if able", so all three go through `can_attack` below.
     # A fourth: Gideon Jura's mark on a planeswalker, read live for its turn
     # (`required_attack_walkers`), which also catches creatures that arrived
-    # after the ability resolved.
+    # after the ability resolved. A fifth: a requirement naming the player to
+    # attack (`required_attack_defenders`), which compels only while one of
+    # those seats is open to this creature.
     if (
         not attack_compelled(state, oid)
         and not obj.goaded_by
         and not required_attack_walkers(state, oid)
+        and not required_attack_defenders(state, oid)
     ):
         if obj.must_attack is None:
             return False
@@ -370,8 +380,15 @@ def attack_target_forbidden(
     # attack Gideon Jura if able" -- a requirement naming one attack target.
     # Asked after the prohibitions, which a requirement never overrides
     # (508.1d: "if able"), and before goad, with which it is weighed below.
-    if obj is not None and (required := required_attack_walkers(state, oid)):
-        return _misses_attack_requirements(state, oid, defender, permanent, required)
+    # A requirement naming a defending *player* (Galactus, Silver Surfer) is
+    # weighed in the same count.
+    if obj is not None:
+        walkers = required_attack_walkers(state, oid)
+        named = required_attack_defenders(state, oid)
+        if walkers or named:
+            return _misses_attack_requirements(
+                state, oid, defender, permanent, walkers, named
+            )
     # Goad's second half (701.38a): "…and attacks a player other than you if
     # able". `defender` is the defending *player* for both attack kinds -- a
     # planeswalker's or battle's controller is the defending player (506.2) and
@@ -400,6 +417,9 @@ def _attack_prohibited(
         for restriction in state.attack_restrictions:
             if restriction.attacker != obj.controller or restriction.defender != defender:
                 continue
+            # "…during their next turn" (Willie Lumpkin): pending until then.
+            if not restriction.in_force(state.turn):
+                continue
             if restriction.walker_subtypes:
                 # "…can't attack Jaces you control": the seat and every other
                 # permanent stay attackable, and only a walker that *is* one of
@@ -412,6 +432,20 @@ def _attack_prohibited(
                         return True
                 continue
             if permanent is None or restriction.planeswalkers:
+                return True
+    # Promise of Loyalty: "each of those creatures can't attack you or
+    # planeswalkers you control for as long as it has a vow counter on it". The
+    # same prohibition as the table above, written on the one creature it
+    # names (`structs.AttackMark`); its counter clock is ended by
+    # `GameObject.remove_counter`, and the counter is read again here so a mark
+    # can never outlast it.
+    if obj is not None and obj.attack_marks:
+        for mark in obj.attack_marks:
+            if not mark.prohibition or mark.defender != defender:
+                continue
+            if mark.while_counter is not None and obj.counter(mark.while_counter) <= 0:
+                continue
+            if permanent is None or mark.planeswalkers:
                 return True
     # Combat Calligrapher: "Inklings can't attack you or planeswalkers you
     # control." The same seam read off a *static* instead of the table, so the
@@ -468,29 +502,70 @@ def required_attack_walkers(state: GameState, oid: int) -> set[int]:
     return out
 
 
+def required_attack_defenders(state: GameState, oid: int) -> list[frozenset[int]]:
+    """The requirements naming a defending player this creature must obey now.
+
+    "Galactus attacks an opponent with the most life among your opponents each
+    combat if able" (an `attacks_if_able` static with ``defending``) and "target
+    creature attacks that player each combat if able" (an `AttackMark` from the
+    `must_attack_player` op) are one requirement in two lifetimes: a set of
+    seats, obeyed only by attacking one of those **players** -- an attack on a
+    planeswalker or battle they control is not attacking them (506.2). One set
+    per requirement, so two of them can be counted apart by 508.1d.
+
+    Each set is narrowed to the seats this creature could attack at all --
+    alive, not its controller, no prohibition in the way -- and dropped when
+    that leaves nothing: "if able", so a requirement nobody can obey compels
+    nothing, and in particular does not turn into "attack somebody else".
+    """
+    obj = state.objects.get(oid)
+    if obj is None or obj.controller != state.active_player:
+        return []
+    named = static_attack_defenders(state, oid)
+    named.extend(
+        frozenset((mark.defender,)) for mark in obj.attack_marks if not mark.prohibition
+    )
+    out: list[frozenset[int]] = []
+    for seats in named:
+        open_seats = frozenset(
+            pid
+            for pid in seats
+            if pid != obj.controller
+            and state.is_alive(pid)
+            and not _attack_prohibited(state, oid, pid)
+        )
+        if open_seats:
+            out.append(open_seats)
+    return out
+
+
 def _misses_attack_requirements(
     state: GameState,
     oid: int,
     defender: int,
     permanent: int | None,
     required: set[int],
+    named: list[frozenset[int]],
 ) -> bool:
     """Is attacking here worse than the best declaration 508.1d allows?
 
     Rule 508.1d: the attack must obey the **maximum number of requirements**
-    possible without breaking a restriction. For a creature under a walker
-    requirement alone that is simple -- attack one of the required walkers.
-    Beside goad (701.38a) it is a count: attacking the walker obeys the walker
-    requirement, attacking something no goader controls obeys goad's, and a
-    walker no goader controls obeys both. Every candidate target is scored and
-    anything below the best is refused; ties are all allowed, so the player
-    still chooses between equally obedient attacks.
+    possible without breaking a restriction. For a creature under one
+    targeted requirement alone that is simple -- attack the required walker,
+    or one of the required players. Beside goad (701.38a) and each other it
+    is a count: attacking the walker obeys the walker requirement, attacking
+    one of a requirement's named players (``named``) obeys that one,
+    attacking something no goader controls obeys goad's. Every candidate
+    target is scored and anything below the best is refused; ties are all
+    allowed, so the player still chooses between equally obedient attacks.
     """
     obj = state.objects.get(oid)
     goaders = obj.goaded_by if obj is not None else set()
 
     def score(seat: int, pw: int | None) -> int:
         points = 1 if pw is not None and pw in required else 0
+        if pw is None:
+            points += sum(1 for seats in named if seat in seats)
         if goaders and seat not in goaders:
             points += 1
         return points

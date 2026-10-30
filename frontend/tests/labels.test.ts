@@ -95,6 +95,17 @@ describe("describeEvent", () => {
     ).toBe("AI 1 is eliminated (21 commander damage)");
   });
 
+  it("narrates a coin flip won or lost", () => {
+    // A flip moves no card, so without this line the sacrifice a lost flip
+    // causes (Negative Zone Portal) would appear in the log with no reason.
+    expect(
+      describeEvent(event({ type: "coin_flipped", player: 0, data: { won: true } }), names, 0),
+    ).toBe("You flip a coin and win");
+    expect(
+      describeEvent(event({ type: "coin_flipped", player: 1, data: { won: false } }), names, 0),
+    ).toBe("AI 1 flips a coin and loses");
+  });
+
   it("narrates the crown changing hands", () => {
     // A new engine event is silently dropped by the `default` fallthrough, and
     // nothing else in the log would say the monarch moved: no permanent changes

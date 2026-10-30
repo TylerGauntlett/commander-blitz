@@ -168,10 +168,13 @@ class TempEffect:
         }
 
 
-#: The two durations an :class:`AttackRestriction` can carry, and the printed
+#: The durations an :class:`AttackRestriction` can carry, and the printed
 #: sentence each one is.  Kept beside the class rather than as an enum because
 #: every other duration in the DSL is a bare string a card file writes.
-ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat")
+#: ``attacker_next_turn`` is "that player can't attack you **during their next
+#: turn**" (Willie Lumpkin, Postman): pending until the attacker's next untap
+#: step, in force for that turn, gone at its cleanup.
+ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn")
 
 #: The durations a control change can carry -- Captivating Vampire's steal, Act
 #: of Treason's, and Stilt-Man, Towering Terror's "…until the end of your next
@@ -258,6 +261,18 @@ class AttackRestriction:
     #: battlefield, because a resolved one-shot effect does not care what
     #: happens to the card that made it.
     source: int | None = None
+    #: An ``attacker_next_turn`` restriction's turn: ``None`` while it is
+    #: pending, then the number of the attacker's next turn, written by
+    #: `temp_effects.arm_attack_restrictions` in their untap step. Keyed to
+    #: the player rather than projected as a number, for detain's reason: an
+    #: elimination or an extra turn moves "their next turn".
+    in_force_turn: int | None = None
+
+    def in_force(self, turn: int) -> bool:
+        """Does this restriction bite during ``turn``?"""
+        if self.duration != "attacker_next_turn":
+            return True
+        return self.in_force_turn == turn
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -267,6 +282,80 @@ class AttackRestriction:
             "planeswalkers": self.planeswalkers,
             "walker_subtypes": list(self.walker_subtypes),
             "source": self.source,
+            "in_force_turn": self.in_force_turn,
+        }
+
+
+#: The durations an :class:`AttackMark` can carry. Spelled the way
+#: `CONTROL_DURATIONS` spells the same clock, because it is the same clock.
+ATTACK_MARK_DURATIONS = ("end_of_your_next_turn",)
+
+
+@dataclass(frozen=True)
+class AttackMark:
+    """"Target creature attacks **that player** each combat if able." A
+    requirement written on one creature that names the defending player --
+    or, with ``prohibition``, "those creatures can't attack you".
+
+    The per-creature counterpart of :class:`AttackRestriction`, which names a
+    pair of *players* and no creature: this names one creature and one seat.
+    It lives on the creature (`GameObject.attack_marks`) for goad's reason --
+    the effect names that object, and 400.7 ends it when the object leaves.
+
+    Read by `combat.required_attack_defenders` beside the static form (an
+    `attacks_if_able` static with ``defending``), so the two are one
+    requirement to `combat.attack_required` and to 508.1d's scoring: it is
+    obeyed only by attacking ``defender`` itself -- not a planeswalker or
+    battle they control, which is not attacking them (506.2) -- and it owes
+    nothing while that seat cannot be attacked at all ("if able").
+
+    ``until_end_of_turn_of`` and ``since_turn`` are `TempEffect`'s "until the
+    end of your next turn" clock, read the same way: the entry ends in the
+    cleanup of the first of that seat's turns to begin after ``since_turn``.
+
+    ``prohibition`` turns the mark round: Promise of Loyalty's "each of those
+    creatures can't attack you or planeswalkers you control for as long as it
+    has a vow counter on it". Read by `combat._attack_prohibited` beside the
+    player-pair `AttackRestriction`, so it closes ``defender``'s seat -- and,
+    with ``planeswalkers``, every permanent ``defender`` may be attacked
+    through, which is that table's flag with that table's meaning. Its clock is
+    ``while_counter``: the mark stands while the creature has a counter of
+    that kind and is dropped the moment the last one goes
+    (`GameObject.remove_counter`), so a counter put back later does not revive
+    a duration that has ended (611.2b).
+    """
+
+    #: The player the creature must (or, with ``prohibition``, may not) attack.
+    defender: int
+    #: The seat whose next turn's end ends the mark; ``None`` on a
+    #: ``while_counter`` mark.
+    until_end_of_turn_of: int | None = None
+    #: The turn the mark was made in.
+    since_turn: int = 0
+    #: The permanent or spell that installed it, for the log.
+    source: int | None = None
+    #: "Can't attack" rather than "attacks if able".
+    prohibition: bool = False
+    #: A prohibition that also closes ``defender``'s planeswalkers and battles.
+    planeswalkers: bool = False
+    #: "For as long as it has a <kind> counter on it": the counter kind.
+    while_counter: str | None = None
+
+    def ends_now(self, active_player: int, turn: int) -> bool:
+        """Is the cleanup step of this turn the end of the mark's duration?"""
+        if self.until_end_of_turn_of is None:
+            return False
+        return self.until_end_of_turn_of == active_player and self.since_turn < turn
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "defender": self.defender,
+            "until_end_of_turn_of": self.until_end_of_turn_of,
+            "since_turn": self.since_turn,
+            "source": self.source,
+            "prohibition": self.prohibition,
+            "planeswalkers": self.planeswalkers,
+            "while_counter": self.while_counter,
         }
 
 
@@ -1132,6 +1221,13 @@ class StackItem:
     oid: int | None = None  # the spell's GameObject (kind == "spell")
     source_oid: int | None = None  # the ability's source permanent
     ability_index: int | None = None
+    #: ``"activated"`` or ``"triggered"`` for an ability, ``None`` for a spell.
+    #: Recorded as the ability is put on the stack, the one moment it is known:
+    #: "copy target **triggered** ability you control" (Strionic Resonator,
+    #: Mister Fantastic) is read off this by `targeting._ability_matches`, and
+    #: neither ``kind`` nor ``bindings`` can say it -- an activated ability's
+    #: cost writes bindings too. A copy keeps it (706.10).
+    ability_kind: str | None = None
     targets: tuple[TargetRef, ...] = ()
     x: int = 0
     modes: tuple[int, ...] = ()
@@ -1244,6 +1340,7 @@ class StackItem:
             "oid": self.oid,
             "source_oid": self.source_oid,
             "ability_index": self.ability_index,
+            "ability_kind": self.ability_kind,
             "targets": [t.to_dict() for t in self.targets],
             "x": self.x,
             "kicked": self.kicked,

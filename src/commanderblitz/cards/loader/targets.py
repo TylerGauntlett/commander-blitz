@@ -125,6 +125,29 @@ def _compile_targets(
                 f"{where}.target[{spec.id}]: 'count': {{\"x\": true}} needs an "
                 f"{{X}} in the card's mana cost -- there is no X to size it by"
             )
+    for spec in specs:
+        if not spec.selector.get("random"):
+            continue
+        # "Target … chosen at random" (Power Pack): `stack._random_trigger_targets`
+        # draws it as a triggered ability goes on the stack. Nothing else reads
+        # the clause -- a spell's or an activated ability's targets are chosen
+        # in legality, which offers every tuple -- so anywhere else it would
+        # load and be a free choice.
+        if not on_trigger:
+            raise DslError(
+                f"{where}.target[{spec.id}]: 'random' is a triggered ability's "
+                f"target -- nothing else draws one at random"
+            )
+        if len(specs) != 1 or spec.mode is not None:
+            raise DslError(
+                f"{where}.target[{spec.id}]: a random target must be the ability's "
+                f"only target, owned by no mode"
+            )
+        if not isinstance(spec.count, int) or spec.count < 1 or spec.optional or spec.up_to:
+            raise DslError(
+                f"{where}.target[{spec.id}]: a random target takes a fixed 'count' "
+                f"-- 'optional', 'up_to' and 'any' are choices nobody makes"
+            )
     _check_mode_targets(
         specs, where, on_spell=on_spell, on_trigger=on_trigger, mode_count=mode_count
     )
@@ -339,8 +362,27 @@ def _compile_target(
     refusals below is a card that would otherwise load with two of them
     overlapping, and read as a printing that does not exist.
     """
-    validate_selector(model.selector, f"{where}.target[{model.id}]")
     label = f"{where}.target[{model.id}]"
+    if model.kind == "ability_on_stack":
+        # An ability on the stack has no face (113.7a): `_ability_matches`
+        # answers `controller` and `ability_kind` and nothing else, so any
+        # other clause would load and narrow nothing.
+        extra = set(model.selector) - {"controller", "ability_kind"}
+        if extra:
+            raise DslError(
+                f"{label}: an 'ability_on_stack' target reads only 'controller' "
+                f"and 'ability_kind', not {sorted(extra)}"
+            )
+        kind = model.selector.get("ability_kind")
+        if kind is not None and kind not in ("triggered", "activated"):
+            raise DslError(
+                f"{label}.ability_kind: 'triggered' or 'activated', got {kind!r}"
+            )
+        validate_selector(
+            {k: v for k, v in model.selector.items() if k != "ability_kind"}, label
+        )
+    else:
+        validate_selector(model.selector, label)
     controller_clause = model.selector.get("controller")
     if (
         # `"any"` is a *target* word, not a player spec: `_player_allowed`

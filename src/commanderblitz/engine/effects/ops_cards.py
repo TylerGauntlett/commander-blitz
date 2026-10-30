@@ -1623,6 +1623,35 @@ ROLL_SIDES = "sides"
 DEFAULT_SIDES = 6
 
 
+@register("flip_coin")
+def op_flip_coin(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Rule 705 -- flip a coin, and run ``effects`` on a win and ``else`` on a loss.
+
+    "At the beginning of your upkeep, if there are four or more creature cards
+    exiled with this artifact, flip a coin. **If you lose the flip**, sacrifice
+    this artifact and return a card exiled with it at random to its owner's
+    hand." -- Negative Zone Portal.
+
+    The controller flips (705.2: the player who flips calls it, and a called
+    flip is won or lost with even odds). Not `roll_dice` with ``sides: 2``: a
+    coin is not a die, so a d2 would fire "whenever you roll one or more dice"
+    and miss every coin-flip card. Not ``choose_mode`` with ``random``, which
+    picks a mode rather than resolving a won or lost flip.
+
+    Determinism: the outcome comes from ``state.rng``, the engine's single
+    seeded source, so a replay of the same seed and action tape flips the same
+    way. One ``coin_flipped`` event carries ``won`` for the log.
+    """
+    won = ctx.state.rng.randint(0, 1) == 1
+    ctx.state.emit(
+        EventType.COIN_FLIPPED,
+        player=ctx.controller,
+        source=ctx.source_oid,
+        won=won,
+    )
+    yield from execute(ctx, spec.get("effects" if won else "else") or [])
+
+
 @register("roll_dice")
 def op_roll_dice(ctx: EffectContext, spec: Mapping[str, Any]):
     """Rule 705.1 -- roll dice, and write down every face that came up.
@@ -2050,8 +2079,15 @@ def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
     never "cast this way". A card with no legal target is not cast at all, which
     is why the binding is built from `cast_for_free`'s answer rather than from
     the chosen list.
+
+    ``exiles: true`` is "If that spell would be put into your graveyard, exile
+    it instead" (Power Pack) -- `cast_card`'s rider, on the free cast: the
+    replacement rides on the stack item (`StackItem.exiles_instead`), so it
+    holds however the spell leaves the stack for a graveyard (resolving,
+    fizzling, being countered).
     """
 
+    exiles = bool(spec.get("exiles", False))
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "exile")
     selector.setdefault("controller", "any")
@@ -2066,7 +2102,7 @@ def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, selector, "Play the exiled card", "play_exiled")
     cast: list[int] = []
     for oid in oids:
-        if cast_for_free(ctx.state, ctx.controller, oid):
+        if cast_for_free(ctx.state, ctx.controller, oid, exiles_instead=exiles):
             cast.append(oid)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = cast

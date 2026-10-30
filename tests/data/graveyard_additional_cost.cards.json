@@ -1,0 +1,18 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_graveyard_additional_cost.py. t_gac_robot is a 2/2 creature castable from its owner's graveyard by discarding any card in addition to its printed {2}{U} -- Dragon Man, Reformed Robot's permission on a vanilla body.",
+  "cards": [
+    {
+      "id": "t_gac_robot",
+      "name": "Test Graveyard Robot",
+      "oracle_text": "You may cast this card from your graveyard by discarding a card in addition to paying its other costs.",
+      "mana_cost": "{2}{U}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Robot"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "graveyard_additional_cost": {"discard": 1}
+    }
+  ]
+}

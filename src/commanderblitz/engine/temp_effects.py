@@ -7,6 +7,7 @@ rule, ``_expired``.
 from __future__ import annotations
 
 from collections.abc import Iterable, Mapping
+from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
 from .characteristics import _matches, printed_creature_types
@@ -22,6 +23,7 @@ from .structs import (
     PERMANENT_SHIELD_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
+    AttackMark,
     AttackRestriction,
     BlockProhibition,
     CastLock,
@@ -107,16 +109,42 @@ def restrict_attack(
 def clear_attack_restrictions(state: GameState, duration: str) -> None:
     """Drop every attack restriction of one duration -- its wearing-off.
 
-    Called from two places, one per duration: `turn._cleanup_step` for
-    ``this_turn`` and `combat.end_combat` for ``this_combat``.  Split by duration
-    rather than cleared wholesale at either point, because a turn-scoped
-    restriction has to survive the combat it was cast before -- Call for Aid is
-    cast in a precombat main phase and means the *whole* turn, extra combats
-    included.
+    Called from two places: `turn._cleanup_step` for ``this_turn`` and
+    ``attacker_next_turn``, and `combat.end_combat` for ``this_combat``.  Split
+    by duration rather than cleared wholesale at either point, because a
+    turn-scoped restriction has to survive the combat it was cast before -- Call
+    for Aid is cast in a precombat main phase and means the *whole* turn, extra
+    combats included.
+
+    ``attacker_next_turn`` drops only the entries in force *this* turn: one
+    still pending -- installed this turn, for the attacker's next one -- has
+    not begun yet.
     """
     if not state.attack_restrictions:
         return
-    state.attack_restrictions = [r for r in state.attack_restrictions if r.duration != duration]
+    state.attack_restrictions = [
+        r
+        for r in state.attack_restrictions
+        if r.duration != duration
+        or (duration == "attacker_next_turn" and r.in_force_turn != state.turn)
+    ]
+
+
+def arm_attack_restrictions(state: GameState, player: int) -> None:
+    """Start every pending ``attacker_next_turn`` restriction on ``player``.
+
+    Called from `turn._untap_step` for the untapping player: "during their
+    next turn" is this turn. Pending entries are frozen, so each is replaced
+    by its armed copy.
+    """
+    if not state.attack_restrictions:
+        return
+    state.attack_restrictions = [
+        replace(r, in_force_turn=state.turn)
+        if r.duration == "attacker_next_turn" and r.attacker == player and r.in_force_turn is None
+        else r
+        for r in state.attack_restrictions
+    ]
 
 
 def goad_creature(state: GameState, oid: int, player: int, *, permanent: bool = False) -> bool:
@@ -1185,3 +1213,92 @@ def drop_attack_requirements(state: GameState, player: int) -> None:
         obj = state.objects.get(oid)
         if obj is not None and player in obj.must_be_attacked_by:
             del obj.must_be_attacked_by[player]
+        # The creature marks as well: a mark naming a seat that has left can
+        # never be obeyed, and one on that seat's "end of your next turn" clock
+        # would never end -- the turn it waits for is never taken (800.4a).
+        if obj is not None and obj.attack_marks:
+            obj.attack_marks = [
+                m
+                for m in obj.attack_marks
+                if player not in (m.defender, m.until_end_of_turn_of)
+            ]
+
+
+def require_attack_player(
+    state: GameState,
+    oid: int,
+    defender: int,
+    clock: int,
+    source: int | None = None,
+) -> bool:
+    """ "Until the end of your next turn, target creature attacks that player
+    each combat if able." One rules-relevant thing: it writes the mark.
+
+    ``clock`` is "your" -- the seat whose next turn's cleanup ends the mark
+    (`structs.AttackMark`). Refused, returning ``False``, for a creature no
+    longer on the battlefield and for a defender out of the game. A defender
+    who controls the creature is *not* refused: control can change before the
+    combat the mark is about, and until then it simply cannot be obeyed.
+
+    One mark per defender: a second one naming the same player replaces the
+    first, which is the later clock -- the same requirement renewed, not two.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if not state.is_alive(defender):
+        return False
+    mark = AttackMark(
+        defender=defender, until_end_of_turn_of=clock, since_turn=state.turn, source=source
+    )
+    obj.attack_marks = [
+        m for m in obj.attack_marks if m.prohibition or m.defender != defender
+    ] + [mark]
+    return True
+
+
+def forbid_attack_while_counter(
+    state: GameState,
+    oid: int,
+    defender: int,
+    counter: str,
+    *,
+    planeswalkers: bool = False,
+    source: int | None = None,
+) -> bool:
+    """ "That creature can't attack ``defender`` for as long as it has a
+    ``counter`` counter on it." One rules-relevant thing: it writes the mark.
+
+    Refused, returning ``False``, for a creature no longer on the battlefield,
+    a defender out of the game, and a creature with no such counter -- its
+    duration is already over (611.2b), so the mark would lie in the log. A
+    defender who controls the creature is not refused: control can change.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.counter(counter) <= 0:
+        return False
+    if not state.is_alive(defender):
+        return False
+    mark = AttackMark(
+        defender=defender,
+        since_turn=state.turn,
+        source=source,
+        prohibition=True,
+        planeswalkers=planeswalkers,
+        while_counter=counter,
+    )
+    if mark in obj.attack_marks:
+        return False
+    obj.attack_marks = [*obj.attack_marks, mark]
+    return True
+
+
+def clear_attack_marks(state: GameState) -> None:
+    """End the creature attack marks whose "end of your next turn" is now -- cleanup."""
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.attack_marks:
+            continue
+        obj.attack_marks = [
+            m for m in obj.attack_marks if not m.ends_now(state.active_player, state.turn)
+        ]

@@ -304,7 +304,8 @@ def _own_board(registry: CardRegistry, card: CardDef | None) -> list[str]:
     (:func:`swap_in_artifact_body`).
     """
     props = _props(registry, OWN_BOARD_ROLES)
-    return swap_in_artifact_body(registry, swap_in_tribal_body(registry, props, card), card)
+    board = swap_in_legendary_body(registry, swap_in_tribal_body(registry, props, card), card)
+    return swap_in_artifact_body(registry, board, card)
 
 
 def quiet_tribal_body(registry: CardRegistry, subtype: str) -> str | None:
@@ -348,6 +349,65 @@ def swap_in_tribal_body(
     if subtype is None or not board:
         return board
     pick = quiet_tribal_body(registry, subtype)
+    if pick is None:
+        return board
+    return [pick, *board[1:]]
+
+
+def sacrifice_cost_wants_legendary(card: CardDef | None) -> bool:
+    """Does this card's additional cost sacrifice a **legendary** creature?
+
+    "As an additional cost to cast this spell, sacrifice a legendary creature"
+    -- Ultimate Nullification. Read off the compiled cost, as
+    :func:`tribal_cost_subtype` reads its tribe, so the question asked is the
+    one the payment solver will ask.
+    """
+    if card is None or card.additional_cost is None:
+        return False
+    pool = card.additional_cost.sacrifice
+    return bool(pool) and "Legendary" in (pool.get("supertypes") or ())
+
+
+def quiet_legendary_body(registry: CardRegistry) -> str | None:
+    """The quietest legendary creature in this pool, or None if it has none.
+
+    The `legendary_creature` role's floor -- no activated or triggered
+    ability, either of which could act during the drive -- and then the
+    fewest abilities, the fewest keywords and the id, so the position is
+    identical run to run. Not :func:`quiet_tribal_body`'s "no abilities at
+    all": the hand-written pool `--collect` verifies against has no legendary
+    creature without one, and the body is sacrificed as the spell is cast, so
+    a static of its own applies only before the card under test is on the
+    stack.
+    """
+    match = sorted(
+        (
+            c
+            for c in registry
+            if _ROLES["legendary_creature"](c) and (c.toughness or 0) > 0
+        ),
+        key=lambda c: (len(c.abilities), len(c.keywords), c.id),
+    )
+    return match[0].id if match else None
+
+
+def swap_in_legendary_body(
+    registry: CardRegistry, board: list[str], card: CardDef | None
+) -> list[str]:
+    """``board`` with its first creature swapped for a legendary one, if ``card`` needs it.
+
+    Your creatures are nonlegendary -- the opponent's is the position's one
+    legendary permanent -- so a spell whose additional cost sacrifices a
+    legendary creature is never offered, and gate 4 reports "not playable in
+    the sandbox": the harness naming a shape the position cannot represent, not
+    a verdict about the card. The prop is added and the gate left alone, on
+    :func:`swap_in_tribal_body`'s terms: **only** for a card
+    :func:`sacrifice_cost_wants_legendary` says needs it, a swap so the boards
+    stay 32 and 6, and the board untouched when the pool has no quiet body.
+    """
+    if not sacrifice_cost_wants_legendary(card) or not board:
+        return board
+    pick = quiet_legendary_body(registry)
     if pick is None:
         return board
     return [pick, *board[1:]]
@@ -1236,6 +1296,11 @@ def residual_text(card: CardDef, oracle_text: str) -> str:
     return proxy_residual(facts, claimed_lines(card, oracle_text))
 
 
+def _bare_keyword_line(line: str) -> str:
+    """A printed keyword line without its reminder text, lowercased."""
+    return re.sub(r"\([^()]*\)", "", line).strip().rstrip(".").strip().lower()
+
+
 def claimed_lines(card: CardDef, oracle_text: str) -> set[str]:
     """The printed lines something on this card accounts for.
 
@@ -1476,6 +1541,14 @@ def _declares_printed_cost(printed: str, declared: ManaCost) -> bool:
     )
 
 
+#: "You may cast this card from your graveyard by discarding a [land] card in
+#: addition to paying its other costs." The noun, when printed, is the card
+#: type the discard is narrowed to.
+_GRAVEYARD_ADDITIONAL_LINE = re.compile(
+    r"you may cast (?:~|this card) from your graveyard by discarding an? "
+    r"(?:(\w+) )?card in addition to paying its other costs"
+)
+
 _TOXIC_PART = re.compile(r"toxic (\d+)")
 
 
@@ -1592,9 +1665,14 @@ def _covered(card: CardDef, line: str) -> bool:
     # "Escalate {G} (Pay this cost for each mode chosen beyond the first.)" --
     # multikicker's shape and its strictness: `card.escalate` is set only once
     # the loader has desugared it beside a one-or-more modal spell, and the
-    # symbols on the line have to be the ones charged.
+    # symbols on the line have to be the ones charged. A non-mana escalate
+    # ("Escalate—Tap an untapped creature you control") has no symbols to
+    # compare, so it is never claimed here; the spell's `spell_effects` claim
+    # its every line, and gate 5 is the witness for what the payment is.
     if card.escalate is not None and stripped.lower().startswith("escalate "):
-        return _declares_printed_cost(stripped[len("escalate ") :], card.escalate)
+        if not card.escalate.charges_nothing():
+            return False
+        return _declares_printed_cost(stripped[len("escalate ") :], card.escalate.mana)
 
     # "Strive — This spell costs {1}{W} more to cast for each target beyond the
     # first." Multikicker's shape: a card-level price charged inside
@@ -1607,11 +1685,36 @@ def _covered(card: CardDef, line: str) -> bool:
         match = _STRIVE_LINE.search(stripped)
         return match is not None and _declares_printed_cost(match.group(1), card.strive)
 
+    # "You may cast this card from your graveyard by discarding a card in
+    # addition to paying its other costs." (Dragon Man, Reformed Robot) is
+    # `graveyard_additional_cost` -- retrace's card-level permission, which no
+    # ability could honestly carry. Strict on the cost: the printed discard
+    # has to be the one charged, so a card discarding "a land card" cannot
+    # claim "discarding a card", and any other printed cost stays residual.
+    if card.retrace:
+        match = _GRAVEYARD_ADDITIONAL_LINE.fullmatch(folded_line.lower())
+        if match is not None:
+            noun = match.group(1)
+            wanted = Cost(discard=1) if noun is None else Cost(
+                discard=1, discard_selector={"types": [noun.capitalize()]}
+            )
+            return card.retrace_cost == wanted
+
     # "Ascend (If you control ten or more permanents…)" is a *state trigger*
     # checked in the state-based-action pass, not an ability: it uses no stack
     # and cannot be responded to, so there is nothing for an ability's `text` to
     # be attached to. Same shape as `kicker` above.
     if card.ascend and stripped.lower().startswith("ascend"):
+        return True
+
+    # "Rebound (If you cast this spell from your hand, exile it as it
+    # resolves…)" is the card-level `rebound` rider: the exile replaces the
+    # graveyard in `stack` and the upkeep cast is armed there, so no ability
+    # carries the line. A spell with `spell_effects` never reached this, since
+    # those claim every line; one whose only text is keyword lines (Into the
+    # Time Vortex: cascade and rebound) has none. Strict like improvise's: the
+    # line must be the bare word plus its reminder, and the field must be set.
+    if card.rebound and _bare_keyword_line(stripped) == "rebound":
         return True
 
     # "Improvise (Your artifacts can help cast this spell…)", and convoke and
@@ -1625,8 +1728,7 @@ def _covered(card: CardDef, line: str) -> bool:
     # line must be the bare keyword plus its reminder text.
     if card.pay_generic_with is not None:
         keyword = _PAY_GENERIC_KEYWORDS.get(card.pay_generic_with)
-        bare = re.sub(r"\([^()]*\)", "", stripped).strip().rstrip(".").strip().lower()
-        if keyword is not None and bare == keyword:
+        if keyword is not None and _bare_keyword_line(stripped) == keyword:
             return True
 
     # "This spell costs {X} less to cast" is a property of the card read while

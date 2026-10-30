@@ -30,6 +30,7 @@ from commanderblitz.engine.mana import SYMBOLS as MANA_SYMBOLS
 from commanderblitz.engine.mana import ManaCost, compile_restriction
 from commanderblitz.engine.objects import PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
+    ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
@@ -1411,68 +1412,114 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # two durations are not a long and a short version of one restriction:
         # `this_turn` read for `this_combat` blanks the extra combat a Relentless
         # Assault bought, `this_combat` read for `this_turn` gives it away free.
-        for side in ("attacker", "defender"):
-            if side not in effect:
+        # `objects` is the creature-scoped form ("each of those creatures
+        # can't attack you ... for as long as it has a vow counter on it"),
+        # and it replaces `attacker` rather than narrowing it: a line naming
+        # both would say two different things about who is stopped.
+        if "objects" in effect:
+            if "attacker" in effect:
                 raise DslError(
-                    f"{where}: cant_attack_player needs '{side}' -- "
-                    f"the restriction names both players"
+                    f"{where}: cant_attack_player takes 'objects' (the creatures "
+                    f"stopped) or 'attacker' (the player stopped), not both"
                 )
-            _validate_player_spec(effect[side], f"{where}.{side}", target_kinds)
-        if "duration" not in effect:
-            raise DslError(
-                f"{where}: cant_attack_player needs a 'duration' "
-                f"(implemented: 'this_turn', 'this_combat')"
-            )
-        if str(effect["duration"]) not in ATTACK_RESTRICTION_DURATIONS:
-            raise DslError(
-                f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
-                f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
-            )
-        # `planeswalkers` decides whether the prohibition reaches 506.2's third
-        # attack target, and it is checked for the reason `no_monarch` and
-        # `was_cast` are: `"false"` is a non-empty string and would read as
-        # `true`, turning "you can't attack that player" into a line strictly
-        # stronger than the printing -- invisibly, since no board shows a
-        # prohibition that was never tested.
-        if "planeswalkers" in effect and not isinstance(effect["planeswalkers"], bool):
-            raise DslError(
-                f"{where}.planeswalkers: must be true or false -- true is for the "
-                f"sentence naming no defender at all ('creatures can't attack this "
-                f"combat'), false for every line that names a seat (506.2)"
-            )
-        # `planeswalkers_matching` keeps the seat open and closes only the
-        # defender's walkers of the named subtypes ("can't attack Jaces you
-        # control"). Each refusal below is a card that would load as a different
-        # one: beside `planeswalkers: true` it would close the seat it promises
-        # to leave open; an empty or unknown filter would close nothing (or, read
-        # loosely, everything); and a creature subtype names no planeswalker, so
-        # the line would prohibit nothing.
-        if "planeswalkers_matching" in effect:
-            matching = effect["planeswalkers_matching"]
-            subtypes = matching.get("subtypes") if isinstance(matching, dict) else None
-            if (
-                not isinstance(matching, dict)
-                or set(matching) != {"subtypes"}
-                or not isinstance(subtypes, list)
-                or not subtypes
-                or not all(isinstance(t, str) for t in subtypes)
-            ):
+            if not effect.get("objects"):
+                raise DslError(f"{where}: cant_attack_player 'objects' names no creatures")
+            if "defender" not in effect:
                 raise DslError(
-                    f"{where}.planeswalkers_matching: must be {{'subtypes': [...]}} "
-                    f"naming at least one planeswalker subtype"
+                    f"{where}: cant_attack_player needs 'defender' -- the player "
+                    f"those creatures may not attack"
                 )
-            for sub in subtypes:
-                if SUBTYPE_CLASS.get(sub) != "Planeswalker":
+            _validate_player_spec(effect["defender"], f"{where}.defender", target_kinds)
+            # The one clock the creature form has. A creature-scoped line on a
+            # turn clock is a different sentence nobody has printed yet, and
+            # guessing its storage would be a card nobody can check.
+            if effect.get("duration") != "while_counter":
+                raise DslError(
+                    f"{where}: cant_attack_player with 'objects' needs "
+                    f"'duration': 'while_counter' (\"for as long as it has a "
+                    f"<kind> counter on it\"), not {effect.get('duration')!r}"
+                )
+            counter = effect.get("counter")
+            if not isinstance(counter, str) or not counter:
+                raise DslError(
+                    f"{where}: cant_attack_player 'while_counter' needs 'counter' "
+                    f"naming the counter kind"
+                )
+            if "planeswalkers_matching" in effect:
+                raise DslError(
+                    f"{where}: cant_attack_player with 'objects' takes "
+                    f"'planeswalkers' but not 'planeswalkers_matching'"
+                )
+            if "planeswalkers" in effect and not isinstance(effect["planeswalkers"], bool):
+                raise DslError(f"{where}.planeswalkers: must be true or false")
+        elif "counter" in effect or effect.get("duration") == "while_counter":
+            raise DslError(
+                f"{where}: cant_attack_player's 'while_counter' clock is a fact "
+                f"about creatures; name them in 'objects'"
+            )
+        else:
+            for side in ("attacker", "defender"):
+                if side not in effect:
                     raise DslError(
-                        f"{where}.planeswalkers_matching: {sub!r} is not a "
-                        f"planeswalker subtype"
+                        f"{where}: cant_attack_player needs '{side}' -- "
+                        f"the restriction names both players"
                     )
-            if effect.get("planeswalkers") is True:
+                _validate_player_spec(effect[side], f"{where}.{side}", target_kinds)
+            if "duration" not in effect:
                 raise DslError(
-                    f"{where}: cant_attack_player takes 'planeswalkers_matching' or "
-                    f"'planeswalkers: true', not both -- one closes only some walkers "
-                    f"and leaves the seat open, the other closes the seat and every walker"
+                    f"{where}: cant_attack_player needs a 'duration' "
+                    f"(implemented: {list(ATTACK_RESTRICTION_DURATIONS)})"
                 )
+            if str(effect["duration"]) not in ATTACK_RESTRICTION_DURATIONS:
+                raise DslError(
+                    f"{where}: unknown cant_attack_player duration {effect['duration']!r} "
+                    f"(implemented: {sorted(ATTACK_RESTRICTION_DURATIONS)})"
+                )
+            # `planeswalkers` decides whether the prohibition reaches 506.2's third
+            # attack target, and it is checked for the reason `no_monarch` and
+            # `was_cast` are: `"false"` is a non-empty string and would read as
+            # `true`, turning "you can't attack that player" into a line strictly
+            # stronger than the printing -- invisibly, since no board shows a
+            # prohibition that was never tested.
+            if "planeswalkers" in effect and not isinstance(effect["planeswalkers"], bool):
+                raise DslError(
+                    f"{where}.planeswalkers: must be true or false -- true is for the "
+                    f"sentence naming no defender at all ('creatures can't attack this "
+                    f"combat'), false for every line that names a seat (506.2)"
+                )
+            # `planeswalkers_matching` keeps the seat open and closes only the
+            # defender's walkers of the named subtypes ("can't attack Jaces you
+            # control"). Each refusal below is a card that would load as a different
+            # one: beside `planeswalkers: true` it would close the seat it promises
+            # to leave open; an empty or unknown filter would close nothing (or, read
+            # loosely, everything); and a creature subtype names no planeswalker, so
+            # the line would prohibit nothing.
+            if "planeswalkers_matching" in effect:
+                matching = effect["planeswalkers_matching"]
+                subtypes = matching.get("subtypes") if isinstance(matching, dict) else None
+                if (
+                    not isinstance(matching, dict)
+                    or set(matching) != {"subtypes"}
+                    or not isinstance(subtypes, list)
+                    or not subtypes
+                    or not all(isinstance(t, str) for t in subtypes)
+                ):
+                    raise DslError(
+                        f"{where}.planeswalkers_matching: must be {{'subtypes': [...]}} "
+                        f"naming at least one planeswalker subtype"
+                    )
+                for sub in subtypes:
+                    if SUBTYPE_CLASS.get(sub) != "Planeswalker":
+                        raise DslError(
+                            f"{where}.planeswalkers_matching: {sub!r} is not a "
+                            f"planeswalker subtype"
+                        )
+                if effect.get("planeswalkers") is True:
+                    raise DslError(
+                        f"{where}: cant_attack_player takes 'planeswalkers_matching' or "
+                        f"'planeswalkers: true', not both -- one closes only some walkers "
+                        f"and leaves the seat open, the other closes the seat and every walker"
+                    )
     if op == "goad":
         # A goad with no selector goads nobody: the spell resolves, the log says
         # nothing, and every creature attacks exactly as it pleases. Detain's
@@ -1497,6 +1544,29 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every
         # op, goad included.
+    if op == "must_attack_player":
+        # All three are the card. Without `objects` nobody is compelled;
+        # without `defender` there is no "that player" to attack, and guessing
+        # one (the controller, every opponent) compels a seat the printed line
+        # never named; and the clock is required for `cant_attack_player`'s
+        # reason -- a requirement with a guessed lifetime is a different card.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: must_attack_player needs 'objects' naming the creatures "
+                f"that must attack"
+            )
+        if effect.get("defender") is None:
+            raise DslError(
+                f"{where}: must_attack_player needs 'defender' -- the player they "
+                f"must attack ({{\"binding\": \"defender\"}} for 'that player')"
+            )
+        _validate_player_spec(effect["defender"], f"{where}.defender", target_kinds)
+        if str(effect.get("duration", "")) not in ATTACK_MARK_DURATIONS:
+            raise DslError(
+                f"{where}: must_attack_player needs a 'duration' "
+                f"(implemented: {list(ATTACK_MARK_DURATIONS)}), not "
+                f"{effect.get('duration')!r}"
+            )
     if op == "must_attack_planeswalker":
         # Both required. Without `objects` there is no walker to attack and the
         # line does nothing; without `player`, defaulting to anybody would
@@ -2630,6 +2700,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'snapshot' must be a non-empty binding name, got {effect['snapshot']!r}"
             )
+    if op == "flip_coin":
+        # "Flip a coin. If you lose the flip, ..." The branches are the card: a
+        # flip with neither is a coin tossed for nothing, and a non-list branch
+        # would be read as no effects at all.
+        for key in ("effects", "else"):
+            if key in effect and not isinstance(effect[key], list):
+                raise DslError(f"{where}.{key}: a list of effects")
+        if not effect.get("effects") and not effect.get("else"):
+            raise DslError(
+                f"{where}: flip_coin needs 'effects' (if you win the flip) or "
+                f"'else' (if you lose it) -- a flip nothing reads changes nothing"
+            )
     if op == "roll_dice":
         # The same refusal `join_forces` carries below, for the same reason: a
         # roll is never the effect, it is what the sentences after it read. A
@@ -3073,6 +3155,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: cant_cast_spells is total -- a zone-filtered lock is "
                 f"cant_cast_spells_from_zones"
             )
+    if op == "play_exiled" and "exiles" in effect and not isinstance(effect["exiles"], bool):
+        # `cast_card`'s rider and its refusal: a string "false" read as truthy
+        # would exile a spell the card sends back to the graveyard.
+        raise DslError(f"{where}: play_exiled's 'exiles' is true or false")
     if op == "cast_card":
         # "You may cast that card": the pool is the whole of what may be cast,
         # and without one the op offers nothing while still printing its

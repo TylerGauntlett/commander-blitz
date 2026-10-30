@@ -1072,3 +1072,75 @@ class TestRedGhostsApeIsAThreeThreeRedVillainWithHaste:
         assert sorted(ape.colors) == ["G"]
         assert not ape.keywords
         assert "Villain" not in ape.subtypes
+
+
+class TestInvisibleWomansWallIsAZeroThreeColorlessWall:
+    """Invisible Woman: *"…create a 0/3 colorless Wall creature token with
+    defender and reach."*
+
+    `spider_1_2_g_reach` is the pool's nearest reach blocker: green, a point
+    of power that can deal damage, a toughness short, a Spider, and free to
+    attack.
+    """
+
+    def test_it_is_a_zero_three_colorless_wall_with_defender_and_reach(self, pool):
+        token = pool.get("wall_0_3_c_defender_reach")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 3)
+        assert not token.colors
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Wall"]
+        assert sorted(token.keywords) == ["defender", "reach"]
+        assert not token.abilities
+
+    def test_the_spider_is_still_a_separate_token(self, pool):
+        spider = pool.get("spider_1_2_g_reach")
+        assert (spider.power, spider.toughness) == (1, 2)
+        assert "defender" not in spider.keywords
+
+
+class TestNamorsMerfolkIsAOneOneBlueMerfolk:
+    """Namor, Atlantean King: *"Whenever you cast a noncreature spell, create
+    a 1/1 blue Merfolk creature token."*
+
+    `fish_1_1_u` and `tentacle_1_1_u` are the same blue 1/1 body with the wrong
+    creature type, which a Merfolk lord or a Merfolk count would not see.
+    """
+
+    def test_it_is_a_vanilla_one_one_blue_merfolk(self, pool):
+        token = pool.get("merfolk_1_1_u")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["U"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Merfolk"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_fish_and_the_tentacle_are_still_separate_tokens(self, pool):
+        for near_miss in ("fish_1_1_u", "tentacle_1_1_u"):
+            assert "Merfolk" not in pool.get(near_miss).subtypes
+
+
+class TestTheFantasticarsConstructsAreFourFourHastyFliers:
+    """The Fantasticar: *"…create four 4/4 colorless Construct artifact
+    creature tokens with flying and haste."*
+
+    `construct_0_0_c_artifact_buff` is the pool's other Construct: a 0/0 that
+    grows with artifacts and has no keywords. `dragon_4_4_r_flying` has the
+    body but is red, not an artifact, and cannot attack the turn it arrives.
+    """
+
+    def test_it_is_a_four_four_colorless_construct_artifact_with_flying_and_haste(self, pool):
+        token = pool.get("construct_4_4_c_artifact_flying_haste")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Construct"]
+        assert sorted(token.keywords) == ["flying", "haste"]
+        assert not token.abilities
+
+    def test_the_growing_construct_is_still_a_separate_token(self, pool):
+        construct = pool.get("construct_0_0_c_artifact_buff")
+        assert (construct.power, construct.toughness) == (0, 0)
+        assert not construct.keywords

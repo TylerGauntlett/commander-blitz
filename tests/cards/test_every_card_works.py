@@ -19,6 +19,7 @@ import pytest
 from commanderblitz.cards.authoring.verify import (
     check_expectation,
     swap_in_artifact_body,
+    swap_in_legendary_body,
     swap_in_tribal_body,
 )
 from commanderblitz.cards.registry import CardRegistry
@@ -107,7 +108,11 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
     # and died. `swap_in_artifact_body` trades the second creature for a quiet
     # artifact creature, again only for a card that needs it.
     under_test = registry.get(card_id) if card_id in registry else None
+    # Ultimate Nullification sacrifices a legendary creature to be cast, and
+    # this board's creatures are nonlegendary; `swap_in_legendary_body` is the
+    # tribal swap's twin, shared for the same reason.
     board = swap_in_tribal_body(registry, list(OWN_BOARD), under_test)
+    board = swap_in_legendary_body(registry, board, under_test)
     builder.battlefield(0, swap_in_artifact_body(registry, board, under_test))
     builder.battlefield(1, OPPONENT_BOARD)
     builder.graveyard(0, OWN_GRAVEYARD)
@@ -164,7 +169,7 @@ def add_dummy_spell(game: Game, seat: int = 1) -> None:
         push_spell(game.state, obj.oid, seat)
 
 
-def add_dummy_ability(game: Game, registry, seat: int = 0) -> None:
+def add_dummy_ability(game: Game, registry, seat: int = 0, kind: str | None = None) -> None:
     """Put an **ability** on the stack for an `ability_on_stack` target to find.
 
     The sibling of `add_dummy_spell` above, and needed for the same reason at a
@@ -178,24 +183,43 @@ def add_dummy_ability(game: Game, registry, seat: int = 0) -> None:
     Strionic Resonator), where every counterspell wants the opponent's.
 
     Any permanent with a non-mana activated ability will do, since
-    `_ability_matches` reads only the controller -- so this picks the first one in
-    the pool rather than trying to satisfy a selector it knows nothing about.
+    `_ability_matches` reads only the controller and the ability's kind -- so
+    this picks the first one in the pool rather than trying to satisfy a
+    selector it knows nothing about. ``kind`` is that selector's
+    `ability_kind`: ``"triggered"`` (Mister Fantastic) pushes a targetless,
+    modeless triggered ability instead.
     """
-    from commanderblitz.engine.stack import push_activated_ability
+    from commanderblitz.engine.stack import push_activated_ability, push_triggered_ability
+    from commanderblitz.engine.structs import TriggerInstance
 
     for card_id in sorted(registry.ids()):
         card = registry.get(card_id)
-        ability = next(
-            (a for a in card.abilities if a.is_activated and not a.is_mana_ability),
-            None,
-        )
+        if kind == "triggered":
+            ability = next(
+                (
+                    a
+                    for a in card.abilities
+                    if a.is_triggered and not a.targets and not a.cast_time_modes
+                ),
+                None,
+            )
+        else:
+            ability = next(
+                (a for a in card.abilities if a.is_activated and not a.is_mana_ability),
+                None,
+            )
         if ability is None or ability.targets:
             # No targets, so putting it on the stack needs no choices made.
             continue
         obj = new_object(game.state, card_id, owner=seat, zone=Zone.BATTLEFIELD)
         obj.controller = seat
         game.state.battlefield.append(obj.oid)
-        push_activated_ability(game.state, obj.oid, ability.index, seat)
+        if kind == "triggered":
+            trig = TriggerInstance(source_oid=obj.oid, ability_index=ability.index, controller=seat)
+            for _ in push_triggered_ability(game.state, trig):
+                raise AssertionError("a targetless, modeless trigger chooses nothing")
+        else:
+            push_activated_ability(game.state, obj.oid, ability.index, seat)
         return
 
 
@@ -820,7 +844,8 @@ def _satisfy_an_exists(game: Game, registry, selector: dict) -> None:
     It puts out one real card from the pool whose *printed* power clears the
     floor, rather than pumping a sandbox creature: the condition reads `chars`,
     so a card that names the wrong characteristic still fails. Only "you control
-    it on the battlefield" and a ``>=`` power floor over a constant are read; any
+    it on the battlefield" and a ``>=`` power or toughness floor over a constant
+    are read; any
     other shape is left alone and the ability reports as unusable, which is the
     honest answer when the harness cannot build the position.
     """
@@ -828,14 +853,21 @@ def _satisfy_an_exists(game: Game, registry, selector: dict) -> None:
         return
     if selector.get("zone", "battlefield") != "battlefield":
         return
-    min_power = None
-    power = selector.get("power")
-    if power is not None:
-        value = power.get("value") if isinstance(power, dict) else None
-        if power.get("op") != ">=" or not isinstance(value, dict) or "const" not in value:
+    # Baxter Building: "...only if you control a creature with toughness 4 or
+    # greater" -- the same floor over the other printed characteristic, read the
+    # same way and refused the same way when its shape is anything else.
+    floors: dict[str, int | None] = {"power": None, "toughness": None}
+    for stat in floors:
+        spec = selector.get(stat)
+        if spec is None:
+            continue
+        value = spec.get("value") if isinstance(spec, dict) else None
+        if spec.get("op") != ">=" or not isinstance(value, dict) or "const" not in value:
             return
-        min_power = int(value["const"])
-    match = _fodder_for(registry, selector, min_power=min_power)
+        floors[stat] = int(value["const"])
+    match = _fodder_for(
+        registry, selector, min_power=floors["power"], min_toughness=floors["toughness"]
+    )
     if match is None:
         return
     fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
@@ -937,7 +969,13 @@ def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:
     return True
 
 
-def _fodder_for(registry, selector: dict, count: int = 1, min_power: int | None = None):
+def _fodder_for(
+    registry,
+    selector: dict,
+    count: int = 1,
+    min_power: int | None = None,
+    min_toughness: int | None = None,
+):
     """The first card in the pool matching a counting filter's types.
 
     Shared by every helper that satisfies a requirement by putting permanents
@@ -969,6 +1007,7 @@ def _fodder_for(registry, selector: dict, count: int = 1, min_power: int | None 
         and (not subtypes or subtypes & set(c.subtypes))
         and colors <= set(c.colors)
         and (min_power is None or (c.power is not None and c.power >= min_power))
+        and (min_toughness is None or (c.toughness is not None and c.toughness >= min_toughness))
     ]
     if not matches:
         return None
@@ -1048,7 +1087,10 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
             if spec.kind != "ability_on_stack":
                 continue
             add_dummy_ability(
-                game, registry, 1 if spec.selector.get("controller") == "opponent" else 0
+                game,
+                registry,
+                1 if spec.selector.get("controller") == "opponent" else 0,
+                spec.selector.get("ability_kind"),
             )
         return
     for spec in ability.targets:

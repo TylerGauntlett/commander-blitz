@@ -1,0 +1,32 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_legend_rule_exemption.py. t_lre_reeds is Council of Reeds' exemption on a noncreature enchantment, so the creature filter is the only thing deciding what it reaches; t_lre_relic is a legendary artifact the filter must miss.",
+  "cards": [
+    {
+      "id": "t_lre_reeds",
+      "name": "Test Reed Council",
+      "oracle_text": "The \"legend rule\" doesn't apply to creatures you control.",
+      "mana_cost": "{2}{U}",
+      "types": ["Enchantment"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "The \"legend rule\" doesn't apply to creatures you control.",
+          "effect": "legend_rule_exemption",
+          "affects": {"controller": "you", "types": ["Creature"]}
+        }
+      ]
+    },
+    {
+      "id": "t_lre_relic",
+      "name": "Test Exemption Relic",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "supertypes": ["Legendary"],
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    }
+  ]
+}

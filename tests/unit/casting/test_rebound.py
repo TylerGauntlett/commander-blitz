@@ -187,3 +187,70 @@ class TestTheLoaderGuard:
         """It enters the battlefield, so the rider never fires -- silently."""
         with pytest.raises(DslError, match="only means anything on an instant or sorcery"):
             compile_card(self._card(types=["Creature"], power=1, toughness=1))
+
+
+class TestThePrintedReboundLineIsClaimed:
+    """Gate 3's bookkeeping for a spell whose only text is keyword lines.
+
+    A spell with `spell_effects` has every printed line claimed by them, so
+    Fantastic Elasticity's Rebound line never needed a claimant. Into the Time
+    Vortex is cascade and rebound and nothing else: the cascade line is its
+    stack trigger's `text`, and the rebound line is the card-level `rebound`
+    rider, which no ability carries. Without a claimant the card was rejected
+    with `residual_text` returning exactly "Rebound (...)".
+    """
+
+    CASCADE = (
+        "Cascade (When you cast this spell, exile cards from the top of your library "
+        "until you exile a nonland card that costs less. You may cast it without paying "
+        "its mana cost. Put the exiled cards on the bottom in a random order.)"
+    )
+    REBOUND = (
+        "Rebound (If you cast this spell from your hand, exile it as it resolves. At the "
+        "beginning of your next upkeep, you may cast this card from exile without paying "
+        "its mana cost.)"
+    )
+
+    def _card(self, **extra):
+        base = {
+            "id": "t_rebound_residual",
+            "name": "Rebound Residual",
+            "mana_cost": "{3}{U}{R}",
+            "types": ["Sorcery"],
+            "oracle_text": f"{self.CASCADE}\n{self.REBOUND}",
+            "rebound": True,
+            "abilities": [
+                {
+                    "kind": "triggered",
+                    "text": self.CASCADE,
+                    "active_zones": ["stack"],
+                    "trigger": {"event": "spell_cast", "source": "self", "controller": "you"},
+                    "effects": [{"op": "cascade"}],
+                }
+            ],
+        }
+        base.update(extra)
+        return compile_card(CardModel.model_validate(base))
+
+    def test_the_printed_rebound_line_is_claimed(self):
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card()
+        assert residual_text(card, card.oracle_text) == ""
+
+    def test_a_card_without_the_rider_leaves_the_line_residual(self):
+        """The claimant is the field, not the word: no rider, no claim."""
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card(id="t_rebound_absent", rebound=False)
+        assert "Rebound" in residual_text(card, card.oracle_text)
+
+    def test_the_rider_claims_only_the_bare_keyword_line(self):
+        """A sentence that merely starts with the word is not the keyword."""
+        from commanderblitz.cards.authoring.verify import residual_text
+
+        card = self._card(
+            id="t_rebound_sentence",
+            oracle_text=f"{self.CASCADE}\nRebound target creature to its owner's hand.",
+        )
+        assert "Rebound target creature" in residual_text(card, card.oracle_text)

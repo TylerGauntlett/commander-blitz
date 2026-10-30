@@ -38,6 +38,8 @@ from .state import MAX_EXTRA_PHASES_PER_TURN
 from .structs import StackItem
 from .temp_effects import (
     arm_attack_requirements,
+    arm_attack_restrictions,
+    clear_attack_marks,
     clear_attack_requirements,
     clear_attack_restrictions,
     clear_block_prohibitions,
@@ -385,6 +387,9 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # attack Gideon Jura if able." This is that next turn: arm the marks
     # waiting on the untapping player, so they bite for exactly this turn.
     arm_attack_requirements(state, player.pid)
+    # "That player can't attack you … during their next turn" (Willie
+    # Lumpkin, Postman): the same "next turn" of the same player, armed here.
+    arm_attack_restrictions(state, player.pid)
     # "Until your next turn, up to one target creature gets -2/-1." (Liliana,
     # the Last Hope.) The pumps, keyword grants, animations and ability locks a
     # loyalty ability stretched past cleanup -- the same clock as the tables
@@ -751,6 +756,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # this restriction belongs to no permanent at all -- Call for Aid is a
     # sorcery, and the seat it restricts is its own caster's.
     clear_attack_restrictions(state, "this_turn")
+    clear_attack_restrictions(state, "attacker_next_turn")
     # "…can't block **this turn**." Beside it and for the same reason: Aragorn's
     # global clause is a continuous effect owned by no permanent, so
     # `clear_until_eot` -- which walks the battlefield -- has nothing to find.
@@ -807,6 +813,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_permanent_shields(state, "this_turn")
     # And Gideon Jura's "during target opponent's next turn" ends with it.
     clear_attack_requirements(state)
+    # "Until the end of your next turn, target creature attacks that player
+    # each combat if able" (Silver Surfer, Galactus's Herald).
+    clear_attack_marks(state)
     # "You can't sacrifice those creatures **this turn**." (Call for Aid.) The
     # fourth of these and owned by no permanent for the same reason: the sorcery
     # that said it is in a graveyard long before the opponent reaches for their
