@@ -32,6 +32,7 @@ from .vocabulary import (
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
     STATIC_COUNT_ZONES,
+    STATIC_DEATHS_KEYS,
     STATIC_FILTER_KEYS,
     STATIC_LIFE_KEYS,
     STATIC_LIFE_PLAYERS,
@@ -535,7 +536,11 @@ def _validate_static_value(value: Any, where: str) -> None:
             f"got {value['spells_cast_this_turn']!r}"
         )
     for key in (
-        STATIC_LIFE_KEYS | STATIC_POISON_KEYS | STATIC_MANA_POOL_KEYS | STATIC_SPELLS_CAST_KEYS
+        STATIC_LIFE_KEYS
+        | STATIC_POISON_KEYS
+        | STATIC_MANA_POOL_KEYS
+        | STATIC_SPELLS_CAST_KEYS
+        | STATIC_DEATHS_KEYS
     ) & set(value):
         who = value[key]
         if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:

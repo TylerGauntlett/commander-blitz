@@ -1684,6 +1684,14 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # cast that changed it or the turn that ended it.
         pids = _static_players(state, source, expr["spells_cast_this_turn"])
         return sum(state.turn_ledger.spells_cast.get(p, 0) for p in pids)
+    if "creatures_died_this_turn" in expr:
+        # Gorma, the Gullet: "...for each creature that died under your control
+        # this turn." The effect side's morbid leaf, keyed by the creature's
+        # controller as it died, so "you" is the source's controller's dead.
+        # A pipeline input on `spells_cast_this_turn`'s terms: `_tally` writes
+        # it off DIES, the cleanup step empties it, and no layer touches it.
+        pids = _static_players(state, source, expr["creatures_died_this_turn"])
+        return sum(state.turn_ledger.creatures_died.get(p, 0) for p in pids)
     if "max_count_of" in expr:
         # "As long as an opponent controls more lands than you." A count per
         # player rather than over the merged pool -- `count` with

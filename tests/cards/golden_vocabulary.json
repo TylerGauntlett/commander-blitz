@@ -458,6 +458,9 @@
    "hand",
    "library"
   ],
+  "STATIC_DEATHS_KEYS": [
+   "creatures_died_this_turn"
+  ],
   "STATIC_DERIVED_CONDITION_EFFECTS": [
    "cant_attack",
    "cant_block"
@@ -596,6 +599,7 @@
    "const",
    "count",
    "counters_on",
+   "creatures_died_this_turn",
    "extreme_value",
    "greatest_commander_mana_value",
    "mana_symbols",

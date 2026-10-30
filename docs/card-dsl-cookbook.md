@@ -2072,9 +2072,9 @@ with an additional +1/+1 counter on it for each Angel you already control."
  "amount": {"count": {"controller": "you", "subtypes": ["Angel"]}}}
 ```
 
-`amount` is a whole number of 1 or more, or `{"count": <battlefield filter>}` and
-nothing else (the filter is the static `count` filter, judged from the static's
-source). The count is taken as the permanent enters and **leaves out the
+`amount` is a whole number of 1 or more, `{"count": <battlefield filter>}` or
+`{"creatures_died_this_turn": <player>}`, each alone (the filter is the static
+`count` filter, judged from the static's source). The count is taken as the permanent enters and **leaves out the
 entering group** — the arrival itself and everything that entered in the same
 simultaneous event (`state.event_batch`) — which is the word "already": two
 Angel tokens from one effect each count only the Angels that were there before.
@@ -2082,6 +2082,27 @@ A source in the entering group applies nothing (614.12), so Giada returned
 together with an Angel gives it no counters. A count of 0 adds none. A resolving
 permanent spell and a land drop are each their own event, so a token made while
 the spell waited on the stack is counted.
+
+**A death tally** — Gorma, the Gullet: "Nontoken creatures you control enter
+with an additional +1/+1 counter on them for each creature that died under your
+control this turn."
+
+```jsonc
+{"kind": "static", "effect": "enters_with_additional_counters",
+ "affects": {"controller": "you", "types": ["Creature"], "is_token": false},
+ "counter": "+1/+1",
+ "amount": {"creatures_died_this_turn": "you"}}
+```
+
+The turn ledger's static value, read as the creature enters: "you" is the
+static's controller, and a creature counts under whoever controlled it as it
+died, so an opponent's dead are not yours. Tokens that die count; "nontoken" is
+the `affects` filter and says who gets the counters. No deaths adds none, and a
+creature already on the battlefield does not grow when something dies later.
+`spells_cast_this_turn` and `permanents_entered_this_turn` are refused here,
+because each would count the arrival itself. **Not** a `permanent_enters`
+trigger running `add_counters`, which is respondable and lets the creature
+enter at its printed size.
 
 ### `empower` — "Empower Jace N"
 

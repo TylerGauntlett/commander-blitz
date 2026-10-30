@@ -797,6 +797,11 @@ class GameState:
                 who = obj.controller if obj is not None else pid
                 if who is not None:
                     ledger.creatures_died[who] = ledger.creatures_died.get(who, 0) + 1
+                    # The count is a static's input (`creatures_died_this_turn`),
+                    # and `chars` caches per `char_version`. The zone change
+                    # bumped it before this event fired, and an answer read in
+                    # between would otherwise outlive the death.
+                    self.bump_chars()
         elif event.type == EventType.ATTACKERS_DECLARED:
             if pid is not None:
                 # The oids come off the event payload, which `finish_attackers`

@@ -148,6 +148,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
     STATIC_COUNT_ZONES,
+    STATIC_DEATHS_KEYS,
     STATIC_DERIVED_CONDITION_EFFECTS,
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
@@ -4998,7 +4999,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"kind the arrival gets more of"
             )
         _check_counter_kind(model.counter, f"{where}.counter")
-        if isinstance(model.amount, Mapping):
+        if (
+            isinstance(model.amount, Mapping)
+            and len(model.amount) == 1
+            and set(model.amount) <= STATIC_DEATHS_KEYS
+        ):
+            # Gorma, the Gullet: "...for each creature that died under your
+            # control this turn." One turn-ledger death tally alone, read
+            # through the static value language as the creature enters, with
+            # the bare player specs that language allows. Only the deaths:
+            # `spells_cast_this_turn` and `permanents_entered_this_turn` would
+            # each count the arrival itself, which is the "already" question
+            # below again with no printed card to answer it.
+            _validate_static_value(model.amount, f"{where}.amount")
+        elif isinstance(model.amount, Mapping):
             # Giada, Font of Hope: "...for each Angel you already control." A
             # count of permanents and nothing else: the engine evaluates it
             # leaving out the entering group ("already"), which only means
@@ -5007,7 +5021,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if set(model.amount) != {"count"}:
                 raise DslError(
                     f"{where}: enters_with_additional_counters takes an 'amount' of "
-                    f"a whole number or {{'count': <battlefield filter>}} alone "
+                    f"a whole number, {{'count': <battlefield filter>}} or "
+                    f"{{'creatures_died_this_turn': <player>}} alone "
                     f"(got {sorted(model.amount)})"
                 )
             spec = model.amount["count"]
@@ -5022,7 +5037,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         ):
             raise DslError(
                 f"{where}: enters_with_additional_counters needs 'amount', a whole "
-                f"number of 1 or more or a {{'count': ...}} (got {model.amount!r})"
+                f"number of 1 or more, a {{'count': ...}} or a "
+                f"{{'creatures_died_this_turn': ...}} (got {model.amount!r})"
             )
 
     if model.effect == "lose_keyword":
