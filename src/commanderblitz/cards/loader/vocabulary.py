@@ -177,6 +177,11 @@ STATIC_EFFECTS = frozenset(
         # infect damage, "enters with" counters and costs all find nothing put
         # on.  Takes `affects` and `counter`, both required.
         "cant_have_counters",
+        # Council of Reeds: "The \"legend rule\" doesn't apply to creatures you
+        # control." Matching permanents are left out of 704.5j's grouping, read
+        # by `player_statics.legend_rule_exempt` from `sba._legend_rule`. Takes
+        # `affects`, required: the filter is the printed clause.
+        "legend_rule_exemption",
         # Winter Orb: "As long as this artifact is untapped, players can't
         # untap more than one land during their untap steps."  A **count**,
         # which is the whole difference from `skip_untap_step` next door: that

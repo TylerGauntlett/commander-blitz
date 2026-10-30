@@ -2380,6 +2380,26 @@ def counters_prohibited(state: GameState, oid: int, kind: str) -> bool:
     return False
 
 
+def legend_rule_exempt(state: GameState, oid: int) -> bool:
+    """Does the legend rule not apply to this permanent?
+
+    Council of Reeds: "The \"legend rule\" doesn't apply to creatures you
+    control." A ``legend_rule_exemption`` static, read by `sba._legend_rule`,
+    which leaves a matching permanent out of the per-name grouping (704.5j) --
+    so two legendary creatures named alike both stay, and a matching one never
+    makes a non-matching namesake go. ``affects`` is required by the loader, so
+    the filter always narrows: no card says the rule is off for everything.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    return any(
+        static.get("effect") == "legend_rule_exemption"
+        and _matches(state, obj, source_obj, static.get("affects"))
+        for source_obj, static in _battlefield_statics(state)
+    )
+
+
 def _counter_static_applies(
     source_obj: GameObject,
     static: Mapping[str, Any],

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**99 cards** blocked by **80** capabilities.
+**98 cards** blocked by **79** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,7 +53,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
-| [legend-rule-exemption](#legend-rule-exemption) | 1 | 15154 | static_effect |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -807,20 +806,6 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
-## legend-rule-exemption
-
-Blocks **1** card.
-
-- **(static_effect)** a static effect (with an `affects` filter, here controller you + types Creature) that exempts matching permanents from the legend rule state-based action (704.5j), so several legendary creatures with the same name may coexist under one controller (Mirror Box, Mirror Gallery, Sakashima of a Thousand Faces)
-  <br>Why the existing vocabulary won't do: No entry in static_effects touches the legend rule; sba._legend_rule unconditionally keeps only the newest legendary per (controller, name). Without it the card's own token copy (which is legendary) immediately kills one of the two, so the second line would be useless as printed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Council of Reeds** (rank 15154) — `council_of_reeds`
-  - The "legend rule" doesn't apply to creatures you control.
 
 </details>
 

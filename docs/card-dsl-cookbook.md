@@ -1989,6 +1989,25 @@ counter on a permanent, and is untouched. `affects` and `counter` are both
 required. **Not** `replace_counters` with `counter_multiplier: 0`, which the
 loader refuses because a prevention is a different sentence.
 
+### `legend_rule_exemption` — the legend rule doesn't apply
+
+"The \"legend rule\" doesn't apply to creatures you control." — Council of
+Reeds
+
+```jsonc
+{"kind": "static",
+ "text": "The \"legend rule\" doesn't apply to creatures you control.",
+ "effect": "legend_rule_exemption",
+ "affects": {"controller": "you", "types": ["Creature"]}}
+```
+
+`sba._legend_rule` asks `player_statics.legend_rule_exempt` of each legendary
+permanent and leaves a matching one out of 704.5j's per-name grouping: two
+matching namesakes both stay, and a matching permanent never sends a
+non-matching namesake to the graveyard. `affects` is required and `amount` is
+refused. **Not** `copy_permanent`'s `remove_supertypes: ["Legendary"]`, which
+makes the copy nonlegendary — a different card for every "legendary" reader.
+
 ### `enters_with_additional_counters` — a static about other arrivals
 
 "Each planeswalker you control enters with an additional loyalty counter on

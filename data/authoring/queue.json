@@ -54192,12 +54192,12 @@
     },
     "Council of Reeds": {
       "edhrec_rank": 15154,
-      "gate": "template",
+      "gate": null,
       "name": "Council of Reeds",
-      "reason": "no template for: The \"legend rule\" doesn't apply to creatures you control",
+      "reason": "",
       "scryfall_id": "2aa10540-b082-43d1-94d2-c78ebe6e4805",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Council of the Absolute": {

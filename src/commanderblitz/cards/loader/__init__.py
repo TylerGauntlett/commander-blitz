@@ -4882,6 +4882,23 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         _check_counter_kind(model.counter, f"{where}.counter")
 
+    if model.effect == "legend_rule_exemption":
+        # Council of Reeds: "The legend rule doesn't apply to creatures you
+        # control." No filter would lift the rule for every permanent on the
+        # table, including the opponents', which no printed card of this shape
+        # says; Mirror Gallery's "doesn't apply" is written `controller: any`.
+        if model.affects is None:
+            raise DslError(
+                f"{where}: legend_rule_exemption needs 'affects' naming the "
+                f"permanents the legend rule doesn't apply to -- Council of "
+                f"Reeds says creatures you control"
+            )
+        if model.amount is not None:
+            raise DslError(
+                f"{where}: legend_rule_exemption is an exemption, not a "
+                f"quantity; it takes 'affects' and an optional 'condition'"
+            )
+
     if model.effect == "enters_with_additional_counters":
         # Oath of Gideon: "Each planeswalker you control enters with an
         # additional loyalty counter on it." All three are the printed clause,

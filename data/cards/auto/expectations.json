@@ -2631,6 +2631,10 @@
       "0": 2
     }
   },
+  "council_of_reeds": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "counsel_of_the_soratami": {
     "hand_size": {
       "0": 3

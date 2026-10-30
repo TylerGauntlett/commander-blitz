@@ -15,7 +15,7 @@ from .enums import Keyword, LossReason, Supertype, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
-from .player_statics import outcome_barred_by_static
+from .player_statics import legend_rule_exempt, outcome_barred_by_static
 from .primitives import become_monarch, clear_until_next_turn, end_effects_of_leaving_player
 from .temp_effects import (
     clear_flash_permissions,
@@ -693,6 +693,11 @@ def _legend_rule(state: GameState) -> bool:
         # it's legendary" (Adagia, Windswept Bastion) has a non-legendary card
         # behind it, and the exception is the whole reason the copy is unique.
         if Supertype.LEGENDARY.value not in chars(state, oid).supertypes:
+            continue
+        # Council of Reeds: "The legend rule doesn't apply to creatures you
+        # control." An exempt permanent is not grouped at all, so it neither
+        # goes nor sends a non-exempt namesake to the graveyard.
+        if legend_rule_exempt(state, oid):
             continue
         seen.setdefault((obj.controller, card.name), []).append(oid)
 
