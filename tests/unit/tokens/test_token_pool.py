@@ -511,6 +511,31 @@ class TestJosuVesssKnightsAreZombieKnightsWithMenace:
         assert "Knight" not in other.subtypes
 
 
+class TestJadarsZombiesHaveDecayed:
+    """Jadar, Ghoulcaller of Nephalia: *"if you control no creatures with
+    decayed, create a 2/2 black Zombie creature token **with decayed**."*
+
+    `zombie_2_2_b` is the right body without the keyword, and on this card the
+    keyword is the whole engine: the plain Zombie can block, is never
+    sacrificed, and never satisfies the intervening-if, so Jadar would make one
+    every end step instead of one at a time.
+    """
+
+    def test_it_is_a_two_two_black_zombie_with_decayed(self, pool):
+        token = pool.get("zombie_2_2_b_decayed")
+        assert token is not None
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Zombie"]
+        assert list(token.keywords) == ["decayed"]
+        assert token.is_creature and token.is_token
+
+    def test_the_plain_zombie_is_still_a_separate_token(self, pool):
+        other = pool.get("zombie_2_2_b")
+        assert other is not None
+        assert "decayed" not in other.keywords
+
+
 class TestCurrencyConvertersRogueIsATwoTwoBlack:
     """Currency Converter: *"If it's a nonland card, create a **2/2 black
     Rogue** creature token."*

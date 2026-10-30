@@ -4796,6 +4796,38 @@ whom, the second only the seats this one creature attacked, and both per turn
 rather than per combat. Write the keyword. A permanent holding melee twice
 triggers once, as exalted does.
 
+### Decayed
+
+    Jadar, Ghoulcaller of Nephalia — "At the beginning of your end step, if you
+    control no creatures with decayed, create a 2/2 black Zombie creature token
+    with decayed."
+
+```jsonc
+"keywords": ["decayed"]                                // the token, zombie_2_2_b_decayed
+
+{ "kind": "triggered",
+  "text": "At the beginning of your end step, if you control no creatures with decayed, create a 2/2 black Zombie creature token with decayed.",
+  "trigger": { "event": "end_step", "controller": "you",
+    "condition": { "not": { "exists": { "zone": "battlefield", "controller": "you",
+      "types": ["Creature"], "keywords": ["decayed"] } } } },
+  "effects": [ { "op": "create_token", "token": "zombie_2_2_b_decayed" } ] }
+```
+
+Two rules under one word (702.147a), both read off **derived** keywords.
+"This creature can't block" is `combat.can_block`. "When it attacks, sacrifice
+it at end of combat" is exalted's shape: the rules-supplied
+`carddef.DECAYED_TRIGGER`, yielded once for every battlefield permanent with the
+keyword, an `attacks` trigger from `source: "self"` whose resolution makes a
+`delay` at `end_of_combat` that sacrifices itself. So the creature deals its
+combat damage first, is sacrificed in the end of combat step of the combat it
+attacked in, and fires `sacrificed` like any other sacrifice; a creature put
+onto the battlefield attacking never attacked and is not sacrificed.
+
+**The near miss** is a `cant_block` static and a printed attack trigger with the
+same `delay`. It plays the same on its own card and it is not a creature *with
+decayed*: Jadar's `keywords: ["decayed"]` filter never sees it. Write the
+keyword. Its token is `zombie_2_2_b_decayed`, not `zombie_2_2_b`.
+
 ## Protection
 
 Parameterised, so it is a static rather than a `Keyword`:

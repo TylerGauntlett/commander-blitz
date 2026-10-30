@@ -1047,6 +1047,7 @@ KEYWORDS: dict[str, Entry] = {
                             "The inert keywords — partner, and choose a Background"),
     "compleated": ("Compleated.", "`compleated` — the keyword"),
     "daybound": ("Daybound.", "Daybound and nightbound — one field for the whole table"),
+    "decayed": ("Decayed: can't block; sacrificed at end of the combat it attacks in.", "Decayed"),
     "deathtouch": ("Deathtouch.", None),
     "defender": ("Defender.", None),
     "double_strike": ("Double strike.", None),

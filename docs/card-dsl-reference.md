@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 32 |
-| [Keywords](#keywords) | 42 |
+| [Keywords](#keywords) | 43 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -789,6 +789,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `compleated` | Compleated. | [compleated — the keyword](card-dsl-cookbook.md#compleated--the-keyword) |
 | `daybound` | Daybound. | [Daybound and nightbound — one field for the whole table](card-dsl-cookbook.md#daybound-and-nightbound--one-field-for-the-whole-table) |
 | `deathtouch` | Deathtouch. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `decayed` | Decayed: can't block; sacrificed at end of the combat it attacks in. | [Decayed](card-dsl-cookbook.md#decayed) |
 | `defender` | Defender. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `dethrone` | Dethrone. | [Dethrone](card-dsl-cookbook.md#dethrone) |
 | `double_strike` | Double strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |

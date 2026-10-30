@@ -179,6 +179,8 @@ def could_block(state: GameState, blocker: int, attacker: int, defender: int) ->
         return False
     if block_forbidden(state, blocker) or block_prohibited(state, blocker):
         return False
+    if Keyword.DECAYED.value in bc.keywords:
+        return False
     if unblockable(state, attacker, blocker) or protected_from(state, attacker, blocker):
         return False
     if Keyword.FLYING.value in ac.keywords and not (

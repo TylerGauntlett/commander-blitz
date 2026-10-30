@@ -1870,3 +1870,39 @@ MELEE_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(MELEE_TRIGGER)
+
+
+#: Decayed's attack half (702.147a): "When it attacks, sacrifice it at end of
+#: combat."
+#:
+#: Rules-supplied for exalted's reason: the sentence is the rules', and the
+#: printings that carry the word are mostly *tokens* (Jadar's Zombies), which
+#: print no ability to hang a trigger on. `triggers._candidate_abilities`
+#: yields it once for every battlefield permanent whose derived keywords
+#: include decayed, with that permanent as the source.
+#:
+#: Two abilities, as the rule is: the attack trigger, which on resolution
+#: creates a **delayed** trigger (603.7) for the end of this combat -- the
+#: `delay` op at `end_of_combat`, stamped with the combat it was made in -- so
+#: the creature deals its combat damage first, and a trigger that is countered
+#: on the stack schedules nothing. The sacrifice is the controller's own
+#: (`controller: "you"`, the default), so a creature stolen before end of combat
+#: is not sacrificed by the player who attacked with it (701.17a).
+DECAYED_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Decayed",
+    trigger=TriggerSpec(event="attacks", controller="you", source="self"),
+    effects=(
+        {
+            "op": "delay",
+            "step": "end_of_combat",
+            "text": "Decayed: sacrifice it at end of combat.",
+            "effects": (
+                {"op": "sacrifice", "objects": {"zone": "battlefield", "self_only": True}},
+            ),
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(DECAYED_TRIGGER)

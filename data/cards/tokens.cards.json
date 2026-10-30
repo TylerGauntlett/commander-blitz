@@ -2419,6 +2419,29 @@
       ]
     },
     {
+      "id": "zombie_2_2_b_decayed",
+      "name": "Zombie Token",
+      "oracle_text": "2/2 black Zombie creature token with decayed. (It can't block. When it attacks, sacrifice it at end of combat.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "decayed"
+      ]
+    },
+    {
       "id": "plant_0_1_g",
       "name": "Plant Token",
       "oracle_text": "0/1 green Plant creature token.",

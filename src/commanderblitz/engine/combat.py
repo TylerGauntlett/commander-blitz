@@ -1017,6 +1017,10 @@ def can_block(
     # one creature, not about the shape of the whole declaration.
     if block_forbidden(state, blocker_oid):
         return False
+    # Decayed (702.147a) says the same sentence as a keyword, so a creature
+    # that loses its abilities may block again. Read off derived keywords.
+    if Keyword.DECAYED.value in bc.keywords:
+        return False
 
     if blocker.detained_by is not None:
         return False
