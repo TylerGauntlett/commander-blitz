@@ -1,0 +1,22 @@
+{
+  "card_id": "first_family",
+  "name": "First Family",
+  "oracle_text": "You draw X cards and gain X life, where X is the number of colors among permanents you control and spells you've cast this turn.",
+  "blocked_sentences": [
+    "You draw X cards and gain X life, where X is the number of colors among permanents you control and spells you've cast this turn."
+  ],
+  "needs": [
+    {
+      "capability": "colors_among",
+      "kind": "value",
+      "what": "a value counting the distinct colors (0-5, colorless never counting) across the union of permanents you control (derived colors) and the spells you've cast this turn (read from the per-turn cast ledger, this spell included), e.g. {\"distinct\": {\"of\": \"color\", \"objects\": {\"zone\": \"battlefield\", \"controller\": \"you\"}, \"spells_cast_this_turn\": \"you\"}}, usable as the amount of draw and gain_life",
+      "why_existing_wont_do": "`distinct` accepts only of: power, basic_land_type or card_type (DISTINCT_OF in engine/effects/values.py), so it cannot count colors; and its pool is an objects selector over current objects, while `spells_cast_this_turn` returns only a count of spells (optionally filtered), never their colors, so the colors of spells already resolved this turn cannot be read and unioned with the board's colors. A sum of five per-color `if exists` checks could cover the board half but still has no way to ask the colors of spells cast this turn, which have mostly left the stack."
+    }
+  ],
+  "closest_existing": [
+    "distinct",
+    "spells_cast_this_turn",
+    "each_color_among"
+  ],
+  "confidence": "high"
+}

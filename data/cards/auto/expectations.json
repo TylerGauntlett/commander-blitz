@@ -246,6 +246,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "alicia_masters_skilled_sculptor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "all_is_dust": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -2792,6 +2796,10 @@
   "crystal_grotto": {
     "zone": "battlefield"
   },
+  "crystal_inhuman_princess": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "crystal_quarry": {
     "zone": "battlefield"
   },
@@ -4219,6 +4227,13 @@
   "fangren_hunter": {
     "zone": "battlefield"
   },
+  "fantastic_elasticity": {
+    "battlefield_count": 31,
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "exile"
+  },
   "faramir_steward_of_gondor": {
     "zone": "battlefield"
   },
@@ -4768,6 +4783,10 @@
     },
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "franklin_richards_ascendant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "frantic_search": {
     "graveyard_size": {

@@ -6092,12 +6092,12 @@
     },
     "Alicia Masters, Skilled Sculptor": {
       "edhrec_rank": 17559,
-      "gate": "template",
+      "gate": null,
       "name": "Alicia Masters, Skilled Sculptor",
-      "reason": "no template for: At the beginning of combat on your turn, if you've cast a noncreature spell this turn, cre",
+      "reason": "",
       "scryfall_id": "3db94749-340c-4454-a15d-ba6353e0c4a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alien Invasion": {
@@ -57842,12 +57842,12 @@
     },
     "Crystal, Inhuman Princess": {
       "edhrec_rank": 13944,
-      "gate": "template",
+      "gate": null,
       "name": "Crystal, Inhuman Princess",
-      "reason": "no template for: Whenever you cast a noncreature spell, Crystal deals X damage to each opponent, where X is",
+      "reason": "",
       "scryfall_id": "1e9aec49-08d7-4fc8-87dd-69ab8910688a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crystalline Armor": {
@@ -91362,12 +91362,12 @@
     },
     "Fantastic Elasticity": {
       "edhrec_rank": 17847,
-      "gate": "template",
+      "gate": null,
       "name": "Fantastic Elasticity",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "35521ad2-f701-48d6-8686-537ef1f079da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Far // Away": {
@@ -101602,12 +101602,12 @@
     },
     "Franklin Richards, Ascendant": {
       "edhrec_rank": 16864,
-      "gate": "template",
+      "gate": null,
       "name": "Franklin Richards, Ascendant",
-      "reason": "no template for: At the beginning of combat on your turn, if you've cast a noncreature spell this turn, dis",
+      "reason": "",
       "scryfall_id": "0957b296-c34d-4193-9fe7-a339533ac121",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Frantic Confrontation": {

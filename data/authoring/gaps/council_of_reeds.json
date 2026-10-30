@@ -1,0 +1,18 @@
+{
+  "card_id": "council_of_reeds",
+  "name": "Council of Reeds",
+  "oracle_text": "The \"legend rule\" doesn't apply to creatures you control.\nAt the beginning of combat on your turn, if you've cast a noncreature spell this turn, create a token that's a copy of Council of Reeds.",
+  "blocked_sentences": [
+    "The \"legend rule\" doesn't apply to creatures you control."
+  ],
+  "needs": [
+    {
+      "capability": "legend_rule_exemption",
+      "kind": "static_effect",
+      "what": "a static effect (with an `affects` filter, here controller you + types Creature) that exempts matching permanents from the legend rule state-based action (704.5j), so several legendary creatures with the same name may coexist under one controller (Mirror Box, Mirror Gallery, Sakashima of a Thousand Faces)",
+      "why_existing_wont_do": "No entry in static_effects touches the legend rule; sba._legend_rule unconditionally keeps only the newest legendary per (controller, name). Without it the card's own token copy (which is legendary) immediately kills one of the two, so the second line would be useless as printed"
+    }
+  ],
+  "closest_existing": ["copy_permanent"],
+  "confidence": "high"
+}
