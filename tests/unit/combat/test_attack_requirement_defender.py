@@ -311,7 +311,9 @@ class TestTheLoader:
 
     def test_an_unknown_duration_is_refused(self):
         with pytest.raises(DslError, match="must_attack_player needs a 'duration'"):
-            compile_card(CardModel.model_validate(_sorcery({**self.base, "duration": "this_turn"})))
+            compile_card(
+                CardModel.model_validate(_sorcery({**self.base, "duration": "next_turn"}))
+            )
 
     def test_defending_on_another_static_is_refused(self):
         probe = static_probe(

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**95 cards** blocked by **78** capabilities.
+**95 cards** blocked by **79** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,6 +43,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -51,6 +52,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -66,7 +68,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
-| [must-attack-player-this-turn](#must-attack-player-this-turn) | 1 | 11062 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -658,6 +659,20 @@ Blocks **1** card.
 
 </details>
 
+## elemental-x-x-ur-flying-haste
+
+Blocks **1** card.
+
+- **(token)** an X/X blue and red Elemental creature token with flying and haste (power/toughness set by create_token's power/toughness)
+  <br>Why the existing vocabulary won't do: token_ids has elemental_3_3_ur_flying (no haste), elemental_1_1_ur and elemental_4_4_ur (no flying/haste) and dragon_illusion_x_x_r_flying_haste (wrong colour and types); none is a blue-red Elemental with flying and haste
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
+  - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
+
+</details>
+
 ## escalate-non-mana
 
 Blocks **1** card.
@@ -777,6 +792,20 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## greatest-mana-value-spells-cast-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value reading the greatest printed mana value among the spells a player cast this turn that match a filter (here instant and sorcery spells you've cast), read off TurnLedger.spells_cast_ids like spells_cast_this_turn's filter form; e.g. extreme_value accepting a spells_cast_this_turn source in place of objects
+  <br>Why the existing vocabulary won't do: spells_cast_this_turn with a filter only counts the matching spells, and extreme_value only resolves an `objects` pool of objects in zones -- resolved instants and sorceries have left the stack, so neither yields their greatest mana value
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
+  - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
 
 </details>
 
@@ -992,20 +1021,6 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
-
-</details>
-
-## must-attack-player-this-turn
-
-Blocks **1** card.
-
-- **(op)** a this_turn duration on must_attack_player: the created creatures must attack a named player (here {"binding": "each_player"} inside for_each_player over opponents) during this turn's combat if able, and the requirement ends at this turn's cleanup
-  <br>Why the existing vocabulary won't do: must_attack_player names the defender but only accepts duration end_of_your_next_turn (structs.ATTACK_MARK_DURATIONS), which would also compel the tokens on your next turn; must_attack accepts this_turn but names no defender, so in multiplayer the tokens could attack any opponent instead of 'that opponent'; goad points away from a player and lasts too long. The rest of the card is expressible: cost_reduction count of Instant/Sorcery cards (any_types) in your graveyard, create_token elemental_3_3_ur_flying x2 per opponent with 'as', grant_keyword haste until end of turn on the binding.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Furygale Flocking** (rank 11062) — `furygale_flocking`
-  - For each opponent, create two 3/3 blue and red Elemental creature tokens with flying that attack that opponent this turn if able.
 
 </details>
 

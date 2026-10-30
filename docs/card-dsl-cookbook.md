@@ -10105,6 +10105,11 @@ scored by the requirements an attack on it obeys and only the best are offered.
 //   creature attacks that player each combat if able."
 { "op": "must_attack_player", "objects": { "target": "t1" },
   "defender": { "binding": "defender" }, "duration": "end_of_your_next_turn" }
+
+// Furygale Flocking: "For each opponent, create two 3/3 … tokens with flying
+//   that attack that opponent this turn if able."
+{ "op": "must_attack_player", "objects": { "binding": "flock" },
+  "defender": { "binding": "each_player" }, "duration": "this_turn" }
 ```
 
 An attack requirement that names **whom** to attack, in two lifetimes. The
@@ -10112,9 +10117,11 @@ static's `defending` is read live, relative to the static's controller:
 `opponent_most_life` is every opponent tied for the most life among that
 player's opponents, and the attacking player picks among the tied. The op
 writes a `structs.AttackMark` on each creature, naming each player `defender`
-resolves to; `end_of_your_next_turn` is the only `duration` and ends it in the
-cleanup of the effect controller's next turn, `TempEffect`'s clock for those
-words. The mark ends with the creature (400.7) and with either seat leaving.
+resolves to. Its `duration` is one of two clocks: `end_of_your_next_turn` ends
+it in the cleanup of the effect controller's next turn, `TempEffect`'s clock for
+those words, and `this_turn` ends it in the cleanup of the turn it was made in,
+whoever's turn that is. The mark ends with the creature (400.7) and with the
+named seat, or the clock's seat, leaving.
 
 Both are read by `combat.required_attack_defenders`, so they are one
 requirement to `attack_required` and to 508.1d's count beside goad and Gideon

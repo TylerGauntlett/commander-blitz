@@ -113,7 +113,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `move_counters` | Board |  | Move counters from one permanent to another. | [Effect ops](card-dsl.md#effect-ops) |
 | `must_attack` | Board |  | Creatures attack this turn if able. | [Attack requirements](card-dsl-cookbook.md#attack-requirements) |
 | `must_attack_planeswalker` | Board |  | Creatures attack a planeswalker this turn if able. | ["…creatures that player controls attack Gideon Jura if able"](card-dsl-cookbook.md#creatures-that-player-controls-attack-gideon-jura-if-able) |
-| `must_attack_player` | Board |  | Creatures attack a named player each combat if able until the end of your next turn. | ["…attacks that player each combat if able"](card-dsl-cookbook.md#attacks-that-player-each-combat-if-able) |
+| `must_attack_player` | Board |  | Creatures attack a named player each combat if able, until the end of your next turn or this turn. | ["…attacks that player each combat if able"](card-dsl-cookbook.md#attacks-that-player-each-combat-if-able) |
 | `must_block` | Board |  | Creatures block this turn if able. | [Effect ops](card-dsl.md#effect-ops) |
 | `pair` | Board |  | Soulbond: pair the source with another creature. | [Soulbond — a relationship that is not attachment](card-dsl-cookbook.md#soulbond--a-relationship-that-is-not-attachment) |
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
