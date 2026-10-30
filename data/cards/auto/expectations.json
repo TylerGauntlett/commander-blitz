@@ -7234,6 +7234,9 @@
       "graveyard"
     ]
   },
+  "lethal_scheme": {
+    "zone": "graveyard"
+  },
   "level_up": {
     "battlefield_count": 33,
     "target_pt_delta": {
