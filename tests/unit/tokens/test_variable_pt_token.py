@@ -136,7 +136,7 @@ class TestTheToken:
         """The 0/0s that are created and then given counters are *not* X/X."""
         pool = CardRegistry.from_dir()
         flagged = sorted(c.id for c in pool if c.variable_pt)
-        assert flagged == [SHARK]
+        assert flagged == sorted([SHARK, "dragon_illusion_x_x_r_flying_haste"])
         assert not pool.get("fractal_0_0_gu").variable_pt
 
 
