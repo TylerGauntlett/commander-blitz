@@ -8351,6 +8351,13 @@
     },
     "zone": "battlefield"
   },
+  "mazirek_kraul_death_priest": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "medusa_inhuman_queen": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8417,6 +8424,15 @@
     }
   },
   "merchant_of_truth": {
+    "zone": "battlefield"
+  },
+  "merchant_of_venom": {
+    "battlefield_count": 32,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "merchant_scroll": {
@@ -8676,6 +8692,16 @@
   "moldering_karok": {
     "zone": "battlefield"
   },
+  "moldervine_reclamation": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "molecule_man": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8783,6 +8809,13 @@
   },
   "moriok_reaver": {
     "zone": "battlefield"
+  },
+  "mortality_spear": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "graveyard"
   },
   "mortify": {
     "battlefield_count": 31,
@@ -8927,6 +8960,17 @@
   },
   "mutilate": {
     "zone": "graveyard"
+  },
+  "mycoloth": {
+    "battlefield_count": 31,
+    "counters": {
+      "amount": 4,
+      "kind": "+1/+1"
+    },
+    "graveyard_size": {
+      "0": 4
+    },
+    "zone": "battlefield"
   },
   "myr_battlesphere": {
     "battlefield_count": 37,
@@ -9118,6 +9162,13 @@
     "zone": "battlefield"
   },
   "nether_horror": {
+    "zone": "battlefield"
+  },
+  "nether_traitor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "nettle_swine": {

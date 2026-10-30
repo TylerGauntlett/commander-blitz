@@ -169972,12 +169972,12 @@
     },
     "Mazirek, Kraul Death Priest": {
       "edhrec_rank": 1600,
-      "gate": "template",
+      "gate": null,
       "name": "Mazirek, Kraul Death Priest",
-      "reason": "no template for: Whenever a player sacrifices another permanent, put a +1/+1 counter on each creature you c",
+      "reason": "",
       "scryfall_id": "940ae3c2-7ac2-412b-afd0-c8b0099bc3aa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mazzy, Truesword Paladin": {
@@ -171312,12 +171312,12 @@
     },
     "Merchant of Venom": {
       "edhrec_rank": 11831,
-      "gate": "template",
+      "gate": null,
       "name": "Merchant of Venom",
-      "reason": "no template for: When this creature enters, each player sacrifices a creature of their choice",
+      "reason": "",
       "scryfall_id": "935e0dbb-76fd-4f4f-bcc6-d80a3061bb29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merchant of the Vale // Haggle": {
@@ -177442,12 +177442,12 @@
     },
     "Moldervine Reclamation": {
       "edhrec_rank": 959,
-      "gate": "template",
+      "gate": null,
       "name": "Moldervine Reclamation",
-      "reason": "no template for: Whenever a creature you control dies, you gain 1 life and draw a card",
+      "reason": "",
       "scryfall_id": "f3e93085-ffcb-4f48-8649-3fcbc5e97699",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moldgraf Millipede": {
@@ -179592,12 +179592,12 @@
     },
     "Mortality Spear": {
       "edhrec_rank": 3352,
-      "gate": "template",
+      "gate": null,
       "name": "Mortality Spear",
-      "reason": "no template for: This spell costs {2} less to cast if you gained life this turn",
+      "reason": "",
       "scryfall_id": "f6cdff9b-bb09-45b9-aa3c-16a3136d183c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortarion, Daemon Primarch": {
@@ -181612,12 +181612,12 @@
     },
     "Mycoloth": {
       "edhrec_rank": 2090,
-      "gate": "template",
+      "gate": null,
       "name": "Mycoloth",
-      "reason": "no template for: Devour 2",
+      "reason": "",
       "scryfall_id": "924976cf-9b46-4cbf-ab27-07ca72a21608",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Myconid Spore Tender": {
@@ -185462,12 +185462,12 @@
     },
     "Nether Traitor": {
       "edhrec_rank": 2454,
-      "gate": "template",
+      "gate": null,
       "name": "Nether Traitor",
-      "reason": "no template for: Whenever another creature is put into your graveyard from the battlefield, you may pay {B}",
+      "reason": "",
       "scryfall_id": "fae5d1cb-ead9-41e1-84ce-2f06dc8cf6ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nether Void": {
