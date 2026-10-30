@@ -50,6 +50,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [free-cast-exiles-instead](#free-cast-exiles-instead) | 1 | 19958 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [graveyard-cast-additional-discard](#graveyard-cast-additional-discard) | 1 | 25385 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -80,7 +81,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-greatest-mana-value](#static-greatest-mana-value) | 1 | 25385 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -766,6 +766,20 @@ Blocks **1** card.
 
 </details>
 
+## graveyard-cast-additional-discard
+
+Blocks **1** card.
+
+- **(cost)** a card-level permission to cast this card from its owner's graveyard at its printed cost plus an additional cost of discarding a card of any type -- retrace's shape (601.2b/601.2g, the discard paid after the mana) with the discard filter opened from 'a land card' to 'a card', e.g. a `retrace` that takes the discard selector, or a graveyard-cast permission carrying an `additional_cost`
+  <br>Why the existing vocabulary won't do: `retrace` is a bare flag whose cost is fixed in `CardDef.retrace_cost` as discarding a *land* card, so it would refuse a nonland discard the card allows; `graveyard_cost`/`flashback` is an *alternative* cost replacing the mana cost, which changes what the cast is (no other alternative cost, such as a free-cast permission, could be applied, and cost-reading effects see an alternative cost); a `cast_from_graveyard` static with `active_zones: ["graveyard"]` (Gravecrawler) grants the cast at the printed price but carries no additional cost. The power line is expressible with the static `extreme_value` leaf.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dragon Man, Reformed Robot** (rank 25385) — `dragon_man_reformed_robot`
+  - You may cast this card from your graveyard by discarding a card in addition to paying its other costs.
+
+</details>
+
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -1198,20 +1212,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## static-greatest-mana-value
-
-Blocks **1** card.
-
-- **(value)** a static value (usable as a set_pt / buff magnitude, i.e. a characteristic-defining power) that evaluates to the greatest mana value among objects matching a selector spanning zones -- here the union of noncreature permanents you control on the battlefield and noncreature cards in your graveyard -- and 0 when nothing matches
-  <br>Why the existing vocabulary won't do: `extreme_value` (with `of: mana_value`, `pick: greatest`) does exactly this but is only in `value_keys` for effects, not in `static_value_keys`; the static magnitudes offer `count`, `max_count_of`, `greatest_commander_mana_value` (commanders only) and `sum`, none of which aggregate mana value over arbitrary objects. A one-shot `pump`/`set_pt` op would not track the board continuously as a CDA must.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Dragon Man, Reformed Robot** (rank 25385) — `dragon_man_reformed_robot`
-  - Dragon Man's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard.
 
 </details>
 

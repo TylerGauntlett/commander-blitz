@@ -3,16 +3,16 @@
   "name": "Dragon Man, Reformed Robot",
   "oracle_text": "Flying\nDragon Man's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard.\nYou may cast this card from your graveyard by discarding a card in addition to paying its other costs.",
   "blocked_sentences": [
-    "Dragon Man's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard."
+    "You may cast this card from your graveyard by discarding a card in addition to paying its other costs."
   ],
   "needs": [
     {
-      "capability": "static_greatest_mana_value",
-      "kind": "value",
-      "what": "a static value (usable as a set_pt / buff magnitude, i.e. a characteristic-defining power) that evaluates to the greatest mana value among objects matching a selector spanning zones -- here the union of noncreature permanents you control on the battlefield and noncreature cards in your graveyard -- and 0 when nothing matches",
-      "why_existing_wont_do": "`extreme_value` (with `of: mana_value`, `pick: greatest`) does exactly this but is only in `value_keys` for effects, not in `static_value_keys`; the static magnitudes offer `count`, `max_count_of`, `greatest_commander_mana_value` (commanders only) and `sum`, none of which aggregate mana value over arbitrary objects. A one-shot `pump`/`set_pt` op would not track the board continuously as a CDA must."
+      "capability": "graveyard_cast_additional_discard",
+      "kind": "cost",
+      "what": "a card-level permission to cast this card from its owner's graveyard at its printed cost plus an additional cost of discarding a card of any type -- retrace's shape (601.2b/601.2g, the discard paid after the mana) with the discard filter opened from 'a land card' to 'a card', e.g. a `retrace` that takes the discard selector, or a graveyard-cast permission carrying an `additional_cost`",
+      "why_existing_wont_do": "`retrace` is a bare flag whose cost is fixed in `CardDef.retrace_cost` as discarding a *land* card, so it would refuse a nonland discard the card allows; `graveyard_cost`/`flashback` is an *alternative* cost replacing the mana cost, which changes what the cast is (no other alternative cost, such as a free-cast permission, could be applied, and cost-reading effects see an alternative cost); a `cast_from_graveyard` static with `active_zones: [\"graveyard\"]` (Gravecrawler) grants the cast at the printed price but carries no additional cost. The power line is expressible with the static `extreme_value` leaf."
     }
   ],
-  "closest_existing": ["extreme_value", "greatest_commander_mana_value"],
+  "closest_existing": ["retrace", "cast_from_graveyard", "graveyard_cost"],
   "confidence": "high"
 }

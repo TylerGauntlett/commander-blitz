@@ -1635,6 +1635,23 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             ),
             default=0,
         )
+    if "extreme_value" in expr:
+        # Dragon Man, Reformed Robot: "power is equal to the greatest mana value
+        # among noncreature permanents you control and noncreature cards in your
+        # graveyard." The printed mana value off each object a counting filter
+        # finds, `union` joining a filter per zone -- an object in two branches
+        # counts once, and an empty pool is 0. A printed mana cost is a pipeline
+        # input on `mana_symbols`' terms.
+        spec = expr["extreme_value"]
+        objects = spec.get("objects") or {}
+        branches = objects.get("union", [objects])
+        pool = {
+            obj.oid: obj for branch in branches for obj in _matching_objects(state, branch, source)
+        }
+        values = [state.card_of(obj).mana_value for obj in pool.values()]
+        if not values:
+            return 0
+        return max(values) if spec.get("pick", "greatest") == "greatest" else min(values)
     if "min_life_of" in expr:
         pids = _static_players(state, source, expr["min_life_of"])
         return min_life([state.players[p].life for p in pids])

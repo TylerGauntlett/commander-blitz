@@ -668,6 +668,8 @@ CONDITIONS: dict[str, Entry] = {
 #: Static-side entries, read before `VALUES`: a leaf in both languages whose
 #: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "extreme_value": ("The greatest/least printed mana value among a counting filter's pool, or a `union` of them.",
+                      None),
     "greatest_commander_mana_value": (
         "The greatest printed mana value among your commanders, wherever they are.", None),
     "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; the bare spec only.",

@@ -1,0 +1,38 @@
+{
+  "_comment": "Shapes for tests/unit/statics/test_static_extreme_value.py. t_sev_robot is Dragon Man, Reformed Robot's characteristic-defining power on a */5; t_sev_rock is a mana value 2 artifact, t_sev_relic a mana value 5 enchantment, t_sev_ritual a mana value 6 sorcery, t_sev_titan a mana value 7 creature the noncreature filter must miss.",
+  "cards": [
+    {
+      "id": "t_sev_robot",
+      "name": "Test Reformed Robot",
+      "oracle_text": "Test Reformed Robot's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard.",
+      "mana_cost": "{2}{W}{U}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Robot"],
+      "colors": ["W", "U"],
+      "color_identity": ["W", "U"],
+      "power": 0,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Test Reformed Robot's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard.",
+          "effect": "set_pt",
+          "affects": {"self_only": true},
+          "power": {"extreme_value": {"of": "mana_value", "pick": "greatest", "objects": {"union": [
+            {"zone": "battlefield", "controller": "you", "not_types": ["Creature"]},
+            {"zone": "graveyard", "controller": "you", "not_types": ["Creature"]}
+          ]}}},
+          "toughness": {"const": 5}
+        }
+      ]
+    },
+    {"id": "t_sev_rock", "name": "Test Extreme Rock", "oracle_text": "", "mana_cost": "{2}",
+     "types": ["Artifact"], "colors": [], "color_identity": []},
+    {"id": "t_sev_relic", "name": "Test Extreme Relic", "oracle_text": "", "mana_cost": "{4}{W}",
+     "types": ["Enchantment"], "colors": ["W"], "color_identity": ["W"]},
+    {"id": "t_sev_ritual", "name": "Test Extreme Ritual", "oracle_text": "", "mana_cost": "{5}{B}",
+     "types": ["Sorcery"], "colors": ["B"], "color_identity": ["B"]},
+    {"id": "t_sev_titan", "name": "Test Extreme Titan", "oracle_text": "", "mana_cost": "{6}{G}",
+     "types": ["Creature"], "colors": ["G"], "color_identity": ["G"], "power": 7, "toughness": 7}
+  ]
+}

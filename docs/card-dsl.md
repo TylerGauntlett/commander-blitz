@@ -5158,7 +5158,25 @@ smaller than the effect-side `value_keys`:
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
+| `{"extreme_value": {"of": "mana_value", "pick": …, "objects": …}}` | the greatest (or least) printed mana value among the objects a counting filter, or a `union` of them, finds; 0 with none — `"mana_value"` only (Dragon Man, Reformed Robot) |
 | `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
+
+`extreme_value` is the effect side's leaf held to a printed number. Dragon Man,
+Reformed Robot's "power is equal to the greatest mana value among noncreature
+permanents you control and noncreature cards in your graveyard" is a `set_pt`
+static whose `power` spans two zones, so `objects` takes a `union` of counting
+filters, each held to the static filter rules for its zone, and an object two
+branches find counts once:
+
+```jsonc
+{ "extreme_value": { "of": "mana_value", "pick": "greatest", "objects": { "union": [
+    { "zone": "battlefield", "controller": "you", "not_types": ["Creature"] },
+    { "zone": "graveyard",   "controller": "you", "not_types": ["Creature"] } ] } } }
+```
+
+`of: "power"` is refused: a power is a layer's output, and a static sized by one
+would depend on another static. `count` is the near miss and says how many,
+never how big; `greatest_commander_mana_value` reaches commanders only.
 
 `permanents_entered_this_turn` is the leaf whose near miss is worst. Kinbinding
 reads "Creatures you control get +X/+X, where X is the number of creatures that
