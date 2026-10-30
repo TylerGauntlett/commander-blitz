@@ -1273,6 +1273,13 @@
   "behemoth_sledge": {
     "zone": "battlefield"
   },
+  "beledros_witherbloom": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "benalish_hero": {
     "zone": "battlefield"
   },
@@ -1416,6 +1423,10 @@
     "zone": "graveyard"
   },
   "blasted_landscape": {
+    "zone": "battlefield"
+  },
+  "blight_mound": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blight_sickle": {
@@ -2889,6 +2900,15 @@
   "crystal_slipper": {
     "zone": "battlefield"
   },
+  "culling_ritual": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "cultist_s_staff": {
     "zone": "battlefield"
   },
@@ -3186,6 +3206,11 @@
   "deadeye_harpooner": {
     "zone": "battlefield"
   },
+  "deadly_brew": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "deadly_dispute": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -3281,6 +3306,14 @@
       "0": 4
     },
     "zone": "graveyard"
+  },
+  "defiling_daemogoth": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
   },
   "deft_duelist": {
     "zone": "battlefield"

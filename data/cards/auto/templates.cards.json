@@ -14041,6 +14041,76 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "pest_1_1_bg"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each upkeep, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+          "trigger": {
+            "controller": "any",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "pay_life": 10
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Pay 10 life: Untap all lands you control. Activate only once each turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "beledros_witherbloom",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}{B}{G}",
+      "name": "Beledros Witherbloom",
+      "oracle_text": "Flying\nAt the beginning of each upkeep, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"\nPay 10 life: Untap all lands you control. Activate only once each turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -15625,6 +15695,80 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "subtypes": [
+              "Pest"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Attacking Pests you control get +1/+0 and have menace.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "subtypes": [
+              "Pest"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Attacking Pests you control get +1/+0 and have menace."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "pest_1_1_bg"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a nontoken creature you control dies, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+          "trigger": {
+            "controller": "you",
+            "event": "dies",
+            "filter": {
+              "is_token": false,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blight_mound",
+      "mana_cost": "{2}{B}",
+      "name": "Blight Mound",
+      "oracle_text": "Attacking Pests you control get +1/+0 and have menace.\nWhenever a nontoken creature you control dies, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -33035,6 +33179,57 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "culling_ritual",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Culling Ritual",
+      "oracle_text": "Destroy each nonland permanent with mana value 2 or less. Add {B} or {G} for each permanent destroyed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "destroyed"
+            }
+          },
+          "op": "add_mana",
+          "player": "you",
+          "split": [
+            "B",
+            "G"
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -35870,6 +36065,103 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "deadly_brew",
+      "mana_cost": "{B}{G}",
+      "name": "Deadly Brew",
+      "oracle_text": "Each player sacrifices a creature or planeswalker of their choice. If you sacrificed a permanent this way, you may return another permanent card from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "brew_yours",
+          "objects": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "chooser": "controller",
+            "controller": "you",
+            "count": 1,
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "binding": "brew_yours"
+              }
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "any_types": [
+                      "Artifact",
+                      "Creature",
+                      "Enchantment",
+                      "Land",
+                      "Planeswalker",
+                      "Battle"
+                    ],
+                    "controller": "you",
+                    "count": 1,
+                    "exclude_binding": "brew_yours",
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return another permanent card from your graveyard to your hand?"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "any_types": [
@@ -36834,6 +37126,66 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control deals combat damage to a player, you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "life_gained_this_turn": "you"
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each opponent loses X life, where X is the amount of life you gained this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "defiling_daemogoth",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Defiling Daemogoth",
+      "oracle_text": "Menace\nWhenever a creature you control deals combat damage to a player, you gain 1 life.\nAt the beginning of your end step, each opponent loses X life, where X is the amount of life you gained this turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

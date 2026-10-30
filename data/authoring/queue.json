@@ -23282,12 +23282,12 @@
     },
     "Beledros Witherbloom": {
       "edhrec_rank": 1443,
-      "gate": "template",
+      "gate": null,
       "name": "Beledros Witherbloom",
-      "reason": "no template for: At the beginning of each upkeep, create a 1/1 black and green Pest creature token with \"Wh",
+      "reason": "",
       "scryfall_id": "144c2886-3d37-4a8a-8e37-99ccff66599e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Belfry Spirit": {
@@ -26982,12 +26982,12 @@
     },
     "Blight Mound": {
       "edhrec_rank": 3931,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Mound",
-      "reason": "no template for: Attacking Pests you control get +1/+0 and have menace",
+      "reason": "",
       "scryfall_id": "dc060028-e01c-4bc7-8b52-7d0e2a350061",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight Pile": {
@@ -57992,12 +57992,12 @@
     },
     "Culling Ritual": {
       "edhrec_rank": 578,
-      "gate": "template",
+      "gate": null,
       "name": "Culling Ritual",
-      "reason": "no template for: Destroy each nonland permanent with mana value 2 or less. Add {B} or {G} for each permanen",
+      "reason": "",
       "scryfall_id": "2bcd7858-7ae6-4419-bc58-a5c133c97577",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Culling Scales": {
@@ -63012,12 +63012,12 @@
     },
     "Deadly Brew": {
       "edhrec_rank": 4864,
-      "gate": "template",
+      "gate": null,
       "name": "Deadly Brew",
-      "reason": "no template for: Each player sacrifices a creature or planeswalker of their choice. If you sacrificed a per",
+      "reason": "",
       "scryfall_id": "3e5493c3-0be2-467c-82f0-3ee1ca909d0c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deadly Complication": {
@@ -65452,12 +65452,12 @@
     },
     "Defiling Daemogoth": {
       "edhrec_rank": 7653,
-      "gate": "template",
+      "gate": null,
       "name": "Defiling Daemogoth",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, you gain 1 life",
+      "reason": "",
       "scryfall_id": "2cde79eb-91c3-4a42-a2d3-e733e3b56846",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Defiling Tears": {
