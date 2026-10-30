@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**90 cards** blocked by **72** capabilities.
+**91 cards** blocked by **73** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,6 +40,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [elemental-3-3-ur-flying](#elemental-3-3-ur-flying) | 1 | 11062 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -607,6 +608,20 @@ Blocks **1** card.
 
 - **Lion's Eye Diamond** (rank 725) — `lion_s_eye_diamond`
   - Discard your hand, Sacrifice this artifact: Add three mana of any one color. Activate only as an instant.
+
+</details>
+
+## elemental-3-3-ur-flying
+
+Blocks **1** card.
+
+- **(token)** a 3/3 blue and red Elemental creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no blue-red Elemental; the nearest are elemental_2_2_g (wrong size, colour, no flying) and dragon_4_4_r_flying / angel_3_3_w_flying (wrong type and colour). The rest of the line is expressible: for_each_player over opponents with create_token amount 2 and `as`, then must_attack_player with defender {binding: each_player} duration this_turn and grant_keyword haste on the bound tokens; the cost line is cost_reduction {count: {controller: you, zone: graveyard, any_types: [Instant, Sorcery]}}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Furygale Flocking** (rank 11062) — `furygale_flocking`
+  - For each opponent, create two 3/3 blue and red Elemental creature tokens with flying that attack that opponent this turn if able. They gain haste until end of turn.
 
 </details>
 

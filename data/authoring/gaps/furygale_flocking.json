@@ -1,0 +1,18 @@
+{
+  "card_id": "furygale_flocking",
+  "name": "Furygale Flocking",
+  "oracle_text": "This spell costs {1} less to cast for each instant and sorcery card in your graveyard.\nFor each opponent, create two 3/3 blue and red Elemental creature tokens with flying that attack that opponent this turn if able. They gain haste until end of turn.",
+  "blocked_sentences": [
+    "For each opponent, create two 3/3 blue and red Elemental creature tokens with flying that attack that opponent this turn if able. They gain haste until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "elemental_3_3_ur_flying",
+      "kind": "token",
+      "what": "a 3/3 blue and red Elemental creature token with flying",
+      "why_existing_wont_do": "token_ids has no blue-red Elemental; the nearest are elemental_2_2_g (wrong size, colour, no flying) and dragon_4_4_r_flying / angel_3_3_w_flying (wrong type and colour). The rest of the line is expressible: for_each_player over opponents with create_token amount 2 and `as`, then must_attack_player with defender {binding: each_player} duration this_turn and grant_keyword haste on the bound tokens; the cost line is cost_reduction {count: {controller: you, zone: graveyard, any_types: [Instant, Sorcery]}}"
+    }
+  ],
+  "closest_existing": ["elemental_2_2_g", "angel_3_3_w_flying", "for_each_player", "must_attack_player", "cost_reduction"],
+  "confidence": "high"
+}

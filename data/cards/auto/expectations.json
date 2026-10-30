@@ -2970,6 +2970,15 @@
   "damocles_base_sword_of_kang": {
     "zone": "battlefield"
   },
+  "dance_with_calamity": {
+    "graveyard_size": {
+      "0": 4
+    },
+    "library_size": {
+      "0": 0
+    },
+    "zone": "graveyard"
+  },
   "dancing_scimitar": {
     "zone": "battlefield"
   },
@@ -3292,6 +3301,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "determined_iteration": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "devilthorn_fox": {
     "zone": "battlefield"
   },
@@ -3317,6 +3330,15 @@
   "diamond_weapon": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "dig_through_time": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "dimension_x": {
     "life": {
@@ -3347,6 +3369,13 @@
     "zone": "battlefield"
   },
   "diregraf_ghoul": {
+    "zone": "battlefield"
+  },
+  "dirgur_focusmage_braingeyser": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "dismal_backwater": {
@@ -4209,6 +4238,13 @@
     "zone": "battlefield"
   },
   "faerie_invaders": {
+    "zone": "battlefield"
+  },
+  "faerie_mastermind": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "faerie_seer": {

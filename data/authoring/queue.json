@@ -32852,12 +32852,12 @@
     },
     "Braingeyser": {
       "edhrec_rank": 11593,
-      "gate": "template",
+      "gate": null,
       "name": "Braingeyser",
-      "reason": "no template for: Target player draws X cards",
+      "reason": "",
       "scryfall_id": "25e1ff5d-0ba5-4055-9a1d-42ed65c11485",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Brainspoil": {
@@ -60392,12 +60392,12 @@
     },
     "Dance with Calamity": {
       "edhrec_rank": 4364,
-      "gate": "template",
+      "gate": null,
       "name": "Dance with Calamity",
-      "reason": "no template for: Shuffle your library. As many times as you choose, you may exile the top card of your libr",
+      "reason": "",
       "scryfall_id": "69f34a40-30f8-4fdd-bb21-79171ba2f00d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dance with Devils": {
@@ -67772,12 +67772,12 @@
     },
     "Determined Iteration": {
       "edhrec_rank": 3938,
-      "gate": "template",
+      "gate": null,
       "name": "Determined Iteration",
-      "reason": "no template for: At the beginning of combat on your turn, populate. The token created this way gains haste.",
+      "reason": "",
       "scryfall_id": "d95490fe-44f2-4f83-b587-b0df402d38ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Detonate": {
@@ -68602,12 +68602,12 @@
     },
     "Dig Through Time": {
       "edhrec_rank": 618,
-      "gate": "template",
+      "gate": null,
       "name": "Dig Through Time",
-      "reason": "no template for: Delve",
+      "reason": "",
       "scryfall_id": "87c899c1-401f-4090-8f71-307e7106cdf2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dig Up": {
@@ -69442,12 +69442,12 @@
     },
     "Dirgur Focusmage // Braingeyser": {
       "edhrec_rank": 10082,
-      "gate": "template",
+      "gate": null,
       "name": "Dirgur Focusmage // Braingeyser",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "7bdabeba-0cfb-4953-b725-50a48164a044",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dirgur Island Dragon // Skimming Strike": {
@@ -90012,12 +90012,12 @@
     },
     "Faerie Mastermind": {
       "edhrec_rank": 309,
-      "gate": "template",
+      "gate": null,
       "name": "Faerie Mastermind",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, you draw a card",
+      "reason": "",
       "scryfall_id": "bc9a7599-3c7d-4b83-bff3-e3d1f20f1b0f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Faerie Mechanist": {

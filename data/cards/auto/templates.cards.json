@@ -18187,6 +18187,43 @@
       "colors": [
         "U"
       ],
+      "id": "braingeyser_dirgur_focusmage",
+      "mana_cost": "{X}{U}{U}",
+      "name": "Braingeyser",
+      "oracle_text": "Target player draws X cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
       "id": "brainstorm",
       "mana_cost": "{U}",
       "name": "Brainstorm",
@@ -33409,6 +33446,85 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "dance_with_calamity",
+      "mana_cost": "{7}{R}",
+      "name": "Dance with Calamity",
+      "oracle_text": "Shuffle your library. As many times as you choose, you may exile the top card of your library. If the total mana value of the cards exiled this way is 13 or less, you may cast any number of spells from among those cards without paying their mana costs.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "shuffle",
+          "player": "you"
+        },
+        {
+          "condition": {
+            "exists": {
+              "player": "you",
+              "zone": "library"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "link": true,
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "player": "you"
+            }
+          ],
+          "op": "may",
+          "prompt": "Exile the top card of your library?",
+          "repeat": true
+        },
+        {
+          "condition": {
+            "cmp": "<=",
+            "left": {
+              "mana_value_of": {
+                "objects": {
+                  "controller": "any",
+                  "exiled_with": "self",
+                  "zone": "exile"
+                }
+              }
+            },
+            "right": {
+              "const": 13
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "controller": "any",
+                "count": "any",
+                "exiled_with": "self",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "exile"
+              },
+              "op": "play_exiled"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "dancing_scimitar",
@@ -36827,6 +36943,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "populate_original",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "is_token": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Populate: choose a creature token you control to copy"
+            },
+            {
+              "as": "populated",
+              "controller": "you",
+              "objects": {
+                "binding": "populate_original"
+              },
+              "op": "copy_permanent"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "populated",
+                "count": "all"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "populated",
+                    "count": "all"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice it at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, populate. The token created this way gains haste. Sacrifice it at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "determined_iteration",
+      "mana_cost": "{1}{R}",
+      "name": "Determined Iteration",
+      "oracle_text": "At the beginning of combat on your turn, populate. The token created this way gains haste. Sacrifice it at the beginning of the next end step. (To populate, create a token that's a copy of a creature token you control.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -37068,6 +37259,37 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "dig_through_time",
+      "mana_cost": "{6}{U}{U}",
+      "name": "Dig Through Time",
+      "oracle_text": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nLook at the top seven cards of your library. Put two of them into your hand and the rest on the bottom of your library in any order.",
+      "pay_generic_with": "exile_from_graveyard",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "destination": "hand",
+          "objects": {
+            "count": 2
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -37470,6 +37692,77 @@
         "Zombie"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "any_types": [
+              "Instant",
+              "Sorcery"
+            ],
+            "controller": "you"
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Instant and sorcery spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell with mana value 5 or greater from your hand, this creature becomes prepared.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 5
+                }
+              }
+            },
+            "from_zones": [
+              "hand"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "dirgur_focusmage_braingeyser",
+      "mana_cost": "{2}{U}",
+      "name": "Dirgur Focusmage // Braingeyser",
+      "oracle_text": "Instant and sorcery spells you cast cost {1} less to cast.\nWhenever you cast an instant or sorcery spell with mana value 5 or greater from your hand, this creature becomes prepared.",
+      "power": 1,
+      "prepared_face": "braingeyser_dirgur_focusmage",
+      "source": "auto",
+      "subtypes": [
+        "Djinn",
+        "Monk"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -46946,6 +47239,68 @@
         "Rogue"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws their second card each turn, you draw a card.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw",
+            "nth": 2
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "each_player"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Each player draws a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "faerie_mastermind",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{1}{U}",
+      "name": "Faerie Mastermind",
+      "oracle_text": "Flash\nFlying\nWhenever an opponent draws their second card each turn, you draw a card.\n{3}{U}: Each player draws a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Rogue"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
