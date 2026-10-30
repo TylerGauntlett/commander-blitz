@@ -3448,6 +3448,17 @@
   "dimir_signet": {
     "zone": "battlefield"
   },
+  "dina_essence_brewer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "dina_soul_steeper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "diplomatic_immunity": {
     "zone": [
       "battlefield",
@@ -3809,6 +3820,10 @@
     "zone": "battlefield"
   },
   "ebony_rhino": {
+    "zone": "battlefield"
+  },
+  "eccentric_pestfinder_turn_stones": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "echoing_deeps": {
@@ -4537,6 +4552,10 @@
     "zone": "battlefield"
   },
   "feral_abomination": {
+    "zone": "battlefield"
+  },
+  "feral_appetite": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "feral_invocation": {
@@ -5368,6 +5387,14 @@
     "zone": "battlefield"
   },
   "gilanra_caller_of_wirewood": {
+    "zone": "battlefield"
+  },
+  "gilded_goose": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "food_token"
+    },
     "zone": "battlefield"
   },
   "gilded_lotus": {

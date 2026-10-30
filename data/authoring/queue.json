@@ -68972,22 +68972,22 @@
     },
     "Dina, Essence Brewer": {
       "edhrec_rank": 6737,
-      "gate": "template",
+      "gate": null,
       "name": "Dina, Essence Brewer",
-      "reason": "no template for: Whenever you sacrifice a creature, draw a card. This ability triggers only once each turn",
+      "reason": "",
       "scryfall_id": "9fe237b8-c02c-41ea-9fc4-b771b91d2157",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dina, Soul Steeper": {
       "edhrec_rank": 2748,
-      "gate": "template",
+      "gate": null,
       "name": "Dina, Soul Steeper",
-      "reason": "no template for: Whenever you gain life, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "6ae992b6-506b-4667-884f-4f7fc075b71e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dingus Egg": {
@@ -78982,12 +78982,12 @@
     },
     "Eccentric Pestfinder // Turn Stones": {
       "edhrec_rank": 7923,
-      "gate": "template",
+      "gate": null,
       "name": "Eccentric Pestfinder // Turn Stones",
-      "reason": "no template for: At the beginning of each end step, if you gained life this turn, this creature becomes pre",
+      "reason": "",
       "scryfall_id": "508e1dd7-edbd-4b76-90bc-ff58c55b58a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Echo Chamber": {
@@ -93442,12 +93442,12 @@
     },
     "Feral Appetite": {
       "edhrec_rank": 9229,
-      "gate": "template",
+      "gate": null,
       "name": "Feral Appetite",
-      "reason": "no template for: Attacking Pests you control get +1/+0 and have deathtouch",
+      "reason": "",
       "scryfall_id": "69dda877-c176-456c-8cd8-5a1ea288e4c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Feral Contest": {
@@ -109392,12 +109392,12 @@
     },
     "Gilded Goose": {
       "edhrec_rank": 789,
-      "gate": "template",
+      "gate": null,
       "name": "Gilded Goose",
-      "reason": "no template for: When this creature enters, create a Food token",
+      "reason": "",
       "scryfall_id": "5ea59511-24b1-4925-9948-9d4c0d27d1c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gilded Light": {

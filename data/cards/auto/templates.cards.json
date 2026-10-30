@@ -38800,6 +38800,185 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a creature, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}, {T}, Sacrifice another creature: You gain X life and put X +1/+1 counters on target creature you control, where X is the sacrificed creature's power."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "dina_essence_brewer",
+      "mana_cost": "{1}{B}{G}",
+      "name": "Dina, Essence Brewer",
+      "oracle_text": "Whenever you sacrifice a creature, draw a card. This ability triggers only once each turn.\n{2}, {T}, Sacrifice another creature: You gain X life and put X +1/+1 counters on target creature you control, where X is the sacrificed creature's power.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dryad",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you gain life, each opponent loses 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_gain_life"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "power_of": {
+                  "binding": "sacrificed"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, Sacrifice another creature: Dina gets +X/+0 until end of turn, where X is the sacrificed creature's power."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "dina_soul_steeper",
+      "mana_cost": "{B}{G}",
+      "name": "Dina, Soul Steeper",
+      "oracle_text": "Whenever you gain life, each opponent loses 1 life.\n{1}, Sacrifice another creature: Dina gets +X/+0 until end of turn, where X is the sacrificed creature's power.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Dryad",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -43080,6 +43259,61 @@
       "toughness": 5,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if you gained life this turn, this creature becomes prepared.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "eccentric_pestfinder_turn_stones",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{2}{B}{G}",
+      "name": "Eccentric Pestfinder // Turn Stones",
+      "oracle_text": "Trample\nAt the beginning of each end step, if you gained life this turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 5,
+      "prepared_face": "turn_stones",
+      "source": "auto",
+      "subtypes": [
+        "Troll",
+        "Druid"
+      ],
+      "toughness": 5,
+      "types": [
         "Creature"
       ]
     },
@@ -50560,6 +50794,104 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "subtypes": [
+              "Pest"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Attacking Pests you control get +1/+0 and have deathtouch.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attacking": true,
+            "controller": "you",
+            "subtypes": [
+              "Pest"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Attacking Pests you control get +1/+0 and have deathtouch."
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}"
+          },
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "binding": "exiled",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "pest_1_1_bg"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}{G}: Exile target card from a graveyard. If a creature card is exiled this way, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "feral_appetite",
+      "mana_cost": "{2}{G}",
+      "name": "Feral Appetite",
+      "oracle_text": "Attacking Pests you control get +1/+0 and have deathtouch.\n{1}{G}: Exile target card from a graveyard. If a creature card is exiled this way, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -59454,6 +59786,131 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "food_token"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}, {T}: Create a Food token."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Food"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Sacrifice a Food: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "gilded_goose",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{G}",
+      "name": "Gilded Goose",
+      "oracle_text": "Flying\nWhen this creature enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n{1}{G}, {T}: Create a Food token.\n{T}, Sacrifice a Food: Add one mana of any color.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Bird"
       ],
       "toughness": 2,
       "types": [
@@ -164751,6 +165208,40 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "turn_stones",
+      "mana_cost": "{B}{G}",
+      "name": "Turn Stones",
+      "oracle_text": "For each opponent, you create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "pest_1_1_bg"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
