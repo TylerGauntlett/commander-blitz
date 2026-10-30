@@ -1,0 +1,76 @@
+{
+  "_comment": "Cards that exist only for the single-use flash permission test (tests/unit/casting/test_next_spell_flash.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_nsf_icon` is Witness, Progenitor's Icon without its mana ability: choose a creature type as it enters, and tap for 'the next spell of the chosen type you cast this turn can be cast as though it had flash'. The Goblin, the Bear and the Changeling are vanilla {1} creatures that differ only in creature type; the changeling's type comes from its characteristic-defining add_subtype static, as the template tier writes changeling.",
+  "cards": [
+    {
+      "id": "t_nsf_icon",
+      "name": "Test Next Spell Icon",
+      "oracle_text": "As this artifact enters, choose a creature type.\n{T}: The next spell of the chosen type you cast this turn can be cast as though it had flash.",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this artifact enters, choose a creature type.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "effects": [{"op": "choose_type", "player": "you"}]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: The next spell of the chosen type you cast this turn can be cast as though it had flash.",
+          "cost": {"tap": true},
+          "effects": [
+            {
+              "op": "grant_flash_permission",
+              "duration": "this_turn",
+              "subtypes": [{"chosen_type_of": "self"}],
+              "next_spell": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_nsf_goblin",
+      "name": "Test Next Spell Goblin",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Goblin"],
+      "power": 1,
+      "toughness": 1,
+      "color_identity": []
+    },
+    {
+      "id": "t_nsf_bear",
+      "name": "Test Next Spell Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 1,
+      "toughness": 1,
+      "color_identity": []
+    },
+    {
+      "id": "t_nsf_changeling",
+      "name": "Test Next Spell Changeling",
+      "oracle_text": "Changeling (This card is every creature type.)",
+      "mana_cost": "{1}",
+      "types": ["Creature"],
+      "subtypes": ["Shapeshifter"],
+      "power": 1,
+      "toughness": 1,
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Changeling",
+          "effect": "add_subtype",
+          "affects": {"self_only": true},
+          "subtypes": ["Bear", "Elf", "Goblin", "Wall"]
+        }
+      ]
+    }
+  ]
+}

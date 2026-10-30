@@ -27,7 +27,7 @@ from typing import Any
 from ..errors import DslError
 from ..primitives import become_monarch, give_emblem
 from ..sba import declare_loss, declare_win
-from ..structs import CAST_LOCK_DURATIONS, CASTABLE_ZONES
+from ..structs import ACTIVATION_CHOSEN_TYPE, CAST_LOCK_DURATIONS, CASTABLE_ZONES
 from ..temp_effects import grant_flash_permission, lock_casting_zones
 from .context import EffectContext
 from .registry import register
@@ -180,13 +180,41 @@ def op_grant_flash_permission(ctx: EffectContext, spec: Mapping[str, Any]):
     moment, and it covers cards drawn after it resolved -- so it is written to
     the player's timed table and read by `casting._timing_ok`. ``types`` narrows
     it to spells of those card types; ``duration`` is required.
+
+    ``subtypes`` narrows it to spells of those creature types, and
+    ``next_spell`` makes it single-use: "{T}: The next spell of the chosen type
+    you cast this turn can be cast as though it had flash" (Witness,
+    Progenitor's Icon). ``{"chosen_type_of": "self"}`` is substituted **now**,
+    from the type the source had as the ability was activated
+    (`ACTIVATION_CHOSEN_TYPE`, written by `Game._activate`) or else from the
+    source as it stands: the permission is a resolved effect, so it keeps the
+    type after the Icon has gone, and an Icon that never chose one grants
+    nothing -- no spell is of no type.
     """
 
     types = tuple(str(t) for t in spec.get("types") or ())
+    subtypes: list[str] = []
+    for entry in spec.get("subtypes") or ():
+        if isinstance(entry, Mapping):
+            chosen = ctx.bindings.get(ACTIVATION_CHOSEN_TYPE)
+            if chosen is None:
+                source = ctx.state.objects.get(ctx.source_oid)
+                chosen = source.chosen_type if source is not None else None
+            if chosen is None:
+                return
+            subtypes.append(chosen)
+        else:
+            subtypes.append(str(entry))
     duration = str(spec["duration"])
     for pid in select_players(ctx, spec.get("player", "you")):
         grant_flash_permission(
-            ctx.state, pid, types=types, duration=duration, source=ctx.source_oid
+            ctx.state,
+            pid,
+            types=types,
+            subtypes=tuple(subtypes),
+            next_spell=bool(spec.get("next_spell")),
+            duration=duration,
+            source=ctx.source_oid,
         )
     yield from ()
 

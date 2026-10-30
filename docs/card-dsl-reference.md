@@ -162,7 +162,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cant_cast_spells_from_zones` | Players |  | A player can't cast spells from the listed zones. | ["Can't cast spells from anywhere other than their hands"](card-dsl-cookbook.md#cant-cast-spells-from-anywhere-other-than-their-hands) |
 | `emblem` | Players |  | A player gets an emblem with the given abilities. | [Emblems — "Target opponent gets an emblem with …"](card-dsl-cookbook.md#emblems--target-opponent-gets-an-emblem-with-) |
 | `extra_loyalty_activation` | Players |  | A player may activate loyalty abilities an extra time this turn. | [Effect ops](card-dsl.md#effect-ops) |
-| `grant_flash_permission` | Players |  | A player may cast matching spells as though they had flash. | [Effect ops](card-dsl.md#effect-ops) |
+| `grant_flash_permission` | Players |  | A player may cast matching spells (or, with `next_spell`, the next one) as though they had flash. | [Effect ops](card-dsl.md#effect-ops) |
 | `lose_game` | Players |  | A player loses the game. | ["That player loses the game"](card-dsl-cookbook.md#that-player-loses-the-game) |
 | `no_maximum_hand_size` | Players |  | A player has no maximum hand size for the rest of the game. | ["No maximum hand size for the rest of the game"](card-dsl-cookbook.md#no-maximum-hand-size-for-the-rest-of-the-game) |
 | `win_game` | Players |  | A player wins the game. | ["You win the game"](card-dsl-cookbook.md#you-win-the-game) |

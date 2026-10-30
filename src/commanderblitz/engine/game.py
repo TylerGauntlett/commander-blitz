@@ -70,7 +70,7 @@ from .player_statics import (
 from .primitives import add_counters, draw_cards, tap_permanent
 from .rng import Rng
 from .state import GameState, new_object
-from .structs import TargetRef
+from .structs import ACTIVATION_CHOSEN_TYPE, TargetRef
 from .targeting import (
     candidates,
     declared_by_spec,
@@ -1117,6 +1117,10 @@ class Game:
         bindings: dict[str, Any] = {}
         if distribution:
             bindings["distribution"] = distribution
+        # "Of the chosen type", as last-known information: read before the
+        # cost is paid, because a cost that moves the source resets it.
+        if (chosen := state.objects[oid].chosen_type) is not None:
+            bindings[ACTIVATION_CHOSEN_TYPE] = chosen
         ok = yield from pay(
             state,
             pid,

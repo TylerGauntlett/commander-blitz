@@ -36,6 +36,7 @@ from .structs import (
     TurnLedger,
     Unblockable,
 )
+from .temp_effects import consume_next_spell_flash_permissions
 
 if TYPE_CHECKING:  # pragma: no cover
     from commanderblitz.cards.registry import CardRegistry
@@ -969,6 +970,11 @@ class GameState:
                 # `spells_cast_ids[pid][:nth]` is the run up to and including
                 # this spell however many are cast before a trigger reads it.
                 data["nth"] = ledger.spells_cast[pid]
+                # "The next spell of the chosen type you cast this turn…"
+                # (Witness, Progenitor's Icon). Spent by the cast, here for the
+                # reason `nth` is: every cast path passes through this fold.
+                if self.flash_permissions and (spell := data.get("oid")) in self.objects:
+                    consume_next_spell_flash_permissions(self, pid, self.card(spell))
                 # The count is a static's input (`spells_cast_this_turn`, Captain
                 # Mar-Vell's "as long as an opponent has cast a spell this
                 # turn"), and `chars` caches per `char_version`.

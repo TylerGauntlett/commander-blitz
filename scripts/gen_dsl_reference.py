@@ -363,7 +363,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "become_monarch": ("Players", "A player becomes the monarch.", H_MONARCH),
     "extra_loyalty_activation": ("Players", "A player may activate loyalty abilities an extra time this turn.",
                                  None),
-    "grant_flash_permission": ("Players", "A player may cast matching spells as though they had flash.",
+    "grant_flash_permission": ("Players", "A player may cast matching spells (or, with `next_spell`, the next one) as though they had flash.",
                                None),
     "win_game": ("Players", "A player wins the game.", '"You win the game"'),
     "no_maximum_hand_size": ("Players", "A player has no maximum hand size for the rest of the game.",

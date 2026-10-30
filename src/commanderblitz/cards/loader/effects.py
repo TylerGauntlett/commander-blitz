@@ -2314,6 +2314,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for t in effect.get("types") or ():
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {t!r}")
+        # Creature types only (205.3m), because that is all the reader matches:
+        # an "Equipment" here would narrow the permission to nothing. And the
+        # one dynamic entry spelled exactly, or "of the chosen type" resolves
+        # to no type and the Icon's ability does nothing, for ever.
+        for index, entry in enumerate(effect.get("subtypes") or ()):
+            if isinstance(entry, Mapping):
+                if dict(entry) != {"chosen_type_of": "self"}:
+                    raise DslError(
+                        f"{where}.subtypes[{index}]: the only subtype that is not a "
+                        f'literal name is {{"chosen_type_of": "self"}}, not {dict(entry)!r}'
+                    )
+            elif not isinstance(entry, str) or SUBTYPE_CLASS.get(entry, "Creature") != "Creature":
+                raise DslError(
+                    f"{where}.subtypes[{index}]: grant_flash_permission narrows by "
+                    f"creature type, and {entry!r} is not one"
+                )
+        if not isinstance(effect.get("next_spell", False), bool):
+            raise DslError(f"{where}: grant_flash_permission's 'next_spell' is true or false")
     if op in ("add_poison", "add_energy") and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
     if op == "proliferate" and "objects" in effect:

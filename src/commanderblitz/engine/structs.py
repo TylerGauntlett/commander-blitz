@@ -826,12 +826,25 @@ class FlashPermission:
     covers cards drawn after it resolved -- so it belongs to the *player*, in a
     timed table beside `outcome_locks`, and `casting._timing_ok` reads it.
     ``types`` narrows it to spells of those card types (empty: every spell).
+
+    ``subtypes`` narrows it by **creature type** (205.3m), and ``next_spell``
+    makes it single-use: "{T}: The next spell of the chosen type you cast this
+    turn can be cast as though it had flash" -- Witness, Progenitor's Icon. The
+    type is a literal by the time it is here, snapshotted from the source's
+    `chosen_type` as the ability resolved, so an Icon that has left since still
+    names the type it named. A one-shot permission is **used up by the cast**
+    and not by the timing it relaxed -- see
+    `temp_effects.consume_next_spell_flash_permissions`.
     """
 
     #: Who may cast at instant speed.
     player: int
     #: The card types it covers; empty for every spell.
     types: tuple[str, ...] = ()
+    #: The creature types it covers (any of them); empty for every spell.
+    subtypes: tuple[str, ...] = ()
+    #: Single-use: the first matching spell its player casts removes it.
+    next_spell: bool = False
     #: ``this_turn`` or ``until_your_next_turn``.
     duration: str = "until_your_next_turn"
     #: What installed it, for the log.
@@ -840,6 +853,14 @@ class FlashPermission:
 
 #: The durations a `FlashPermission` may carry.
 FLASH_PERMISSION_DURATIONS = ("this_turn", "until_your_next_turn")
+
+#: The binding an activated ability's stack item carries its source's
+#: `chosen_type` in, written by `Game._activate` before the cost is paid.
+#: Last-known information for "of the chosen type": a permanent that leaves
+#: the battlefield forgets its choice (`reset_permanent_state`), and an ability
+#: already on the stack still resolves off what it was -- Witness,
+#: Progenitor's Icon killed in response still grants its flash.
+ACTIVATION_CHOSEN_TYPE = "source_chosen_type"
 
 
 #: The durations a `LifeFloor` may carry.

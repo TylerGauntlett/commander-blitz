@@ -1515,6 +1515,37 @@ hand the permission to every spell. The one-shot, timed form ("until your next
 turn, you may cast sorcery spells as though they had flash") is the
 `grant_flash_permission` op, not this static.
 
+The op's single-use form is Witness, Progenitor's Icon's "{T}: The next spell of
+the chosen type you cast this turn can be cast as though it had flash", beside a
+`choose_type` "as this artifact enters":
+
+```jsonc
+{ "op": "grant_flash_permission",
+  "duration": "this_turn",
+  "subtypes": [{ "chosen_type_of": "self" }],
+  "next_spell": true }
+```
+
+`types` (card types) and `subtypes` (creature types, 205.3m) are any-ofs, ANDed
+with each other. A spell's creature types are read off the face being cast by
+`characteristics.printed_creature_types`: the printed line plus its own
+characteristic-defining `add_subtype` static, so a changeling is every type and a
+Kindred instant counts. `{"chosen_type_of": "self"}` is replaced by a literal as
+the ability resolves, from the type its source had when the ability was activated
+(`structs.ACTIVATION_CHOSEN_TYPE`, written by `Game._activate`), so an Icon
+destroyed in response still grants its flash; a source that chose nothing grants
+nothing. `next_spell: true` makes the permission one-shot, and it is spent by the
+**cast**, not by the timing it relaxed: `temp_effects.consume_next_spell_flash_permissions`
+runs off `GameState._tally`'s SPELL_CAST arm, so a Goblin cast in your own main
+phase, which never needed flash, still uses it up, and a Bear cast first leaves it
+waiting. One cast spends every matching one-shot permission, because each
+activation is an effect about the same "next spell": two Icons of one type make
+one flash Goblin, not two. An unused one ends at cleanup with the rest of
+`this_turn`. Load errors: a `subtypes` entry that is not a creature type
+(`SUBTYPE_CLASS`), a near-miss dynamic entry, and a non-boolean `next_spell`.
+Leaving `next_spell` off is the near miss — it reads as "Goblin spells have flash
+this turn", every Goblin rather than the next one.
+
 `cast_only_at_sorcery_speed` points the other way — Teferi, Time Raveler's "Each
 opponent can cast spells only any time they could cast a sorcery":
 

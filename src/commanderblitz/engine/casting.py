@@ -51,7 +51,7 @@ from .targeting import (
     kicked_targets,
     selectable_modes,
 )
-from .temp_effects import sacrifice_forbidden
+from .temp_effects import flash_permission_covers, sacrifice_forbidden
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -521,11 +521,11 @@ def _timing_ok(state: GameState, pid: int, card: CardDef, sorcery_speed: bool) -
         return True
     # Teferi, Time Raveler's +1: "Until your next turn, you may cast sorcery
     # spells as though they had flash" -- the timed, per-player permission a
-    # loyalty ability leaves behind, narrowed to the card types it names.
-    if any(
-        perm.player == pid and (not perm.types or set(perm.types) & set(card.types))
-        for perm in state.flash_permissions
-    ):
+    # loyalty ability leaves behind, narrowed to the card types it names --
+    # and Witness, Progenitor's Icon's single-use one, narrowed to a creature
+    # type. Reading it here spends nothing; the cast does
+    # (`consume_next_spell_flash_permissions`).
+    if any(flash_permission_covers(perm, pid, card) for perm in state.flash_permissions):
         return True
     return player_casts_as_though_flash(state, pid, card)
 
