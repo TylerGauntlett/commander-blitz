@@ -1327,3 +1327,22 @@ class TestCreakwoodLiegesWormIsAPlainBlackAndGreen:
         other = pool.get("pest_1_1_bg")
         assert list(other.subtypes) == ["Pest"]
         assert other.abilities
+
+
+class TestOphiomancersSnakeHasDeathtouch:
+    """Ophiomancer: *"create a **1/1 black Snake** creature token with
+    **deathtouch**."*
+
+    The pool had no Snake at all; the deathtouch is the whole point of the
+    card, which turns a 1/1 into a blocker nothing wants to attack into.
+    """
+
+    def test_it_is_a_one_one_black_snake_with_deathtouch(self, pool):
+        snake = pool.get("snake_1_1_b_deathtouch")
+        assert snake is not None and snake.is_token and snake.is_creature
+        assert (snake.power, snake.toughness) == (1, 1)
+        assert sorted(snake.colors) == ["B"]
+        assert list(snake.types) == ["Creature"]
+        assert list(snake.subtypes) == ["Snake"]
+        assert "deathtouch" in snake.keywords and len(snake.keywords) == 1
+        assert not snake.abilities

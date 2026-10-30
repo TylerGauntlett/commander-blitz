@@ -1246,6 +1246,29 @@
       "is_token": true
     },
     {
+      "id": "snake_1_1_b_deathtouch",
+      "name": "Snake Token",
+      "oracle_text": "1/1 black Snake creature token with deathtouch.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Snake"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "deathtouch"
+      ]
+    },
+    {
       "id": "worm_1_1_bg",
       "name": "Worm Token",
       "oracle_text": "1/1 black and green Worm creature token.",
