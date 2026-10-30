@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 155 |
 | [Selectors](#selectors) | 69 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 61 |
+| [Values](#values) | 62 |
 | [Conditions](#conditions) | 32 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 35 |
@@ -307,7 +307,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `cards_drawn_this_turn` | Cards the player drew this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_from_graveyard_this_turn` | Cards that left the player's graveyard this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_in_hand` | Cards in the player's hand. | [Value expressions](card-dsl.md#value-expressions) |
-| `cards_to_graveyard_this_turn` | Cards put into any graveyard this turn (gravestorm). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `cards_to_graveyard_this_turn` | Cards put into any graveyard from anywhere this turn; tokens excluded. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `colors_of_mana_spent` | Colors of mana spent to cast this (sunburst, converge). | [Counting the mana that was actually spent](card-dsl.md#counting-the-mana-that-was-actually-spent) |
 | `combats_this_turn` | Which combat phase of the turn this is. | [Which combat phase of the turn this is](card-dsl.md#which-combat-phase-of-the-turn-this-is) |
 | `commander_casts_this_game` | Times the player has cast their commanders from the command zone this game (903.8's tally). | [Copying a spell for each commander cast](card-dsl-cookbook.md#copying-a-spell-for-each-commander-cast) |
@@ -344,6 +344,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `most_sharing_a_name` | The largest group in a pool sharing one name. | [Value expressions](card-dsl.md#value-expressions) |
 | `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
+| `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |
 | `player_count` | How many players still in the game a player spec names ("the number of opponents you have"). | [Value expressions](card-dsl.md#value-expressions) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |

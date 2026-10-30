@@ -990,6 +990,14 @@ class GameState:
                 ledger.taps_by_permanent.pop(data.get("oid"), None)
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
+            # Gravestorm's count, and the token is *in* it: the token
+            # state-based action has not run yet, so the token reached the
+            # graveyard as a permanent and counts (111.7).
+            if (
+                data.get("from") == Zone.BATTLEFIELD.value
+                and data.get("to") == Zone.GRAVEYARD.value
+            ):
+                ledger.permanents_to_graveyard += 1
             # The departure half. Keyed by the graveyard's **owner** rather than
             # by whoever moved the card: "a card left *your* graveyard" is a
             # fact about the yard, and a Reanimate cast by an opponent on your

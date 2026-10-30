@@ -276,7 +276,7 @@ This is the long tail, and where the build order comes from.
 | Fuse † | shipped | a third cast line on a split card: one card built from both halves — costs added, target lists concatenated, both effect lists run through **one** `EffectContext`, which is splice's argument | `fuse` |
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
 | Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
-| Gravestorm | free | storm's shape, counting `cards_to_graveyard_this_turn` instead | `copy_spell` |
+| Gravestorm | free | storm's shape, counting `permanents_to_graveyard_this_turn` instead | `copy_spell` |
 | Haunt | shipped | the `haunt` op and a `haunted_by: "self"` trigger filter -- the exile link reversed, read off the ability source | `haunt` |
 | Hideaway | shipped | the `hideaway` op writes the `exiled_by` link and `revealed_to`; `play_exiled` is the permission, reading it back | `hideaway` |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |

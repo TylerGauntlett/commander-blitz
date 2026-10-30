@@ -1817,10 +1817,26 @@ class TurnLedger:
     #: disturb cast turns the card over inside `push_spell`, and the half that
     #: was cast is the half the condition is asking about.
     spells_cast_ids: dict[int, list[str]] = field(default_factory=dict)
-    #: Cards put into any graveyard from anywhere this turn (gravestorm).
-    #: Tokens are excluded because they are not cards, and a token dying is the
-    #: single most common way this number would otherwise be wrong.
+    #: Cards put into any graveyard from anywhere this turn -- discards, mills,
+    #: resolved instants and sorceries and deaths alike. Tokens are excluded
+    #: because they are not cards. **Not** gravestorm's count, which is the
+    #: field below: that one asks about permanents, from the battlefield only.
     cards_to_graveyard: int = 0
+    #: Permanents put into any graveyard **from the battlefield** this turn, by
+    #: any player and under any controller -- gravestorm (702.69a). Tokens
+    #: count: a token is put into a graveyard before it ceases to exist
+    #: (111.7, 704.5d), and a dying token is the commonest case on a board.
+    #:
+    #: Beside `cards_to_graveyard` rather than derived from it, because the two
+    #: disagree in both directions: a discard or a mill is a card reaching a
+    #: graveyard and no permanent leaving the battlefield, and a token dying is
+    #: the reverse. `creatures_died` is the other near miss and counts only
+    #: creatures, where a sacrificed Treasure or a destroyed enchantment counts
+    #: here. Folded off ZONE_CHANGE's *final* destination, so a permanent
+    #: whose move was replaced -- exiled by Rest in Peace, or a commander the
+    #: engine's automatic 903.9a sends home -- never reached a graveyard and is
+    #: not counted (see the commander-replacement row of rules-coverage.md).
+    permanents_to_graveyard: int = 0
     #: Cards that **left** a graveyard this turn, per graveyard owner -- Gau,
     #: Feral Youth: "if a card left your graveyard this turn". The mirror of
     #: `cards_to_graveyard` above and deliberately not folded into it: that one
@@ -2063,6 +2079,7 @@ class TurnLedger:
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
         self.cards_to_graveyard = 0
+        self.permanents_to_graveyard = 0
         self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()
         self.object_flags.clear()

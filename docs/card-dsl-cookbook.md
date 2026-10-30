@@ -735,6 +735,38 @@ then. The near miss is `spells_cast_this_game`, which counts every spell from
 every zone. A copy of a permanent spell resolves as a token (706.10, via
 `put_copy_on_stack`), so the creature form needs nothing further.
 
+### Gravestorm — permanents put into a graveyard from the battlefield
+
+```jsonc
+{ "kind": "triggered",
+  "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [ { "op": "copy_spell",
+                 "amount": { "permanents_to_graveyard_this_turn": true },
+                 "new_targets": true } ] }
+```
+
+"Gravestorm (When you cast this spell, copy it for each permanent put into a
+graveyard from the battlefield this turn.)" (Ominous Harvest; rule 702.69a.)
+Storm's shape with a different count. `permanents_to_graveyard_this_turn` reads
+`TurnLedger.permanents_to_graveyard`, folded off every ZONE_CHANGE from the
+battlefield to a graveyard: every permanent type, every controller, and
+**tokens included** — a token is put into the graveyard before it ceases to
+exist (111.7, 704.5d). A move that a replacement sent somewhere else (Rest in
+Peace, a commander going home) reached no graveyard and is not counted. It takes
+`true` and nothing else; a player spec is refused at load time, because the
+count is the whole table's and "you" would read as a filter it does not apply.
+702.69a lets each copy take new targets, so `new_targets` is part of the
+keyword, not an option.
+
+The count is read when the trigger resolves, so a permanent that dies in
+response still adds a copy.
+
+Two near misses, each wrong quietly. `cards_to_graveyard_this_turn` counts
+**cards** from **any** zone: a discard or a mill inflates it, and a dying token
+is missing from it. `creatures_died_this_turn` misses every noncreature
+permanent — a sacrificed Treasure, a destroyed enchantment.
+
 ### Casting out of every graveyard, until end of turn
 
 ```jsonc

@@ -13,6 +13,8 @@ forms::
     {"attacked_this_turn": "you"}          raid, bloodthirst, spectacle,
     {"attackers_this_turn": "you"}         storm and gravestorm -- and how
     {"spells_cast_this_turn": "all"}       many creatures attacked, not seats
+    {"permanents_to_graveyard_this_turn":  gravestorm: permanents, tokens
+        true}                               included, battlefield to graveyard
     {"attack_power_this_combat": "you"}  pack tactics: attackers' total power
                                         as declared, this combat
     {"opponents_attacked_this_combat":  melee: how many opponents they
@@ -202,6 +204,13 @@ VALUE_KEYS = frozenset(
         # `cmp` `==` 1, which counts the tap that fired the trigger.
         "times_tapped_this_turn",
         "cards_to_graveyard_this_turn",
+        # Gravestorm (702.69a) -- "copy it for each **permanent** put into a
+        # graveyard from the battlefield this turn". Off
+        # `TurnLedger.permanents_to_graveyard`, tokens included. Neither near
+        # miss is the count: `cards_to_graveyard_this_turn` above takes
+        # discards and mills and skips tokens, and `creatures_died_this_turn`
+        # misses every noncreature permanent.
+        "permanents_to_graveyard_this_turn",
         "cards_from_graveyard_this_turn",
         "extreme_value",
         # "…if this is the second time this ability has resolved this turn."
@@ -765,9 +774,14 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             total += sum(tax.get(oid, 0) for oid in ctx.state.commanders_of(p))
         return total
     if "cards_to_graveyard_this_turn" in expr:
-        # Every graveyard, so it takes no player spec: gravestorm counts cards
-        # put into *a* graveyard, not into yours.
+        # Every graveyard, from every zone, cards only, so it takes no player
+        # spec. Not gravestorm's count -- that is the key below.
         return ledger.cards_to_graveyard
+    if "permanents_to_graveyard_this_turn" in expr:
+        # Gravestorm. Every permanent, every controller, tokens included, and
+        # only from the battlefield -- so `true` and no player spec, because
+        # the printed count is the whole table's.
+        return ledger.permanents_to_graveyard
     if "extreme_value" in expr:
         # "…where X is the **greatest** mana value among artifacts you control"
         # -- Edgar, Master Machinist. A single number off a pool, which neither
@@ -1453,6 +1467,18 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.unspent_mana_count: needs a player spec, e.g. 'you' "
                 f"(whose mana pool), got {who!r}"
             )
+    # `true` only. Gravestorm counts every player's permanents, and a player
+    # spec here would read as a filter the count does not apply -- "you" would
+    # still count an opponent's dead creature.
+    if (
+        "permanents_to_graveyard_this_turn" in expr
+        and expr["permanents_to_graveyard_this_turn"] is not True
+    ):
+        raise DslError(
+            f"{where}.permanents_to_graveyard_this_turn: takes `true` -- the count "
+            f"is every permanent put into any graveyard from the battlefield, "
+            f"got {expr['permanents_to_graveyard_this_turn']!r}"
+        )
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(
             expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"

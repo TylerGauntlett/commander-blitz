@@ -1363,7 +1363,8 @@ Anywhere a number is expected -- the leaf list is
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
 { "spells_cast_this_turn": "all" }              // storm
-{ "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
+{ "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
+{ "permanents_to_graveyard_this_turn": true }   // gravestorm; permanents, tokens too, from the battlefield
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
 { "extreme_value": { "of": "mana_value", "pick": "greatest",   // Edgar; ONE number off a pool,
                      "objects": { … } } }                      //   where `mana_value_of` sums
