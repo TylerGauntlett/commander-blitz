@@ -267792,12 +267792,12 @@
     },
     "Study Hall": {
       "edhrec_rank": 3830,
-      "gate": "template",
+      "gate": null,
       "name": "Study Hall",
-      "reason": "no template for: {1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry",
+      "reason": "",
       "scryfall_id": "93f812bc-7663-4504-b566-79e2c0a0f845",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Study the Classics": {

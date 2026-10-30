@@ -13097,6 +13097,10 @@
     },
     "zone": "graveyard"
   },
+  "study_hall": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "stumpsquall_hydra": {
     "battlefield_count": 33,
     "counters": {
