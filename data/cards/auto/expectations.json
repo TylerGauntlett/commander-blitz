@@ -6459,6 +6459,9 @@
     },
     "zone": "graveyard"
   },
+  "into_the_time_vortex": {
+    "zone": "exile"
+  },
   "intruder_alarm": {
     "battlefield_count": 33,
     "zone": "battlefield"

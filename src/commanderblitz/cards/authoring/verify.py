@@ -1236,6 +1236,11 @@ def residual_text(card: CardDef, oracle_text: str) -> str:
     return proxy_residual(facts, claimed_lines(card, oracle_text))
 
 
+def _bare_keyword_line(line: str) -> str:
+    """A printed keyword line without its reminder text, lowercased."""
+    return re.sub(r"\([^()]*\)", "", line).strip().rstrip(".").strip().lower()
+
+
 def claimed_lines(card: CardDef, oracle_text: str) -> set[str]:
     """The printed lines something on this card accounts for.
 
@@ -1614,6 +1619,16 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.ascend and stripped.lower().startswith("ascend"):
         return True
 
+    # "Rebound (If you cast this spell from your hand, exile it as it
+    # resolves…)" is the card-level `rebound` rider: the exile replaces the
+    # graveyard in `stack` and the upkeep cast is armed there, so no ability
+    # carries the line. A spell with `spell_effects` never reached this, since
+    # those claim every line; one whose only text is keyword lines (Into the
+    # Time Vortex: cascade and rebound) has none. Strict like improvise's: the
+    # line must be the bare word plus its reminder, and the field must be set.
+    if card.rebound and _bare_keyword_line(stripped) == "rebound":
+        return True
+
     # "Improvise (Your artifacts can help cast this spell…)", and convoke and
     # delve beside it: `pay_generic_with`, a card-level way to pay the generic
     # cost read by `casting` and `game._cast`, with no ability that could
@@ -1625,8 +1640,7 @@ def _covered(card: CardDef, line: str) -> bool:
     # line must be the bare keyword plus its reminder text.
     if card.pay_generic_with is not None:
         keyword = _PAY_GENERIC_KEYWORDS.get(card.pay_generic_with)
-        bare = re.sub(r"\([^()]*\)", "", stripped).strip().rstrip(".").strip().lower()
-        if keyword is not None and bare == keyword:
+        if keyword is not None and _bare_keyword_line(stripped) == keyword:
             return True
 
     # "This spell costs {X} less to cast" is a property of the card read while

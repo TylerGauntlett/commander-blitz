@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**101 cards** blocked by **82** capabilities.
+**100 cards** blocked by **81** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -75,7 +75,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
-| [rebound](#rebound) | 1 | 5377 | engine |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -1129,20 +1128,6 @@ Blocks **1** card.
 
 - **Gourmand's Talent** (rank 5861) — `gourmand_s_talent`
   - Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.
-
-</details>
-
-## rebound
-
-Blocks **1** card.
-
-- **(engine)** the residual gate (verify._covered) claiming a printed "Rebound (...)" line when the card declares the card-level `rebound: true` rider, so an instant or sorcery whose only text is keyword lines (cascade + rebound, no spell_effects) can be authored
-  <br>Why the existing vocabulary won't do: The engine and loader already support `rebound: true` (Fantastic Elasticity ships with it), and cascade is the `cascade` op on a stack spell_cast trigger. But Fantastic Elasticity's Rebound line is only claimed because a sorcery with any spell_effects has all its lines consumed; with no spell_effects, `_covered` has claimants for kicker, uncounterable, evoke etc. but none for rebound, so verify fails at residual with 'printed text not represented: Rebound'. Padding spell_effects with a `noop` would pass only by gaming the gate, so it was not done. Once the claimant exists the answer is: rebound: true, a triggered ability {active_zones: [stack], trigger: {event: spell_cast, source: self, controller: you}, effects: [{op: cascade}]} carrying the Cascade line, expectation {zone: exile}.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Into the Time Vortex** (rank 5377) — `into_the_time_vortex`
-  - Rebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)
 
 </details>
 

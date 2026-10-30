@@ -5622,6 +5622,11 @@ that cast is itself a cast and would otherwise re-arm the card as it resolved.
 Both because the upkeep tick runs from the turn structure, which cannot stop to
 ask.
 
+The rider claims the printed "Rebound (…)" line for the residual gate, so a
+spell whose only text is keyword lines needs no `spell_effects` to carry it.
+Into the Time Vortex is cascade and rebound: the cascade line is a `cascade`
+trigger with `active_zones: ["stack"]`, and the rebound line is this flag.
+
 #### Splice
 
 ```jsonc

@@ -138362,12 +138362,12 @@
     },
     "Into the Time Vortex": {
       "edhrec_rank": 5377,
-      "gate": "residual",
+      "gate": null,
       "name": "Into the Time Vortex",
-      "reason": "printed text not represented: Rebound",
+      "reason": "",
       "scryfall_id": "9c1763b6-c83b-4a76-af58-64c0a6418326",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Into the Void": {
