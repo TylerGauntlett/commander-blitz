@@ -95286,6 +95286,104 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "spells_cast_this_turn": {
+                  "filter": {
+                    "not_types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{R}{G}{W}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            },
+            {
+              "new_targets": true,
+              "op": "copy_ability",
+              "target": "t1"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "ability_on_stack",
+              "selector": {
+                "ability_kind": "triggered",
+                "controller": "you"
+              }
+            }
+          ],
+          "text": "{R}{G}{W}{U}, {T}: Copy target triggered ability you control twice. You may choose new targets for the copies."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mister_fantastic",
+      "keywords": [
+        "reach",
+        "vigilance"
+      ],
+      "mana_cost": "{2}{U}",
+      "name": "Mister Fantastic",
+      "oracle_text": "Reach, vigilance\nAt the beginning of combat on your turn, if you've cast a noncreature spell this turn, draw a card.\n{R}{G}{W}{U}, {T}: Copy target triggered ability you control twice. You may choose new targets for the copies.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "amount": {

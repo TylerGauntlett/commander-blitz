@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**90 cards** blocked by **72** capabilities.
+**89 cards** blocked by **71** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -79,7 +79,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
-| [target-triggered-ability](#target-triggered-ability) | 1 | 15919 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -1174,20 +1173,6 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
-
-</details>
-
-## target-triggered-ability
-
-Blocks **1** card.
-
-- **(selector)** a way for an `ability_on_stack` target spec to match only TRIGGERED abilities ("target triggered ability you control", Strionic Resonator, Mister Fantastic): a field on StackItem recording whether the ability on the stack is triggered or activated, and a selector clause (e.g. `ability_kind: "triggered"`) honoured by `_ability_matches` in both `candidates` and `still_legal`
-  <br>Why the existing vocabulary won't do: `copy_ability` with `new_targets` covers the copy and the retargeting (twice is just two `copy_ability` effects on the same target), and the `ability_on_stack` target kind exists -- but `engine/targeting.py` `_ability_matches` honours only `controller` and its docstring explicitly refuses "triggered ability" alone: `StackItem.kind` is "ability" for both activated and triggered abilities and nothing records which, so the closest spec (Peter Parker's Camera's) would also let this copy an activated ability, a strictly wider card.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mister Fantastic** (rank 15919) — `mister_fantastic`
-  - {R}{G}{W}{U}, {T}: Copy target triggered ability you control twice. You may choose new targets for the copies.
 
 </details>
 

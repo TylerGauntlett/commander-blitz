@@ -339,8 +339,27 @@ def _compile_target(
     refusals below is a card that would otherwise load with two of them
     overlapping, and read as a printing that does not exist.
     """
-    validate_selector(model.selector, f"{where}.target[{model.id}]")
     label = f"{where}.target[{model.id}]"
+    if model.kind == "ability_on_stack":
+        # An ability on the stack has no face (113.7a): `_ability_matches`
+        # answers `controller` and `ability_kind` and nothing else, so any
+        # other clause would load and narrow nothing.
+        extra = set(model.selector) - {"controller", "ability_kind"}
+        if extra:
+            raise DslError(
+                f"{label}: an 'ability_on_stack' target reads only 'controller' "
+                f"and 'ability_kind', not {sorted(extra)}"
+            )
+        kind = model.selector.get("ability_kind")
+        if kind is not None and kind not in ("triggered", "activated"):
+            raise DslError(
+                f"{label}.ability_kind: 'triggered' or 'activated', got {kind!r}"
+            )
+        validate_selector(
+            {k: v for k, v in model.selector.items() if k != "ability_kind"}, label
+        )
+    else:
+        validate_selector(model.selector, label)
     controller_clause = model.selector.get("controller")
     if (
         # `"any"` is a *target* word, not a player spec: `_player_allowed`

@@ -1221,6 +1221,13 @@ class StackItem:
     oid: int | None = None  # the spell's GameObject (kind == "spell")
     source_oid: int | None = None  # the ability's source permanent
     ability_index: int | None = None
+    #: ``"activated"`` or ``"triggered"`` for an ability, ``None`` for a spell.
+    #: Recorded as the ability is put on the stack, the one moment it is known:
+    #: "copy target **triggered** ability you control" (Strionic Resonator,
+    #: Mister Fantastic) is read off this by `targeting._ability_matches`, and
+    #: neither ``kind`` nor ``bindings`` can say it -- an activated ability's
+    #: cost writes bindings too. A copy keeps it (706.10).
+    ability_kind: str | None = None
     targets: tuple[TargetRef, ...] = ()
     x: int = 0
     modes: tuple[int, ...] = ()
@@ -1333,6 +1340,7 @@ class StackItem:
             "oid": self.oid,
             "source_oid": self.source_oid,
             "ability_index": self.ability_index,
+            "ability_kind": self.ability_kind,
             "targets": [t.to_dict() for t in self.targets],
             "x": self.x,
             "kicked": self.kicked,

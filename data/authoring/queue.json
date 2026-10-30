@@ -176112,12 +176112,12 @@
     },
     "Mister Fantastic": {
       "edhrec_rank": 15919,
-      "gate": "template",
+      "gate": null,
       "name": "Mister Fantastic",
-      "reason": "no template for: At the beginning of combat on your turn, if you've cast a noncreature spell this turn, dra",
+      "reason": "",
       "scryfall_id": "64307a48-6e47-49b3-bfe0-c9d8d7226650",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mister Fantastic, Reed Richards": {

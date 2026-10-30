@@ -398,9 +398,11 @@ and ignore the rest, so a depth written there loads clean and plays as a
 strictly better card. A zero or negative ordinal is refused too — the op floors
 it, but a card that needed correcting was authored wrong.
 
+### Copying an ability on the stack
+
 `copy_ability` is "copy target activated or triggered ability you control. You
-may choose new targets for the copy" (Strionic Resonator, Lithoform Engine,
-Peter Parker's Camera) — 706.10 for an **ability**:
+may choose new targets for the copy" (Lithoform Engine, Peter Parker's Camera)
+— 706.10 for an **ability**:
 
 ```jsonc
 { "op": "copy_ability", "target": "t1", "new_targets": true }
@@ -408,12 +410,21 @@ Peter Parker's Camera) — 706.10 for an **ability**:
 //                               "selector": { "controller": "you" } }
 ```
 
+An `ability_on_stack` target's selector reads exactly two clauses: `controller`
+and `ability_kind`, which is `"triggered"` or `"activated"` — "copy target
+**triggered** ability you control" (Strionic Resonator, Mister Fantastic) is
+`{ "controller": "you", "ability_kind": "triggered" }`. The kind is recorded on
+the stack item as the ability is put there, and both the target's candidates
+and its re-check on resolution read it. The loader refuses any other clause on
+such a target, and `ability_kind` on any other selector. "Copy … twice" is two
+`copy_ability` effects on the same target, each with its own `new_targets`.
+
 It is a different op from `copy_spell` because the two copy different kinds of
 object: `copy_spell` written for an ability loads clean and does nothing. The
 copy keeps every field of the original, including the `bindings` the trigger
-captured and the announced `x`, and goes on top of the stack. `new_targets` is
-offered from the **ability's** own target specs, not the card's; the loader
-accepts it on `copy_spell` and `copy_ability` only.
+captured, the announced `x` and its ability kind, and goes on top of the stack.
+`new_targets` is offered from the **ability's** own target specs, not the
+card's; the loader accepts it on `copy_spell` and `copy_ability` only.
 
 ### Proliferate — a choice over permanents and players
 

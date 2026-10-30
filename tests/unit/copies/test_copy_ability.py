@@ -36,15 +36,12 @@ captured** and the `x` that was announced. `TestTheCopyKeepsWhatMatters` pins
 those, because a copy that lost its bindings would be a copied "whenever a land
 enters" ability that no longer knows which land.
 
-### What is deliberately *not* built
+### Triggered alone
 
-"Target **triggered** ability" alone — Strionic Resonator — is not expressible.
-`StackItem.kind` is `"ability"` for both activated and triggered ones and nothing
-on the item records which, so there is no honest way to filter. Guessing from
-`bindings` would be wrong: an activated ability's cost writes bindings too, via
-`costs.bind_paid_object`. The Camera and Lithoform Engine both say "activated or
-triggered" and so need no distinction; a card that needs it needs a field first,
-and is a gap record until it has one.
+"Target **triggered** ability" -- Strionic Resonator -- is the selector's
+`ability_kind` clause, read off a field the stack records; see
+`test_copy_triggered_ability.py`. The Camera says "activated or triggered" and
+needs no clause.
 
 Witness: Peter Parker's Camera
 (`peter_parker_s_camera` in `data/cards/auto/`).
@@ -251,7 +248,8 @@ class TestTheMatcherIsNarrow:
     An ability has no printed face, so a `types` clause asked of it would answer
     about the source permanent -- turning "target activated ability" into "target
     ability of a creature" without anything saying so. The loader is the guard;
-    here we pin that the matcher itself honours only `controller`.
+    here we pin that the matcher itself honours only `controller` (and
+    `ability_kind`, pinned in `test_copy_triggered_ability.py`).
     """
 
     def test_controller_you_is_honoured(self, builder):

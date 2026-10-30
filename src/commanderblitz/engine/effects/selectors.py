@@ -351,6 +351,13 @@ SELECTOR_KEYS = frozenset(
         "target",
         "binding",
         "object_kind",
+        #: "Copy target **triggered** ability you control" -- Strionic
+        #: Resonator, Mister Fantastic. ``"triggered"`` or ``"activated"``,
+        #: read off `StackItem.ability_kind` by `targeting._ability_matches`,
+        #: and so meaningful only on an ``ability_on_stack`` target's
+        #: selector: `validate_selector` refuses it anywhere else, where no
+        #: matcher would read it.
+        "ability_kind",
         "name",
         #: "…search your library for up to five Dragon cards **not named
         #: Tiamat**" -- the negation twin of `name`, and the one the `not_*`
@@ -1587,6 +1594,14 @@ def validate_selector(selector: Any, where: str) -> None:
     unknown = set(selector) - SELECTOR_KEYS
     if unknown:
         raise DslError(f"{where}: unknown selector keys {sorted(unknown)}")
+    if "ability_kind" in selector:
+        # `loader.targets._compile_target` lifts it off an `ability_on_stack`
+        # spec before calling this; anywhere else no matcher reads it, and a
+        # pool of permanents or cards has no ability kind to be asked.
+        raise DslError(
+            f"{where}: 'ability_kind' narrows an 'ability_on_stack' target and "
+            f"means nothing on any other selector"
+        )
     zone = selector.get("zone")
     if zone is not None and zone not in ZONE_NAMES:
         raise DslError(f"{where}: unknown zone {zone!r}")

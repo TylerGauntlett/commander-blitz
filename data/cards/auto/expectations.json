@@ -8348,6 +8348,10 @@
   "mist_leopard": {
     "zone": "battlefield"
   },
+  "mister_fantastic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mister_fantastic_reed_richards": {
     "battlefield_count": 33,
     "hand_size": {

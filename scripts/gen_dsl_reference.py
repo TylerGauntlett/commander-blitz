@@ -437,6 +437,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
 SELECTORS: dict[str, Entry] = {
     "any_of": ("A union of whole selectors: any one may match.", None),
     "any_types": ("Any one of these card types is enough.", None),
+    "ability_kind": ("On an `ability_on_stack` target only: `triggered` or `activated`.",
+                     "Copying an ability on the stack"),
     "attached": ("Attached to the named object (\"self\", a binding, a target).", None),
     "attacked_this_turn": ("Attacked this turn (read after combat).", H_ATTACKED),
     "attacking": ("Is attacking.", None),

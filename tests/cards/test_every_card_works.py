@@ -169,7 +169,7 @@ def add_dummy_spell(game: Game, seat: int = 1) -> None:
         push_spell(game.state, obj.oid, seat)
 
 
-def add_dummy_ability(game: Game, registry, seat: int = 0) -> None:
+def add_dummy_ability(game: Game, registry, seat: int = 0, kind: str | None = None) -> None:
     """Put an **ability** on the stack for an `ability_on_stack` target to find.
 
     The sibling of `add_dummy_spell` above, and needed for the same reason at a
@@ -183,24 +183,43 @@ def add_dummy_ability(game: Game, registry, seat: int = 0) -> None:
     Strionic Resonator), where every counterspell wants the opponent's.
 
     Any permanent with a non-mana activated ability will do, since
-    `_ability_matches` reads only the controller -- so this picks the first one in
-    the pool rather than trying to satisfy a selector it knows nothing about.
+    `_ability_matches` reads only the controller and the ability's kind -- so
+    this picks the first one in the pool rather than trying to satisfy a
+    selector it knows nothing about. ``kind`` is that selector's
+    `ability_kind`: ``"triggered"`` (Mister Fantastic) pushes a targetless,
+    modeless triggered ability instead.
     """
-    from commanderblitz.engine.stack import push_activated_ability
+    from commanderblitz.engine.stack import push_activated_ability, push_triggered_ability
+    from commanderblitz.engine.structs import TriggerInstance
 
     for card_id in sorted(registry.ids()):
         card = registry.get(card_id)
-        ability = next(
-            (a for a in card.abilities if a.is_activated and not a.is_mana_ability),
-            None,
-        )
+        if kind == "triggered":
+            ability = next(
+                (
+                    a
+                    for a in card.abilities
+                    if a.is_triggered and not a.targets and not a.cast_time_modes
+                ),
+                None,
+            )
+        else:
+            ability = next(
+                (a for a in card.abilities if a.is_activated and not a.is_mana_ability),
+                None,
+            )
         if ability is None or ability.targets:
             # No targets, so putting it on the stack needs no choices made.
             continue
         obj = new_object(game.state, card_id, owner=seat, zone=Zone.BATTLEFIELD)
         obj.controller = seat
         game.state.battlefield.append(obj.oid)
-        push_activated_ability(game.state, obj.oid, ability.index, seat)
+        if kind == "triggered":
+            trig = TriggerInstance(source_oid=obj.oid, ability_index=ability.index, controller=seat)
+            for _ in push_triggered_ability(game.state, trig):
+                raise AssertionError("a targetless, modeless trigger chooses nothing")
+        else:
+            push_activated_ability(game.state, obj.oid, ability.index, seat)
         return
 
 
@@ -1068,7 +1087,10 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
             if spec.kind != "ability_on_stack":
                 continue
             add_dummy_ability(
-                game, registry, 1 if spec.selector.get("controller") == "opponent" else 0
+                game,
+                registry,
+                1 if spec.selector.get("controller") == "opponent" else 0,
+                spec.selector.get("ability_kind"),
             )
         return
     for spec in ability.targets:
