@@ -13214,6 +13214,10 @@
     },
     "zone": "battlefield"
   },
+  "the_thing": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_ur_dragon": {
     "battlefield_count": 33,
     "zone": "battlefield"
