@@ -1,0 +1,18 @@
+{
+  "card_id": "sevinne_s_reclamation",
+  "name": "Sevinne's Reclamation",
+  "oracle_text": "Return target permanent card with mana value 3 or less from your graveyard to the battlefield. If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.\nFlashback {4}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+  "blocked_sentences": [
+    "If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy."
+  ],
+  "needs": [
+    {
+      "capability": "copy_this_spell_on_resolution",
+      "kind": "op",
+      "what": "a way for a resolving instant or sorcery's own spell_effects to copy that same spell (\"you may copy this spell and may choose a new target for the copy\"), with new_targets: copy_spell must be able to name the spell currently resolving, which stack.resolve_top has already popped off the stack before _resolve_spell runs its effects",
+      "why_existing_wont_do": "copy_spell (sid, target, new_targets) finds its original through _spell_named_by -> state.stack_item(sid), and the resolving spell is no longer on the stack (resolve_top pops it first), nor does the resolution context bind its own sid -- so a copy_spell inside spell_effects copies nothing. The cast_from_graveyard condition itself works. Moving the copy to a spell_cast trigger (the storm shape) would be a different card: the copy would exist even if the original is countered, and it would be made at cast rather than at resolution"
+    }
+  ],
+  "closest_existing": ["copy_spell", "cast_from_graveyard"],
+  "confidence": "high"
+}

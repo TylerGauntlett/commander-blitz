@@ -4735,6 +4735,141 @@
         {
           "effects": [
             {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "gy_permanent"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gy_permanent",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, return target permanent card with mana value 4 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{6}{W}{W}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {6}{W}{W} ({6}{W}{W}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "angel_of_indemnity",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{5}{W}",
+      "name": "Angel of Indemnity",
+      "oracle_text": "Flying, lifelink\nWhen this creature enters, return target permanent card with mana value 4 or less from your graveyard to the battlefield.\nEncore {6}{W}{W} ({6}{W}{W}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Angel",
+        "Warrior"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "count": 1,
               "modes": [
                 {
@@ -9463,6 +9598,129 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "augusta_exiled",
+                  "objects": {
+                    "chooser": {
+                      "binding": "each_player"
+                    },
+                    "controller": "any",
+                    "count": 1,
+                    "player": {
+                      "binding": "each_player"
+                    },
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "count": {
+                    "binding": "augusta_exiled",
+                    "controller": "any",
+                    "not_types": [
+                      "Land"
+                    ]
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "augusta_counters",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Augusta attacks, each player exiles a card from their graveyard.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "binding": "augusta_exiled",
+                  "controller": "any",
+                  "not_types": [
+                    "Land"
+                  ]
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "id": "augusta_counters",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When one or more nonland cards are exiled this way, put that many +1/+1 counters on target attacking creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "augusta_order_returned",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Augusta, Order Returned",
+      "oracle_text": "Flying, vigilance\nWhenever Augusta attacks, each player exiles a card from their graveyard. When one or more nonland cards are exiled this way, put that many +1/+1 counters on target attacking creature.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -11273,6 +11531,130 @@
         "Bear"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "colors": [
+              "R"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other red creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "colors": [
+              "W"
+            ],
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other white creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "types": [
+                  "Planeswalker"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever you cast a red spell, this creature deals 3 damage to target player or planeswalker.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "R"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a white spell, you gain 3 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "W"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "balefire_liege",
+      "mana_cost": "{2}{R/W}{R/W}{R/W}",
+      "name": "Balefire Liege",
+      "oracle_text": "Other red creatures you control get +1/+1.\nOther white creatures you control get +1/+1.\nWhenever you cast a red spell, this creature deals 3 damage to target player or planeswalker.\nWhenever you cast a white spell, you gain 3 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Horror"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -14341,6 +14723,130 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "germ",
+              "controller": "you",
+              "op": "create_token",
+              "token": "germ_0_0_b"
+            },
+            {
+              "objects": {
+                "binding": "germ"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "battlefield",
+                  "op": "search_library",
+                  "player": "you",
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for a basic land card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "bitterthorn_nissa_s_animus",
+      "mana_cost": "{3}",
+      "name": "Bitterthorn, Nissa's Animus",
+      "oracle_text": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +1/+1.\nWhenever equipped creature attacks, you may search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -23521,6 +24027,48 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ceaseless_conflict",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Ceaseless Conflict",
+      "oracle_text": "Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nontoken creature you controlled that was destroyed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "destroyed",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "count": {
+              "binding": "destroyed",
+              "controller": "you",
+              "is_token": false
+            }
+          },
+          "op": "create_token",
+          "player": "you",
+          "token": "spirit_3_2_rw"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -41130,6 +41678,43 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "untap_during_each_untap_step",
+          "kind": "static",
+          "text": "Untap all creatures you control during each other player's untap step."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "drumbellower",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Drumbellower",
+      "oracle_text": "Flying\nUntap all creatures you control during each other player's untap step.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -46407,6 +46992,120 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "counters": {
+                "finality": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "animate",
+              "power": {
+                "const": 1
+              },
+              "subtypes": [
+                "Spirit"
+              ],
+              "toughness": {
+                "const": 1
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  {
+                    "not_subtypes": [
+                      "Aura"
+                    ],
+                    "types": [
+                      "Enchantment"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Excava attacks, return up to one target artifact, creature, or non-Aura enchantment card with mana value 3 or less from your graveyard to the battlefield with a finality counter on it. It's a 1/1 Spirit creature with flying in addition to its other types.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "excava_the_risen_past",
+      "keywords": [
+        "flying",
+        "haste"
+      ],
+      "mana_cost": "{2}{R}{W}",
+      "name": "Excava, the Risen Past",
+      "oracle_text": "Flying, haste\nWhenever Excava attacks, return up to one target artifact, creature, or non-Aura enchantment card with mana value 3 or less from your graveyard to the battlefield with a finality counter on it. It's a 1/1 Spirit creature with flying in addition to its other types. (If a creature with a finality counter on it would die, exile it instead.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Horse"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -64292,6 +64991,240 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "phase_out"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, any number of other target creatures you control phase out.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "guardian_of_faith",
+      "keywords": [
+        "flash",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{W}",
+      "name": "Guardian of Faith",
+      "oracle_text": "Flash\nVigilance\nWhen this creature enters, any number of other target creatures you control phase out. (Treat them and anything attached to them as though they don't exist until their controller's next turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "exists": {
+                  "exclude_self": true,
+                  "target": "t1"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "flying"
+                  ],
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "ability": 0,
+                  "duration": "until_end_of_turn",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "grant_ability"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn.)",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, return target nonland permanent card with mana value X or less from your graveyard to the battlefield, where X is this creature's power.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "not_types": [
+                  "Land",
+                  "Instant",
+                  "Sorcery"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, return target nonland permanent card with mana value X or less from your graveyard to the battlefield, where X is this creature's power.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "guardian_scalelord",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Guardian Scalelord",
+      "oracle_text": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following abilities until end of turn.)\nFlying\nWhenever this creature attacks, return target nonland permanent card with mana value X or less from your graveyard to the battlefield, where X is this creature's power.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -78364,6 +79297,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Sacrifice this creature: Destroy target enchantment."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kami_of_ancient_law",
+      "mana_cost": "{1}{W}",
+      "name": "Kami of Ancient Law",
+      "oracle_text": "Sacrifice this creature: Destroy target enchantment.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -81708,6 +82697,53 @@
       ],
       "types": [
         "Planeswalker"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more cards leave your graveyard, Kirol becomes prepared.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "kirol_history_buff_pack_a_punch",
+      "mana_cost": "{R}{W}",
+      "name": "Kirol, History Buff // Pack a Punch",
+      "oracle_text": "Whenever one or more cards leave your graveyard, Kirol becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 2,
+      "prepared_face": "pack_a_punch_kirol_history_buff",
+      "source": "auto",
+      "subtypes": [
+        "Vampire",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -87955,6 +88991,262 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if there are three or more artifact and/or creature cards in your graveyard, this creature becomes prepared.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "any_types": [
+                    "Artifact",
+                    "Creature"
+                  ],
+                  "controller": "you",
+                  "zone": "graveyard"
+                }
+              },
+              "right": {
+                "const": 3
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "lorehold_archivist_restore_relic",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{R}{W}",
+      "name": "Lorehold Archivist // Restore Relic",
+      "oracle_text": "First strike\nAt the beginning of your upkeep, if there are three or more artifact and/or creature cards in your graveyard, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 3,
+      "prepared_face": "restore_relic_lorehold_archivist",
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Artificer"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {W}."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "lorehold_campus",
+      "name": "Lorehold Campus",
+      "oracle_text": "This land enters tapped.\n{T}: Add {R} or {W}.\n{4}, {T}: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "lorehold_charm",
+      "mana_cost": "{R}{W}",
+      "name": "Lorehold Charm",
+      "oracle_text": "Choose one —\n• Each opponent sacrifices a nontoken artifact of their choice.\n• Return target artifact or creature card with mana value 2 or less from your graveyard to the battlefield.\n• Creatures you control get +1/+1 and gain trample until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "chooser": {
+                          "binding": "each_player"
+                        },
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "is_token": false,
+                        "types": [
+                          "Artifact"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "for_each_player",
+                  "players": "each_opponent"
+                }
+              ],
+              "label": "Each opponent sacrifices a nontoken artifact of their choice."
+            },
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "target": "recovered"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "label": "Return target artifact or creature card with mana value 2 or less from your graveyard to the battlefield."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "pump",
+                  "power": {
+                    "const": 1
+                  },
+                  "toughness": {
+                    "const": 1
+                  }
+                },
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "trample"
+                  ],
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "grant_keyword"
+                }
+              ],
+              "label": "Creatures you control get +1/+1 and gain trample until end of turn."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "recovered",
+          "kind": "card_in_graveyard",
+          "mode": 1,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "you",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 2
+              }
+            },
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -88403,6 +89695,104 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 2,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, sacrifice two lands.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}{W}{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}{U}{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}{B}{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}{R}{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}{G}{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add three mana of any one color."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "lotus_field",
+      "keywords": [
+        "hexproof"
+      ],
+      "name": "Lotus Field",
+      "oracle_text": "Hexproof\nThis land enters tapped.\nWhen this land enters, sacrifice two lands.\n{T}: Add three mana of any one color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -96871,6 +98261,87 @@
       "abilities": [
         {
           "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {W}.)"
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "count": {
+                "colors": [
+                  "W"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "cost": {
+            "mana": "{W}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "bottom": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{W}, {T}: Put target card from your graveyard on the bottom of your library. Activate only if you control two or more white permanents."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "mistveil_plains",
+      "mana_cost": "",
+      "name": "Mistveil Plains",
+      "oracle_text": "({T}: Add {W}.)\nThis land enters tapped.\n{W}, {T}: Put target card from your graveyard on the bottom of your library. Activate only if you control two or more white permanents.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plains"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "pay_life": 1,
             "sacrifice": {
               "self_only": true,
@@ -101044,6 +102515,61 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if a player has one or fewer cards in hand, this creature becomes prepared.",
+          "trigger": {
+            "condition": {
+              "cmp": "<=",
+              "left": {
+                "min_count_of": {
+                  "objects": {
+                    "zone": "hand"
+                  },
+                  "player": "each_player"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "naktamun_lorespinner_wheel_of_fortune",
+      "mana_cost": "{2}{R}",
+      "name": "Naktamun Lorespinner // Wheel of Fortune",
+      "oracle_text": "At the beginning of your upkeep, if a player has one or fewer cards in hand, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 3,
+      "prepared_face": "wheel_of_fortune_naktamun_lorespinner",
+      "source": "auto",
+      "subtypes": [
+        "Jackal",
+        "Wizard"
       ],
       "toughness": 3,
       "types": [
@@ -109936,6 +111462,66 @@
     },
     {
       "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "pack_a_punch_kirol_history_buff",
+      "mana_cost": "{1}{R}{W}",
+      "name": "Pack a Punch",
+      "oracle_text": "Mill a card. Put two +1/+1 counters on target creature. It gains trample until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "mill",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "trample"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -111957,6 +113543,67 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Mill two cards."
+        },
+        {
+          "cost": {
+            "exile_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{2}, Exile this artifact: Shuffle any number of target cards from your graveyard into your library."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "perpetual_timepiece",
+      "mana_cost": "{2}",
+      "name": "Perpetual Timepiece",
+      "oracle_text": "{T}: Mill two cards. (Put the top two cards of your library into your graveyard.)\n{2}, Exile this artifact: Shuffle any number of target cards from your graveyard into your library.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -115234,6 +116881,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "not_types": [
+                  "Instant",
+                  "Sorcery",
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this enchantment enters, return target nonland permanent card with mana value 3 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if a card left your graveyard this turn, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "cards_from_graveyard_this_turn": "you"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "primary_research",
+      "mana_cost": "{4}{W}",
+      "name": "Primary Research",
+      "oracle_text": "When this enchantment enters, return target nonland permanent card with mana value 3 or less from your graveyard to the battlefield.\nAt the beginning of your end step, if a card left your graveyard this turn, draw a card.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -117822,6 +119553,169 @@
       "toughness": 8,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Spirit"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Spirits you control get +1/+0.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "spirit_3_2_rw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "quintorius_field_historian",
+      "mana_cost": "{3}{R}{W}",
+      "name": "Quintorius, Field Historian",
+      "oracle_text": "Spirits you control get +1/+0.\nWhenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elephant",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "spirit_3_2_rw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard"
+          }
+        },
+        {
+          "cost": {
+            "loyalty": 1
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "op": "draw",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "mill",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "discard": 1
+              },
+              "player": "you",
+              "prompt": "Discard a card to draw two cards, then mill a card?"
+            }
+          ],
+          "kind": "activated",
+          "text": "+1: You may discard a card. If you do, draw two cards, then mill a card."
+        },
+        {
+          "cost": {
+            "loyalty": -4
+          },
+          "effects": [
+            {
+              "keywords": [
+                "double_strike",
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "subtypes": [
+                  "Spirit"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "−4: Spirits you control gain double strike and vigilance until end of turn."
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "quintorius_history_chaser",
+      "loyalty": 5,
+      "mana_cost": "{2}{R}{W}",
+      "name": "Quintorius, History Chaser",
+      "oracle_text": "Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creature token.\n+1: You may discard a card. If you do, draw two cards, then mill a card.\n−4: Spirits you control gain double strike and vigilance until end of turn.\nQuintorius, History Chaser can be your commander.",
+      "source": "auto",
+      "subtypes": [
+        "Quintorius"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -121074,6 +122968,56 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if a card left your graveyard this turn, create a Treasure token.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "cards_from_graveyard_this_turn": "you"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "relic_retriever",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Relic Retriever",
+      "oracle_text": "First strike\nAt the beginning of each end step, if a card left your graveyard this turn, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Monkey"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "W"
@@ -121260,6 +123204,65 @@
         "Survivor"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "count": "all",
+                "player": {
+                  "target": "t1"
+                },
+                "zone": "graveyard"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {}
+            }
+          ],
+          "text": "Sacrifice this creature: Exile target player's graveyard."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "remorseful_cleric",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Remorseful Cleric",
+      "oracle_text": "Flying\nSacrifice this creature: Exile target player's graveyard.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Cleric"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -122345,6 +124348,55 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "restore_relic_lorehold_archivist",
+      "mana_cost": "{2}{R}{W}",
+      "name": "Restore Relic",
+      "oracle_text": "Exile target artifact or creature card from your graveyard. Create a token that's a copy of it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "exiled",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        },
+        {
+          "controller": "you",
+          "objects": {
+            "binding": "exiled"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -130788,6 +132840,40 @@
       ]
     },
     {
+      "additional_cost": {
+        "discard": 1
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "seize_the_spoils",
+      "mana_cost": "{2}{R}",
+      "name": "Seize the Spoils",
+      "oracle_text": "As an additional cost to cast this spell, discard a card.\nDraw two cards and create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -130941,6 +133027,61 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice this creature: Creatures you control gain indestructible until end of turn."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "selfless_spirit",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Selfless Spirit",
+      "oracle_text": "Flying\nSacrifice this creature: Creatures you control gain indestructible until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Cleric"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -136989,6 +139130,109 @@
         {
           "effects": [
             {
+              "link": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "is_token": false,
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, exile up to one target nonland, nontoken permanent you don't control with mana value 4 or less.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "controller": {
+                    "owner_of": "each"
+                  },
+                  "op": "create_token",
+                  "power": {
+                    "mana_value_of": {
+                      "binding": "each"
+                    }
+                  },
+                  "token": "illusion_x_x_u",
+                  "toughness": {
+                    "mana_value_of": {
+                      "binding": "each"
+                    }
+                  }
+                }
+              ],
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, the exiled card's owner creates an X/X blue Illusion creature token, where X is the mana value of the exiled card.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "skyclave_apparition",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Skyclave Apparition",
+      "oracle_text": "When this creature enters, exile up to one target nonland, nontoken permanent you don't control with mana value 4 or less.\nWhen this creature leaves the battlefield, the exiled card's owner creates an X/X blue Illusion creature token, where X is the mana value of the exiled card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -142480,6 +144724,59 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return Squee, Goblin Nabob from your graveyard to your hand?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may return this card from your graveyard to your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "squee_goblin_nabob",
+      "mana_cost": "{2}{R}",
+      "name": "Squee, Goblin Nabob",
+      "oracle_text": "At the beginning of your upkeep, you may return this card from your graveyard to your hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Goblin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -153883,6 +156180,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "const": 3
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever you cast a historic spell, return target creature card with mana value 3 or less from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "supertypes": [
+                    "Legendary"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Saga"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "teshar_ancestor_s_apostle",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Teshar, Ancestor's Apostle",
+      "oracle_text": "Flying\nWhenever you cast a historic spell, return target creature card with mana value 3 or less from your graveyard to the battlefield. (Artifacts, legendaries, and Sagas are historic.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -158897,6 +161281,54 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control with mana value 3 or less enter, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "mana_value": {
+                "op": "<=",
+                "value": {
+                  "const": 3
+                }
+              },
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "tocasia_s_welcome",
+      "mana_cost": "{2}{W}",
+      "name": "Tocasia's Welcome",
+      "oracle_text": "Whenever one or more creatures you control with mana value 3 or less enter, draw a card. This ability triggers only once each turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -161507,6 +163939,77 @@
       "subtypes": [
         "Island",
         "Mountain"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {R} or {W}.)"
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [],
+      "id": "turbulent_steppe",
+      "name": "Turbulent Steppe",
+      "oracle_text": "({T}: Add {R} or {W}.)\nThis land enters tapped unless your opponents control eight or more lands.",
+      "replacements": [
+        {
+          "condition": {
+            "cmp": "<",
+            "left": {
+              "count": {
+                "controller": "opponent",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "right": {
+              "const": 8
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Mountain",
+        "Plains"
       ],
       "types": [
         "Land"
@@ -166909,6 +169412,75 @@
         "Cleric"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "binding": "amount"
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature deals combat damage to a player, you may return target creature card with mana value X or less from your graveyard to the battlefield, where X is the amount of damage this creature dealt to that player.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "W"
+      ],
+      "id": "venerable_warsinger",
+      "keywords": [
+        "vigilance",
+        "trample"
+      ],
+      "mana_cost": "{1}{R}{W}",
+      "name": "Venerable Warsinger",
+      "oracle_text": "Vigilance, trample\nWhenever this creature deals combat damage to a player, you may return target creature card with mana value X or less from your graveyard to the battlefield, where X is the amount of damage this creature dealt to that player.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Cleric"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -172341,6 +174913,51 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "wave_of_reckoning",
+      "mana_cost": "{4}{W}",
+      "name": "Wave of Reckoning",
+      "oracle_text": "Each creature deals damage to itself equal to its power.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "each"
+                }
+              },
+              "objects": {
+                "binding": "each"
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "each"
+              }
+            }
+          ],
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "for_each"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "G",
         "U",
         "W"
@@ -173110,6 +175727,48 @@
     },
     {
       "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "wheel_of_fortune_naktamun_lorespinner",
+      "mana_cost": "{2}{R}",
+      "name": "Wheel of Fortune",
+      "oracle_text": "Each player discards their hand, then draws seven cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "cards_in_hand": {
+                  "binding": "each_player"
+                }
+              },
+              "op": "discard",
+              "player": {
+                "binding": "each_player"
+              }
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "amount": {
+            "const": 7
+          },
+          "op": "draw",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -173596,6 +176255,88 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "op": "snapshot",
+              "target": "t1"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": {
+                "controller_of": "victim"
+              },
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "not_supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy up to one target nonbasic land. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "white_orchid_phantom",
+      "keywords": [
+        "flying",
+        "first_strike"
+      ],
+      "mana_cost": "{W}{W}",
+      "name": "White Orchid Phantom",
+      "oracle_text": "Flying, first strike\nWhen this creature enters, destroy up to one target nonbasic land. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Knight"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {

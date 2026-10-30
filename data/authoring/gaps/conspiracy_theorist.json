@@ -1,0 +1,19 @@
+{
+  "card_id": "conspiracy_theorist",
+  "name": "Conspiracy Theorist",
+  "oracle_text": "Whenever this creature attacks, you may pay {1} and discard a card. If you do, draw a card.\nWhenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn.",
+  "blocked_sentences": [
+    "Whenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn"
+  ],
+  "needs": [
+    {
+      "capability": "batched_trigger_objects",
+      "kind": "trigger_event",
+      "what": "a batched `discard` trigger that binds every card of its simultaneous batch matching the filter (e.g. as `{\"binding\": \"batch\"}`), so the effect can choose one of them still in the graveyard -- here an optional `exile` of one of those nonland cards with `playable: \"this_turn\"` (cast only)",
+      "why_existing_wont_do": "`batched: true` on `discard` (Doctor Doom, King of Latveria) fires once per batch, but `triggers._queue` builds its bindings from the first matching event only (`event_bindings`); nothing exposes the other cards of the batch, so \"one of them\" can be written only as the first discarded card, which takes the choice away when two nonland cards are discarded together. An unbatched trigger would fire once per card and let you exile several, which is a different card",
+      "closest_existing": ["discard trigger with batched", "exile with playable_this_turn"]
+    }
+  ],
+  "closest_existing": ["batched", "exile"],
+  "confidence": "high"
+}

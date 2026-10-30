@@ -1,0 +1,18 @@
+{
+  "card_id": "hofri_ghostforge",
+  "name": "Hofri Ghostforge",
+  "oracle_text": "Spirits you control get +1/+1 and have trample and haste.\nWhenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has \"When this token leaves the battlefield, return the exiled card to its owner's graveyard.\"",
+  "blocked_sentences": [
+    "Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has \"When this token leaves the battlefield, return the exiled card to its owner's graveyard.\""
+  ],
+  "needs": [
+    {
+      "capability": "copy_exception_ability",
+      "kind": "op",
+      "what": "copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here \"When this token leaves the battlefield, return the exiled card to its owner's graveyard\" -- where \"the exiled card\" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: \"self\"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves",
+      "why_existing_wont_do": "copy_permanent's `except_` becomes `copy_overrides`, which characteristics._compute reads only for power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes -- `add_subtypes: [\"Spirit\"]` covers the Spirit half, but nothing adds an ability. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: \"self\"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible."
+    }
+  ],
+  "closest_existing": ["copy_permanent", "grant_ability", "exile"],
+  "confidence": "high"
+}

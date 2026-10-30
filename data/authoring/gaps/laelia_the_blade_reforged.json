@@ -1,0 +1,18 @@
+{
+  "card_id": "laelia_the_blade_reforged",
+  "name": "Laelia, the Blade Reforged",
+  "oracle_text": "Haste\nWhenever Laelia attacks, exile the top card of your library. You may play that card this turn.\nWhenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.",
+  "blocked_sentences": [
+    "Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia."
+  ],
+  "needs": [
+    {
+      "capability": "cards_exiled_trigger",
+      "kind": "trigger_event",
+      "what": "a batched zone-change trigger event that fires once per event when one or more of your cards are put into exile from your library and/or your graveyard (from_zones: library, graveyard; to exile), whatever caused the exile",
+      "why_existing_wont_do": "No trigger event watches cards moving into exile. leaves_graveyard covers only the graveyard half and fires for any destination, and nothing watches cards leaving the library; the trigger keys to_zones/from_zones are loader-restricted to leaves_battlefield destinations and spell_cast/land_played origins respectively"
+    }
+  ],
+  "closest_existing": ["leaves_graveyard"],
+  "confidence": "high"
+}

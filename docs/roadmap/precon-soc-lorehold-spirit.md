@@ -5,7 +5,7 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [voting]
 status: proposed
 rank: 10
 ---
@@ -19,6 +19,17 @@ coming-soon shell on the shelf: its row `soc_lorehold_spirit` is in
 `python scripts/sync_precons.py --missing soc_lorehold_spirit` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. What is left
+is thirteen cards, each with a gap record naming what it waits on: Fateful
+Tempest on voting (its own item, which this one depends on); Conspiracy
+Theorist and Spirit of Resilience on a batched trigger that binds every card
+in the batch; Quintorius, Loremaster on a free cast that tucks the spell to
+the library's bottom; Serra Paragon on one graveyard-play limit shared by
+lands and spells, and on granting the card played that way an ability;
+Advanced Reconstruction, Ao, the Dawn Sky, Hofri Ghostforge, Karmic Guide
+(echo), Laelia, the Blade Reforged, Sevinne's Reclamation, Study Hall and
+Vanguard of the Restless on one capability each, named in their records.
 
 ## The change
 

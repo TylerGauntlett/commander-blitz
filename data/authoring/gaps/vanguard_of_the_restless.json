@@ -1,0 +1,18 @@
+{
+  "card_id": "vanguard_of_the_restless",
+  "name": "Vanguard of the Restless",
+  "oracle_text": "Flying\nSpirits you control get +1/+1 for each time you've cast your commander from the command zone this game.\nWhenever a Spirit you control enters, you may pay {2}{W}. If you do, return this card from your graveyard to the battlefield.",
+  "blocked_sentences": [
+    "Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game."
+  ],
+  "needs": [
+    {
+      "capability": "static_commander_casts_this_game",
+      "kind": "value",
+      "what": "the value leaf commander_casts_this_game ({\"commander_casts_this_game\": \"you\"}) admitted to static_value_keys, so a continuous buff's power/toughness can read the controller's count of commander casts from the command zone this game (characteristics._static_value and loader.statics._validate_static_value)",
+      "why_existing_wont_do": "commander_casts_this_game exists only in value_keys (effect amounts, resolved once); static_value_keys has greatest_commander_mana_value and spells_cast_this_turn but no commander-cast tally, and a one-shot pump or add_counters would miss Spirits that enter later and would not grow with later commander casts"
+    }
+  ],
+  "closest_existing": ["commander_casts_this_game", "greatest_commander_mana_value", "buff"],
+  "confidence": "high"
+}

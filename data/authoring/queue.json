@@ -8552,12 +8552,12 @@
     },
     "Angel of Indemnity": {
       "edhrec_rank": 3419,
-      "gate": "template",
+      "gate": null,
       "name": "Angel of Indemnity",
-      "reason": "no template for: When this creature enters, return target permanent card with mana value 4 or less from you",
+      "reason": "",
       "scryfall_id": "41163f43-7357-4bbc-a1e7-9c8070135c93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Angel of Invention": {
@@ -16192,12 +16192,12 @@
     },
     "Augusta, Order Returned": {
       "edhrec_rank": 12410,
-      "gate": "template",
+      "gate": null,
       "name": "Augusta, Order Returned",
-      "reason": "no template for: Whenever Augusta attacks, each player exiles a card from their graveyard. When one or more",
+      "reason": "",
       "scryfall_id": "11dee8bb-a19a-44a7-aa19-55cdd3a0bcf6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aunt May": {
@@ -19382,12 +19382,12 @@
     },
     "Balefire Liege": {
       "edhrec_rank": 4889,
-      "gate": "template",
+      "gate": null,
       "name": "Balefire Liege",
-      "reason": "no template for: Other red creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "6f236f33-f6d2-4b07-a69d-42165670bd45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baleful Ammit": {
@@ -25482,12 +25482,12 @@
     },
     "Bitterthorn, Nissa's Animus": {
       "edhrec_rank": 2048,
-      "gate": "template",
+      "gate": null,
       "name": "Bitterthorn, Nissa's Animus",
-      "reason": "no template for: Living weapon",
+      "reason": "",
       "scryfall_id": "926cbd68-3b66-4ccc-a7c9-fb20e38a3126",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bituminous Blast": {
@@ -41902,12 +41902,12 @@
     },
     "Ceaseless Conflict": {
       "edhrec_rank": 12071,
-      "gate": "template",
+      "gate": null,
       "name": "Ceaseless Conflict",
-      "reason": "no template for: Destroy all creatures. Then create a 3/2 red and white Spirit creature token for each nont",
+      "reason": "",
       "scryfall_id": "a0e18f74-7fa6-4e3a-bc80-390a25055205",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ceaseless Searblades": {
@@ -76272,12 +76272,12 @@
     },
     "Drumbellower": {
       "edhrec_rank": 1933,
-      "gate": "template",
+      "gate": null,
       "name": "Drumbellower",
-      "reason": "no template for: Untap all creatures you control during each other player's untap step",
+      "reason": "",
       "scryfall_id": "c19e0ebf-ca94-4684-8b2c-68e592b65a24",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Drumhunter": {
@@ -87722,12 +87722,12 @@
     },
     "Excava, the Risen Past": {
       "edhrec_rank": 11681,
-      "gate": "template",
+      "gate": null,
       "name": "Excava, the Risen Past",
-      "reason": "no template for: Whenever Excava attacks, return up to one target artifact, creature, or non-Aura enchantme",
+      "reason": "",
       "scryfall_id": "d47ebf19-b3fa-48a2-851a-254d32b0305a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Excavated Wall": {
@@ -119802,12 +119802,12 @@
     },
     "Guardian Scalelord": {
       "edhrec_rank": 4756,
-      "gate": "template",
+      "gate": null,
       "name": "Guardian Scalelord",
-      "reason": "no template for: Backup 1",
+      "reason": "",
       "scryfall_id": "8415c0b3-9bf7-4c45-a215-4a73f1a42cbd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guardian Seraph": {
@@ -119862,12 +119862,12 @@
     },
     "Guardian of Faith": {
       "edhrec_rank": 1951,
-      "gate": "template",
+      "gate": null,
       "name": "Guardian of Faith",
-      "reason": "no template for: When this creature enters, any number of other target creatures you control phase out",
+      "reason": "",
       "scryfall_id": "037739cd-e05c-4aae-9123-f924e420010c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guardian of Ghirapur": {
@@ -145502,12 +145502,12 @@
     },
     "Kami of Ancient Law": {
       "edhrec_rank": 14542,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of Ancient Law",
-      "reason": "no template for: Sacrifice this creature: Destroy target enchantment",
+      "reason": "",
       "scryfall_id": "4edbce98-bfc1-4c66-bd04-16100d9e22d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of Celebration": {
@@ -149602,12 +149602,12 @@
     },
     "Kirol, History Buff // Pack a Punch": {
       "edhrec_rank": 14856,
-      "gate": "template",
+      "gate": null,
       "name": "Kirol, History Buff // Pack a Punch",
-      "reason": "no template for: Whenever one or more cards leave your graveyard, Kirol becomes prepared",
+      "reason": "",
       "scryfall_id": "676ba521-66e4-42cf-a315-70d03cb7334e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kirri, Talented Sprout": {
@@ -161452,32 +161452,32 @@
     },
     "Lorehold Archivist // Restore Relic": {
       "edhrec_rank": 13556,
-      "gate": "template",
+      "gate": null,
       "name": "Lorehold Archivist // Restore Relic",
-      "reason": "no template for: At the beginning of your upkeep, if there are three or more artifact and/or creature cards",
+      "reason": "",
       "scryfall_id": "cb535433-f062-4c35-977e-2f896251b1d8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lorehold Campus": {
       "edhrec_rank": 7279,
-      "gate": "template",
+      "gate": null,
       "name": "Lorehold Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "b6ad08da-c9e8-4061-a4a6-032d6957a403",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lorehold Charm": {
       "edhrec_rank": 7588,
-      "gate": "template",
+      "gate": null,
       "name": "Lorehold Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "5fe70295-e550-4577-a341-dab6c25aabfd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lorehold Command": {
@@ -161902,12 +161902,12 @@
     },
     "Lotus Field": {
       "edhrec_rank": 904,
-      "gate": "template",
+      "gate": null,
       "name": "Lotus Field",
-      "reason": "no template for: When this land enters, sacrifice two lands",
+      "reason": "",
       "scryfall_id": "ee5ac47c-e8b6-400e-b91e-a7cd0f952cf1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lotus Guardian": {
@@ -176472,12 +176472,12 @@
     },
     "Mistveil Plains": {
       "edhrec_rank": 2884,
-      "gate": "template",
+      "gate": null,
       "name": "Mistveil Plains",
-      "reason": "no template for: {W}, {T}: Put target card from your graveyard on the bottom of your library. Activate only",
+      "reason": "",
       "scryfall_id": "c53028dd-efb5-486c-a7d3-45f2f6050c1d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mistvein Borderpost": {
@@ -183052,12 +183052,12 @@
     },
     "Naktamun Lorespinner // Wheel of Fortune": {
       "edhrec_rank": 9736,
-      "gate": "template",
+      "gate": null,
       "name": "Naktamun Lorespinner // Wheel of Fortune",
-      "reason": "no template for: At the beginning of your upkeep, if a player has one or fewer cards in hand, this creature",
+      "reason": "",
       "scryfall_id": "acca1fd4-6384-460e-905f-118f01aa76ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nalathni Dragon": {
@@ -200032,12 +200032,12 @@
     },
     "Perpetual Timepiece": {
       "edhrec_rank": 2010,
-      "gate": "template",
+      "gate": null,
       "name": "Perpetual Timepiece",
-      "reason": "no template for: {T}: Mill two cards",
+      "reason": "",
       "scryfall_id": "6edbedf9-273f-4d7f-80a2-705858bd4d6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Perplex": {
@@ -207152,12 +207152,12 @@
     },
     "Primary Research": {
       "edhrec_rank": 11953,
-      "gate": "template",
+      "gate": null,
       "name": "Primary Research",
-      "reason": "no template for: When this enchantment enters, return target nonland permanent card with mana value 3 or le",
+      "reason": "",
       "scryfall_id": "f6fdb814-45c6-4d14-afff-7f5bd1bd10a1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prime Speaker Vannifar": {
@@ -212272,22 +212272,22 @@
     },
     "Quintorius, Field Historian": {
       "edhrec_rank": 9458,
-      "gate": "template",
+      "gate": null,
       "name": "Quintorius, Field Historian",
-      "reason": "no template for: Spirits you control get +1/+0",
+      "reason": "",
       "scryfall_id": "8e3c7f00-e997-4b07-98af-45b9ea35d2d7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quintorius, History Chaser": {
       "edhrec_rank": 10055,
-      "gate": "template",
+      "gate": null,
       "name": "Quintorius, History Chaser",
-      "reason": "no template for: Whenever one or more cards leave your graveyard, create a 3/2 red and white Spirit creatur",
+      "reason": "",
       "scryfall_id": "0742f19d-179c-43c4-ab95-4160c56b4384",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quintorius, Loremaster": {
@@ -219812,12 +219812,12 @@
     },
     "Relic Retriever": {
       "edhrec_rank": 10996,
-      "gate": "template",
+      "gate": null,
       "name": "Relic Retriever",
-      "reason": "no template for: At the beginning of each end step, if a card left your graveyard this turn, create a Treas",
+      "reason": "",
       "scryfall_id": "2866da1d-62e9-4a0d-9e6c-793d2d38c884",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Relic Robber": {
@@ -220062,12 +220062,12 @@
     },
     "Remorseful Cleric": {
       "edhrec_rank": 5116,
-      "gate": "template",
+      "gate": null,
       "name": "Remorseful Cleric",
-      "reason": "no template for: Sacrifice this creature: Exile target player's graveyard",
+      "reason": "",
       "scryfall_id": "665a1bd1-db82-4db9-af7d-af161d31a696",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Remorseless Punishment": {
@@ -239382,12 +239382,12 @@
     },
     "Seize the Spoils": {
       "edhrec_rank": 818,
-      "gate": "template",
+      "gate": null,
       "name": "Seize the Spoils",
-      "reason": "no template for: Draw two cards and create a Treasure token",
+      "reason": "",
       "scryfall_id": "c6348e42-9082-4c62-bd0e-0239b588533b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seize the Spotlight": {
@@ -239802,12 +239802,12 @@
     },
     "Selfless Spirit": {
       "edhrec_rank": 592,
-      "gate": "template",
+      "gate": null,
       "name": "Selfless Spirit",
-      "reason": "no template for: Sacrifice this creature: Creatures you control gain indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "9cd16dac-3bf9-4a71-a906-0cfbf98cdca5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Selfless Squire": {
@@ -250412,12 +250412,12 @@
     },
     "Skyclave Apparition": {
       "edhrec_rank": 1206,
-      "gate": "template",
+      "gate": null,
       "name": "Skyclave Apparition",
-      "reason": "no template for: When this creature enters, exile up to one target nonland, nontoken permanent you don't co",
+      "reason": "",
       "scryfall_id": "e671de25-c47c-48a1-919b-6aa30dab142f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skyclave Cleric // Skyclave Basilica": {
@@ -261762,12 +261762,12 @@
     },
     "Squee, Goblin Nabob": {
       "edhrec_rank": 3925,
-      "gate": "template",
+      "gate": null,
       "name": "Squee, Goblin Nabob",
-      "reason": "no template for: At the beginning of your upkeep, you may return this card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "8aabc541-ff2a-416f-a973-44eda8ec4706",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Squee, the Immortal": {
@@ -278732,12 +278732,12 @@
     },
     "Teshar, Ancestor's Apostle": {
       "edhrec_rank": 1884,
-      "gate": "template",
+      "gate": null,
       "name": "Teshar, Ancestor's Apostle",
-      "reason": "no template for: Whenever you cast a historic spell, return target creature card with mana value 3 or less ",
+      "reason": "",
       "scryfall_id": "6e80198c-cfae-46f9-84cb-584d091014c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Test of Endurance": {
@@ -288462,12 +288462,12 @@
     },
     "Tocasia's Welcome": {
       "edhrec_rank": 857,
-      "gate": "template",
+      "gate": null,
       "name": "Tocasia's Welcome",
-      "reason": "no template for: Whenever one or more creatures you control with mana value 3 or less enter, draw a card. T",
+      "reason": "",
       "scryfall_id": "ebd20adc-4fb5-47aa-abdf-4278752581a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tocasia, Dig Site Mentor": {
@@ -294242,12 +294242,12 @@
     },
     "Turbulent Steppe": {
       "edhrec_rank": 5001,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Steppe",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "a138b2e9-9665-4544-866a-8672ddab79fc",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Wetlands": {
@@ -302372,12 +302372,12 @@
     },
     "Venerable Warsinger": {
       "edhrec_rank": 8842,
-      "gate": "template",
+      "gate": null,
       "name": "Venerable Warsinger",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may return target creature car",
+      "reason": "",
       "scryfall_id": "cdd0062f-6b2a-49c4-bf47-9b05f16ca6eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Venerated Loxodon": {
@@ -312152,12 +312152,12 @@
     },
     "Wave of Reckoning": {
       "edhrec_rank": 5596,
-      "gate": "template",
+      "gate": null,
       "name": "Wave of Reckoning",
-      "reason": "no template for: Each creature deals damage to itself equal to its power",
+      "reason": "",
       "scryfall_id": "7be0c25a-5e65-48e1-9560-9391111bb912",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wave of Terror": {
@@ -314452,12 +314452,12 @@
     },
     "White Orchid Phantom": {
       "edhrec_rank": 7090,
-      "gate": "template",
+      "gate": null,
       "name": "White Orchid Phantom",
-      "reason": "no template for: When this creature enters, destroy up to one target nonbasic land. Its controller may sear",
+      "reason": "",
       "scryfall_id": "e6cebc57-d7b0-4e86-bc9e-ebb1de58f932",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "White Plume Adventurer": {

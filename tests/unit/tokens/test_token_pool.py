@@ -1224,3 +1224,52 @@ class TestManaformHellkitesDragonIsAnXXHastyFlier:
         dragon = pool.get("dragon_4_4_r_flying")
         assert not dragon.variable_pt
         assert "haste" not in dragon.keywords
+
+
+class TestLoreholdsSpiritIsAThreeTwoRedAndWhite:
+    """Quintorius, Field Historian, Ceaseless Conflict and the other Lorehold
+    cards: *"create a **3/2 red and white** Spirit creature token."*
+
+    `spirit_2_2_w` is the nearest Spirit: a 2/2 and white only. Sizing it up
+    with `create_token`'s power and toughness would still leave it mono-white,
+    which a "red creature" or "multicolored" count would miss.
+    """
+
+    def test_it_is_a_three_two_red_and_white_spirit(self, pool):
+        spirit = pool.get("spirit_3_2_rw")
+        assert spirit is not None and spirit.is_token and spirit.is_creature
+        assert (spirit.power, spirit.toughness) == (3, 2)
+        assert sorted(spirit.colors) == ["R", "W"]
+        assert list(spirit.types) == ["Creature"]
+        assert list(spirit.subtypes) == ["Spirit"]
+        assert not spirit.keywords and not spirit.abilities
+
+    def test_the_white_spirit_is_still_a_separate_token(self, pool):
+        other = pool.get("spirit_2_2_w")
+        assert (other.power, other.toughness) == (2, 2)
+        assert sorted(other.colors) == ["W"]
+
+
+class TestSkyclaveApparitionsIllusionIsAPlainXXBlue:
+    """Skyclave Apparition: *"its owner creates an **X/X blue Illusion**
+    creature token, where X is the mana value of the exiled card."*
+
+    Written 0/0 with `variable_pt`, like the Shark. `illusion_1_1_u` is a
+    printed 1/1, and the pool's X/X Illusion is the red Dragon Illusion with
+    flying and haste; neither stands in.
+    """
+
+    def test_it_is_a_variable_blue_illusion_with_no_abilities(self, pool):
+        token = pool.get("illusion_x_x_u")
+        assert token is not None and token.is_token and token.is_creature
+        assert token.variable_pt
+        assert (token.power, token.toughness) == (0, 0)
+        assert sorted(token.colors) == ["U"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Illusion"]
+        assert not token.keywords and not token.abilities
+
+    def test_the_printed_illusion_is_still_a_separate_token(self, pool):
+        other = pool.get("illusion_1_1_u")
+        assert not other.variable_pt
+        assert (other.power, other.toughness) == (1, 1)

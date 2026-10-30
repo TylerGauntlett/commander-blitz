@@ -1,0 +1,24 @@
+{
+  "card_id": "quintorius_loremaster",
+  "name": "Quintorius, Loremaster",
+  "oracle_text": "Vigilance\nAt the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.\n{1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.",
+  "blocked_sentences": [
+    "At the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.",
+    "{1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead."
+  ],
+  "needs": [
+    {
+      "capability": "free_cast_tuck_to_library_bottom",
+      "kind": "replacement",
+      "what": "a rider on a free-cast permission granted to a card in exile (grant_playable / play_exiled with playable_free, playable_this_turn): if the spell cast that way would be put into a graveyard (resolving, countered or fizzling), it goes to the bottom of its owner's library instead",
+      "why_existing_wont_do": "grant_playable carries playable, playable_free, playable_this_turn, as_flashback and limit, and play_exiled carries as/exiles/objects, but none attaches a destination replacement to the resulting spell; as_flashback exiles rather than tucks, and tucks_itself is a card-level rider on the card's own printed text, not something granted to another card"
+    }
+  ],
+  "closest_existing": [
+    "grant_playable",
+    "play_exiled",
+    "tucks_itself",
+    "spirit_2_2_w"
+  ],
+  "confidence": "high"
+}
