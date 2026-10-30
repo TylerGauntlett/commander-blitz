@@ -825,7 +825,8 @@ def _satisfy_an_exists(game: Game, registry, selector: dict) -> None:
     It puts out one real card from the pool whose *printed* power clears the
     floor, rather than pumping a sandbox creature: the condition reads `chars`,
     so a card that names the wrong characteristic still fails. Only "you control
-    it on the battlefield" and a ``>=`` power floor over a constant are read; any
+    it on the battlefield" and a ``>=`` power or toughness floor over a constant
+    are read; any
     other shape is left alone and the ability reports as unusable, which is the
     honest answer when the harness cannot build the position.
     """
@@ -833,14 +834,21 @@ def _satisfy_an_exists(game: Game, registry, selector: dict) -> None:
         return
     if selector.get("zone", "battlefield") != "battlefield":
         return
-    min_power = None
-    power = selector.get("power")
-    if power is not None:
-        value = power.get("value") if isinstance(power, dict) else None
-        if power.get("op") != ">=" or not isinstance(value, dict) or "const" not in value:
+    # Baxter Building: "...only if you control a creature with toughness 4 or
+    # greater" -- the same floor over the other printed characteristic, read the
+    # same way and refused the same way when its shape is anything else.
+    floors: dict[str, int | None] = {"power": None, "toughness": None}
+    for stat in floors:
+        spec = selector.get(stat)
+        if spec is None:
+            continue
+        value = spec.get("value") if isinstance(spec, dict) else None
+        if spec.get("op") != ">=" or not isinstance(value, dict) or "const" not in value:
             return
-        min_power = int(value["const"])
-    match = _fodder_for(registry, selector, min_power=min_power)
+        floors[stat] = int(value["const"])
+    match = _fodder_for(
+        registry, selector, min_power=floors["power"], min_toughness=floors["toughness"]
+    )
     if match is None:
         return
     fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
@@ -942,7 +950,13 @@ def _satisfy_a_per_player_count(game: Game, registry, condition: dict) -> bool:
     return True
 
 
-def _fodder_for(registry, selector: dict, count: int = 1, min_power: int | None = None):
+def _fodder_for(
+    registry,
+    selector: dict,
+    count: int = 1,
+    min_power: int | None = None,
+    min_toughness: int | None = None,
+):
     """The first card in the pool matching a counting filter's types.
 
     Shared by every helper that satisfies a requirement by putting permanents
@@ -974,6 +988,7 @@ def _fodder_for(registry, selector: dict, count: int = 1, min_power: int | None 
         and (not subtypes or subtypes & set(c.subtypes))
         and colors <= set(c.colors)
         and (min_power is None or (c.power is not None and c.power >= min_power))
+        and (min_toughness is None or (c.toughness is not None and c.toughness >= min_toughness))
     ]
     if not matches:
         return None
