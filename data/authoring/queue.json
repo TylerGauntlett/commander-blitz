@@ -278362,12 +278362,12 @@
     },
     "Terramorph": {
       "edhrec_rank": 7707,
-      "gate": "template",
+      "gate": null,
       "name": "Terramorph",
-      "reason": "no template for: Search your library for a basic land card, put it onto the battlefield, then shuffle",
+      "reason": "",
       "scryfall_id": "1389d46e-956d-4be6-a519-9c8338007715",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Terrapact Intimidator": {
@@ -298692,12 +298692,12 @@
     },
     "Unstable Molecule Suit": {
       "edhrec_rank": 14666,
-      "gate": "template",
+      "gate": null,
       "name": "Unstable Molecule Suit",
-      "reason": "no template for: Equip commander {2}",
+      "reason": "",
       "scryfall_id": "1e41af36-00da-4dc6-a5e7-4aed74489f1d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unstable Mutation": {
@@ -300292,12 +300292,12 @@
     },
     "Valeria Richards, Precocious": {
       "edhrec_rank": 14067,
-      "gate": "template",
+      "gate": null,
       "name": "Valeria Richards, Precocious",
-      "reason": "no template for: Noncreature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "5e0c357b-c5e8-4082-b1ec-85d40d10524c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Valeron Outlander": {

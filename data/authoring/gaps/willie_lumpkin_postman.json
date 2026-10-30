@@ -1,0 +1,18 @@
+{
+  "card_id": "willie_lumpkin_postman",
+  "name": "Willie Lumpkin, Postman",
+  "oracle_text": "Willie Lumpkin can't be blocked.\nWhenever Willie Lumpkin deals combat damage to an opponent, you draw a card and that player may draw a card. If they do, that player can't attack you or permanents you control during their next turn.",
+  "blocked_sentences": [
+    "Whenever Willie Lumpkin deals combat damage to an opponent, you draw a card and that player may draw a card. If they do, that player can't attack you or permanents you control during their next turn."
+  ],
+  "needs": [
+    {
+      "capability": "cant_attack_player_next_turn",
+      "kind": "op",
+      "what": "a `cant_attack_player` duration meaning \"during the ATTACKER's next turn\" -- the prohibition is pending from resolution, switches on when that player's next turn begins and ends at that turn's cleanup, closing the defender's seat and every permanent the defender controls (planeswalkers and battles, i.e. `planeswalkers: true` widened to all attackable permanents)",
+      "why_existing_wont_do": "`cant_attack_player` takes only `ATTACK_RESTRICTION_DURATIONS` = (`this_turn`, `this_combat`), and the trigger resolves on Willie's controller's turn, so either clock has expired before the damaged opponent ever declares attackers. Wrapping it in `delay` does not fix the clock: `delay` fires at the next occurrence of a step (or the controller's own with `your_turn`), not at a named other player's next turn, so in multiplayer it would lock the wrong turn. `must_attack_planeswalker` has the right 'that player's next turn' pending mark but is a requirement, not a prohibition. The rest of the line (unblockable static, draw, `may` draw by `event_player` with an `if` on it) is expressible"
+    }
+  ],
+  "closest_existing": ["cant_attack_player", "delay", "must_attack_planeswalker"],
+  "confidence": "high"
+}

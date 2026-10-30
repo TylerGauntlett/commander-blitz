@@ -13076,6 +13076,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "terramorph": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 39
+    },
+    "zone": "exile"
+  },
   "terrian_world_tyrant": {
     "zone": "battlefield"
   },
@@ -13912,6 +13919,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "unstable_molecule_suit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "unstoppable_slasher": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14007,6 +14018,13 @@
   },
   "utvara_hellkite": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "valeria_richards_precocious": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "valiant_guard": {
