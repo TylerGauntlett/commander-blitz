@@ -1,0 +1,828 @@
+{
+  "id": "soc_witherbloom_pestilence",
+  "name": "Witherbloom Pestilence",
+  "commanders": [
+    "dina_essence_brewer"
+  ],
+  "color_identity": [
+    "B",
+    "G"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "SOC",
+    "set_name": "Secrets of Strixhaven Commander",
+    "date": "2026-04-24"
+  },
+  "notes": "Secrets of Strixhaven Commander precon, card for card (https://mtgjson.com/api/v5/decks/WitherbloomPestilence_SOC.json).",
+  "tags": [
+    "Aristocrats",
+    "Tokens",
+    "Lifegain",
+    "Drain"
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 3,
+    "interaction": 3,
+    "resilience": 4,
+    "pilot": 3
+  },
+  "strategy": "Dina, Essence Brewer draws a card the first time each turn you sacrifice a creature, and for {2} and a tap turns a sacrificed creature's power into life and +1/+1 counters. The deck feeds her with Pests: Beledros Witherbloom, Pest Rescuer, Pest Infestation, Feral Appetite and Ribtruss Roaster all make 1/1s that gain a life when they die, and Viscera Seer, Priest of Forgotten Gods, Woe Strider and Umbral Collar Zealot turn them into scry, cards and mana. Every life gained is pressure: Dina, Soul Steeper and Defiling Daemogoth drain the table, Blood Artist and Zulaport Cutthroat punish each death, and Trudge Garden and Veinwitch Coven turn the life into bodies and card advantage. Bloodghast, Nether Traitor and Teacher's Pest come back for more, Casualties of War, Assassin's Trophy, Toxic Deluge and Final Act answer the board, and Beledros's untap of every land closes a long game.",
+  "signature": [
+    {
+      "card_id": "dina_essence_brewer",
+      "why": "Draws on the first sacrifice each turn, and turns a sacrificed creature's power into life and counters."
+    },
+    {
+      "card_id": "beledros_witherbloom",
+      "why": "A Pest every upkeep, everyone's, and pay 10 life to untap all your lands once each turn."
+    },
+    {
+      "card_id": "dina_soul_steeper",
+      "why": "Every life gained makes each opponent lose 1 life."
+    },
+    {
+      "card_id": "pest_infestation",
+      "why": "X artifacts or enchantments gone and twice X Pests to sacrifice."
+    }
+  ],
+  "archetype": "aristocrats",
+  "printings": {
+    "arcane_signet": {
+      "scryfall_id": "7811dd72-61b9-4067-ac20-cea153e625d2",
+      "artist": "Joe Slucher",
+      "set_code": "soc",
+      "collector_number": "127"
+    },
+    "assassin_s_trophy": {
+      "scryfall_id": "aaf258fc-3ba4-4b83-bdbf-10a07e0b6c03",
+      "artist": "Dmitry Burmak",
+      "set_code": "soc",
+      "collector_number": "294"
+    },
+    "awakening_zone": {
+      "scryfall_id": "13724768-83d3-4da2-82d7-35787c4f9877",
+      "artist": "Johann Bodin",
+      "set_code": "soc",
+      "collector_number": "262"
+    },
+    "beledros_witherbloom": {
+      "scryfall_id": "144c2886-3d37-4a8a-8e37-99ccff66599e",
+      "artist": "Raymond Swanland",
+      "set_code": "soc",
+      "collector_number": "296"
+    },
+    "blight_mound": {
+      "scryfall_id": "dc060028-e01c-4bc7-8b52-7d0e2a350061",
+      "artist": "Oriana Menendez",
+      "set_code": "soc",
+      "collector_number": "208"
+    },
+    "blood_artist": {
+      "scryfall_id": "b5275d76-2947-4219-be21-614c7421614a",
+      "artist": "L.A. Draws",
+      "set_code": "soc",
+      "collector_number": "209"
+    },
+    "bloodghast": {
+      "scryfall_id": "cee85485-598f-4dfc-aa0b-7b1de86c7788",
+      "artist": "Lixin Yin",
+      "set_code": "soc",
+      "collector_number": "210"
+    },
+    "blossoming_bogbeast": {
+      "scryfall_id": "764054f1-e848-4cee-b623-4861ce15c370",
+      "artist": "Aaron Miller",
+      "set_code": "soc",
+      "collector_number": "264"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "55b5b094-9d2d-4d96-b90c-78fecdae725a",
+      "artist": "Howard Lyon",
+      "set_code": "soc",
+      "collector_number": "363"
+    },
+    "casualties_of_war": {
+      "scryfall_id": "2467f50a-bf45-4046-9086-1bfcf3438af4",
+      "artist": "Nereida",
+      "set_code": "soc",
+      "collector_number": "300"
+    },
+    "command_tower": {
+      "scryfall_id": "c46a217c-0ed2-4b3c-9a01-ee38d12d76f3",
+      "artist": "Constantin Marin",
+      "set_code": "soc",
+      "collector_number": "129"
+    },
+    "creakwood_liege": {
+      "scryfall_id": "9a05c8f9-e810-498d-ab51-632661dd000d",
+      "artist": "Cole Eastburn",
+      "set_code": "soc",
+      "collector_number": "301"
+    },
+    "culling_ritual": {
+      "scryfall_id": "abaad8c5-763d-4276-9b19-623cd19f59b9",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "soc",
+      "collector_number": "302"
+    },
+    "cultivate": {
+      "scryfall_id": "f1cc00f9-ae7b-4f7b-95f2-bc5c00e4bd72",
+      "artist": "Justyna Dura",
+      "set_code": "soc",
+      "collector_number": "265"
+    },
+    "deadly_brew": {
+      "scryfall_id": "3e5493c3-0be2-467c-82f0-3ee1ca909d0c",
+      "artist": "Randy Vargas",
+      "set_code": "soc",
+      "collector_number": "303"
+    },
+    "defiling_daemogoth": {
+      "scryfall_id": "2cde79eb-91c3-4a42-a2d3-e733e3b56846",
+      "artist": "Quintin Gleim",
+      "set_code": "soc",
+      "collector_number": "25"
+    },
+    "dina_essence_brewer": {
+      "scryfall_id": "9fe237b8-c02c-41ea-9fc4-b771b91d2157",
+      "artist": "Pauline Voss",
+      "set_code": "soc",
+      "collector_number": "1"
+    },
+    "dina_soul_steeper": {
+      "scryfall_id": "6ae992b6-506b-4667-884f-4f7fc075b71e",
+      "artist": "Chris Rahn",
+      "set_code": "soc",
+      "collector_number": "305"
+    },
+    "eccentric_pestfinder_turn_stones": {
+      "scryfall_id": "508e1dd7-edbd-4b76-90bc-ff58c55b58a3",
+      "artist": "Nereida",
+      "set_code": "soc",
+      "collector_number": "46"
+    },
+    "elvish_mystic": {
+      "scryfall_id": "eb654a76-62ee-4fd8-83d4-cb912211a9a0",
+      "artist": "Wesley Burt",
+      "set_code": "soc",
+      "collector_number": "266"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "7db2934a-43a0-46ad-8380-ff6703f8fd6d",
+      "artist": "Ron Spears",
+      "set_code": "soc",
+      "collector_number": "369"
+    },
+    "fabled_passage": {
+      "scryfall_id": "8119d329-6ee5-433c-bd81-8579bb061162",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "soc",
+      "collector_number": "130"
+    },
+    "feral_appetite": {
+      "scryfall_id": "69dda877-c176-456c-8cd8-5a1ea288e4c9",
+      "artist": "Michal Ivan",
+      "set_code": "soc",
+      "collector_number": "38"
+    },
+    "festering_thicket": {
+      "scryfall_id": "f71c87db-54ea-4611-8692-096d9714d854",
+      "artist": "Jakob Eirich",
+      "set_code": "soc",
+      "collector_number": "371"
+    },
+    "final_act": {
+      "scryfall_id": "a86671d1-4f4b-486e-a0b3-671608974a82",
+      "artist": "Nils Hamm",
+      "set_code": "soc",
+      "collector_number": "213"
+    },
+    "forest": {
+      "scryfall_id": "f169dfb2-e4c8-46e9-8591-e51bb82da082",
+      "artist": "Raph Lomotan",
+      "set_code": "sos",
+      "collector_number": "280"
+    },
+    "gilded_goose": {
+      "scryfall_id": "5ea59511-24b1-4925-9948-9d4c0d27d1c5",
+      "artist": "Lindsey Look",
+      "set_code": "soc",
+      "collector_number": "269"
+    },
+    "gorma_the_gullet": {
+      "scryfall_id": "86f97dd8-8647-4938-aee0-690bb715f88b",
+      "artist": "Brian Valeza",
+      "set_code": "soc",
+      "collector_number": "3"
+    },
+    "grim_backwoods": {
+      "scryfall_id": "606c5f42-fe5f-4dcd-b8f4-b67beabe3f0a",
+      "artist": "Vincent Proce",
+      "set_code": "soc",
+      "collector_number": "377"
+    },
+    "gyome_master_chef": {
+      "scryfall_id": "8279d421-dd86-49d1-93f7-65f6046c542d",
+      "artist": "Steve Prescott",
+      "set_code": "soc",
+      "collector_number": "313"
+    },
+    "haunted_mire": {
+      "scryfall_id": "3e041aef-5771-4a3f-af07-e85a66c48979",
+      "artist": "Bruce Brenneise",
+      "set_code": "soc",
+      "collector_number": "379"
+    },
+    "haywire_mite": {
+      "scryfall_id": "6f813bc3-6d81-4555-8e4b-6ecd9a6757b7",
+      "artist": "Izzy",
+      "set_code": "soc",
+      "collector_number": "349"
+    },
+    "high_market": {
+      "scryfall_id": "894aa6b6-0d08-4c43-8734-9cb7b31359c6",
+      "artist": "Carl Critchlow",
+      "set_code": "soc",
+      "collector_number": "380"
+    },
+    "immoral_bargain": {
+      "scryfall_id": "fc01f092-80fb-4643-8ada-c2e5aeb68658",
+      "artist": "Diana Franco",
+      "set_code": "soc",
+      "collector_number": "47"
+    },
+    "infernal_grasp": {
+      "scryfall_id": "f67b323d-0dda-45f8-84b7-d883ce5045a8",
+      "artist": "Naomi Baker",
+      "set_code": "soc",
+      "collector_number": "216"
+    },
+    "jadar_ghoulcaller_of_nephalia": {
+      "scryfall_id": "49d5d62b-72ed-446a-b280-ad04c38bdd0c",
+      "artist": "Yongjae Choi",
+      "set_code": "soc",
+      "collector_number": "217"
+    },
+    "llanowar_wastes": {
+      "scryfall_id": "266316d3-3bbc-4283-aab8-69629855909f",
+      "artist": "Lucas Graciano",
+      "set_code": "soc",
+      "collector_number": "383"
+    },
+    "mazirek_kraul_death_priest": {
+      "scryfall_id": "940ae3c2-7ac2-412b-afd0-c8b0099bc3aa",
+      "artist": "Mathias Kollros",
+      "set_code": "soc",
+      "collector_number": "319"
+    },
+    "merchant_of_venom": {
+      "scryfall_id": "d60cf719-d5ce-46c3-bf92-24682b1c53bd",
+      "artist": "Diana Franco",
+      "set_code": "soc",
+      "collector_number": "27"
+    },
+    "moldervine_reclamation": {
+      "scryfall_id": "f3e93085-ffcb-4f48-8649-3fcbc5e97699",
+      "artist": "Antonio José Manzanedo",
+      "set_code": "soc",
+      "collector_number": "320"
+    },
+    "morbid_opportunist": {
+      "scryfall_id": "08838865-a9b6-4323-96a2-0d3a7aba9d3d",
+      "artist": "Tyler Walpole",
+      "set_code": "soc",
+      "collector_number": "219"
+    },
+    "mortality_spear": {
+      "scryfall_id": "f6cdff9b-bb09-45b9-aa3c-16a3136d183c",
+      "artist": "PINDURSKI",
+      "set_code": "soc",
+      "collector_number": "321"
+    },
+    "mycoloth": {
+      "scryfall_id": "924976cf-9b46-4cbf-ab27-07ca72a21608",
+      "artist": "Raymond Swanland",
+      "set_code": "soc",
+      "collector_number": "276"
+    },
+    "necroblossom_snarl": {
+      "scryfall_id": "4355ba23-de6a-4f18-baf4-82ae47cc2965",
+      "artist": "Sam Burley",
+      "set_code": "soc",
+      "collector_number": "389"
+    },
+    "nether_traitor": {
+      "scryfall_id": "fae5d1cb-ead9-41e1-84ce-2f06dc8cf6ba",
+      "artist": "Vance Kovacs",
+      "set_code": "soc",
+      "collector_number": "220"
+    },
+    "nights_whisper": {
+      "scryfall_id": "d12fefdf-d13f-4638-ac8d-112fa7c6f970",
+      "artist": "John Severin Brassell",
+      "set_code": "soc",
+      "collector_number": "221"
+    },
+    "ohran_frostfang": {
+      "scryfall_id": "55fb93e6-d057-4b70-ad12-e98291fd4a2c",
+      "artist": "Torstein Nordstrand",
+      "set_code": "soc",
+      "collector_number": "279"
+    },
+    "ominous_harvest": {
+      "scryfall_id": "2271184b-08eb-4d2a-8ebf-a1807d51dd2a",
+      "artist": "Fajareka Setiawan",
+      "set_code": "soc",
+      "collector_number": "28"
+    },
+    "ophiomancer": {
+      "scryfall_id": "baf793b6-9612-43f3-9f1b-2e53e81cb89f",
+      "artist": "Flavio Greco Paglia",
+      "set_code": "soc",
+      "collector_number": "118"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "9335e773-4b45-4b91-8140-5159fe7e0395",
+      "artist": "Alayna Danner",
+      "set_code": "soc",
+      "collector_number": "393"
+    },
+    "pawn_of_ulamog": {
+      "scryfall_id": "c1b0377c-efd6-4fab-89f0-b219ca2c4c22",
+      "artist": "Daarken",
+      "set_code": "soc",
+      "collector_number": "223"
+    },
+    "pest_infestation": {
+      "scryfall_id": "c9b8626d-d3d8-4460-9adf-112f48f173f6",
+      "artist": "Brian Valeza",
+      "set_code": "soc",
+      "collector_number": "282"
+    },
+    "pest_rescuer": {
+      "scryfall_id": "1f2a066a-7bcd-4e9d-8e52-0769cd6c8124",
+      "artist": "Justine Cruz",
+      "set_code": "soc",
+      "collector_number": "42"
+    },
+    "plumb_the_forbidden": {
+      "scryfall_id": "79c27df1-0c05-4208-a80c-73185ab35424",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "soc",
+      "collector_number": "224"
+    },
+    "priest_of_forgotten_gods": {
+      "scryfall_id": "363f8761-91a7-47e8-9e15-3b73d59bc020",
+      "artist": "Zack Stella",
+      "set_code": "soc",
+      "collector_number": "225"
+    },
+    "ribtruss_roaster": {
+      "scryfall_id": "8217100d-8244-4565-97bd-6c0f38c3e2f0",
+      "artist": "Steve Ellis",
+      "set_code": "soc",
+      "collector_number": "43"
+    },
+    "sakura_tribe_elder": {
+      "scryfall_id": "7a8b1c49-8594-426d-b585-41140235bb0e",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "soc",
+      "collector_number": "285"
+    },
+    "smothering_abomination": {
+      "scryfall_id": "aac33238-e4bd-4c72-aecc-9905232c3ab4",
+      "artist": "Aleksi Briclot",
+      "set_code": "soc",
+      "collector_number": "226"
+    },
+    "sol_ring": {
+      "scryfall_id": "870ec754-a76c-40ea-9b81-81b3dca1f62c",
+      "artist": "Jorge Jacinto",
+      "set_code": "soc",
+      "collector_number": "128"
+    },
+    "springbloom_druid": {
+      "scryfall_id": "c7b7d415-d9b4-49b7-ab31-b2fc91d57fe3",
+      "artist": "Andrey Kuzinskiy",
+      "set_code": "soc",
+      "collector_number": "287"
+    },
+    "stensian_sanguinist_exsanguinate": {
+      "scryfall_id": "909a52bc-53f6-4654-9db7-e8f48333d765",
+      "artist": "Cristi Balanescu",
+      "set_code": "soc",
+      "collector_number": "29"
+    },
+    "study_hall": {
+      "scryfall_id": "93f812bc-7663-4504-b566-79e2c0a0f845",
+      "artist": "Andreas Rocha",
+      "set_code": "soc",
+      "collector_number": "407"
+    },
+    "swamp": {
+      "scryfall_id": "51fe930f-2b5a-4b1e-9007-6ee74fb44715",
+      "artist": "Sergey Glushakov",
+      "set_code": "sos",
+      "collector_number": "276"
+    },
+    "teacher_s_pest": {
+      "scryfall_id": "eaa358ac-761d-4507-aa15-3d4684027207",
+      "artist": "Stephanie Cheung",
+      "set_code": "sos",
+      "collector_number": "238"
+    },
+    "temple_of_malady": {
+      "scryfall_id": "1ca36218-db87-4e44-8606-2a516504ed20",
+      "artist": "Titus Lunter",
+      "set_code": "soc",
+      "collector_number": "413"
+    },
+    "tendershoot_dryad": {
+      "scryfall_id": "def3571c-01dd-4eee-8f60-0ac4d1928d33",
+      "artist": "Evyn Fong",
+      "set_code": "soc",
+      "collector_number": "125"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "9a4c5629-fadd-42b9-850f-9f8586a2ca50",
+      "artist": "Leon Tukker",
+      "set_code": "sos",
+      "collector_number": "265"
+    },
+    "titan_s_grave": {
+      "scryfall_id": "a9ab41c8-3ee2-4676-9b8b-20c34d9f5f21",
+      "artist": "Lorenzo Lanfranconi",
+      "set_code": "sos",
+      "collector_number": "266"
+    },
+    "toxic_deluge": {
+      "scryfall_id": "a1c2a8da-56b0-4cab-b07b-10cac92c72c5",
+      "artist": "Nathaniel Himawan",
+      "set_code": "soc",
+      "collector_number": "120"
+    },
+    "trudge_garden": {
+      "scryfall_id": "80dd8180-668a-41e4-a4e9-ebdd71345841",
+      "artist": "Adam Paquette",
+      "set_code": "soc",
+      "collector_number": "290"
+    },
+    "turbulent_fen": {
+      "scryfall_id": "9737159b-256c-4004-ba5f-0417c35e1b30",
+      "artist": "Sergey Glushakov",
+      "set_code": "soc",
+      "collector_number": "55"
+    },
+    "twilight_mire": {
+      "scryfall_id": "3cc8186b-b46f-46c0-8dfb-9e423e430048",
+      "artist": "Rob Alexander",
+      "set_code": "soc",
+      "collector_number": "418"
+    },
+    "umbral_collar_zealot": {
+      "scryfall_id": "98648b8a-2cf0-4c10-ab13-c88b2e03fc15",
+      "artist": "Dmitry Burmak",
+      "set_code": "soc",
+      "collector_number": "227"
+    },
+    "veinwitch_coven": {
+      "scryfall_id": "c5cc7d88-b9d3-425e-bef2-f1e3a85a3e4d",
+      "artist": "Caio Monteiro",
+      "set_code": "soc",
+      "collector_number": "228"
+    },
+    "vernal_fen": {
+      "scryfall_id": "0466cf57-bb3e-4359-8fe8-d6cc1288fdc6",
+      "artist": "Titus Lunter",
+      "set_code": "soc",
+      "collector_number": "419"
+    },
+    "viridescent_bog": {
+      "scryfall_id": "54d852fc-0f3a-4791-a147-b21ca6964763",
+      "artist": "Piotr Dura",
+      "set_code": "soc",
+      "collector_number": "421"
+    },
+    "viscera_seer": {
+      "scryfall_id": "f511830b-1c1f-4d30-aa5d-4314726d142e",
+      "artist": "John Stanko",
+      "set_code": "soc",
+      "collector_number": "229"
+    },
+    "wight_of_the_reliquary": {
+      "scryfall_id": "a8c6ee26-fa74-4859-9a94-89b476d218d2",
+      "artist": "Scott Murphy",
+      "set_code": "soc",
+      "collector_number": "338"
+    },
+    "witch_of_the_moors": {
+      "scryfall_id": "d9367aa0-2da2-4ed5-b52a-c52e40a00adf",
+      "artist": "Caio Monteiro",
+      "set_code": "soc",
+      "collector_number": "230"
+    },
+    "witherbloom_campus": {
+      "scryfall_id": "e5af06c8-86ab-4731-aa4a-2eec2c664488",
+      "artist": "Alayna Danner",
+      "set_code": "soc",
+      "collector_number": "423"
+    },
+    "witherbloom_charm": {
+      "scryfall_id": "254437f7-7a8a-4b11-9cea-e8e7ea23c59e",
+      "artist": "Florian Herold",
+      "set_code": "sos",
+      "collector_number": "244"
+    },
+    "witherbloom_command": {
+      "scryfall_id": "0d68dee5-56ff-45bb-a37e-9e2dfc07c5a7",
+      "artist": "Dmitry Burmak",
+      "set_code": "soc",
+      "collector_number": "339"
+    },
+    "woe_strider": {
+      "scryfall_id": "f458ae68-5cda-4c40-a348-47b4196fba02",
+      "artist": "John Thacker",
+      "set_code": "soc",
+      "collector_number": "231"
+    },
+    "woodland_cemetery": {
+      "scryfall_id": "4d6f6c96-f813-4864-b4e1-b2a0aa8be1e8",
+      "artist": "Christine Choi",
+      "set_code": "soc",
+      "collector_number": "424"
+    },
+    "yahenni_undying_partisan": {
+      "scryfall_id": "518b155a-cb84-48d3-9aba-07577f60f091",
+      "artist": "Lius Lasahido",
+      "set_code": "soc",
+      "collector_number": "232"
+    },
+    "zulaport_cutthroat": {
+      "scryfall_id": "c43609fb-3cee-44e0-98d0-3ecaba1d5767",
+      "artist": "Jason Rainville",
+      "set_code": "soc",
+      "collector_number": "233"
+    }
+  },
+  "cards": [
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "assassin_s_trophy"
+    },
+    {
+      "id": "awakening_zone"
+    },
+    {
+      "id": "beledros_witherbloom"
+    },
+    {
+      "id": "blight_mound"
+    },
+    {
+      "id": "blood_artist"
+    },
+    {
+      "id": "bloodghast"
+    },
+    {
+      "id": "blossoming_bogbeast"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "casualties_of_war"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "creakwood_liege"
+    },
+    {
+      "id": "culling_ritual"
+    },
+    {
+      "id": "cultivate"
+    },
+    {
+      "id": "deadly_brew"
+    },
+    {
+      "id": "defiling_daemogoth"
+    },
+    {
+      "id": "dina_soul_steeper"
+    },
+    {
+      "id": "eccentric_pestfinder_turn_stones"
+    },
+    {
+      "id": "elvish_mystic"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "fabled_passage"
+    },
+    {
+      "id": "feral_appetite"
+    },
+    {
+      "id": "festering_thicket"
+    },
+    {
+      "id": "final_act"
+    },
+    {
+      "id": "forest",
+      "qty": 8
+    },
+    {
+      "id": "gilded_goose"
+    },
+    {
+      "id": "gorma_the_gullet"
+    },
+    {
+      "id": "grim_backwoods"
+    },
+    {
+      "id": "gyome_master_chef"
+    },
+    {
+      "id": "haunted_mire"
+    },
+    {
+      "id": "haywire_mite"
+    },
+    {
+      "id": "high_market"
+    },
+    {
+      "id": "immoral_bargain"
+    },
+    {
+      "id": "infernal_grasp"
+    },
+    {
+      "id": "jadar_ghoulcaller_of_nephalia"
+    },
+    {
+      "id": "llanowar_wastes"
+    },
+    {
+      "id": "mazirek_kraul_death_priest"
+    },
+    {
+      "id": "merchant_of_venom"
+    },
+    {
+      "id": "moldervine_reclamation"
+    },
+    {
+      "id": "morbid_opportunist"
+    },
+    {
+      "id": "mortality_spear"
+    },
+    {
+      "id": "mycoloth"
+    },
+    {
+      "id": "necroblossom_snarl"
+    },
+    {
+      "id": "nether_traitor"
+    },
+    {
+      "id": "nights_whisper"
+    },
+    {
+      "id": "ohran_frostfang"
+    },
+    {
+      "id": "ominous_harvest"
+    },
+    {
+      "id": "ophiomancer"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "pawn_of_ulamog"
+    },
+    {
+      "id": "pest_infestation"
+    },
+    {
+      "id": "pest_rescuer"
+    },
+    {
+      "id": "plumb_the_forbidden"
+    },
+    {
+      "id": "priest_of_forgotten_gods"
+    },
+    {
+      "id": "ribtruss_roaster"
+    },
+    {
+      "id": "sakura_tribe_elder"
+    },
+    {
+      "id": "smothering_abomination"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "springbloom_druid"
+    },
+    {
+      "id": "stensian_sanguinist_exsanguinate"
+    },
+    {
+      "id": "study_hall"
+    },
+    {
+      "id": "swamp",
+      "qty": 8
+    },
+    {
+      "id": "teacher_s_pest"
+    },
+    {
+      "id": "temple_of_malady"
+    },
+    {
+      "id": "tendershoot_dryad"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "titan_s_grave"
+    },
+    {
+      "id": "toxic_deluge"
+    },
+    {
+      "id": "trudge_garden"
+    },
+    {
+      "id": "turbulent_fen"
+    },
+    {
+      "id": "twilight_mire"
+    },
+    {
+      "id": "umbral_collar_zealot"
+    },
+    {
+      "id": "veinwitch_coven"
+    },
+    {
+      "id": "vernal_fen"
+    },
+    {
+      "id": "viridescent_bog"
+    },
+    {
+      "id": "viscera_seer"
+    },
+    {
+      "id": "wight_of_the_reliquary"
+    },
+    {
+      "id": "witch_of_the_moors"
+    },
+    {
+      "id": "witherbloom_campus"
+    },
+    {
+      "id": "witherbloom_charm"
+    },
+    {
+      "id": "witherbloom_command"
+    },
+    {
+      "id": "woe_strider"
+    },
+    {
+      "id": "woodland_cemetery"
+    },
+    {
+      "id": "yahenni_undying_partisan"
+    },
+    {
+      "id": "zulaport_cutthroat"
+    }
+  ]
+}
