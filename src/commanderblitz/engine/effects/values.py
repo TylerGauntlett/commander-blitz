@@ -316,7 +316,13 @@ ROLL_PARITIES = ("even", "odd")
 #: counts basic land types, coven counts powers, delirium counts card types.
 #: A fourth would be vocabulary with nothing printed asking for it, and a
 #: misspelling has to be a load error rather than a silent zero.
-DISTINCT_OF = ("power", "basic_land_type", "card_type")
+#: ``color`` is First Family's "the number of colors among permanents you
+#: control and spells you've cast this turn".
+DISTINCT_OF = ("power", "basic_land_type", "card_type", "color")
+
+#: The five colors (105.1). Colorless is not a color (105.2c), so a pool of
+#: artifacts and lands counts none.
+COLORS = frozenset({"W", "U", "B", "R", "G"})
 
 #: Rule 305.6. The five basic land types, which are the whole of domain.
 BASIC_LAND_TYPES = frozenset({"Plains", "Island", "Swamp", "Mountain", "Forest"})
@@ -459,6 +465,23 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                 if obj is not None:
                     types |= set(ctx.state.card_of(obj).types)
             return len(types)
+        if of == "color":
+            # First Family: "the number of colors among permanents you control
+            # **and spells you've cast this turn**". The permanents' colors are
+            # derived, as domain's land types are; the spells' are the printed
+            # colors of the face each cast recorded in `TurnLedger.spells_cast_ids`
+            # -- most have left the stack, and a printed face is all a resolved
+            # spell still has, the reading `spells_cast_this_turn`'s filter takes.
+            colors: set[str] = set()
+            for oid in pool:
+                colors |= set(chars(ctx.state, oid).colors)
+            if (who := spec.get("spells_cast_this_turn")) is not None:
+                registry = ctx.state.registry
+                for p in _players(ctx, who):
+                    for cast_id in ctx.state.turn_ledger.spells_cast_ids.get(p, ()):
+                        if cast_id in registry:
+                            colors |= set(registry.get(cast_id).colors)
+            return len(colors & COLORS)
         found: set[str] = set()
         for oid in pool:
             found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes
@@ -1452,7 +1475,7 @@ def validate_value(expr: Any, where: str) -> None:
         spec = expr["distinct"]
         if not isinstance(spec, Mapping):
             raise DslError(f"{where}.distinct: must be an object")
-        unknown = set(spec) - {"of", "objects"}
+        unknown = set(spec) - {"of", "objects", "spells_cast_this_turn"}
         if unknown:
             raise DslError(f"{where}.distinct: unsupported keys {sorted(unknown)}")
         of = spec.get("of")
@@ -1460,6 +1483,20 @@ def validate_value(expr: Any, where: str) -> None:
             # Defaulted or misspelled it would count powers when the card meant
             # land types, which is a plausible-looking number on every board.
             raise DslError(f"{where}.distinct: 'of' must be one of {list(DISTINCT_OF)}, got {of!r}")
+        if "spells_cast_this_turn" in spec:
+            # A player spec whose casts this turn join the pool. Colors only:
+            # it is the one printed sentence that unions a board with the
+            # turn's casts, and on any other `of` it would be read as nothing.
+            if of != "color":
+                raise DslError(
+                    f"{where}.distinct: 'spells_cast_this_turn' joins the turn's "
+                    f"casts to a count of colors only, got of {of!r}"
+                )
+            if not spec["spells_cast_this_turn"]:
+                raise DslError(
+                    f"{where}.distinct.spells_cast_this_turn: needs a player spec, "
+                    f"e.g. 'you'"
+                )
         if not spec.get("objects"):
             # An empty selector is the whole battlefield, so domain would count
             # an opponent's basics and coven would count their creatures.

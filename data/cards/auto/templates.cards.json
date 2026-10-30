@@ -50110,6 +50110,54 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "first_family",
+      "mana_cost": "{2}{G}{U}",
+      "name": "First Family",
+      "oracle_text": "You draw X cards and gain X life, where X is the number of colors among permanents you control and spells you've cast this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "distinct": {
+              "objects": {
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "of": "color",
+              "spells_cast_this_turn": "you"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "distinct": {
+              "objects": {
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "of": "color",
+              "spells_cast_this_turn": "you"
+            }
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {

@@ -3089,9 +3089,26 @@ than three because `count` fails them in **opposite** directions:
 
 No selector, however filtered, reaches any of those numbers — `count` counts
 matches, and these count the distinct values those matches hold. `of` is `power`,
-`basic_land_type` or `card_type`, and nothing else: each has a printed card
-behind it, and a misspelling is a load error rather than a silent fall back to
-powers.
+`basic_land_type`, `card_type` or `color`, and nothing else: each has a printed
+card behind it, and a misspelling is a load error rather than a silent fall back
+to powers.
+
+`color` counts the five colors (105.1) among the pool's derived colors;
+colorless counts none (105.2c). It alone takes `spells_cast_this_turn`, a player
+spec whose casts this turn join the pool — First Family's "the number of colors
+among permanents you control **and spells you've cast this turn**":
+
+```jsonc
+{ "distinct": { "of": "color",
+                "objects": { "zone": "battlefield", "controller": "you" },
+                "spells_cast_this_turn": "you" } }
+```
+
+A cast contributes the printed colors of the face `TurnLedger.spells_cast_ids`
+recorded, the reading `spells_cast_this_turn`'s `filter` takes, because most of
+those spells have left the stack; the spell being resolved is among them. The
+key is refused on any other `of`. **Not** `each_color_among`, which loops once
+per color and has no way to reach a resolved spell.
 
 Domain and coven read **derived** characteristics — an anthem changes who has
 coven, "all lands are Islands" changes what counts for domain — which is also

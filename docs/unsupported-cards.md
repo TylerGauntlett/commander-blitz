@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**98 cards** blocked by **79** capabilities.
+**97 cards** blocked by **78** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -37,7 +37,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [coin-flip](#coin-flip) | 1 | 25056 | op |
-| [colors-among](#colors-among) | 1 | 18464 | value |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -575,20 +574,6 @@ Blocks **1** card.
 
 - **Negative Zone Portal** (rank 25056) — `negative_zone_portal`
   - At the beginning of your upkeep, if there are four or more creature cards exiled with this artifact, flip a coin. If you lose the flip, sacrifice this artifact and return a card exiled with it at random to its owner's hand.
-
-</details>
-
-## colors-among
-
-Blocks **1** card.
-
-- **(value)** a value counting the distinct colors (0-5, colorless never counting) across the union of permanents you control (derived colors) and the spells you've cast this turn (read from the per-turn cast ledger, this spell included), e.g. {"distinct": {"of": "color", "objects": {"zone": "battlefield", "controller": "you"}, "spells_cast_this_turn": "you"}}, usable as the amount of draw and gain_life
-  <br>Why the existing vocabulary won't do: `distinct` accepts only of: power, basic_land_type or card_type (DISTINCT_OF in engine/effects/values.py), so it cannot count colors; and its pool is an objects selector over current objects, while `spells_cast_this_turn` returns only a count of spells (optionally filtered), never their colors, so the colors of spells already resolved this turn cannot be read and unioned with the board's colors. A sum of five per-color `if exists` checks could cover the board half but still has no way to ask the colors of spells cast this turn, which have mostly left the stack.
-
-<details><summary>Cards waiting on this</summary>
-
-- **First Family** (rank 18464) — `first_family`
-  - You draw X cards and gain X life, where X is the number of colors among permanents you control and spells you've cast this turn.
 
 </details>
 

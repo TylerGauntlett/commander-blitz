@@ -1,0 +1,15 @@
+{
+  "_comment": "Shapes for tests/unit/values/test_colors_among.py. Explicit colors throughout so the counts are the fixture's, not a mana-cost inference: a green creature, a white-blue creature, a colorless artifact, a red instant and a green sorcery to cast.",
+  "cards": [
+    {"id": "t_ca_bear", "name": "Test Colors Bear", "oracle_text": "", "mana_cost": "{1}{G}",
+     "types": ["Creature"], "colors": ["G"], "color_identity": ["G"], "power": 2, "toughness": 2},
+    {"id": "t_ca_azorius", "name": "Test Colors Envoy", "oracle_text": "", "mana_cost": "{W}{U}",
+     "types": ["Creature"], "colors": ["W", "U"], "color_identity": ["W", "U"], "power": 2, "toughness": 2},
+    {"id": "t_ca_rock", "name": "Test Colors Rock", "oracle_text": "", "mana_cost": "{2}",
+     "types": ["Artifact"], "colors": [], "color_identity": []},
+    {"id": "t_ca_bolt", "name": "Test Colors Bolt", "oracle_text": "", "mana_cost": "{R}",
+     "types": ["Instant"], "colors": ["R"], "color_identity": ["R"]},
+    {"id": "t_ca_growth", "name": "Test Colors Growth", "oracle_text": "", "mana_cost": "{G}",
+     "types": ["Sorcery"], "colors": ["G"], "color_identity": ["G"]}
+  ]
+}

@@ -316,7 +316,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
-| `distinct` | Distinct values of a quality among a pool (domain, coven). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
+| `distinct` | Distinct values of a quality among a pool (domain, coven, delirium, colors). | [Counting different values rather than objects](card-dsl.md#counting-different-values-rather-than-objects) |
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
 | `half` | Half of a value, rounded `up` or `down`. | [Value expressions](card-dsl.md#value-expressions) |

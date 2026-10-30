@@ -572,7 +572,7 @@ VALUES: dict[str, Entry] = {
     "creatures_you_control": ("Creatures the player controls.", None),
     "damage_taken_this_turn": ("Damage the player was dealt this turn, summed over a plural spec (bloodthirst).", H_LEDGER),
     "most_sharing_a_name": ("The largest group in a pool sharing one name.", "Value expressions"),
-    "distinct": ("Distinct values of a quality among a pool (domain, coven).",
+    "distinct": ("Distinct values of a quality among a pool (domain, coven, delirium, colors).",
                  "Counting different values rather than objects"),
     "extreme_value": ("The greatest/least of a quality in a pool, as one number.", None),
     "greatest_discarded_by_a_player": ("The greatest number of cards one player discarded this way.",

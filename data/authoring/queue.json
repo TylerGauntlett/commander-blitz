@@ -96332,12 +96332,12 @@
     },
     "First Family": {
       "edhrec_rank": 18464,
-      "gate": "template",
+      "gate": null,
       "name": "First Family",
-      "reason": "no template for: You draw X cards and gain X life, where X is the number of colors among permanents you con",
+      "reason": "",
       "scryfall_id": "1d0a2647-9a1a-40e1-9a39-f2c0cd805c74",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "First Responder": {
