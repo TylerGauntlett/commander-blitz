@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 153 |
+| [Effect ops](#effect-ops) | 154 |
 | [Selectors](#selectors) | 68 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 61 |
@@ -36,7 +36,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
 | [Card-level rider keys](#card-level-rider-keys) | 16 |
-| [Engine events](#engine-events) | 76 |
+| [Engine events](#engine-events) | 77 |
 
 ## Effect ops
 
@@ -179,6 +179,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `extra_combat` | Turn structure |  | An additional combat phase (and main phase) this turn. | [An additional combat phase](card-dsl-cookbook.md#an-additional-combat-phase) |
 | `extra_turn` | Turn structure |  | A player takes an extra turn after this one. | [An extra turn](card-dsl-cookbook.md#an-extra-turn) |
 | `choose_blockers` | Combat decisions |  | Decide blocks on another player's behalf. | [Effect ops](card-dsl.md#effect-ops) |
+| `flip_coin` | Dice |  | Flip a coin (705); `effects` on a win, `else` on a loss. | [flip_coin — won or lost](card-dsl-cookbook.md#flip_coin--won-or-lost) |
 | `roll_dice` | Dice | yes | Roll N dice with F faces; `as` records the results. | [Rolling dice](card-dsl-cookbook.md#rolling-dice) |
 | `choose_card_name` | Control flow | yes | Choose a card name; `as` records it. | ["Choose a card name"](card-dsl-cookbook.md#choose-a-card-name) |
 | `choose_color` | Control flow |  | Choose a color, readable later. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
@@ -1062,6 +1063,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `blocks` | `blocks` |  | [Triggers](card-dsl.md#triggers) |
 | `chapter_reached` | `chapter` |  | [Triggers](card-dsl.md#triggers) |
 | `city_s_blessing` |  |  | [Triggers](card-dsl.md#triggers) |
+| `coin_flipped` |  |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_planeswalker` | `deals_combat_damage_to_planeswalker` |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_player` | `deals_combat_damage_to_player` |  | [Triggers](card-dsl.md#triggers) |
 | `connived` | `connives` |  | [Triggers](card-dsl.md#triggers) |

@@ -100235,6 +100235,123 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "portal_exiled",
+              "link": "self",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "count": {
+                    "binding": "portal_exiled",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "exile"
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "opponent",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{2}, {T}: Exile target card from an opponent's graveyard. If it's a creature card, draw a card."
+        },
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                },
+                {
+                  "objects": {
+                    "controller": "any",
+                    "count": 1,
+                    "exiled_with": "self",
+                    "random": true,
+                    "zone": "exile"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "op": "flip_coin"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if there are four or more creature cards exiled with this artifact, flip a coin. If you lose the flip, sacrifice this artifact and return a card exiled with it at random to its owner's hand.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "any",
+                  "exiled_with": "self",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "exile"
+                }
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "negative_zone_portal",
+      "mana_cost": "{2}",
+      "name": "Negative Zone Portal",
+      "oracle_text": "{2}, {T}: Exile target card from an opponent's graveyard. If it's a creature card, draw a card.\nAt the beginning of your upkeep, if there are four or more creature cards exiled with this artifact, flip a coin. If you lose the flip, sacrifice this artifact and return a card exiled with it at random to its owner's hand.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

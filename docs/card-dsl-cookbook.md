@@ -12489,6 +12489,29 @@ otherwise get quietly wrong:
 At a pod the op asks which opponent to clash with; in a duel there is one
 opponent and `ask_player` does not stop to ask.
 
+## Flipping a coin
+
+### `flip_coin` — won or lost
+
+Rule 705. `flip_coin` flips one coin for the controller and runs `effects` if
+they win the flip and `else` if they lose it; at least one is required.
+
+```jsonc
+// Negative Zone Portal — "flip a coin. If you lose the flip, sacrifice this
+// artifact and return a card exiled with it at random to its owner's hand."
+{ "op": "flip_coin",
+  "else": [ { "op": "sacrifice", "objects": { "self_only": true } },
+            { "op": "return_to_hand",
+              "objects": { "zone": "exile", "exiled_with": "self",
+                           "count": 1, "random": true } } ] }
+```
+
+The outcome comes from the engine's seeded `Rng`, and one `coin_flipped` event
+carries `won` for the log. **Not** `roll_dice` with `sides: 2`: a coin is not a
+die, so a d2 would answer "whenever you roll one or more dice" and nothing that
+asks about a coin. **Not** `choose_mode` with `random`, which picks a mode rather
+than deciding a won or lost flip.
+
 ## Rolling dice
 
 Rule 705.1. `roll_dice` throws the dice and **writes down every face**; the

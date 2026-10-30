@@ -130,6 +130,27 @@ export function changeBeat(ctx: EventContext): boolean {
       return true;
     }
 
+    /*
+     * A coin flip (rule 705), anchored and floated the way a roll is: the
+     * sacrifice a lost flip causes lands right after, and a player who did not
+     * see the coin come down cannot tell why the permanent went.
+     */
+    case "coin_flipped": {
+      if (event.source === null) return true;
+      const anchor = { kind: "object", oid: event.source } as const;
+      push({
+        hold: 420,
+        sound: "chime",
+        float: {
+          anchor,
+          value: event.data.won ? "won" : "lost",
+          tone: event.data.won ? "good" : "loss",
+        },
+        fx: [{ at: 0, kind: "actuate", oid: event.source, move: "pulse", power: 1 }],
+      });
+      return true;
+    }
+
     // Both of these change what a card *is* without moving it, so the frame
     // redraws in place. Held longer than an ETB so the change reads as a play
     // rather than as a rendering glitch.

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**97 cards** blocked by **78** capabilities.
+**96 cards** blocked by **77** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -36,7 +36,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-attack-player-next-turn](#cant-attack-player-next-turn) | 1 | 15818 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [coin-flip](#coin-flip) | 1 | 25056 | op |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -560,20 +559,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## coin-flip
-
-Blocks **1** card.
-
-- **(op)** an op that flips a coin for a player (705) and runs `effects` if they win and `else` if they lose, or binds the result so a following `if` can read whether the flip was won; it should route through the engine Rng like shuffles do
-  <br>Why the existing vocabulary won't do: No op in `ops` flips a coin: `roll_dice` with `sides: 2` binds a number but a d2 roll is not a coin flip (it would fire die-roll triggers and is not affected by coin-flip effects like Krark's Thumb), `clash` compares mana values, and `choose_mode` with `random` picks a mode rather than resolving a won/lost flip. The rest of the line is expressible (an upkeep trigger with a `cmp` condition over a `count` of `exiled_with: self` creature cards, `sacrifice` self, and `return_to_hand` of a `random` exiled_with card)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Negative Zone Portal** (rank 25056) — `negative_zone_portal`
-  - At the beginning of your upkeep, if there are four or more creature cards exiled with this artifact, flip a coin. If you lose the flip, sacrifice this artifact and return a card exiled with it at random to its owner's hand.
 
 </details>
 

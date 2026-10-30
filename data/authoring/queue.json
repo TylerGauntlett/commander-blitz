@@ -184932,12 +184932,12 @@
     },
     "Negative Zone Portal": {
       "edhrec_rank": 25056,
-      "gate": "template",
+      "gate": null,
       "name": "Negative Zone Portal",
-      "reason": "no template for: {2}, {T}: Exile target card from an opponent's graveyard. If it's a creature card, draw a ",
+      "reason": "",
       "scryfall_id": "16fa4f17-972b-4a35-8dd6-88ee9b2ea2ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neglected Heirloom // Ashmouth Blade": {

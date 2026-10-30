@@ -8799,6 +8799,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "negative_zone_portal": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nema_siltlurker": {
     "zone": "battlefield"
   },

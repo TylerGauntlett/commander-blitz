@@ -400,6 +400,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     # ---- Combat decisions ------------------------------------------------
     "choose_blockers": ("Combat decisions", "Decide blocks on another player's behalf.", None),
     # ---- Dice ------------------------------------------------------------
+    "flip_coin": ("Dice", "Flip a coin (705); `effects` on a win, `else` on a loss.",
+                  "`flip_coin` — won or lost"),
     "roll_dice": ("Dice", "Roll N dice with F faces; `as` records the results.", H_ROLL),
     # ---- Control flow ----------------------------------------------------
     "if": ("Control flow", "Run `then` effects if a condition holds, else `else`.", None),

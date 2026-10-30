@@ -193,6 +193,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Value leaves** | `mana_symbols` (chroma, hybrid counting for each colour, 107.4f), `distinct` (domain, coven, delirium, and colors among a pool joined by the turn's casts, 105.1), `max_count_of` / `min_count_of` (per-opponent counts aggregated per seat), `half` with a required `round` (107.1a), `starting_life_of` (103.4, 903.7), `two_share_a_color`, `top_of_library`, `rolled`, `counters_on`, `cards_drawn_this_turn`, `resolutions_this_turn`, `permanents_entered_this_turn` |
 | **"Repeat this process"** | `repeat_while`, a mandatory do-while with `reset` of per-pass bindings and the shared hundred-iteration guard |
 | **Rolling dice** | 705.1: `roll_dice` with a value-expression `count`, results under `as` from `state.rng`, the `dice_rolled` event |
+| **Flipping a coin** | 705: `flip_coin` flips for the controller from `state.rng`, running `effects` on a win and `else` on a loss, with the `coin_flipped` event |
 | **Private and public information** | `look_at_hand` entitles one seat through `GameObject.revealed_to` (`hand_revealed`); `reveal_library_top` (public) and `look_at_library_top` (controller only) statics with the `top_of_library` condition leaf (701.16a); Fact or Fiction's piles, split by an opponent and chosen by the caster |
 
 ### Zones and the command zone
@@ -389,7 +390,7 @@ These are absent, and the shipped decks avoid them. Adding any one is additive.
 - A tax on an activated ability (no `ability_cost_increase`), and a `spell_cost_increase` sized by anything but a literal.
 - A warp cost with X, and airbend on a kicked or bestowed cast.
 - An impending cost with X, or offered from anywhere but the hand (evoke's zone gate).
-- Dice-roll triggers and the AFR d20 outcome tables, and a mill trigger: `EventType.DICE_ROLLED` and `EventType.MILL` have no `TRIGGER_EVENTS` name.
+- Dice-roll and coin-flip triggers, coin-flip replacements (Krark's Thumb) and the AFR d20 outcome tables, and a mill trigger: `EventType.DICE_ROLLED`, `EventType.COIN_FLIPPED` and `EventType.MILL` have no `TRIGGER_EVENTS` name.
 - Granting extort to other creatures (Pontiff of Blight).
 - A chosen card name stored on a permanent for a later reader (Pithing Needle, Meddling Mage); `choose_card_name` binds for one resolution.
 - `distribute_counters` on a spell or a triggered ability; dividing damage among players or any target, or on an ability.

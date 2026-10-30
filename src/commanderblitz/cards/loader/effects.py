@@ -2630,6 +2630,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'snapshot' must be a non-empty binding name, got {effect['snapshot']!r}"
             )
+    if op == "flip_coin":
+        # "Flip a coin. If you lose the flip, ..." The branches are the card: a
+        # flip with neither is a coin tossed for nothing, and a non-list branch
+        # would be read as no effects at all.
+        for key in ("effects", "else"):
+            if key in effect and not isinstance(effect[key], list):
+                raise DslError(f"{where}.{key}: a list of effects")
+        if not effect.get("effects") and not effect.get("else"):
+            raise DslError(
+                f"{where}: flip_coin needs 'effects' (if you win the flip) or "
+                f"'else' (if you lose it) -- a flip nothing reads changes nothing"
+            )
     if op == "roll_dice":
         # The same refusal `join_forces` carries below, for the same reason: a
         # roll is never the effect, it is what the sentences after it read. A

@@ -351,6 +351,11 @@ class EventType:
     #: arbitrary. Not emitted for a roll of **zero** dice -- "roll X dice" with
     #: X at 0 rolls nothing, and a line saying so would be noise.
     DICE_ROLLED = "dice_rolled"
+    #: A coin was flipped (rule 705) -- one event per `flip_coin`.
+    #: ``data["won"]`` is whether the flipper won, which is what the branch
+    #: that follows turns on; without the line a sacrifice on a lost flip would
+    #: appear in the log with no reason beside it.
+    COIN_FLIPPED = "coin_flipped"
 
     # game outcome
     PLAYER_LOST = "player_lost"
