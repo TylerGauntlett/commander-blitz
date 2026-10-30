@@ -1,0 +1,18 @@
+{
+  "card_id": "magma_opus",
+  "name": "Magma Opus",
+  "oracle_text": "Magma Opus deals 4 damage divided as you choose among any number of targets. Tap two target permanents. Create a 4/4 blue and red Elemental creature token. Draw two cards.\n{U/R}{U/R}, Discard this card: Create a Treasure token.",
+  "blocked_sentences": [
+    "Magma Opus deals 4 damage divided as you choose among any number of targets."
+  ],
+  "needs": [
+    {
+      "capability": "divided_damage_any_target",
+      "kind": "engine",
+      "what": "damage `divided` over a target spec of kind \"any\" (creatures, planeswalkers, battles AND players), so the 601.2d announcement offers players a share and resolution deals each player target its share",
+      "why_existing_wont_do": "`damage` with `divided` exists, but `Game._ask_damage_division` keeps only declared refs with `kind == \"object\"` and `ops_life._damage_divided` deals each share through `damage_permanent`, so a player chosen as one of the 'any number of targets' would receive no damage at all. It works only for permanent-only specs (Monstrous Onslaught's 'target creatures'); restricting this card to permanents would be an approximation"
+    }
+  ],
+  "closest_existing": ["damage.divided"],
+  "confidence": "high"
+}

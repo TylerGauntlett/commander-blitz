@@ -1772,6 +1772,10 @@
     },
     "zone": "battlefield"
   },
+  "brudiclad_telchor_engineer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bruna_the_fading_light": {
     "graveyard_size": {
       "0": 1
@@ -7963,6 +7967,10 @@
     },
     "zone": "battlefield"
   },
+  "manaform_hellkite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "managorger_hydra": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9987,6 +9995,10 @@
     },
     "zone": "graveyard"
   },
+  "prismari_pianist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "prismatic_lens": {
     "zone": "battlefield"
   },
@@ -10424,6 +10436,10 @@
     "zone": "graveyard"
   },
   "red_ghost_intangible_genius": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "redoubled_stormsinger": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

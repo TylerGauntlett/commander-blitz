@@ -35582,12 +35582,12 @@
     },
     "Brudiclad, Telchor Engineer": {
       "edhrec_rank": 2116,
-      "gate": "template",
+      "gate": null,
       "name": "Brudiclad, Telchor Engineer",
-      "reason": "no template for: Creature tokens you control have haste",
+      "reason": "",
       "scryfall_id": "d24bf1df-5087-4ad6-a1aa-4eda2340cd8b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bruenor Battlehammer": {
@@ -166472,12 +166472,12 @@
     },
     "Manaform Hellkite": {
       "edhrec_rank": 5523,
-      "gate": "template",
+      "gate": null,
       "name": "Manaform Hellkite",
-      "reason": "no template for: Whenever you cast a noncreature spell, create an X/X red Dragon Illusion creature token wi",
+      "reason": "",
       "scryfall_id": "0a559655-0967-41b9-8248-170f95c05f84",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Managorger Hydra": {
@@ -207512,12 +207512,12 @@
     },
     "Prismari Pianist": {
       "edhrec_rank": 10469,
-      "gate": "template",
+      "gate": null,
       "name": "Prismari Pianist",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, create a 1/1 blue and red Elemental creatur",
+      "reason": "",
       "scryfall_id": "6d3bfd1b-8ea8-43ad-8785-af29c807c935",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prismari Pledgemage": {
@@ -218692,12 +218692,12 @@
     },
     "Redoubled Stormsinger": {
       "edhrec_rank": 3338,
-      "gate": "template",
+      "gate": null,
       "name": "Redoubled Stormsinger",
-      "reason": "no template for: Whenever this creature attacks, for each creature token you control that entered this turn",
+      "reason": "",
       "scryfall_id": "fc5fcb5e-091e-4f47-9c74-9e187a9e0e5d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redress Fate": {

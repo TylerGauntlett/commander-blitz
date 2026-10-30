@@ -19707,6 +19707,99 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Creature tokens you control have haste."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "phyrexian_myr_2_1_u_artifact"
+            },
+            {
+              "effects": [
+                {
+                  "as": "model_token",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "is_token": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a token you control"
+                },
+                {
+                  "copying": {
+                    "binding": "model_token"
+                  },
+                  "duration": "permanent",
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "exclude_binding": "model_token",
+                    "is_token": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "become_copy"
+                }
+              ],
+              "op": "may",
+              "prompt": "Choose a token you control? Each other token you control becomes a copy of it."
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, create a 2/1 blue Phyrexian Myr artifact creature token. Then you may choose a token you control. If you do, each other token you control becomes a copy of that token.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "brudiclad_telchor_engineer",
+      "mana_cost": "{4}{U}{R}",
+      "name": "Brudiclad, Telchor Engineer",
+      "oracle_text": "Creature tokens you control have haste.\nAt the beginning of combat on your turn, create a 2/1 blue Phyrexian Myr artifact creature token. Then you may choose a token you control. If you do, each other token you control becomes a copy of that token.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -91551,6 +91644,78 @@
               "amount": {
                 "const": 1
               },
+              "as": "the_token",
+              "op": "create_token",
+              "power": {
+                "mana_spent_of": {
+                  "binding": "subject"
+                }
+              },
+              "token": "dragon_illusion_x_x_r_flying_haste",
+              "toughness": {
+                "mana_spent_of": {
+                  "binding": "subject"
+                }
+              }
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "the_token"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Exile that token at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create an X/X red Dragon Illusion creature token with flying and haste, where X is the amount of mana spent to cast that spell. Exile that token at the beginning of the next end step.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "manaform_hellkite",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{R}{R}",
+      "name": "Manaform Hellkite",
+      "oracle_text": "Flying\nWhenever you cast a noncreature spell, create an X/X red Dragon Illusion creature token with flying and haste, where X is the amount of mana spent to cast that spell. Exile that token at the beginning of the next end step.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "counter": "+1/+1",
               "objects": {
                 "self_only": true
@@ -115464,6 +115629,78 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "mana_value_of": {
+                    "binding": "subject"
+                  }
+                },
+                "right": {
+                  "const": 5
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "token": "elemental_1_1_ur"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "create_token",
+                  "token": "elemental_1_1_ur"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, create a 1/1 blue and red Elemental creature token. If that spell's mana value is 5 or greater, create three of those tokens instead.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "prismari_pianist",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Prismari Pianist",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, create a 1/1 blue and red Elemental creature token. If that spell's mana value is 5 or greater, create three of those tokens instead.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Djinn",
+        "Bard"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -120162,6 +120399,73 @@
       ],
       "supertypes": [
         "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "stormsinger_copies",
+              "attacking": true,
+              "controller": "you",
+              "objects": {
+                "controller": "you",
+                "entered_this_turn": true,
+                "is_token": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "copy_permanent",
+              "tapped": true
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "stormsinger_copies",
+                    "count": "all"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "At the beginning of the next end step, sacrifice those tokens."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, for each creature token you control that entered this turn, create a tapped and attacking token that's a copy of that token. At the beginning of the next end step, sacrifice those tokens.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "redoubled_stormsinger",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Redoubled Stormsinger",
+      "oracle_text": "First strike\nWhenever this creature attacks, for each creature token you control that entered this turn, create a tapped and attacking token that's a copy of that token. At the beginning of the next end step, sacrifice those tokens.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Wizard"
       ],
       "toughness": 3,
       "types": [

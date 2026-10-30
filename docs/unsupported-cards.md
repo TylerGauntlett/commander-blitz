@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**93 cards** blocked by **76** capabilities.
+**95 cards** blocked by **78** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -42,6 +42,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -65,6 +66,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
+| [must-attack-player-this-turn](#must-attack-player-this-turn) | 1 | 11062 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -642,6 +644,20 @@ Blocks **1** card.
 
 </details>
 
+## divided-damage-any-target
+
+Blocks **1** card.
+
+- **(engine)** damage `divided` over a target spec of kind "any" (creatures, planeswalkers, battles AND players), so the 601.2d announcement offers players a share and resolution deals each player target its share
+  <br>Why the existing vocabulary won't do: `damage` with `divided` exists, but `Game._ask_damage_division` keeps only declared refs with `kind == "object"` and `ops_life._damage_divided` deals each share through `damage_permanent`, so a player chosen as one of the 'any number of targets' would receive no damage at all. It works only for permanent-only specs (Monstrous Onslaught's 'target creatures'); restricting this card to permanents would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Magma Opus** (rank 5125) — `magma_opus`
+  - Magma Opus deals 4 damage divided as you choose among any number of targets.
+
+</details>
+
 ## escalate-non-mana
 
 Blocks **1** card.
@@ -976,6 +992,20 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
+
+</details>
+
+## must-attack-player-this-turn
+
+Blocks **1** card.
+
+- **(op)** a this_turn duration on must_attack_player: the created creatures must attack a named player (here {"binding": "each_player"} inside for_each_player over opponents) during this turn's combat if able, and the requirement ends at this turn's cleanup
+  <br>Why the existing vocabulary won't do: must_attack_player names the defender but only accepts duration end_of_your_next_turn (structs.ATTACK_MARK_DURATIONS), which would also compel the tokens on your next turn; must_attack accepts this_turn but names no defender, so in multiplayer the tokens could attack any opponent instead of 'that opponent'; goad points away from a player and lasts too long. The rest of the card is expressible: cost_reduction count of Instant/Sorcery cards (any_types) in your graveyard, create_token elemental_3_3_ur_flying x2 per opponent with 'as', grant_keyword haste until end of turn on the binding.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Furygale Flocking** (rank 11062) — `furygale_flocking`
+  - For each opponent, create two 3/3 blue and red Elemental creature tokens with flying that attack that opponent this turn if able.
 
 </details>
 
