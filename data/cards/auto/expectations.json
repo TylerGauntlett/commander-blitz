@@ -14583,6 +14583,10 @@
       "0": 42
     }
   },
+  "venerable_warsinger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vengeful_dead": {
     "battlefield_count": 33,
     "life": {

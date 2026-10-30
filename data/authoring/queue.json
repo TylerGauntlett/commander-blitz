@@ -302372,12 +302372,12 @@
     },
     "Venerable Warsinger": {
       "edhrec_rank": 8842,
-      "gate": "template",
+      "gate": null,
       "name": "Venerable Warsinger",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, you may return target creature car",
+      "reason": "",
       "scryfall_id": "cdd0062f-6b2a-49c4-bf47-9b05f16ca6eb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Venerated Loxodon": {
