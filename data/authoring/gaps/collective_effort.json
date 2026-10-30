@@ -1,0 +1,22 @@
+{
+  "card_id": "collective_effort",
+  "name": "Collective Effort",
+  "oracle_text": "Escalate—Tap an untapped creature you control. (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Destroy target creature with power 4 or greater.\n• Destroy target enchantment.\n• Put a +1/+1 counter on each creature target player controls.",
+  "blocked_sentences": [
+    "Escalate—Tap an untapped creature you control. (Pay this cost for each mode chosen beyond the first.)"
+  ],
+  "needs": [
+    {
+      "capability": "escalate_non_mana",
+      "kind": "cost",
+      "what": "card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {\"tap_permanents\": {\"types\": [\"Creature\"]}} -- tap an untapped creature you control), charged once per mode chosen beyond the first with a distinct creature each time, tied to the mode count the way mana escalate is (casting._additional_ceiling and Game._cast's `exactly`)",
+      "why_existing_wont_do": "The loader parses `escalate` with ManaCost.parse, desugars it to CostModel(mana=...), and refuses a free (mana value 0) escalate, so \"Tap an untapped creature you control\" cannot be written there. Hand-desugaring to additional_cost {tap_permanents: ...} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of taps to the number of modes, so a plain `or_more` choose_mode would take every mode for zero taps. `spree` prices every mode, the first included."
+    }
+  ],
+  "closest_existing": [
+    "escalate",
+    "tap_permanents",
+    "multikicker"
+  ],
+  "confidence": "high"
+}

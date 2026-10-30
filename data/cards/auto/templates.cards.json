@@ -5611,6 +5611,77 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 5
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker"
+                ],
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Annie Joins Up enters, it deals 5 damage to target creature or planeswalker an opponent controls.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "double_triggers",
+          "kind": "static",
+          "text": "If a triggered ability of a legendary creature you control triggers, that ability triggers an additional time."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "annie_joins_up",
+      "mana_cost": "{1}{R}{G}{W}",
+      "name": "Annie Joins Up",
+      "oracle_text": "When Annie Joins Up enters, it deals 5 damage to target creature or planeswalker an opponent controls.\nIf a triggered ability of a legendary creature you control triggers, that ability triggers an additional time.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "effects": [
                 {
                   "objects": {
@@ -12868,6 +12939,89 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{4}, {T}: Add four mana in any combination of colors."
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "toughness": {
+                "op": ">=",
+                "value": {
+                  "const": 4
+                }
+              },
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Draw a card. Activate only if you control a creature with toughness 4 or greater."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "baxter_building",
+      "name": "Baxter Building",
+      "oracle_text": "{T}: Add {C}.\n{4}, {T}: Add four mana in any combination of colors.\n{4}, {T}: Draw a card. Activate only if you control a creature with toughness 4 or greater.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -14054,6 +14208,96 @@
         "Archer"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": 2,
+              "toughness": 2
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, Black Bolt gets +2/+2 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Lethal Voice — Whenever Black Bolt becomes the target of a spell or ability an opponent controls, destroy target nonland permanent that player controls.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "becomes_target",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "black_bolt_inhuman_king",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{U}",
+      "name": "Black Bolt, Inhuman King",
+      "oracle_text": "Flying\nWhenever you cast a noncreature spell, Black Bolt gets +2/+2 until end of turn.\nLethal Voice — Whenever Black Bolt becomes the target of a spell or ability an opponent controls, destroy target nonland permanent that player controls.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Inhuman",
+        "Noble",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -29288,6 +29532,94 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "op": "add_mana",
+              "split": [
+                "W",
+                "U",
+                "B",
+                "R",
+                "G"
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, add four mana in any combination of colors.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "cosmic_crucible_copied"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "new_targets": true,
+                      "op": "copy_spell",
+                      "sid": {
+                        "binding": "sid"
+                      }
+                    },
+                    {
+                      "flag": "cosmic_crucible_copied",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Copy that spell?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, you may copy it. You may choose new targets for the copy. Do this only once each turn. (A copy of a permanent spell becomes a token.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "cosmic_crucible",
+      "mana_cost": "{4}{G}{U}",
+      "name": "Cosmic Crucible",
+      "oracle_text": "At the beginning of your first main phase, add four mana in any combination of colors.\nWhenever you cast a noncreature spell, you may copy it. You may choose new targets for the copy. Do this only once each turn. (A copy of a permanent spell becomes a token.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

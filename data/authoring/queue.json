@@ -9562,12 +9562,12 @@
     },
     "Annie Joins Up": {
       "edhrec_rank": 1024,
-      "gate": "template",
+      "gate": null,
       "name": "Annie Joins Up",
-      "reason": "no template for: When enters, it deals 5 damage to target creature or planeswalker an opponent controls",
+      "reason": "",
       "scryfall_id": "93854306-f4ed-48bf-bc98-c224e9754795",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Annihilate": {
@@ -22292,12 +22292,12 @@
     },
     "Baxter Building": {
       "edhrec_rank": 11290,
-      "gate": "template",
+      "gate": null,
       "name": "Baxter Building",
-      "reason": "no template for: {4}, {T}: Draw a card. Activate only if you control a creature with toughness 4 or greater",
+      "reason": "",
       "scryfall_id": "82b4ccb5-7d0e-46c0-b538-837927ada9f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baxter Stockman": {
@@ -25512,12 +25512,12 @@
     },
     "Black Bolt, Inhuman King": {
       "edhrec_rank": 22051,
-      "gate": "template",
+      "gate": null,
       "name": "Black Bolt, Inhuman King",
-      "reason": "no template for: Whenever you cast a noncreature spell, Black Bolt gets +2/+2 until end of turn",
+      "reason": "",
       "scryfall_id": "0d484566-6816-4535-a754-dbda8073ae73",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Carriage": {
@@ -53972,12 +53972,12 @@
     },
     "Cosmic Crucible": {
       "edhrec_rank": 16531,
-      "gate": "template",
+      "gate": null,
       "name": "Cosmic Crucible",
-      "reason": "no template for: At the beginning of your first main phase, add four mana in any combination of colors",
+      "reason": "",
       "scryfall_id": "7436364b-5604-44c8-b539-9b7c3221ccdf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cosmic Cube": {

@@ -534,6 +534,10 @@
   "ankle_biter": {
     "zone": "battlefield"
   },
+  "annie_joins_up": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "anowon_the_ruin_sage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -1186,6 +1190,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "baxter_building": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bay_falcon": {
     "zone": "battlefield"
   },
@@ -1315,6 +1323,10 @@
     "zone": "graveyard"
   },
   "bitterbow_sharpshooters": {
+    "zone": "battlefield"
+  },
+  "black_bolt_inhuman_king": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "black_market_connections": {
@@ -2600,6 +2612,10 @@
     "hand_size": {
       "0": 3
     }
+  },
+  "cosmic_crucible": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "costly_plunder": {
     "hand_size": {
