@@ -4726,6 +4726,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: 'or_planeswalkers' only means anything on an attack_tax, "
             f"not on {model.effect!r}"
         )
+    if model.defending is not None and model.effect != "attacks_if_able":
+        # "...attacks <that player> each combat if able" is a clause of the
+        # attack requirement and of nothing else; on any other static it would
+        # load, print and change nothing.
+        raise DslError(
+            f"{where}: 'defending' only means anything on an attacks_if_able, "
+            f"not on {model.effect!r}"
+        )
     if model.player_only and model.effect != "cant_attack_you":
         # "...can't attack you" with the walkers left open is a clause of the
         # wall and of nothing else; `attack_tax` already reaches only the
@@ -5299,6 +5307,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["or_planeswalkers"] = True
     if model.player_only:
         static["player_only"] = True
+    if model.defending is not None:
+        static["defending"] = model.defending
     if model.effect in ("spell_cost_increase", "granted_alternative_cost"):
         # Pruned like the two above, so the mapping `player_statics.spell_life_tax`
         # and `player_statics.granted_alternative_cost` read carries nothing the

@@ -257,6 +257,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "must_attack": ("Board", "Creatures attack this turn if able.", "Attack requirements"),
     "must_attack_planeswalker": ("Board", "Creatures attack a planeswalker this turn if able.",
                                  '"…creatures that player controls attack Gideon Jura if able"'),
+    "must_attack_player": ("Board", "Creatures attack a named player each combat if able until the end of your next turn.",
+                           '"…attacks that player each combat if able"'),
     "must_block": ("Board", "Creatures block this turn if able.", None),
     "cant_attack_player": ("Board", "Creatures can't attack a player (or only their walkers of a subtype) until a duration ends.",
                            '"That player can\'t attack you"'),
@@ -760,7 +762,8 @@ STATICS: dict[str, Entry] = {
                     '"…is the chosen type in addition to its other types"'),
     "attack_tax": ("Matching creatures can't attack unless their controller pays.",
                    "Pricing an attack rather than forbidding it"),
-    "attacks_if_able": ("Matching creatures attack each combat if able.", "The continuous form"),
+    "attacks_if_able": ("Matching creatures attack each combat if able "
+                        "(`defending`: only a named player obeys it).", "The continuous form"),
     "black_mana_as_phyrexian": ("The player may pay life for each {B} in a cost.",
                                 '`black_mana_as_phyrexian` — K\'rrik\'s "For each {B} in a cost"'),
     "block_restriction": ("Matching creatures can't block, or can only block under a rule.",

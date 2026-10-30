@@ -16,7 +16,7 @@ from typing import Any
 
 from .enums import Step, Zone
 from .mana import ManaOrigin
-from .structs import PermanentShield, TempEffect
+from .structs import AttackMark, PermanentShield, TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
@@ -897,6 +897,11 @@ class GameObject:
     #: `reset_permanent_state` (400.7 -- a Gideon that left and came back is not
     #: the one they were told to attack).
     must_be_attacked_by: dict[int, int] = field(default_factory=dict)
+    #: "Until the end of your next turn, target creature attacks **that player**
+    #: each combat if able" (Silver Surfer, Galactus's Herald) -- see
+    #: :class:`structs.AttackMark`. On the creature for the field above's
+    #: reason, and cleared by `reset_permanent_state` with it (400.7).
+    attack_marks: list[AttackMark] = field(default_factory=list)
 
     #: "…exile all other tokens **created with this creature**" -- Faerie
     #: Artisans. The tokens an effect whose source is *this object* created,
@@ -1126,6 +1131,8 @@ class GameObject:
         self.damage_shields = []
         # Nor the planeswalker anybody was told to attack.
         self.must_be_attacked_by = {}
+        # Nor the creature told to attack a player.
+        self.attack_marks = []
         # The same new object: the tokens the old one made were not made by
         # this one, so "tokens created with this creature" is none of them.
         self.created_tokens = set()
@@ -1324,6 +1331,11 @@ class GameObject:
                     }
                 }
                 if self.must_be_attacked_by
+                else {}
+            ),
+            **(
+                {"attack_marks": [mark.to_dict() for mark in self.attack_marks]}
+                if self.attack_marks
                 else {}
             ),
         }

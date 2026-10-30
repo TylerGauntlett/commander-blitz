@@ -54121,6 +54121,81 @@
         {
           "effects": [
             {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Galactus enters, exile target permanent.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "not": {
+              "exists": {
+                "controller": "you",
+                "name": "Silver Surfer, Galactus's Herald",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          },
+          "defending": "opponent_most_life",
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "Insatiable Hunger — Galactus attacks an opponent with the most life among your opponents each combat if able unless you control a creature named Silver Surfer, Galactus's Herald."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "galactus_devourer_of_worlds",
+      "keywords": [
+        "flying",
+        "trample",
+        "indestructible"
+      ],
+      "mana_cost": "{10}",
+      "name": "Galactus, Devourer of Worlds",
+      "oracle_text": "Flying, trample, indestructible\nWhen Galactus enters, exile target permanent.\nInsatiable Hunger — Galactus attacks an opponent with the most life among your opponents each combat if able unless you control a creature named Silver Surfer, Galactus's Herald.",
+      "power": 12,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Alien"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 12,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 2
               },
@@ -133179,6 +133254,93 @@
           "event": "self_enters_tapped"
         }
       ],
+      "source": "auto",
+      "subtypes": [
+        "Alien",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": "you",
+                  "reveal": true,
+                  "selector": {
+                    "name": "Galactus, Devourer of Worlds"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for a card named Galactus, Devourer of Worlds?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Silver Surfer enters, you may search your library for a card named Galactus, Devourer of Worlds, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "defender": {
+                "binding": "defender"
+              },
+              "duration": "end_of_your_next_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "must_attack_player"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Silver Surfer deals combat damage to a player, until the end of your next turn, target creature attacks that player each combat if able.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "silver_surfer_galactus_s_herald",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{5}",
+      "name": "Silver Surfer, Galactus's Herald",
+      "oracle_text": "Flying\nWhen Silver Surfer enters, you may search your library for a card named Galactus, Devourer of Worlds, reveal it, put it into your hand, then shuffle.\nWhenever Silver Surfer deals combat damage to a player, until the end of your next turn, target creature attacks that player each combat if able.",
+      "power": 4,
       "source": "auto",
       "subtypes": [
         "Alien",

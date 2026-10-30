@@ -104262,12 +104262,12 @@
     },
     "Galactus, Devourer of Worlds": {
       "edhrec_rank": 13864,
-      "gate": "template",
+      "gate": null,
       "name": "Galactus, Devourer of Worlds",
-      "reason": "no template for: When Galactus enters, exile target permanent",
+      "reason": "",
       "scryfall_id": "3a9df9dd-a480-406c-ba28-94895fbfb574",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Galadhrim Ambush": {
@@ -247612,12 +247612,12 @@
     },
     "Silver Surfer, Galactus's Herald": {
       "edhrec_rank": 18029,
-      "gate": "template",
+      "gate": null,
       "name": "Silver Surfer, Galactus's Herald",
-      "reason": "no template for: When Silver Surfer enters, you may search your library for a card named Galactus, Devourer",
+      "reason": "",
       "scryfall_id": "657cc9b4-eb02-4b68-b395-35538d4ccccf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silver Wyvern": {

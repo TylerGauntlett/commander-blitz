@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 154 |
+| [Effect ops](#effect-ops) | 155 |
 | [Selectors](#selectors) | 68 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 61 |
@@ -113,6 +113,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `move_counters` | Board |  | Move counters from one permanent to another. | [Effect ops](card-dsl.md#effect-ops) |
 | `must_attack` | Board |  | Creatures attack this turn if able. | [Attack requirements](card-dsl-cookbook.md#attack-requirements) |
 | `must_attack_planeswalker` | Board |  | Creatures attack a planeswalker this turn if able. | ["…creatures that player controls attack Gideon Jura if able"](card-dsl-cookbook.md#creatures-that-player-controls-attack-gideon-jura-if-able) |
+| `must_attack_player` | Board |  | Creatures attack a named player each combat if able until the end of your next turn. | ["…attacks that player each combat if able"](card-dsl-cookbook.md#attacks-that-player-each-combat-if-able) |
 | `must_block` | Board |  | Creatures block this turn if able. | [Effect ops](card-dsl.md#effect-ops) |
 | `pair` | Board |  | Soulbond: pair the source with another creature. | [Soulbond — a relationship that is not attachment](card-dsl-cookbook.md#soulbond--a-relationship-that-is-not-attachment) |
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
@@ -505,7 +506,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `attack_tax` |  | yes | Matching creatures can't attack unless their controller pays. | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
-| `attacks_if_able` |  | yes | Matching creatures attack each combat if able. | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
+| `attacks_if_able` |  | yes | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `black_mana_as_phyrexian` | yes |  | The player may pay life for each {B} in a cost. | [black_mana_as_phyrexian — K'rrik's "For each {B} in a cost"](card-dsl-cookbook.md#black_mana_as_phyrexian--krriks-for-each-b-in-a-cost) |
 | `block_restriction` |  | yes | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` |  | yes | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
@@ -649,7 +650,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `add_subtype` | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `attack_tax` | Matching creatures can't attack unless their controller pays. | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |
-| `attacks_if_able` | Matching creatures attack each combat if able. | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
+| `attacks_if_able` | Matching creatures attack each combat if able (`defending`: only a named player obeys it). | [The continuous form](card-dsl-cookbook.md#the-continuous-form) |
 | `block_restriction` | Matching creatures can't block, or can only block under a rule. | [Block restrictions](card-dsl-cookbook.md#block-restrictions) |
 | `block_tax` | Matching creatures can't block unless their controller pays. | [Pricing a block rather than forbidding it](card-dsl.md#pricing-a-block-rather-than-forbidding-it) |
 | `buff` | Matching permanents get +N/+M. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |

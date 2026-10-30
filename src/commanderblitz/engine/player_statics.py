@@ -1430,7 +1430,7 @@ def attack_compelled(state: GameState, oid: int) -> bool:
     if obj is None or not obj.on_battlefield:
         return False
     for source_obj, static in _battlefield_statics(state):
-        if static.get("effect") != "attacks_if_able":
+        if static.get("effect") != "attacks_if_able" or static.get("defending"):
             continue
         # An attack requirement is no layer (613), so its filter reads the
         # creature as it now is: Graaz's Juggernauts include the creatures its
@@ -1438,6 +1438,53 @@ def attack_compelled(state: GameState, oid: int) -> bool:
         if _matches(state, obj, source_obj, static.get("affects"), derived=True):
             return True
     return False
+
+
+def static_attack_defenders(state: GameState, oid: int) -> list[frozenset[int]]:
+    """The defending players each "attacks <a player> each combat if able"
+    static names for this creature -- one set per static.
+
+    Galactus, Devourer of Worlds: "attacks an opponent with the most life
+    among your opponents each combat if able". The `attacks_if_able` static
+    with ``defending``, which `attack_compelled` leaves out: a requirement that
+    names whom to attack is obeyed only by attacking one of them, so it is a
+    different question from "must it attack at all" and is weighed by
+    `combat.required_attack_defenders` beside the creature marks.
+
+    ``defending`` is read relative to the **static's controller** ("your
+    opponents"), live at declaration:
+
+    ``opponent_most_life``  every opponent of that player whose life is at
+                            least every other such opponent's -- the tie is the
+                            attacking player's choice among them.
+
+    A set may be empty (no opponent left); `combat` drops it, and an
+    unsatisfiable requirement owes nothing.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return []
+    out: list[frozenset[int]] = []
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "attacks_if_able" or not static.get("defending"):
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects"), derived=True):
+            continue
+        if not _static_active(state, source_obj, static, affected=obj):
+            continue
+        out.append(_defending_seats(state, source_obj.controller, str(static["defending"])))
+    return out
+
+
+def _defending_seats(state: GameState, pid: int, word: str) -> frozenset[int]:
+    """The seats a static's ``defending`` word names, relative to ``pid``."""
+    opponents = state.opponents(pid)
+    if word == "opponent_most_life":
+        if not opponents:
+            return frozenset()
+        top = max(state.players[p].life for p in opponents)
+        return frozenset(p for p in opponents if state.players[p].life == top)
+    raise ValueError(f"unknown attacks_if_able defending {word!r}")  # pragma: no cover
 
 
 def untap_also(state: GameState, active_pid: int) -> list[int]:

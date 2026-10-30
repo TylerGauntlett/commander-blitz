@@ -4906,6 +4906,11 @@
   "gala_greeters": {
     "zone": "battlefield"
   },
+  "galactus_devourer_of_worlds": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "galadhrim_guide": {
     "zone": "battlefield"
   },
@@ -11662,6 +11667,12 @@
     "zone": "battlefield"
   },
   "silver_surfer_cosmic_voyager": {
+    "zone": "battlefield"
+  },
+  "silver_surfer_galactus_s_herald": {
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "silverback_ape": {

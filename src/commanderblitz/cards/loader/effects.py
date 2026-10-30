@@ -30,6 +30,7 @@ from commanderblitz.engine.mana import SYMBOLS as MANA_SYMBOLS
 from commanderblitz.engine.mana import ManaCost, compile_restriction
 from commanderblitz.engine.objects import PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
+    ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
@@ -1497,6 +1498,29 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # goad; when a card does spell it out it must be a player the engine can
         # resolve -- which the general `player` check above now does for every
         # op, goad included.
+    if op == "must_attack_player":
+        # All three are the card. Without `objects` nobody is compelled;
+        # without `defender` there is no "that player" to attack, and guessing
+        # one (the controller, every opponent) compels a seat the printed line
+        # never named; and the clock is required for `cant_attack_player`'s
+        # reason -- a requirement with a guessed lifetime is a different card.
+        if not effect.get("objects"):
+            raise DslError(
+                f"{where}: must_attack_player needs 'objects' naming the creatures "
+                f"that must attack"
+            )
+        if effect.get("defender") is None:
+            raise DslError(
+                f"{where}: must_attack_player needs 'defender' -- the player they "
+                f"must attack ({{\"binding\": \"defender\"}} for 'that player')"
+            )
+        _validate_player_spec(effect["defender"], f"{where}.defender", target_kinds)
+        if str(effect.get("duration", "")) not in ATTACK_MARK_DURATIONS:
+            raise DslError(
+                f"{where}: must_attack_player needs a 'duration' "
+                f"(implemented: {list(ATTACK_MARK_DURATIONS)}), not "
+                f"{effect.get('duration')!r}"
+            )
     if op == "must_attack_planeswalker":
         # Both required. Without `objects` there is no walker to attack and the
         # line does nothing; without `player`, defaulting to anybody would

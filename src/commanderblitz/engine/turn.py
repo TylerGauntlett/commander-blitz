@@ -38,6 +38,7 @@ from .state import MAX_EXTRA_PHASES_PER_TURN
 from .structs import StackItem
 from .temp_effects import (
     arm_attack_requirements,
+    clear_attack_marks,
     clear_attack_requirements,
     clear_attack_restrictions,
     clear_block_prohibitions,
@@ -807,6 +808,9 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     clear_permanent_shields(state, "this_turn")
     # And Gideon Jura's "during target opponent's next turn" ends with it.
     clear_attack_requirements(state)
+    # "Until the end of your next turn, target creature attacks that player
+    # each combat if able" (Silver Surfer, Galactus's Herald).
+    clear_attack_marks(state)
     # "You can't sacrifice those creatures **this turn**." (Call for Aid.) The
     # fourth of these and owned by no permanent for the same reason: the sorcery
     # that said it is in a graveyard long before the opponent reaches for their

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**96 cards** blocked by **77** capabilities.
+**94 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attack-requirement-defender](#attack-requirement-defender) | 1 | 13864 | static_effect |
 | [attacking-bound-player](#attacking-bound-player) | 1 | 20128 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -64,7 +63,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
-| [must-attack-player](#must-attack-player) | 1 | 18029 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -458,20 +456,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attack-requirement-defender
-
-Blocks **1** card.
-
-- **(static_effect)** an attacks-each-combat-if-able static that also names WHICH defender the attack must go at, here 'an opponent with the most life among your opponents' (a seat filter evaluated live at declare-attackers, ties letting the controller pick among the tied opponents), so the requirement is only satisfied by attacking one of those seats; it must keep the existing static `condition` (not exists a creature you control named Silver Surfer, Galactus's Herald) that switches the whole requirement off
-  <br>Why the existing vocabulary won't do: The `attacks_if_able` static (player_statics.attack_compelled) compels an attack but names no defender, so Galactus could satisfy it by attacking any opponent or a planeswalker; `combat.attack_target_forbidden` only knows defender requirements from goad (away from the goader) and `must_attack_planeswalker` (one planeswalker, one turn), and `must_attack`/`goad` ops are one-shot or player-relative. Nothing restricts a static attack requirement to the opponent(s) with the most life (max_life_of exists only as a value, not as a defender selector).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Galactus, Devourer of Worlds** (rank 13864) — `galactus_devourer_of_worlds`
-  - Insatiable Hunger — Galactus attacks an opponent with the most life among your opponents each combat if able unless you control a creature named Silver Surfer, Galactus's Herald.
 
 </details>
 
@@ -963,20 +947,6 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
-
-</details>
-
-## must-attack-player
-
-Blocks **1** card.
-
-- **(op)** an attack requirement on a target creature that names a specific player it must attack (the player the trigger's combat damage was dealt to), enforced each combat until the end of the effect controller's next turn
-  <br>Why the existing vocabulary won't do: must_attack takes only objects and a duration of this_turn or next_combat, names no defender and cannot last 'until the end of your next turn' across every combat; goad forces attacks on a player OTHER than the goader and expires at the goader's next turn rather than its end; must_attack_planeswalker targets a planeswalker; the attacks_if_able static is a permanent self-filter with no defender or duration
-
-<details><summary>Cards waiting on this</summary>
-
-- **Silver Surfer, Galactus's Herald** (rank 18029) — `silver_surfer_galactus_s_herald`
-  - Whenever Silver Surfer deals combat damage to a player, until the end of your next turn, target creature attacks that player each combat if able.
 
 </details>
 

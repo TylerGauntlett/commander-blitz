@@ -10011,6 +10011,49 @@ during that turn each of the player's creatures that can attack must, and
 forbids the walker ("if able"). Beside goad, 508.1d is a count: each target is
 scored by the requirements an attack on it obeys and only the best are offered.
 
+## "…attacks that player each combat if able"
+
+```jsonc
+// Galactus, Devourer of Worlds: "Galactus attacks an opponent with the most life
+//   among your opponents each combat if able unless you control a creature
+//   named Silver Surfer, Galactus's Herald."
+{ "kind": "static", "effect": "attacks_if_able",
+  "affects": { "self_only": true }, "defending": "opponent_most_life",
+  "condition": { "not": { "exists": { "controller": "you", "types": ["Creature"],
+                                      "name": "Silver Surfer, Galactus's Herald" } } } }
+
+// Silver Surfer, Galactus's Herald: "…until the end of your next turn, target
+//   creature attacks that player each combat if able."
+{ "op": "must_attack_player", "objects": { "target": "t1" },
+  "defender": { "binding": "defender" }, "duration": "end_of_your_next_turn" }
+```
+
+An attack requirement that names **whom** to attack, in two lifetimes. The
+static's `defending` is read live, relative to the static's controller:
+`opponent_most_life` is every opponent tied for the most life among that
+player's opponents, and the attacking player picks among the tied. The op
+writes a `structs.AttackMark` on each creature, naming each player `defender`
+resolves to; `end_of_your_next_turn` is the only `duration` and ends it in the
+cleanup of the effect controller's next turn, `TempEffect`'s clock for those
+words. The mark ends with the creature (400.7) and with either seat leaving.
+
+Both are read by `combat.required_attack_defenders`, so they are one
+requirement to `attack_required` and to 508.1d's count beside goad and Gideon
+Jura's walker:
+
+- Only an attack on the named **player** obeys it. Attacking a planeswalker or
+  battle that player controls is not attacking them (506.2).
+- "If able": the named seats are narrowed to those the creature may attack, and
+  a requirement left with none compels nothing. It never becomes "attack
+  somebody else": Galactus walled off from the top seat by a `cant_attack_you`
+  may stay home.
+- Without `defending`, `attacks_if_able` is the plain requirement that any
+  attack obeys. `defending` on any other static is a load error, and so is a
+  `must_attack_player` without `objects`, `defender` or the `duration`.
+
+`must_attack` is the near miss and names no defender, and is spent after one
+combat; goad points *away* from a player.
+
 ## "Whenever you attack"
 
 ```jsonc

@@ -22,6 +22,7 @@ from .structs import (
     PERMANENT_SHIELD_DURATIONS,
     SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
+    AttackMark,
     AttackRestriction,
     BlockProhibition,
     CastLock,
@@ -1185,3 +1186,54 @@ def drop_attack_requirements(state: GameState, player: int) -> None:
         obj = state.objects.get(oid)
         if obj is not None and player in obj.must_be_attacked_by:
             del obj.must_be_attacked_by[player]
+        # The creature marks as well: a mark naming a seat that has left can
+        # never be obeyed, and one on that seat's "end of your next turn" clock
+        # would never end -- the turn it waits for is never taken (800.4a).
+        if obj is not None and obj.attack_marks:
+            obj.attack_marks = [
+                m
+                for m in obj.attack_marks
+                if player not in (m.defender, m.until_end_of_turn_of)
+            ]
+
+
+def require_attack_player(
+    state: GameState,
+    oid: int,
+    defender: int,
+    clock: int,
+    source: int | None = None,
+) -> bool:
+    """ "Until the end of your next turn, target creature attacks that player
+    each combat if able." One rules-relevant thing: it writes the mark.
+
+    ``clock`` is "your" -- the seat whose next turn's cleanup ends the mark
+    (`structs.AttackMark`). Refused, returning ``False``, for a creature no
+    longer on the battlefield and for a defender out of the game. A defender
+    who controls the creature is *not* refused: control can change before the
+    combat the mark is about, and until then it simply cannot be obeyed.
+
+    One mark per defender: a second one naming the same player replaces the
+    first, which is the later clock -- the same requirement renewed, not two.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    if not state.is_alive(defender):
+        return False
+    mark = AttackMark(
+        defender=defender, until_end_of_turn_of=clock, since_turn=state.turn, source=source
+    )
+    obj.attack_marks = [m for m in obj.attack_marks if m.defender != defender] + [mark]
+    return True
+
+
+def clear_attack_marks(state: GameState) -> None:
+    """End the creature attack marks whose "end of your next turn" is now -- cleanup."""
+    for oid in state.battlefield:
+        obj = state.objects.get(oid)
+        if obj is None or not obj.attack_marks:
+            continue
+        obj.attack_marks = [
+            m for m in obj.attack_marks if not m.ends_now(state.active_player, state.turn)
+        ]

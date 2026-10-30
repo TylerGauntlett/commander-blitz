@@ -865,6 +865,14 @@ class AbilityModel(BaseModel):
     #: planeswalkers you control" out loud; a sentence naming only "you" is
     #: 506.2's reading, under which attacking a walker is not attacking you.
     player_only: bool = False
+    #: ``attacks_if_able``: whom the creature must attack, relative to the
+    #: static's controller -- Galactus, Devourer of Worlds' "attacks **an
+    #: opponent with the most life among your opponents** each combat if able"
+    #: is ``"opponent_most_life"``. Omitted, the requirement names nobody and
+    #: any attack obeys it. With it, only an attack on one of those players
+    #: does -- not on a planeswalker or battle they control (506.2) -- and
+    #: while none of them can be attacked it compels nothing.
+    defending: Literal["opponent_most_life"] | None = None
     #: ``replace_token_creation``: which token is about to be made. A filter on
     #: a *printed face* and not on `affects`, which picks out permanents on the
     #: battlefield: the token this asks about does not exist yet, has no

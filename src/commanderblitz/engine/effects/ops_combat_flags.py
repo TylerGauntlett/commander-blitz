@@ -14,6 +14,7 @@ from ..objects import PLUS_ONE
 from ..player_statics import proliferate_times
 from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
+    ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
@@ -27,6 +28,7 @@ from ..temp_effects import (
     grant_cant_be_sacrificed,
     make_unblockable,
     require_attack_on,
+    require_attack_player,
     restrict_attack,
 )
 from .board_helpers import (
@@ -473,6 +475,45 @@ def op_goad(ctx: EffectContext, spec: Mapping[str, Any]):
             # Battlefield and liveness are checked in the primitive, which is
             # also what makes a creature that left in response get nothing.
             goad_creature(ctx.state, oid, player, permanent=permanent)
+    yield from ()
+
+
+@register("must_attack_player")
+def op_must_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until the end of your next turn, target creature attacks **that player**
+    each combat if able." (Silver Surfer, Galactus's Herald.)
+
+    A requirement naming the **defending player**, written on each creature in
+    ``objects`` as a `structs.AttackMark` and read live by
+    `combat.required_attack_defenders` -- the same reader as the
+    `attacks_if_able` static's ``defending``, so the one-shot and the
+    continuous form are one requirement to 508.1d. It is obeyed only by
+    attacking that player, not a planeswalker or battle they control (506.2),
+    and while that seat cannot be attacked it compels nothing at all ("if
+    able"): the creature is not sent at somebody else instead.
+
+    ``objects``   the creatures, chosen at resolution (required).
+    ``defender``  the player to attack -- ``{"binding": "defender"}`` for
+                  "that player" on a combat-damage trigger (required). Several
+                  players are several requirements.
+    ``duration``  ``end_of_your_next_turn`` (required): the effect
+                  controller's next turn's cleanup ends it, `TempEffect`'s
+                  clock for the same words.
+
+    Why not the near misses: `must_attack` names no defender and is spent
+    after one combat; goad points *away* from a player and ends at the
+    goader's next turn rather than its end; `must_attack_planeswalker` names a
+    walker and binds a player's creatures, not a creature.
+    """
+    duration = str(spec.get("duration", ""))
+    if duration not in ATTACK_MARK_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown must_attack_player duration {duration!r}")
+    defenders = _players(ctx, spec.get("defender"))
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        for defender in defenders:
+            require_attack_player(
+                ctx.state, oid, defender, ctx.controller, source=ctx.source_oid
+            )
     yield from ()
 
 

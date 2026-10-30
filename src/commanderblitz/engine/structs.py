@@ -270,6 +270,55 @@ class AttackRestriction:
         }
 
 
+#: The durations an :class:`AttackMark` can carry. Spelled the way
+#: `CONTROL_DURATIONS` spells the same clock, because it is the same clock.
+ATTACK_MARK_DURATIONS = ("end_of_your_next_turn",)
+
+
+@dataclass(frozen=True)
+class AttackMark:
+    """"Target creature attacks **that player** each combat if able." A
+    requirement written on one creature that names the defending player.
+
+    The per-creature counterpart of :class:`AttackRestriction`, which names a
+    pair of *players* and no creature: this names one creature and one seat.
+    It lives on the creature (`GameObject.attack_marks`) for goad's reason --
+    the effect names that object, and 400.7 ends it when the object leaves.
+
+    Read by `combat.required_attack_defenders` beside the static form (an
+    `attacks_if_able` static with ``defending``), so the two are one
+    requirement to `combat.attack_required` and to 508.1d's scoring: it is
+    obeyed only by attacking ``defender`` itself -- not a planeswalker or
+    battle they control, which is not attacking them (506.2) -- and it owes
+    nothing while that seat cannot be attacked at all ("if able").
+
+    ``until_end_of_turn_of`` and ``since_turn`` are `TempEffect`'s "until the
+    end of your next turn" clock, read the same way: the entry ends in the
+    cleanup of the first of that seat's turns to begin after ``since_turn``.
+    """
+
+    #: The player the creature must attack.
+    defender: int
+    #: The seat whose next turn's end ends the mark.
+    until_end_of_turn_of: int
+    #: The turn the mark was made in.
+    since_turn: int
+    #: The permanent or spell that installed it, for the log.
+    source: int | None = None
+
+    def ends_now(self, active_player: int, turn: int) -> bool:
+        """Is the cleanup step of this turn the end of the mark's duration?"""
+        return self.until_end_of_turn_of == active_player and self.since_turn < turn
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "defender": self.defender,
+            "until_end_of_turn_of": self.until_end_of_turn_of,
+            "since_turn": self.since_turn,
+            "source": self.source,
+        }
+
+
 #: The two durations a :class:`BlockProhibition` can carry.  Neither is the one
 #: `AttackRestriction` uses, and that is not an oversight -- see the class.
 BLOCK_PROHIBITION_DURATIONS = ("this_turn", "until_your_next_turn")
