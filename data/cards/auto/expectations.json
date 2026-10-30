@@ -13623,6 +13623,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tendershoot_dryad": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tendrils_of_corruption": {
     "life": {
       "0": 46
@@ -14072,6 +14076,10 @@
   "titan_of_littjara": {
     "zone": "battlefield"
   },
+  "titan_s_grave": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "titania_proud_pummeler": {
     "battlefield_count": 33,
     "granted": {
@@ -14321,6 +14329,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "turbulent_fen": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "turbulent_shore": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14439,6 +14451,10 @@
     "zone": "battlefield"
   },
   "umara_entangler": {
+    "zone": "battlefield"
+  },
+  "umbral_collar_zealot": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "umbral_expanse": {
@@ -14807,6 +14823,16 @@
   },
   "vein_ripper": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "veinwitch_coven": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "venerable_lammasu": {
@@ -15488,6 +15514,13 @@
   },
   "wight_of_precinct_six": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "wight_of_the_reliquary": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "wild_ceratok": {

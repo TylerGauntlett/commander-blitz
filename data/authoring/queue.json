@@ -277892,12 +277892,12 @@
     },
     "Tendershoot Dryad": {
       "edhrec_rank": 1291,
-      "gate": "template",
+      "gate": null,
       "name": "Tendershoot Dryad",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "def3571c-01dd-4eee-8f60-0ac4d1928d33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tendo Ice Bridge": {
@@ -288032,12 +288032,12 @@
     },
     "Titan's Grave": {
       "edhrec_rank": 8262,
-      "gate": "template",
+      "gate": null,
       "name": "Titan's Grave",
-      "reason": "no template for: {2}{B}{G}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "a9ab41c8-3ee2-4676-9b8b-20c34d9f5f21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan's Presence": {
@@ -294202,12 +294202,12 @@
     },
     "Turbulent Fen": {
       "edhrec_rank": 4155,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Fen",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "9737159b-256c-4004-ba5f-0417c35e1b30",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Moor": {
@@ -296412,12 +296412,12 @@
     },
     "Umbral Collar Zealot": {
       "edhrec_rank": 1438,
-      "gate": "template",
+      "gate": null,
       "name": "Umbral Collar Zealot",
-      "reason": "no template for: Sacrifice another creature or artifact: Surveil 1",
+      "reason": "",
       "scryfall_id": "98648b8a-2cf0-4c10-ab13-c88b2e03fc15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Umbral Expanse": {
@@ -302202,12 +302202,12 @@
     },
     "Veinwitch Coven": {
       "edhrec_rank": 4146,
-      "gate": "template",
+      "gate": null,
       "name": "Veinwitch Coven",
-      "reason": "no template for: Whenever you gain life, you may pay {B}. If you do, return target creature card from your ",
+      "reason": "",
       "scryfall_id": "c5cc7d88-b9d3-425e-bef2-f1e3a85a3e4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vela the Night-Clad": {
@@ -314892,12 +314892,12 @@
     },
     "Wight of the Reliquary": {
       "edhrec_rank": 1256,
-      "gate": "template",
+      "gate": null,
       "name": "Wight of the Reliquary",
-      "reason": "no template for: This creature gets +1/+1 for each creature card in your graveyard",
+      "reason": "",
       "scryfall_id": "a8c6ee26-fa74-4859-9a94-89b476d218d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wiitigo": {
