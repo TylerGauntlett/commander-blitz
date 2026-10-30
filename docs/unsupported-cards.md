@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**92 cards** blocked by **73** capabilities.
+**91 cards** blocked by **72** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -29,7 +29,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attacking-bound-player](#attacking-bound-player) | 1 | 20128 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
@@ -454,20 +453,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attacking-bound-player
-
-Blocks **1** card.
-
-- **(selector)** a selector key naming the creatures attacking one specific player held in a binding (the `defender` of Namor's own `attacks` event), so "other creatures you control attacking that player" picks only the creatures sent at the player Namor attacked
-  <br>Why the existing vocabulary won't do: `attacking_player` takes only the words you/opponent/any/most_life (selectors.ATTACKING_PLAYER_WORDS); `opponent` would also pump creatures attacking a different opponent in a pod, and `attacking` has no notion of whom. The trigger half is expressible: event attacks, source self, recheck false, condition {exists {self_only, attacking_player: opponent}} (a player, not a planeswalker) and life_of {binding: defender} > life_of you. The Merfolk token line is expressible since merfolk_1_1_u was added.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Namor, Atlantean King** (rank 20128) — `namor_atlantean_king`
-  - Whenever Namor attacks a player who has more life than you, other creatures you control attacking that player get +2/+0 until end of turn.
 
 </details>
 

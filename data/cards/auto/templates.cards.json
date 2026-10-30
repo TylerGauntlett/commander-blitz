@@ -99543,6 +99543,111 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "controller": "you",
+              "op": "create_token",
+              "token": "merfolk_1_1_u"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, create a 1/1 blue Merfolk creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacking_player": {
+                  "binding": "defender"
+                },
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Namor attacks a player who has more life than you, other creatures you control attacking that player get +2/+0 until end of turn.",
+          "trigger": {
+            "condition": {
+              "all": [
+                {
+                  "exists": {
+                    "attacking_player": "opponent",
+                    "self_only": true
+                  }
+                },
+                {
+                  "cmp": ">",
+                  "left": {
+                    "life_of": {
+                      "binding": "defender"
+                    }
+                  },
+                  "right": {
+                    "life_of": "you"
+                  }
+                }
+              ]
+            },
+            "event": "attacks",
+            "recheck": false,
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "namor_atlantean_king",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}{U}",
+      "name": "Namor, Atlantean King",
+      "oracle_text": "Flying\nWhenever you cast a noncreature spell, create a 1/1 blue Merfolk creature token.\nWhenever Namor attacks a player who has more life than you, other creatures you control attacking that player get +2/+0 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Mutant",
+        "Merfolk",
+        "Noble"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

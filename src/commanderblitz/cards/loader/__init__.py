@@ -2554,6 +2554,14 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
         validate_trigger_filter(model.trigger.filter, f"{where}.trigger.filter")
+        if isinstance((model.trigger.filter or {}).get("attacking_player"), dict):
+            # Nothing is bound when a trigger filter is asked, so "attacking
+            # the player in binding X" would match nothing and the trigger
+            # would never fire.
+            raise DslError(
+                f"{where}.trigger.filter: attacking_player takes a word here "
+                f"(nothing is bound yet), not a binding"
+            )
         shares =(model.trigger.filter or {}).get("shares_a_creature_type_with")
         if shares is not None and shares != "self":
             # Nothing is bound when a trigger filter is asked, so a binding name

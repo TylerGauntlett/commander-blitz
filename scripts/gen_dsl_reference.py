@@ -440,7 +440,7 @@ SELECTORS: dict[str, Entry] = {
     "attached": ("Attached to the named object (\"self\", a binding, a target).", None),
     "attacked_this_turn": ("Attacked this turn (read after combat).", H_ATTACKED),
     "attacking": ("Is attacking.", None),
-    "attacking_player": ("Attacking this player (`you`/`opponent`/`any`/`most_life`), not their planeswalkers.",
+    "attacking_player": ("Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers.",
                          '"Attacks **you**" is not "attacks you and/or your planeswalkers"'),
     "base_power": ("A comparison on base power (layer 7a/7b).",
                    "`power` / `toughness` — a *derived* characteristic, read at a fixed layer"),

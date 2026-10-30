@@ -183142,12 +183142,12 @@
     },
     "Namor, Atlantean King": {
       "edhrec_rank": 20128,
-      "gate": "template",
+      "gate": null,
       "name": "Namor, Atlantean King",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 blue Merfolk creature token",
+      "reason": "",
       "scryfall_id": "6b06f1aa-53f1-49e1-b9f7-e4b489ef7d55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Namor, Scourge of the Seas": {

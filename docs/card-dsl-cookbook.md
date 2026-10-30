@@ -10210,6 +10210,21 @@ in a `condition` it is asked again on resolution. Dethrone, which has no "if",
 is the trigger's `defending: "most_life"` instead. Battles are not attackable in
 this engine; when they are, a creature attacking one belongs outside this key too.
 
+`{"binding": name}` is the one non-word form: the creature is attacking the
+**seat** that binding holds. Namor, Atlantean King's "other creatures you
+control attacking **that player** get +2/+0" is the `defender` of its own
+`attacks` event:
+
+```jsonc
+{ "op": "pump", "power": {"const": 2}, "toughness": {"const": 0},
+  "objects": { "controller": "you", "types": ["Creature"], "exclude_self": true,
+               "attacking_player": { "binding": "defender" } } }
+```
+
+`"opponent"` is the near miss and pumps creatures sent at every opponent in a
+pod. Only a binding is taken, and a trigger filter refuses it: nothing is bound
+when a trigger filter is asked, so it would match nothing.
+
 ## An additional combat phase
 
 ```jsonc
