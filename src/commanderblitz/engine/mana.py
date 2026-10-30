@@ -584,6 +584,32 @@ class ManaKeywordGrant(NamedTuple):
     spell_types: tuple[str, ...] = ()
 
 
+class ManaSpendTrigger(NamedTuple):
+    """ "…When you spend this mana to cast your commander, scry X" -- Study Hall.
+
+    The third thing a pip can carry, and the only one that is an *ability*:
+    rule 106.6 has the mana ability create a delayed triggered ability that
+    triggers when that mana is spent. `costs.activate_mana_ability` makes **one
+    of these per activation** and every pip of that activation shares it, so
+    `ManaPool.spend` collects them by identity: two mana from one activation
+    paying one spell are one "this mana" and trigger once, while two
+    activations -- two Study Halls -- are two and each triggers.
+
+    ``ability`` is the compiled trigger (`Ability.mana_spent_trigger`), carried
+    for its spell filter; ``source``, ``ability_index`` and ``granted_by`` say
+    where `stack.ability_of` finds it again, and ``def_id`` is the source's card
+    for when the source has gone (the trigger outlives it). ``controller`` is
+    who activated the mana ability, and so controls the trigger.
+    """
+
+    source: int
+    ability_index: int
+    def_id: str
+    controller: int
+    ability: Any
+    granted_by: int | None = None
+
+
 class ManaOrigin(NamedTuple):
     """What the permanent that made a unit of mana **was**, at that instant.
 
@@ -667,6 +693,10 @@ class Pip(NamedTuple):
     #: **effect** put in the pool has already been made, and the pool is the only
     #: place left that can remember what it may pay for.
     restriction: ManaRestriction | None = None
+    #: Study Hall's "…When you spend this mana to cast your commander". On the
+    #: pip for `grant`'s reason: Study Hall's plain ``{C}`` must not trigger.
+    #: Shared by every pip of one activation -- see :class:`ManaSpendTrigger`.
+    spend_trigger: ManaSpendTrigger | None = None
 
     def permits(self, purpose: SpendPurpose | None) -> bool:
         """May this pip pay for what ``purpose`` describes?
@@ -708,6 +738,10 @@ class SpentMana:
     #: order the pips were taken, deduplicated, so two Arenas paying for one
     #: creature grant haste once.
     grants: tuple[ManaKeywordGrant, ...] = ()
+    #: Every spent-mana trigger a pip this payment consumed carried -- Study
+    #: Hall. One entry per *activation*, collected by identity: see
+    #: :class:`ManaSpendTrigger`.
+    spend_triggers: tuple[ManaSpendTrigger, ...] = ()
 
 
 class ManaPool:
@@ -777,6 +811,7 @@ class ManaPool:
         grant: ManaKeywordGrant | None = None,
         source_traits: ManaOrigin | None = None,
         restriction: ManaRestriction | None = None,
+        spend_trigger: ManaSpendTrigger | None = None,
     ) -> None:
         pip = Pip(
             source=source,
@@ -785,6 +820,7 @@ class ManaPool:
             grant=grant,
             source_traits=source_traits,
             restriction=restriction,
+            spend_trigger=spend_trigger,
         )
         for i, v in enumerate(produced):
             self.amounts[i] += v
@@ -954,6 +990,10 @@ class ManaPool:
         # to survive into `SpentMana` as data rather than a flag, and a stable
         # order keeps one payment's report the same from run to run.
         grants: list[ManaKeywordGrant] = []
+        # Study Hall's "When you spend this mana…". By identity, not equality:
+        # two activations of one Study Hall build equal tags, and each is its own
+        # "this mana" with its own trigger.
+        spend_triggers: list[ManaSpendTrigger] = []
 
         # The pool as this payment may spend it, kept in step with every take
         # below: a restricted pip is not in these counts and is not taken.
@@ -969,6 +1009,9 @@ class ManaPool:
                 rider = rider or pip.uncounterable
                 if pip.grant is not None and pip.grant not in grants:
                     grants.append(pip.grant)
+                tag = pip.spend_trigger
+                if tag is not None and not any(tag is seen for seen in spend_triggers):
+                    spend_triggers.append(tag)
 
         def take(index: int, count: int) -> None:
             avail[index] -= count
@@ -1015,6 +1058,7 @@ class ManaPool:
             source_traits=frozenset(made_by_traits),
             uncounterable=rider,
             grants=tuple(grants),
+            spend_triggers=tuple(spend_triggers),
         )
 
     def __repr__(self) -> str:  # pragma: no cover - debug helper

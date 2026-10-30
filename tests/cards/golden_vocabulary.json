@@ -820,6 +820,16 @@
    "level",
    "sorcery_speed_only",
    "text"
+  ],
+  "_MANA_SPENT_SOURCE_KEYS": [
+   "attached",
+   "created_with",
+   "damaged_by",
+   "exclude_self",
+   "haunted_by",
+   "paid_by",
+   "self_only",
+   "shares_a_creature_type_with"
   ]
  },
  "ops": [

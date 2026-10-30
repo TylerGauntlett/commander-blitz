@@ -3195,6 +3195,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         # does not.
         raise DslError(f"{where}: 'mana_uncounterable' needs 'is_mana_ability'")
     mana_grant = _mana_grant(model.mana_grant, model.is_mana_ability, where)
+    mana_spent_trigger = _mana_spent_trigger(model, index, where)
 
     return Ability(
         kind=kind,
@@ -3218,6 +3219,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_restriction=mana_restriction,
         mana_uncounterable=model.mana_uncounterable,
         mana_grant=mana_grant,
+        mana_spent_trigger=mana_spent_trigger,
         # 606.3: a loyalty ability may be activated "any time they could cast a
         # sorcery". That is the rule speaking, not the card, so it is applied
         # here rather than left to an author to remember -- one omitted flag and
@@ -3238,6 +3240,77 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         effects=tuple(model.effects),
         static=None,
     )
+
+
+#: The `matches_card_filter` keys that ask about the ability's *source* rather
+#: than the spell. A spent-mana trigger is matched when the mana is spent, which
+#: may be after its source has left the battlefield (106.6: the trigger belongs
+#: to the mana, not the permanent), and "this mana" already says which mana --
+#: so each of these is a question with no permanent to answer it, or with the
+#: answer fixed by construction.
+_MANA_SPENT_SOURCE_KEYS = frozenset(
+    {
+        "self_only",
+        "exclude_self",
+        "attached",
+        "haunted_by",
+        "created_with",
+        "damaged_by",
+        "paid_by",
+        "shares_a_creature_type_with",
+    }
+)
+
+
+def _mana_spent_trigger(model: AbilityModel, index: int, where: str) -> Ability | None:
+    """ "…When you spend this mana to cast <spell>, <effects>" compiled to a
+    triggered `Ability` -- Study Hall, Gilanra, Scaled Nurturer.
+
+    Built by the ordinary triggered-ability compiler from a synthetic
+    `spell_cast` model, so the spell filter is validated exactly as a cast
+    trigger's is and the effects and targets get every guard a printed trigger
+    gets. The event is never listened for: the ability is not in the card's
+    abilities list, and `costs.pay_mana` is what queues it.
+    """
+    spec = model.mana_spent_trigger
+    if spec is None:
+        return None
+    if not model.is_mana_ability:
+        # It rides the mana, so on an ability that makes none it would load and
+        # never fire -- `mana_grant`'s refusal, for its reason.
+        raise DslError(f"{where}: 'mana_spent_trigger' needs 'is_mana_ability'")
+    unknown = set(spec) - {"spell", "effects", "targets"}
+    if unknown:
+        raise DslError(f"{where}: 'mana_spent_trigger' has unknown keys {sorted(unknown)}")
+    effects = spec.get("effects")
+    if not isinstance(effects, list) or not effects:
+        raise DslError(
+            f"{where}: 'mana_spent_trigger' needs a non-empty 'effects' list -- a "
+            f"trigger that does nothing is a sentence the card does not print"
+        )
+    spell = spec.get("spell", {})
+    if not isinstance(spell, Mapping):
+        raise DslError(f"{where}: 'mana_spent_trigger.spell' is a trigger filter object")
+    bad = sorted(set(spell) & _MANA_SPENT_SOURCE_KEYS)
+    if bad:
+        raise DslError(
+            f"{where}: 'mana_spent_trigger.spell' may not use {bad}: they ask about "
+            f"the ability's source, and this trigger belongs to the mana, which "
+            f"can be spent after its source has gone"
+        )
+    try:
+        synthetic = AbilityModel.model_validate(
+            {
+                "kind": "triggered",
+                "text": model.text,
+                "trigger": {"event": "spell_cast", "controller": "you", "filter": dict(spell)},
+                "effects": effects,
+                "targets": spec.get("targets") or [],
+            }
+        )
+    except Exception as exc:  # pydantic ValidationError
+        raise DslError(f"{where}.mana_spent_trigger: {exc}") from exc
+    return _compile_printed_ability(synthetic, index, f"{where}.mana_spent_trigger")
 
 
 def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> None:

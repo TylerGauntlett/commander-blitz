@@ -392,7 +392,12 @@ def ability_of(state: GameState, item_or_trig) -> Ability | None:
             if def_id is None or def_id not in state.registry:
                 return None
             pool = state.registry.get(def_id).abilities
-    return pool[index] if index < len(pool) else None
+    ability = pool[index] if index < len(pool) else None
+    if ability is not None and getattr(item_or_trig, "mana_spent", False):
+        # Study Hall's "When you spend this mana…": the index names the mana
+        # ability, and what triggered is the ability riding its mana.
+        return ability.mana_spent_trigger
+    return ability
 
 
 def push_triggered_ability(
@@ -436,6 +441,7 @@ def push_triggered_ability(
         x=int(trig.bindings.get("x", 0) or 0),
         description=trig.description,
         granted_by=trig.granted_by,
+        mana_spent=trig.mana_spent,
     )
     ability = ability_of(state, item)
     if ability is not None and ability.cast_time_modes:

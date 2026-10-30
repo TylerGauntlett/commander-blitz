@@ -1332,6 +1332,8 @@ class StackItem:
     #: Read only when the granter object itself is gone -- a token popped by the
     #: token state-based action -- so the ability still resolves (608.2).
     granted_def_id: str = ""
+    #: See `TriggerInstance.mana_spent`. A copy keeps it (706.10).
+    mana_spent: bool = False
 
     @property
     def is_spell(self) -> bool:
@@ -1377,6 +1379,12 @@ class TriggerInstance:
     #: `grantable_abilities` it came from.  Resolution has to look there rather
     #: than at the source's own abilities, which do not include it.
     granted_by: int | None = None
+    #: "When you spend this mana to cast…" -- Study Hall. ``ability_index``
+    #: names the *mana* ability, and the ability that triggered is the one
+    #: riding it, `Ability.mana_spent_trigger`; `stack.ability_of` reads this
+    #: flag to step from one to the other. A flag beside the index rather than
+    #: an index of its own, because the rider is not in any abilities list.
+    mana_spent: bool = False
 
 
 @dataclass

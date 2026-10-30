@@ -78,6 +78,7 @@ ABILITY_SPEC_FIELDS = (
     "mana_colors_of",
     "mana_each_color_among",
     "mana_restriction",
+    "mana_spent_trigger",
     "activation_condition",
     "trigger",
     "targets",

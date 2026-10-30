@@ -684,6 +684,58 @@ nothing reads on the board as a land whose second ability is strictly worse than
 its first. Refused on an ability that is not a mana ability, where it would load
 and never be read. Cashed by `tests/unit/mana/test_mana_granted_keyword.py`.
 
+### Mana that triggers when it is spent — `mana_spent_trigger`
+
+```jsonc
+// Study Hall's second mana ability
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry X, where X is the number of times it's been cast from the command zone this game.",
+  "cost": { "mana": "{1}", "tap": true },
+  "effects": [ /* one choose_mode of five add_manas */ ],
+  "mana_spent_trigger": {
+    "spell": { "is_commander": true, "owner": "you" },
+    "effects": [ { "op": "scry", "player": "you",
+                   "amount": { "commander_casts_this_game": "you" } } ] } }
+```
+
+Rule 106.6: a mana ability may create a delayed triggered ability that
+triggers when that mana is spent. The trigger belongs to the **mana**, so it
+rides the pip like the two riders above. `Ability.mana_spent_trigger` is the
+rider compiled into a triggered ability; `costs.activate_mana_ability` gives
+every pip of one activation the same `mana.ManaSpendTrigger` tag;
+`ManaPool.spend` reports the tags a payment consumed; and `costs.pay_mana`
+matches each against the spell being cast and queues a `TriggerInstance` whose
+`mana_spent` flag tells `stack.ability_of` to resolve the rider rather than the
+mana ability.
+
+- **`spell`** is the printed spell filter, read with a `spell_cast` trigger
+  filter's semantics and validated by the same compiler. Omitted, any spell.
+  "Your commander" is `{"is_commander": true, "owner": "you"}`: 903.3 makes it
+  the commander you own. The keys that ask about the ability's *source*
+  (`paid_by`, `self_only`, `exclude_self`, `attached`, `haunted_by`,
+  `created_with`, `damaged_by`, `shares_a_creature_type_with`) are refused,
+  because the mana can be spent after its source has gone and "this mana"
+  already says which mana.
+- **`effects`** is required and non-empty; **`targets`** is optional and declared
+  as the trigger goes on the stack (603.3d). The spell the mana paid for is bound
+  as `subject`.
+- **Who and when.** The trigger is controlled by whoever activated the mana
+  ability and goes on the stack the next time a player would receive priority,
+  above the spell it paid for. It resolves after the cast is complete, so a value
+  read on resolution counts this cast: `commander_casts_this_game` is 1 on the
+  first cast.
+- **How many.** One trigger per activation whose mana paid for a matching spell.
+  Two pips of one activation are one "this mana"; two Study Halls are two
+  triggers. Mana left in the pool and emptied was never spent and triggers
+  nothing.
+- **The near misses.** A `spell_cast` trigger with `paid_by: "self"` (Path of
+  Ancestry's shape) is per permanent, so Study Hall's plain `{C}` would scry
+  too; and a `mana_rider` op runs at activation, before any spell exists to be
+  filtered.
+
+Refused on an ability that is not a mana ability, where it would load and never
+fire. Cashed by `tests/unit/mana/test_mana_spent_trigger.py`.
+
 ### Counting the spells you cast, by type
 
 ```jsonc
