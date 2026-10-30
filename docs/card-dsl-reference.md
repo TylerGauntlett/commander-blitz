@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 156 |
 | [Selectors](#selectors) | 69 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 62 |
+| [Values](#values) | 63 |
 | [Conditions](#conditions) | 33 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 35 |
@@ -311,6 +311,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `cards_to_graveyard_this_turn` | Cards put into any graveyard from anywhere this turn; tokens excluded. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `colors_of_mana_spent` | Colors of mana spent to cast this (sunburst, converge). | [Counting the mana that was actually spent](card-dsl.md#counting-the-mana-that-was-actually-spent) |
 | `combats_this_turn` | Which combat phase of the turn this is. | [Which combat phase of the turn this is](card-dsl.md#which-combat-phase-of-the-turn-this-is) |
+| `command_zone_casts_of` | Times one commander has been cast from the command zone this game, off its owner's 903.8 tally. | [Mana that triggers when it is spent — mana_spent_trigger](card-dsl-cookbook.md#mana-that-triggers-when-it-is-spent--mana_spent_trigger) |
 | `commander_casts_this_game` | Times the player has cast their commanders from the command zone this game (903.8's tally). | [Copying a spell for each commander cast](card-dsl-cookbook.md#copying-a-spell-for-each-commander-cast) |
 | `commander_color_identity` | Colors in your commander's color identity. | [Commander-identity mana — "any color in your commander's color identity"](card-dsl-cookbook.md#commander-identity-mana--any-color-in-your-commanders-color-identity) |
 | `const` | A literal number. | [Value expressions](card-dsl.md#value-expressions) |

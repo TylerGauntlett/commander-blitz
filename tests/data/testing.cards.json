@@ -14505,7 +14505,7 @@
                 "op": "scry",
                 "player": "you",
                 "amount": {
-                  "commander_casts_this_game": "you"
+                  "command_zone_casts_of": { "binding": "subject" }
                 }
               }
             ]

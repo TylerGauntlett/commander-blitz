@@ -695,7 +695,7 @@ and never be read. Cashed by `tests/unit/mana/test_mana_granted_keyword.py`.
   "mana_spent_trigger": {
     "spell": { "is_commander": true, "owner": "you" },
     "effects": [ { "op": "scry", "player": "you",
-                   "amount": { "commander_casts_this_game": "you" } } ] } }
+                   "amount": { "command_zone_casts_of": { "binding": "subject" } } } ] } }
 ```
 
 Rule 106.6: a mana ability may create a delayed triggered ability that
@@ -722,8 +722,10 @@ mana ability.
 - **Who and when.** The trigger is controlled by whoever activated the mana
   ability and goes on the stack the next time a player would receive priority,
   above the spell it paid for. It resolves after the cast is complete, so a value
-  read on resolution counts this cast: `commander_casts_this_game` is 1 on the
-  first cast.
+  read on resolution counts this cast: `command_zone_casts_of` the subject is 1
+  on the first cast. "It" is that commander alone, so the count is
+  `command_zone_casts_of`, one object's tally, and not
+  `commander_casts_this_game`, which sums both partners.
 - **How many.** One trigger per activation whose mana paid for a matching spell.
   Two pips of one activation are one "this mana"; two Study Halls are two
   triggers. Mana left in the pool and emptied was never spent and triggers

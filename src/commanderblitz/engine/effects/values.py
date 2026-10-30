@@ -189,6 +189,13 @@ VALUE_KEYS = frozenset(
         #: miss: it counts every cast from every zone, so a commander cast from
         #: hand or graveyard and every other spell would inflate it.
         "commander_casts_this_game",
+        #: "…scry X, where X is the number of times **it**'s been cast from the
+        #: command zone this game" -- Study Hall, where "it" is the commander
+        #: the mana paid for. One object's 903.8 tally, read off its owner's
+        #: `Player.commander_tax`. `commander_casts_this_game` is the near miss:
+        #: it sums both partners, so a partner deck would scry for the other's
+        #: casts too. Takes an object reference, `times_tapped_this_turn`'s.
+        "command_zone_casts_of",
         # "…if it's the first combat phase of the turn" (Genji Glove). A value
         # rather than a boolean head, so the ordinary `cmp` says it: the printed
         # clause is `== 1`, and "the second combat" or "a later combat" fall out
@@ -679,6 +686,17 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # permanent that left and came back reads from nought (400.7).
         taps = ledger.taps_by_permanent
         return sum(taps.get(oid, 0) for oid in _referenced_oids(ctx, expr["times_tapped_this_turn"]))
+    if "command_zone_casts_of" in expr:
+        # Keyed by the object, which keeps its oid through the zone change from
+        # the command zone to the stack, so the spell being cast reads its own
+        # tally -- this cast included, since `Game` bumps it as the cast is made.
+        # An object that is nobody's commander reads 0.
+        total = 0
+        for oid in _referenced_oids(ctx, expr["command_zone_casts_of"]):
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                total += ctx.state.players[obj.owner].commander_tax.get(oid, 0)
+        return total
     if "combats_this_turn" in expr:
         # Counting the combat in progress, so during the first combat this is 1.
         # `GameState.combat_number` is the near miss and is monotonic for the
@@ -962,7 +980,7 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
     raise DslError(f"unparsable characteristic reference {ref!r}")
 
 
-#: The object references ``times_tapped_this_turn`` takes: one object the
+#: The object references ``times_tapped_this_turn`` and ``command_zone_casts_of`` take: one object the
 #: context already has in hand. Not a selector, because the printed question is
 #: about *that* creature and a selector sums a pool.
 OBJECT_REF_KEYS = ("binding", "self", "target")
@@ -1414,6 +1432,8 @@ def validate_value(expr: Any, where: str) -> None:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
     if "times_tapped_this_turn" in expr:
         validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
+    if "command_zone_casts_of" in expr:
+        validate_object_ref(expr["command_zone_casts_of"], f"{where}.command_zone_casts_of")
     if "attack_power_this_combat" in expr:
         who = expr["attack_power_this_combat"]
         if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:

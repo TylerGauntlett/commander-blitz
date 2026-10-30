@@ -195,6 +195,22 @@ class TestSpendingItOnTheCommander:
         settle(game)
         assert scries(game) == [3]
 
+    def test_x_is_this_commanders_casts_not_its_partners(self, builder):
+        """"…the number of times **it**'s been cast": one commander's tally.
+        A partner's three casts are on the same player's 903.8 record and are
+        not this commander's, so the sum over `commanders_of` would scry 4.
+        The partner is seeded onto the record rather than built, since only
+        its tally is read."""
+        game = position(builder)
+        player = game.state.players[0]
+        partner = only_oid(game, HALL, 0)
+        player.commanders.append(partner)
+        player.commander_tax[partner] = 3
+        rider_mana(game, partner)
+        cast(game, COMMANDER)
+        settle(game)
+        assert scries(game) == [1]
+
     def test_two_halls_paying_one_commander_trigger_twice(self, builder):
         game = position(builder, halls=2)
         for hall in oids_of(game, HALL, 0):

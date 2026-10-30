@@ -1389,6 +1389,7 @@ Anywhere a number is expected -- the leaf list is
 { "cards_in_hand": "each_opponent" }
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
+{ "command_zone_casts_of": { "binding": "subject" } }  // ONE commander's casts from the command zone
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
