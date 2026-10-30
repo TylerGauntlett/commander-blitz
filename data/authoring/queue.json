@@ -192452,12 +192452,12 @@
     },
     "Ominous Harvest": {
       "edhrec_rank": 11154,
-      "gate": "template",
+      "gate": null,
       "name": "Ominous Harvest",
-      "reason": "no template for: Gravestorm",
+      "reason": "",
       "scryfall_id": "2271184b-08eb-4d2a-8ebf-a1807d51dd2a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ominous Parcel": {

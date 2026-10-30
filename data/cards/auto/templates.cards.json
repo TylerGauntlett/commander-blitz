@@ -110905,6 +110905,75 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "permanents_to_graveyard_this_turn": true
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Gravestorm (When you cast this spell, copy it for each permanent put into a graveyard from the battlefield this turn.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ominous_harvest",
+      "mana_cost": "{2}{B}",
+      "name": "Ominous Harvest",
+      "oracle_text": "Gravestorm (When you cast this spell, copy it for each permanent put into a graveyard from the battlefield this turn.)\nTarget player draws a card and loses 1 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "lose_life",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

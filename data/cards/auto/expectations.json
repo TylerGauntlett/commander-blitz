@@ -9577,6 +9577,18 @@
   "omen_hawker": {
     "zone": "battlefield"
   },
+  "ominous_harvest": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "life": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "omnath_locus_of_the_void": {
     "zone": "battlefield"
   },
