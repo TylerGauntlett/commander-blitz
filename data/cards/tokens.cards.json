@@ -1162,6 +1162,47 @@
       "is_token": true
     },
     {
+      "id": "pest_1_1_bg",
+      "name": "Pest Token",
+      "oracle_text": "1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pest"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this token dies, you gain 1 life.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "phyrexian_myr_2_1_u_artifact",
       "name": "Phyrexian Myr Token",
       "oracle_text": "2/1 blue Phyrexian Myr artifact creature token.",

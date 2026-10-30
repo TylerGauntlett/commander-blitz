@@ -1273,3 +1273,34 @@ class TestSkyclaveApparitionsIllusionIsAPlainXXBlue:
         other = pool.get("illusion_1_1_u")
         assert not other.variable_pt
         assert (other.power, other.toughness) == (1, 1)
+
+
+class TestWitherbloomsPestGainsLifeWhenItDies:
+    """Beledros Witherbloom, Blight Mound and the Witherbloom precon: *"create a
+    **1/1 black and green Pest** creature token with 'When this token dies, you
+    gain 1 life.'"*
+
+    The pool's nearest 1/1 is the green Insect, which has neither the black nor
+    the death trigger; a Pest that gains nothing is a weaker card everywhere.
+    """
+
+    def test_it_is_a_one_one_black_and_green_pest(self, pool):
+        pest = pool.get("pest_1_1_bg")
+        assert pest is not None and pest.is_token and pest.is_creature
+        assert (pest.power, pest.toughness) == (1, 1)
+        assert sorted(pest.colors) == ["B", "G"]
+        assert list(pest.types) == ["Creature"]
+        assert list(pest.subtypes) == ["Pest"]
+        assert not pest.keywords
+
+    def test_it_gains_one_life_when_it_dies(self, pool):
+        (ability,) = pool.get("pest_1_1_bg").abilities
+        assert ability.kind == "triggered"
+        assert ability.trigger.event == "dies" and ability.trigger.source == "self"
+        (effect,) = ability.effects
+        assert effect["op"] == "gain_life" and effect["player"] == "you"
+
+    def test_the_green_insect_is_still_a_separate_token(self, pool):
+        other = pool.get("insect_1_1_g")
+        assert (other.power, other.toughness) == (1, 1)
+        assert sorted(other.colors) == ["G"]
