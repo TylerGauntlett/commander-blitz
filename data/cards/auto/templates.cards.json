@@ -169880,6 +169880,57 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "volcanic_torrent",
+      "mana_cost": "{4}{R}",
+      "name": "Volcanic Torrent",
+      "oracle_text": "Cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order.)\nVolcanic Torrent deals X damage to each creature and planeswalker your opponents control, where X is the number of spells you've cast this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "spells_cast_this_turn": "you"
+          },
+          "objects": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "controller": "opponent",
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

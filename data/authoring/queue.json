@@ -307342,12 +307342,12 @@
     },
     "Volcanic Torrent": {
       "edhrec_rank": 4029,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Volcanic Torrent",
-      "reason": "player 0 library_size is 38, expected 39",
+      "reason": "",
       "scryfall_id": "bddd4336-ef03-4c4e-9992-02a0548d2d6f",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Volcanic Upheaval": {

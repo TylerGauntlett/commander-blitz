@@ -14691,6 +14691,9 @@
       "graveyard"
     ]
   },
+  "volcanic_torrent": {
+    "zone": "graveyard"
+  },
   "voldaren_estate": {
     "battlefield_count": 33,
     "graveyard_size": {
