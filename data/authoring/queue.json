@@ -208232,12 +208232,12 @@
     },
     "Progenitor's Icon": {
       "edhrec_rank": 5481,
-      "gate": "template",
+      "gate": null,
       "name": "Progenitor's Icon",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "5457025c-9720-4717-8ee5-fb048815a895",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Progenitus": {

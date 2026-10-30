@@ -9760,6 +9760,10 @@
     },
     "zone": "battlefield"
   },
+  "progenitor_s_icon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "promising_vein": {
     "zone": "battlefield"
   },
