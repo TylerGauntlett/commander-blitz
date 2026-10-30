@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**91 cards** blocked by **73** capabilities.
+**93 cards** blocked by **75** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [dragon-illusion-x-x-r-flying-haste](#dragon-illusion-x-x-r-flying-haste) | 1 | 5523 | token |
 | [elemental-3-3-ur-flying](#elemental-3-3-ur-flying) | 1 | 11062 | token |
+| [elemental-4-4-ur-token](#elemental-4-4-ur-token) | 1 | 5125 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -611,6 +613,20 @@ Blocks **1** card.
 
 </details>
 
+## dragon-illusion-x-x-r-flying-haste
+
+Blocks **1** card.
+
+- **(token)** a 0/0 (X/X) red Dragon Illusion creature token with flying and haste, sized at creation through create_token's power/toughness
+  <br>Why the existing vocabulary won't do: token_ids has no Dragon Illusion: the red Dragons (dragon_4_4_r_flying etc.) are fixed-size and lack haste and the Illusion subtype, illusion_1_1_u_flying is blue, and shark_x_x_u_flying is the only X/X flier but is a blue Shark. The rest of the line is expressible: a spell_cast trigger filtered not_types Creature, create_token with power/toughness {"mana_spent_of": {"binding": "subject"}} and `as`, then a delay to the next end step exiling that binding.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Manaform Hellkite** (rank 5523) — `manaform_hellkite`
+  - Whenever you cast a noncreature spell, create an X/X red Dragon Illusion creature token with flying and haste, where X is the amount of mana spent to cast that spell. Exile that token at the beginning of the next end step.
+
+</details>
+
 ## elemental-3-3-ur-flying
 
 Blocks **1** card.
@@ -622,6 +638,20 @@ Blocks **1** card.
 
 - **Furygale Flocking** (rank 11062) — `furygale_flocking`
   - For each opponent, create two 3/3 blue and red Elemental creature tokens with flying that attack that opponent this turn if able. They gain haste until end of turn.
+
+</details>
+
+## elemental-4-4-ur-token
+
+Blocks **1** card.
+
+- **(token)** a 4/4 blue and red Elemental creature token (suggested id elemental_4_4_ur)
+  <br>Why the existing vocabulary won't do: token_ids has only elemental_2_2_g (a 2/2 green Elemental); substituting it changes power, toughness and colors. The rest of the card looks expressible once the token exists: a damage op with amount 4 and divided over an any-target spec (count 4, up_to) as the engine's division.py supports, a tap op on a second target spec of two permanents, create_token with the new id, draw 2 for you; and the second line as an activated ability with active_zones ["hand"], cost {mana: "{U/R}{U/R}", discard_self: true}, effect create_token treasure_token.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Magma Opus** (rank 5125) — `magma_opus`
+  - Create a 4/4 blue and red Elemental creature token.
 
 </details>
 

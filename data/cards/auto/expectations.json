@@ -4982,6 +4982,14 @@
   "galadriel_light_of_valinor": {
     "zone": "battlefield"
   },
+  "galazeth_prismari": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
   "galewind_moose": {
     "zone": "battlefield"
   },
@@ -5808,6 +5816,10 @@
     },
     "zone": "battlefield"
   },
+  "hall_of_oracles": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hallowed_fountain": {
     "zone": "battlefield"
   },
@@ -6500,6 +6512,13 @@
     "zone": "battlefield"
   },
   "insomnia_crown_city": {
+    "zone": "battlefield"
+  },
+  "inspired_skypainter_maestro_s_gift": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "inspiring_cleric": {
@@ -7389,6 +7408,10 @@
       ]
     },
     "zone": "graveyard"
+  },
+  "leitmotif_composer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "leonin_scimitar": {
     "zone": "battlefield"

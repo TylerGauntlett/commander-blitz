@@ -55052,6 +55052,133 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Galazeth Prismari enters, create a Treasure token.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Artifact"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Artifacts you control have \"{T}: Add one mana of any color. Spend this mana only to cast an instant or sorcery spell.\""
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": [
+            "instant",
+            "sorcery"
+          ],
+          "text": "{T}: Add one mana of any color. Spend this mana only to cast an instant or sorcery spell."
+        }
+      ],
+      "id": "galazeth_prismari",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{U}{R}",
+      "name": "Galazeth Prismari",
+      "oracle_text": "Flying\nWhen Galazeth Prismari enters, create a Treasure token.\nArtifacts you control have \"{T}: Add one mana of any color. Spend this mana only to cast an instant or sorcery spell.\"",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -64533,6 +64660,138 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{1}, {T}: Add one mana of any color."
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "spells_cast_this_turn": {
+                "filter": {
+                  "any_types": [
+                    "Instant",
+                    "Sorcery"
+                  ]
+                },
+                "player": "you"
+              }
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Put a +1/+1 counter on target creature. Activate only as a sorcery and only if you've cast an instant or sorcery spell this turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "hall_of_oracles",
+      "name": "Hall of Oracles",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color.\n{T}: Put a +1/+1 counter on target creature. Activate only as a sorcery and only if you've cast an instant or sorcery spell this turn.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -73387,6 +73646,74 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and whenever one or more creature tokens you control deal combat damage to a player, this creature becomes prepared.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters and whenever one or more creature tokens you control deal combat damage to a player, this creature becomes prepared.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "is_token": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "inspired_skypainter_maestro_s_gift",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}{R}",
+      "name": "Inspired Skypainter // Maestro's Gift",
+      "oracle_text": "Flying\nWhen this creature enters and whenever one or more creature tokens you control deal combat damage to a player, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 2,
+      "prepared_face": "maestro_s_gift",
+      "source": "auto",
+      "subtypes": [
+        "Lizard",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -84332,6 +84659,97 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature deals combat damage to a player, draw a card.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "copy_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell with mana value 5 or greater, create a token that's a copy of this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ],
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 5
+                }
+              }
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{U}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "name": "Leitmotif Composer",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{U}: Creatures named Leitmotif Composer can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "leitmotif_composer",
+      "mana_cost": "{2}{U}",
+      "name": "Leitmotif Composer",
+      "oracle_text": "Whenever this creature deals combat damage to a player, draw a card.\nWhenever you cast an instant or sorcery spell with mana value 5 or greater, create a token that's a copy of this creature.\n{2}{U}: Creatures named Leitmotif Composer can't be blocked this turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Bard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -89872,6 +90290,58 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "maestro_s_gift",
+      "mana_cost": "{3}{U}{R}",
+      "name": "Maestro's Gift",
+      "oracle_text": "Create a token that's a copy of target creature you control. That token gains haste until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "the_token",
+          "controller": "you",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "copy_permanent"
+        },
+        {
+          "keywords": [
+            "haste"
+          ],
+          "objects": {
+            "binding": "the_token",
+            "count": "all"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

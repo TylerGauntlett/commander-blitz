@@ -104362,12 +104362,12 @@
     },
     "Galazeth Prismari": {
       "edhrec_rank": 5720,
-      "gate": "template",
+      "gate": null,
       "name": "Galazeth Prismari",
-      "reason": "no template for: When enters, create a Treasure token",
+      "reason": "",
       "scryfall_id": "abdd3b41-6bdd-4b35-998c-0358ba72ca12",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gale Force": {
@@ -121522,12 +121522,12 @@
     },
     "Hall of Oracles": {
       "edhrec_rank": 5584,
-      "gate": "template",
+      "gate": null,
       "name": "Hall of Oracles",
-      "reason": "no template for: {T}: Put a +1/+1 counter on target creature. Activate only as a sorcery and only if you've",
+      "reason": "",
       "scryfall_id": "c29b896e-eee0-4f40-89b8-89262dae44e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hall of Storm Giants": {
@@ -137652,12 +137652,12 @@
     },
     "Inspired Skypainter // Maestro's Gift": {
       "edhrec_rank": 12675,
-      "gate": "template",
+      "gate": null,
       "name": "Inspired Skypainter // Maestro's Gift",
-      "reason": "no template for: When this creature enters and whenever one or more creature tokens you control deal combat",
+      "reason": "",
       "scryfall_id": "29d2186c-c5fb-4439-95c6-ffe46b6dded9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspired Sphinx": {
@@ -156382,12 +156382,12 @@
     },
     "Leitmotif Composer": {
       "edhrec_rank": 14398,
-      "gate": "template",
+      "gate": null,
       "name": "Leitmotif Composer",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, draw a card",
+      "reason": "",
       "scryfall_id": "04c9c969-4f63-4c16-a1e9-c9a9e05488b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lembas": {

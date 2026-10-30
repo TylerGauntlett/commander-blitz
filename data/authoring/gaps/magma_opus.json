@@ -1,0 +1,20 @@
+{
+  "card_id": "magma_opus",
+  "name": "Magma Opus",
+  "oracle_text": "Magma Opus deals 4 damage divided as you choose among any number of targets. Tap two target permanents. Create a 4/4 blue and red Elemental creature token. Draw two cards.\n{U/R}{U/R}, Discard this card: Create a Treasure token.",
+  "blocked_sentences": [
+    "Create a 4/4 blue and red Elemental creature token."
+  ],
+  "needs": [
+    {
+      "capability": "elemental_4_4_ur_token",
+      "kind": "token",
+      "what": "a 4/4 blue and red Elemental creature token (suggested id elemental_4_4_ur)",
+      "why_existing_wont_do": "token_ids has only elemental_2_2_g (a 2/2 green Elemental); substituting it changes power, toughness and colors. The rest of the card looks expressible once the token exists: a damage op with amount 4 and divided over an any-target spec (count 4, up_to) as the engine's division.py supports, a tap op on a second target spec of two permanents, create_token with the new id, draw 2 for you; and the second line as an activated ability with active_zones [\"hand\"], cost {mana: \"{U/R}{U/R}\", discard_self: true}, effect create_token treasure_token."
+    }
+  ],
+  "closest_existing": [
+    "elemental_2_2_g"
+  ],
+  "confidence": "high"
+}
