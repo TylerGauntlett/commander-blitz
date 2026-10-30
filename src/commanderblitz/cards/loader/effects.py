@@ -3155,6 +3155,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: cant_cast_spells is total -- a zone-filtered lock is "
                 f"cant_cast_spells_from_zones"
             )
+    if op == "play_exiled" and "exiles" in effect and not isinstance(effect["exiles"], bool):
+        # `cast_card`'s rider and its refusal: a string "false" read as truthy
+        # would exile a spell the card sends back to the graveyard.
+        raise DslError(f"{where}: play_exiled's 'exiles' is true or false")
     if op == "cast_card":
         # "You may cast that card": the pool is the whole of what may be cast,
         # and without one the op offers nothing while still printing its

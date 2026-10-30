@@ -125,6 +125,29 @@ def _compile_targets(
                 f"{where}.target[{spec.id}]: 'count': {{\"x\": true}} needs an "
                 f"{{X}} in the card's mana cost -- there is no X to size it by"
             )
+    for spec in specs:
+        if not spec.selector.get("random"):
+            continue
+        # "Target … chosen at random" (Power Pack): `stack._random_trigger_targets`
+        # draws it as a triggered ability goes on the stack. Nothing else reads
+        # the clause -- a spell's or an activated ability's targets are chosen
+        # in legality, which offers every tuple -- so anywhere else it would
+        # load and be a free choice.
+        if not on_trigger:
+            raise DslError(
+                f"{where}.target[{spec.id}]: 'random' is a triggered ability's "
+                f"target -- nothing else draws one at random"
+            )
+        if len(specs) != 1 or spec.mode is not None:
+            raise DslError(
+                f"{where}.target[{spec.id}]: a random target must be the ability's "
+                f"only target, owned by no mode"
+            )
+        if not isinstance(spec.count, int) or spec.count < 1 or spec.optional or spec.up_to:
+            raise DslError(
+                f"{where}.target[{spec.id}]: a random target takes a fixed 'count' "
+                f"-- 'optional', 'up_to' and 'any' are choices nobody makes"
+            )
     _check_mode_targets(
         specs, where, on_spell=on_spell, on_trigger=on_trigger, mode_count=mode_count
     )

@@ -2079,8 +2079,15 @@ def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
     never "cast this way". A card with no legal target is not cast at all, which
     is why the binding is built from `cast_for_free`'s answer rather than from
     the chosen list.
+
+    ``exiles: true`` is "If that spell would be put into your graveyard, exile
+    it instead" (Power Pack) -- `cast_card`'s rider, on the free cast: the
+    replacement rides on the stack item (`StackItem.exiles_instead`), so it
+    holds however the spell leaves the stack for a graveyard (resolving,
+    fizzling, being countered).
     """
 
+    exiles = bool(spec.get("exiles", False))
     selector = dict(spec.get("objects") or {})
     selector.setdefault("zone", "exile")
     selector.setdefault("controller", "any")
@@ -2095,7 +2102,7 @@ def op_play_exiled(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, selector, "Play the exiled card", "play_exiled")
     cast: list[int] = []
     for oid in oids:
-        if cast_for_free(ctx.state, ctx.controller, oid):
+        if cast_for_free(ctx.state, ctx.controller, oid, exiles_instead=exiles):
             cast.append(oid)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = cast

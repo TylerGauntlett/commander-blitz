@@ -9804,6 +9804,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "power_pack": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "prairie_stream": {
     "zone": "battlefield"
   },

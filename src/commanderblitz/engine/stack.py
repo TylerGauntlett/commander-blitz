@@ -600,6 +600,35 @@ def _choose_each_target(
     return tuple(chosen)
 
 
+def _random_trigger_targets(
+    state: GameState, trig: TriggerInstance, spec: TargetSpec
+) -> tuple[TargetRef, ...]:
+    """"…target instant or sorcery card from your graveyard **chosen at
+    random**" -- Power Pack.
+
+    Still a target (115.1): chosen as the ability goes on the stack (603.3d),
+    re-checked on resolution, and an ability with no legal one is never put on
+    the stack. Only *who* chooses changes -- nobody does; the game's seeded
+    rng picks uniformly among the legal candidates, so a replay draws the same
+    card. The loader allows it only as a triggered ability's one fixed-size
+    spec, so there is no other spec to combine with and no size to ask.
+    """
+    count = spec.count if isinstance(spec.count, int) else 1
+    single = replace(spec, count=1, optional=False, up_to=False)
+    candidates = [
+        combo[0]
+        for combo in enumerate_target_tuples(
+            state, trig.controller, [single], trig.source_oid, bindings=trig.bindings,
+            limit=10_000,
+        )
+        if combo
+    ]
+    if len(candidates) < count:
+        # Exactly N with fewer than N legal: the ability has no legal tuple.
+        return ()
+    return tuple(state.rng.shuffled(candidates)[:count])
+
+
 def _choose_trigger_targets(
     state: GameState, trig: TriggerInstance, specs: Sequence[TargetSpec]
 ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
@@ -616,6 +645,9 @@ def _choose_trigger_targets(
     "when this dies, it deals damage to *its controller*" has one legal tuple
     and asking would be a decision with a single button.
     """
+
+    if any(spec.selector.get("random") for spec in specs):
+        return _random_trigger_targets(state, trig, specs[0])
 
     picked = yield from _choose_each_target(state, trig, specs)
     if picked is not None:

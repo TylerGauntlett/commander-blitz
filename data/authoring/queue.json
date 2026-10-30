@@ -205612,12 +205612,12 @@
     },
     "Power Pack": {
       "edhrec_rank": 19958,
-      "gate": "template",
+      "gate": null,
       "name": "Power Pack",
-      "reason": "no template for: Whenever deals combat damage to a player, exile target instant or sorcery card from your g",
+      "reason": "",
       "scryfall_id": "04f8aa71-f27b-48b3-9146-b9e785555428",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Power Plant Worker": {

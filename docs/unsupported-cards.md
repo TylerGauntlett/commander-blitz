@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**89 cards** blocked by **71** capabilities.
+**88 cards** blocked by **70** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -44,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [free-cast-exiles-instead](#free-cast-exiles-instead) | 1 | 19958 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [graveyard-cast-additional-discard](#graveyard-cast-additional-discard) | 1 | 25385 | cost |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
@@ -667,21 +666,6 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
-
-</details>
-
-## free-cast-exiles-instead
-
-Blocks **1** card.
-
-- **(op)** an `exiles: true` option on the free-cast ops (`play_exiled`, or `exile`'s `playable_free`) so a card cast without paying its mana cost from exile carries the stack-item replacement "if that spell would be put into your graveyard, exile it instead" (StackItem.exiles_instead), usable inside a `delay` with step upkeep and your_turn over the binding captured by the earlier `exile ... as`
-  <br>Why the existing vocabulary won't do: `cast_card` has `exiles` but always pays the card's mana cost (_cast_paying_mana_cost), so it cannot say "without paying its mana cost"; `play_exiled` and `suspend.cast_for_free` cast for free but take no `exiles` flag, so the spell would go to the graveyard after resolving; `exile`'s `playable_free` has no `your next upkeep` duration and no exile-instead rider either
-
-<details><summary>Cards waiting on this</summary>
-
-- **Power Pack** (rank 19958) — `power_pack`
-  - At the beginning of your next upkeep, you may cast that card without paying its mana cost.
-  - If that spell would be put into your graveyard, exile it instead.
 
 </details>
 

@@ -61,7 +61,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `look_at_hand` | Cards |  | Look at a player's hand (private: only you see it). | [Effect ops](card-dsl.md#effect-ops) |
 | `look_at_top` | Cards | yes | Look at the top N cards; take some, send the rest somewhere. | [Effect ops](card-dsl.md#effect-ops) |
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
-| `play_exiled` | Cards | yes | Play or cast a card from exile this turn (impulse draw). | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
+| `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |
@@ -258,7 +258,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `phased_out_with` | Phased out by the named source. | ["…phases out until this enchantment leaves the battlefield"](card-dsl-cookbook.md#phases-out-until-this-enchantment-leaves-the-battlefield) |
 | `player` | Whose zone to walk (for hand, library, graveyard, exile). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
-| `random` | Pick at random rather than by choice. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `random` | Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
 | `self_only` | This permanent only. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `shares_a_color_with` | Shares a color with the named object. | [Describing objects relative to another object](card-dsl.md#describing-objects-relative-to-another-object) |
 | `shares_a_creature_type_with` | Shares a creature type with the named object. | ["…that shares a creature type with this creature"](card-dsl-cookbook.md#that-shares-a-creature-type-with-this-creature) |

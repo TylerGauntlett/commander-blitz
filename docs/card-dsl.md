@@ -1149,6 +1149,25 @@ An unaffordable price is never offered: 118.4 forbids paying life you do not hav
 so `can_pay` is asked first rather than showing a question whose "yes" cannot be
 honoured.
 
+### "Target … chosen at random"
+
+```jsonc
+// Power Pack: "exile target instant or sorcery card from your graveyard
+// chosen at random"
+{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+  "selector": { "owner": "you", "any_types": ["Instant", "Sorcery"], "random": true } }
+```
+
+Still a target: chosen as the triggered ability goes on the stack (603.3d),
+re-checked on resolution, and an ability with no legal candidate is not put on
+the stack. Only the chooser changes — the seeded `state.rng` picks uniformly
+among the legal candidates (`stack._random_trigger_targets`). The loader
+allows `random` only on a **triggered** ability's one target spec, with a
+fixed `count` and no `mode`, `optional` or `up_to`: a spell's and an activated
+ability's targets are chosen in legality, where nothing would read the clause.
+The near miss is an untargeted `exile` with `random` in its `objects`, which
+never fizzles and goes on the stack with nothing to exile.
+
 ### "Each of X targets"
 
 ```jsonc

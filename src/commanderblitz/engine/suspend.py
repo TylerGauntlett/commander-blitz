@@ -221,7 +221,9 @@ def rebound_tick(state: GameState, pid: int) -> None:
         cast_for_free(state, pid, oid)
 
 
-def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) -> bool:
+def cast_for_free(
+    state: GameState, pid: int, oid: int, *, haste: bool = False, exiles_instead: bool = False
+) -> bool:
     """Put a suspended card on the stack having paid nothing for it.
 
     Still a cast: it uses the stack, it can be countered, and its targets are
@@ -232,6 +234,10 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
     ignores it; `ops_cards.op_play_exiled` needs it, because "each player who
     owns a spell **you cast this way**" (Kefka) has to name the cards that were
     really cast and not the ones that were merely offered.
+
+    ``exiles_instead`` is "if that spell would be put into your graveyard,
+    exile it instead" (Power Pack), the replacement `StackItem.exiles_instead`
+    carries for `cast_card`'s ``exiles`` too.
     """
 
     obj = state.objects.get(oid)
@@ -281,7 +287,9 @@ def cast_for_free(state: GameState, pid: int, oid: int, *, haste: bool = False) 
     # card -- so the flag is opt-in rather than a property of casting free.
     obj.hasted_by_suspend = haste and card.is_creature
 
-    item = stack.push_spell(state, oid, pid, options[0] + mode_refs, modes=modes)
+    item = stack.push_spell(
+        state, oid, pid, options[0] + mode_refs, modes=modes, exiles_instead=exiles_instead
+    )
     triggers.fire(
         state,
         EventType.SPELL_CAST,

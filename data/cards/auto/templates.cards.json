@@ -113017,6 +113017,98 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "exiles": true,
+                      "objects": {
+                        "binding": "exiled"
+                      },
+                      "op": "play_exiled"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Cast that card without paying its mana cost?"
+                }
+              ],
+              "op": "delay",
+              "step": "upkeep",
+              "your_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "owner": "you",
+                "random": true,
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever Power Pack deals combat damage to a player, exile target instant or sorcery card from your graveyard chosen at random. At the beginning of your next upkeep, you may cast that card without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "power_pack",
+      "keywords": [
+        "flying",
+        "vigilance",
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{1}{R}{G}{W}{U}",
+      "name": "Power Pack",
+      "oracle_text": "Flying, vigilance, trample, haste\nWhenever Power Pack deals combat damage to a player, exile target instant or sorcery card from your graveyard chosen at random. At the beginning of your next upkeep, you may cast that card without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
