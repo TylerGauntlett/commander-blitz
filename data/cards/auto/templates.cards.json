@@ -73140,6 +73140,139 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "wall_0_3_c_defender_reach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, create a 0/3 colorless Wall creature token with defender and reach.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "spells_cast_this_turn": {
+                  "filter": {
+                    "not_types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "you"
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "ability": "invisible_woman_vanish",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{R}{G}{W}{U}"
+              },
+              "player": "you",
+              "prompt": "Pay {R}{G}{W}{U} to pump and make target creature unblockable?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack, you may pay {R}{G}{W}{U}.",
+          "trigger": {
+            "controller": "you",
+            "event": "you_attack"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "id": "invisible_woman_vanish",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you do, target creature gets +1/+0 until end of turn for each creature you control and can't be blocked this turn."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "invisible_woman",
+      "mana_cost": "{2}{W}",
+      "name": "Invisible Woman",
+      "oracle_text": "At the beginning of combat on your turn, if you've cast a noncreature spell this turn, create a 0/3 colorless Wall creature token with defender and reach.\nWhenever you attack, you may pay {R}{G}{W}{U}. When you do, target creature gets +1/+0 until end of turn for each creature you control and can't be blocked this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Hero"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -151235,6 +151368,105 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "animate",
+                  "power": {
+                    "const": 4
+                  },
+                  "toughness": {
+                    "const": 4
+                  },
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Have The Fantasticar become an artifact creature until end of turn?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, you may have The Fantasticar become an artifact creature until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 4
+                  },
+                  "op": "create_token",
+                  "token": "construct_4_4_c_artifact_flying_haste"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "self_only": true,
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice The Fantasticar to create four 4/4 Constructs?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast your fourth noncreature spell each turn, you may sacrifice The Fantasticar. If you do, create four 4/4 colorless Construct artifact creature tokens with flying and haste.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            },
+            "nth": 4
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "the_fantasticar",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}",
+      "name": "The Fantasticar",
+      "oracle_text": "Flying\nWhenever you cast a noncreature spell, you may have The Fantasticar become an artifact creature until end of turn.\nWhenever you cast your fourth noncreature spell each turn, you may sacrifice The Fantasticar. If you do, create four 4/4 colorless Construct artifact creature tokens with flying and haste.",
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**87 cards** blocked by **69** capabilities.
+**101 cards** blocked by **82** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -20,6 +20,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [escalate-non-mana](#escalate-non-mana) | 2 | 3199 | cost |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
@@ -28,10 +29,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attack-requirement-defender](#attack-requirement-defender) | 1 | 13864 | static_effect |
+| [attacking-bound-player](#attacking-bound-player) | 1 | 20128 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
+| [cant-attack-player-next-turn](#cant-attack-player-next-turn) | 1 | 15818 | op |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [coin-flip](#coin-flip) | 1 | 25056 | op |
+| [colors-among](#colors-among) | 1 | 18464 | value |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
@@ -39,14 +45,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
-| [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [escape](#escape) | 1 | 388 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [free-cast-exiles-instead](#free-cast-exiles-instead) | 1 | 19958 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
+| [legend-rule-exemption](#legend-rule-exemption) | 1 | 15154 | static_effect |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -59,6 +66,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
+| [must-attack-player](#must-attack-player) | 1 | 18029 | op |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
@@ -67,6 +75,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
+| [rebound](#rebound) | 1 | 5377 | engine |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -74,14 +83,18 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [static-greatest-mana-value](#static-greatest-mana-value) | 1 | 25385 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
+| [target-triggered-ability](#target-triggered-ability) | 1 | 15919 | selector |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
+| [tucks-itself-bottom](#tucks-itself-bottom) | 1 | 23471 | engine |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [vow-counter](#vow-counter) | 1 | 955 | op |
 | [x-maximum](#x-maximum) | 1 | 17407 | engine |
 
 ## combat-only-permanent-shield
@@ -303,6 +316,25 @@ Blocks **2** cards.
 
 </details>
 
+## escalate-non-mana
+
+Blocks **2** cards.
+
+- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"discard": 1}), charged once per mode chosen beyond the first, with the same mode-count tie that mana escalate has (casting._additional_ceiling and Game._cast's `exactly`); the discarded card must not be the spell itself (601.2a)
+  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse and desugars it to CostModel(mana=...), and rejects a free (mana value 0) escalate, so "Discard a card" cannot be written there. Hand-desugaring to additional_cost {discard: 1} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of discards to the number of modes, so a plain `or_more` choose_mode would take every mode for one or zero discards. `spree` prices each mode individually including the first.
+- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"tap_permanents": {"types": ["Creature"]}} -- tap an untapped creature you control), charged once per mode chosen beyond the first with a distinct creature each time, tied to the mode count the way mana escalate is (casting._additional_ceiling and Game._cast's `exactly`)
+  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse, desugars it to CostModel(mana=...), and refuses a free (mana value 0) escalate, so "Tap an untapped creature you control" cannot be written there. Hand-desugaring to additional_cost {tap_permanents: ...} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of taps to the number of modes, so a plain `or_more` choose_mode would take every mode for zero taps. `spree` prices every mode, the first included.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Collective Effort** (rank 3199) — `collective_effort`
+  - Escalate—Tap an untapped creature you control. (Pay this cost for each mode chosen beyond the first.)
+- **Collective Brutality** (rank 11817) — `collective_brutality`
+  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
+  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
 ## opening-hand-ability
 
 Blocks **2** cards.
@@ -434,6 +466,34 @@ Blocks **1** card.
 
 </details>
 
+## attack-requirement-defender
+
+Blocks **1** card.
+
+- **(static_effect)** an attacks-each-combat-if-able static that also names WHICH defender the attack must go at, here 'an opponent with the most life among your opponents' (a seat filter evaluated live at declare-attackers, ties letting the controller pick among the tied opponents), so the requirement is only satisfied by attacking one of those seats; it must keep the existing static `condition` (not exists a creature you control named Silver Surfer, Galactus's Herald) that switches the whole requirement off
+  <br>Why the existing vocabulary won't do: The `attacks_if_able` static (player_statics.attack_compelled) compels an attack but names no defender, so Galactus could satisfy it by attacking any opponent or a planeswalker; `combat.attack_target_forbidden` only knows defender requirements from goad (away from the goader) and `must_attack_planeswalker` (one planeswalker, one turn), and `must_attack`/`goad` ops are one-shot or player-relative. Nothing restricts a static attack requirement to the opponent(s) with the most life (max_life_of exists only as a value, not as a defender selector).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Galactus, Devourer of Worlds** (rank 13864) — `galactus_devourer_of_worlds`
+  - Insatiable Hunger — Galactus attacks an opponent with the most life among your opponents each combat if able unless you control a creature named Silver Surfer, Galactus's Herald.
+
+</details>
+
+## attacking-bound-player
+
+Blocks **1** card.
+
+- **(selector)** a selector key naming the creatures attacking one specific player held in a binding (the `defender` of Namor's own `attacks` event), so "other creatures you control attacking that player" picks only the creatures sent at the player Namor attacked
+  <br>Why the existing vocabulary won't do: `attacking_player` takes only the words you/opponent/any/most_life (selectors.ATTACKING_PLAYER_WORDS); `opponent` would also pump creatures attacking a different opponent in a pod, and `attacking` has no notion of whom. The trigger half is expressible: event attacks, source self, recheck false, condition {exists {self_only, attacking_player: opponent}} (a player, not a planeswalker) and life_of {binding: defender} > life_of you. The Merfolk token line is expressible since merfolk_1_1_u was added.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Namor, Atlantean King** (rank 20128) — `namor_atlantean_king`
+  - Whenever Namor attacks a player who has more life than you, other creatures you control attacking that player get +2/+0 until end of turn.
+
+</details>
+
 ## basic-land-type-mana
 
 Blocks **1** card.
@@ -460,6 +520,20 @@ Blocks **1** card.
 - **Goblin Snowman** (rank 21010) — `goblin_snowman`
   - Whenever this creature blocks, prevent all combat damage that would be dealt to and dealt by it this turn.
   - {T}: This creature deals 1 damage to target creature it's blocking.
+
+</details>
+
+## cant-attack-player-next-turn
+
+Blocks **1** card.
+
+- **(op)** a `cant_attack_player` duration meaning "during the ATTACKER's next turn" -- the prohibition is pending from resolution, switches on when that player's next turn begins and ends at that turn's cleanup, closing the defender's seat and every permanent the defender controls (planeswalkers and battles, i.e. `planeswalkers: true` widened to all attackable permanents)
+  <br>Why the existing vocabulary won't do: `cant_attack_player` takes only `ATTACK_RESTRICTION_DURATIONS` = (`this_turn`, `this_combat`), and the trigger resolves on Willie's controller's turn, so either clock has expired before the damaged opponent ever declares attackers. Wrapping it in `delay` does not fix the clock: `delay` fires at the next occurrence of a step (or the controller's own with `your_turn`), not at a named other player's next turn, so in multiplayer it would lock the wrong turn. `must_attack_planeswalker` has the right 'that player's next turn' pending mark but is a requirement, not a prohibition. The rest of the line (unblockable static, draw, `may` draw by `event_player` with an `if` on it) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Willie Lumpkin, Postman** (rank 15818) — `willie_lumpkin_postman`
+  - Whenever Willie Lumpkin deals combat damage to an opponent, you draw a card and that player may draw a card. If they do, that player can't attack you or permanents you control during their next turn.
 
 </details>
 
@@ -490,6 +564,34 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## coin-flip
+
+Blocks **1** card.
+
+- **(op)** an op that flips a coin for a player (705) and runs `effects` if they win and `else` if they lose, or binds the result so a following `if` can read whether the flip was won; it should route through the engine Rng like shuffles do
+  <br>Why the existing vocabulary won't do: No op in `ops` flips a coin: `roll_dice` with `sides: 2` binds a number but a d2 roll is not a coin flip (it would fire die-roll triggers and is not affected by coin-flip effects like Krark's Thumb), `clash` compares mana values, and `choose_mode` with `random` picks a mode rather than resolving a won/lost flip. The rest of the line is expressible (an upkeep trigger with a `cmp` condition over a `count` of `exiled_with: self` creature cards, `sacrifice` self, and `return_to_hand` of a `random` exiled_with card)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Negative Zone Portal** (rank 25056) — `negative_zone_portal`
+  - At the beginning of your upkeep, if there are four or more creature cards exiled with this artifact, flip a coin. If you lose the flip, sacrifice this artifact and return a card exiled with it at random to its owner's hand.
+
+</details>
+
+## colors-among
+
+Blocks **1** card.
+
+- **(value)** a value counting the distinct colors (0-5, colorless never counting) across the union of permanents you control (derived colors) and the spells you've cast this turn (read from the per-turn cast ledger, this spell included), e.g. {"distinct": {"of": "color", "objects": {"zone": "battlefield", "controller": "you"}, "spells_cast_this_turn": "you"}}, usable as the amount of draw and gain_life
+  <br>Why the existing vocabulary won't do: `distinct` accepts only of: power, basic_land_type or card_type (DISTINCT_OF in engine/effects/values.py), so it cannot count colors; and its pool is an objects selector over current objects, while `spells_cast_this_turn` returns only a count of spells (optionally filtered), never their colors, so the colors of spells already resolved this turn cannot be read and unioned with the board's colors. A sum of five per-color `if exists` checks could cover the board half but still has no way to ask the colors of spells cast this turn, which have mostly left the stack.
+
+<details><summary>Cards waiting on this</summary>
+
+- **First Family** (rank 18464) — `first_family`
+  - You draw X cards and gain X life, where X is the number of colors among permanents you control and spells you've cast this turn.
 
 </details>
 
@@ -593,21 +695,6 @@ Blocks **1** card.
 
 </details>
 
-## escalate-non-mana
-
-Blocks **1** card.
-
-- **(cost)** card-level `escalate` accepting a non-mana cost (here a full Cost spec such as {"discard": 1}), charged once per mode chosen beyond the first, with the same mode-count tie that mana escalate has (casting._additional_ceiling and Game._cast's `exactly`); the discarded card must not be the spell itself (601.2a)
-  <br>Why the existing vocabulary won't do: The loader parses `escalate` with ManaCost.parse and desugars it to CostModel(mana=...), and rejects a free (mana value 0) escalate, so "Discard a card" cannot be written there. Hand-desugaring to additional_cost {discard: 1} + additional_optional + additional_repeatable is multikicker's shape: the loader refuses escalate beside another additional cost, and without the `escalate` flag nothing ties the number of discards to the number of modes, so a plain `or_more` choose_mode would take every mode for one or zero discards. `spree` prices each mode individually including the first.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Collective Brutality** (rank 11817) — `collective_brutality`
-  - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
-  - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
-
-</details>
-
 ## escape
 
 Blocks **1** card.
@@ -668,6 +755,21 @@ Blocks **1** card.
 
 </details>
 
+## free-cast-exiles-instead
+
+Blocks **1** card.
+
+- **(op)** an `exiles: true` option on the free-cast ops (`play_exiled`, or `exile`'s `playable_free`) so a card cast without paying its mana cost from exile carries the stack-item replacement "if that spell would be put into your graveyard, exile it instead" (StackItem.exiles_instead), usable inside a `delay` with step upkeep and your_turn over the binding captured by the earlier `exile ... as`
+  <br>Why the existing vocabulary won't do: `cast_card` has `exiles` but always pays the card's mana cost (_cast_paying_mana_cost), so it cannot say "without paying its mana cost"; `play_exiled` and `suspend.cast_for_free` cast for free but take no `exiles` flag, so the spell would go to the graveyard after resolving; `exile`'s `playable_free` has no `your next upkeep` duration and no exile-instead rider either
+
+<details><summary>Cards waiting on this</summary>
+
+- **Power Pack** (rank 19958) — `power_pack`
+  - At the beginning of your next upkeep, you may cast that card without paying its mana cost.
+  - If that spell would be put into your graveyard, exile it instead.
+
+</details>
+
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -707,6 +809,20 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
+
+</details>
+
+## legend-rule-exemption
+
+Blocks **1** card.
+
+- **(static_effect)** a static effect (with an `affects` filter, here controller you + types Creature) that exempts matching permanents from the legend rule state-based action (704.5j), so several legendary creatures with the same name may coexist under one controller (Mirror Box, Mirror Gallery, Sakashima of a Thousand Faces)
+  <br>Why the existing vocabulary won't do: No entry in static_effects touches the legend rule; sba._legend_rule unconditionally keeps only the newest legendary per (controller, name). Without it the card's own token copy (which is legendary) immediately kills one of the two, so the second line would be useless as printed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Council of Reeds** (rank 15154) — `council_of_reeds`
+  - The "legend rule" doesn't apply to creatures you control.
 
 </details>
 
@@ -883,6 +999,20 @@ Blocks **1** card.
 
 </details>
 
+## must-attack-player
+
+Blocks **1** card.
+
+- **(op)** an attack requirement on a target creature that names a specific player it must attack (the player the trigger's combat damage was dealt to), enforced each combat until the end of the effect controller's next turn
+  <br>Why the existing vocabulary won't do: must_attack takes only objects and a duration of this_turn or next_combat, names no defender and cannot last 'until the end of your next turn' across every combat; goad forces attacks on a player OTHER than the goader and expires at the goader's next turn rather than its end; must_attack_planeswalker targets a planeswalker; the attacks_if_able static is a permanent self-filter with no defender or duration
+
+<details><summary>Cards waiting on this</summary>
+
+- **Silver Surfer, Galactus's Herald** (rank 18029) — `silver_surfer_galactus_s_herald`
+  - Whenever Silver Surfer deals combat damage to a player, until the end of your next turn, target creature attacks that player each combat if able.
+
+</details>
+
 ## noted-mana-type
 
 Blocks **1** card.
@@ -1002,6 +1132,20 @@ Blocks **1** card.
 
 </details>
 
+## rebound
+
+Blocks **1** card.
+
+- **(engine)** the residual gate (verify._covered) claiming a printed "Rebound (...)" line when the card declares the card-level `rebound: true` rider, so an instant or sorcery whose only text is keyword lines (cascade + rebound, no spell_effects) can be authored
+  <br>Why the existing vocabulary won't do: The engine and loader already support `rebound: true` (Fantastic Elasticity ships with it), and cascade is the `cascade` op on a stack spell_cast trigger. But Fantastic Elasticity's Rebound line is only claimed because a sorcery with any spell_effects has all its lines consumed; with no spell_effects, `_covered` has claimants for kicker, uncounterable, evoke etc. but none for rebound, so verify fails at residual with 'printed text not represented: Rebound'. Padding spell_effects with a `noop` would pass only by gaming the gate, so it was not done. Once the claimant exists the answer is: rebound: true, a triggered ability {active_zones: [stack], trigger: {event: spell_cast, source: self, controller: you}, effects: [{op: cascade}]} carrying the Cascade line, expectation {zone: exile}.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Into the Time Vortex** (rank 5377) — `into_the_time_vortex`
+  - Rebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)
+
+</details>
+
 ## remove-subtype
 
 Blocks **1** card.
@@ -1103,6 +1247,20 @@ Blocks **1** card.
 
 </details>
 
+## static-greatest-mana-value
+
+Blocks **1** card.
+
+- **(value)** a static value (usable as a set_pt / buff magnitude, i.e. a characteristic-defining power) that evaluates to the greatest mana value among objects matching a selector spanning zones -- here the union of noncreature permanents you control on the battlefield and noncreature cards in your graveyard -- and 0 when nothing matches
+  <br>Why the existing vocabulary won't do: `extreme_value` (with `of: mana_value`, `pick: greatest`) does exactly this but is only in `value_keys` for effects, not in `static_value_keys`; the static magnitudes offer `count`, `max_count_of`, `greatest_commander_mana_value` (commanders only) and `sum`, none of which aggregate mana value over arbitrary objects. A one-shot `pump`/`set_pt` op would not track the board continuously as a CDA must.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Dragon Man, Reformed Robot** (rank 25385) — `dragon_man_reformed_robot`
+  - Dragon Man's power is equal to the greatest mana value among noncreature permanents you control and noncreature cards in your graveyard.
+
+</details>
+
 ## target-ability-on-stack
 
 Blocks **1** card.
@@ -1142,6 +1300,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## target-triggered-ability
+
+Blocks **1** card.
+
+- **(selector)** a way for an `ability_on_stack` target spec to match only TRIGGERED abilities ("target triggered ability you control", Strionic Resonator, Mister Fantastic): a field on StackItem recording whether the ability on the stack is triggered or activated, and a selector clause (e.g. `ability_kind: "triggered"`) honoured by `_ability_matches` in both `candidates` and `still_legal`
+  <br>Why the existing vocabulary won't do: `copy_ability` with `new_targets` covers the copy and the retargeting (twice is just two `copy_ability` effects on the same target), and the `ability_on_stack` target kind exists -- but `engine/targeting.py` `_ability_matches` honours only `controller` and its docstring explicitly refuses "triggered ability" alone: `StackItem.kind` is "ability" for both activated and triggered abilities and nothing records which, so the closest spec (Peter Parker's Camera's) would also let this copy an activated ability, a strictly wider card.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mister Fantastic** (rank 15919) — `mister_fantastic`
+  - {R}{G}{W}{U}, {T}: Copy target triggered ability you control twice. You may choose new targets for the copies.
 
 </details>
 
@@ -1187,6 +1359,20 @@ Blocks **1** card.
 
 </details>
 
+## tucks-itself-bottom
+
+Blocks **1** card.
+
+- **(engine)** a card-level rider (or a bottom form of tucks_itself) that, as the instant or sorcery resolves, puts the spell on the BOTTOM of its owner's library instead of into its graveyard
+  <br>Why the existing vocabulary won't do: tucks_itself is an ordinal counted from the top (Approach of the Second Sun's 'seventh from the top'), and _place_after_resolution converts it to an insert index from the top, so no value says 'bottom' of a library whose size varies; put_on_top has bottom: true but it moves objects during resolution, while the spell is still on the stack and is then unconditionally placed by _place_after_resolution, so pointing it at the spell itself is not a supported or gated path
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ultimate Nullification** (rank 23471) — `ultimate_nullification`
+  - Put Ultimate Nullification on the bottom of its owner's library.
+
+</details>
+
 ## unattach-cost
 
 Blocks **1** card.
@@ -1212,6 +1398,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## vow-counter
+
+Blocks **1** card.
+
+- **(op)** a per-creature attack prohibition installed by a resolving spell: the chosen creatures (a binding) can't attack the spell's controller or planeswalkers that player controls, lasting for as long as each creature has a vow counter on it (checked when attackers are declared, ending when the counter is removed or the creature leaves)
+  <br>Why the existing vocabulary won't do: The cant_attack_player op names players on both sides (attacker/defender), not specific creatures, and its duration is only this_turn or this_combat, never 'while it has a <kind> counter'. The cant_attack_you static is scoped to the seat of the permanent carrying it, so granting it to each opponent's creature via grant_ability would make 'you' mean that creature's own controller, not the caster. The cant_attack static has no defender in its question at all.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Promise of Loyalty** (rank 955) — `promise_of_loyalty`
+  - Each of those creatures can't attack you or planeswalkers you control for as long as it has a vow counter on it.
 
 </details>
 

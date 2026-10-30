@@ -6483,6 +6483,10 @@
     },
     "zone": "exile"
   },
+  "invisible_woman": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "invoke_the_divine": {
     "life": {
       "0": 44
@@ -13157,6 +13161,10 @@
     "zone": "battlefield"
   },
   "the_fabulous_frog_man": {
+    "zone": "battlefield"
+  },
+  "the_fantasticar": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_frightful_four": {

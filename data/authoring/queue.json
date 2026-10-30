@@ -139292,12 +139292,12 @@
     },
     "Invisible Woman": {
       "edhrec_rank": 17278,
-      "gate": "template",
+      "gate": null,
       "name": "Invisible Woman",
-      "reason": "no template for: At the beginning of combat on your turn, if you've cast a noncreature spell this turn, cre",
+      "reason": "",
       "scryfall_id": "640ebf2f-5687-42d4-97e5-85e2fefa89a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Invisible Woman, Sue Storm": {
@@ -280732,12 +280732,12 @@
     },
     "The Fantasticar": {
       "edhrec_rank": 19743,
-      "gate": "template",
+      "gate": null,
       "name": "The Fantasticar",
-      "reason": "no template for: Whenever you cast a noncreature spell, you may have become an artifact creature until end ",
+      "reason": "",
       "scryfall_id": "b7d36772-c2eb-4824-94db-b9ee47fa098d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Fifteenth Doctor": {

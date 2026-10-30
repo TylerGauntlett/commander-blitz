@@ -528,6 +528,27 @@
       ]
     },
     {
+      "id": "construct_4_4_c_artifact_flying_haste",
+      "name": "Construct Token",
+      "oracle_text": "4/4 colorless Construct artifact creature token with flying and haste.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Construct"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "flying",
+        "haste"
+      ]
+    },
+    {
       "id": "detective_2_2_wu",
       "name": "Detective Token",
       "oracle_text": "2/2 white and blue Detective creature token.",
@@ -1777,6 +1798,26 @@
       "is_token": true
     },
     {
+      "id": "merfolk_1_1_u",
+      "name": "Merfolk Token",
+      "oracle_text": "1/1 blue Merfolk creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Merfolk"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true
+    },
+    {
       "id": "lander_token",
       "name": "Lander",
       "oracle_text": "{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.",
@@ -2830,6 +2871,26 @@
         "B"
       ],
       "is_token": true
+    },
+    {
+      "id": "wall_0_3_c_defender_reach",
+      "name": "Wall Token",
+      "oracle_text": "0/3 colorless Wall creature token with defender and reach.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wall"
+      ],
+      "power": 0,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "keywords": [
+        "defender",
+        "reach"
+      ]
     },
     {
       "id": "vibranium_token",
