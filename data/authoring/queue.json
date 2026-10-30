@@ -207482,12 +207482,12 @@
     },
     "Prismari Campus": {
       "edhrec_rank": 5603,
-      "gate": "template",
+      "gate": null,
       "name": "Prismari Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "7c464dee-dd89-4955-ae40-8bb74e9ff42a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prismari Charm": {
@@ -207502,12 +207502,12 @@
     },
     "Prismari Command": {
       "edhrec_rank": 1108,
-      "gate": "template",
+      "gate": null,
       "name": "Prismari Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "372d0c0b-439c-413f-aac4-5174c75aadb0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prismari Pianist": {

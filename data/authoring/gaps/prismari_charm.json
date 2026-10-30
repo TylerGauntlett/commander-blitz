@@ -1,0 +1,18 @@
+{
+  "card_id": "prismari_charm",
+  "name": "Prismari Charm",
+  "oracle_text": "Choose one —\n• Surveil 2, then draw a card.\n• Prismari Charm deals 1 damage to each of one or two targets.\n• Return target nonland permanent to its owner's hand.",
+  "blocked_sentences": [
+    "• Prismari Charm deals 1 damage to each of one or two targets."
+  ],
+  "needs": [
+    {
+      "capability": "modal_variable_target_count",
+      "kind": "engine",
+      "what": "a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: \"any\", count: 2, up_to: true` owned by mode 1 -- so \"deals 1 damage to each of one or two targets\" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets",
+      "why_existing_wont_do": "loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list"
+    }
+  ],
+  "closest_existing": ["choose_mode", "damage", "target.mode", "target.up_to"],
+  "confidence": "high"
+}

@@ -1,0 +1,16 @@
+{
+  "card_id": "muddle_the_ever_changing",
+  "name": "Muddle, the Ever-Changing",
+  "oracle_text": "Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad. (Whenever it attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+  "blocked_sentences": [
+    "Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad"
+  ],
+  "needs": [{
+    "capability": "copy_exception_ability",
+    "kind": "op",
+    "what": "a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen",
+    "why_existing_wont_do": "`become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card"
+  }],
+  "closest_existing": ["become_copy", "grant_ability", "copy_permanent"],
+  "confidence": "high"
+}
