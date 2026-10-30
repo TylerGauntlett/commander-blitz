@@ -24,6 +24,7 @@ from .events import EventType
 from .mana import OTHER_PAYMENT
 from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
+from .structs import CONVOKED_BINDING
 from .temp_effects import end_redirects_to
 from .triggers import delayed_watches_departure, fire
 
@@ -317,6 +318,12 @@ def move_object(
         # battlefield)". It is not, and the object that may come back is a new
         # one (400.7) under the same oid. See `structs.DamageRedirect`.
         end_redirects_to(state, oid)
+        # "Each creature that convoked this spell" (702.51c) is that object,
+        # and the one that may come back under the same oid is not it.
+        for item in state.stack:
+            convoked = item.bindings.get(CONVOKED_BINDING)
+            if convoked and oid in convoked:
+                item.bindings[CONVOKED_BINDING] = [o for o in convoked if o != oid]
 
     obj.zone = to_zone
     if to_zone is not Zone.BATTLEFIELD or from_zone is not Zone.BATTLEFIELD:
@@ -324,6 +331,9 @@ def move_object(
         # 400.7: the object that arrives has chosen no modes this turn, though
         # it keeps its oid. See `TurnLedger.modes_chosen`.
         state.turn_ledger.modes_chosen.pop(oid, None)
+        # The same 400.7 boundary for mayhem's "if you discarded it this
+        # turn": see `TurnLedger.discarded`.
+        state.turn_ledger.discarded.pop(oid, None)
 
     if as_face is not None:
         # After the reset, which clears `transformed`, and before anything reads
@@ -1455,7 +1465,10 @@ def _enter_battlefield(
     read_ahead = obj.read_ahead_chapter
     obj.read_ahead_chapter = None
     _apply_board_enters_tapped(state, obj)
-    for replacement in card.replacements:
+    # A list rather than the tuple itself: a copy applied below appends the
+    # copied face's "enters with" counters to it (614.12).
+    replacements = list(card.replacements)
+    for replacement in replacements:
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
         # rather than by a static, because the answer is only ever asked once
@@ -1483,12 +1496,58 @@ def _enter_battlefield(
             # The rest of this loop goes on reading the **printed** card's
             # replacements, which is what every card in this family wants:
             # Vesuva's "enter tapped" is printed on Vesuva, not on the land it
-            # copies.
+            # copies. The one addition is the copied face's "enters with"
+            # counters, appended below.
             if copy_on_arrival is not None:
+                exception = replacement.get("except_") or {}
                 obj.copying = copy_on_arrival
                 obj.copying_until_eot = replacement.get("duration") == "end_of_turn"
-                added = (replacement.get("except_") or {}).get("add_keywords")
+                added = exception.get("add_keywords")
                 obj.copying_keywords = frozenset(added) if added else None
+                # "…and it isn't legendary" (Spark Double), and "…except his
+                # name is Chameleon, Master of Disguise" -- the two other
+                # copiable values an exception rewrites, read by `card_of`.
+                dropped = exception.get("remove_supertypes")
+                obj.copying_remove_supertypes = frozenset(dropped) if dropped else None
+                obj.copying_name = exception.get("name")
+                state.bump_chars()
+                # 614.12: the copied face's own "enters with" -- above all a
+                # planeswalker's intrinsic starting loyalty (306.5b), which
+                # the loader compiles as one -- applies to a permanent entering
+                # as a copy of it. Appended to the list this loop is walking, so
+                # they join the one placement below (122.6). Only counters: the
+                # printed card's other replacements stay the ones read, as the
+                # note above says.
+                replacements.extend(
+                    r
+                    for r in state.registry.get(copy_on_arrival).replacements
+                    if r.get("event") == "self_enters_with_counters"
+                    or (
+                        r.get("event") == "self_enters"
+                        and (r.get("modify") or {}).get("counters")
+                    )
+                )
+                # "…except it enters with an additional +1/+1 counter on it if
+                # it's a creature, it enters with an additional loyalty counter
+                # on it if it's a planeswalker" (Spark Double). Part of the same
+                # replacement (614.1c), so judged now, against the copy -- the
+                # 0/0 is never seen at its printed size, and a planeswalker copy
+                # enters with its copied loyalty and the extra one in a single
+                # placement.
+                for entry in exception.get("enters_with") or ():
+                    if not evaluate_condition(
+                        state,
+                        entry.get("condition"),
+                        controller=obj.controller,
+                        source=obj.oid,
+                    ):
+                        continue
+                    ctx = EffectContext(
+                        state=state, controller=obj.controller, source_oid=obj.oid
+                    )
+                    entering.setdefault(str(entry["counter"]), []).append(
+                        evaluate_value(ctx, entry.get("amount", 1))
+                    )
             continue
         if event == "self_enters_prepared":
             # "This creature **enters prepared**." A characteristic of the
@@ -1839,6 +1898,59 @@ def link_exiled(state: GameState, oid: int, source_oid: int) -> None:
             source.exiled_cards.remove(oid)
         source.exiled_cards.append(oid)
     state.bump_chars()
+
+
+UNTIL_NEXT_EXILE = "until_next_exile_by_source"
+
+
+def end_permissions_until_next_exile(state: GameState, source_oid: int | None) -> None:
+    """End the permissions ``source_oid`` granted "until you exile another card".
+
+    Superior Foes of Spider-Man: "you may play that card until you exile
+    another card with this creature." Called by every exiling op whose source
+    this is, *once* and before it moves anything, so the cards one resolution
+    exiles together are granted together and only a later exile ends them.
+
+    Each card is checked against `playable_source` as well as the list: a card
+    this source exiled may since have left exile and been exiled again by
+    something else, and that newer permission is not this source's to end.
+    """
+    if source_oid is None:
+        return
+    source = state.objects.get(source_oid)
+    if source is None or not source.playable_grants:
+        return
+    for oid in source.playable_grants:
+        obj = state.objects.get(oid)
+        if (
+            obj is None
+            or obj.playable_duration != UNTIL_NEXT_EXILE
+            or obj.playable_source != source_oid
+        ):
+            continue
+        obj.playable_by = None
+        obj.playable_source = None
+        obj.playable_any_type = False
+        obj.playable_any_color = False
+        obj.playable_free = False
+        obj.playable_alt_cost = None
+    source.playable_grants = []
+
+
+def record_playable_source(state: GameState, oid: int, source_oid: int | None) -> None:
+    """Tie a freshly granted permission to the object that granted it.
+
+    Only the ``"until_next_exile_by_source"`` duration reads the tie, so every
+    grant site calls this after writing `playable_duration` and it does
+    nothing for the others.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or source_oid is None or obj.playable_duration != UNTIL_NEXT_EXILE:
+        return
+    obj.playable_source = source_oid
+    source = state.objects.get(source_oid)
+    if source is not None and oid not in source.playable_grants:
+        source.playable_grants.append(oid)
 
 
 def bounce(state: GameState, oid: int, *, by: int | None = None) -> bool:

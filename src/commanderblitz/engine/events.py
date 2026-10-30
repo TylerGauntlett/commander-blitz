@@ -81,6 +81,18 @@ class EventType:
     #: on the cause, so they would count a conditional tutor that never searched
     #: and miss a search done by a trigger.
     LIBRARY_SEARCHED = "library_searched"
+    #: A permanent connived (701.47) -- "Whenever a creature you control
+    #: connives" (Glorious Purpose, Iron Monger, Ultron). ``data["oid"]`` is
+    #: the permanent that connived, which is the trigger's subject, and
+    #: ``player`` its controller; ``drawn``, ``discarded`` and ``nonland`` say
+    #: how it went.
+    #:
+    #: One event per conniving permanent, fired by `ops_cards.op_connive` once
+    #: its draw, discard and counter are all done. Its own type because the
+    #: near misses fire per card and on unrelated draws and discards: a connive
+    #: that discards nothing (an opponent's ability under a discard shield) is
+    #: still a connive, and connive 2 is one connive, not two.
+    CONNIVED = "connived"
     #: A player got the city's blessing. Once per player per game.
     CITY_S_BLESSING = "city_s_blessing"
     MILL = "mill"

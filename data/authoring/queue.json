@@ -642,12 +642,12 @@
     },
     "Abomination, World Ravager": {
       "edhrec_rank": 16046,
-      "gate": "template",
+      "gate": null,
       "name": "Abomination, World Ravager",
-      "reason": "no template for: Mayhem {4}{R}",
+      "reason": "",
       "scryfall_id": "5093ee4c-6275-47e9-85cf-c2f621d3a1da",
-      "source": "",
-      "status": "pending",
+      "source": "template:mayhem",
+      "status": "done",
       "wanted": false
     },
     "Aboroth": {
@@ -3772,12 +3772,12 @@
     },
     "Age of Ultron": {
       "edhrec_rank": 16042,
-      "gate": "template",
+      "gate": null,
       "name": "Age of Ultron",
-      "reason": "no template for: I — For each opponent, destroy up to one target nonartifact creature that player controls",
+      "reason": "",
       "scryfall_id": "54050442-c9b1-481a-a1cd-77c147e9013e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ageless Entity": {
@@ -12222,12 +12222,12 @@
     },
     "Archnemesis": {
       "edhrec_rank": 13937,
-      "gate": "template",
+      "gate": null,
       "name": "Archnemesis",
-      "reason": "no template for: Enchant opponent",
+      "reason": "",
       "scryfall_id": "2a75bfc8-7aa5-49ce-90c7-21d76733760c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archon of Absolution": {
@@ -20782,12 +20782,12 @@
     },
     "Baron Strucker, HYDRA Overlord": {
       "edhrec_rank": 10007,
-      "gate": "template",
+      "gate": null,
       "name": "Baron Strucker, HYDRA Overlord",
-      "reason": "no template for: Villain spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "0eb58292-72f2-4344-b5ec-db6c8999cb01",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baron, Airship Kingdom": {
@@ -21632,12 +21632,12 @@
     },
     "Batroc the Leaper": {
       "edhrec_rank": 22217,
-      "gate": "template",
+      "gate": null,
       "name": "Batroc the Leaper",
-      "reason": "no template for: Multikicker {2}",
+      "reason": "",
       "scryfall_id": "c2c43855-e2f9-4369-b404-ebede94fd264",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Battalion Foot Soldier": {
@@ -43322,12 +43322,12 @@
     },
     "Chameleon, Master of Disguise": {
       "edhrec_rank": 2043,
-      "gate": "template",
+      "gate": null,
       "name": "Chameleon, Master of Disguise",
-      "reason": "no template for: You may have Chameleon enter as a copy of a creature you control, except his name is",
+      "reason": "",
       "scryfall_id": "dcc50ba7-c4be-4c20-a1fc-466194aab7c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Champion Lancer": {
@@ -52502,12 +52502,12 @@
     },
     "Containment Construct": {
       "edhrec_rank": 1868,
-      "gate": "template",
+      "gate": null,
       "name": "Containment Construct",
-      "reason": "no template for: Whenever you discard a card, you may exile that card from your graveyard. If you do, you m",
+      "reason": "",
       "scryfall_id": "050c52b1-5dea-4aae-aa32-e501d61b56e7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Containment Membrane": {
@@ -60252,12 +60252,12 @@
     },
     "Damocles Base, Sword of Kang": {
       "edhrec_rank": 17462,
-      "gate": "template",
+      "gate": null,
       "name": "Damocles Base, Sword of Kang",
-      "reason": "no template for: Whenever Damocles Base deals combat damage to a player, that player faces a villainous cho",
+      "reason": "",
       "scryfall_id": "32d79eb7-307a-4c26-b7dc-9ec019f2d2c0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dampen Thought": {
@@ -71322,12 +71322,12 @@
     },
     "Doctor Doom, King of Latveria": {
       "edhrec_rank": 10735,
-      "gate": "template",
+      "gate": null,
       "name": "Doctor Doom, King of Latveria",
-      "reason": "no template for: Whenever you discard one or more land cards, each opponent loses 2 life",
+      "reason": "",
       "scryfall_id": "099ed408-9178-4403-8b2d-479ca3cbda9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doctor Doom, Unrivaled": {
@@ -72012,12 +72012,12 @@
     },
     "Doom's Time Platform": {
       "edhrec_rank": 12063,
-      "gate": "template",
+      "gate": null,
       "name": "Doom's Time Platform",
-      "reason": "no template for: Whenever you attack, exile target nonland card from your graveyard with two time counters ",
+      "reason": "",
       "scryfall_id": "6f7935d1-d588-40ca-804f-bac56d986d74",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Doombot Harbinger": {
@@ -83732,12 +83732,12 @@
     },
     "Endless Ranks of HYDRA": {
       "edhrec_rank": 17179,
-      "gate": "template",
+      "gate": null,
       "name": "Endless Ranks of HYDRA",
-      "reason": "no template for: For each opponent, you create a 2/1 black Villain creature token with menace",
+      "reason": "",
       "scryfall_id": "27da10b3-a131-4afc-ab84-5df93160d81f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endless Ranks of the Dead": {
@@ -88982,12 +88982,12 @@
     },
     "Extract Power": {
       "edhrec_rank": 17797,
-      "gate": "template",
+      "gate": null,
       "name": "Extract Power",
-      "reason": "no template for: Look at the top card of each player's library, then exile those cards face down. You may p",
+      "reason": "",
       "scryfall_id": "11aaa7c6-c79d-48f9-af66-3b360d3b15b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Extract a Confession": {
@@ -111522,12 +111522,12 @@
     },
     "Glorious Purpose": {
       "edhrec_rank": 12744,
-      "gate": "template",
+      "gate": null,
       "name": "Glorious Purpose",
-      "reason": "no template for: Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan ",
+      "reason": "",
       "scryfall_id": "164e83b1-2822-4215-8857-d31b10b9c4c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glorious Sunrise": {
@@ -125972,12 +125972,12 @@
     },
     "Helmut Zemo, Mastermind": {
       "edhrec_rank": 19562,
-      "gate": "template",
+      "gate": null,
       "name": "Helmut Zemo, Mastermind",
-      "reason": "no template for: Whenever Helmut Zemo attacks, you may cast target instant or sorcery card with mana value ",
+      "reason": "",
       "scryfall_id": "1977e0ad-8468-42c9-9f40-48a436a8552e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Helpful Hunter": {
@@ -139982,12 +139982,12 @@
     },
     "Iron Monger, Sadistic Tycoon": {
       "edhrec_rank": 11508,
-      "gate": "template",
+      "gate": null,
       "name": "Iron Monger, Sadistic Tycoon",
-      "reason": "no template for: Whenever a creature you control connives, put a +1/+1 counter on each Villain you control",
+      "reason": "",
       "scryfall_id": "16dd0d87-6f54-41eb-94ed-62488a7f85ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Iron Myr": {
@@ -145742,22 +145742,22 @@
     },
     "Kang Dynasty": {
       "edhrec_rank": 17075,
-      "gate": "template",
+      "gate": null,
       "name": "Kang Dynasty",
-      "reason": "no template for: I, II — For each opponent, tap up to one target creature that player controls. Goad those ",
+      "reason": "",
       "scryfall_id": "5e4223df-c9fc-410a-913a-17bbfd054b57",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kang Prime": {
       "edhrec_rank": 16601,
-      "gate": "template",
+      "gate": null,
       "name": "Kang Prime",
-      "reason": "no template for: Whenever enters or attacks, exile cards from the top of your library until you exile a non",
+      "reason": "",
       "scryfall_id": "88cf0311-d7e3-40bb-85fa-3cca973c5e44",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kang the Conqueror": {
@@ -145772,12 +145772,12 @@
     },
     "Kang, Temporal Tyrant": {
       "edhrec_rank": 11791,
-      "gate": "template",
+      "gate": null,
       "name": "Kang, Temporal Tyrant",
-      "reason": "no template for: Whenever Kang attacks, he connives",
+      "reason": "",
       "scryfall_id": "e5dc6bca-f005-43e9-b6c7-739e49064c2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kangee's Lieutenant": {
@@ -148812,12 +148812,12 @@
     },
     "Killmonger, Ruthless Usurper": {
       "edhrec_rank": 16401,
-      "gate": "template",
+      "gate": null,
       "name": "Killmonger, Ruthless Usurper",
-      "reason": "no template for: Whenever Killmonger attacks, he gets +1/+0 until end of turn for each artifact defending p",
+      "reason": "",
       "scryfall_id": "0ec1ec8b-24d7-40e4-9e9d-4d9ec4f0a4f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Killmonger, Scourge of Wakanda": {
@@ -149072,12 +149072,12 @@
     },
     "Kindred Dominance": {
       "edhrec_rank": 718,
-      "gate": "template",
+      "gate": null,
       "name": "Kindred Dominance",
-      "reason": "no template for: Choose a creature type. Destroy all creatures that aren't of the chosen type",
+      "reason": "",
       "scryfall_id": "538492b5-b61e-4165-b432-37cba84a169d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kindred Judgment": {
@@ -150312,12 +150312,12 @@
     },
     "Klaw, Master of Sound": {
       "edhrec_rank": 18793,
-      "gate": "template",
+      "gate": null,
       "name": "Klaw, Master of Sound",
-      "reason": "no template for: Whenever you play a card from exile, Klaw gains indestructible until end of turn",
+      "reason": "",
       "scryfall_id": "5c589d94-7cea-4d4c-91a8-4d939634a5e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Klaw, Sonic Subjugator": {
@@ -153822,12 +153822,12 @@
     },
     "Lady Loki, Agent of Chaos": {
       "edhrec_rank": 18077,
-      "gate": "template",
+      "gate": null,
       "name": "Lady Loki, Agent of Chaos",
-      "reason": "no template for: Whenever you cast your first instant, sorcery, or Villain spell each turn, exile it, then ",
+      "reason": "",
       "scryfall_id": "44ac85d4-0429-4813-b7fe-eed1f6575b7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lady Octopus, Inspired Inventor": {
@@ -156882,12 +156882,12 @@
     },
     "Lethal Scheme": {
       "edhrec_rank": 1330,
-      "gate": "template",
+      "gate": null,
       "name": "Lethal Scheme",
-      "reason": "no template for: Convoke",
+      "reason": "",
       "scryfall_id": "9806c0bf-d94a-4e01-9c86-b53dfaf6a223",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lethal Sting": {
@@ -160662,12 +160662,12 @@
     },
     "Loki's Scepter": {
       "edhrec_rank": 10436,
-      "gate": "template",
+      "gate": null,
       "name": "Loki's Scepter",
-      "reason": "no template for: When enters, gain control of target creature until end of turn. Untap that creature. Until",
+      "reason": "",
       "scryfall_id": "57e90938-9225-4c15-b4fb-aad2cced2e6a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loki, God of Lies": {
@@ -160702,12 +160702,12 @@
     },
     "Loki, the Deceiver": {
       "edhrec_rank": 12465,
-      "gate": "template",
+      "gate": null,
       "name": "Loki, the Deceiver",
-      "reason": "no template for: Whenever Loki attacks, create a tapped and attacking token that's a copy of another target",
+      "reason": "",
       "scryfall_id": "91177999-7e98-4c7c-ba19-cc4fc7cfa8f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lolth, Spider Queen": {
@@ -163482,12 +163482,12 @@
     },
     "Luxury Suite": {
       "edhrec_rank": 162,
-      "gate": "template",
+      "gate": null,
       "name": "Luxury Suite",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "3c409d1e-f634-44a2-8fcf-dcdcb0babc3f",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lychguard": {
@@ -163962,12 +163962,12 @@
     },
     "Madame Hydra": {
       "edhrec_rank": 13421,
-      "gate": "template",
+      "gate": null,
       "name": "Madame Hydra",
-      "reason": "no template for: Whenever you cast a Villain spell, create a 2/1 black Villain creature token with menace",
+      "reason": "",
       "scryfall_id": "4dedca48-b7a2-45b9-af1e-b3754879d1d6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Madame Hydra, Reanimated": {
@@ -177522,12 +177522,12 @@
     },
     "Molecule Man": {
       "edhrec_rank": 10188,
-      "gate": "template",
+      "gate": null,
       "name": "Molecule Man",
-      "reason": "no template for: Nonland cards in your hand have miracle {0}",
+      "reason": "",
       "scryfall_id": "3b4f30a7-4096-48f4-b502-3e31e0940632",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Molimo, Maro-Sorcerer": {
@@ -178972,12 +178972,12 @@
     },
     "Moonstone, Harsh Mistress": {
       "edhrec_rank": 13027,
-      "gate": "template",
+      "gate": null,
       "name": "Moonstone, Harsh Mistress",
-      "reason": "no template for: Whenever you discard a card, you may exile that card from your graveyard. If you do, until",
+      "reason": "",
       "scryfall_id": "1a1b2bd0-e17d-4b34-a8ee-7c913a6bc945",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moonveil Dragon": {
@@ -208232,12 +208232,12 @@
     },
     "Progenitor's Icon": {
       "edhrec_rank": 5481,
-      "gate": "template",
+      "gate": null,
       "name": "Progenitor's Icon",
-      "reason": "no template for: As this artifact enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "5457025c-9720-4717-8ee5-fb048815a895",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Progenitus": {
@@ -208992,12 +208992,12 @@
     },
     "Prowler, Clawed Thief": {
       "edhrec_rank": 8635,
-      "gate": "template",
+      "gate": null,
       "name": "Prowler, Clawed Thief",
-      "reason": "no template for: Whenever another Villain you control enters, Prowler connives",
+      "reason": "",
       "scryfall_id": "08d18fce-e250-4bcb-9acf-08a8a6e4f1e2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prowler, Misguided Mentor": {
@@ -210032,12 +210032,12 @@
     },
     "Puppet Master, String Puller": {
       "edhrec_rank": 13756,
-      "gate": "template",
+      "gate": null,
       "name": "Puppet Master, String Puller",
-      "reason": "no template for: Whenever you attack, goad target creature an opponent controls. It can't block this turn",
+      "reason": "",
       "scryfall_id": "ab888daa-1161-4917-bca0-efd5c430b2d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Puppet Strings": {
@@ -218422,12 +218422,12 @@
     },
     "Red Ghost, Intangible Genius": {
       "edhrec_rank": 14597,
-      "gate": "template",
+      "gate": null,
       "name": "Red Ghost, Intangible Genius",
-      "reason": "no template for: Ward {2}",
+      "reason": "",
       "scryfall_id": "35bae013-51e9-4047-91e3-3b366ad0764e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Red Guardian, Super-Soldier": {
@@ -256862,12 +256862,12 @@
     },
     "Spark Double": {
       "edhrec_rank": 400,
-      "gate": "template",
+      "gate": null,
       "name": "Spark Double",
-      "reason": "no template for: You may have this creature enter as a copy of a creature or planeswalker you control, exce",
+      "reason": "",
       "scryfall_id": "83932e9e-18e7-4c41-ad54-0c063c4aa33d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spark Elemental": {
@@ -264432,12 +264432,12 @@
     },
     "Stilt-Man, Towering Terror": {
       "edhrec_rank": 18564,
-      "gate": "template",
+      "gate": null,
       "name": "Stilt-Man, Towering Terror",
-      "reason": "no template for: Whenever one or more Villains you control deal combat damage to a player, gain control of ",
+      "reason": "",
       "scryfall_id": "7ffa820c-ac05-4b3d-a0ec-5cbd3c42ac9c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stiltzkin, Moogle Merchant": {
@@ -270372,12 +270372,12 @@
     },
     "Superior Foes of Spider-Man": {
       "edhrec_rank": 15670,
-      "gate": "template",
+      "gate": null,
       "name": "Superior Foes of Spider-Man",
-      "reason": "no template for: Whenever you cast a spell with mana value 4 or greater, you may exile the top card of your",
+      "reason": "",
       "scryfall_id": "bb759a0b-df7b-43c8-8e8e-bd52535cdbc0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Superior Numbers": {
@@ -273182,12 +273182,12 @@
     },
     "Syphon Mind": {
       "edhrec_rank": 1055,
-      "gate": "template",
+      "gate": null,
       "name": "Syphon Mind",
-      "reason": "no template for: Each other player discards a card. You draw a card for each card discarded this way",
+      "reason": "",
       "scryfall_id": "be3f418b-25c3-4370-a1de-50e8e88c2ef6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Syphon Sliver": {
@@ -280932,12 +280932,12 @@
     },
     "The Frightful Four": {
       "edhrec_rank": 15514,
-      "gate": "template",
+      "gate": null,
       "name": "The Frightful Four",
-      "reason": "no template for: Whenever an opponent casts their first noncreature spell each turn, that player loses life",
+      "reason": "",
       "scryfall_id": "3e792132-de96-47aa-bcd5-58f1e9be5932",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Fugitive Doctor": {
@@ -282422,12 +282422,12 @@
     },
     "The Squadron Sinister": {
       "edhrec_rank": 13349,
-      "gate": "template",
+      "gate": null,
       "name": "The Squadron Sinister",
-      "reason": "no template for: Other Villains you control get +2/+2 and have flying and haste",
+      "reason": "",
       "scryfall_id": "013fc8c1-dd0c-42ce-9498-1a13305c75a4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Stasis Coffin": {
@@ -288022,12 +288022,12 @@
     },
     "Titan of Littjara": {
       "edhrec_rank": 5055,
-      "gate": "template",
+      "gate": null,
       "name": "Titan of Littjara",
-      "reason": "no template for: As this creature enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "4bfeac6d-f253-47c4-a1d4-c649a14b9cd1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan's Grave": {
@@ -288152,12 +288152,12 @@
     },
     "Titania, Proud Pummeler": {
       "edhrec_rank": 17758,
-      "gate": "template",
+      "gate": null,
       "name": "Titania, Proud Pummeler",
-      "reason": "no template for: Melee",
+      "reason": "",
       "scryfall_id": "31255422-9afa-416c-90b2-62baf1d02cca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titania, Rugged Rumbler": {
@@ -288962,12 +288962,12 @@
     },
     "Tombstone, Career Criminal": {
       "edhrec_rank": 7486,
-      "gate": "template",
+      "gate": null,
       "name": "Tombstone, Career Criminal",
-      "reason": "no template for: When Tombstone enters, return target Villain card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "4f2e53db-58f4-4a72-a1f3-cc3c322f6b70",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tome Anima": {
@@ -292472,12 +292472,12 @@
     },
     "Tri-Sentinel, Act of Vengeance": {
       "edhrec_rank": 15605,
-      "gate": "template",
+      "gate": null,
       "name": "Tri-Sentinel, Act of Vengeance",
-      "reason": "no template for: When Tri-Sentinel enters, for each opponent, Tri-Sentinel deals 3 damage to up to one targ",
+      "reason": "",
       "scryfall_id": "a4960ab8-fac3-4a11-a3f6-46527cf228ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Triad of Fates": {
@@ -295352,12 +295352,12 @@
     },
     "Typhoid Mary, Fractured": {
       "edhrec_rank": 14475,
-      "gate": "template",
+      "gate": null,
       "name": "Typhoid Mary, Fractured",
-      "reason": "no template for: Whenever Typhoid Mary attacks, choose one at random. If you discarded a card this turn, yo",
+      "reason": "",
       "scryfall_id": "6880df6d-2ec3-459d-aa4f-92f595fab9b8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Typhoid Rats": {
@@ -296232,12 +296232,12 @@
     },
     "Ultron, Unlimited": {
       "edhrec_rank": 10963,
-      "gate": "template",
+      "gate": null,
       "name": "Ultron, Unlimited",
-      "reason": "no template for: Whenever Ultron attacks, he connives",
+      "reason": "",
       "scryfall_id": "8b00cc03-88ac-42d6-a5cf-59fa2af06ba3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ultros, Obnoxious Octopus": {
@@ -304882,12 +304882,12 @@
     },
     "Villainous Hideout": {
       "edhrec_rank": 9958,
-      "gate": "template",
+      "gate": null,
       "name": "Villainous Hideout",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a Villain spell or to activat",
+      "reason": "",
       "scryfall_id": "822b0249-e1df-453d-8b60-75a5196ed818",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Villainous Ogre": {

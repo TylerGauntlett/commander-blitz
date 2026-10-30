@@ -15,6 +15,8 @@ forms::
     {"spells_cast_this_turn": "all"}       many creatures attacked, not seats
     {"attack_power_this_combat": "you"}  pack tactics: attackers' total power
                                         as declared, this combat
+    {"opponents_attacked_this_combat":  melee: how many opponents they
+        "you"}                          declared attackers against, this combat
     {"permanents_entered_this_turn":  WHICH permanents entered the battlefield
         {"controller": "you",           this turn, by subtype and by
          "subtypes": ["Human"]}}        controller-at-entry
@@ -110,6 +112,11 @@ VALUE_KEYS = frozenset(
         # count of objects, and the two stop agreeing the moment anything is
         # played, discarded, or drawn on somebody else's turn.
         "cards_drawn_this_turn",
+        # "…if you **discarded a card** this turn" (Typhoid Mary, Fractured).
+        # Per discarding seat, off `TurnLedger.cards_discarded`. Not mayhem's
+        # per-object record, which forgets a discarded card the moment it
+        # leaves the graveyard -- the player still discarded it.
+        "cards_discarded_this_turn",
         # The rest of the per-turn ledger (`structs.TurnLedger`).  All six are
         # values rather than condition leaves, so morbid is an ordinary `cmp`
         # against 1 and nothing new had to be added to the condition language:
@@ -135,6 +142,13 @@ VALUE_KEYS = frozenset(
         # `power_of` over `attacking: true` is the near miss and reads the live
         # board. Per combat, not per turn.
         "attack_power_this_combat",
+        # Melee -- "+1/+1 for each **opponent you attacked** with a creature
+        # this combat" (702.121). Seats, not creatures, frozen at the
+        # declaration (`TurnLedger.opponents_attacked_this_combat`), and a
+        # planeswalker's or battle's controller counts (702.121b).
+        # `attacked_this_turn` is the near miss: it counts who attacked, not
+        # whom, and per turn rather than per combat.
+        "opponents_attacked_this_combat",
         # "…if another **Human** entered the battlefield under **your control**
         # this turn" -- Éowyn, Shieldmaiden. The one ledger read that takes a
         # filter rather than a player spec, because the printed sentence asks
@@ -574,6 +588,15 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # is the whole of pack tactics and an opponent's total reads 0.
         totals = ledger.attack_power_this_combat
         return sum(totals.get(p, 0) for p in _players(ctx, expr["attack_power_this_combat"]))
+    if "opponents_attacked_this_combat" in expr:
+        # Per named player, the distinct seats they declared attackers against
+        # -- never themselves, so every one is an opponent. Only the active
+        # player declares, so anyone else reads 0.
+        seats = ledger.opponents_attacked_this_combat
+        return sum(
+            len(seats.get(p, set()) - {p})
+            for p in _players(ctx, expr["opponents_attacked_this_combat"])
+        )
     if "permanents_entered_this_turn" in expr:
         # How many permanents matching the filter have entered the battlefield
         # this turn. Read off the ledger's snapshots rather than the board,
@@ -611,6 +634,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_gained_this_turn" in expr:
         pids = _players(ctx, expr["life_gained_this_turn"])
         return sum(ledger.life_gained.get(p, 0) for p in pids)
+    if "cards_discarded_this_turn" in expr:
+        pids = _players(ctx, expr["cards_discarded_this_turn"])
+        return sum(ledger.cards_discarded.get(p, 0) for p in pids)
     if "loyalty_activations_this_turn" in expr:
         pids = _players(ctx, expr["loyalty_activations_this_turn"])
         return sum(ledger.loyalty_activations.get(p, 0) for p in pids)
@@ -1352,6 +1378,13 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.attack_power_this_combat: needs a player spec, e.g. 'you' "
                 f"(whose attackers' declared power), got {who!r}"
             )
+    if "opponents_attacked_this_combat" in expr:
+        who = expr["opponents_attacked_this_combat"]
+        if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
+            raise DslError(
+                f"{where}.opponents_attacked_this_combat: needs a player spec, e.g. 'you' "
+                f"(whose attacks this combat), got {who!r}"
+            )
     if "max_poison_of" in expr:
         who = expr["max_poison_of"]
         if not isinstance(who, Mapping) and (
@@ -1369,6 +1402,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
                 f"(whose commanders' casts from the command zone), got {who!r}"
+            )
+    if "cards_discarded_this_turn" in expr:
+        who = expr["cards_discarded_this_turn"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.cards_discarded_this_turn: needs a player spec, e.g. 'you' "
+                f"(who discarded), got {who!r}"
             )
     if "player_count" in expr:
         who = expr["player_count"]

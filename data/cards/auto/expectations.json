@@ -26,6 +26,9 @@
   "abbey_griffin": {
     "zone": "battlefield"
   },
+  "abomination_world_ravager": {
+    "zone": "battlefield"
+  },
   "abrade": {
     "hand_size": {
       "0": 1
@@ -107,6 +110,13 @@
     "zone": "graveyard"
   },
   "affa_protector": {
+    "zone": "battlefield"
+  },
+  "age_of_ultron": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
     "zone": "battlefield"
   },
   "ageless_guardian": {
@@ -707,6 +717,10 @@
     },
     "zone": "graveyard"
   },
+  "archnemesis": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archon_of_cruelty": {
     "hand_size": {
       "0": 2
@@ -1098,6 +1112,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "baron_strucker_hydra_overlord": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "barony_vampire": {
     "zone": "battlefield"
   },
@@ -1133,6 +1151,18 @@
   "bastion_protector": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "batroc_the_leaper": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "life": {
+      "0": 32,
+      "1": 40
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "battle_cry_goblin": {
     "zone": "battlefield"
@@ -2114,6 +2144,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "chameleon_master_of_disguise": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "champion_of_arashin": {
     "zone": "battlefield"
   },
@@ -2506,6 +2540,10 @@
   "contagious_nim": {
     "zone": "battlefield"
   },
+  "containment_construct": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "contaminated_aquifer": {
     "zone": "battlefield"
   },
@@ -2875,6 +2913,9 @@
       "0": 20
     },
     "zone": "graveyard"
+  },
+  "damocles_base_sword_of_kang": {
+    "zone": "battlefield"
   },
   "dancing_scimitar": {
     "zone": "battlefield"
@@ -3304,11 +3345,19 @@
   "djinn_of_the_lamp": {
     "zone": "battlefield"
   },
+  "doctor_doom_king_of_latveria": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dolmen_gate": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
   "donatello_mutant_mechanic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "doom_s_time_platform": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -3796,6 +3845,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "endless_ranks_of_hydra": {
+    "battlefield_count": 33,
+    "tokens": {
+      "count": 1,
+      "id": "villain_2_1_b_menace"
+    },
+    "zone": "graveyard"
+  },
   "endless_ranks_of_the_dead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4056,6 +4113,18 @@
     },
     "library_size": {
       "0": 38
+    },
+    "zone": "graveyard"
+  },
+  "extract_power": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
     },
     "zone": "graveyard"
   },
@@ -5178,6 +5247,10 @@
   "gloomhunter": {
     "zone": "battlefield"
   },
+  "glorious_purpose": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "glory_seeker": {
     "zone": "battlefield"
   },
@@ -5783,6 +5856,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "helmut_zemo_mastermind": {
+    "zone": "battlefield"
+  },
   "helpful_hunter": {
     "hand_size": {
       "0": 2
@@ -6360,6 +6436,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "iron_monger_sadistic_tycoon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "iron_myr": {
     "zone": "battlefield"
   },
@@ -6613,6 +6693,28 @@
   "kami_of_old_stone": {
     "zone": "battlefield"
   },
+  "kang_dynasty": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "kang_prime": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "battlefield"
+  },
+  "kang_temporal_tyrant": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kappa_cannoneer": {
     "counters": {
       "amount": 1,
@@ -6742,6 +6844,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "killmonger_ruthless_usurper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "kimoyo_beads": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6770,6 +6876,14 @@
       "0": 40
     },
     "zone": "battlefield"
+  },
+  "kindred_dominance": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "kindred_judgment": {
     "battlefield_count": 30,
@@ -6856,6 +6970,9 @@
   },
   "klauth_unrivaled_ancient": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "klaw_master_of_sound": {
     "zone": "battlefield"
   },
   "knight_errant": {
@@ -6989,6 +7106,10 @@
   "kyoshi_warrior_guard": {
     "zone": "battlefield"
   },
+  "lady_loki_agent_of_chaos": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lady_orca": {
     "zone": "battlefield"
   },
@@ -7112,6 +7233,9 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "lethal_scheme": {
+    "zone": "graveyard"
   },
   "level_up": {
     "battlefield_count": 33,
@@ -7256,6 +7380,13 @@
         "skulk"
       ]
     },
+    "zone": "battlefield"
+  },
+  "loki_s_scepter": {
+    "zone": "battlefield"
+  },
+  "loki_the_deceiver": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "lone_missionary": {
@@ -7439,6 +7570,10 @@
   "lush_portico": {
     "zone": "battlefield"
   },
+  "luxury_suite": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lynx": {
     "zone": "battlefield"
   },
@@ -7455,6 +7590,13 @@
     "zone": "battlefield"
   },
   "macetail_hystrodon": {
+    "zone": "battlefield"
+  },
+  "madame_hydra": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "madcap_skills": {
@@ -8123,6 +8265,10 @@
   "moldering_karok": {
     "zone": "battlefield"
   },
+  "molecule_man": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "molimo_maro_sorcerer": {
     "zone": "battlefield"
   },
@@ -8204,6 +8350,10 @@
         "flying"
       ]
     },
+    "zone": "battlefield"
+  },
+  "moonstone_harsh_mistress": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "moor_fiend": {
@@ -9616,6 +9766,10 @@
     },
     "zone": "battlefield"
   },
+  "progenitor_s_icon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "promising_vein": {
     "zone": "battlefield"
   },
@@ -9632,6 +9786,10 @@
     }
   },
   "proteus_staff": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "prowler_clawed_thief": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9676,6 +9834,10 @@
       "0": 20
     },
     "zone": "graveyard"
+  },
+  "puppet_master_string_puller": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "putrefy": {
     "battlefield_count": 31,
@@ -9983,6 +10145,10 @@
   "red_elemental_blast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "red_ghost_intangible_genius": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "redwood_treefolk": {
     "zone": "battlefield"
@@ -11752,6 +11918,14 @@
   "spara_s_headquarters": {
     "zone": "battlefield"
   },
+  "spark_double": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "speaker_of_the_heavens": {
     "battlefield_count": 33,
     "life": {
@@ -11996,6 +12170,10 @@
     "zone": "battlefield"
   },
   "steward_of_valeron": {
+    "zone": "battlefield"
+  },
+  "stilt_man_towering_terror": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "stirring_wildwood": {
@@ -12264,6 +12442,10 @@
   "super_villain_lockup": {
     "zone": "battlefield"
   },
+  "superior_foes_of_spider_man": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "supreme_verdict": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -12387,6 +12569,15 @@
     "tokens": {
       "count": 1,
       "id": "zombie_2_2_b"
+    },
+    "zone": "graveyard"
+  },
+  "syphon_mind": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
     },
     "zone": "graveyard"
   },
@@ -12823,6 +13014,14 @@
   "the_fabulous_frog_man": {
     "zone": "battlefield"
   },
+  "the_frightful_four": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "the_great_mound": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12852,6 +13051,10 @@
     "zone": "battlefield"
   },
   "the_spear_of_bashenga": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "the_squadron_sinister": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -13115,6 +13318,19 @@
       "0": 43
     }
   },
+  "titan_of_littjara": {
+    "zone": "battlefield"
+  },
+  "titania_proud_pummeler": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "melee"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "tobias_andrion": {
     "zone": "battlefield"
   },
@@ -13140,6 +13356,10 @@
     "zone": "battlefield"
   },
   "tolarian_scholar": {
+    "zone": "battlefield"
+  },
+  "tombstone_career_criminal": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tome_of_legends": {
@@ -13282,6 +13502,10 @@
   "tresserhorn_sinks": {
     "zone": "battlefield"
   },
+  "tri_sentinel_act_of_vengeance": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "triton_shorethief": {
     "zone": "battlefield"
   },
@@ -13403,6 +13627,10 @@
   "two_headed_zombie": {
     "zone": "battlefield"
   },
+  "typhoid_mary_fractured": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "typhoid_rats": {
     "zone": "battlefield"
   },
@@ -13414,6 +13642,10 @@
     "zone": "battlefield"
   },
   "ukud_cobra": {
+    "zone": "battlefield"
+  },
+  "ultron_unlimited": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ulvenwald_tracker": {
@@ -13913,6 +14145,10 @@
     "hand_size": {
       "0": 3
     }
+  },
+  "villainous_hideout": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vine_trellis": {
     "zone": "battlefield"

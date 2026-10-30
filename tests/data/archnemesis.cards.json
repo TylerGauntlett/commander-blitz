@@ -1,0 +1,83 @@
+{
+  "_comment": "Cards that exist only for the attach-an-Aura-to-a-player test (tests/unit/attachments/test_attach_to_player.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_archnemesis` is the Archnemesis prototype, all three sentences; `t_robe_mover` is an 'Enchant player' Aura that moves onto a player who attacks you, where any seat is a legal host.",
+  "cards": [
+    {
+      "id": "t_archnemesis",
+      "name": "Test Archnemesis",
+      "oracle_text": "Enchant opponent\nWhenever you attack enchanted player, that player loses 2 life. You draw a card and gain 2 life.\nWhenever a player attacks you, you may attach this Aura to that player.",
+      "mana_cost": "{1}{B}{B}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {"id": "t1", "kind": "player", "selector": {"controller": "opponent"}, "count": 1}
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you attack enchanted player, that player loses 2 life. You draw a card and gain 2 life.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "you",
+            "defending": "enchanted_player"
+          },
+          "effects": [
+            {"op": "lose_life", "player": {"binding": "defender"}, "amount": {"const": 2}},
+            {"op": "draw", "player": "you", "amount": {"const": 1}},
+            {"op": "gain_life", "player": "you", "amount": {"const": 2}}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever a player attacks you, you may attach this Aura to that player.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "any",
+            "defending": "you",
+            "recheck": false,
+            "condition": {
+              "cmp": ">=",
+              "left": {"count": {"binding": "attackers", "attacking_player": "you"}},
+              "right": {"const": 1}
+            }
+          },
+          "effects": [
+            {
+              "op": "may",
+              "effects": [{"op": "attach", "player": {"binding": "event_player"}}]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_robe_mover",
+      "name": "Test Robe Mover",
+      "oracle_text": "Enchant player\nWhenever a player attacks you, you may attach this Aura to that player.",
+      "mana_cost": "{1}{B}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [{"id": "t1", "kind": "player", "count": 1}],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a player attacks you, you may attach this Aura to that player.",
+          "trigger": {
+            "event": "creatures_attack_player",
+            "controller": "any",
+            "defending": "you"
+          },
+          "effects": [
+            {
+              "op": "may",
+              "effects": [{"op": "attach", "player": {"binding": "event_player"}}]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

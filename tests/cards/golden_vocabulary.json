@@ -86,6 +86,12 @@
    "recipient",
    "subject"
   ],
+  "ENTERS_COPY_EXCEPT_KEYS": [
+   "add_keywords",
+   "enters_with",
+   "name",
+   "remove_supertypes"
+  ],
   "FREE_CAST_FILTER_KEYS": [
    "any_types",
    "colors",
@@ -175,6 +181,7 @@
    "intimidate",
    "islandwalk",
    "lifelink",
+   "melee",
    "menace",
    "mountainwalk",
    "nightbound",
@@ -285,6 +292,7 @@
    "extra_land_drops",
    "free_cast_permission",
    "freeze_opponent_lands",
+   "grant_miracle",
    "grant_warp",
    "granted_alternative_cost",
    "look_at_library_top",
@@ -496,6 +504,7 @@
    "freeze_opponent_lands",
    "grant_ability",
    "grant_keyword",
+   "grant_miracle",
    "grant_warp",
    "granted_alternative_cost",
    "imprint_characteristics",
@@ -653,6 +662,7 @@
    "free_cast_permission",
    "freeze_opponent_lands",
    "grant_ability",
+   "grant_miracle",
    "grant_warp",
    "granted_alternative_cost",
    "look_at_library_top",
@@ -950,6 +960,7 @@
   "skip_untap",
   "snapshot",
   "surveil",
+  "suspend",
   "tap",
   "transform",
   "two_piles",

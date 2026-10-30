@@ -364,7 +364,11 @@ class TriggerModel(BaseModel):
     #: needs this one. ``most_life`` is dethrone's "attacks the player with the
     #: most life or tied for most life", and ``monarch`` is "attacks the
     #: monarch" (The Spear of Bashenga); both are legal on ``attacks`` only.
-    defending: Literal["you", "opponent", "any", "most_life", "monarch"] | None = None
+    #: ``enchanted_player`` is the seat this Aura is attached to -- "whenever
+    #: you attack enchanted player" (Archnemesis) -- attacked as a player.
+    defending: (
+        Literal["you", "opponent", "any", "most_life", "monarch", "enchanted_player"] | None
+    ) = None
     #: "…if it wasn't put onto the battlefield with this ability."  Names the
     #: ``cause`` this trigger refuses to fire on, which is how an ability that
     #: puts permanents onto the battlefield avoids triggering on its own output.
@@ -446,6 +450,11 @@ class TriggerModel(BaseModel):
     #: Inexorable's ghostform -- is ``["graveyard", "exile"]``, and a bounce or
     #: a tuck must not fire it. Refused on every other event.
     to_zones: list[str] | None = None
+    #: For ``spell_cast`` and ``land_played``: the zones the card must have been
+    #: played *from*. "Whenever you play a card **from exile**" -- Klaw, Master
+    #: of Sound -- is ``["exile"]`` on each of the two events. Refused on every
+    #: other event.
+    from_zones: list[str] | None = None
     #: For ``state``: the condition a state trigger (603.8) watches -- "When
     #: there are four or more page counters on this artifact" (Mazemind Tome).
     #: Any condition; it fires when the condition holds and not again while
@@ -988,6 +997,10 @@ class AbilityModel(BaseModel):
     #: read only their printed face, and this says what the grant costs, which
     #: is a fact about the granting permanent.
     warp_cost: str | None = None
+    #: ``grant_miracle``: the miracle cost the filtered cards in hand gain --
+    #: Molecule Man's ``"{0}"``. Beside `affects_spells` for `warp_cost`'s
+    #: reason.
+    miracle_cost: str | None = None
 
 
 class ReplacementModel(BaseModel):
@@ -1036,9 +1049,15 @@ class ReplacementModel(BaseModel):
     #: `self_enters_as_copy`: the copy exception (707.9b), written into the
     #: copiable values the permanent enters with -- "…except it has **haste and
     #: dethrone**" (Dack's Duplicate) is ``{"add_keywords": ["haste",
-    #: "dethrone"]}``. ``add_keywords`` is the one key: the keywords are part of
-    #: the copy, not a layer-6 grant on top of it, so the copy has them from the
-    #: moment it arrives and loses them only when the copy itself ends.
+    #: "dethrone"]}``. The keywords are part of the copy, not a layer-6 grant on
+    #: top of it, so the copy has them from the moment it arrives and loses
+    #: them only when the copy itself ends. The other keys:
+    #: ``remove_supertypes`` (`copy_permanent`'s spelling -- Spark Double's
+    #: "…and it isn't legendary"), ``name`` ("…except his name is Chameleon,
+    #: Master of Disguise") and ``enters_with``, a list of ``{counter, amount,
+    #: condition}`` judged against the copy as it enters (Spark Double's "an
+    #: additional +1/+1 counter on it if it's a creature"). The loader holds
+    #: the set as ``ENTERS_COPY_EXCEPT_KEYS``.
     except_: dict[str, Any] | None = None
     #: `self_enters_as_copy`: how long the copy lasts. ``permanent`` (the
     #: default) is Phyrexian Metamorph's -- 706.2 gives a copy no duration, so
@@ -1464,11 +1483,11 @@ class CardModel(BaseModel):
     #: your graveyard. One cast line, and which permanents tap (or which cards
     #: go) is asked as the spell is paid for -- see ADR 0020.
     #:
-    #: Generic only, and clamped at what the spell actually costs. That is
-    #: improvise's and delve's printed rule; convoke's "or one mana of that
-    #: creature's colour" is a documented simplification: it is the same trade
-    #: `cost_reduction` already makes, and it bites only on a spell whose
-    #: coloured pips a creature could have paid.
+    #: Improvise and delve pay generic only, clamped at what the spell
+    #: actually costs. Convoke also pays "one mana of that creature's color"
+    #: (702.51a): a creature pays a coloured or hybrid pip of its own colour,
+    #: and the spell's effects name the creatures that convoked it with the
+    #: ``{"convoked": true}`` selector key (702.51c).
     pay_generic_with: (
         Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
     ) = None
@@ -1514,6 +1533,13 @@ class CardModel(BaseModel):
     #: card is the *back* face from the moment it goes on the stack, so its
     #: name, types and effects are the back face's and not the front's.
     graveyard_cast_transformed: bool = False
+    #: **Mayhem** (702.187a): "You may cast this card from your graveyard for
+    #: {cost} if you discarded it this turn. Timing rules still apply." The
+    #: printed mana price. Compiled onto the `graveyard_cost` slot with escape's
+    #: destination -- the card goes wherever it normally would -- plus the one
+    #: condition mayhem adds: this object was discarded this turn. Refused
+    #: beside `graveyard_cost`/`flashback`, `graveyard_cast` and `retrace`.
+    mayhem: str | None = None
     #: **Dredge N** (702.51a): "If you would draw a card, you may instead return
     #: this card from your graveyard to your hand and mill N." The number is the
     #: mill, and it is also the price -- a player with fewer than N cards left is

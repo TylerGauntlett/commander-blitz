@@ -32,6 +32,7 @@ from commanderblitz.engine.objects import PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
     ATTACK_RESTRICTION_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
+    CANT_SACRIFICE_DURATIONS,
     CAST_LOCK_DURATIONS,
     COMBAT_FOG_DURATIONS,
     CONTROL_DURATIONS,
@@ -44,7 +45,6 @@ from commanderblitz.engine.structs import (
     PERMANENT_SHIELD_DURATIONS,
     PLAYER_PROTECTION_DURATIONS,
     PROTECTION_SENTINELS,
-    SACRIFICE_RESTRICTION_DURATIONS,
     UNBLOCKABLE_DURATIONS,
 )
 from commanderblitz.engine.triggers import (
@@ -277,6 +277,34 @@ def _validate_enchanted_player(model: CardModel, where: str) -> None:
             f"attached to (303.4a), and only an Aura is ever attached to one -- "
             f"on {model.subtypes or 'this card'} it resolves to nobody, every "
             f"time, and the ability silently does nothing"
+        )
+
+
+def _validate_attach_to_player(model: CardModel, where: str) -> None:
+    """``attach`` with ``player`` only on an Aura that enchants a player.
+
+    The op moves the ability's **source** onto a seat, and reads the legal
+    hosts off the source's first declared target (303.4a) -- the enchant
+    clause. On anything but an Aura whose clause names a player the op could
+    never attach, and the ability would read on screen as though it did.
+    """
+
+    def walk(node: Any) -> bool:
+        if isinstance(node, Mapping):
+            if node.get("op") == "attach" and "player" in node:
+                return True
+            return any(walk(v) for v in node.values())
+        if isinstance(node, (list, tuple)):
+            return any(walk(v) for v in node)
+        return False
+
+    if not walk(model.model_dump()):
+        return
+    if "Aura" not in model.subtypes or not model.targets or model.targets[0].kind != "player":
+        raise DslError(
+            f"{where}: attach with 'player' moves this Aura onto a player, so the "
+            f"card must be an Aura whose enchant clause -- its first target -- "
+            f"is kind 'player' (303.4a)"
         )
 
 
@@ -1104,6 +1132,26 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}.attachment: references target {sub['target']!r} "
                 f"which the card does not declare"
             )
+    if op == "attach" and "player" in effect:
+        # "…attach this Aura to **that player**" (Archnemesis). The host is a
+        # seat, so `objects` beside it would be a second host (303.4: an Aura
+        # is attached to one thing), and the mover is the source Aura whose
+        # enchant clause the op checks -- `attachment` would move something
+        # whose clause nothing here has seen. A spec naming several seats would
+        # need a choice the printed line never offers, and the op would attach
+        # to nobody.
+        for key in ("objects", "attachment"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: attach with 'player' moves this Aura onto that seat; "
+                    f"it takes no {key!r}"
+                )
+        if effect["player"] in ("opponent", "each_opponent", "each_player", "all"):
+            raise DslError(
+                f"{where}.player: an Aura is attached to one player, and "
+                f"{effect['player']!r} can name several -- name the one seat, "
+                f'e.g. {{"binding": "event_player"}}'
+            )
     if "new_targets" in effect:
         # "You may choose new targets for the copy" (Jin-Gitaxias). Opt-in on the
         # two copy ops: the choice is a decision per copy, and storm, replicate,
@@ -1343,6 +1391,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{effect['else_destination']!r} "
                     f"(implemented: {sorted(EXILE_UNTIL_ELSE_DESTINATIONS)})"
                 )
+    if op == "suspend":
+        # Both are the card: which card is suspended, and for how many upkeeps.
+        # An omitted count would evaluate to zero and suspend nothing, and an
+        # omitted selector would exile nothing -- a trigger that loads and does
+        # nothing, with no test of its own to notice. `amount` rather than
+        # `counters`, which is the kind-keyed map a permanent arrives with.
+        if not effect.get("objects"):
+            raise DslError(f"{where}: suspend needs 'objects' -- the card to suspend")
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: suspend needs an 'amount' -- \"with N time counters on it\""
+            )
     if op == "cant_attack_player":
         # All three keys are required, and each omission is silent in its own
         # way. Without `attacker`/`defender` the spec defaults to the controller
@@ -1564,19 +1624,18 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"can't be sacrificed, chosen when it resolves)"
             )
         # And the duration is required for the reason the three above it are.
-        # `this_turn` is the only word implemented; a card that wanted a longer
-        # one would be a strictly better card than any printed sacrifice
-        # prohibition, so a second word is added to
-        # `SACRIFICE_RESTRICTION_DURATIONS` rather than defaulted to here.
+        # A longer word read as a shorter one, or the reverse, is a different
+        # card, so the implemented words are enumerated in
+        # `CANT_SACRIFICE_DURATIONS` rather than defaulted to here.
         if "duration" not in effect:
             raise DslError(
                 f"{where}: cant_sacrifice needs a 'duration' "
-                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
+                f"(implemented: {sorted(CANT_SACRIFICE_DURATIONS)})"
             )
-        if str(effect["duration"]) not in SACRIFICE_RESTRICTION_DURATIONS:
+        if str(effect["duration"]) not in CANT_SACRIFICE_DURATIONS:
             raise DslError(
                 f"{where}: unknown cant_sacrifice duration {effect['duration']!r} "
-                f"(implemented: {sorted(SACRIFICE_RESTRICTION_DURATIONS)})"
+                f"(implemented: {sorted(CANT_SACRIFICE_DURATIONS)})"
             )
     if op == "prevent_damage":
         # The op, not the `static_effects` entry of the same name. That one is
@@ -1819,6 +1878,46 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'any_color' and 'any_type' are different printed "
                 f"sentences -- write the one the card says"
             )
+    if "any_type" in effect and op != "add_mana":
+        # "Mana of any type can be spent to cast a spell this way" (Klaw,
+        # Master of Sound; 609.4b) is a rider on a "you may play it" permission,
+        # as `any_color` is, and broader than it: "any type" names colourless
+        # too, so coloured mana pays ``{C}``. On a bare exile it would load,
+        # print its sentence and relax nothing. `add_mana`'s key of the same
+        # name is a different sentence about what a land produces.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'any_type' relaxes the cast a 'playable' permission "
+                f"grants, so it needs one (exile / look_at_top with 'playable', "
+                f"or grant_playable)"
+            )
+        if effect["any_type"] is not True:
+            raise DslError(f"{where}.any_type: the only value is true")
+    if "playable_free" in effect:
+        # "You may play them **without paying their mana costs**" is a rider on
+        # a "you may play it" permission, as `any_color` is: on a bare exile it
+        # would load, print its sentence and make nothing free.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_free' prices the cast a 'playable' permission "
+                f"grants, so it needs one (exile / look_at_top with 'playable', "
+                f"or grant_playable)"
+            )
+        if effect.get("any_color") or effect.get("any_type"):
+            # Nothing is paid, so a relaxation of what may be spent is a
+            # sentence no card prints beside this one.
+            raise DslError(
+                f"{where}: 'playable_free' leaves no mana to spend, so "
+                f"'any_color'/'any_type' beside it relaxes nothing"
+            )
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every
         # card written before durations existed says, and `playable:
@@ -1844,12 +1943,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown 'playable' duration {duration!r} "
                 f"(implemented: {sorted(PLAYABLE_DURATIONS)})"
             )
-        if duration == "while_exiled":
+        if duration in ("while_exiled", "until_next_exile_by_source"):
             # "For as long as they remain exiled" ends when the card leaves
             # exile, which is the zone-change reset -- so it is only the printed
             # duration on a card that is *in* exile. On a graveyard or a hand
             # card the same reset would read "for as long as it remains
             # there", which is a different sentence and a silent one.
+            # "Until you exile another card with this creature" is a card the
+            # creature exiled, so the same zone-change reset is its other end.
             objects = effect.get("objects")
             in_exile = (
                 op == "exile"
@@ -1862,7 +1963,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
             if not in_exile:
                 raise DslError(
-                    f"{where}: 'playable': \"while_exiled\" lasts while the card is in "
+                    f"{where}: 'playable': {duration!r} lasts at most while the card is in "
                     f"exile, so it needs cards being exiled or already there "
                     f"(exile, look_at_top to exile, grant_playable over zone exile)"
                 )
@@ -2008,7 +2109,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if "duration" in effect and str(effect["duration"]) not in CONTROL_DURATIONS:
             raise DslError(
                 f"{where}: unknown gain_control duration {effect['duration']!r} "
-                f"(use 'until_end_of_turn' or 'permanent')"
+                f"(use one of {list(CONTROL_DURATIONS)})"
             )
     if op == "rotate_control":
         # Aminatou's -6. Without a pool the op rotates nothing and the card
@@ -2232,6 +2333,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         for t in effect.get("types") or ():
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown card type {t!r}")
+        # Creature types only (205.3m), because that is all the reader matches:
+        # an "Equipment" here would narrow the permission to nothing. And the
+        # one dynamic entry spelled exactly, or "of the chosen type" resolves
+        # to no type and the Icon's ability does nothing, for ever.
+        for index, entry in enumerate(effect.get("subtypes") or ()):
+            if isinstance(entry, Mapping):
+                if dict(entry) != {"chosen_type_of": "self"}:
+                    raise DslError(
+                        f"{where}.subtypes[{index}]: the only subtype that is not a "
+                        f'literal name is {{"chosen_type_of": "self"}}, not {dict(entry)!r}'
+                    )
+            elif not isinstance(entry, str) or SUBTYPE_CLASS.get(entry, "Creature") != "Creature":
+                raise DslError(
+                    f"{where}.subtypes[{index}]: grant_flash_permission narrows by "
+                    f"creature type, and {entry!r} is not one"
+                )
+        if not isinstance(effect.get("next_spell", False), bool):
+            raise DslError(f"{where}: grant_flash_permission's 'next_spell' is true or false")
     if op in ("add_poison", "add_energy") and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
     if op == "proliferate" and "objects" in effect:
@@ -2443,6 +2562,36 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         validate_condition(more["condition"], f"{where}.up_to_if.condition")
         if "count" in more:
             validate_value(more["count"], f"{where}.up_to_if.count")
+    if op == "choose_mode" and "random" in effect:
+        # "Choose one at random" -- the game picks exactly `count` modes off its
+        # seeded rng. Every clause that shapes a *player's* answer is
+        # meaningless here and would load, be ignored, and leave a card whose
+        # printed widening or chooser does nothing.
+        if not isinstance(effect["random"], bool):
+            raise DslError(f"{where}: 'random' is a boolean, got {effect['random']!r}")
+        if effect["random"]:
+            clash = [
+                key
+                for key in ("chooser", "budget", "up_to", "up_to_if", "or_more", "all_if")
+                if effect.get(key) not in (None, False)
+            ]
+            if clash:
+                raise DslError(
+                    f"{where}: a 'random' choose_mode picks exactly 'count' modes "
+                    f"with nobody choosing, so {clash} cannot apply to it"
+                )
+    if "choose_instead_if" in effect:
+        # "If you discarded a card this turn, you choose one instead" (Typhoid
+        # Mary, Fractured). Only a random pick has an "instead" to switch to;
+        # anywhere else the key would load and be ignored.
+        if op != "choose_mode" or effect.get("random") is not True:
+            raise DslError(
+                f"{where}: 'choose_instead_if' only means anything on a choose_mode "
+                f"with 'random': true"
+            )
+        validate_condition(effect["choose_instead_if"], f"{where}.choose_instead_if")
+        if effect["choose_instead_if"] is None:
+            raise DslError(f"{where}: 'choose_instead_if' needs a condition")
     if "as" in effect:
         # `as` names a binding -- `snapshot`'s, and the record `reveal`,
         # `sacrifice`, `exile` and the two token-making ops write of what they
@@ -2931,6 +3080,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if not isinstance(effect.get("objects"), Mapping):
             raise DslError(f"{where}: cast_card needs an 'objects' selector naming the card")
         validate_selector(effect["objects"], f"{where}.objects")
+        if "exiles" in effect and not isinstance(effect["exiles"], bool):
+            # "Exile it instead" is a yes or a no; a string "false" read as
+            # truthy would exile a spell the card sends back to the graveyard.
+            raise DslError(f"{where}: cast_card's 'exiles' is true or false")
         for key in ("free", "selector", "zones", "per_owner"):
             if key in effect:
                 # The near misses' keys. `cast_card` charges the mana cost; a
@@ -3096,7 +3249,9 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # but itself is a permanent animation, the strictly better card.
         # Nissa, Vital Force's land stays a 5/5 "until your next turn".
         duration = effect.get("duration", "until_end_of_turn")
-        allowed = (*CONTROL_DURATIONS, "until_your_next_turn")
+        # Spelled out rather than built from `CONTROL_DURATIONS`: that list
+        # also has "end_of_your_next_turn", which no animation implements.
+        allowed = ("permanent", "until_end_of_turn", "until_your_next_turn")
         if duration not in allowed:
             raise DslError(
                 f"{where}: animate's 'duration' is one of {list(allowed)}, "

@@ -1,0 +1,31 @@
+{
+  "_comment": "A card that exists only for tests/unit/triggers/test_play_from_exile_trigger.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_exile_player` is Klaw, Master of Sound's 'Whenever you play a card from exile' -- one printed line, two abilities (a spell is cast, a land is played), each with `from_zones: [\"exile\"]`. It draws rather than gaining indestructible so a test can count the firings.",
+  "cards": [
+    {
+      "id": "t_exile_player",
+      "name": "Test Exile Player",
+      "oracle_text": "Whenever you play a card from exile, draw a card.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Rogue"],
+      "power": 1,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you play a card from exile, draw a card.",
+          "trigger": {"event": "spell_cast", "controller": "you", "from_zones": ["exile"]},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        },
+        {
+          "kind": "triggered",
+          "text": "Whenever you play a card from exile, draw a card.",
+          "trigger": {"event": "land_played", "controller": "you", "from_zones": ["exile"]},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

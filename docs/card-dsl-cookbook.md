@@ -364,6 +364,37 @@ an artifact card has warp, a red creature card has warp, a blue creature card
 with the same body does not — along with the alternative cost, the exile at the
 next end step, and the cast from exile a turn later.
 
+### `grant_miracle` — miracle handed to cards in your hand
+
+```jsonc
+{ "kind": "static", "effect": "grant_miracle", "affects_player": "you",
+  "miracle_cost": "{0}",
+  "affects_spells": { "not_types": ["Land"] } }
+```
+
+Molecule Man: *"Nonland cards in your hand have miracle {0}."* `grant_warp`'s
+shape for the card-level `miracle` price: `affects_spells` names the cards (the
+same printed-face filter, `any_of` included) and `miracle_cost` the price, both
+required — `"{0}"` is a price and is written, and a cost with X is refused.
+
+It is read by `player_statics.granted_miracle_cost` from the draw-time offer,
+`replacements._miracle`, after the drawn card is in hand. So the static must be
+active **as the card is drawn** (702.94a reveals it then): a card drawn before
+the granter arrived was never offered, and a second card drawn this turn is not
+offered either. It reaches only the granter's controller's hand.
+
+**Not `grant_warp` or `granted_alternative_cost`.** Those are prices offered at
+every cast; a miracle cost is offered once, at the draw, and is gone after it.
+
+A card that prints its own miracle and is granted another has **two miracle
+abilities**. Each is offered in turn, printed first; declining one leaves the
+other, a cast ends the offers, and two identical prices are one offer. Two
+grants are one price — the first wins, for `grant_warp`'s reason.
+
+`tests/unit/replacement/test_grant_miracle.py` pins the scope: a nonland card
+drawn first is cast for `{0}`, a second draw, a land, a missing granter and an
+opponent's draw are offered nothing.
+
 ### Restricted mana
 
 ```jsonc
@@ -756,6 +787,8 @@ graveyard that refills as you empty it, that is the loop, not a rounding error.
   "playable": "end_of_your_next_turn" }                             // Light Up the Stage
 { "op": "exile", "objects": { ... },
   "playable": "while_exiled" }                                      // Elder Brain
+{ "op": "look_at_top", "destination": "exile",
+  "playable": "until_next_exile_by_source" }                        // Superior Foes of Spider-Man
 ```
 
 The values are `PLAYABLE_DURATIONS` in `engine/objects.py`, listed for workers as
@@ -796,10 +829,51 @@ the loader accepts it only where the card is in exile -- `exile`, `look_at_top`
 with `destination: "exile"`, or `grant_playable` over `zone: "exile"` -- since on
 a graveyard card the same reset would read "while it remains in the graveyard".
 
+**`until_next_exile_by_source`** is "you may play that card **until you exile
+another card with this creature**" (Superior Foes of Spider-Man). No clock: the
+grant records the source on the card (`playable_source`) and the card on the
+source (`playable_grants`), and `zones.end_permissions_until_next_exile` ends
+those grants at the start of the source's next `exile`, `airbend` or
+`look_at_top` into exile, whether or not that op grants anything itself. Once
+per op, before any card moves, so the cards one op exiles together keep the
+permissions they were granted together. The tie is to the **object** (400.7):
+`reset_permanent_state` empties the source's list when it leaves the
+battlefield, so the last card it exiled stays playable while it stays exiled,
+and the creature returning is a new object whose exiles end only its own grants.
+The loader accepts it where `while_exiled` is accepted, since leaving exile is
+its other end. `while_exiled` is the near miss: it leaves every earlier card
+playable for ever, a stronger card than printed.
+
 The land half ("you may **play lands** … from among the exiled cards") walks
 every seat's exile, as the cast half always did: an opponent's card exiled by
 your effect sits in *their* exile. A land played that way enters under the
 control of the player who played it (110.2).
+
+### "You may play them without paying their mana costs"
+
+```jsonc
+{ "op": "look_at_top", "player": "each_player", "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "face_down": true,
+  "playable": "while_exiled", "playable_free": true }              // Extract Power
+```
+
+`playable_free` is a rider on the permission a `playable` duration grants, on
+`exile`, `look_at_top` to exile or `grant_playable`, and the loader refuses it
+without one. It sets the object's `playable_free`, the flag plot already writes,
+so the cast path is the same one: the line is priced free (601.2b), X is 0, an
+additional cost is still charged (601.2f), and the spell keeps its own timing --
+a creature still waits for your main phase. A land needs no price: it is played
+from exile with your land drop, at sorcery speed (305.1, 305.2). `any_color` and
+`any_type` beside it are refused, because nothing is spent.
+
+The permission belongs to the effect's controller on all three ops, so a card
+taken off an opponent's library is yours to play and not theirs. Exiled
+`face_down` with a permission, the card is shown to that player and to nobody
+else; the rest of the table sees only that a card is there.
+
+The near misses are `cast_free` on `look_at_top` or `exile_until`, which casts
+one spell while the effect resolves and never a land, and `play_exiled`, which
+does the same for a linked card. Neither leaves a permission behind.
 
 ## Auras and Equipment
 
@@ -918,6 +992,52 @@ with the ability's own controller, which here is the other seat.
 including inside a static's `affects` filter — nothing else is ever attached to a
 player, so it would resolve to nobody for the whole game and the ability would
 read on screen as though it did something.
+
+### Moving an Aura onto a player — `attach` with `player`
+
+    Archnemesis — "Enchant opponent
+                   Whenever you attack enchanted player, that player loses 2
+                   life. You draw a card and gain 2 life.
+                   Whenever a player attacks you, you may attach this Aura to
+                   that player."
+
+```jsonc
+// "Whenever you attack enchanted player, that player loses 2 life…"
+"trigger": { "event": "creatures_attack_player", "controller": "you",
+             "defending": "enchanted_player" },
+"effects": [ { "op": "lose_life", "player": { "binding": "defender" }, "amount": { "const": 2 } },
+             { "op": "draw", "player": "you", "amount": { "const": 1 } },
+             { "op": "gain_life", "player": "you", "amount": { "const": 2 } } ]
+
+// "Whenever a player attacks you, you may attach this Aura to that player."
+"trigger": { "event": "creatures_attack_player", "controller": "any",
+             "defending": "you", "recheck": false,
+             "condition": { "cmp": ">=", "right": { "const": 1 },
+                            "left": { "count": { "binding": "attackers",
+                                                 "attacking_player": "you" } } } },
+"effects": [ { "op": "may",
+               "effects": [ { "op": "attach", "player": { "binding": "event_player" } } ] } ]
+```
+
+`attach` with `player` in place of `objects` moves the ability's **source**
+Aura onto the one seat the spec names (701.3). The host is not a selector the
+card wrote to encode its enchant clause, so the op asks the clause itself: the
+Aura's first declared target, the spec `stack._attach_aura` reads on the cast
+path, resolved against the Aura's current controller. "Enchant opponent" never
+lands on its own controller (303.4); an illegal host, a seat that has lost, or a
+seat with protection from the Aura leaves it where it was (701.3b) rather than
+unattached, and the player it is already on is a no-op with no `attached`
+event. Attaching is not targeting, so hexproof does not stop it.
+
+The loader refuses it on anything but an Aura whose first target is
+`kind: "player"`, beside `objects` or `attachment`, and with a spec that can
+name several seats (`"opponent"`, `"each_opponent"`, `"each_player"`, `"all"`).
+
+"That player" in the second sentence is the attacking player,
+`{"binding": "event_player"}` on `creatures_attack_player`. The condition is
+"attacks **you**", not your planeswalker (506.2); it is part of the event, hence
+`recheck: false`. `defending: "enchanted_player"` in the first sentence is
+described under [Triggers](card-dsl.md#triggers).
 
 ### Reconfigure — taking it off again
 
@@ -1394,6 +1514,37 @@ without `controller` (`affects_player` names the caster); an empty filter, or
 hand the permission to every spell. The one-shot, timed form ("until your next
 turn, you may cast sorcery spells as though they had flash") is the
 `grant_flash_permission` op, not this static.
+
+The op's single-use form is Witness, Progenitor's Icon's "{T}: The next spell of
+the chosen type you cast this turn can be cast as though it had flash", beside a
+`choose_type` "as this artifact enters":
+
+```jsonc
+{ "op": "grant_flash_permission",
+  "duration": "this_turn",
+  "subtypes": [{ "chosen_type_of": "self" }],
+  "next_spell": true }
+```
+
+`types` (card types) and `subtypes` (creature types, 205.3m) are any-ofs, ANDed
+with each other. A spell's creature types are read off the face being cast by
+`characteristics.printed_creature_types`: the printed line plus its own
+characteristic-defining `add_subtype` static, so a changeling is every type and a
+Kindred instant counts. `{"chosen_type_of": "self"}` is replaced by a literal as
+the ability resolves, from the type its source had when the ability was activated
+(`structs.ACTIVATION_CHOSEN_TYPE`, written by `Game._activate`), so an Icon
+destroyed in response still grants its flash; a source that chose nothing grants
+nothing. `next_spell: true` makes the permission one-shot, and it is spent by the
+**cast**, not by the timing it relaxed: `temp_effects.consume_next_spell_flash_permissions`
+runs off `GameState._tally`'s SPELL_CAST arm, so a Goblin cast in your own main
+phase, which never needed flash, still uses it up, and a Bear cast first leaves it
+waiting. One cast spends every matching one-shot permission, because each
+activation is an effect about the same "next spell": two Icons of one type make
+one flash Goblin, not two. An unused one ends at cleanup with the rest of
+`this_turn`. Load errors: a `subtypes` entry that is not a creature type
+(`SUBTYPE_CLASS`), a near-miss dynamic entry, and a non-boolean `next_spell`.
+Leaving `next_spell` off is the near miss — it reads as "Goblin spells have flash
+this turn", every Goblin rather than the next one.
 
 `cast_only_at_sorcery_speed` points the other way — Teferi, Time Raveler's "Each
 opponent can cast spells only any time they could cast a sorcery":
@@ -3856,12 +4007,22 @@ and the safe reading.
 **`objects` is required and there is no wildcard**, for `unblockable`'s reason
 and harder: read as "everything" an absent `objects` is a one-sided Sigarda for
 the turn, and read as "nothing" it is a card that silently protects nobody.
-**`duration` is required** and `this_turn` is the only word implemented — the
-only one printed — so there is no `until_your_next_turn`, no `player` field to
-carry its clock, and nothing for `sba` to prune when a seat leaves. The record is
-`structs.SacrificeRestriction` on `GameState.sacrifice_restrictions`, cleared by
-`turn._cleanup_step` beside the three restrictions above it, and read through the
-one predicate `primitives.sacrifice_forbidden`.
+**`duration` is required**: `this_turn` or `end_of_your_next_turn`
+(`structs.CANT_SACRIFICE_DURATIONS`). There is no `until_your_next_turn`, because
+no card prints it.
+
+The two words are two records. `this_turn` is `structs.SacrificeRestriction` on
+`GameState.sacrifice_restrictions`, keyed on the oids chosen at resolution and
+cleared by `turn._cleanup_step` beside the three restrictions above it.
+`end_of_your_next_turn` is Stilt-Man's "it **gains** \"This permanent can't be
+sacrificed\"", a granted ability, and is a `TempEffect(kind="cant_sacrifice")`
+on each permanent on the battlefield (`temp_effects.grant_cant_be_sacrificed`)
+on the clock described under *…until the end of your next turn* above. It is not
+a table row because a granted ability ends with the object (400.7) and an oid
+survives a zone change: over one turn the difference is negligible, but across a
+turn boundary a flickered permanent coming back still protected is a line a
+player can actually take. Both are read through the one predicate
+`temp_effects.sacrifice_forbidden`.
 
 ## Attack requirements
 
@@ -4166,6 +4327,52 @@ otherwise become impossible:
   party controls — is legally attackable, which is why a goad can never empty the
   defender list and never makes a creature unable to attack.
 
+### "Goaded creatures" — `goaded`
+
+    Puppet Master, String Puller — "Whenever you attack, goad target creature an
+    opponent controls. It can't block this turn. … Whenever one or more goaded
+    creatures deal combat damage to one of your opponents, create a Treasure
+    token."
+
+```jsonc
+// The second ability: the payoff for every goad at the table.
+{ "kind": "triggered",
+  "trigger": { "event": "creatures_deal_combat_damage", "controller": "any",
+               "per_player": true, "defending": "opponent",
+               "filter": { "goaded": true } },
+  "effects": [ { "op": "create_token", "token": "treasure_token" } ] }
+
+// The first ability needs nothing new: goad, then the cant_block op.
+{ "kind": "triggered", "trigger": { "event": "you_attack" },
+  "targets": [ { "id": "t1", "kind": "permanent", "count": 1,
+                 "selector": { "zone": "battlefield", "controller": "opponent",
+                               "types": ["Creature"] } } ],
+  "effects": [ { "op": "goad", "objects": { "target": "t1" } },
+               { "op": "cant_block", "objects": { "target": "t1" },
+                 "duration": "this_turn" } ] }
+```
+
+`goaded` is a selector and trigger-filter key that reads `GameObject.goaded_by`:
+`true` matches a creature somebody has goaded right now, `false` one nobody
+has. **Anybody's** goad counts, because the printed word names no goader — a
+creature another player goaded is as much a goaded creature as one you goaded.
+It is a boolean only; the loader refuses a word such as `"you"`, which `bool()`
+would otherwise read as `true`.
+
+Three parts of the trigger carry the sentence, and each one has a near miss:
+
+| | |
+|---|---|
+| `controller: "any"` | The goaded creatures are nearly always an opponent's, and on this event `controller` is compared with the player whose creatures dealt the damage. The schema's default, `"you"`, would leave the ability unable to fire at all |
+| `per_player` + `defending: "opponent"` | "…to one of your opponents" is the per-seat reading: one firing, and so one Treasure, for each opponent the batch dealt damage to, with `damagers` narrowed to the creatures that hit that seat. Damage to you never fires it, so a goaded creature that gets through to you pays nothing even when another one hits an opponent |
+| `filter: { "goaded": true }` | Read over the narrowed damagers and met by any of them ("one or more"). A goaded creature that hit one opponent does not make an ungoaded creature's hit on another opponent count |
+
+The key reads live state, and in a trigger filter it is asked once, as the
+event fires. On `creatures_deal_combat_damage` that is as the damage is dealt,
+before state-based actions can remove the creature, so a goaded creature that
+dies in combat still counts. A creature that leaves the battlefield loses its
+marks (400.7), so off the battlefield `goaded` is always false.
+
 ## Block restrictions
 
 "This creature can't be blocked by …" is a static, not a keyword, because the
@@ -4442,6 +4649,39 @@ planeswalker or battle does not count.
 **The near miss** is the same trigger printed on the card. It plays the same on
 the card that prints it, and a grant cannot hand it to another creature. Write
 the keyword. A permanent holding dethrone twice triggers once, as exalted does.
+
+### Melee
+
+    Titania, Proud Pummeler — "Melee" and "Other creatures you control have melee."
+
+```jsonc
+"keywords": ["first_strike", "melee"]                  // printed on the permanent
+
+{ "kind": "static", "text": "Other creatures you control have melee.",
+  "effect": "grant_keyword", "keywords": ["melee"],
+  "affects": { "controller": "you", "types": ["Creature"], "exclude_self": true } }
+```
+
+Exalted's shape again: a `Keyword` whose content is the rules-supplied
+`carddef.MELEE_TRIGGER`, yielded once for every battlefield permanent whose
+derived keywords include melee. The trigger is "whenever this creature attacks,
+it gets +1/+1 until end of turn for each opponent you attacked with a creature
+this combat" (702.121a): `attacks` from `source: "self"`, then a `pump` of
+itself by the `opponents_attacked_this_combat` value for `"you"`.
+
+That value is counted as the ability resolves (702.121b), off
+`TurnLedger.opponents_attacked_this_combat`: the distinct seats the player
+declared attackers against in the combat in progress. A creature attacking a
+planeswalker or battle counts that permanent's controller; an attacker removed
+before resolution still counts its opponent; a creature put onto the
+battlefield attacking was never declared (508.4) and adds nobody; and a second
+combat in the turn starts again from nought.
+
+**The near miss** is an `attacks` trigger pumping by `attacked_this_turn` or by
+a `player_count` over `attacked_by`: the first counts who attacked rather than
+whom, the second only the seats this one creature attacked, and both per turn
+rather than per combat. Write the keyword. A permanent holding melee twice
+triggers once, as exalted does.
 
 ## Protection
 
@@ -4861,13 +5101,35 @@ them where it is sitting:
 
 #### Convoke, improvise and delve
 
-One field, three currencies, each paying {1} of the spell's **generic** cost:
-`"tap_creatures"` taps untapped creatures you control (convoke, 702.51),
-`"tap_artifacts"` taps untapped artifacts you control (improvise, 702.126), and
-`"exile_from_graveyard"` exiles cards from your graveyard (delve, 702.66). The
-card is one cast line; which permanents tap or which cards go is a
-`CHOOSE_OBJECTS` asked as the spell is paid for, tagged `convoke`, `improvise`
-or `delve` ([ADR 0020](adr/0020-convoke-is-one-line.md)).
+One field, three currencies: `"tap_creatures"` taps untapped creatures you
+control (convoke, 702.51), `"tap_artifacts"` taps untapped artifacts you
+control (improvise, 702.126), and `"exile_from_graveyard"` exiles cards from
+your graveyard (delve, 702.66). Each artifact or card pays {1} of the spell's
+**generic** cost; each convoking creature pays {1} **or one mana of its
+colour** (702.51a), so a black creature pays a `{B}` pip, or a hybrid pip with
+black in it, and a green one cannot. The card is one cast line; which
+permanents tap or which cards go is a `CHOOSE_OBJECTS` asked as the spell is
+paid for, tagged `convoke`, `improvise` or `delve`
+([ADR 0020](adr/0020-convoke-is-one-line.md)). Which symbol each creature pays
+is not asked: the engine takes the split that leaves the rest payable, and a
+pick with a creature left paying nothing is asked again.
+
+"Each creature that convoked this spell" (702.51c) is the selector key
+`{"convoked": true}`: the creatures tapped to pay for the resolving spell, as
+the cast recorded them. One that left the battlefield since is not among them
+(400.7), and a copy of the spell was convoked by nobody. The loader refuses
+the key on a card without `"pay_generic_with": "tap_creatures"`. `binding` is
+the near miss: the record is the cast's, not an op's `as`.
+
+```jsonc
+// Lethal Scheme -- "Convoke … Destroy target creature or planeswalker. Each
+//  creature that convoked this spell connives."
+"pay_generic_with": "tap_creatures",
+"spell_effects": [
+  { "op": "destroy", "objects": { "target": "t1" } },
+  { "op": "connive", "objects": { "convoked": true, "types": ["Creature"] } }
+]
+```
 
 ```jsonc
 // Kappa Cannoneer -- "Improvise (Your artifacts can help cast this spell. Each
@@ -4880,8 +5142,10 @@ to improvise cannot also be tapped for mana — the printed "after you're done
 activating mana abilities". A pick that taps the Sol Ring the rest of the cost
 needed is asked again. The type is read off derived characteristics, so an
 artifact creature counts for either keyword and an animated artifact land for
-both. None of them reaches a coloured pip: the saving goes through the same
-clamp as every cost reduction, and the ceiling is the spell's own generic cost.
+both, and a convoking creature's colour is its derived one. Improvise and delve
+never reach a coloured pip: their saving goes through the same clamp as every
+cost reduction, and their ceiling is the spell's own generic cost. Convoke's
+ceiling adds the pips a colour could pay.
 The near miss is `cost_reduction` with a count of artifacts (affinity), which
 lowers the price without tapping anything.
 
@@ -4943,6 +5207,34 @@ looks at those keys. It is refused on an instant or sorcery, which would be
 exiled as it resolves the way flashback is. The near miss is `graveyard_cost`
 with the printed mana, which has no `condition`: the card would be castable from
 the graveyard with no Zombie at all.
+
+#### Mayhem
+
+"Mayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if you
+discarded it this turn. Timing rules still apply.)" is one card-level key, the
+printed price:
+
+```jsonc
+// Abomination, World Ravager
+"mayhem": "{4}{R}"
+```
+
+It compiles onto the graveyard-cost slot above with escape's destination: a
+permanent resolves onto the battlefield and an instant or sorcery goes back to
+the graveyard, with no exile rider. The one thing mayhem adds is the condition.
+Legality offers the line only while `TurnLedger.discarded` maps this object to
+the caster. `primitives.discard_cards` writes the entry after the move, and only
+when the card really reached a graveyard (a Rest in Peace exile leaves nothing
+to cast). `zones.move_object` drops it at the next zone change, and the ledger
+clears with the turn. So a card milled or put into the graveyard by any other
+route is not castable this way. Neither is one cast with mayhem that resolves
+back into the graveyard, because that card is a new object (400.7).
+
+The loader refuses `mayhem` beside `graveyard_cost`/`flashback`, `graveyard_cast`,
+`graveyard_cast_transformed` or `retrace`. Each of those is a second answer to
+what the card costs from the graveyard or where it goes. The near miss is
+`graveyard_cost` plus `graveyard_cast: "graveyard"`, which has no condition:
+the card would be castable from the graveyard every turn, however it got there.
 
 #### An *alternative* cost that is not mana
 
@@ -8121,8 +8413,26 @@ group, including the extra ones a `replace_token_creation` doubler adds or the
 ones it substitutes. Two `create_token` ops are two groups. `attacks_unblocked`
 groups by the block declaration (`combat.finish_blockers`), since every attacker
 is blocked or unblocked at that one instant (509.1h); a second combat is a second
-group. `dealt_damage` groups by the damage event, below. The loader refuses
+group. `discard` groups by the discard: one `replacements.discard` call -- a
+"discard two cards", one player's share of "each player discards", the
+cleanup-step trim, one creature's connive -- is one group, and two discards
+are two. `dealt_damage` groups by the damage event, below. The loader refuses
 `batched` on any other event, where nothing would group it.
+
+"Whenever you discard one or more land cards, each opponent loses 2 life."
+(Doctor Doom, King of Latveria)
+
+```jsonc
+"trigger": {"event": "discard", "controller": "you",
+            "filter": {"types": ["Land"]}, "batched": true},
+"effects": [
+  {"op": "lose_life", "player": "each_opponent", "amount": {"const": 2}}
+]
+```
+
+Two lands discarded together drain 2, a land beside a nonland drains 2, two
+nonlands drain nothing. Without `batched` the same trigger is "whenever you
+discard **a** land card" and drains once per land.
 
 "Whenever one or more creatures an opponent controls attack you and aren't
 blocked, that player draws three cards and gains control of this artifact.
@@ -8996,6 +9306,37 @@ the spent modes would still be offered and the flag written for nothing. It is
 meaningless there anyway: a spell is a new object each cast. **`"turn"` is also
 refused on an activated ability** (Kargan Intimidator), for the same reason:
 602.2b answers its modes in `Game._ask_modes`, which strikes nothing off.
+
+## "Choose one at random" — and "you choose one instead"
+
+Typhoid Mary, Fractured — *"Whenever Typhoid Mary attacks, choose one at random.
+If you discarded a card this turn, you choose one instead."*
+
+```jsonc
+{"op": "choose_mode", "count": 1, "random": true,
+ "choose_instead_if": {"cmp": ">", "left": {"cards_discarded_this_turn": "you"},
+                       "right": {"const": 0}},
+ "modes": [...]}
+```
+
+`random: true` picks exactly `count` modes, uniformly, off the game's seeded
+`state.rng`, so a game replays from its seed and nobody is asked. The pick is
+made where a player's choice would be: as a spell is cast (601.2b), as a
+trigger is put on the stack (603.3c), or on resolution for a nested
+`choose_mode`. Only modes that could have been chosen are in the draw — one
+with no legal target, or one spent under `once_each`, is struck off first.
+
+`choose_instead_if` is a condition, read at that same moment; while it holds,
+the controller chooses as for an ordinary `choose_mode`. It is refused without
+`random: true`, and `random` is refused beside every clause that shapes a
+player's answer (`up_to`, `or_more`, `up_to_if`, `all_if`, `budget`,
+`chooser`).
+
+The near miss is `roll_dice` with an `if` per face. It is a different card: it
+rolls a die, and a roll is an event "whenever you roll" cards see. For the
+condition, `cards_discarded_this_turn` counts the player's discards wherever
+the cards went; mayhem's per-object record is the near miss there, and forgets
+a discarded card that has since left the graveyard.
 
 ## One choice across two zones — `union`
 
@@ -10220,7 +10561,8 @@ built from zone changes alone would show a creature silently swapping sides.
 ```
 
 Act of Treason, Threaten, Zealous Conscripts. `duration` is `"permanent"` (the
-default) or `"until_end_of_turn"`; **any other spelling is a load error**. A
+default), `"until_end_of_turn"` or `"end_of_your_next_turn"` (below); **any
+other spelling is a load error**. A
 `duration` the engine does not read would be understood as "until end of turn"
 by whoever wrote it and turn Act of Treason into a permanent steal — a strictly
 better card than the printed one, loading clean.
@@ -10258,6 +10600,48 @@ Call for Aid says the same three sentences about a *set* rather than one
 targeted permanent, and there the follow-on clauses have nowhere to point once
 control has moved — which is what `as` is for; see *Bindings* above and the
 `cant_sacrifice` op below.
+
+### …until the end of your next turn
+
+    Stilt-Man, Towering Terror — "Whenever one or more Villains you control deal
+    combat damage to a player, gain control of target noncreature, nonland
+    permanent that player controls until the end of your next turn. It gains
+    "This permanent can't be sacrificed" until the end of your next turn."
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" },
+  "duration": "end_of_your_next_turn" },
+{ "op": "cant_sacrifice", "objects": { "target": "t1" },
+  "duration": "end_of_your_next_turn" }
+```
+
+Rule 611.2b's turn-relative duration, spelled the way `grant_playable`'s Light
+Up the Stage permission is because it is the same clock. The entry ends in the
+**cleanup step of the first turn of yours to begin after it was made**: made
+during your own turn — always, for a combat-damage trigger — that turn is not
+"your next turn" and the opponents' turns are not yours, so the permanent stays
+through two cleanups and goes back in the third. Made during an opponent's turn,
+your very next turn ends it. "Your" is the effect's controller, which `player`
+does not change.
+
+It is `TempEffect.until_end_of_turn_of` (the seat) and `since_turn` (the turn it
+was made in) on the same `TempEffect(kind="control")`, read by
+`primitives.clear_until_eot` — never a projected future turn number, so an extra
+turn or an eliminated seat moves the end with it. The near misses are both
+wrong cards: `until_end_of_turn` is Act of Treason, and `until_your_next_turn`
+(an untap-step clock some other ops take) would hand the permanent back before
+you could use it on the turn the printed card promises.
+
+**800.4a** applies to every timed steal: when the player who gained control
+leaves the game, `sba._eliminate` ends the effects that gave it to them
+(`primitives.end_effects_of_leaving_player`) before it exiles what they still
+control, so the stolen permanent goes back to the seat it came from. An entry
+whose clock seat leaves ends too, because that turn never comes. A *permanent*
+steal records no previous controller and still leaves with the thief.
+
+"It gains \"This permanent can't be sacrificed\"" is `cant_sacrifice` on the
+same clock; see that op below for why it rides the permanent rather than the
+table.
 
 ### "Choose left or right" — passing the board around the table
 
@@ -10516,11 +10900,25 @@ walk offers nothing extra: nothing carries it that was not granted it.
 
 ### `any_type`
 
+```jsonc
+{ "op": "look_at_top", "player": { "binding": "event_player" }, "amount": { "const": 1 },
+  "objects": { "count": "all" }, "destination": "exile", "face_down": true,
+  "playable": "while_exiled", "any_type": true }        // Klaw, Master of Sound
+```
+
+The same key rides every op that writes a playable permission: `grant_playable`
+(Valigarmanda), and `exile` or `look_at_top` beside a `playable` duration
+("Mana of any type can be spent to cast a spell this way", Klaw). The loader
+refuses it without that permission, beside `any_color` (a different printed
+sentence) and beside `playable_free` (nothing is spent); its only value is
+`true`. `add_mana`'s `any_type` is a different key on a different op.
+
 "…and mana of any type can be spent to cast that spell" is the one clause in the
 engine that relaxes a **coloured** requirement, and nothing else could stand in
-for it. Every cost reduction there is — `spell_cost_reduction`, convoke, improvise, delve,
+for it. Every cost reduction there is — `spell_cost_reduction`, improvise, delve,
 emerge, the commander tax's negative twin — is clamped to the generic part
-precisely so that no pile of them can ever reach a pip; and `add_mana`'s "any
+precisely so that no pile of them can ever reach a pip; convoke pays a pip only
+the way mana of the creature's colour would; and `add_mana`'s "any
 type" is about what a permanent *produces*, not about what may be spent.
 
 `ManaCost.as_any_type` sums the coloured and hybrid pips into `generic`, which
@@ -10530,9 +10928,11 @@ a generic cost of the same size. `{C}` goes with them — "any type" names the
 colourless type too — and `X` does not, being a number the caster chooses.
 
 The flag rides on the **card**, beside the permission it is printed next to, and
-is read only while that permission is live (`playable_turn == state.turn`).
-Not on the player and not on the turn: the caster's other spells that turn are
-paid for normally, which is what the printed "**that** spell" says.
+is read only while that permission is live (`playable_live`), and it leaves
+exile with the permission (400.7). Not on the player and not on the turn: the
+caster's other spells that turn are paid for normally, which is what the printed
+"**that** spell" says. A land taken this way is played with the land drop, never
+cast (305.1), so the flag has nothing to reach there.
 
 ### `any_color`
 
@@ -10660,10 +11060,31 @@ narrower than 601.2b, never cheaper. `objects` is required, and `free`,
 `selector`, `zones` and `per_owner` are refused, because those keys belong to
 the free casts.
 
+**`exiles: true`** is "If that spell would be put into your graveyard, exile
+it instead" — Helmut Zemo, Mastermind, casting from a graveyard:
+
+```jsonc
+{ "op": "cast_card", "objects": { "target": "t1" }, "exiles": true, "as": "cast" },
+{ "op": "if", "condition": { "exists": { "binding": "cast" } },
+  "then": [ { "op": "add_counters",
+              "objects": { "zone": "battlefield", "self_only": true },
+              "counter": "+1/+1", "amount": { "const": 1 } } ] }
+```
+
+It is a replacement on the spell, so it applies however the spell leaves the
+stack for a graveyard: when it resolves, when it fizzles (608.2b) and when it is
+countered. It is carried on the stack item (`StackItem.exiles_instead`) and not
+on the card, so the same card cast again later by any other route goes back to
+the graveyard. "If you cast a spell this way" is `exists` over the `as` binding.
+`exiles` must be a boolean. It does not set the `cast_from_graveyard` condition,
+and it is not the card's own `graveyard_cast` rider: that rider belongs to
+flashback-like keywords printed on the card.
+
 | near miss | why it is not this |
 |---|---|
 | `cast_from_hand`, `play_exiled`, `cascade`, `look_at_top`'s `cast_free` | free: they go through `suspend.cast_for_free`, and a free Conduit is a strictly better card |
 | `grant_playable`, `grant_graveyard_cast` | leave a *permission* to cast later in a priority window; "if you do" has nothing to read while the ability resolves |
+| the card-level `exiles_itself` | the card's rider about *its own* spell, whoever casts it; Zemo's rider is about the spell his trigger cast |
 
 **`cant_cast_spells`** is the timed, one-shot form of the `cant_cast_spells`
 static: a player-wide, **total** prohibition. `player` (who is locked) and
@@ -10678,7 +11099,8 @@ zone-filtered lock is `cant_cast_spells_from_zones`. The clock and the cleanup
 are the timed table's own. A spell already on the stack is untouched, so the
 card Conduit just cast still resolves.
 
-Pinned in `tests/unit/casting/test_cast_card.py`.
+Pinned in `tests/unit/casting/test_cast_card.py` and, for `exiles`,
+`tests/unit/casting/test_cast_card_exiles.py`.
 
 ## Addendum — the phase a spell was cast in
 
@@ -11839,6 +12261,45 @@ them out of the library.
 The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
 `cast_free`.
 
+## "It gains suspend" — suspending a card from an effect
+
+```jsonc
+// Doom's Time Platform -- "Whenever you attack, exile target nonland card from
+// your graveyard with two time counters on it. If it doesn't have suspend, it
+// gains suspend."
+{ "kind": "triggered",
+  "trigger": { "event": "you_attack", "controller": "you" },
+  "targets": [{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+                "selector": { "zone": "graveyard", "controller": "you",
+                              "not_types": ["Land"] } }],
+  "effects": [{ "op": "suspend", "objects": { "target": "t1" }, "amount": 2 }] }
+
+// Kang Prime -- "exile cards from the top of your library until you exile a
+// nonland card. Put two time counters on that card. If it doesn't have
+// suspend, it gains suspend."
+"effects": [
+  { "op": "exile_until", "objects": { "not_types": ["Land"] }, "as": "hit" },
+  { "op": "suspend", "objects": { "binding": "hit" }, "amount": 2 }
+]
+```
+
+`suspend` puts each card in `objects` into exile if it is not there already,
+puts `amount` time counters on it and marks it suspended (702.62). From then on
+it is exactly a card suspended from hand: its owner's upkeep removes a counter,
+the last one casts it for free, and a creature cast that way has haste.
+
+- The card is its **owner's** suspended card, whoever controlled the effect: a
+  card in exile is controlled by its owner, so the owner's upkeep ticks it and
+  the owner casts it.
+- `amount` is a value expression evaluated once; both keys are required, and
+  the loader refuses either missing.
+- A card that does not stay in exile -- a commander its owner moves to the
+  command zone -- is not suspended.
+
+The near misses: `exile` followed by `add_counters` with `time` leaves a card
+nothing ticks, and `exile_until`'s `cast_free` casts the hit now rather than two
+upkeeps later.
+
 ## behold — choose a permanent or reveal a card
 
 ```jsonc
@@ -11912,6 +12373,41 @@ the turn your hand was all lands.
 `objects` is required for `explore`'s reason, and each permanent in the pool
 connives on its own — its own controller draws, from its own hand, onto its own
 counters.
+
+## "Whenever a creature you control connives"
+
+```jsonc
+// Glorious Purpose — "Whenever a creature you control connives, put a +1/+1
+// counter on that creature and a plan counter on this enchantment."
+{ "kind": "triggered",
+  "trigger": { "event": "connives", "controller": "you",
+               "filter": { "types": ["Creature"] } },
+  "effects": [
+    { "op": "add_counters", "counter": "+1/+1", "amount": { "const": 1 },
+      "objects": { "binding": "subject", "zone": "battlefield" } },
+    { "op": "add_counters", "counter": "plan", "amount": { "const": 1 },
+      "objects": { "zone": "battlefield", "self_only": true } } ] }
+
+// "Whenever this creature connives, …"
+{ "trigger": { "event": "connives", "source": "self" } }
+```
+
+The `connives` trigger event fires once for each permanent that connives,
+after its draw, its discard and its counter are all done. Its subject is the
+permanent that connived: `filter` asks what that permanent is,
+`controller: "you"` asks who controls it, and `{"binding": "subject"}` is "that
+creature". `source: "self"` means this permanent connived, never that this
+permanent's ability made something else connive.
+
+A connive counts whatever it drew or discarded. Connive 2 is one connive and
+fires once. A connive whose discard an opponent's discard shield stopped still
+fires. A permanent that left the battlefield before its connive resolved does
+not connive in this engine (see `docs/rules-coverage.md`), so nothing fires.
+
+`draw` and `discard` are the near misses. Both fire once per card and on every
+draw and discard at the table, so connive 2 would pay twice and a cleanup-step
+discard would pay too. Neither one names the creature, so "that creature" has
+nothing to point at.
 
 ## Clash
 

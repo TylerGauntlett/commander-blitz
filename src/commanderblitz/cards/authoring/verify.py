@@ -1710,6 +1710,14 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.warp is not None and stripped.lower().startswith("warp "):
         return _declares_printed_cost(stripped[len("warp ") :], card.warp)
 
+    # "Mayhem {4}{R} (You may cast this card from your graveyard for {4}{R} if
+    # you discarded it this turn…)" -- warp's shape again: the line is the
+    # price, carried by the card-level `mayhem` on the graveyard-cost slot, and
+    # a creature has no `spell_effects` to claim it wholesale. Strict for
+    # warp's reason: a card declaring `{1}{R}` cannot claim a printed `{4}{R}`.
+    if card.mayhem and card.flashback is not None and stripped.lower().startswith("mayhem "):
+        return _declares_printed_cost(stripped[len("mayhem ") :], card.flashback.mana)
+
     # "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost…)"
     # -- warp's shape with a count beside the price, and claimed by the field
     # for warp's reason: the price is no ability, and the counters, the type
@@ -1883,7 +1891,19 @@ def _covered(card: CardDef, line: str) -> bool:
             # `except_`, or the card claims a sentence it only half performs.
             if "until end of turn" in lowered and replacement.get("duration") != "end_of_turn":
                 continue
-            if "except it has" in lowered and not replacement.get("except_"):
+            # Each printed half of the exception needs its key: "…isn't
+            # legendary" (Spark Double), "…his name is…" (Chameleon), "…enters
+            # with an additional … counter" (Spark Double again).
+            exception = replacement.get("except_") or {}
+            if "except" in lowered and not exception:
+                continue
+            if "isn't legendary" in lowered and "Legendary" not in (
+                exception.get("remove_supertypes") or ()
+            ):
+                continue
+            if "name is" in lowered and not exception.get("name"):
+                continue
+            if "enters with" in lowered and not exception.get("enters_with"):
                 continue
             return True
         if event == "self_enters_replaced" and "would enter" in lowered:

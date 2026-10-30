@@ -16,7 +16,7 @@ from ..enums import Zone
 from ..events import EventType
 from ..stack import StackItem, ability_of, announce_targets
 from ..state import new_object
-from ..structs import TriggerInstance
+from ..structs import CONVOKED_BINDING, TriggerInstance
 from ..targeting import describe_ref, enumerate_target_tuples
 from ..triggers import fire
 from ..zones import move_object
@@ -251,7 +251,15 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # declared under the promised target list, so `stack._resolve_spell`
         # has to split them by that list rather than the unpromised one.
         gift_to=original.gift_to,
-        bindings=dict(original.bindings),
+        # Everything but the convoking creatures: 702.51c's "convoked it" is a
+        # creature tapped to *pay* for the spell, and a copy was never paid for
+        # -- convoke is neither an additional nor an alternative cost, so
+        # 707.10 does not carry it over.
+        bindings={
+            key: value
+            for key, value in original.bindings.items()
+            if key != CONVOKED_BINDING
+        },
         description=f"{card.name} (copy)",
     )
     obj.stack_id = copy.sid
@@ -478,7 +486,12 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
                 # was cast as -- and a countered Adventure is a card in the
                 # graveyard, since 715.3c exiles it only *as it resolves*.
                 obj.showing_second_face = False
-                move_object(state, item.oid, Zone.GRAVEYARD, to_player=obj.owner, cause="countered")
+                # "If that spell would be put into your graveyard, exile it
+                # instead" is a replacement on the spell, not a resolution
+                # rider, so a countered one is exiled too (`cast_card`'s
+                # ``exiles``).
+                destination = Zone.EXILE if item.exiles_instead else Zone.GRAVEYARD
+                move_object(state, item.oid, destination, to_player=obj.owner, cause="countered")
 
 
 @register("reflexive_trigger")

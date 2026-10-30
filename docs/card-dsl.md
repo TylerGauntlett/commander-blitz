@@ -1321,6 +1321,7 @@ Anywhere a number is expected -- the leaf list is
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
+{ "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
@@ -2342,14 +2343,58 @@ permanent enters none (Phyrexian Metamorph). `end_of_turn` is Cursed Mirror's
 copy is `clear_until_eot`'s timed form, and after cleanup the permanent is its
 own printed card again.
 
-`except_` is the copy exception, 707.9b, and `add_keywords` is its one key —
-Dack's Duplicate's "…except it has haste and dethrone" is
-`{"add_keywords": ["haste", "dethrone"]}`. The keywords go on
-`GameObject.copying_keywords`, which `GameState.card_of` writes into the copied
-face, so they are part of the copy rather than granted on top of it and they end
-when the copy ends. The near miss is a printed `grant_keyword` static: that is a
-layer-6 grant which keeps working on the uncopied card when the controller
-declines. The loader refuses an unknown keyword, an empty list and any other key.
+`except_` is the copy exception, 707.9b. Dack's Duplicate's "…except it has
+haste and dethrone" is `{"add_keywords": ["haste", "dethrone"]}`. The keywords go
+on `GameObject.copying_keywords`, which `GameState.card_of` writes into the
+copied face, so they are part of the copy rather than granted on top of it and
+they end when the copy ends. The near miss is a printed `grant_keyword` static:
+that is a layer-6 grant which keeps working on the uncopied card when the
+controller declines.
+
+```jsonc
+// Spark Double
+{ "event": "self_enters_as_copy",
+  "copying": { "zone": "battlefield", "controller": "you",
+               "any_types": ["Creature", "Planeswalker"] },
+  "except_": {
+    "enters_with": [
+      { "counter": "+1/+1", "amount": 1,
+        "condition": { "exists": { "self_only": true, "types": ["Creature"] } } },
+      { "counter": "loyalty", "amount": 1,
+        "condition": { "exists": { "self_only": true, "types": ["Planeswalker"] } } } ],
+    "remove_supertypes": ["Legendary"] } }
+
+// Chameleon, Master of Disguise
+{ "event": "self_enters_as_copy",
+  "copying": { "zone": "battlefield", "controller": "you", "types": ["Creature"] },
+  "except_": { "name": "Chameleon, Master of Disguise" } }
+```
+
+The other keys, each a copiable value the copy carries until it ends:
+
+| key | meaning |
+|---|---|
+| `add_keywords` | keywords added to the copied face |
+| `remove_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy does not take, on `copying_remove_supertypes`. The legend rule reads the result |
+| `name` | the name the copy keeps (`become_copy`'s `except_name`), on `copying_name` |
+| `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has |
+
+`enters_with` is part of the replacement (614.1c). Its conditions are judged once
+the copy is applied, with the arriving permanent as `self_only`, so "if it's a
+creature" asks about the copy and never about the printed 0/0. The counters join
+the arrival's one placement (122.6), so Hardened Scales and Oath of Gideon apply
+to the total. Written as a `self_enters` trigger, the counters would arrive a
+moment after the copy, and a planeswalker copy would sit at its copied loyalty
+until they did.
+
+Whatever the exception, a permanent entering as a copy also takes the copied
+face's own "enters with" counters (614.12), above all a planeswalker's starting
+loyalty (306.5b), which the loader compiles as a `self_enters_with_counters` on
+that face. The printed card's other replacements stay the ones read.
+
+The loader holds the key set as `ENTERS_COPY_EXCEPT_KEYS`. It refuses an unknown
+key, an empty exception, an empty list, an unknown keyword, supertype or counter,
+a malformed condition and an empty name.
 
 `copying` is required on the event; `copying`, `except_` and a non-default
 `duration` are refused on the other four. Always an
@@ -3192,6 +3237,12 @@ Two things about that ledger are load-bearing:
   took 4 each. `max_damage_taken_this_turn` reads each player's total and
   takes the greatest, so the `cmp` asks about one opponent — the
   `life_of` / `min_life_of` split, for the same reason.
+- **A count per seat is not a record per object.** `cards_discarded_this_turn`
+  ("if you discarded a card this turn", Typhoid Mary, Fractured) counts DISCARD
+  events by the discarding player, so a card discarded and since exiled, cast
+  with mayhem, or replaced into exile by madness or Rest in Peace still counts.
+  Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
+  and forgets it at its next zone change (400.7).
 
 It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn`
 — nothing it counts can happen before turn 1, so it has no opening hand to
@@ -3962,7 +4013,8 @@ and the filter keys are
     "put_by": "you",                 // `counter_placed` only: YOU put them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
     "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
-    "to_zones": ["graveyard", "exile"] // `leaves_battlefield` only: where it went
+    "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
+    "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
   },
   "effects": [ ... ]
 }
@@ -4022,6 +4074,19 @@ only, and names zones a permanent can leave to (`library`, `hand`, `graveyard`,
 `union` of `{"zone": "graveyard", "self_only": true}` and `{"zone": "exile",
 "self_only": true}`.
 
+`from_zones` is "whenever you play a card **from exile**" -- Klaw, Master of
+Sound. "Play" is cast or play a land, so the line is two abilities claiming one
+printed sentence, `spell_cast` and `land_played`, each with
+`from_zones: ["exile"]`; one play is never both, so they never fire together.
+The trigger fires only when the zone the card was played from is in the list. A
+spell answers with the origin `stack.push_spell` stamps on it
+(`GameObject.cast_from_zone`), because 601.2a has already moved it to the stack
+when SPELL_CAST fires; a land drop carries `from_zone` on its LAND_PLAYED
+payload. It is allowed on those two events only, and names zones a card is
+played from (`library`, `hand`, `graveyard`, `exile`, `command`). A filter's
+`zone: "exile"` is the near miss: it reads where the subject is *now*, the stack
+or the battlefield, and never matches.
+
 `self_enters` and `permanent_enters` are the *same* engine event, separated only
 by `source: "self"` — so the loader supplies it for `self_enters` rather than
 trusting each card file to remember.
@@ -4065,6 +4130,16 @@ event's defender, so a target restricted to them is `"controller": {"binding":
 "defender"}` in its selector. The near miss is `condition: {"is_monarch":
 {"binding": "defender"}}` with `recheck: false`, which fires on an attack at the
 monarch's planeswalker because `defender` names the walker's controller.
+
+`defending: "enchanted_player"` is "whenever you attack **enchanted player**"
+(Archnemesis): the defender is the seat this Aura is attached to as the event
+happens, and only on an Aura, like every `enchanted_player`. On `attacks` the
+creature must attack that player, not their planeswalker or battle (506.2); on
+`creatures_attack_player` one of the declared creatures must. On a damage event
+it is the seat that was dealt the damage. "That player" in the effect is
+`{"binding": "defender"}`. The near miss is `defending: "opponent"` with a
+condition on `enchanted_player`, which still fires on an attack at the
+enchanted player's planeswalker alone.
 
 `counter` names which kind a `counter_placed` trigger cares about. Without it the
 trigger fires on *every* kind — and the pool places `charge` and `slumber`

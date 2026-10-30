@@ -77,6 +77,7 @@ from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
+    _validate_attach_to_player,
     _validate_cast_lock_zones,
     _validate_effect,
     _validate_enchanted_player,
@@ -395,6 +396,76 @@ def load_deck_file(path: Path) -> DeckModel:
 # ----------------------------------------------------------------------
 # compilation
 # ----------------------------------------------------------------------
+
+
+#: The keys a `self_enters_as_copy` replacement's ``except_`` (707.9b) reads.
+#: ``add_keywords`` and ``remove_supertypes`` say what `copy_permanent`'s keys
+#: of the same names say; ``name`` is `become_copy`'s ``except_name``; and
+#: ``enters_with`` is the one clause no token copy prints, because a token is
+#: never "entering" as anything but itself.
+ENTERS_COPY_EXCEPT_KEYS = frozenset({"add_keywords", "remove_supertypes", "name", "enters_with"})
+
+
+def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
+    """The copy exception an as-enters copy writes into its copiable values.
+
+    Checked whole at load, because every key is read only when a permanent
+    actually enters as a copy: a misspelt keyword, supertype or counter would
+    arrive as a plain copy -- a different card from the printed one, and
+    nothing would say so.
+    """
+    unknown = set(spec) - ENTERS_COPY_EXCEPT_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}: unsupported keys {sorted(unknown)} "
+            f"(known: {sorted(ENTERS_COPY_EXCEPT_KEYS)})"
+        )
+    if not spec:
+        raise DslError(f"{where}: an empty exception -- omit 'except_' instead")
+    if "add_keywords" in spec:
+        # "…except it has haste and dethrone" (Dack's Duplicate).
+        added = spec["add_keywords"]
+        if not isinstance(added, list) or not added:
+            raise DslError(f"{where}.add_keywords: needs a non-empty list of keywords")
+        for k in added:
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}.add_keywords: unknown keyword {k!r}")
+        refuse_numbered_grant(added, f"{where}.add_keywords")
+    if "remove_supertypes" in spec:
+        # "…and it isn't legendary" (Spark Double). Dropped, the copy of a
+        # legendary permanent is binned by the legend rule beside its original.
+        removed = spec["remove_supertypes"]
+        if not isinstance(removed, list) or not removed:
+            raise DslError(f"{where}.remove_supertypes: must be a non-empty list")
+        for s in removed:
+            if s not in KNOWN_SUPERTYPES:
+                raise DslError(f"{where}.remove_supertypes: unknown supertype {s!r}")
+    if "name" in spec:
+        # "…except his name is Chameleon, Master of Disguise."
+        name = spec["name"]
+        if not isinstance(name, str) or not name.strip():
+            raise DslError(f"{where}.name: must be a non-empty string")
+    if "enters_with" in spec:
+        # "…except it enters with an additional +1/+1 counter on it if it's a
+        # creature" (Spark Double). Each entry is a `self_enters_with_counters`
+        # replacement's own three fields, judged once the copy is applied.
+        entries = spec["enters_with"]
+        if not isinstance(entries, list) or not entries:
+            raise DslError(f"{where}.enters_with: must be a non-empty list")
+        for j, entry in enumerate(entries):
+            at = f"{where}.enters_with[{j}]"
+            if not isinstance(entry, Mapping) or "counter" not in entry:
+                raise DslError(f"{at}: needs a 'counter'")
+            extra = set(entry) - {"counter", "amount", "condition"}
+            if extra:
+                raise DslError(
+                    f"{at}: unsupported keys {sorted(extra)} "
+                    f"(known: amount, condition, counter)"
+                )
+            _check_counter_kind(entry["counter"], f"{at}.counter")
+            validate_value(entry.get("amount", 1), f"{at}.amount")
+            if entry.get("condition") is not None:
+                validate_condition(entry["condition"], f"{at}.condition")
 
 
 def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
@@ -906,29 +977,9 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 replacement.copying, f"{where}.replacements[{i}].copying"
             )
             if replacement.except_ is not None:
-                # "…except it has haste and dethrone." The one exception this
-                # replacement writes, and checked the way a printed keyword
-                # list is: a misspelt keyword would enter as a copy with
-                # nothing added, a cheaper card than the printed one.
-                unknown = set(replacement.except_) - {"add_keywords"}
-                if unknown:
-                    raise DslError(
-                        f"{where}.replacements[{i}].except_: unsupported keys "
-                        f"{sorted(unknown)} (only 'add_keywords')"
-                    )
-                added = replacement.except_.get("add_keywords")
-                if not isinstance(added, list) or not added:
-                    raise DslError(
-                        f"{where}.replacements[{i}].except_.add_keywords: "
-                        f"needs a non-empty list of keywords"
-                    )
-                for k in added:
-                    if k not in KNOWN_KEYWORDS:
-                        raise DslError(
-                            f"{where}.replacements[{i}].except_.add_keywords: "
-                            f"unknown keyword {k!r}"
-                        )
-                refuse_numbered_grant(added, f"{where}.replacements[{i}].except_.add_keywords")
+                _check_enters_copy_except(
+                    replacement.except_, f"{where}.replacements[{i}].except_"
+                )
         else:
             for key in ("copying", "except_"):
                 if getattr(replacement, key) is not None:
@@ -1736,8 +1787,31 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"the same field, and a card with two prices from the graveyard has "
             f"no answer to what it costs from there"
         )
+    # Mayhem (702.187a) is the same slot once more: an alternative price from
+    # the graveyard, with escape's destination (the card goes wherever it
+    # normally would) and one condition the others lack -- legality offers it
+    # only while `TurnLedger.discarded` holds this object. Everything mayhem
+    # implies is the rule's, so a card naming any of the slot's other keys
+    # beside it would be two answers to one question.
+    if model.mayhem is not None:
+        if model.flashback is not None or model.graveyard_cost is not None:
+            raise DslError(
+                f"{where}: give 'mayhem' or a graveyard cost, not both -- mayhem "
+                f"is the graveyard cost, offered only after a discard"
+            )
+        if "graveyard_cast" in model.model_fields_set or model.graveyard_cast_transformed:
+            raise DslError(
+                f"{where}: 'mayhem' already says where the card goes -- wherever "
+                f"it normally would -- so 'graveyard_cast' and "
+                f"'graveyard_cast_transformed' have nothing to add"
+            )
     graveyard_spec = model.graveyard_cost or model.flashback
-    flashback = Cost.from_spec(graveyard_spec.model_dump()) if graveyard_spec else None
+    if graveyard_spec is not None:
+        flashback = Cost.from_spec(graveyard_spec.model_dump())
+    elif model.mayhem is not None:
+        flashback = Cost.from_spec({"mana": model.mayhem})
+    else:
+        flashback = None
     if flashback is not None:
         if not flashback.mana.text:
             # The mana half *replaces* the printed cost, so without it the card
@@ -1786,6 +1860,14 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if reads_clash and not clashes:
         raise DslError(
             f"{where}: reads the 'clash_won' binding but never clashes, so it would always read 0"
+        )
+
+    # "Each creature that convoked this spell" is recorded by a convoke cast and
+    # by nothing else, so on any other card the key loads and matches nothing.
+    if _mentions_pair(model, "convoked", True) and model.pay_generic_with != "tap_creatures":
+        raise DslError(
+            f"{where}: reads {{'convoked': true}} but has no convoke "
+            f"(pay_generic_with: 'tap_creatures'), so no creature ever convoked it"
         )
 
     # Dice are the same two halves, and fail the same way. A roll is never the
@@ -1840,6 +1922,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
 
     _validate_was_cast_placement(model, where)
     _validate_enchanted_player(model, where)
+    _validate_attach_to_player(model, where)
 
     colors = (
         frozenset(model.colors)
@@ -1973,7 +2056,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         emerge_subtype=model.emerge_subtype,
         alternative_cost=alternative_cost,
         alternative_condition=alternative_condition,
-        graveyard_cast_exiles=model.graveyard_cast == "exile",
+        graveyard_cast_exiles=model.graveyard_cast == "exile" and model.mayhem is None,
+        mayhem=model.mayhem is not None,
         ascend=model.ascend,
         suspend=suspend,
         impending=impending,
@@ -2711,6 +2795,23 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"{where}: 'to_zones' names zones a permanent can leave to, "
                     f"from {sorted(departures)}, got {model.trigger.to_zones!r}"
                 )
+        if model.trigger.from_zones is not None:
+            # "Whenever you play a card from exile." Only a cast and a land
+            # drop record where the card was played from, so anywhere else
+            # this would be a filter that never applies.
+            if model.trigger.event not in ("spell_cast", "land_played"):
+                raise DslError(
+                    f"{where}: 'from_zones' narrows a spell_cast or land_played "
+                    f"trigger to where the card was played from, and means "
+                    f"nothing on {model.trigger.event!r}"
+                )
+            origins = {"library", "hand", "graveyard", "exile", "command"}
+            bad = [z for z in model.trigger.from_zones if z not in origins]
+            if bad or not model.trigger.from_zones:
+                raise DslError(
+                    f"{where}: 'from_zones' names zones a card can be played "
+                    f"from, from {sorted(origins)}, got {model.trigger.from_zones!r}"
+                )
         _validate_state_trigger(model, where)
         trigger = TriggerSpec(
             event=model.trigger.event,
@@ -2733,6 +2834,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             or_battle=model.trigger.or_battle,
             per_player=model.trigger.per_player,
             to_zones=tuple(model.trigger.to_zones) if model.trigger.to_zones else None,
+            from_zones=tuple(model.trigger.from_zones) if model.trigger.from_zones else None,
             state=dict(model.trigger.state) if model.trigger.state else None,
         )
         if trigger.max_per_turn is not None and trigger.max_per_turn < 1:
@@ -3667,6 +3769,28 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if ManaCost.parse(model.warp_cost).x_count:
             raise DslError(f"{where}: a warp cost with X is not implemented")
+    elif model.effect == "grant_miracle":
+        # `grant_warp`'s guards for its reasons: no filter is miracle on every
+        # card in every hand rather than the printed "nonland cards", and no
+        # price is a free cast nobody printed ("{0}" is a price, and is written).
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: grant_miracle filters cards in hand with 'affects_spells', "
+                f"not 'affects' (which picks out permanents)"
+            )
+        if model.affects_spells is None:
+            raise DslError(
+                f"{where}: grant_miracle needs 'affects_spells' naming which cards in "
+                f"hand gain miracle -- without one every card in the game has it"
+            )
+        _check_warp_grant_filter(model.affects_spells, f"{where}.affects_spells")
+        if not model.miracle_cost:
+            raise DslError(
+                f"{where}: grant_miracle needs a 'miracle_cost' -- miracle is a price; "
+                f"write \"{{0}}\" for a free one"
+            )
+        if ManaCost.parse(model.miracle_cost).x_count:
+            raise DslError(f"{where}: a miracle cost with X is not implemented")
     elif model.effect == "granted_alternative_cost":
         # `free_cast_permission`'s guards, for its reason: a grant with no
         # filter re-prices every spell in the game rather than the printed
@@ -5078,6 +5202,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # and offer warp for nothing.
     if model.warp_cost is not None:
         static["warp_cost"] = model.warp_cost
+    # `grant_miracle`'s price, whitelisted for `warp_cost`'s reason.
+    if model.miracle_cost is not None:
+        static["miracle_cost"] = model.miracle_cost
     # `double_triggers`' cause clause. Copied explicitly like every other field
     # here: this dict is a whitelist, not a dump of the model, so a field the
     # schema accepts and this loop forgets is silently dropped -- the static

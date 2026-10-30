@@ -116,6 +116,30 @@
       "is_token": true
     },
     {
+      "id": "ape_villain_3_3_r_haste",
+      "name": "Ape Villain Token",
+      "oracle_text": "3/3 red Ape Villain creature token with haste.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ape",
+        "Villain"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "haste"
+      ]
+    },
+    {
       "id": "assassin_1_1_b_lose_game",
       "name": "Assassin Token",
       "oracle_text": "1/1 black Assassin creature token with \"Whenever this creature deals combat damage to a player, that player loses the game.\"",
@@ -1079,6 +1103,47 @@
       "colors": [],
       "color_identity": [],
       "is_token": true
+    },
+    {
+      "id": "robot_villain_2_2_c",
+      "name": "Robot Villain Token",
+      "oracle_text": "2/2 colorless Robot Villain artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Robot",
+        "Villain"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "villain_2_1_b_menace",
+      "name": "Villain Token",
+      "oracle_text": "2/1 black Villain creature token with menace.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Villain"
+      ],
+      "power": 2,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "menace"
+      ]
     },
     {
       "id": "goat_0_1_w",

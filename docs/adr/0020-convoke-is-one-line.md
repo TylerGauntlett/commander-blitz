@@ -31,6 +31,12 @@ cards are a `CHOOSE_OBJECTS` asked by `Game._cast` as the spell is paid for.**
   unpayable (it convoked the creature the mana needed) is asked again, a bounded
   number of times (`MAX_PAY_GENERIC_ASKS`), and then picked for the player,
   creatures that make no mana first.
+- A convoking creature pays {1} or one mana of its colour (702.51a), and
+  which symbol it pays is **not** a second question: `casting.convoke_payments`
+  lists every split of the picked creatures over the pips and the generic
+  part, and the first that leaves the rest payable is taken. Legality prices
+  the line the same way, over the colours of the creatures that could tap,
+  so `pay_generic` counts creatures, not generic mana.
 
 ## Consequences
 

@@ -98,6 +98,12 @@ class GameObject:
     #: is the loop guard: a rebounded spell is cast from exile, so without it
     #: the card would rebound again every upkeep for ever.
     cast_from_hand: bool = False
+    #: The zone this card was cast from, by name, written beside
+    #: `cast_from_hand` by `stack.push_spell` -- the only moment it is knowable
+    #: (601.2a moves the card to the stack first). Read by a `from_zones`
+    #: clause on a `spell_cast` trigger: Klaw, Master of Sound's "whenever you
+    #: play a card **from exile**".
+    cast_from_zone: str | None = None
     #: Which **colours of mana were actually spent** casting this -- sunburst
     #: (702.43a) and converge. Recorded by `pay_mana`, which is the only moment
     #: it is knowable: `ManaPool.spend` decrements six integers and afterwards
@@ -163,6 +169,12 @@ class GameObject:
     #: cleared with `copying`, because an exception to a copy ends when the
     #: copy does.
     copying_keywords: frozenset[str] | None = None
+    #: Supertypes the copy does *not* take (707.9b) -- Spark Double's "…and it
+    #: isn't legendary". Beside `copying_keywords` and for its reasons: written
+    #: by `zones._enter_battlefield` from the replacement's ``except_``, read by
+    #: `GameState.card_of` into the copied face so the legend rule never sees a
+    #: Legendary, and cleared with `copying`.
+    copying_remove_supertypes: frozenset[str] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -812,6 +824,13 @@ class GameObject:
     #: is simply not the card's. Rides on the permission and dies with it, the
     #: way `playable_any_color` does.
     playable_alt_cost: str | None = None
+    #: The object whose effect granted an ``"until_next_exile_by_source"``
+    #: permission -- Superior Foes of Spider-Man: "you may play that card
+    #: **until you exile another card with this creature**". Read only by
+    #: `zones.end_permissions_until_next_exile`, which ends the permission when
+    #: that object exiles again; the source's `playable_grants` says which
+    #: cards it granted, this says the grant on the card is still that one.
+    playable_source: int | None = None
     #: An attack *requirement* placed on this creature -- the duration, one
     #: of ``"this_turn"`` or ``"next_combat"``, or None.  Not a TempEffect:
     #: "attacks during its controller's next combat phase" has to survive
@@ -912,6 +931,15 @@ class GameObject:
     #: `characteristics.last_exiled_creature_card`, which also requires the
     #: card still to be in exile with its `exiled_by` intact.
     exiled_cards: list[int] = field(default_factory=list)
+
+    #: The cards this *object* granted an ``"until_next_exile_by_source"``
+    #: permission to, ended the next time it exiles a card (Superior Foes of
+    #: Spider-Man). On the source and emptied by `reset_permanent_state`, for
+    #: `exiled_cards`' reason: "this creature" is one object (400.7), so once
+    #: it has left the battlefield nothing it becomes can exile "another card
+    #: with this creature", and the last card it granted stays playable for as
+    #: long as it stays in exile.
+    playable_grants: list[int] = field(default_factory=list)
 
     #: "As this artifact enters, choose a creature type." The type this
     #: permanent's controller named, read back by its own abilities through
@@ -1104,6 +1132,7 @@ class GameObject:
         # Nor the cards the old one exiled (607.2a): Duplicant flickered is a
         # 2/4 again, whatever its earlier incarnation imprinted.
         self.exiled_cards = []
+        self.playable_grants = []
         self.granted_keywords = set()
         self.granted_keyword_at = {}
         # Cleared like every other battlefield word, and deliberately: a spell
@@ -1138,6 +1167,7 @@ class GameObject:
         # of `move_object` and `_enter_battlefield` has read it.
         self.copying_name = None
         self.copying_keywords = None
+        self.copying_remove_supertypes = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False
@@ -1184,6 +1214,7 @@ class GameObject:
         self.playable_any_type = False
         self.playable_any_color = False
         self.playable_alt_cost = None
+        self.playable_source = None
         self.exiled_from = None
         self.prepared = False
         self.revealed_to = set()
@@ -1318,6 +1349,13 @@ PLAYABLE_DURATIONS = (
     #: (400.7), which is exactly the moment the printed permission ends. The
     #: loader refuses it anywhere the card is not in exile for that reason.
     "while_exiled",
+    #: Superior Foes of Spider-Man: "you may play that card **until you exile
+    #: another card with this creature**." No clock: the end is the granting
+    #: object's next exile, which `zones.end_permissions_until_next_exile`
+    #: carries out at the start of every exiling op whose source it is. Tied
+    #: to that object, not the card, so once the creature leaves the
+    #: battlefield the last card it exiled stays playable while it is exiled.
+    "until_next_exile_by_source",
 )
 
 

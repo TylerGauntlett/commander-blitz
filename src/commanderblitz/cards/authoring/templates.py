@@ -280,8 +280,14 @@ CHANGELING_SUBTYPES = (
     "Giant", "Orc", "Merfolk", "Druid", "Shaman", "Bear", "Wall",
 )
 
+#: ``Mayhem {4}{R}`` -- the card-level `mayhem` price (702.187a). The whole
+#: printed line is the keyword and its mana; the discard condition, the
+#: graveyard widening and the destination are the rule's, so nothing else on
+#: the line needs reading.
+_MAYHEM = re.compile(r"^mayhem (?P<cost>(?:\{[^}]+\})+)$", re.I)
+
 #: ``Equip {2}``.  A sorcery-speed activated ability that re-attaches.
-_EQUIP = re.compile(r"^equip (?P<cost>(?:\{[^}]+\})+)$", re.I)
+_EQUIP =re.compile(r"^equip (?P<cost>(?:\{[^}]+\})+)$", re.I)
 
 _ENCHANT_TYPES = {
     "creature": ["Creature"],
@@ -539,6 +545,23 @@ def _translate_line(line: str, *, is_spell: bool):
             },
             Translation(effects=[], expect={}),
             "changeling",
+        )
+
+    if mayhem := _MAYHEM.match(bare):
+        mana = mayhem.group("cost")
+        try:
+            ManaCost.parse(mana)
+        except Exception:
+            # Cycling's reason: an unparsable symbol must fail the card here
+            # rather than stop the registry loading at boot.
+            return None
+        return (
+            "card",
+            {"mayhem": mana},
+            # Nothing to assert in the sandbox: the card is cast from hand, and
+            # what it does there is the other lines' to claim.
+            Translation(effects=[], expect={}),
+            "mayhem",
         )
 
     if cycling := _CYCLING.match(bare):

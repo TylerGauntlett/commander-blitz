@@ -21,6 +21,7 @@ from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
 from ..player_statics import commander_subtypes
+from ..structs import CONVOKED_BINDING
 from .context import EffectContext, ask_objects
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -83,6 +84,14 @@ SELECTOR_KEYS = frozenset(
         #: ask which; this reads the mark `draw_cards` puts on each card as it is
         #: drawn. Effect-side only: nothing continuous asks the question.
         "drawn_this_turn",
+        #: "Each creature **that convoked this spell** connives" -- Lethal
+        #: Scheme. The creatures tapped to pay for the resolving spell (702.51c),
+        #: recorded on its stack item by the cast that tapped them; `true` only,
+        #: and only on a card with convoke. A creature that has since left the
+        #: battlefield is struck out of the record, because the one that may
+        #: come back under its oid is a new object (400.7); the default zone is
+        #: the battlefield besides.
+        "convoked",
         #: "**modified** creatures you control" (Silkguard, and the whole Kamigawa
         #: cycle) -- a permanent with a counter on it, equipped, or enchanted by
         #: an Aura you control. A definition rather than a characteristic, which
@@ -373,6 +382,15 @@ SELECTOR_KEYS = frozenset(
         #: negation of `blocking`: that key is about a blocker, and these are
         #: two different creatures.
         "blocked",
+        #: "Whenever one or more **goaded** creatures deal combat damage to one
+        #: of your opponents" -- Puppet Master, String Puller. A creature that
+        #: is goaded right now (701.38), by **anyone**: `true` when
+        #: `GameObject.goaded_by` is non-empty, `false` when it is empty. The
+        #: printed word names no goader, so a creature another player goaded
+        #: counts exactly as one you goaded did. A boolean only; who goaded it
+        #: is not a question any printed filter asks, and a word here would
+        #: read as a boolean and pass silently, so the loader refuses one.
+        "goaded",
         # "When the creature this card haunts dies…" -- a trigger filter only,
         # answered off the ability's source, which is the card sitting in exile
         # with the link on it. The haunted creature carries no record of it.
@@ -754,6 +772,8 @@ def matches(
             return False
     if selector.get("modified") and not _is_modified(ctx, oid):
         return False
+    if selector.get("convoked") and oid not in _bound_oids(ctx, CONVOKED_BINDING):
+        return False
     if selector.get("drawn_this_turn") and obj.drawn_turn != state.turn:
         # Compared against the turn rather than read as a flag, so nothing has
         # to clear it at a turn boundary -- a stale `true` would read as a card
@@ -1053,6 +1073,11 @@ def matches(
         is_blocked = bool(combat and any(v == oid for v in combat.blockers.values()))
         if is_blocked != bool(selector["blocked"]):
             return False
+    # "…goaded creatures…" (701.38): goaded by anyone, read off the live
+    # object. `reset_permanent_state` clears the marks when it leaves the
+    # battlefield, so a card elsewhere is never goaded.
+    if "goaded" in selector and bool(obj.goaded_by) != bool(selector["goaded"]):
+        return False
     if (blocking := selector.get("blocking")) is not None:
         if isinstance(blocking, Mapping) and "binding" in blocking:
             # "…blocked by a creature without flanking": *which* attacker it is
@@ -1573,6 +1598,10 @@ def validate_selector(selector: Any, where: str) -> None:
                 f"snapshot records one player, so only 'you', 'opponent' and 'any' "
                 f"can be asked of it"
             )
+    if "convoked" in selector and selector["convoked"] is not True:
+        # "That didn't convoke this spell" is printed on nothing, and `false`
+        # would load as "every creature" -- the opposite of the card.
+        raise DslError(f"{where}: convoked must be true, got {selector['convoked']!r}")
     if "created_with" in selector and selector["created_with"] != "self":
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.
@@ -1624,6 +1653,15 @@ def validate_selector(selector: Any, where: str) -> None:
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
             f"cost has an {{X}} symbol at all; use 'mana_value' to compare numbers"
+        )
+    # "Goaded creatures" names no goader, so the key is a predicate. `"you"`
+    # is the tempting spelling -- `goaded_by` is the field it reads -- and it
+    # would be read through `bool()` as `true`, quietly meaning "by anyone"
+    # whatever word was written.
+    if "goaded" in selector and not isinstance(selector["goaded"], bool):
+        raise DslError(
+            f"{where}: 'goaded' is true or false -- whether anyone has goaded "
+            f"the creature (701.38); it names no goader"
         )
     # A bare `true` is the tempting spelling -- it is how `attacking` is written
     # -- and it would name nobody: the key is *which* player, and a boolean read

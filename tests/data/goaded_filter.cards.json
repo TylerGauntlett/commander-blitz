@@ -1,0 +1,94 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_goaded_filter.py. t_gdf_payoff is the goaded-creatures payoff: a creatures_deal_combat_damage trigger with controller any, per_player, defending opponent and the goaded filter. t_gdf_puppeteer is the goad-and-can't-block attack trigger that sets it up. The bodies are t_bcd_wyrm and t_bcd_elf from batched_combat_damage.cards.json.",
+  "cards": [
+    {
+      "id": "t_gdf_payoff",
+      "name": "Test Goaded Tithe",
+      "oracle_text": "Whenever one or more goaded creatures deal combat damage to one of your opponents, create a Treasure token.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever one or more goaded creatures deal combat damage to one of your opponents, create a Treasure token.",
+          "trigger": {
+            "event": "creatures_deal_combat_damage",
+            "controller": "any",
+            "per_player": true,
+            "defending": "opponent",
+            "filter": {
+              "goaded": true
+            }
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_gdf_puppeteer",
+      "name": "Test Goad Puppeteer",
+      "oracle_text": "Whenever you attack, goad target creature an opponent controls. It can't block this turn.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you attack, goad target creature an opponent controls. It can't block this turn.",
+          "trigger": {
+            "event": "you_attack"
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "goad",
+              "objects": {
+                "target": "t1"
+              }
+            },
+            {
+              "op": "cant_block",
+              "objects": {
+                "target": "t1"
+              },
+              "duration": "this_turn"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

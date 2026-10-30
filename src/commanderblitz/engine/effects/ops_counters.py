@@ -15,6 +15,7 @@ from ..primitives import (
     add_counters,
     add_subtypes,
     attach,
+    attach_to_player,
     change_control,
     create_token,
     remove_counters,
@@ -339,7 +340,14 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
     `sba` bins an Aura enchanting nothing the moment it arrives. Which host is
     legal for it is the card's own selector to state; the engine models no
     "enchant creature" restriction off the stack (see `docs/rules-coverage.md`).
+
+    ``player`` in place of ``objects`` moves **this Aura onto a player** --
+    Archnemesis's "you may attach this Aura to that player". See
+    `_attach_source_to_player`.
     """
+    if "player" in spec:
+        _attach_source_to_player(ctx, spec["player"])
+        return
     if "attachment" in spec:
         movers = yield from choose_objects(ctx, spec["attachment"], "Attach", "attach")
         # No pool, no question. See the docstring: this is the "if an Equipment
@@ -356,6 +364,43 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
     for oid in oids[:1]:
         for mover in movers:
             attach(ctx.state, mover, oid)
+
+
+def _attach_source_to_player(ctx: EffectContext, who: Any) -> None:
+    """Attach the ability's source Aura to the one seat ``who`` names (701.3).
+
+    Unlike a permanent host, the seat here is not a selector the card wrote to
+    encode its enchant clause -- "that player" is whoever attacked -- so the
+    clause is asked here, off the Aura itself: the first target its spell
+    declares, the same spec `stack._attach_aura` reads (303.4a). "Enchant
+    opponent" is ``{"controller": "opponent"}`` resolved against the Aura's
+    **current** controller, so the Aura's own controller is never a legal host.
+    An Aura whose enchant clause names a permanent can't enchant a player at
+    all. 701.3b: on an illegal host the Aura does not move -- it stays where it
+    was rather than falling off -- and onto the player it is already on,
+    nothing happens (`primitives.attach_to_player`).
+
+    Attaching is not targeting, so hexproof is not asked; protection is, by
+    the primitive (702.16c). Exactly one seat or nothing: the loader refuses
+    the specs that name several.
+    """
+    state = ctx.state
+    aura = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
+    if aura is None or not aura.on_battlefield:
+        return
+    seats = _players(ctx, who)
+    if len(seats) != 1:
+        return
+    pid = seats[0]
+    specs = state.card_of(aura).targets
+    if not specs or specs[0].kind != "player":
+        return
+    clause = specs[0].selector.get("controller", "any")
+    if clause != "any":
+        enchant_ctx = EffectContext(state=state, controller=aura.controller, source_oid=aura.oid)
+        if pid not in _players(enchant_ctx, clause):
+            return
+    attach_to_player(state, aura.oid, pid)
 
 
 @register("meld")
@@ -455,7 +500,12 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     is what every "*you* gain control" line means; the spec exists because "target
     opponent gains control of" is the same effect pointed elsewhere.
 
-    ``duration`` is ``"permanent"`` or ``"until_end_of_turn"``.  The default is
+    ``duration`` is ``"permanent"``, ``"until_end_of_turn"`` or
+    ``"end_of_your_next_turn"`` -- Stilt-Man, Towering Terror's "…until the end
+    of your next turn", whose "your" is this effect's controller even when
+    ``player`` hands the permanent to somebody else, and which, granted during
+    that controller's own turn, outlasts that turn's cleanup and ends in the
+    next one's (`primitives._ends_this_cleanup`).  The default is
     ``"permanent"`` because that is what every card written before this meant,
     not because it is the safer reading -- it is the *stronger* one, and it is
     the loader rather than this default that keeps a misspelling from silently
@@ -483,7 +533,14 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     taken = [
         oid
         for oid in oids
-        if change_control(ctx.state, oid, players[0], source=ctx.source_oid, duration=duration)
+        if change_control(
+            ctx.state,
+            oid,
+            players[0],
+            source=ctx.source_oid,
+            duration=duration,
+            clock=ctx.controller,
+        )
     ]
     if name := spec.get("as"):
         ctx.bindings[str(name)] = taken

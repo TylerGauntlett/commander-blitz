@@ -36,6 +36,7 @@ from .structs import (
     TurnLedger,
     Unblockable,
 )
+from .temp_effects import consume_next_spell_flash_permissions
 
 if TYPE_CHECKING:  # pragma: no cover
     from commanderblitz.cards.registry import CardRegistry
@@ -581,6 +582,13 @@ class GameState:
                 # itself rather than granted on top of it: the exception is
                 # part of what the copy is, so it is there before any layer.
                 copied = replace(copied, keywords=copied.keywords | obj.copying_keywords)
+            if obj.copying_remove_supertypes:
+                # "…and it isn't legendary" (Spark Double), the same 707.9b
+                # exception the other way: the copied face has no Legendary, so
+                # the legend rule (704.5j) never pairs it with its original.
+                copied = replace(
+                    copied, supertypes=copied.supertypes - obj.copying_remove_supertypes
+                )
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied
@@ -811,6 +819,10 @@ class GameState:
                 power = sum(chars(self, oid).power for oid in declared if oid in self.objects)
                 totals = ledger.attack_power_this_combat
                 totals[pid] = totals.get(pid, 0) + power
+                # Melee's opponents, frozen here for the same reason.
+                ledger.opponents_attacked_this_combat.setdefault(pid, set()).update(
+                    int(seat) for seat in data.get("defenders") or ()
+                )
         elif event.type == EventType.ATTACKS:
             # Angel of Destiny's "each player this creature attacked this turn".
             # Only an attack on a seat: one aimed at a planeswalker or a battle
@@ -927,6 +939,13 @@ class GameState:
                 # `you_gain_life` trigger with `nth` reads it at queue time.
                 ledger.life_gains[pid] = ledger.life_gains.get(pid, 0) + 1
                 data["nth"] = ledger.life_gains[pid]
+        elif event.type == EventType.DISCARD:
+            # "If you discarded a card this turn" (Typhoid Mary, Fractured).
+            # Counted per discarding seat off the event, which both the plain
+            # discard and madness's exile fire, so where the card ended up --
+            # and where it has gone since -- does not matter.
+            if pid is not None:
+                ledger.cards_discarded[pid] = ledger.cards_discarded.get(pid, 0) + 1
         elif event.type == EventType.SPELL_CAST:
             if pid is not None:
                 ledger.spells_cast[pid] = ledger.spells_cast.get(pid, 0) + 1
@@ -951,6 +970,11 @@ class GameState:
                 # `spells_cast_ids[pid][:nth]` is the run up to and including
                 # this spell however many are cast before a trigger reads it.
                 data["nth"] = ledger.spells_cast[pid]
+                # "The next spell of the chosen type you cast this turn…"
+                # (Witness, Progenitor's Icon). Spent by the cast, here for the
+                # reason `nth` is: every cast path passes through this fold.
+                if self.flash_permissions and (spell := data.get("oid")) in self.objects:
+                    consume_next_spell_flash_permissions(self, pid, self.card(spell))
                 # The count is a static's input (`spells_cast_this_turn`, Captain
                 # Mar-Vell's "as long as an opponent has cast a spell this
                 # turn"), and `chars` caches per `char_version`.

@@ -162,9 +162,10 @@ class Action:
     #: enters" condition: a spectacle spell reporting `cast_evoked` would be a
     #: card quietly claiming to have been evoked.
     alternative: bool = False
-    #: How much of the generic cost is paid with something other than mana --
-    #: convoke (creatures tapped), improvise (artifacts tapped) and delve
-    #: (cards exiled from the graveyard). The *fewest* the cast must spend,
+    #: How many permanents or cards pay for the spell instead of mana --
+    #: convoke (creatures tapped, each paying {1} or a pip of its colour),
+    #: improvise (artifacts tapped) and delve (cards exiled from the
+    #: graveyard), the last two paying generic only. The *fewest* the cast must spend,
     #: which is all legality decides: the one convoke, improvise or delve line
     #: carries it, and `Game._cast` asks which permanents or cards -- at least
     #: this many -- as the spell is paid for. Zero when

@@ -20,14 +20,16 @@ from ..player_statics import (
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
 from ..structs import GraveyardCastGrant
-from ..suspend import cast_for_free
+from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
+    end_permissions_until_next_exile,
     link_exiled,
     move_object,
     offer_enters_replacement,
     offer_read_ahead,
     offer_riot_choice,
+    record_playable_source,
 )
 from . import execute
 from .behold import announce_beheld, behold_count, behold_pool
@@ -64,6 +66,7 @@ LOOK_STEP_KEYS = frozenset(
         "playable_this_turn",
         "playable",
         "any_color",
+        "any_type",
         "face_down",
         "link",
     }
@@ -251,6 +254,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # read only where `playable_turn` already gates the offer.
         obj.playable_any_type = any_type
         obj.playable_any_color = bool(spec.get("any_color"))
+        # "…without paying their mana costs" (601.2b), plot's flag on the
+        # same permission and read by the same cast path.
+        obj.playable_free = bool(spec.get("playable_free"))
+        record_playable_source(ctx.state, oid, ctx.source_oid)
 
 
 
@@ -595,8 +602,15 @@ def _move_found(
     Weatherlight Corsair scans an *opponent's* library and puts the hit down
     "under your control", which is the one case where the two differ.
     """
+    # "…until you exile another card with this creature": the first card this
+    # lookup exiles ends what its source granted before. Once, so the cards
+    # exiled together here keep the permissions granted together below.
+    ended_earlier_grants = False
     for oid in picked:
         destination, tapped = _destination_for(ctx, oid, spec, destination, tapped)
+        if destination is Zone.EXILE and not ended_earlier_grants:
+            end_permissions_until_next_exile(ctx.state, ctx.source_oid)
+            ended_earlier_grants = True
         if destination is Zone.BATTLEFIELD:
             # to_player only picks the destination zone list; the battlefield
             # is global, so controller has to be set explicitly or the
@@ -630,13 +644,30 @@ def _move_found(
         # them -- after the move, because `reset_permanent_state` would wipe it.
         if destination is Zone.EXILE and spec.get("link") and ctx.source_oid is not None:
             link_exiled(ctx.state, oid, ctx.source_oid)
+        # The permission is the **effect's controller's**, not the library
+        # owner's: "Look at the top card of each player's library, then exile
+        # those cards face down. **You** may play them" (Extract Power). The
+        # same seat `exile` and `grant_playable` write, and for every
+        # `player: "you"` lookup the two seats are one.
+        #
+        # ``playable_free`` is "…without paying their mana costs" (601.2b) on
+        # the same permission -- plot's flag, read by the same cast path, which
+        # prices the line free, makes X 0 and still charges additional costs. A
+        # land needs no flag: it is played, never cast, and spends the land drop
+        # like any other (305.2).
         if destination is Zone.EXILE and (duration := playable_duration_of(spec)):
             obj = ctx.state.objects.get(oid)
             if obj is not None:
-                obj.playable_by = pid
+                obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = duration
+                # "Mana of any type can be spent to cast a spell this way"
+                # (Klaw, Master of Sound) -- `grant_playable`'s flag, read by
+                # the same cast path while the permission is live.
+                obj.playable_any_type = bool(spec.get("any_type"))
                 obj.playable_any_color = bool(spec.get("any_color"))
+                obj.playable_free = bool(spec.get("playable_free"))
+                record_playable_source(ctx.state, oid, ctx.source_oid)
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
         # carries: a card in exile has no characteristics to hide behind. What
@@ -655,7 +686,11 @@ def _move_found(
             obj = ctx.state.objects.get(oid)
             if obj is not None:
                 obj.hidden_in_exile = True
-                obj.revealed_to = set()
+                # The one exception is the player the permission names: a card
+                # you may play is a card you may look at, or the permission
+                # would be a blind pick (Extract Power). Everybody else still
+                # sees only that a card is there.
+                obj.revealed_to = {obj.playable_by} if obj.playable_by is not None else set()
 
 
 @register("look_at_top")
@@ -1420,10 +1455,16 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
     its own hand is discarded from, its own counters. That matters for "each
     creature you control connives" only at a pod, and is free here.
 
+    Each permanent that connives fires one `EventType.CONNIVED` once its draw,
+    discard and counter are done -- the `connives` trigger event, with that
+    permanent as the subject. A connive whose discard an opponent's shield
+    stopped is still a connive and still fires.
+
     *Divergence*: 701.47b keeps the draw and the discard when the conniving
     permanent has left the battlefield, and drops only the counter. Here an empty
     pool does nothing at all, so a creature killed in response to its own connive
-    trigger draws nobody a card. Recorded in rules-coverage.md.
+    trigger draws nobody a card -- and, consistently, fires no `connives`
+    trigger, where 701.47b would. Recorded in rules-coverage.md.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Connive", "connive")
@@ -1455,11 +1496,16 @@ def op_connive(ctx: EffectContext, spec: Mapping[str, Any]):
         # uncaused.
         yield from replacements.discard(ctx.state, pid, picked, caused_by=ctx.controller)
         add_counters(ctx.state, oid, PLUS_ONE, nonland, source=ctx.source_oid)
-        ctx.state.emit(
-            "connive",
+        # Fired, not emitted: "whenever a creature you control connives" listens
+        # for it. Once per permanent and after the counter, so the trigger sees
+        # the connive finished (701.47a) and "that creature" is ``oid``.
+        fire(
+            ctx.state,
+            EventType.CONNIVED,
             player=pid,
             source=ctx.source_oid,
             oid=oid,
+            card=obj.def_id,
             drawn=amount,
             discarded=len(picked),
             nonland=nonland,
@@ -1761,7 +1807,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
                 cast_for_free(ctx.state, pid, picked[0])
 
 
-def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int):
+def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):
     """ "You may cast that card", in the middle of a resolution, at its price.
 
     Returns whether the card reached the stack. The paid sibling of
@@ -1787,6 +1833,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int):
     is not offered at all rather than cast without it. Madness and miracle
     (`replacements._offer_cast`) make the same narrowing, and it is narrower
     than 601.2b, never cheaper.
+
+    ``exiles`` puts the "exile it instead" replacement on the spell
+    (`StackItem.exiles_instead`); see `op_cast_card`.
     """
     # Local: `costs` and `targeting` import the effect layer.
     from ..cost_reduction import cost_reduction
@@ -1891,7 +1940,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int):
     )
     if not paid:  # pragma: no cover - the offer proved this payable
         return False
-    item = push_spell(state, oid, pid, tuple(targets) + mode_refs, x=x, modes=modes)
+    item = push_spell(
+        state, oid, pid, tuple(targets) + mode_refs, x=x, modes=modes, exiles_instead=exiles
+    )
     fire(
         state,
         EventType.SPELL_CAST,
@@ -1924,11 +1975,22 @@ def op_cast_card(ctx: EffectContext, spec: Mapping[str, Any]):
     controller. ``as`` records the cards actually **cast**, which is what "if
     you do" reads: ``{"exists": {"binding": …}}``. A declined offer, a card
     with no payable line and a card a lock refuses all leave it empty.
+
+    ``exiles: true`` is "If that spell would be put into your graveyard,
+    exile it instead" -- Helmut Zemo, Mastermind, casting from a graveyard.
+    A replacement on the **spell**, so it holds however the spell leaves the
+    stack for a graveyard: resolving, fizzling or being countered. It rides
+    on the stack item (`StackItem.exiles_instead`) rather than the card, so
+    the same card cast later by other means goes back to the graveyard.
+    Not `cast_from_graveyard`, which is a fact about where a cast came from
+    that the card's own conditions read, and not flashback's
+    `graveyard_cast_exiles`, which is the card's own rider.
     """
 
+    exiles = bool(spec.get("exiles", False))
     cast: list[int] = []
     for oid in resolve_pool(ctx, spec.get("objects")):
-        if (yield from _cast_paying_mana_cost(ctx, ctx.controller, oid)):
+        if (yield from _cast_paying_mana_cost(ctx, ctx.controller, oid, exiles=exiles)):
             cast.append(oid)
     if name := spec.get("as"):
         ctx.bindings[str(name)] = cast
@@ -2178,6 +2240,34 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
         cast = yield from _offer_free_cast(ctx, pid, hit, f"Cast {name} for free?")
     if not cast and (where := spec.get("else_destination")):
         move_object(ctx.state, hit, DESTINATIONS[str(where)], to_player=pid, cause="exile_until")
+
+
+@register("suspend")
+def op_suspend(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Exile target nonland card from your graveyard with two time counters on
+    it. If it doesn't have suspend, it gains suspend." — Doom's Time Platform.
+
+    "Put two time counters on that card. If it doesn't have suspend, it gains
+    suspend." — Kang Prime, after an `exile_until` walk that bound the card.
+
+    The card is suspended exactly as if its owner had suspended it from hand
+    (702.62): `suspend.make_suspended` exiles it if it is not already in exile,
+    puts ``counters`` time counters on it and marks it, and from there the
+    upkeep tick, the free cast and a creature's haste are suspend's own.
+
+    - ``objects`` is the card or cards -- a target, or a binding an earlier op
+      wrote. Required.
+    - ``amount`` is the number of time counters, a value expression evaluated
+      once. Required: the printed number is the whole timing of the card.
+
+    Not `exile` followed by `add_counters`: that leaves a card with time
+    counters that nothing ticks, which is an exile with no way back. Not
+    `exile_until`'s ``cast_free``: that casts the card now, two upkeeps early.
+    """
+    counters = evaluate_value(ctx, spec.get("amount"))
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Suspend")
+    for oid in oids:
+        make_suspended(ctx.state, oid, counters, by=ctx.source_oid)
 
 
 @register("ripple")

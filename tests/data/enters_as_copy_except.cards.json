@@ -1,5 +1,5 @@
 {
-  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_except.py. t_eacx_duplicate is Dack's Duplicate: a 0/0 that may enter as a copy of any creature, except it has haste and dethrone. t_eacx_mirror is Cursed Mirror: a mana rock that may enter as a copy of any creature until end of turn, except it has haste.",
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_except.py. t_eacx_duplicate is Dack's Duplicate: a 0/0 that may enter as a copy of any creature, except it has haste and dethrone. t_eacx_mirror is Cursed Mirror: a mana rock that may enter as a copy of any creature until end of turn, except it has haste. t_eacx_spark is Spark Double: a 0/0 that may enter as a copy of a creature or planeswalker you control, with an additional +1/+1 counter if it's a creature, an additional loyalty counter if it's a planeswalker, and not legendary. t_eacx_chameleon is Chameleon, Master of Disguise: a legendary 2/3 that may enter as a copy of a creature you control, except his name stays his own.",
   "cards": [
     {
       "id": "t_eacx_duplicate",
@@ -43,6 +43,51 @@
           "copying": {"zone": "battlefield", "types": ["Creature"]},
           "duration": "end_of_turn",
           "except_": {"add_keywords": ["haste"]}
+        }
+      ]
+    },
+    {
+      "id": "t_eacx_spark",
+      "name": "Test Spark Double",
+      "oracle_text": "You may have this creature enter as a copy of a creature or planeswalker you control, except it enters with an additional +1/+1 counter on it if it's a creature, it enters with an additional loyalty counter on it if it's a planeswalker, and it isn't legendary.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Illusion"],
+      "power": 0,
+      "toughness": 0,
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "controller": "you", "any_types": ["Creature", "Planeswalker"]},
+          "except_": {
+            "enters_with": [
+              {"counter": "+1/+1", "amount": 1, "condition": {"exists": {"self_only": true, "types": ["Creature"]}}},
+              {"counter": "loyalty", "amount": 1, "condition": {"exists": {"self_only": true, "types": ["Planeswalker"]}}}
+            ],
+            "remove_supertypes": ["Legendary"]
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_eacx_chameleon",
+      "name": "Test Chameleon, Master of Disguise",
+      "oracle_text": "You may have Test Chameleon enter as a copy of a creature you control, except his name is Test Chameleon, Master of Disguise.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Human", "Shapeshifter"],
+      "power": 2,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "controller": "you", "types": ["Creature"]},
+          "except_": {"name": "Test Chameleon, Master of Disguise"}
         }
       ]
     }

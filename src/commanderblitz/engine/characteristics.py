@@ -246,6 +246,37 @@ def last_exiled_creature_card(state: GameState, source: GameObject) -> GameObjec
     return None
 
 
+def printed_creature_types(card: CardDef) -> frozenset[str]:
+    """The creature types a card **face** has wherever it is -- 205.3m and 604.3.
+
+    `creature_types_of` asks an object and reads the layer pipeline, whose
+    statics work on the battlefield only. A card being cast is asked about as a
+    `CardDef` (`casting._timing_ok` never sees the object), so this is the
+    printed line plus the face's own characteristic-defining abilities, which
+    604.3 says function in every zone: changeling is an unconditional
+    `add_subtype` static whose `affects` is the card alone, and it makes the
+    card every creature type in a hand exactly as on the battlefield. A
+    ``{"chosen_type_of": "self"}`` entry is skipped -- a card in a hand has
+    chosen nothing.
+
+    Filtered through `SUBTYPE_CLASS` as `creature_types_of` is, so a Kindred
+    instant's Goblin counts and an Equipment's "Equipment" does not.
+    """
+    types = {sub for sub in card.subtypes if SUBTYPE_CLASS.get(sub, "Creature") == "Creature"}
+    for ability in card.abilities:
+        static = ability.static if ability.is_static else None
+        if not static or static.get("condition") or static.get("effect") != "add_subtype":
+            continue
+        if dict(static.get("affects") or {}) != {"self_only": True}:
+            continue
+        types.update(
+            sub
+            for sub in static.get("subtypes", ())
+            if isinstance(sub, str) and SUBTYPE_CLASS.get(sub, "Creature") == "Creature"
+        )
+    return frozenset(types)
+
+
 def card_in_exile_characteristics(
     state: GameState, card: GameObject
 ) -> tuple[int, int, frozenset[str]]:

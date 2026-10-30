@@ -1,0 +1,35 @@
+{
+  "_comment": "Cards that exist only for the granted-miracle test (tests/unit/replacement/test_grant_miracle.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_miracle_granter` is Molecule Man's line on a free body, so the grant can be put on the board without paying for the granter.",
+  "cards": [
+    {
+      "id": "t_miracle_granter",
+      "name": "Test Miracle Granter",
+      "oracle_text": "Nonland cards in your hand have miracle {0}.",
+      "mana_cost": "{0}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Nonland cards in your hand have miracle {0}.",
+          "effect": "grant_miracle",
+          "affects_player": "you",
+          "miracle_cost": "{0}",
+          "affects_spells": {
+            "not_types": [
+              "Land"
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

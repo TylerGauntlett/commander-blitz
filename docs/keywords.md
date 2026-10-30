@@ -301,6 +301,7 @@ This is the long tail, and where the build order comes from.
 | Madness | shipped | the `madness` card field: the discard exiles instead, and the cast is offered from there | `madness` |
 | Manifest | shipped | the `manifest` op, plus the face-down shell in `chars` and the turn-face-up activation | `manifest` |
 | Meld | shipped | the `meld` op: mutate's merged permanent with the pair fixed by `melds_with` and the result a third card entry, `melds_into` | `meld` |
+| Melee | shipped | `Keyword`, whose trigger `carddef.MELEE_TRIGGER` the rules supply once per permanent with the keyword: `attacks` from itself, then `pump` itself by `opponents_attacked_this_combat` — the seats declared against this combat, a walker's or battle's controller included, counted on resolution. A keyword for exalted's reason: Titania, Proud Pummeler grants it — cashed by `test_melee.py` | `melee` |
 | Mentor | free | `attacks` trigger, target filter `power` `{"op": "<", "value": {"power_of": {"self": true}}}` | — |
 | Miracle | shipped | the `miracle` card field, read off `cards_drawn_this_turn` *before* the draw bumps it | `miracle` |
 | Modular | free | `self_enters_with_counters`, then a `dies` trigger with `move_counters` and `{"counters_had": "+1/+1"}` | `move_counters` |

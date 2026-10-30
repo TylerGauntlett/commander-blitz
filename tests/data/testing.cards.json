@@ -2543,6 +2543,44 @@
       ]
     },
     {
+      "id": "t_long_steal",
+      "name": "Test Long Steal",
+      "oracle_text": "Gain control of target creature until the end of your next turn. It gains \"This permanent can't be sacrificed\" until the end of your next turn.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_control",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "end_of_your_next_turn"
+        },
+        {
+          "op": "cant_sacrifice",
+          "objects": {
+            "target": "t1"
+          },
+          "duration": "end_of_your_next_turn"
+        }
+      ]
+    },
+    {
       "id": "t_slip",
       "name": "Test Slip",
       "oracle_text": "Target creature can't be blocked this turn.",
@@ -3176,6 +3214,64 @@
               }
             }
           ]
+        }
+      ]
+    },
+    {
+      "id": "t_mayhem_brute",
+      "name": "Test Mayhem Brute",
+      "oracle_text": "Mayhem {1}{R} (You may cast this card from your graveyard for {1}{R} if you discarded it this turn. Timing rules still apply.)",
+      "mana_cost": "{4}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Ogre"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "mayhem": "{1}{R}"
+    },
+    {
+      "id": "t_mayhem_bolt",
+      "name": "Test Mayhem Bolt",
+      "oracle_text": "Test Mayhem Bolt deals 2 damage to target player.\nMayhem {R} (You may cast this card from your graveyard for {R} if you discarded it this turn. Timing rules still apply.)",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Instant"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player"
+        }
+      ],
+      "mayhem": "{R}",
+      "spell_effects": [
+        {
+          "op": "damage",
+          "target": "t1",
+          "amount": {
+            "const": 2
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_discard_one",
+      "name": "Test Discard One",
+      "oracle_text": "Discard a card.",
+      "mana_cost": "{0}",
+      "types": [
+        "Sorcery"
+      ],
+      "spell_effects": [
+        {
+          "op": "discard",
+          "player": "you",
+          "amount": {
+            "const": 1
+          }
         }
       ]
     },
@@ -4806,6 +4902,73 @@
               "player": "you",
               "amount": {
                 "const": 3
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_land_discard_drainer",
+      "name": "Test Land Discard Drainer",
+      "oracle_text": "Whenever you discard one or more land cards, each opponent loses 2 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you discard one or more land cards, each opponent loses 2 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "you",
+            "batched": true,
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 2
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_greedy_land_discard_drainer",
+      "name": "Test Greedy Land Discard Drainer",
+      "oracle_text": "Whenever you discard a land card, each opponent loses 2 life.",
+      "mana_cost": "{2}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you discard a land card, each opponent loses 2 life.",
+          "trigger": {
+            "event": "discard",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "lose_life",
+              "player": "each_opponent",
+              "amount": {
+                "const": 2
               }
             }
           ]
@@ -14063,6 +14226,101 @@
             },
             {
               "op": "draw",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_connive_planner",
+      "name": "Test Connive Planner",
+      "oracle_text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.",
+      "mana_cost": "{2}{U}{B}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "U",
+        "B"
+      ],
+      "color_identity": [
+        "U",
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.",
+          "trigger": {
+            "event": "connives",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "add_counters",
+              "counter": "+1/+1",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "binding": "subject",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "op": "add_counters",
+              "counter": "plan",
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_self_conniver",
+      "name": "Test Self Conniver",
+      "oracle_text": "Whenever this creature connives, you gain 1 life.",
+      "mana_cost": "{1}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rogue"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever this creature connives, you gain 1 life.",
+          "trigger": {
+            "event": "connives",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
               "player": "you",
               "amount": {
                 "const": 1

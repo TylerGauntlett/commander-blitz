@@ -16,7 +16,7 @@ from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD
 from .player import COMMANDER_DAMAGE_THRESHOLD
 from .player_statics import outcome_barred_by_static
-from .primitives import become_monarch, clear_until_next_turn
+from .primitives import become_monarch, clear_until_next_turn, end_effects_of_leaving_player
 from .temp_effects import (
     clear_flash_permissions,
     clear_goad,
@@ -195,6 +195,10 @@ def _eliminate(state: GameState, pid: int, reason: LossReason) -> None:
     player.loss_reason = reason
     state.emit(EventType.PLAYER_LOST, player=pid, reason=reason.value)
 
+    # 800.4a's order: the effects giving this player control of something end
+    # first, and only what they *still* control afterwards is exiled -- so a
+    # permanent they stole for a turn goes home instead of out of the game.
+    end_effects_of_leaving_player(state, pid)
     for oid in list(state.battlefield):
         obj = state.objects.get(oid)
         if obj is not None and (obj.owner == pid or obj.controller == pid):

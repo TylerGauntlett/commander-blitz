@@ -12,12 +12,12 @@ whatever it could cost. The line carries the fewest the player must spend
 (`pay_generic`): zero when the mana alone pays, which is the printed line, and
 the floor the pick is asked at when it does not.
 
-**It goes through the ordinary cost-reduction clamp.** The saving is netted
-into the same `extra` the commander tax and emerge's sacrifice use, and `pay`
-floors the generic part at zero — so no amount of convoking makes a spell free
-of its coloured pips. That is convoke's documented simplification: "or one mana
-of that creature's colour" is not modelled, which bites only on a spell whose
-coloured pips a creature could have paid.
+**The {1} goes through the ordinary cost-reduction clamp.** The saving is
+netted into the same `extra` the commander tax and emerge's sacrifice use, and
+`pay` floors the generic part at zero — so no amount of delving makes a spell
+free of its coloured pips. Convoke's "or one mana of that creature's colour"
+pays a pip only of the creature's own colour; `test_convoke_colors.py` owns
+that half.
 
 **The tap comes before the mana**, so the payment cannot tap a convoked
 creature for mana as well: a creature taps once. A pick that convokes the very
@@ -184,9 +184,9 @@ class TestConvoke:
                 obj.tapped = True
         assert cast_lines(game) == []
 
-    def test_it_never_pays_the_coloured_pip(self, builder):
-        """The documented simplification, stated as a boundary: convoking
-        everything still leaves {R} to find."""
+    def test_it_never_pays_a_pip_of_another_colour(self, builder):
+        """The bears are green: convoking everything still leaves {R} to find,
+        because a creature pays a pip only of its own colour (702.51a)."""
         game = self.position(builder, lands=0, creatures=4)
         assert cast_lines(game) == [], "no red source, so no line at any count"
 

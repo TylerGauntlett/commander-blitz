@@ -24,7 +24,14 @@ from .characteristics import abilities_of, granted_ability_origin, printed_abili
 from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_targets, ask_yes_no
-from .effects.modes import modal_bounds, mode_labels, record_per_turn, unspent
+from .effects.modes import (
+    chosen_at_random,
+    modal_bounds,
+    mode_labels,
+    pick_at_random,
+    record_per_turn,
+    unspent,
+)
 from .enums import DecisionKind, Zone
 from .events import EventType
 from .primitives import attach, attach_to_player, merge_permanents
@@ -65,6 +72,7 @@ def push_spell(
     impending: bool = False,
     flashback: bool = False,
     graveyard_permission: int | None = None,
+    exiles_instead: bool = False,
     enters_tapped: bool = False,
     overloaded: bool = False,
     cost_option: int | None = None,
@@ -95,6 +103,7 @@ def push_spell(
     # Rebound reads this on resolution, and this is the only moment it is
     # knowable: by then the card is on the stack and every spell looks alike.
     obj.cast_from_hand = obj.zone is Zone.HAND
+    obj.cast_from_zone = obj.zone.value
     # Addendum (Ravnica Allegiance): "if you cast this spell during your main
     # phase". Stamped here, with `cast_from_hand`, because this is the moment
     # the sentence is about and the only moment it is knowable -- the spell can
@@ -148,6 +157,7 @@ def push_spell(
         mutated=mutated,
         flashback=flashback,
         graveyard_permission=graveyard_permission,
+        exiles_instead=exiles_instead,
         enters_tapped=enters_tapped,
         overloaded=overloaded,
         cost_option=cost_option,
@@ -509,10 +519,15 @@ def _choose_trigger_modes(
     # indistinguishable from the board: with no mode chosen the ability resolves
     # having done nothing, which is what being removed looks like.
     floor = min(floor, len(offered))
-    picked = yield from ask_mode(
-        ctx, "Choose", [labels[i] for i in offered], trig.controller, floor, up_to
-    )
-    chosen = tuple(sorted(offered[i] for i in picked))
+    if chosen_at_random(ctx, spec):
+        # "Choose one at random" -- chosen here as well, as the trigger is put
+        # on the stack (603.3c), from what could have been chosen.
+        chosen = tuple(pick_at_random(state, offered, floor))
+    else:
+        picked = yield from ask_mode(
+            ctx, "Choose", [labels[i] for i in offered], trig.controller, floor, up_to
+        )
+        chosen = tuple(sorted(offered[i] for i in picked))
     # "…that hasn't been chosen **this turn**" is spent here, as the trigger is
     # put on the stack (603.3c), not when it resolves -- see `record_per_turn`.
     record_per_turn(state, trig.source_oid, spec, labels, chosen)
@@ -687,7 +702,10 @@ def free_cast_modes(
     ctx = EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name)
     floor, _ = modal_bounds(ctx, spec)
     offered = selectable_modes(state, pid, card, oid) or []
-    modes = tuple(offered[:floor])
+    if chosen_at_random(ctx, spec):
+        modes = tuple(pick_at_random(state, list(offered), floor))
+    else:
+        modes = tuple(offered[:floor])
     refs: list[TargetRef] = []
     for index in modes:
         options = enumerate_target_tuples(
@@ -776,7 +794,9 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         # applies -- and the same exemption: an escape spell whose targets all
         # left is back in the graveyard to be escaped again.
         destination = (
-            Zone.EXILE if item.flashback and card.graveyard_cast_exiles else Zone.GRAVEYARD
+            Zone.EXILE
+            if (item.flashback and card.graveyard_cast_exiles) or item.exiles_instead
+            else Zone.GRAVEYARD
         )
         move_object(state, item.oid, destination, to_player=obj.owner, cause="fizzled")
         return
@@ -878,7 +898,12 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
         yield from _merge_mutation(state, item, targets)
         return
     yield from _place_after_resolution(
-        state, obj, card, enters_tapped=item.enters_tapped, warped=item.warped
+        state,
+        obj,
+        card,
+        enters_tapped=item.enters_tapped,
+        warped=item.warped,
+        exiles_instead=item.exiles_instead,
     )
     _attach_aura(state, obj, card, targets, specs)
 
@@ -924,7 +949,13 @@ def _merge_mutation(
 
 
 def _place_after_resolution(
-    state: GameState, obj, card: CardDef, *, enters_tapped: bool = False, warped: bool = False
+    state: GameState,
+    obj,
+    card: CardDef,
+    *,
+    enters_tapped: bool = False,
+    warped: bool = False,
+    exiles_instead: bool = False,
 ):
     """A resolved permanent enters the battlefield; anything else goes to the graveyard.
 
@@ -955,6 +986,12 @@ def _place_after_resolution(
     if destination is Zone.GRAVEYARD and (
         (obj.cast_from_graveyard and card.graveyard_cast_exiles)
         or (obj.playable_exiles and obj.playable_live(state.turn))
+        # "If that spell would be put into your graveyard, exile it instead"
+        # -- the rider the effect that cast it put on the stack item
+        # (`cast_card`'s ``exiles``). A third path, and the one with no flag
+        # on the object: neither of the above is true of a card Helmut Zemo
+        # cast from a graveyard, which would otherwise come back every attack.
+        or exiles_instead
     ):
         destination = Zone.EXILE
     # Buyback: "put it into your hand instead of your graveyard as it

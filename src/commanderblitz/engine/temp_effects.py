@@ -9,7 +9,7 @@ from __future__ import annotations
 from collections.abc import Iterable, Mapping
 from typing import TYPE_CHECKING, Any
 
-from .characteristics import _matches
+from .characteristics import _matches, printed_creature_types
 from .player_statics import _battlefield_statics, static_life_floor
 from .structs import (
     ATTACK_RESTRICTION_DURATIONS,
@@ -35,10 +35,12 @@ from .structs import (
     PermanentShield,
     PlayerProtection,
     SacrificeRestriction,
+    TempEffect,
     Unblockable,
 )
 
 if TYPE_CHECKING:  # pragma: no cover
+    from .carddef import CardDef
     from .state import GameState
 
 
@@ -469,14 +471,62 @@ def grant_flash_permission(
     pid: int,
     *,
     types: tuple[str, ...] = (),
+    subtypes: tuple[str, ...] = (),
+    next_spell: bool = False,
     duration: str = "until_your_next_turn",
     source: int | None = None,
 ) -> None:
-    """Let ``pid`` cast spells of ``types`` at instant speed for ``duration``."""
+    """Let ``pid`` cast spells of ``types`` and ``subtypes`` at instant speed
+    for ``duration`` -- or, with ``next_spell``, the first such spell only."""
 
     state.flash_permissions.append(
-        FlashPermission(player=pid, types=tuple(types), duration=duration, source=source)
+        FlashPermission(
+            player=pid,
+            types=tuple(types),
+            subtypes=tuple(subtypes),
+            next_spell=next_spell,
+            duration=duration,
+            source=source,
+        )
     )
+
+
+def flash_permission_covers(perm: FlashPermission, pid: int, card: CardDef) -> bool:
+    """Whether ``perm`` is about ``pid`` casting this face.
+
+    Both filters are any-ofs and they are ANDed: ``types`` against the card
+    types, ``subtypes`` against the face's creature types as 205.3m has them
+    (`printed_creature_types`, so a changeling is every one of them and an
+    instant that is not Kindred is none).
+    """
+    if perm.player != pid:
+        return False
+    if perm.types and not set(perm.types) & set(card.types):
+        return False
+    return not perm.subtypes or bool(set(perm.subtypes) & printed_creature_types(card))
+
+
+def consume_next_spell_flash_permissions(state: GameState, pid: int, card: CardDef) -> None:
+    """Use up every single-use permission this cast answers.
+
+    "The next spell of the chosen type you cast this turn" is the next one
+    **cast**, whatever timing it was cast at: a Goblin cast in your own main
+    phase, where it never needed the permission, still spends it (the 2017
+    Progenitor's Icon ruling). So it is folded off the cast itself, in
+    `GameState._tally`'s SPELL_CAST arm that every cast path passes through,
+    and never off the timing check that consulted it.
+
+    *Every* matching one, not the oldest: each activation is its own effect
+    about "the next spell of the chosen type", and they all name the same
+    spell -- two activations in one turn are not two flash Goblins. A
+    permission whose filter this spell misses is untouched, so a Bear cast in
+    between leaves the Goblin's permission waiting.
+    """
+    state.flash_permissions = [
+        perm
+        for perm in state.flash_permissions
+        if not (perm.next_spell and flash_permission_covers(perm, pid, card))
+    ]
 
 
 def clear_flash_permissions(state: GameState, duration: str, player: int | None = None) -> None:
@@ -628,6 +678,46 @@ def forbid_sacrifice(
     return True
 
 
+def grant_cant_be_sacrificed(
+    state: GameState,
+    objects: Iterable[int],
+    player: int,
+    source: int | None = None,
+) -> list[int]:
+    """ "It gains \"This permanent can't be sacrificed\" until the end of your
+    next turn." (Stilt-Man, Towering Terror.)
+
+    The same prohibition as :func:`forbid_sacrifice` on a longer clock, and
+    deliberately not a row in the same table.  The printed sentence grants the
+    permanent an *ability*, and a granted ability ends with the object (400.7);
+    the table is keyed on oids, which survive a zone change.  Over a single turn
+    that difference is the one `forbid_sacrifice` argues away -- across a turn
+    boundary a flickered permanent coming back still protected is a reachable
+    line.  So the grant is a `TempEffect(kind="cant_sacrifice")` on the
+    permanent itself: `reset_permanent_state` empties it when the permanent
+    leaves, and `primitives.clear_until_eot` ends it in the cleanup of
+    ``player``'s next turn (`TempEffect.until_end_of_turn_of`).
+
+    Only permanents on the battlefield get it -- one gone in response is not
+    there to gain anything.  Returns the oids that did.
+    """
+    granted = []
+    for oid in dict.fromkeys(objects):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        obj.until_eot.append(
+            TempEffect(
+                kind="cant_sacrifice",
+                source=source,
+                until_end_of_turn_of=player,
+                since_turn=state.turn,
+            )
+        )
+        granted.append(oid)
+    return granted
+
+
 def sacrifice_forbidden(state: GameState, oid: int) -> bool:
     """Whether ``oid`` may not be sacrificed right now (701.17b).
 
@@ -661,6 +751,10 @@ def sacrifice_forbidden(state: GameState, oid: int) -> bool:
     ``char_version`` and is an empty list in the same games.
     """
     if any(oid in entry.objects for entry in state.sacrifice_restrictions):
+        return True
+    obj = state.objects.get(oid)
+    if obj is not None and any(temp.kind == "cant_sacrifice" for temp in obj.until_eot):
+        # The granted form, :func:`grant_cant_be_sacrificed`'s.
         return True
     return _forbidden_by_a_static(state, oid)
 

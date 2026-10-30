@@ -109,6 +109,21 @@ describe("describeEvent", () => {
     );
   });
 
+  it("names the creature that connived", () => {
+    // The draw and the discard have their own lines; this one says they were
+    // one connive, which is what Glorious Purpose's trigger is waiting for.
+    expect(
+      describeEvent(
+        event({ type: "connived", player: 0, data: { card: "ultron_unlimited" } }),
+        names,
+        0,
+      ),
+    ).toBe("Ultron Unlimited connives");
+    expect(describeEvent(event({ type: "connived", player: 1 }), names, 0)).toBe(
+      "A creature connives",
+    );
+  });
+
   it("says who searched a library, and whose", () => {
     // The shuffle that ends a search emits nothing and an empty search moves no
     // card, so without this line Archivist of Oghma's life and card arrive with

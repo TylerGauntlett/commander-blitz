@@ -40,9 +40,11 @@ from .carddef import Cost
 from .effects.context import EffectContext, ask_objects, ask_yes_no
 from .enums import Zone
 from .events import EventType
+from .mana import ManaCost
 from .player_statics import (
     draw_cap,
     draw_replacements,
+    granted_miracle_cost,
     player_cant_cast_while_resolving,
     wins_on_empty_draw,
 )
@@ -144,7 +146,18 @@ def discard(
     ``caused_by`` is passed through to `discard_cards`: the controller of the
     spell or ability that caused the discard, or ``None`` for the cleanup step
     and for a discard paid as a cost. See that function.
+
+    One call is one discard event, however many cards it takes (603.2c), so it
+    opens its own `state.event_batch` and every DISCARD it fires -- the madness
+    exiles and the ordinary cards alike -- carries that batch. Its own rather
+    than the enclosing op's: the cleanup-step discard has no op around it and
+    would otherwise share the batch of whatever resolved last, and an op that
+    discards twice (once per player, or once per conniving creature) discards
+    twice. Taken once, up front, because a madness cast offered mid-discard
+    pays a cost, and a payment bumps the counter.
     """
+    state.event_batch += 1
+    batch = state.event_batch
     ordinary: list[int] = []
     for oid in oids:
         obj = state.objects.get(oid)
@@ -154,8 +167,8 @@ def discard(
         if card.madness is None:
             ordinary.append(oid)
             continue
-        yield from _madness(state, pid, oid)
-    return discard_cards(state, pid, ordinary, caused_by=caused_by)
+        yield from _madness(state, pid, oid, batch)
+    return discard_cards(state, pid, ordinary, caused_by=caused_by, batch=batch)
 
 
 # ----------------------------------------------------------------------
@@ -203,13 +216,28 @@ def _miracle(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     what they drew.
     """
     card = state.card_of(state.objects[oid])
-    if card.miracle is None:
+    # Read with the card in hand: "Nonland cards in your hand have miracle {0}"
+    # (Molecule Man) gives the card the ability only there, and only while the
+    # granting static is active as the card is drawn.
+    granted = granted_miracle_cost(state, pid, card)
+    costs = [] if card.miracle is None else [card.miracle]
+    if granted is not None:
+        extra = ManaCost.parse(granted)
+        if extra not in costs:
+            costs.append(extra)
+    if not costs:
         return
     state.emit("reveal", player=pid, source=oid, cards=[card.id])
-    yield from _offer_cast(state, pid, oid, card.miracle, "miracle")
+    # A printed miracle beside a granted one is two miracle abilities (702.94a),
+    # each its own "you may cast it for [cost]" -- offered in turn, printed
+    # first, so declining one leaves the other; one cast ends it, since the
+    # card has left the hand. An identical price is one offer, not two.
+    for cost in costs:
+        if (yield from _offer_cast(state, pid, oid, cost, "miracle")):
+            return
 
 
-def _madness(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
+def _madness(state: GameState, pid: int, oid: int, batch: int) -> Generator[Any, list[int]]:
     """"If you would discard this card, exile it instead."
 
     The exile happens whether or not the cast is taken, and that is the half a
@@ -222,7 +250,7 @@ def _madness(state: GameState, pid: int, oid: int) -> Generator[Any, list[int]]:
     obj = state.objects[oid]
     card = state.card_of(obj)
     move_object(state, oid, Zone.EXILE, to_player=obj.owner, cause="madness")
-    state.emit(EventType.DISCARD, player=pid, source=oid, oid=oid, madness=True)
+    state.emit(EventType.DISCARD, player=pid, source=oid, oid=oid, madness=True, batch=batch)
     yield from _offer_cast(state, pid, oid, card.madness, "madness")
 
 

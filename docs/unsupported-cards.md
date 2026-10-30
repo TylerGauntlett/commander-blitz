@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**88 cards** blocked by **70** capabilities.
+**87 cards** blocked by **69** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -44,7 +44,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [gain-control-until-end-of-your-next-turn](#gain-control-until-end-of-your-next-turn) | 1 | 18564 | op |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
@@ -666,20 +665,6 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
-
-</details>
-
-## gain-control-until-end-of-your-next-turn
-
-Blocks **1** card.
-
-- **(op)** gain_control with a duration that ends at the end of the controller's next turn, and a granted "this permanent can't be sacrificed" with the same duration
-  <br>Why the existing vocabulary won't do: structs.CONTROL_DURATIONS is only permanent and until_end_of_turn; the trigger half (per_player, target controller {"binding": "defender"}) is expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Stilt-Man, Towering Terror** (rank 18564) — `stilt_man_towering_terror`
-  - Whenever one or more Villains you control deal combat damage to a player, gain control of target noncreature, nonland permanent that player controls until the end of your next turn. It gains "This permanent can't be sacrificed" until the end of your next turn.
 
 </details>
 

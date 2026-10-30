@@ -1,0 +1,93 @@
+{
+  "_comment": "Cards that exist only for tests/unit/mana/test_convoke_colors.py. Never part of a deck list. t_scheme is Lethal Scheme's shape: a {2}{B}{B} convoke instant that destroys a creature or planeswalker and has each creature that convoked it connive. t_black_bear and t_orzhov_bear are a mono-black and a white-black 2/2, so a pip can be paid by colour; t_bear (testing.cards.json) is the green one that cannot pay {B}.",
+  "cards": [
+    {
+      "id": "t_scheme",
+      "name": "Test Scheme",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDestroy target creature or planeswalker. Each creature that convoked this spell connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)",
+      "mana_cost": "{2}{B}{B}",
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "types": ["Instant"],
+      "pay_generic_with": "tap_creatures",
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "any_types": ["Creature", "Planeswalker"]}
+        }
+      ],
+      "spell_effects": [
+        {"op": "destroy", "objects": {"target": "t1"}},
+        {"op": "connive", "objects": {"convoked": true, "types": ["Creature"]}}
+      ]
+    },
+    {
+      "id": "t_black_bear",
+      "name": "Test Black Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{B}",
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_orzhov_bear",
+      "name": "Test Orzhov Bear",
+      "oracle_text": "",
+      "mana_cost": "{W}{B}",
+      "colors": ["W", "B"],
+      "color_identity": ["W", "B"],
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_white_bear",
+      "name": "Test White Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{W}",
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_free_trick",
+      "name": "Test Free Trick",
+      "oracle_text": "You gain 1 life.",
+      "mana_cost": "{0}",
+      "types": ["Instant"],
+      "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_orzhov_charm",
+      "name": "Test Orzhov Charm",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDraw a card.",
+      "mana_cost": "{W}{B}",
+      "colors": ["W", "B"],
+      "color_identity": ["W", "B"],
+      "types": ["Sorcery"],
+      "pay_generic_with": "tap_creatures",
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    },
+    {
+      "id": "t_hybrid_convoker",
+      "name": "Test Hybrid Convoker",
+      "oracle_text": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nDraw a card.",
+      "mana_cost": "{W/U}",
+      "colors": ["W", "U"],
+      "color_identity": ["W", "U"],
+      "types": ["Sorcery"],
+      "pay_generic_with": "tap_creatures",
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+    }
+  ]
+}

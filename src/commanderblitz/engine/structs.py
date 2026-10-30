@@ -58,7 +58,9 @@ class TempEffect:
     another permanent), ``"animate"`` ("becomes a 4/4 creature until end of
     turn"), ``"subtype"`` ("until end of turn, Sarkhan becomes a Dragon in
     addition to its other types": ``subtypes`` added, base P/T untouched), or
-    ``"control"`` ("gain control of target permanent until end of turn").  The lock is not a keyword because it is not a characteristic: it is
+    ``"control"`` ("gain control of target permanent until end of turn"), or
+    ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
+    read by `temp_effects.sacrifice_forbidden`).  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 
@@ -133,6 +135,19 @@ class TempEffect:
     #: that player's untap step, beside every other ``until_your_next_turn``
     #: table, and keyed by the player for the same reason those are.
     until_player: int | None = None
+    #: "…**until the end of your next turn**" (611.2b), the third clock and
+    #: neither of the other two: the seat whose next turn's cleanup step ends
+    #: the entry, and ``None`` on every other clock. Stilt-Man, Towering
+    #: Terror's steal and the "can't be sacrificed" it grants. Read with
+    #: :attr:`since_turn` by `primitives.clear_until_eot`, which ends the entry
+    #: in the cleanup of the first of that seat's turns to *begin* after the
+    #: grant: made during your own turn, "your next turn" is a later one.
+    until_end_of_turn_of: int | None = None
+    #: The turn an :attr:`until_end_of_turn_of` entry was made in. Compared only
+    #: with the turn now ending and never projected forward to a future turn
+    #: number, so an elimination or an extra turn that moves the seat's next
+    #: turn moves the end with it -- detain's reason for keying on the seat.
+    since_turn: int = 0
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -148,6 +163,8 @@ class TempEffect:
             "new_controller": self.new_controller,
             "exact": self.exact,
             "until_player": self.until_player,
+            "until_end_of_turn_of": self.until_end_of_turn_of,
+            "since_turn": self.since_turn,
         }
 
 
@@ -156,13 +173,16 @@ class TempEffect:
 #: every other duration in the DSL is a bare string a card file writes.
 ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat")
 
-#: The two durations a control change can carry -- Captivating Vampire's steal
-#: and Act of Treason's.  Spelled the way ``grant_keyword``'s pair is, because
-#: it is the same distinction on a different field, and enumerated rather than
-#: defaulted for a harsher reason than most: a misread ``"until_end_of_turn"``
-#: is a *permanent* steal, which is the strictly better card the loader has
-#: always refused to let anybody write by accident.
-CONTROL_DURATIONS = ("permanent", "until_end_of_turn")
+#: The durations a control change can carry -- Captivating Vampire's steal, Act
+#: of Treason's, and Stilt-Man, Towering Terror's "…until the end of your next
+#: turn" (`TempEffect.until_end_of_turn_of`).  The first pair is spelled the way
+#: ``grant_keyword``'s is, because it is the same distinction on a different
+#: field; the third the way `grant_playable`'s Light Up the Stage permission
+#: is, because it is the same clock.  Enumerated rather than defaulted for a
+#: harsher reason than most: a misread ``"until_end_of_turn"`` is a *permanent*
+#: steal, which is the strictly better card the loader has always refused to
+#: let anybody write by accident.
+CONTROL_DURATIONS = ("permanent", "until_end_of_turn", "end_of_your_next_turn")
 
 
 @dataclass(frozen=True)
@@ -806,12 +826,25 @@ class FlashPermission:
     covers cards drawn after it resolved -- so it belongs to the *player*, in a
     timed table beside `outcome_locks`, and `casting._timing_ok` reads it.
     ``types`` narrows it to spells of those card types (empty: every spell).
+
+    ``subtypes`` narrows it by **creature type** (205.3m), and ``next_spell``
+    makes it single-use: "{T}: The next spell of the chosen type you cast this
+    turn can be cast as though it had flash" -- Witness, Progenitor's Icon. The
+    type is a literal by the time it is here, snapshotted from the source's
+    `chosen_type` as the ability resolved, so an Icon that has left since still
+    names the type it named. A one-shot permission is **used up by the cast**
+    and not by the timing it relaxed -- see
+    `temp_effects.consume_next_spell_flash_permissions`.
     """
 
     #: Who may cast at instant speed.
     player: int
     #: The card types it covers; empty for every spell.
     types: tuple[str, ...] = ()
+    #: The creature types it covers (any of them); empty for every spell.
+    subtypes: tuple[str, ...] = ()
+    #: Single-use: the first matching spell its player casts removes it.
+    next_spell: bool = False
     #: ``this_turn`` or ``until_your_next_turn``.
     duration: str = "until_your_next_turn"
     #: What installed it, for the log.
@@ -820,6 +853,14 @@ class FlashPermission:
 
 #: The durations a `FlashPermission` may carry.
 FLASH_PERMISSION_DURATIONS = ("this_turn", "until_your_next_turn")
+
+#: The binding an activated ability's stack item carries its source's
+#: `chosen_type` in, written by `Game._activate` before the cost is paid.
+#: Last-known information for "of the chosen type": a permanent that leaves
+#: the battlefield forgets its choice (`reset_permanent_state`), and an ability
+#: already on the stack still resolves off what it was -- Witness,
+#: Progenitor's Icon killed in response still grants its flash.
+ACTIVATION_CHOSEN_TYPE = "source_chosen_type"
 
 
 #: The durations a `LifeFloor` may carry.
@@ -1005,6 +1046,15 @@ class CastLock:
 #: temporary one's clothes.
 SACRIFICE_RESTRICTION_DURATIONS = ("this_turn",)
 
+#: The durations the `cant_sacrifice` op takes: the table's, plus "It gains
+#: \"This permanent can't be sacrificed\" **until the end of your next turn**"
+#: (Stilt-Man, Towering Terror).  That one is not a row in the table but a
+#: `TempEffect(kind="cant_sacrifice")` on the permanent itself, because it is a
+#: granted ability and has to end with the object (400.7): an oid survives a
+#: zone change, and across a turn boundary a flickered permanent coming back
+#: still protected is a reachable line rather than a curiosity.
+CANT_SACRIFICE_DURATIONS = (*SACRIFICE_RESTRICTION_DURATIONS, "end_of_your_next_turn")
+
 
 @dataclass(frozen=True)
 class SacrificeRestriction:
@@ -1062,6 +1112,13 @@ class SacrificeRestriction:
             "duration": self.duration,
             "source": self.source,
         }
+
+
+#: The `StackItem.bindings` key a convoke spell's cast writes: the creatures
+#: tapped to pay for it (702.51c, "a creature that convoked it"), struck out one
+#: by one by `zones.move_object` as they leave the battlefield. Read by the
+#: ``{"convoked": true}`` selector key.
+CONVOKED_BINDING = "convoked"
 
 
 @dataclass
@@ -1129,6 +1186,14 @@ class StackItem:
     #: granting permanent's oid, so the per-turn use is billed to the one the
     #: line was offered under, and `None` for everything else.
     graveyard_permission: int | None = None
+    #: "If that spell would be put into your graveyard, exile it instead" --
+    #: the rider an *effect* puts on a spell it casts (Helmut Zemo,
+    #: Mastermind), set by `cast_card`'s ``exiles``. A replacement on the
+    #: spell, so it is read wherever the spell leaves the stack for a
+    #: graveyard: resolving, fizzling (608.2b) and being countered. On the
+    #: item, not the card: it is not the card's own rider, and another cast of
+    #: the same card by other means goes to the graveyard as usual.
+    exiles_instead: bool = False
     #: "…that artifact **enters tapped**", the rider on that permission. Carried
     #: on the item rather than the object because `reset_permanent_state` runs
     #: on the way onto the battlefield and would wipe a flag set beforehand.
@@ -1499,6 +1564,19 @@ class TurnLedger:
     #: second combat's pack tactics counts only that combat's attackers.
     #: Summed with derived power and negatives included, as crew sums.
     attack_power_this_combat: dict[int, int] = field(default_factory=dict)
+    #: The players each player **declared attackers against in the combat in
+    #: progress**: attacking seat -> defending seats. Melee -- "+1/+1 for each
+    #: opponent you attacked with a creature this combat" (702.121).
+    #:
+    #: A defending seat is `CombatState.attackers`' value, so a creature that
+    #: attacked a planeswalker or a battle records that permanent's controller:
+    #: 702.121b counts them, which is where this parts from `seats_attacked`
+    #: (506.2's "an attack on a walker is not an attack on its controller").
+    #: Frozen at the declaration for pack tactics' reasons -- an attacker
+    #: removed from combat before melee resolves still attacked its opponent
+    #: -- and a creature put onto the battlefield attacking was never declared
+    #: and records nothing. Per **combat**: `combat.start_combat` resets it.
+    opponents_attacked_this_combat: dict[int, set[int]] = field(default_factory=dict)
     #: Which creatures each player has **declared as attackers** this turn:
     #: player id -> the oids they attacked with.  Two questions, one record.
     #:
@@ -1738,6 +1816,32 @@ class TurnLedger:
     #: whose modes are reordered cannot re-open a spent one.
     modes_chosen: dict[int, set[str]] = field(default_factory=dict)
 
+    #: object id -> the player who **discarded** it this turn, for every card a
+    #: discard put into a graveyard (mayhem, 702.187: "if you discarded it this
+    #: turn").
+    #:
+    #: `modes_chosen`'s lifetime and for its reason: the permission is about the
+    #: one object the discard made (400.7), so `zones.move_object` drops the
+    #: entry at the next zone change -- a card cast with mayhem that resolves
+    #: back into the graveyard, or one returned to hand and discarded again
+    #: next turn, is a new object nobody discarded this turn. Written by
+    #: `primitives.discard_cards` *after* the move, and only when the card
+    #: really reached a graveyard: a discard Rest in Peace sent to exile, or
+    #: madness's replacement, put nothing there to cast. Not `object_flags`,
+    #: which deliberately survives the zone change.
+    discarded: dict[int, int] = field(default_factory=dict)
+    #: How many cards each player has **discarded** this turn: player id ->
+    #: count. "If you discarded a card this turn" (Typhoid Mary, Fractured).
+    #:
+    #: Not `discarded` above, which is about one *object* and is dropped when
+    #: that object changes zones again: a card discarded and then exiled from
+    #: the graveyard (or cast with mayhem) is no longer there, but its owner
+    #: still discarded a card this turn. A count keyed by the discarding seat
+    #: has no object to lose. Folded off DISCARD in `GameState._tally`, so a
+    #: discard madness sent to exile counts too (702.35a: it is still
+    #: discarded), and a discard paid as a cost counts like any other.
+    cards_discarded: dict[int, int] = field(default_factory=dict)
+
     #: Every permanent that has **entered the battlefield** this turn, in the
     #: order it arrived, as :class:`EnteredPermanent` snapshots.
     #:
@@ -1839,6 +1943,7 @@ class TurnLedger:
         self.creatures_died.clear()
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
+        self.opponents_attacked_this_combat.clear()
         self.players_attacked_by.clear()
         self.seats_attacked.clear()
         self.attacks_by_creature.clear()
@@ -1859,6 +1964,8 @@ class TurnLedger:
         self.ability_resolutions.clear()
         self.object_flags.clear()
         self.modes_chosen.clear()
+        self.discarded.clear()
+        self.cards_discarded.clear()
         self.permanents_entered.clear()
         self.combats = 0
 

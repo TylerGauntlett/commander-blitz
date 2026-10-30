@@ -724,6 +724,13 @@ class TriggerSpec:
     #: ``("graveyard", "exile")``. Compared with the event's ``to_zone``, which
     #: `move_object` stamps on every departure. ``None`` is any destination.
     to_zones: tuple[str, ...] | None = None
+    #: For ``spell_cast`` and ``land_played``: the zone names the card must
+    #: have been played from -- "whenever you play a card **from exile**" is
+    #: ``("exile",)``. A spell is asked `GameObject.cast_from_zone`, stamped by
+    #: `stack.push_spell` before the card reaches the stack (601.2a); a land
+    #: drop carries ``from_zone`` on its LAND_PLAYED payload. ``None`` is any
+    #: origin.
+    from_zones: tuple[str, ...] | None = None
     #: The ``state`` event only: the condition a **state trigger** watches
     #: (603.8) -- "When there are four or more page counters on this
     #: artifact…" (Mazemind Tome). Checked whenever state-based actions are, by
@@ -1420,6 +1427,11 @@ class CardDef:
     graveyard_cast_exiles: bool = True
     #: Disturb: a graveyard cast that arrives on the **back** face.
     graveyard_cast_transformed: bool = False
+    #: Mayhem (702.187a): the graveyard cost above is the mayhem price, and it
+    #: is offered only while this object is in the graveyard because its
+    #: owner discarded it this turn (`TurnLedger.discarded`). The card goes
+    #: wherever it normally would, so `graveyard_cast_exiles` is False beside it.
+    mayhem: bool = False
     #: Dredge N -- the mill that replaces a draw. See `engine/replacements.py`.
     dredge: int = 0
     #: Toxic N (702.164) -- the total N of every printed toxic instance, read
@@ -1819,3 +1831,36 @@ DETHRONE_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(DETHRONE_TRIGGER)
+
+
+#: Melee's trigger (702.121a): "Whenever this creature attacks, it gets +1/+1
+#: until end of turn for each opponent you attacked with a creature this
+#: combat."
+#:
+#: Rules-supplied for exalted's reason: Titania, Proud Pummeler *grants*
+#: melee, so the sentence cannot live on the printed card.
+#: `triggers._candidate_abilities` yields it once for every battlefield
+#: permanent whose derived keywords include melee, with that permanent as the
+#: source.
+#:
+#: The bonus is counted as the ability resolves (702.121b), off
+#: `TurnLedger.opponents_attacked_this_combat` -- the opponents its controller
+#: declared attackers against in the combat in progress, a planeswalker's or
+#: battle's controller included -- so an attacker removed before resolution
+#: still counts its opponent, and a second combat counts afresh.
+MELEE_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Melee",
+    trigger=TriggerSpec(event="attacks", controller="you", source="self"),
+    effects=(
+        {
+            "op": "pump",
+            "objects": {"zone": "battlefield", "self_only": True},
+            "power": {"opponents_attacked_this_combat": "you"},
+            "toughness": {"opponents_attacked_this_combat": "you"},
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(MELEE_TRIGGER)

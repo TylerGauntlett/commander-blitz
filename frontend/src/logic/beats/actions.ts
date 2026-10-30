@@ -47,6 +47,15 @@ export function actionBeat(ctx: EventContext): boolean {
       return true;
 
     /*
+     * A connive finishing. Its draw and discard have already had their beats,
+     * so this one is short; it is here so a "whenever a creature you control
+     * connives" trigger that follows has a line before it.
+     */
+    case "connived":
+      push({ hold: 200 });
+      return true;
+
+    /*
      * A library search. Its own beat rather than log-only, because it is the
      * one moment of a tutor or a cracked fetchland that shows nothing on the
      * board -- the card it finds arrives as a separate `zone_change` and a

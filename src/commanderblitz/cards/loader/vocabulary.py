@@ -324,6 +324,14 @@ STATIC_EFFECTS = frozenset(
         # by `player_statics.granted_warp_cost` at every cast, so a card drawn
         # after the granter arrived is covered.
         "grant_warp",
+        # "Nonland cards in your hand have miracle {0}." Molecule Man.
+        # `grant_warp`'s shape for the draw-time price: `affects_spells` names
+        # the cards and `miracle_cost` the price. Not `grant_warp` or
+        # `granted_alternative_cost`, which are prices offered at any cast; a
+        # miracle cost is offered once, as the card is drawn as the first card
+        # this turn. Read by `player_statics.granted_miracle_cost` from
+        # `replacements._miracle`, with the card already in hand.
+        "grant_miracle",
         # "You may pay eight {E} rather than pay the mana cost for permanent
         # spells you cast." Nissa, Worldsoul Speaker. `grant_warp`'s shape for
         # a price paid in something other than mana: `affects_spells` names the
@@ -775,6 +783,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "cast_from_library_top",
         "free_cast_permission",
         "grant_warp",
+        "grant_miracle",
         "granted_alternative_cost",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",

@@ -198,9 +198,9 @@ class TestTheLoaderChecksIt:
             compile_card(self._card(self._copy(except_={"add_keywords": []})))
 
     def test_an_exception_it_cannot_apply_is_refused(self):
-        """Silently dropped, "except its name is…" would be a different card."""
+        """Silently dropped, "except it's white" would be a different card."""
         with pytest.raises(DslError, match="unsupported keys"):
-            compile_card(self._card(self._copy(except_={"name": "Gogo"})))
+            compile_card(self._card(self._copy(except_={"colors": ["W"]})))
 
     @pytest.mark.parametrize(
         "extra",

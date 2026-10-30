@@ -68,6 +68,8 @@ def start_combat(state: GameState) -> None:
     # Pack tactics reads "this combat", so the last combat's attackers stop
     # counting the moment the next one begins.
     state.turn_ledger.attack_power_this_combat.clear()
+    # So does melee's "each opponent you attacked this combat".
+    state.turn_ledger.opponents_attacked_this_combat.clear()
     state.combat = CombatState(declaring_player=state.active_player)
 
 
@@ -756,6 +758,9 @@ def finish_attackers(state: GameState) -> Generator[Any, list[int]]:
             EventType.ATTACKERS_DECLARED,
             player=state.active_player,
             attackers=sorted(combat.attackers),
+            # The defending players, a walker's or battle's controller
+            # included: melee's count (`TurnLedger.opponents_attacked_this_combat`).
+            defenders=sorted(set(combat.attackers.values())),
         )
         # "Whenever one or more creatures attack one of your opponents or a
         # planeswalker they control" -- one per *defending player*, between the

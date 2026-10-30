@@ -14,7 +14,14 @@ from contextlib import contextmanager
 from dataclasses import replace
 from typing import TYPE_CHECKING, Any
 
-from .carddef import CLOAK_WARD, DETHRONE_TRIGGER, EXALTED_TRIGGER, Ability, TriggerSpec
+from .carddef import (
+    CLOAK_WARD,
+    DETHRONE_TRIGGER,
+    EXALTED_TRIGGER,
+    MELEE_TRIGGER,
+    Ability,
+    TriggerSpec,
+)
 from .characteristics import (
     _battlefield_statics,
     _matches_printed,
@@ -205,6 +212,18 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: cause rather than the search: a cracked fetchland and a resolved tutor
     #: are both one search, and a "you may search" declined is none.
     "searches_library": EventType.LIBRARY_SEARCHED,
+    #: "Whenever a creature you control connives, …" (701.47) -- Glorious
+    #: Purpose, Iron Monger, Ultron. Once per conniving permanent, after its
+    #: draw, discard and counter, fired by `ops_cards.op_connive`. The subject
+    #: is the permanent that connived (see `OBJECT_SUBJECT_TRIGGERS`), so a
+    #: `filter` asks what it is, `controller: "you"` reads its controller, and
+    #: `{"binding": "subject"}` is "that creature".
+    #:
+    #: `draw` and `discard` are the near misses and fire per card and on every
+    #: draw and discard at the table: connive 2 would pay twice, a cleanup
+    #: discard would pay at all, and a connive whose discard an opponent's
+    #: shield stopped would not pay -- and neither event names the creature.
+    "connives": EventType.CONNIVED,
     #: Enrage (702.131): "Whenever this creature is dealt damage, …".  No new
     #: event -- `DAMAGE_DEALT` has always been fired through the trigger bus and
     #: nothing subscribed to it.  Sugar in the same sense `creature_dies` is:
@@ -376,6 +395,14 @@ STATE_TRIGGER = "state"
 #: every later event in the batch adds its damage to the queued trigger's
 #: ``amount`` (`_joins_batched_damage`), so Hercules, Olympian Hero blocked by
 #: two creatures is dealt damage once, for both blockers' damage together.
+#:
+#: `discard` takes it from `replacements.discard`: one call is one discard
+#: (603.2c) -- a "discard two cards", one player's share of "each player
+#: discards", the cleanup-step discard, one conniving creature's discard -- and
+#: opens its own batch, so Doctor Doom, King of Latveria's "whenever you discard
+#: one or more **land** cards" drains once for two lands. The `filter` is asked
+#: per card before the batch is spent, so a land and a nonland discarded
+#: together fire it once and two nonlands not at all.
 BATCHED_EVENTS = frozenset(
     {
         "permanent_enters",
@@ -383,6 +410,7 @@ BATCHED_EVENTS = frozenset(
         "token_created",
         "attacks_unblocked",
         "dealt_damage",
+        "discard",
     }
 )
 
@@ -472,6 +500,11 @@ OBJECT_SUBJECT_TRIGGERS = frozenset(
         # battlefield**". The emission passes `source=oid` and no `oid` key, so
         # `_subject_oid` reaches it through the `event.source` fallthrough.
         "ability_activated",
+        # The permanent that connived, so a filter can ask "a *creature you
+        # control*" and `{"binding": "subject"}` is "that creature". Never the
+        # event's `source`, which is whatever made it connive: see the
+        # `source: "self"` check in `_matches`.
+        "connives",
         # The Saga itself. Listed so `source: "self"` -- which the loader always
         # supplies for a chapter -- scopes the ability to *this* Saga rather than
         # to every Saga on the table, and so `_actor` reads the Saga's controller
@@ -1042,6 +1075,9 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # with the keyword, so Marchesa's granted dethrone listens too.
         if not obj.face_down and has_keyword(state, oid, Keyword.DETHRONE.value):
             yield obj, DETHRONE_TRIGGER
+        # Melee (702.121): the same shape again, for Titania's granted melee.
+        if not obj.face_down and has_keyword(state, oid, Keyword.MELEE.value):
+            yield obj, MELEE_TRIGGER
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.
@@ -1167,6 +1203,12 @@ def _matches(
     if spec.event == "dealt_damage" and spec.source == "self" and subject_oid != obj.oid:
         return False
 
+    # The same for "whenever *this creature* connives": the event's `source` is
+    # the ability that made something connive, so Doctor Doom making a Villain
+    # connive would otherwise count as Doom conniving.
+    if spec.event == "connives" and spec.source == "self" and subject_oid != obj.oid:
+        return False
+
     if spec.event == "deals_damage_to_player" and subject_oid is None:
         # "Whenever **enchanted creature** deals damage" is a claim about a
         # permanent, and the subject is the only thing that names it. Damage can
@@ -1187,6 +1229,16 @@ def _matches(
     # emission without a `to_zone` fails the clause rather than passing it,
     # for the `mana_ability` check's reason: wider is the dangerous direction.
     if spec.to_zones is not None and event.data.get("to_zone") not in spec.to_zones:
+        return False
+
+    # "Whenever you play a card **from exile**" -- where the card was played
+    # from. A spell is already on the stack when SPELL_CAST fires, so it is
+    # asked the origin `push_spell` stamped on it (601.2a); a land is already
+    # on the battlefield, and its drop carries the origin on the payload. An
+    # unknown origin fails the clause, for the `mana_ability` check's reason.
+    if spec.from_zones is not None and (
+        _played_from(state, spec.event, event, subject_oid) not in spec.from_zones
+    ):
         return False
 
     # "When **a spell or ability an opponent controls** causes you to discard
@@ -1377,6 +1429,16 @@ ORDINAL_FILTER_KEYS = frozenset(
         "name",
     }
 )
+
+
+def _played_from(
+    state: GameState, dsl_event: str, event: GameEvent, subject_oid: int | None
+) -> str | None:
+    """The zone a cast spell or a played land came from, for `from_zones`."""
+    if dsl_event == "land_played":
+        return event.data.get("from_zone")
+    obj = state.objects.get(subject_oid) if subject_oid is not None else None
+    return obj.cast_from_zone if obj is not None else None
 
 
 def _crosses_nth(event: GameEvent, nth: int) -> bool:
@@ -1622,6 +1684,25 @@ def _defender_matches(
     defender = event.data.get("defender")
     if defender is None:
         return False
+    if clause == "enchanted_player":
+        # The seat this Aura is attached to -- Archnemesis's "whenever you
+        # attack enchanted player" -- read as the event happens. On an attack
+        # event it is the **player** that must be attacked (506.2): an
+        # `attacks` aimed at their planeswalker or battle is not it, and
+        # `creatures_attack_player`, which folds a seat and its permanents
+        # together, needs one of its creatures attacking the seat itself. On a
+        # damage event the seat that was dealt the damage is the whole question.
+        if obj.attached_to_player is None or int(defender) != obj.attached_to_player:
+            return False
+        if event.type == EventType.ATTACKS:
+            return event.data.get("attacked_permanent") is None
+        if event.type == EventType.CREATURES_ATTACKED_PLAYER:
+            combat = state.combat
+            return combat is not None and any(
+                int(oid) not in combat.attacking_permanent
+                for oid in event.data.get("attackers") or ()
+            )
+        return True
     if clause in ("most_life", "monarch"):
         if event.data.get("attacked_permanent") is not None:
             return False
@@ -1771,6 +1852,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "is_commander",
         "tapped",
         "has_counters",
+        "goaded",
         "entered_this_turn",
         "attacking_player",
         "mana_value",
@@ -2092,6 +2174,16 @@ def matches_card_filter(
     if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
         filt["has_counters"]
     ):
+        return False
+    # "Whenever one or more **goaded** creatures deal combat damage to one of
+    # your opponents" -- Puppet Master, String Puller. Live object state, sound
+    # for `tapped`'s reason: the filter is asked once, as the event fires, and
+    # on `creatures_deal_combat_damage` that is the moment the damage is dealt
+    # (510.2), before any state-based action can move the creature. Goaded by
+    # anyone (701.38): the printed word names no goader. The creatures are
+    # usually an opponent's, which is why the trigger beside this filter says
+    # `controller: "any"` -- the schema's default `"you"` would refuse them.
+    if "goaded" in filt and bool(obj.goaded_by) != bool(filt["goaded"]):
         return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the

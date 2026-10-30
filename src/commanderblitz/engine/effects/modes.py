@@ -1,7 +1,7 @@
 """Modal answers shared by `op_choose_mode`, `Game._ask_modes` and `stack`.
 
-How many modes a ``choose_mode`` asks for, what each is called, and the flag
-that marks one spent. A leaf below `ops_control` so `stack` can ask without
+How many modes a ``choose_mode`` asks for, what each is called, whether the
+game picks them at random, and the flag that marks one spent. A leaf below `ops_control` so `stack` can ask without
 importing the op layer, which imports `stack` back.
 """
 
@@ -58,6 +58,37 @@ def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int 
         up_to = count if up_to is None else max(up_to, count)
         return 0, up_to
     return max(1, count), up_to
+
+
+def chosen_at_random(ctx: EffectContext, spec: Mapping[str, Any] | None) -> bool:
+    """Is this ``choose_mode`` answered by the game's random source right now?
+
+    ``random: true`` is "choose one **at random**": nobody is asked, and the
+    pick comes off ``state.rng`` so a seeded game replays it. It is not
+    `roll_dice` with an `if` per face -- the card does not roll, and a roll is
+    an event "whenever you roll" cards see.
+
+    ``choose_instead_if`` is the clause some of those cards add: "If you
+    discarded a card this turn, **you choose one instead**" (Typhoid Mary,
+    Fractured). While its condition holds the question goes back to the
+    controller as an ordinary choice; it is read where the modes are chosen,
+    which for a trigger is as it goes on the stack (603.3c).
+    """
+    if not spec or not spec.get("random"):
+        return False
+    instead = spec.get("choose_instead_if")
+    return instead is None or not evaluate(ctx, instead)
+
+
+def pick_at_random(state, offered: list[int], count: int) -> list[int]:
+    """``count`` distinct modes from ``offered``, uniformly, in printed order.
+
+    Every mode on offer is equally likely, and only modes that could have been
+    chosen are on offer: a mode with no legal target, or one already spent
+    under `once_each`, was struck off before this is asked.
+    """
+    count = max(0, min(count, len(offered)))
+    return sorted(state.rng.shuffled(list(offered))[:count])
 
 
 _COLOR_WORDS = {"W": "white", "U": "blue", "B": "black", "R": "red", "G": "green"}
