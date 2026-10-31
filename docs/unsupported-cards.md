@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**116 cards** blocked by **104** capabilities.
+**115 cards** blocked by **103** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -87,7 +87,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [optional-exact-mode-count](#optional-exact-mode-count) | 1 | 2715 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
@@ -1314,20 +1313,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## optional-exact-mode-count
-
-Blocks **1** card.
-
-- **(decision)** a choose_mode flag for "you may choose N": the mode count is either zero or exactly N (never 1..N-1), answered when the triggered ability goes on the stack so mode-owned player targets can still be declared
-  <br>Why the existing vocabulary won't do: choose_mode's `count: 2` forces two modes with no way to decline; `up_to: true` drops the floor to nothing and so also allows choosing exactly one mode, which the card forbids (Shadrix's ruling: two modes or none); wrapping the choose_mode in `may` makes it no longer the single top-level choose_mode, so its mode-owned targets (`mode` in target_keys) are refused by the loader. The 'different player' half is already covered: `targeting.legal_target_combos` refuses the same ref filling two target specs, so mode-owned `player` targets on each bullet are pairwise distinct
-
-<details><summary>Cards waiting on this</summary>
-
-- **Shadrix Silverquill** (rank 2715) — `shadrix_silverquill`
-  - At the beginning of combat on your turn, you may choose two. Each mode must target a different player.
 
 </details>
 

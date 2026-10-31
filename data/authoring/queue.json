@@ -242222,12 +242222,12 @@
     },
     "Shadrix Silverquill": {
       "edhrec_rank": 2715,
-      "gate": "template",
+      "gate": null,
       "name": "Shadrix Silverquill",
-      "reason": "no template for: At the beginning of combat on your turn, you may choose two. Each mode must target a diffe",
+      "reason": "",
       "scryfall_id": "214a695b-208e-4fd5-9ceb-23c882eadcf7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shady Informant": {

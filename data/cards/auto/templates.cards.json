@@ -140631,6 +140631,145 @@
         {
           "effects": [
             {
+              "count": 2,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": {
+                        "target": "maker"
+                      },
+                      "op": "create_token",
+                      "token": "inkling_2_1_wb_flying"
+                    }
+                  ],
+                  "label": "Target player creates a 2/1 white and black Inkling creature token with flying."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": {
+                        "target": "drawer"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "target": "drawer"
+                      }
+                    }
+                  ],
+                  "label": "Target player draws a card and loses 1 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "controller": {
+                          "target": "grower"
+                        },
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Target player puts a +1/+1 counter on each creature they control."
+                }
+              ],
+              "op": "choose_mode",
+              "optional": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "maker",
+              "kind": "player",
+              "mode": 0,
+              "selector": {
+                "controller": "any"
+              }
+            },
+            {
+              "count": 1,
+              "id": "drawer",
+              "kind": "player",
+              "mode": 1,
+              "selector": {
+                "controller": "any"
+              }
+            },
+            {
+              "count": 1,
+              "id": "grower",
+              "kind": "player",
+              "mode": 2,
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may choose two. Each mode must target a different player. • Target player creates a 2/1 white and black Inkling creature token with flying. • Target player draws a card and loses 1 life. • Target player puts a +1/+1 counter on each creature they control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "shadrix_silverquill",
+      "keywords": [
+        "flying",
+        "double_strike"
+      ],
+      "mana_cost": "{3}{W}{B}",
+      "name": "Shadrix Silverquill",
+      "oracle_text": "Flying, double strike\nAt the beginning of combat on your turn, you may choose two. Each mode must target a different player.\n• Target player creates a 2/1 white and black Inkling creature token with flying.\n• Target player draws a card and loses 1 life.\n• Target player puts a +1/+1 counter on each creature they control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },

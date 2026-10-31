@@ -12163,6 +12163,9 @@
   "shadowy_backstreet": {
     "zone": "battlefield"
   },
+  "shadrix_silverquill": {
+    "zone": "battlefield"
+  },
   "shaman_of_spring": {
     "hand_size": {
       "0": 2
