@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**136 cards** blocked by **114** capabilities.
+**137 cards** blocked by **113** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,11 +19,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [static-goad](#static-goad) | 5 | 2665 | static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
+| [enchanted-by](#enchanted-by) | 3 | 1622 | selector |
+| [attached-to-filter](#attached-to-filter) | 2 | 1812 | selector |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [enchanted-by-aura-you-control](#enchanted-by-aura-you-control) | 2 | 3924 | selector |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -35,9 +36,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [annihilator](#annihilator) | 1 | 1597 | keyword |
-| [attached-to-filter](#attached-to-filter) | 1 | 1812 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attached-to-self](#attached-to-self) | 1 | 1945 | selector |
 | [attack-tax-per-attacker-value](#attack-tax-per-attacker-value) | 1 | 3987 | static_effect |
 | [aura-onto-battlefield](#aura-onto-battlefield) | 1 | 3341 | engine |
 | [auras-attached-last-known](#auras-attached-last-known) | 1 | 4856 | value |
@@ -342,6 +341,47 @@ Blocks **3** cards.
 
 </details>
 
+## enchanted-by
+
+Blocks **3** cards.
+
+- **(selector)** a static affects-filter key matching a creature that has at least one Aura attached to it whose controller is the static's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on the `cant_attack_you` static so any creature, the opponents' included, enchanted by your Aura can't attack you or your planeswalkers
+  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attached` (only the one permanent the source itself is attached to, i.e. 'enchanted/equipped creature') and `attached_to_host` (other attachments sharing the source's host); neither reads the Auras attached to an arbitrary creature or their controller, so `cant_attack_you` cannot be scoped to creatures enchanted by any Aura you control from a non-Aura source
+- **(selector)** a trigger-filter key matching a creature that has at least one Aura attached to it whose controller is the trigger source's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on a batched `attacks` trigger with no controller restriction, so the ability fires once when any creatures -- an opponent's goaded creatures included -- enchanted by your Auras attack
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `attached`, which in triggers.py matches only the one object the ability source itself is attached to (Skullclamp's 'equipped creature'); nothing reads the Auras attached to an arbitrary attacker or their controller. `controller: you` on the attacks trigger would be both wrong (misses opponents' creatures carrying your Auras) and too wide (fires for your unenchanted creatures)
+- **(selector)** a selector key matching a permanent that is (or, negated, is not) enchanted -- i.e. has one or more Auras attached to it, controlled by any player -- e.g. `enchanted: false` on a destroy-all selector
+  <br>Why the existing vocabulary won't do: `attached` matches only the permanent the ability's own source is attached to; `modified` also counts counters and Equipment and only Auras you control; no selector key reads whether any Aura is attached to the object, so `destroy` with `no_regeneration` cannot spare enchanted creatures
+
+<details><summary>Cards waiting on this</summary>
+
+- **Winds of Rath** (rank 1622) — `winds_of_rath`
+  - Destroy all creatures that aren't enchanted.
+- **Eriette of the Charmed Apple** (rank 3924) — `eriette_of_the_charmed_apple`
+  - Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.
+- **Killian, Decisive Mentor** (rank 7931) — `killian_decisive_mentor`
+  - Whenever one or more creatures that are enchanted by an Aura you control attack, draw a card.
+
+</details>
+
+## attached-to-filter
+
+Blocks **2** cards.
+
+- **(selector)** a static filter key (usable inside a static value's `count`) matching the permanents attached to the static's SOURCE itself -- obj.attached_to == source.oid, any controller -- so a creature can say "+2/+2 for each Aura attached to it" as a self_only `buff` whose power and toughness are `times [2, count {attached_to_self: true, subtypes: [Aura]}]`
+  <br>Why the existing vocabulary won't do: `attached` matches the one permanent the source is attached TO (the enchanted/equipped creature), and `attached_to_host` matches other attachments that share the source's host and requires the source itself to be attached; both read the relationship from the attachment's end. Kor Spiritdancer is the host, and no static_filter_key or selector_key matches objects attached to the source (characteristics._static_filter_matches and selectors both lack it), so Strong Back's `count {attached_to_host}` pattern cannot be reused
+- **(selector)** A filter key matching a permanent whose host (obj.attached_to) is a permanent matching a nested filter, e.g. `attached_to: {"types": ["Creature"]}` -- "an Aura you control that's attached to a creature". Needed in both the effect selector language (a `count` value for the `draw` amount) and the static filter language (a `count` static value for a `buff` whose `affects` is `{attached: true}`), any host controller, so an Aura on an opponent's creature counts and one enchanting a land, artifact or player does not
+  <br>Why the existing vocabulary won't do: `attached` names the permanent the SOURCE is attached to (the opposite direction); `attached_to_host` matches only attachments sharing the source's own host, so it misses Auras you control on other creatures; `modified` and `has_counters` test the host side. Counting plain `subtypes: [Aura], controller: you` would wrongly include Auras enchanting noncreature permanents or players
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sage's Reverie** (rank 1812) — `sage_s_reverie`
+  - When this Aura enters, draw a card for each Aura you control that's attached to a creature.
+  - Enchanted creature gets +1/+1 for each Aura you control that's attached to a creature.
+- **Kor Spiritdancer** (rank 1945) — `kor_spiritdancer`
+  - This creature gets +2/+2 for each Aura attached to it.
+
+</details>
+
 ## batched-trigger-objects
 
 Blocks **2** cards.
@@ -413,24 +453,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## enchanted-by-aura-you-control
-
-Blocks **2** cards.
-
-- **(selector)** a static affects-filter key matching a creature that has at least one Aura attached to it whose controller is the static's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on the `cant_attack_you` static so any creature, the opponents' included, enchanted by your Aura can't attack you or your planeswalkers
-  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attached` (only the one permanent the source itself is attached to, i.e. 'enchanted/equipped creature') and `attached_to_host` (other attachments sharing the source's host); neither reads the Auras attached to an arbitrary creature or their controller, so `cant_attack_you` cannot be scoped to creatures enchanted by any Aura you control from a non-Aura source
-- **(selector)** a trigger-filter key matching a creature that has at least one Aura attached to it whose controller is the trigger source's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on a batched `attacks` trigger with no controller restriction, so the ability fires once when any creatures -- an opponent's goaded creatures included -- enchanted by your Auras attack
-  <br>Why the existing vocabulary won't do: trigger_filter_keys has `attached`, which in triggers.py matches only the one object the ability source itself is attached to (Skullclamp's 'equipped creature'); nothing reads the Auras attached to an arbitrary attacker or their controller. `controller: you` on the attacks trigger would be both wrong (misses opponents' creatures carrying your Auras) and too wide (fires for your unenchanted creatures)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Eriette of the Charmed Apple** (rank 3924) — `eriette_of_the_charmed_apple`
-  - Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.
-- **Killian, Decisive Mentor** (rank 7931) — `killian_decisive_mentor`
-  - Whenever one or more creatures that are enchanted by an Aura you control attack, draw a card.
 
 </details>
 
@@ -617,21 +639,6 @@ Blocks **1** card.
 
 </details>
 
-## attached-to-filter
-
-Blocks **1** card.
-
-- **(selector)** A filter key matching a permanent whose host (obj.attached_to) is a permanent matching a nested filter, e.g. `attached_to: {"types": ["Creature"]}` -- "an Aura you control that's attached to a creature". Needed in both the effect selector language (a `count` value for the `draw` amount) and the static filter language (a `count` static value for a `buff` whose `affects` is `{attached: true}`), any host controller, so an Aura on an opponent's creature counts and one enchanting a land, artifact or player does not
-  <br>Why the existing vocabulary won't do: `attached` names the permanent the SOURCE is attached to (the opposite direction); `attached_to_host` matches only attachments sharing the source's own host, so it misses Auras you control on other creatures; `modified` and `has_counters` test the host side. Counting plain `subtypes: [Aura], controller: you` would wrongly include Auras enchanting noncreature permanents or players
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sage's Reverie** (rank 1812) — `sage_s_reverie`
-  - When this Aura enters, draw a card for each Aura you control that's attached to a creature.
-  - Enchanted creature gets +1/+1 for each Aura you control that's attached to a creature.
-
-</details>
-
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -643,20 +650,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attached-to-self
-
-Blocks **1** card.
-
-- **(selector)** a static filter key (usable inside a static value's `count`) matching the permanents attached to the static's SOURCE itself -- obj.attached_to == source.oid, any controller -- so a creature can say "+2/+2 for each Aura attached to it" as a self_only `buff` whose power and toughness are `times [2, count {attached_to_self: true, subtypes: [Aura]}]`
-  <br>Why the existing vocabulary won't do: `attached` matches the one permanent the source is attached TO (the enchanted/equipped creature), and `attached_to_host` matches other attachments that share the source's host and requires the source itself to be attached; both read the relationship from the attachment's end. Kor Spiritdancer is the host, and no static_filter_key or selector_key matches objects attached to the source (characteristics._static_filter_matches and selectors both lack it), so Strong Back's `count {attached_to_host}` pattern cannot be reused
-
-<details><summary>Cards waiting on this</summary>
-
-- **Kor Spiritdancer** (rank 1945) — `kor_spiritdancer`
-  - This creature gets +2/+2 for each Aura attached to it.
 
 </details>
 

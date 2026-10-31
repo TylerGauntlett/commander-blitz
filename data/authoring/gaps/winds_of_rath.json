@@ -1,0 +1,21 @@
+{
+  "card_id": "winds_of_rath",
+  "name": "Winds of Rath",
+  "oracle_text": "Destroy all creatures that aren't enchanted. They can't be regenerated.",
+  "blocked_sentences": [
+    "Destroy all creatures that aren't enchanted."
+  ],
+  "needs": [
+    {
+      "capability": "enchanted_by",
+      "kind": "selector",
+      "what": "a selector key matching a permanent that is (or, negated, is not) enchanted -- i.e. has one or more Auras attached to it, controlled by any player -- e.g. `enchanted: false` on a destroy-all selector",
+      "why_existing_wont_do": "`attached` matches only the permanent the ability's own source is attached to; `modified` also counts counters and Equipment and only Auras you control; no selector key reads whether any Aura is attached to the object, so `destroy` with `no_regeneration` cannot spare enchanted creatures"
+    }
+  ],
+  "closest_existing": [
+    "modified",
+    "attached"
+  ],
+  "confidence": "high"
+}

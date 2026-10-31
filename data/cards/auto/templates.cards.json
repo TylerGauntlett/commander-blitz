@@ -150049,6 +150049,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Enchantment"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Enchantment spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an enchantment you control is put into a graveyard from the battlefield, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "starfield_mystic",
+      "mana_cost": "{1}{W}",
+      "name": "Starfield Mystic",
+      "oracle_text": "Enchantment spells you cast cost {1} less to cast.\nWhenever an enchantment you control is put into a graveyard from the battlefield, put a +1/+1 counter on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -166971,6 +167037,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, that opponent loses 3 life and you draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "opponent",
+            "defending": "you",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Planeswalker"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "tomik_wielder_of_law",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{B}",
+      "name": "Tomik, Wielder of Law",
+      "oracle_text": "Affinity for planeswalkers (This spell costs {1} less to cast for each planeswalker you control.)\nFlying, vigilance\nWhenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, that opponent loses 3 life and you draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -168003,6 +168149,47 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Aura"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Aura spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "transcendent_envoy",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Transcendent Envoy",
+      "oracle_text": "Flying\nAura spells you cast cost {1} less to cast.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Griffin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
+        "Creature"
       ]
     },
     {
@@ -169199,6 +169386,79 @@
       "subtypes": [
         "Swamp",
         "Forest"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {W} or {B}.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "turbulent_moor",
+      "name": "Turbulent Moor",
+      "oracle_text": "({T}: Add {W} or {B}.)\nThis land enters tapped unless your opponents control eight or more lands.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "opponent",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 8
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plains",
+        "Swamp"
       ],
       "types": [
         "Land"
@@ -174070,6 +174330,98 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "vanishing_verse",
+      "mana_cost": "{W}{B}",
+      "name": "Vanishing Verse",
+      "oracle_text": "Exile target monocolored permanent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_of": [
+              {
+                "colors": [
+                  "W"
+                ],
+                "not_colors": [
+                  "U",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "U"
+                ],
+                "not_colors": [
+                  "W",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "B"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "R"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "G"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "R"
+                ]
+              }
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

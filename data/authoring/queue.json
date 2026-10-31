@@ -262762,12 +262762,12 @@
     },
     "Starfield Mystic": {
       "edhrec_rank": 1167,
-      "gate": "template",
+      "gate": null,
       "name": "Starfield Mystic",
-      "reason": "no template for: Enchantment spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "e8f2fcb4-8d06-49ac-9c70-9c54d77c6d86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Starfield Shepherd": {
@@ -289082,12 +289082,12 @@
     },
     "Tomik, Wielder of Law": {
       "edhrec_rank": 7107,
-      "gate": "template",
+      "gate": null,
       "name": "Tomik, Wielder of Law",
-      "reason": "no template for: Affinity for planeswalkers",
+      "reason": "",
       "scryfall_id": "8a7fc460-fc49-480f-8ee2-28a173509f0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tomorrow, Azami's Familiar": {
@@ -291192,12 +291192,12 @@
     },
     "Transcendent Envoy": {
       "edhrec_rank": 2808,
-      "gate": "template",
+      "gate": null,
       "name": "Transcendent Envoy",
-      "reason": "no template for: Aura spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "363a88de-c9ae-41b8-a8d8-321a1b95a427",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Transcendent Master": {
@@ -294212,12 +294212,12 @@
     },
     "Turbulent Moor": {
       "edhrec_rank": 4414,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Moor",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "7e96f1dd-71e7-48c0-80aa-c7f49588af9c",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Shore": {
@@ -301192,12 +301192,12 @@
     },
     "Vanishing Verse": {
       "edhrec_rank": 4287,
-      "gate": "template",
+      "gate": null,
       "name": "Vanishing Verse",
-      "reason": "no template for: Exile target monocolored permanent",
+      "reason": "",
       "scryfall_id": "8a475868-a335-45e7-9d59-9dc4c2cea1ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vanishment": {

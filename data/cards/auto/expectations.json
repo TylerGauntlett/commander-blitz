@@ -13034,6 +13034,10 @@
   "stangg_echo_warrior": {
     "zone": "battlefield"
   },
+  "starfield_mystic": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "starfleet_crew": {
     "zone": "battlefield"
   },
@@ -14360,6 +14364,13 @@
       "0": 2
     }
   },
+  "tomik_wielder_of_law": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "tor_giant": {
     "zone": "battlefield"
   },
@@ -14451,6 +14462,10 @@
     "zone": "battlefield"
   },
   "tranquil_thicket": {
+    "zone": "battlefield"
+  },
+  "transcendent_envoy": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "traumatize": {
@@ -14551,6 +14566,13 @@
   },
   "turbulent_fen": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "turbulent_moor": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "turbulent_shore": {
@@ -14977,6 +14999,11 @@
   "vanguard_seraph": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "vanishing_verse": {
+    "battlefield_count": 31,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "vanquish_the_horde": {
     "battlefield_count": 30,
