@@ -11717,6 +11717,16 @@
     },
     "zone": "battlefield"
   },
+  "screams_from_within": {
+    "target_pt_delta": {
+      "power": -1,
+      "toughness": -1
+    },
+    "zone": [
+      "battlefield",
+      "graveyard"
+    ]
+  },
   "scrounger_of_souls": {
     "zone": "battlefield"
   },
@@ -11899,6 +11909,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "sentinel_s_eyes": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
   },
   "sentinel_spider": {
     "zone": "battlefield"

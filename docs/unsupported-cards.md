@@ -10,14 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**131 cards** blocked by **110** capabilities.
+**135 cards** blocked by **113** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [static-goad](#static-goad) | 4 | 2665 | static_effect |
+| [static-goad](#static-goad) | 5 | 2665 | static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -35,6 +35,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [annihilator](#annihilator) | 1 | 1597 | keyword |
+| [attached-to-filter](#attached-to-filter) | 1 | 1812 | selector |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attached-to-self](#attached-to-self) | 1 | 1945 | selector |
 | [attack-tax-per-attacker-value](#attack-tax-per-attacker-value) | 1 | 3987 | static_effect |
@@ -46,6 +47,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
+| [contract-token](#contract-token) | 1 | 8584 | token |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
@@ -94,6 +96,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [optional-exact-mode-count](#optional-exact-mode-count) | 1 | 2715 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
@@ -290,7 +293,7 @@ Blocks **8** cards.
 
 ## static-goad
 
-Blocks **4** cards.
+Blocks **5** cards.
 
 - **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
   <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter
@@ -298,6 +301,8 @@ Blocks **4** cards.
   <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter. The +1/+1 (`buff`) and deathtouch (`grant_keyword` static) halves of the sentence are expressible; only the goad clause blocks it
 - **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
   <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able', and neither marks goaded_by for the `goaded` filter
+- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
+  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter. The indestructible half (`grant_keyword` static) is expressible but the sentence cannot be split
 
 <details><summary>Cards waiting on this</summary>
 
@@ -305,6 +310,8 @@ Blocks **4** cards.
   - Enchanted creature gets +1/+1, has deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
 - **Parasitic Impetus** (rank 2825) — `parasitic_impetus`
   - Enchanted creature gets +2/+2 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
+- **Redemption Arc** (rank 3607) — `redemption_arc`
+  - Enchanted creature has indestructible and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
 - **Martial Impetus** (rank 3766) — `martial_impetus`
   - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
 - **Coercive Impetus** (rank 7990) — `coercive_impetus`
@@ -609,6 +616,21 @@ Blocks **1** card.
 
 </details>
 
+## attached-to-filter
+
+Blocks **1** card.
+
+- **(selector)** A filter key matching a permanent whose host (obj.attached_to) is a permanent matching a nested filter, e.g. `attached_to: {"types": ["Creature"]}` -- "an Aura you control that's attached to a creature". Needed in both the effect selector language (a `count` value for the `draw` amount) and the static filter language (a `count` static value for a `buff` whose `affects` is `{attached: true}`), any host controller, so an Aura on an opponent's creature counts and one enchanting a land, artifact or player does not
+  <br>Why the existing vocabulary won't do: `attached` names the permanent the SOURCE is attached to (the opposite direction); `attached_to_host` matches only attachments sharing the source's own host, so it misses Auras you control on other creatures; `modified` and `has_counters` test the host side. Counting plain `subtypes: [Aura], controller: you` would wrongly include Auras enchanting noncreature permanents or players
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sage's Reverie** (rank 1812) — `sage_s_reverie`
+  - When this Aura enters, draw a card for each Aura you control that's attached to a creature.
+  - Enchanted creature gets +1/+1 for each Aura you control that's attached to a creature.
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -764,6 +786,20 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
+
+</details>
+
+## contract-token
+
+Blocks **1** card.
+
+- **(token)** a white Aura enchantment token named Contract with enchant creature and "Whenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life." ("your opponents" and "its controller" read relative to the token's controller, Scriv's controller), created attached to target creature an opponent controls
+  <br>Why the existing vocabulary won't do: token_ids has no Contract token; the only Aura token is wicked_role (a colorless Role giving +1/+1), which is a different token. create_token with attached_to would carry the attachment once the token exists.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scriv, the Obligator** (rank 8584) — `scriv_the_obligator`
+  - Whenever Scriv enters or attacks, create a white Aura enchantment token named Contract attached to target creature an opponent controls. The token has enchant creature and "Whenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life."
 
 </details>
 
@@ -1463,6 +1499,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## optional-exact-mode-count
+
+Blocks **1** card.
+
+- **(decision)** a choose_mode flag for "you may choose N": the mode count is either zero or exactly N (never 1..N-1), answered when the triggered ability goes on the stack so mode-owned player targets can still be declared
+  <br>Why the existing vocabulary won't do: choose_mode's `count: 2` forces two modes with no way to decline; `up_to: true` drops the floor to nothing and so also allows choosing exactly one mode, which the card forbids (Shadrix's ruling: two modes or none); wrapping the choose_mode in `may` makes it no longer the single top-level choose_mode, so its mode-owned targets (`mode` in target_keys) are refused by the loader. The 'different player' half is already covered: `targeting.legal_target_combos` refuses the same ref filling two target specs, so mode-owned `player` targets on each bullet are pairwise distinct
+
+<details><summary>Cards waiting on this</summary>
+
+- **Shadrix Silverquill** (rank 2715) — `shadrix_silverquill`
+  - At the beginning of combat on your turn, you may choose two. Each mode must target a different player.
 
 </details>
 

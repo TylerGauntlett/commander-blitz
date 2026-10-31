@@ -236682,12 +236682,12 @@
     },
     "Screams from Within": {
       "edhrec_rank": 8120,
-      "gate": "template",
+      "gate": null,
       "name": "Screams from Within",
-      "reason": "no template for: When enchanted creature dies, return this card from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "27e2a759-971d-455b-845c-2e9b471950bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Screams of the Damned": {
@@ -240282,12 +240282,12 @@
     },
     "Sentinel's Eyes": {
       "edhrec_rank": 6491,
-      "gate": "template",
+      "gate": null,
       "name": "Sentinel's Eyes",
-      "reason": "no template for: Escape—{W}, Exile two other cards from your graveyard",
+      "reason": "",
       "scryfall_id": "9f50278a-06fc-4b11-a1d2-d28cd213ff8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sentinel's Mark": {
