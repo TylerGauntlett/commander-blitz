@@ -1459,3 +1459,25 @@ class TestScrivsContractIsAWhiteAura:
     def test_the_wicked_role_is_still_a_separate_token(self, pool):
         role = pool.get("wicked_role")
         assert "Role" in role.subtypes and not role.colors
+
+
+class TestCurseOfTheSwinesBoar:
+    """Curse of the Swine: *"its controller creates a **2/2 green Boar**
+    creature token."*
+
+    `elemental_2_2_g` is the same body and colour with the wrong creature
+    type, and Boar-typal cards read exactly that one.
+    """
+
+    def test_it_is_a_two_two_green_boar(self, pool):
+        token = pool.get("boar_2_2_g")
+        assert token is not None and token.is_creature and token.is_token
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Boar"]
+        assert not token.keywords
+
+    def test_the_green_elemental_is_still_a_separate_token(self, pool):
+        other = pool.get("elemental_2_2_g")
+        assert other is not None
+        assert "Boar" not in other.subtypes
