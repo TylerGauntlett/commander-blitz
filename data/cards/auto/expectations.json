@@ -3385,6 +3385,10 @@
     },
     "zone": "graveyard"
   },
+  "deekah_fractal_theorist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "deep_gnome_terramancer": {
     "zone": "battlefield"
   },
@@ -4443,6 +4447,15 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "expansion_algorithm": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "expansion_explosion": {
     "hand_size": {
       "0": 2
@@ -5172,6 +5185,14 @@
   },
   "foundry_of_the_consuls": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "fractal_harness": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "fractal_0_0_gu"
+    },
     "zone": "battlefield"
   },
   "fracture": {
@@ -6114,6 +6135,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "guardian_augmenter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "guardian_lions": {
     "zone": "battlefield"
   },
@@ -6205,6 +6230,14 @@
   "hand_of_silumgar": {
     "zone": "battlefield"
   },
+  "hangarback_walker": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 15,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "happy_hogan_dauntless_driver": {
     "zone": "battlefield"
   },
@@ -6216,6 +6249,10 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "hardened_scales": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "harmonic_prodigy": {
     "battlefield_count": 33,
@@ -6878,6 +6915,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ingenious_prodigy": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ingenious_smith": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7303,6 +7347,10 @@
     "zone": "battlefield"
   },
   "kami_of_old_stone": {
+    "zone": "battlefield"
+  },
+  "kami_of_whispered_hopes": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kang_dynasty": {

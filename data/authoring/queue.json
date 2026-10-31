@@ -64592,12 +64592,12 @@
     },
     "Deekah, Fractal Theorist": {
       "edhrec_rank": 4828,
-      "gate": "template",
+      "gate": null,
       "name": "Deekah, Fractal Theorist",
-      "reason": "no template for: Magecraft — Whenever you cast or copy an instant or sorcery spell, create a 0/0 green and ",
+      "reason": "",
       "scryfall_id": "186e15a7-d97e-40df-adaa-96d9bd64f3ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deem Inferior": {
@@ -88212,12 +88212,12 @@
     },
     "Expansion Algorithm": {
       "edhrec_rank": 7344,
-      "gate": "template",
+      "gate": null,
       "name": "Expansion Algorithm",
-      "reason": "no template for: Proliferate X times",
+      "reason": "",
       "scryfall_id": "06147ee1-0fe8-4daf-962a-317dc908add5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expedite": {
@@ -101462,12 +101462,12 @@
     },
     "Fractal Harness": {
       "edhrec_rank": 6497,
-      "gate": "template",
+      "gate": null,
       "name": "Fractal Harness",
-      "reason": "no template for: When this Equipment enters, create a 0/0 green and blue Fractal creature token. Put X +1/+",
+      "reason": "",
       "scryfall_id": "8d196dcf-80bc-4a0a-83c9-ae87da5e74bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fractal Mascot": {
@@ -119722,12 +119722,12 @@
     },
     "Guardian Augmenter": {
       "edhrec_rank": 2814,
-      "gate": "template",
+      "gate": null,
       "name": "Guardian Augmenter",
-      "reason": "no template for: Commander creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "78ba1a2a-a2dd-4e90-900e-1421b5e3924a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guardian Automaton": {
@@ -122192,12 +122192,12 @@
     },
     "Hangarback Walker": {
       "edhrec_rank": 1532,
-      "gate": "template",
+      "gate": null,
       "name": "Hangarback Walker",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "cc387ccf-f746-4855-81e5-64f5a5e0fdda",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hanged Executioner": {
@@ -122622,12 +122622,12 @@
     },
     "Hardened Scales": {
       "edhrec_rank": 186,
-      "gate": "template",
+      "gate": null,
       "name": "Hardened Scales",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a creature you control, that many plus one +",
+      "reason": "",
       "scryfall_id": "99cfd1a8-49fd-4cc0-96f2-f9f159ce5d55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hardened Tactician": {
@@ -136752,12 +136752,12 @@
     },
     "Ingenious Prodigy": {
       "edhrec_rank": 3200,
-      "gate": "template",
+      "gate": null,
       "name": "Ingenious Prodigy",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "8d242dc2-5117-4bd6-a0c9-813d36d01e11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ingenious Skaab": {
@@ -145642,12 +145642,12 @@
     },
     "Kami of Whispered Hopes": {
       "edhrec_rank": 403,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of Whispered Hopes",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a permanent you control, that many plus one ",
+      "reason": "",
       "scryfall_id": "0be4e5f6-a1fc-4a91-aafe-f963878cd1b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of the Crescent Moon": {
@@ -149112,12 +149112,12 @@
     },
     "Kinetic Ooze": {
       "edhrec_rank": 8256,
-      "gate": "template",
+      "gate": "compile",
       "name": "Kinetic Ooze",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "kinetic_ooze.abilities[0].target[t1]: 'up to one target' is 'optional': true -- 'up_to' is for a ceiling above one",
       "scryfall_id": "543877dd-c685-46a0-b3e8-db89090c7e31",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "King Cheetah": {
@@ -157782,12 +157782,12 @@
     },
     "Lifeblood Hydra": {
       "edhrec_rank": 3067,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Lifeblood Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "+1/+1 counters is 20, expected 27",
       "scryfall_id": "3431a77c-2027-406b-9230-5d0f8837af62",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Lifecraft Awakening": {

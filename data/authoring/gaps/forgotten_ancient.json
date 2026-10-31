@@ -1,0 +1,18 @@
+{
+  "card_id": "forgotten_ancient",
+  "name": "Forgotten Ancient",
+  "oracle_text": "Whenever a player casts a spell, you may put a +1/+1 counter on this creature.\nAt the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures.",
+  "blocked_sentences": [
+    "At the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures."
+  ],
+  "needs": [
+    {
+      "capability": "distribute_moved_counters",
+      "kind": "op",
+      "what": "a move_counters mode that, at resolution, lets the controller choose how many of the source's +1/+1 counters to move (0 up to the number on it) and divide them as they choose among any number of other creatures (untargeted, any controller), removing them from the source and putting each creature's share on it in a single placement event per creature",
+      "why_existing_wont_do": "move_counters puts the same `amount` on every chosen destination (and removes that amount once per source), so it cannot split N counters unevenly across several creatures; distribute_counters only adds (removes nothing from the source) and requires a division announced at activation on targets, which a resolving untargeted upkeep trigger never announces. A `may` with `repeat: true` around a one-counter move to one chosen creature reaches the same final split but moves counters one event at a time, so Hardened Scales-style replacements and 'whenever counters are put' triggers apply once per counter instead of once per creature"
+    }
+  ],
+  "closest_existing": ["move_counters", "distribute_counters", "may"],
+  "confidence": "high"
+}
