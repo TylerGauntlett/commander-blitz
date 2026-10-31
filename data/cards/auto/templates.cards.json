@@ -35165,6 +35165,70 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "curse_of_the_swine",
+      "mana_cost": "{X}{U}{U}",
+      "name": "Curse of the Swine",
+      "oracle_text": "Exile X target creatures. For each creature exiled this way, its controller creates a 2/2 green Boar creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "victim",
+              "objects": {
+                "binding": "each"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "each"
+              },
+              "op": "exile"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": {
+                "controller_of": "victim"
+              },
+              "op": "create_token",
+              "token": "boar_2_2_g"
+            }
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "for_each"
+        }
+      ],
+      "targets": [
+        {
+          "count": {
+            "x": true
+          },
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {

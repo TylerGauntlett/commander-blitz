@@ -58962,12 +58962,12 @@
     },
     "Curse of the Swine": {
       "edhrec_rank": 826,
-      "gate": "template",
+      "gate": null,
       "name": "Curse of the Swine",
-      "reason": "no template for: Exile X target creatures. For each creature exiled this way, its controller creates a 2/2 ",
+      "reason": "",
       "scryfall_id": "91eb9067-0bc7-4497-ba9c-c1ea41e5a379",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curse of the Werefox": {

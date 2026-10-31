@@ -3044,6 +3044,15 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "curse_of_the_swine": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "tokens": {
+      "count": 2,
+      "id": "boar_2_2_g"
+    },
+    "zone": "graveyard"
+  },
   "cursed_flesh": {
     "zone": [
       "battlefield",
