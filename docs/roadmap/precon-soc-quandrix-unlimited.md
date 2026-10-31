@@ -5,8 +5,8 @@ area: decks
 effort: L
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
-status: in_progress
+depends_on: [distributed-counters-on-spells]
+status: proposed
 rank: 13
 ---
 
@@ -19,6 +19,19 @@ coming-soon shell on the shelf: its row `soc_quandrix_unlimited` is in
 `python scripts/sync_precons.py --missing soc_quandrix_unlimited` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. What is left
+is twenty-one cards, each with a gap record naming what it waits on: Elusive
+Otter on distributing counters from a spell (Grove's Bounty, its Adventure
+half; its own item, which this one depends on) and on a block restriction by
+relative power; Lattice Library, Nev, the Practical Dean, Owlin
+Spiralmancer, Unbound Flourishing and Zimone, Infinite Analyst on a
+`spell_cast` trigger filter for {X} in the spell's mana cost; Hydroid Krasis
+and Nev on a cast trigger reading the spell's X; Altered Ego, Elementalist's
+Palette, Entrancing Melody, Forgotten Ancient, Nexus Mentality, Opal Palace,
+Open the Way, Oversimplify, Primo, the Unbounded, Quandrix Command,
+Stonecoil Serpent, Yavimaya Bloomsage, Zimone, All-Questioning and Zimone's
+Hypothesis on one or two capabilities each, named in their records.
 
 ## The change
 
