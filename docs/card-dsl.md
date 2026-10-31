@@ -3206,9 +3206,8 @@ refuses.
 (`CARD_TYPE_CHOICES`): the six permanent types plus Instant, Kindred and
 Sorcery — "as this enters, choose a card type" (Serra's Emissary), where an
 instant is a legal and common answer. A permanent type is a card type, so both
-axes share the slot and every reader of it reads either answer. Kindred is
-offered although no card in the engine carries it; naming it matches nothing,
-which is what it would match here.
+axes share the slot and every reader of it reads either answer. Naming Kindred
+matches the [Kindred](card-dsl-cookbook.md#kindred) cards.
 
 A source that has chosen nothing yet matches **nothing** — "all cards of the
 chosen type" before a type is chosen returns nothing, not the whole graveyard.

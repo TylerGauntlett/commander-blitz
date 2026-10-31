@@ -98,6 +98,21 @@ COLORLESS = "C"
 
 
 class CardType(str, Enum):
+    """The card types of rule 205.2a, in the order a type line prints them.
+
+    `build_type_line` renders the left half in this order, which is why Kindred
+    leads: "Kindred Enchantment -- Eldrazi Aura".
+
+    **Kindred** (308) is never alone: every Kindred card has another card type
+    and is cast and resolves as that type (308.1), and the loader refuses one
+    that has none. Its subtypes are creature types (205.3m, 308.3), so Eldrazi
+    Conscription is an Eldrazi to every subtype filter and every creature-type
+    count while never being a creature. It is not a permanent type (110.4a): a
+    Kindred enchantment is a permanent because it is an enchantment. "Tribal" is
+    its old name; the importer reads it as Kindred and the loader refuses it.
+    """
+
+    KINDRED = "Kindred"
     LAND = "Land"
     CREATURE = "Creature"
     ARTIFACT = "Artifact"

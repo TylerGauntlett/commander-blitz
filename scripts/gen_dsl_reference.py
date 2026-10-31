@@ -1113,6 +1113,7 @@ CARD_TYPES: dict[str, Entry] = {
     "Sorcery": ("A sorcery.", None),
     "Planeswalker": ("A planeswalker.", "Planeswalkers"),
     "Battle": ("A battle.", "Battles"),
+    "Kindred": ("Kindred (308): beside another card type; its subtypes are creature types.", "Kindred"),
     "Basic": ("Supertype: basic.", None),
     "Legendary": ("Supertype: legendary.", None),
     "Snow": ("Supertype: snow.", None),

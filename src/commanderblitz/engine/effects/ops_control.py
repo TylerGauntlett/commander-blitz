@@ -311,9 +311,8 @@ PERMANENT_TYPE_CHOICES: tuple[str, ...] = (
 #: Instant, Sorcery and Kindred are the three it adds, and they are the reason
 #: the axis exists: "protection from instants" is the commonest answer on the
 #: card that motivated it, and a list without them offers the wrong choices.
-#: Kindred is offered although no card in this engine is a Kindred card (the
-#: importer drops the word as noise): it is a legal answer at a real table, and
-#: naming it protects from exactly what it would protect from here -- nothing.
+#: Naming Kindred protects from the Kindred cards (308), Eldrazi Conscription
+#: among them.
 CARD_TYPE_CHOICES: tuple[str, ...] = (
     "Artifact",
     "Battle",

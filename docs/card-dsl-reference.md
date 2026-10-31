@@ -24,7 +24,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 32 |
 | [Keywords](#keywords) | 44 |
-| [Card types and supertypes](#card-types-and-supertypes) | 11 |
+| [Card types and supertypes](#card-types-and-supertypes) | 12 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 31 |
@@ -842,6 +842,7 @@ The `types` and `supertypes` a card may print -- the engine's `CardType` and `Su
 
 | Name | Description | Defined in |
 |---|---|---|
+| `Kindred` | Kindred (308): beside another card type; its subtypes are creature types. | [Kindred](card-dsl-cookbook.md#kindred) |
 | `Land` | A land. | [The shape of a card](card-dsl.md#the-shape-of-a-card) |
 | `Creature` | A creature. | [The shape of a card](card-dsl.md#the-shape-of-a-card) |
 | `Artifact` | An artifact. | [The shape of a card](card-dsl.md#the-shape-of-a-card) |

@@ -23,7 +23,7 @@ from ..characteristics import (
     enchanted_by,
     resolve_chosen_subtypes,
 )
-from ..enums import CardType, Supertype, Zone
+from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
 from ..player_statics import commander_subtypes, goaders
@@ -36,6 +36,9 @@ if TYPE_CHECKING:  # pragma: no cover
 #: Card types a selector may name.  Derived from the enum rather than imported
 #: from ``cards.loader``, which imports this module.
 KNOWN_TYPES = frozenset(t.value for t in CardType)
+
+#: The permanent types of 110.4a, by name -- Kindred is a card type and not one.
+_PERMANENT_TYPE_NAMES = frozenset(t.value for t in PERMANENT_TYPES)
 
 #: Supertypes a selector may name, from the enum for the same reason.  There are
 #: three of them, which is what makes a typo here so much worse than a typo in a
@@ -876,9 +879,10 @@ def matches(
         # artifacts and the creatures -- 205.2a lets an object have several card
         # types, and the printed "a permanent type" is satisfied by any one of
         # them. Spell types (Instant, Sorcery) cannot appear on either side
-        # here: both objects are on the battlefield, where every card type is a
-        # permanent type (110.4a).
-        if not (set(types) & set(theirs)):
+        # here: both objects are on the battlefield. Kindred can, and is not a
+        # permanent type (110.4a), so it is left out of the intersection -- a
+        # Kindred artifact and a Kindred enchantment share no permanent type.
+        if not (set(types) & set(theirs) & _PERMANENT_TYPE_NAMES):
             return False
     if (name := selector.get("shares_a_creature_type_with")) is not None:
         # The creature-types-only twin of `shares_a_type_with` (205.3m), which

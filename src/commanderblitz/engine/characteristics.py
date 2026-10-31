@@ -149,6 +149,17 @@ def chars(state: GameState, oid: int) -> Characteristics:
     return result
 
 
+def subtype_survives(sub: str, types: set[str] | frozenset[str]) -> bool:
+    """Whether an object of card ``types`` may keep subtype ``sub`` (205.1b, 205.3d).
+
+    A subtype goes with its card type, and a creature type belongs to Creature
+    **or** Kindred (205.3m, 308.3): a type change that leaves a Kindred
+    enchantment a Kindred enchantment leaves its Eldrazi too.
+    """
+    owner = SUBTYPE_CLASS.get(sub, "Creature")
+    return owner in types or (owner == "Creature" and "Kindred" in types)
+
+
 def creature_types_of(state: GameState, oid: int | None) -> frozenset[str]:
     """The **creature types** an object currently has -- 205.3m, not its subtypes.
 
@@ -489,7 +500,7 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     # layer 4, so an ability-removing static (layer 6) does not undo it.
     if obj.cast_impending and obj.on_battlefield and obj.counter(TIME_COUNTER) > 0:
         types.discard("Creature")
-        subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
+        subtypes = {sub for sub in subtypes if subtype_survives(sub, types)}
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -575,7 +586,7 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
                 types = set(static.get("types", ()))
-                subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
+                subtypes = {sub for sub in subtypes if subtype_survives(sub, types)}
 
         # 0a. creature-type replacement -- "…is a Dragon with base power and
         #     toughness 4/4 … (It loses all other creature types.)" Goddric,

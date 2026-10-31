@@ -853,8 +853,20 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
     for t in model.types:
+        if t == "Tribal":
+            # Kindred's old name (308). One spelling in the DSL, so a filter
+            # reading `types: ["Kindred"]` cannot miss a card written the old way.
+            raise DslError(f"{where}: 'Tribal' is written 'Kindred' (rule 308)")
         if t not in KNOWN_TYPES:
             raise DslError(f"{where}: unknown card type {t!r}")
+    if CardType.KINDRED.value in model.types and len(set(model.types)) == 1:
+        # 308.1: every Kindred card has another card type, and is cast and
+        # resolves as that type. Alone it would be neither a permanent spell
+        # nor an instant or sorcery, and `is_permanent` would guess.
+        raise DslError(
+            f"{where}: a Kindred card has another card type as well (308.1), "
+            f"got only {list(model.types)!r}"
+        )
     for s in model.supertypes:
         if s not in KNOWN_SUPERTYPES:
             raise DslError(f"{where}: unknown supertype {s!r}")

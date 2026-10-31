@@ -2332,6 +2332,36 @@ prints first. The second is not a cloak special case: every rules-supplied
 ability carries a negative index and `ability_of` answers all of them the same
 way, without reading the board.
 
+## Kindred
+
+```jsonc
+{"types": ["Kindred", "Enchantment"], "subtypes": ["Eldrazi", "Aura"]}
+```
+
+Rule 308: Kindred is a card type whose subtypes are creature types (308.3,
+205.3m), and it never makes the card a creature. Eldrazi Conscription is a
+Kindred Enchantment -- Eldrazi Aura: an enchantment spell, an Aura on the
+battlefield, and an Eldrazi to every reader of creature types.
+
+**A Kindred card always has another card type** (308.1), and is cast and
+resolves as that type: Kindred Instant is an instant, Kindred Enchantment a
+permanent. The loader refuses `Kindred` alone. Kindred is not a permanent type
+(110.4a), so `shares_permanent_type_with` leaves it out of the comparison.
+
+**Nothing on the card reads the creature types into place.** A subtype filter
+intersects subtypes and does not ask for a creature, so `{"subtypes":
+["Eldrazi"], "controller": "you"}` counts the enchantment, and so does
+`creature_types_of`, `printed_creature_types` and `shares_a_creature_type_with`
+(`SUBTYPE_CLASS` files every unknown subtype under Creature). A selector that
+also says `types: ["Creature"]` -- "Eldrazi creatures you control" -- does not
+match it, which is the printed sentence. A type change keeps the creature types
+while the object stays Kindred (`characteristics.subtype_survives`), and drops
+them with Kindred.
+
+**"Tribal" is Kindred's old name.** The importer reads it as Kindred
+(`proxy._RENAMED_TYPES`); the loader refuses the old word, so `types:
+["Kindred"]` is the one spelling a filter has to match.
+
 ## Cost reduction
 
 ```jsonc
