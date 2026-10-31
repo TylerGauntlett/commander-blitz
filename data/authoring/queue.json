@@ -154262,12 +154262,12 @@
     },
     "Land Tax": {
       "edhrec_rank": 382,
-      "gate": "template",
+      "gate": null,
       "name": "Land Tax",
-      "reason": "no template for: At the beginning of your upkeep, if an opponent controls more lands than you, you may sear",
+      "reason": "",
       "scryfall_id": "c70d3706-9d28-49ac-8718-4a516413e727",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Land's Edge": {
@@ -199132,12 +199132,12 @@
     },
     "Pearl-Ear, Imperial Advisor": {
       "edhrec_rank": 2068,
-      "gate": "template",
+      "gate": null,
       "name": "Pearl-Ear, Imperial Advisor",
-      "reason": "no template for: Enchantment spells you cast have affinity for Auras",
+      "reason": "",
       "scryfall_id": "7e8d6bc1-4609-4802-a4b6-7e75fdae186c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pearled Unicorn": {

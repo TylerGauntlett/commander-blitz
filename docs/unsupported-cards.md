@@ -10,13 +10,14 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**127 cards** blocked by **108** capabilities.
+**131 cards** blocked by **110** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [static-goad](#static-goad) | 4 | 2665 | static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -26,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
-| [static-goad](#static-goad) | 2 | 2665 | static_effect |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -37,6 +37,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [annihilator](#annihilator) | 1 | 1597 | keyword |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attached-to-self](#attached-to-self) | 1 | 1945 | selector |
+| [attack-tax-per-attacker-value](#attack-tax-per-attacker-value) | 1 | 3987 | static_effect |
 | [auras-attached-last-known](#auras-attached-last-known) | 1 | 4856 | value |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -68,6 +69,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [graveyard-alternative-cost](#graveyard-alternative-cost) | 1 | 13616 | engine |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
@@ -286,6 +288,30 @@ Blocks **8** cards.
 
 </details>
 
+## static-goad
+
+Blocks **4** cards.
+
+- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
+  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter
+- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
+  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter. The +1/+1 (`buff`) and deathtouch (`grant_keyword` static) halves of the sentence are expressible; only the goad clause blocks it
+- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
+  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able', and neither marks goaded_by for the `goaded` filter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ghoulish Impetus** (rank 2665) — `ghoulish_impetus`
+  - Enchanted creature gets +1/+1, has deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
+- **Parasitic Impetus** (rank 2825) — `parasitic_impetus`
+  - Enchanted creature gets +2/+2 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
+- **Martial Impetus** (rank 3766) — `martial_impetus`
+  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
+- **Coercive Impetus** (rank 7990) — `coercive_impetus`
+  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
+
+</details>
+
 ## copy-exception-ability
 
 Blocks **3** cards.
@@ -457,24 +483,6 @@ Blocks **2** cards.
 
 </details>
 
-## static-goad
-
-Blocks **2** cards.
-
-- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter
-- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter. The +1/+1 (`buff`) and deathtouch (`grant_keyword` static) halves of the sentence are expressible; only the goad clause blocks it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ghoulish Impetus** (rank 2665) — `ghoulish_impetus`
-  - Enchanted creature gets +1/+1, has deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
-- **Coercive Impetus** (rank 7990) — `coercive_impetus`
-  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
-
-</details>
-
 ## targeted-discard
 
 Blocks **2** cards.
@@ -626,6 +634,20 @@ Blocks **1** card.
 
 - **Kor Spiritdancer** (rank 1945) — `kor_spiritdancer`
   - This creature gets +2/+2 for each Aura attached to it.
+
+</details>
+
+## attack-tax-per-attacker-value
+
+Blocks **1** card.
+
+- **(static_effect)** an attack_tax whose generic price is a value read off each attacking creature at declaration -- here {X} where X is the total number of counters (of any kind) on that creature -- so a creature with three counters pays {3} to attack you or a planeswalker you control
+  <br>Why the existing vocabulary won't do: The attack_tax static (affects: {has_counters: true}, or_planeswalkers: true) takes a 'cost' that the loader requires to be a fixed mana string, and player_statics.attack_tax sums those strings via _summed_mana with no access to the attacker; there is no static_value_keys hook (counters_on bound to the attacking creature) that could size the tax per creature. A fixed {1} or {2} would be a different card, and cant_attack would be a lock rather than a tax.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nils, Discipline Enforcer** (rank 3987) — `nils_discipline_enforcer`
+  - Each creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.
 
 </details>
 
@@ -1078,6 +1100,20 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## graveyard-alternative-cost
+
+Blocks **1** card.
+
+- **(engine)** a residual-gate claimant in authoring/verify.py `_covered` for the unkeyworded printed line "You may cast this card from your graveyard by paying <mana> rather than paying its mana cost" on a permanent card, matched strictly against the card-level `graveyard_cost` mana (with `graveyard_cast: "graveyard"`, since the card is not exiled afterwards). The engine side already works: the card written with `graveyard_cost: {"mana": "{2}{W}"}` and `graveyard_cast: "graveyard"` passes all six gates once this line is removed from the oracle text
+  <br>Why the existing vocabulary won't do: `graveyard_cost`/`flashback` lines are claimed only by `spell_effects` (instants/sorceries), the `Mayhem` and `Escape—` keyword claimants, and `_ALTERNATIVE_COST_LINE`, which reads `alternative_cost` (not the graveyard slot) and requires "rather than pay" not "rather than paying". No ability can honestly carry the line: a `cast_from_graveyard` static would permit the cast at the printed {W}, not {2}{W}, so the sentence stays residual and gate 3 rejects the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Raffine's Guidance** (rank 13616) — `raffine_s_guidance`
+  - You may cast this card from your graveyard by paying {2}{W} rather than paying its mana cost.
 
 </details>
 

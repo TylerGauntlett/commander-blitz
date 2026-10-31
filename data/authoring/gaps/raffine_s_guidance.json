@@ -1,0 +1,16 @@
+{
+  "card_id": "raffine_s_guidance",
+  "name": "Raffine's Guidance",
+  "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nYou may cast this card from your graveyard by paying {2}{W} rather than paying its mana cost.",
+  "blocked_sentences": [
+    "You may cast this card from your graveyard by paying {2}{W} rather than paying its mana cost."
+  ],
+  "needs": [{
+    "capability": "graveyard_alternative_cost",
+    "kind": "engine",
+    "what": "a residual-gate claimant in authoring/verify.py `_covered` for the unkeyworded printed line \"You may cast this card from your graveyard by paying <mana> rather than paying its mana cost\" on a permanent card, matched strictly against the card-level `graveyard_cost` mana (with `graveyard_cast: \"graveyard\"`, since the card is not exiled afterwards). The engine side already works: the card written with `graveyard_cost: {\"mana\": \"{2}{W}\"}` and `graveyard_cast: \"graveyard\"` passes all six gates once this line is removed from the oracle text",
+    "why_existing_wont_do": "`graveyard_cost`/`flashback` lines are claimed only by `spell_effects` (instants/sorceries), the `Mayhem` and `Escape—` keyword claimants, and `_ALTERNATIVE_COST_LINE`, which reads `alternative_cost` (not the graveyard slot) and requires \"rather than pay\" not \"rather than paying\". No ability can honestly carry the line: a `cast_from_graveyard` static would permit the cast at the printed {W}, not {2}{W}, so the sentence stays residual and gate 3 rejects the card"
+  }],
+  "closest_existing": ["graveyard_cost", "cast_from_graveyard", "alternative_cost"],
+  "confidence": "high"
+}
