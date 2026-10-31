@@ -1433,6 +1433,42 @@ def _declares_printed_escape(card: CardDef, match: re.Match[str]) -> bool:
     return replace(cost, mana=ManaCost(), exile_from_graveyard=None) == Cost()
 
 
+#: "You may cast this card from your graveyard by paying {2}{W} rather than
+#: paying its mana cost." (Raffine's Guidance), read off the self-reference-
+#: folded line. Anchored at both ends, so a line with a condition
+#: in front ("As long as you control a Giant, …") or a rider behind it ("If you
+#: do, it enters with …", "… exile it instead") is not this sentence, and the
+#: payment must be mana symbols alone, so "{B}{B} and sacrificing two
+#: creatures" is not read as {B}{B}.
+_GRAVEYARD_ALTERNATIVE_LINE = re.compile(
+    r"^you may cast ~ from your graveyard by paying (?P<mana>(?:\{[^}]+\})+) "
+    r"rather than paying (?:its|~'s) mana cost$",
+    re.IGNORECASE,
+)
+
+
+def _declares_printed_graveyard_alternative(card: CardDef, match: re.Match[str]) -> bool:
+    """Whether ``card``'s graveyard cost is the mana-only price ``match`` prints.
+
+    The unkeyworded sentence is escape's destination with no extra payment: the
+    card goes wherever it normally would (`graveyard_cast_exiles` False), it is
+    not mayhem's discarded-this-turn price nor disturb's back face, and the
+    cost is the printed mana and nothing else, so a cheaper price or any other
+    payment fails closed.
+    """
+    cost = card.flashback
+    if (
+        cost is None
+        or card.graveyard_cast_exiles
+        or card.mayhem
+        or card.graveyard_cast_transformed
+    ):
+        return False
+    if not _declares_printed_cost(match.group("mana"), cost.mana):
+        return False
+    return replace(cost, mana=ManaCost()) == Cost()
+
+
 #: The `alternative_cost` fields the claimant below reads off the printed line.
 #: Any *other* field set on the node is a payment the claimant cannot see, so
 #: it fails closed rather than wave it through.
@@ -1852,6 +1888,16 @@ def _covered(card: CardDef, line: str) -> bool:
     # other payment fails closed, so a cheaper escape cannot wear the printed one.
     if (match := _ESCAPE_LINE.match(stripped)) is not None:
         return _declares_printed_escape(card, match)
+
+    # "You may cast this card from your graveyard by paying {2}{W} rather than
+    # paying its mana cost." (Raffine's Guidance) -- escape's slot and
+    # destination with no keyword and no exile: an alternative price from the
+    # graveyard, after which the card goes where it normally would. A permanent
+    # card has no `spell_effects` to claim it wholesale, and no ability can
+    # honestly carry it (a `cast_from_graveyard` static permits the printed
+    # mana cost, not this one). Strict for escape's reason.
+    if (match := _GRAVEYARD_ALTERNATIVE_LINE.match(folded_line)) is not None:
+        return _declares_printed_graveyard_alternative(card, match)
 
     # "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost…)"
     # -- warp's shape with a count beside the price, and claimed by the field

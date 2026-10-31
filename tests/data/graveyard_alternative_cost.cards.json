@@ -1,0 +1,34 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_graveyard_alternative_cost.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. t_raffines_guidance is Raffine's Guidance: a {W} Aura castable from the graveyard for {2}{W} instead, with no exile rider.",
+  "cards": [
+    {
+      "id": "t_raffines_guidance",
+      "name": "Test Raffine's Guidance",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nYou may cast this card from your graveyard by paying {2}{W} rather than paying its mana cost.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {"types": ["Creature"], "zone": "battlefield"}
+        }
+      ],
+      "graveyard_cost": {"mana": "{2}{W}"},
+      "graveyard_cast": "graveyard",
+      "abilities": [
+        {
+          "kind": "static",
+          "effect": "buff",
+          "affects": {"attached": true},
+          "power": {"const": 1},
+          "toughness": {"const": 1},
+          "text": "Enchanted creature gets +1/+1"
+        }
+      ]
+    }
+  ]
+}

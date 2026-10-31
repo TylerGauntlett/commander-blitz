@@ -5477,7 +5477,18 @@ and the destination:
 "graveyard_cost": { "mana": "{1}{R}",
                     "exile_from_graveyard": { "count": 2, "exclude_self": true } },
 "graveyard_cast": "graveyard"
+
+\ Raffine's Guidance -- "You may cast this card from your graveyard by paying
+\ {2}{W} rather than paying its mana cost." Escape with nothing but mana.
+"graveyard_cost": { "mana": "{2}{W}" },
+"graveyard_cast": "graveyard"
 ```
+
+The unkeyworded sentence has no exile rider, so it is `"graveyard_cast":
+"graveyard"`, never flashback's default. Gate 3 claims it from the field: the
+printed mana must be the declared mana and nothing else may be charged, so a
+line with a second payment (Scourge of Nel Toth's sacrifice), a condition in
+front or a rider behind it is not this sentence and stays residual.
 
 The mana half **replaces** the printed cost and everything else is charged on
 top, so a jump-start card repeats its own mana cost rather than leaving it out.
