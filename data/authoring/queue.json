@@ -14152,12 +14152,12 @@
     },
     "Artisan of Kozilek": {
       "edhrec_rank": 1174,
-      "gate": "template",
+      "gate": null,
       "name": "Artisan of Kozilek",
-      "reason": "no template for: When you cast this spell, you may return target creature card from your graveyard to the b",
+      "reason": "",
       "scryfall_id": "c632f5a4-7f5f-4d77-9364-58ea03dfdcad",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Artisan's Sorrow": {
@@ -80332,12 +80332,12 @@
     },
     "Eldrazi Ravager": {
       "edhrec_rank": 9847,
-      "gate": "template",
+      "gate": "playable",
       "name": "Eldrazi Ravager",
-      "reason": "no template for: Annihilator 1",
+      "reason": "CommanderBlitzError: eldrazi_ravager is not playable in the sandbox; offered: ['Pass', 'Play Forest', 'Eldrazi Ravager: Cycling {2} ({2}, Discard this card: Draw a card.)']",
       "scryfall_id": "0ce97bb8-b0ee-4473-8c26-a3ec91abec97",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Eldrazi Repurposer": {
@@ -122102,12 +122102,12 @@
     },
     "Hand of Emrakul": {
       "edhrec_rank": 12660,
-      "gate": "template",
+      "gate": null,
       "name": "Hand of Emrakul",
-      "reason": "no template for: You may sacrifice four Eldrazi Spawn rather than pay this spell's mana cost",
+      "reason": "",
       "scryfall_id": "84d602f4-5876-416a-95e5-821a285358bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hand of Honor": {
@@ -140642,12 +140642,12 @@
     },
     "It That Betrays": {
       "edhrec_rank": 1543,
-      "gate": "template",
+      "gate": null,
       "name": "It That Betrays",
-      "reason": "no template for: Annihilator 2",
+      "reason": "",
       "scryfall_id": "ba324afd-98e0-4247-b8a4-06d35e3f6e97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "It That Heralds the End": {
@@ -184112,12 +184112,12 @@
     },
     "Nazgûl Battle-Mace": {
       "edhrec_rank": 4079,
-      "gate": "template",
+      "gate": null,
       "name": "Nazgûl Battle-Mace",
-      "reason": "no template for: Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifi",
+      "reason": "",
       "scryfall_id": "8a08f237-fc13-475f-860f-011dfa4a1a67",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Near-Death Experience": {
@@ -189352,12 +189352,12 @@
     },
     "Nulldrifter": {
       "edhrec_rank": 2440,
-      "gate": "template",
+      "gate": "playable",
       "name": "Nulldrifter",
-      "reason": "no template for: When you cast this spell, draw two cards",
+      "reason": "nulldrifter never left the stack",
       "scryfall_id": "4d9f1bb8-c91b-40cd-a416-abbff0d65306",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Nullhide Ferox": {
@@ -295892,12 +295892,12 @@
     },
     "Ulamog's Crusher": {
       "edhrec_rank": 3379,
-      "gate": "template",
+      "gate": null,
       "name": "Ulamog's Crusher",
-      "reason": "no template for: Annihilator 2",
+      "reason": "",
       "scryfall_id": "ac896541-b271-4bbb-a45c-753869361df6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ulamog's Despoiler": {

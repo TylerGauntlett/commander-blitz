@@ -853,6 +853,9 @@
   "arrogant_vampire": {
     "zone": "battlefield"
   },
+  "artisan_of_kozilek": {
+    "zone": "battlefield"
+  },
   "ascended_lawmage": {
     "zone": "battlefield"
   },
@@ -6115,6 +6118,10 @@
     },
     "zone": "battlefield"
   },
+  "hand_of_emrakul": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hand_of_silumgar": {
     "zone": "battlefield"
   },
@@ -6968,6 +6975,10 @@
   },
   "it_s_clobberin_time": {
     "zone": "exile"
+  },
+  "it_that_betrays": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "ixalli_s_lorekeeper": {
     "zone": "battlefield"
@@ -9311,6 +9322,10 @@
     "zone": "battlefield"
   },
   "naya_panorama": {
+    "zone": "battlefield"
+  },
+  "nazgul_battle_mace": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "necroblossom_snarl": {
@@ -14769,6 +14784,10 @@
     "zone": "battlefield"
   },
   "ukud_cobra": {
+    "zone": "battlefield"
+  },
+  "ulamog_s_crusher": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ultimate_nullification": {

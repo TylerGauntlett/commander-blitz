@@ -747,6 +747,10 @@
     "artist": "Zina Saunders",
     "scryfall_id": "6234f60f-8793-4214-a484-0f1acd290801"
   },
+  "artisan_of_kozilek": {
+    "artist": "Jason Felix",
+    "scryfall_id": "c632f5a4-7f5f-4d77-9364-58ea03dfdcad"
+  },
   "ascended_lawmage": {
     "artist": "Ryan Yee",
     "scryfall_id": "e90d9cc4-9444-4610-ace5-c2981809b331"
@@ -5768,6 +5772,10 @@
     "artist": "Kevin Sidharta",
     "scryfall_id": "5684e177-12b5-4dea-905c-856088d717bc"
   },
+  "hand_of_emrakul": {
+    "artist": "Chippy",
+    "scryfall_id": "84d602f4-5876-416a-95e5-821a285358bf"
+  },
   "hand_of_silumgar": {
     "artist": "Lius Lasahido",
     "scryfall_id": "d3cbb127-6149-4d0b-ad98-1968f2ebe8e4"
@@ -6652,6 +6660,10 @@
   "it_s_clobberin_time": {
     "artist": "Thomas Chamberlain-Keen",
     "scryfall_id": "2b2107a1-afe3-4a06-b3f5-e00f6f83d80b"
+  },
+  "it_that_betrays": {
+    "artist": "CHOGRIN",
+    "scryfall_id": "ba324afd-98e0-4247-b8a4-06d35e3f6e97"
   },
   "ixalli_s_lorekeeper": {
     "artist": "Ernanda Souza",
@@ -8825,6 +8837,10 @@
   "naya_panorama": {
     "artist": "Hideaki Takamura",
     "scryfall_id": "6a546a28-8df5-4080-9f50-af86d84a066f"
+  },
+  "nazgul_battle_mace": {
+    "artist": "Campbell White",
+    "scryfall_id": "8a08f237-fc13-475f-860f-011dfa4a1a67"
   },
   "necroblossom_snarl": {
     "artist": "Sam Burley",
@@ -14098,6 +14114,10 @@
   "ukud_cobra": {
     "artist": "Johann Bodin",
     "scryfall_id": "86d5b59b-a785-4320-be95-659667fe1a86"
+  },
+  "ulamog_s_crusher": {
+    "artist": "Lucas Graciano",
+    "scryfall_id": "ee79bf77-b6db-44da-b249-aec91c0cb285"
   },
   "ultimate_nullification": {
     "artist": "Erikas Perl",

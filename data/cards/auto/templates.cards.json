@@ -8909,6 +8909,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When you cast this spell, you may return target creature card from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "annihilator": 2,
+      "color_identity": [],
+      "colors": [],
+      "id": "artisan_of_kozilek",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{9}",
+      "name": "Artisan of Kozilek",
+      "oracle_text": "When you cast this spell, you may return target creature card from your graveyard to the battlefield.\nAnnihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents of their choice.)",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 9,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U",
         "W"
@@ -69334,6 +69394,37 @@
       ]
     },
     {
+      "alternative_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "count": 4,
+          "subtypes": [
+            "Spawn"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "annihilator": 1,
+      "color_identity": [],
+      "colors": [],
+      "id": "hand_of_emrakul",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{9}",
+      "name": "Hand of Emrakul",
+      "oracle_text": "You may sacrifice four Eldrazi Spawn rather than pay this spell's mana cost.\nAnnihilator 1 (Whenever this creature attacks, defending player sacrifices a permanent of their choice.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -80045,6 +80136,50 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "sacrificed",
+            "filter": {
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "annihilator": 2,
+      "color_identity": [],
+      "colors": [],
+      "id": "it_that_betrays",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{12}",
+      "name": "It That Betrays",
+      "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents of their choice.)\nWhenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control.",
+      "power": 11,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 11,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -107511,6 +107646,112 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "annihilator": 1,
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace",
+            "deathtouch",
+            "annihilator"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.\""
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": 3
+              },
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Pay 3 life to keep that card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "sacrificed",
+            "filter": {
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "id": "nazgul_battle_mace",
+      "mana_cost": "{5}",
+      "name": "Nazgûl Battle-Mace",
+      "oracle_text": "Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.\" (Whenever a creature with annihilator 1 attacks, defending player sacrifices a permanent of their choice.)\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -171921,6 +172162,37 @@
         "Snake"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "This creature attacks each combat if able."
+        }
+      ],
+      "annihilator": 2,
+      "color_identity": [],
+      "colors": [],
+      "id": "ulamog_s_crusher",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{8}",
+      "name": "Ulamog's Crusher",
+      "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents of their choice.)\nThis creature attacks each combat if able.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 8,
       "types": [
         "Creature"
       ]
