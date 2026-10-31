@@ -149112,12 +149112,12 @@
     },
     "Kinetic Ooze": {
       "edhrec_rank": 8256,
-      "gate": "compile",
+      "gate": null,
       "name": "Kinetic Ooze",
-      "reason": "kinetic_ooze.abilities[0].target[t1]: 'up to one target' is 'optional': true -- 'up_to' is for a ceiling above one",
+      "reason": "",
       "scryfall_id": "543877dd-c685-46a0-b3e8-db89090c7e31",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "King Cheetah": {
@@ -157782,12 +157782,12 @@
     },
     "Lifeblood Hydra": {
       "edhrec_rank": 3067,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Lifeblood Hydra",
-      "reason": "+1/+1 counters is 20, expected 27",
+      "reason": "",
       "scryfall_id": "3431a77c-2027-406b-9230-5d0f8837af62",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lifecraft Awakening": {
@@ -166112,12 +166112,12 @@
     },
     "Mana Bloom": {
       "edhrec_rank": 9269,
-      "gate": "template",
+      "gate": null,
       "name": "Mana Bloom",
-      "reason": "no template for: This enchantment enters with X charge counters on it",
+      "reason": "",
       "scryfall_id": "03a40bf7-5eb9-4b36-9388-48b482a6fcf2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mana Breach": {
@@ -193732,12 +193732,12 @@
     },
     "Oran-Rief, the Vastwood": {
       "edhrec_rank": 724,
-      "gate": "template",
+      "gate": null,
       "name": "Oran-Rief, the Vastwood",
-      "reason": "no template for: {T}: Put a +1/+1 counter on each green creature that entered this turn",
+      "reason": "",
       "scryfall_id": "d46d3ef7-b81f-42f4-9c1b-fa53f11eae65",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orator of Ojutai": {
@@ -196572,12 +196572,12 @@
     },
     "Ozolith, the Shattered Spire": {
       "edhrec_rank": 637,
-      "gate": "template",
+      "gate": null,
       "name": "Ozolith, the Shattered Spire",
-      "reason": "no template for: If one or more +1/+1 counters would be put on an artifact or creature you control, that ma",
+      "reason": "",
       "scryfall_id": "1d5bab94-362e-45e6-8988-69e2b2c681b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ozox, the Clattering King": {
@@ -197612,12 +197612,12 @@
     },
     "Paradox Gardens": {
       "edhrec_rank": 10234,
-      "gate": "template",
+      "gate": null,
       "name": "Paradox Gardens",
-      "reason": "no template for: {2}{G}{U}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "dbc3447e-1329-4ea1-b4ca-b321b0ffec8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Paradox Haze": {
@@ -207022,12 +207022,12 @@
     },
     "Primal Might": {
       "edhrec_rank": 3915,
-      "gate": "template",
+      "gate": null,
       "name": "Primal Might",
-      "reason": "no template for: Target creature you control gets +X/+X until end of turn. Then it fights up to one target ",
+      "reason": "",
       "scryfall_id": "69b3f7b9-9499-4883-b5c5-c5474e470b21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primal Order": {

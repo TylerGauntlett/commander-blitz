@@ -87825,6 +87825,147 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "x": true
+                },
+                "right": {
+                  "const": 5
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "x": true
+                },
+                "right": {
+                  "const": 10
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "counters_on": {
+                          "counter": "+1/+1",
+                          "objects": {
+                            "binding": "each"
+                          }
+                        }
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "objects": {
+                    "target": "t2"
+                  },
+                  "op": "for_each"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "x": true
+                  }
+                },
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": "any",
+              "id": "t2",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy up to one target artifact or enchantment with mana value X or less. If X is 5 or more, you draw a card. If X is 10 or more, double the number of +1/+1 counters on any number of other target creatures.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "kinetic_ooze",
+      "mana_cost": "{X}{G}",
+      "name": "Kinetic Ooze",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.\nWhen this creature enters, destroy up to one target artifact or enchantment with mana value X or less. If X is 5 or more, you draw a card. If X is 10 or more, double the number of +1/+1 counters on any number of other target creatures.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Ooze"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -92399,6 +92540,65 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "gain_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, you gain life and draw cards equal to its power.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "lifeblood_hydra",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{X}{G}{G}{G}",
+      "name": "Lifeblood Hydra",
+      "oracle_text": "Trample\nThis creature enters with X +1/+1 counters on it.\nWhen this creature dies, you gain life and draw cards equal to its power.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -98580,6 +98780,123 @@
       "toughness": 5,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "charge"
+            }
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "once_each_turn": true,
+          "text": "Remove a charge counter from this enchantment: Add one mana of any color. Activate only once each turn."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if this enchantment has no charge counters on it, return it to its owner's hand.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "mana_bloom",
+      "mana_cost": "{X}{G}",
+      "name": "Mana Bloom",
+      "oracle_text": "This enchantment enters with X charge counters on it.\nRemove a charge counter from this enchantment: Add one mana of any color. Activate only once each turn.\nAt the beginning of your upkeep, if this enchantment has no charge counters on it, return it to its owner's hand.",
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "charge",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -116355,6 +116672,67 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "colors": [
+                  "G"
+                ],
+                "count": "all",
+                "entered_this_turn": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Put a +1/+1 counter on each green creature that entered this turn."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "oran_rief_the_vastwood",
+      "name": "Oran-Rief, the Vastwood",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G}.\n{T}: Put a +1/+1 counter on each green creature that entered this turn.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -118235,6 +118613,98 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "controller": "you"
+          },
+          "counter": "+1/+1",
+          "counter_addend": 1,
+          "effect": "replace_counters",
+          "kind": "static",
+          "text": "If one or more +1/+1 counters would be put on an artifact or creature you control, that many plus one +1/+1 counters are put on it instead."
+        },
+        {
+          "cost": {
+            "mana": "{1}{G}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature"
+                ],
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{G}, {T}: Put a +1/+1 counter on target artifact or creature you control. Activate only as a sorcery."
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {2} ({2}, Discard this card: Draw a card.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ozolith_the_shattered_spire",
+      "mana_cost": "{1}{G}",
+      "name": "Ozolith, the Shattered Spire",
+      "oracle_text": "If one or more +1/+1 counters would be put on an artifact or creature you control, that many plus one +1/+1 counters are put on it instead.\n{1}{G}, {T}: Put a +1/+1 counter on target artifact or creature you control. Activate only as a sorcery.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "W"
@@ -119028,6 +119498,75 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or {U}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{G}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{G}{U}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)"
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "paradox_gardens",
+      "name": "Paradox Gardens",
+      "oracle_text": "This land enters tapped.\n{T}: Add {G} or {U}.\n{2}{G}{U}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -124091,6 +124630,72 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "primal_might",
+      "mana_cost": "{X}{G}",
+      "name": "Primal Might",
+      "oracle_text": "Target creature you control gets +X/+X until end of turn. Then it fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "mine"
+          },
+          "op": "pump",
+          "power": {
+            "x": true
+          },
+          "toughness": {
+            "x": true
+          }
+        },
+        {
+          "objects": {
+            "target": "mine"
+          },
+          "op": "fight",
+          "other": {
+            "target": "theirs"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "mine",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "theirs",
+          "kind": "permanent",
+          "optional": true,
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

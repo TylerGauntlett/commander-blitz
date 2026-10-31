@@ -1,0 +1,18 @@
+{
+  "card_id": "opal_palace",
+  "name": "Opal Palace",
+  "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.",
+  "blocked_sentences": [
+    "{1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game."
+  ],
+  "needs": [
+    {
+      "capability": "mana_spent_enters_with_counters",
+      "kind": "replacement",
+      "what": "a mana-ability rider (beside mana_grant / mana_spent_trigger) that, when this ability's mana is spent on a spell matching a filter (here is_commander), stages on that spell an 'enters with N additional +1/+1 counters' replacement for the permanent it becomes, with N a value read at spend time (command_zone_casts_of the spell, i.e. commander_casts_this_game for that commander)",
+      "why_existing_wont_do": "mana_grant carries only keywords to the resulting permanent, never counters; mana_spent_trigger is a triggered ability that resolves while the spell is still on the stack, so an add_counters on its subject would put counters on the spell, not make the permanent enter with them; enters_with_additional_counters / self_enters_with_counters are standing replacements on the entering card itself, not one-shots handed to a spell by the mana that paid for it. The add_mana half (in_commander_identity) and the count (command_zone_casts_of) both exist"
+    }
+  ],
+  "closest_existing": ["mana_grant", "mana_spent_trigger", "self_enters_with_counters", "command_zone_casts_of"],
+  "confidence": "high"
+}

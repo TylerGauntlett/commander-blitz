@@ -1,0 +1,24 @@
+{
+  "card_id": "nev_the_practical_dean",
+  "name": "Nev, the Practical Dean",
+  "oracle_text": "Creatures you control with counters on them have trample.\nWhenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.",
+  "blocked_sentences": [
+    "Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev."
+  ],
+  "needs": [
+    {
+      "capability": "x_in_mana_cost_trigger_filter",
+      "kind": "selector",
+      "what": "a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for \"your first spell with {X} in its mana cost each turn\"",
+      "why_existing_wont_do": "trigger_filter_keys has `mana_cost`, but that is an exact printed-cost match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` is a selector key only; `validate_trigger_filter` refuses it because TRIGGER_FILTER_KEYS does not include it and the trigger matcher never reads it"
+    },
+    {
+      "capability": "cast_trigger_x",
+      "kind": "value",
+      "what": "a value reading the X chosen for the triggering spell (the spell bound as `subject` on a spell_cast trigger), e.g. the SPELL_CAST event payload carrying `x` so `event_bindings` overrides the source's `cast_x` and `{\"x\": true}` means the cast spell's X",
+      "why_existing_wont_do": "`{\"x\": true}` in a triggered ability reads the `x` binding, which `triggers.event_bindings` takes from the trigger source's own `cast_x` (Nev's, 0); the SPELL_CAST payload carries no `x` (only the cycle event does via EVENT_BINDING_KEYS), and `mana_value_of` the subject reads mana value, not X"
+    }
+  ],
+  "closest_existing": ["mana_cost", "x_in_mana_cost", "nth", "x"],
+  "confidence": "high"
+}

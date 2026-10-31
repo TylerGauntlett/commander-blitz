@@ -7572,6 +7572,19 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "kinetic_ooze": {
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "king_cheetah": {
     "zone": "battlefield"
   },
@@ -7956,6 +7969,14 @@
   "lier_disciple_of_the_drowned": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "lifeblood_hydra": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "lifelink": {
@@ -8445,6 +8466,10 @@
     "zone": "graveyard"
   },
   "mammoth_spider": {
+    "zone": "battlefield"
+  },
+  "mana_bloom": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "mana_confluence": {
@@ -9989,6 +10014,10 @@
   "oracle_of_mul_daya": {
     "zone": "battlefield"
   },
+  "oran_rief_the_vastwood": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "orazca_frillback": {
     "zone": "battlefield"
   },
@@ -10151,6 +10180,13 @@
     },
     "zone": "graveyard"
   },
+  "ozolith_the_shattered_spire": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "pact_of_negation": {
     "zone": "graveyard"
   },
@@ -10210,6 +10246,10 @@
     "zone": "battlefield"
   },
   "paradise_mantle": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "paradox_gardens": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -10622,6 +10662,9 @@
   },
   "primal_huntbeast": {
     "zone": "battlefield"
+  },
+  "primal_might": {
+    "zone": "graveyard"
   },
   "primal_visitation": {
     "zone": [

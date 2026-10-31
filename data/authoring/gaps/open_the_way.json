@@ -1,0 +1,18 @@
+{
+  "card_id": "open_the_way",
+  "name": "Open the Way",
+  "oracle_text": "X can't be greater than the number of players in the game.\nReveal cards from the top of your library until you reveal X land cards. Put those land cards onto the battlefield tapped and the rest on the bottom of your library in a random order.",
+  "blocked_sentences": [
+    "X can't be greater than the number of players in the game."
+  ],
+  "needs": [
+    {
+      "capability": "x_maximum",
+      "kind": "engine",
+      "what": "a card-level cap on the chosen value of X, read at cast time from a value (here {\"player_count\": ...}, the number of players in the game), so the cast offers no X above it",
+      "why_existing_wont_do": "No card_level_cost_key or card_level_rider_key bounds X; the engine's ask_x has only a min_x floor (from cast_lock_min_x) and max_x is merely what is affordable, so X would be unbounded and the spell would put arbitrarily many lands onto the battlefield, strictly better than printed. The second sentence is expressible with reveal_until (amount x, selector Land, destination battlefield, tapped, rest_to_bottom)"
+    }
+  ],
+  "closest_existing": ["reveal_until", "player_count", "x"],
+  "confidence": "high"
+}
