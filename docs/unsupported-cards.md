@@ -54,6 +54,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
+| [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enchant-graveyard-card](#enchant-graveyard-card) | 1 | 224 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -69,7 +70,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
-| [kindred](#kindred) | 1 | 1597 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -832,6 +832,20 @@ Blocks **1** card.
 
 </details>
 
+## elf-warrior-1-1-g-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 green Elf Warrior creature token
+  <br>Why the existing vocabulary won't do: the packet's token_ids has no Elf Warrior; elf_* tokens of other sizes or subtypes would be a different card (111.4)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elvish Promenade** (rank 3100) — `elvish_promenade`
+  - Create a 1/1 green Elf Warrior creature token for each Elf you control.
+
+</details>
+
 ## enchant-graveyard-card
 
 Blocks **1** card.
@@ -1050,20 +1064,6 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
-## kindred
-
-Blocks **1** card.
-
-- **(engine)** the card type Kindred (formerly Tribal, 308): the type line 'Kindred Enchantment — Eldrazi Aura' lets a noncreature card carry the creature subtype Eldrazi
-  <br>Why the existing vocabulary won't do: the packet's types list (Artifact, Battle, Creature, Enchantment, Instant, Land, Planeswalker, Sorcery) has no Kindred, so the card could only be typed as a plain Enchantment and the Eldrazi subtype would be unexplained to anything reading creature types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Eldrazi Conscription** (rank 1597) — `eldrazi_conscription`
-  - Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)
 
 </details>
 

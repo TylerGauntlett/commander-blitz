@@ -1700,6 +1700,9 @@
   "botanical_sanctum": {
     "zone": "battlefield"
   },
+  "bound_in_silence": {
+    "zone": "battlefield"
+  },
   "bounding_wolf": {
     "zone": "battlefield"
   },
@@ -3949,6 +3952,13 @@
     },
     "zone": "battlefield"
   },
+  "eldrazi_conscription": {
+    "target_pt_delta": {
+      "power": 10,
+      "toughness": 10
+    },
+    "zone": "battlefield"
+  },
   "eldrazi_devastator": {
     "zone": "battlefield"
   },
@@ -4418,6 +4428,9 @@
   },
   "exultant_skymarcher": {
     "zone": "battlefield"
+  },
+  "eyeblight_s_ending": {
+    "zone": "graveyard"
   },
   "ezuri_s_predation": {
     "zone": "graveyard"
@@ -5437,6 +5450,9 @@
   },
   "giant_octopus": {
     "zone": "battlefield"
+  },
+  "giant_s_ire": {
+    "zone": "graveyard"
   },
   "giant_scorpion": {
     "zone": "battlefield"
@@ -10175,6 +10191,13 @@
   "pensive_minotaur": {
     "zone": "battlefield"
   },
+  "peppersmoke": {
+    "target_pt_delta": {
+      "power": -1,
+      "toughness": -1
+    },
+    "zone": "graveyard"
+  },
   "perception_bobblehead": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11475,6 +11498,9 @@
   "rootbreaker_wurm": {
     "zone": "battlefield"
   },
+  "rootgrapple": {
+    "zone": "graveyard"
+  },
   "rootha_mercurial_artist": {
     "battlefield_count": 33,
     "hand_size": {
@@ -11612,6 +11638,9 @@
   },
   "sacred_wolf": {
     "zone": "battlefield"
+  },
+  "sage_s_dousing": {
+    "zone": "graveyard"
   },
   "sage_s_reverie": {
     "hand_size": {
@@ -13322,6 +13351,13 @@
   "straw_soldiers": {
     "zone": "battlefield"
   },
+  "stream_of_unconsciousness": {
+    "target_pt_delta": {
+      "power": -4,
+      "toughness": 0
+    },
+    "zone": "graveyard"
+  },
   "streetbreaker_wurm": {
     "zone": "battlefield"
   },
@@ -13503,6 +13539,9 @@
       "0": 5
     },
     "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
+  "surge_of_thoughtweft": {
     "zone": "graveyard"
   },
   "surrak_and_goreclaw": {
@@ -13796,6 +13835,9 @@
   },
   "taoist_hermit": {
     "zone": "battlefield"
+  },
+  "tarfire": {
+    "zone": "graveyard"
   },
   "targ_nar_demon_fang_gnoll": {
     "zone": "battlefield"

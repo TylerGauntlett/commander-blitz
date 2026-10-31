@@ -30102,12 +30102,12 @@
     },
     "Boggart Birth Rite": {
       "edhrec_rank": 15371,
-      "gate": "template",
+      "gate": "playable",
       "name": "Boggart Birth Rite",
-      "reason": "no template for: Return target Goblin card from your graveyard to your hand",
+      "reason": "CommanderBlitzError: boggart_birth_rite is not playable in the sandbox; offered: ['Pass', 'Play Forest']",
       "scryfall_id": "1bb4916d-ab50-45c9-bf7e-e7a7e761aef4",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Boggart Brute": {
@@ -32412,12 +32412,12 @@
     },
     "Bound in Silence": {
       "edhrec_rank": 19056,
-      "gate": "template",
+      "gate": null,
       "name": "Bound in Silence",
-      "reason": "no template for: Enchanted creature can't attack or block",
+      "reason": "",
       "scryfall_id": "41a0a78e-08cc-4eb0-8891-6c3eec5b595b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Boundary Lands Ranger": {
@@ -80262,12 +80262,12 @@
     },
     "Eldrazi Conscription": {
       "edhrec_rank": 1597,
-      "gate": "template",
+      "gate": null,
       "name": "Eldrazi Conscription",
-      "reason": "no template for: Enchanted creature gets +10/+10 and has trample and annihilator 2",
+      "reason": "",
       "scryfall_id": "33965c48-a7ce-4a04-8251-8eeb2d908c0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eldrazi Devastator": {
@@ -89382,12 +89382,12 @@
     },
     "Eyeblight's Ending": {
       "edhrec_rank": 9094,
-      "gate": "template",
+      "gate": null,
       "name": "Eyeblight's Ending",
-      "reason": "no template for: Destroy target non-Elf creature",
+      "reason": "",
       "scryfall_id": "6738c356-734a-4930-acd3-31dead241bea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eyekite": {
@@ -108702,12 +108702,12 @@
     },
     "Giant's Ire": {
       "edhrec_rank": 21491,
-      "gate": "template",
+      "gate": null,
       "name": "Giant's Ire",
-      "reason": "no template for: deals 4 damage to target player or planeswalker. If you control a Giant, draw a card",
+      "reason": "",
       "scryfall_id": "6e6a52dd-d95c-4eca-a94b-ee989ce8cc16",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Giant's Skewer": {
@@ -199672,12 +199672,12 @@
     },
     "Peppersmoke": {
       "edhrec_rank": 15502,
-      "gate": "template",
+      "gate": null,
       "name": "Peppersmoke",
-      "reason": "no template for: Target creature gets -1/-1 until end of turn. If you control a Faerie, draw a card",
+      "reason": "",
       "scryfall_id": "57f45251-e71e-4601-9b51-dbc08ab036c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Perception Bobblehead": {
@@ -227312,12 +227312,12 @@
     },
     "Rootgrapple": {
       "edhrec_rank": 17005,
-      "gate": "template",
+      "gate": null,
       "name": "Rootgrapple",
-      "reason": "no template for: Destroy target noncreature permanent. If you control a Treefolk, draw a card",
+      "reason": "",
       "scryfall_id": "0fe6051f-6252-4ad1-90ab-d21705a708d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rootha, Mastering the Moment": {
@@ -231062,12 +231062,12 @@
     },
     "Sage's Dousing": {
       "edhrec_rank": 18937,
-      "gate": "template",
+      "gate": null,
       "name": "Sage's Dousing",
-      "reason": "no template for: Counter target spell unless its controller pays {3}. If you control a Wizard, draw a card",
+      "reason": "",
       "scryfall_id": "75ccd5f6-b363-433f-9e98-f65e10b10bc9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage's Knowledge": {
@@ -266892,12 +266892,12 @@
     },
     "Stream of Unconsciousness": {
       "edhrec_rank": 18666,
-      "gate": "template",
+      "gate": null,
       "name": "Stream of Unconsciousness",
-      "reason": "no template for: Target creature gets -4/-0 until end of turn. If you control a Wizard, draw a card",
+      "reason": "",
       "scryfall_id": "54ba05db-6b09-4b6a-b7fe-13c1e1058e25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Streambed Aquitects": {
@@ -270772,12 +270772,12 @@
     },
     "Surge of Thoughtweft": {
       "edhrec_rank": 21322,
-      "gate": "template",
+      "gate": null,
       "name": "Surge of Thoughtweft",
-      "reason": "no template for: Creatures you control get +1/+1 until end of turn. If you control a Kithkin, draw a card",
+      "reason": "",
       "scryfall_id": "e0b61fb2-11e5-45ae-873d-85f79f161950",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Surge of Zeal": {
@@ -275312,12 +275312,12 @@
     },
     "Tarfire": {
       "edhrec_rank": 15812,
-      "gate": "template",
+      "gate": null,
       "name": "Tarfire",
-      "reason": "no template for: deals 2 damage to any target",
+      "reason": "",
       "scryfall_id": "3c7dfc93-36fe-499c-9019-cd45797ffbbf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Targ Nar, Demon-Fang Gnoll": {

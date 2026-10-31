@@ -3093,6 +3093,7 @@
         "Eldrazi"
       ],
       "types": [
+        "Kindred",
         "Sorcery"
       ]
     },
@@ -19037,6 +19038,57 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Enchanted creature can't attack or block."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Enchanted creature can't attack or block."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bound_in_silence",
+      "mana_cost": "{2}{W}",
+      "name": "Bound in Silence",
+      "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+      "source": "auto",
+      "subtypes": [
+        "Rebel",
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Enchantment"
       ]
     },
     {
@@ -45324,6 +45376,64 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 10
+          },
+          "text": "Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)",
+          "toughness": {
+            "const": 10
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "annihilator": 2,
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "annihilator"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "eldrazi_conscription",
+      "mana_cost": "{8}",
+      "name": "Eldrazi Conscription",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)",
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "eldrazi_devastator",
@@ -49967,6 +50077,50 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eyeblight_s_ending",
+      "mana_cost": "{2}{B}",
+      "name": "Eyeblight's Ending",
+      "oracle_text": "Destroy target non-Elf creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_subtypes": [
+              "Elf"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -53551,6 +53705,7 @@
         "Shapeshifter"
       ],
       "types": [
+        "Kindred",
         "Artifact"
       ]
     },
@@ -60807,6 +60962,68 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "giant_s_ire",
+      "mana_cost": "{3}{R}",
+      "name": "Giant's Ire",
+      "oracle_text": "Giant's Ire deals 4 damage to target player or planeswalker. If you control a Giant, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Giant"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Giant"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Sorcery"
       ]
     },
     {
@@ -118381,6 +118598,74 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "peppersmoke",
+      "mana_cost": "{B}",
+      "name": "Peppersmoke",
+      "oracle_text": "Target creature gets -1/-1 until end of turn. If you control a Faerie, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -1
+          },
+          "toughness": {
+            "const": -1
+          }
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Faerie"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Faerie"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -132819,6 +133104,68 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "rootgrapple",
+      "mana_cost": "{4}{G}",
+      "name": "Rootgrapple",
+      "oracle_text": "Destroy target noncreature permanent. If you control a Treefolk, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Treefolk"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Treefolk"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -134335,6 +134682,73 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sage_s_dousing",
+      "mana_cost": "{2}{U}",
+      "name": "Sage's Dousing",
+      "oracle_text": "Counter target spell unless its controller pays {3}. If you control a Wizard, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "else": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "mana": "{3}"
+          },
+          "player": {
+            "controller_of_target": "t1"
+          },
+          "prompt": "Pay {3} to stop Sage's Dousing countering your spell?"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Wizard"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
       ]
     },
     {
@@ -153562,6 +153976,74 @@
     },
     {
       "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "stream_of_unconsciousness",
+      "mana_cost": "{U}",
+      "name": "Stream of Unconsciousness",
+      "oracle_text": "Target creature gets -4/-0 until end of turn. If you control a Wizard, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -4
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Wizard"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G",
         "R"
       ],
@@ -155990,6 +156472,66 @@
         "Sorcery"
       ],
       "uncounterable": true
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "surge_of_thoughtweft",
+      "mana_cost": "{1}{W}",
+      "name": "Surge of Thoughtweft",
+      "oracle_text": "Creatures you control get +1/+1 until end of turn. If you control a Kithkin, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Kithkin"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Kithkin"
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
     },
     {
       "abilities": [
@@ -160060,6 +160602,49 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "tarfire",
+      "mana_cost": "{R}",
+      "name": "Tarfire",
+      "oracle_text": "Tarfire deals 2 damage to any target.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
       ]
     },
     {
