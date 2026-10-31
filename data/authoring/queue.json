@@ -5822,12 +5822,12 @@
     },
     "Alchemist's Refuge": {
       "edhrec_rank": 1098,
-      "gate": "template",
+      "gate": null,
       "name": "Alchemist's Refuge",
-      "reason": "no template for: {G}{U}, {T}: You may cast spells this turn as though they had flash",
+      "reason": "",
       "scryfall_id": "36a11c11-1ea9-48e2-b1bc-49cba1390620",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alchemist's Retrieval": {
@@ -9432,12 +9432,12 @@
     },
     "Animist's Awakening": {
       "edhrec_rank": 2561,
-      "gate": "template",
+      "gate": null,
       "name": "Animist's Awakening",
-      "reason": "no template for: Reveal the top X cards of your library. Put all land cards from among them onto the battle",
+      "reason": "",
       "scryfall_id": "d5ace571-0644-40d6-a05f-15f2e47d8861",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Animist's Might": {
@@ -15452,12 +15452,12 @@
     },
     "Astral Cornucopia": {
       "edhrec_rank": 1316,
-      "gate": "template",
+      "gate": null,
       "name": "Astral Cornucopia",
-      "reason": "no template for: This artifact enters with X charge counters on it",
+      "reason": "",
       "scryfall_id": "15175742-11ae-4819-a5bd-412084b0b686",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Astral Dragon": {
@@ -23852,12 +23852,12 @@
     },
     "Benevolent Hydra": {
       "edhrec_rank": 2989,
-      "gate": "template",
+      "gate": null,
       "name": "Benevolent Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "064595cb-089e-4cf2-afe3-223235ce3f92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benevolent Offering": {
@@ -24972,12 +24972,12 @@
     },
     "Biomass Mutation": {
       "edhrec_rank": 4860,
-      "gate": "template",
+      "gate": null,
       "name": "Biomass Mutation",
-      "reason": "no template for: Creatures you control have base power and toughness X/X until end of turn",
+      "reason": "",
       "scryfall_id": "9894bed2-c5dc-4569-9ed9-1d40df906f58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Biomathematician": {
@@ -50782,12 +50782,12 @@
     },
     "Commander's Insight": {
       "edhrec_rank": 8357,
-      "gate": "template",
+      "gate": null,
       "name": "Commander's Insight",
-      "reason": "no template for: Target player draws X cards plus an additional card for each time they've cast a commander",
+      "reason": "",
       "scryfall_id": "1a40e4da-a631-4423-b70f-701b27b09f79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commander's Insignia": {
@@ -64352,12 +64352,12 @@
     },
     "Decisive Denial": {
       "edhrec_rank": 3280,
-      "gate": "template",
+      "gate": null,
       "name": "Decisive Denial",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "b1ad1949-1c8e-4566-9286-caf240c88fcc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Declaration in Stone": {
@@ -87032,12 +87032,12 @@
     },
     "Eureka Moment": {
       "edhrec_rank": 1967,
-      "gate": "template",
+      "gate": null,
       "name": "Eureka Moment",
-      "reason": "no template for: Draw two cards. You may put a land card from your hand onto the battlefield",
+      "reason": "",
       "scryfall_id": "4d267ed8-e760-4f92-962b-f83dea822c45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Euru, Acorn Scrounger": {

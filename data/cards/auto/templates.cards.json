@@ -2835,6 +2835,50 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{G}{U}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "op": "grant_flash_permission"
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}{U}, {T}: You may cast spells this turn as though they had flash."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [],
+      "id": "alchemist_s_refuge",
+      "name": "Alchemist's Refuge",
+      "oracle_text": "{T}: Add {C}.\n{G}{U}, {T}: You may cast spells this turn as though they had flash.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "mana": "{R}",
               "op": "add_mana"
             }
@@ -6012,6 +6056,80 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "animist_s_awakening",
+      "mana_cost": "{X}{G}",
+      "name": "Animist's Awakening",
+      "oracle_text": "Reveal the top X cards of your library. Put all land cards from among them onto the battlefield tapped and the rest on the bottom of your library in a random order.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, untap those lands.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "awakened_lands",
+          "destination": "battlefield",
+          "objects": {
+            "count": "all",
+            "types": [
+              "Land"
+            ]
+          },
+          "op": "look_at_top",
+          "player": "you",
+          "rest_to_bottom": true,
+          "tapped": true
+        },
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "sum": [
+                {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Instant"
+                    ],
+                    "zone": "graveyard"
+                  }
+                },
+                {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Sorcery"
+                    ],
+                    "zone": "graveyard"
+                  }
+                }
+              ]
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "binding": "awakened_lands"
+              },
+              "op": "untap"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -9870,6 +9988,51 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "self_only": true
+                  }
+                }
+              },
+              "any_one_color": true,
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Choose a color. Add one mana of that color for each charge counter on this artifact."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "astral_cornucopia",
+      "mana_cost": "{X}{X}{X}",
+      "name": "Astral Cornucopia",
+      "oracle_text": "This artifact enters with X charge counters on it.\n{T}: Choose a color. Add one mana of that color for each charge counter on this artifact.",
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "charge",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -14669,6 +14832,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "counter": "+1/+1",
+          "counter_addend": 1,
+          "effect": "replace_counters",
+          "kind": "static",
+          "text": "If one or more +1/+1 counters would be put on another creature you control, that many plus one +1/+1 counters are put on it instead."
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "+1/+1"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Remove a +1/+1 counter from this creature: Put a +1/+1 counter on another target creature you control."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "benevolent_hydra",
+      "mana_cost": "{X}{G}{G}",
+      "name": "Benevolent Hydra",
+      "oracle_text": "This creature enters with X +1/+1 counters on it.\nIf one or more +1/+1 counters would be put on another creature you control, that many plus one +1/+1 counters are put on it instead.\n{T}, Remove a +1/+1 counter from this creature: Put a +1/+1 counter on another target creature you control.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Hydra"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -14893,6 +15140,46 @@
           },
           "op": "create_token",
           "token": "treasure_token"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "biomass_mutation",
+      "mana_cost": "{X}{G/U}{G/U}",
+      "name": "Biomass Mutation",
+      "oracle_text": "Creatures you control have base power and toughness X/X until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "animate",
+          "power": {
+            "x": true
+          },
+          "toughness": {
+            "x": true
+          },
+          "types": [
+            "Creature"
+          ]
         }
       ],
       "types": [
@@ -30051,6 +30338,50 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "commander_s_insight",
+      "mana_cost": "{X}{U}{U}{U}",
+      "name": "Commander's Insight",
+      "oracle_text": "Target player draws X cards plus an additional card for each time they've cast a commander from the command zone this game.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "sum": [
+              "x",
+              {
+                "commander_casts_this_game": {
+                  "target": "t1"
+                }
+              }
+            ]
+          },
+          "op": "draw",
+          "player": {
+            "target": "t1"
+          }
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "player",
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -37993,6 +38324,106 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "decisive_denial",
+      "mana_cost": "{G}{U}",
+      "name": "Decisive Denial",
+      "oracle_text": "Choose one —\n• Target creature you control fights target creature you don't control. (Each deals damage equal to its power to the other.)\n• Counter target noncreature spell unless its controller pays {3}.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "mine"
+                  },
+                  "op": "fight",
+                  "other": {
+                    "target": "theirs"
+                  }
+                }
+              ],
+              "label": "Target creature you control fights target creature you don't control."
+            },
+            {
+              "effects": [
+                {
+                  "else": [
+                    {
+                      "op": "counter",
+                      "target": "t1"
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "mana": "{3}"
+                  },
+                  "player": {
+                    "controller_of_target": "t1"
+                  },
+                  "prompt": "Pay {3} to stop Decisive Denial countering your spell?"
+                }
+              ],
+              "label": "Counter target noncreature spell unless its controller pays {3}."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "mine",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "theirs",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "mode": 1,
+          "selector": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -49269,6 +49700,60 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "eureka_moment",
+      "mana_cost": "{2}{G}{U}",
+      "name": "Eureka Moment",
+      "oracle_text": "Draw two cards. You may put a land card from your hand onto the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ],
+              "zone": "hand"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Land"
+                ],
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "op": "may",
+          "prompt": "Put a land card from your hand onto the battlefield?"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

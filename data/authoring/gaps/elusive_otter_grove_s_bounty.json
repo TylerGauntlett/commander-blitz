@@ -1,0 +1,25 @@
+{
+  "card_id": "elusive_otter_grove_s_bounty",
+  "name": "Elusive Otter // Grove's Bounty",
+  "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nCreatures with power less than this creature's power can't block it.",
+  "blocked_sentences": [
+    "Creatures with power less than this creature's power can't block it.",
+    "Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control."
+  ],
+  "needs": [
+    {
+      "capability": "block_restriction_relative_power",
+      "kind": "static_effect",
+      "what": "a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- \"creatures with power less than this creature's power can't block it\" -- e.g. a power clause whose value is the source's power rather than a printed integer",
+      "why_existing_wont_do": "block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct"
+    },
+    {
+      "capability": "distribute_counters_spell",
+      "kind": "op",
+      "what": "the Adventure half Grove's Bounty ({X}{G} Sorcery -- Adventure): distribute X +1/+1 counters among any number of target creatures you control, on a SPELL with X as the amount; the packet also carries neither a back_face nor the adventure text in oracle_text, so the second_face entry cannot be authored from the packet",
+      "why_existing_wont_do": "distribute_counters exists but the packet's notes restrict it to activated abilities with a printed amount ('Not available on spells or triggered abilities'), so an X-sized distribution among any number of targets on a sorcery has no expression"
+    }
+  ],
+  "closest_existing": ["block_restriction", "distribute_counters", "second_face"],
+  "confidence": "high"
+}

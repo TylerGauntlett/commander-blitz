@@ -242,6 +242,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "alchemist_s_refuge": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "alena_kessig_trapper": {
     "zone": "battlefield"
   },
@@ -560,6 +564,15 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "animist_s_awakening": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "ankle_biter": {
     "zone": "battlefield"
@@ -926,6 +939,10 @@
     "zone": "battlefield"
   },
   "assault_zeppelid": {
+    "zone": "battlefield"
+  },
+  "astral_cornucopia": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "atraxa_praetors_voice": {
@@ -1323,6 +1340,10 @@
   "benalish_knight": {
     "zone": "battlefield"
   },
+  "benevolent_hydra": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "benthic_behemoth": {
     "zone": "battlefield"
   },
@@ -1359,6 +1380,13 @@
     "tokens": {
       "count": 2,
       "id": "treasure_token"
+    },
+    "zone": "graveyard"
+  },
+  "biomass_mutation": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
     },
     "zone": "graveyard"
   },
@@ -2614,6 +2642,9 @@
   "combat_celebrant": {
     "zone": "battlefield"
   },
+  "commander_s_insight": {
+    "zone": "graveyard"
+  },
   "commander_s_plate": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -3342,6 +3373,9 @@
   },
   "deceptive_landscape": {
     "zone": "battlefield"
+  },
+  "decisive_denial": {
+    "zone": "graveyard"
   },
   "decree_of_justice": {
     "battlefield_count": 45,
@@ -4308,6 +4342,15 @@
   "etherium_sculptor": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "eureka_moment": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "everdawn_champion": {
     "battlefield_count": 33,

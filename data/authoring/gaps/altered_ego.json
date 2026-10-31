@@ -1,0 +1,17 @@
+{
+  "card_id": "altered_ego",
+  "name": "Altered Ego",
+  "oracle_text": "This spell can't be countered.\nYou may have this creature enter as a copy of any creature on the battlefield, except it enters with X additional +1/+1 counters on it.",
+  "blocked_sentences": [
+    "You may have this creature enter as a copy of any creature on the battlefield, except it enters with X additional +1/+1 counters on it."
+  ],
+  "needs": [{
+    "capability": "enters_as_copy_x_counters",
+    "kind": "engine",
+    "what": "the `self_enters_as_copy` replacement's `except_.enters_with` entries must evaluate their `amount` with the X announced when the permanent was cast (obj.cast_x), so `{\"amount\": {\"x\": true}, \"counter\": \"+1/+1\"}` puts X counters on the copy as it enters",
+    "why_existing_wont_do": "`self_enters_as_copy` with `except_.enters_with` exists (Spark Double), but `move_object` in engine/zones.py evaluates each entry with an EffectContext built without `x=obj.cast_x`, so `{\"x\": true}` silently evaluates to 0 and the copy enters with no counters. The separate `self_enters_with_counters` replacement does read cast_x, but it applies whether or not a copy is chosen, so a non-copied Altered Ego would survive as a 0/0 with X counters -- a different card",
+    "suggested_fix": "pass `x=obj.cast_x` to the EffectContext built in the `except_.enters_with` loop of `move_object`"
+  }],
+  "closest_existing": ["self_enters_as_copy", "spark_double", "self_enters_with_counters"],
+  "confidence": "high"
+}
