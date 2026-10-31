@@ -149,15 +149,16 @@ def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
     """
     if not isinstance(filt, Mapping):
         return
-    # "Protection from the chosen card type" on the static itself: the same
-    # source-is-the-recipient trap, one key over.
-    for entry in filt.get("from_types") or ():
-        if isinstance(entry, Mapping) and "chosen_card_type_of" in entry:
-            raise DslError(
-                f"{where}.from_types: 'chosen_card_type_of' names the choice made "
-                f"by the source, and a granted static's source is the permanent "
-                f"it was granted to -- which has chosen nothing"
-            )
+    # "Protection from the chosen card type" (or colour) on the static itself:
+    # the same source-is-the-recipient trap, one key over.
+    for key, chosen in (("from_types", "chosen_card_type_of"), ("from_colors", "chosen_color_of")):
+        for entry in filt.get(key) or ():
+            if isinstance(entry, Mapping) and chosen in entry:
+                raise DslError(
+                    f"{where}.{key}: {chosen!r} names the choice made by the "
+                    f"source, and a granted static's source is the permanent "
+                    f"it was granted to -- which has chosen nothing"
+                )
     for key in ("subtypes", "not_subtypes", "colors"):
         for entry in filt.get(key) or ():
             if not isinstance(entry, Mapping):

@@ -1587,7 +1587,9 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
         return False
     # "Protection from Wizards" cannot be enchanted or equipped by one. The Aura
     # is left where it is; state-based actions bin an Aura attached to nothing.
-    if protected_from(state, target_oid, aura_oid):
+    # Asked as an attachment, so "this effect doesn't remove this Aura" spares
+    # the one Aura whose own static it is.
+    if protected_from(state, target_oid, aura_oid, attaching=True):
         return False
     aura.attached_to = target_oid
     aura.attached_timestamp = state.alloc_timestamp()

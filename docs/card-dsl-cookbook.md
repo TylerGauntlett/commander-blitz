@@ -5004,6 +5004,32 @@ and a source that has chosen nothing protects from nothing. It may sit beside
 literal types. A near-miss leaf is refused at load time, and so is the entry on a
 granted static, whose source would be the recipient, which has chosen nothing.
 
+**Protection from the chosen color.** Flickering Ward — "As this Aura enters,
+choose a color. Enchanted creature has protection from the chosen color. This
+effect doesn't remove this Aura." — puts `{"chosen_color_of": "self"}` in
+`from_colors`, after a `choose_color` on its enters trigger:
+
+```jsonc
+{ "kind": "static", "effect": "protection", "affects": { "attached": true },
+  "from_colors": [ { "chosen_color_of": "self" } ], "spares": "self" }
+```
+
+The colour is substituted each time protection is read
+(`characteristics.resolve_chosen_color_list`), exactly as the chosen card type
+is: all four rules see it, nothing is protected before the choice, it may sit
+beside literal letters, and a near-miss leaf or a granted copy is refused.
+
+`"spares": "self"` is "this effect doesn't remove this Aura". Protection from a
+colour stops the host being enchanted or equipped by anything of that colour
+(702.16c), so a white Aura that chose white would be refused by its own host.
+With `spares` the enchant/equip check (`protected_from(..., attaching=True)`,
+read by `primitives.attach` and `zones.offer_aura_host`) leaves out that one
+static when the attachment asking is its own source. Only `"self"` loads, only
+on a `protection` static whose `affects` is `{"attached": true}`; every other
+Aura of the colour is still refused, and damage, blocks and targets from the
+Aura itself still meet the protection. A printed "doesn't remove Auras" (Spectra
+Ward) spares more than its source and is not this key.
+
 **A player with protection.** "**You** and creatures you control have protection
 from the chosen card type" is two statics: the `protection` above for the
 creatures, and a player-wide `player_protection` for the seat, which spells its
@@ -12021,6 +12047,9 @@ exactly the *any* colour idiom, which is a strictly better card than "the chosen
 color". So `add_mana`'s `mana` accepts the reference itself rather than the
 ability offering five modes, and the loader refuses `{"chosen_color_of": …}`
 inside a `choose_mode` for that reason.
+
+The reference also stands in the `from_colors` of a `protection` static and of
+`grant_protection` — see [Protection](#protection).
 
 Five labels rather than the pool-derived list `choose_type` builds: there are
 five colours, and every one of them exists.

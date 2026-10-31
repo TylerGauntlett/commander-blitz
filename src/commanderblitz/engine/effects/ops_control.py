@@ -417,8 +417,8 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
     down to the two decisions below. Stored on the permanent as a colour letter
     and read back by its own abilities through ``{"chosen_color_of": "self"}``,
     which stands wherever a literal colour letter does: a static filter's
-    ``colors``, an ``add_mana``'s ``mana``, and ``grant_protection``'s
-    ``from_colors``.
+    ``colors``, an ``add_mana``'s ``mana``, and the ``from_colors`` of
+    ``grant_protection`` and of the ``protection`` static.
 
     **No new `DecisionKind`.** `ask_mode` already asks "pick one of these
     labels" and hands back the index, which is exactly this question -- so

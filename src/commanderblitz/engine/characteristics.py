@@ -2749,7 +2749,8 @@ def _static_protection_qualities(
     # matches nothing before one is made.
     out.update(resolve_chosen_card_type_list(static.get("from_types"), source_obj))
     out.update(static.get("from_subtypes", ()))
-    out.update(static.get("from_colors", ()))
+    # "Protection from the chosen color" -- the colour twin, read the same way.
+    out.update(resolve_chosen_color_list(static.get("from_colors"), source_obj))
     if static.get("from_colorless"):
         out.add(PROTECTION_COLORLESS)
     if static.get("from_colors_outside_commander_identity"):
@@ -2760,7 +2761,9 @@ def _static_protection_qualities(
     return out
 
 
-def protection_from(state: GameState, oid: int) -> frozenset[str]:
+def protection_from(
+    state: GameState, oid: int, *, attaching: int | None = None
+) -> frozenset[str]:
     """The qualities this permanent has protection from.
 
     Protection is parameterised -- "from Wizards", "from black", "from
@@ -2771,6 +2774,14 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
 
     Four rules read it (damage, enchant/equip, block, target).  Returning a set
     rather than answering a question keeps all four asking it the same way.
+
+    ``attaching`` is the enchant/equip rule asking on behalf of one Aura or
+    Equipment, and it is the only one of the four that can be told "this
+    effect doesn't remove this Aura" (Flickering Ward): a static carrying
+    ``spares: "self"`` whose source *is* that attachment is left out, so the
+    Ward that chose white stays on -- and goes back on -- a creature it gives
+    protection from white. Another white Aura is still refused, and damage,
+    blocks and targets from the Ward itself still meet the protection.
     """
     if not state.objects.get(oid) or not state.objects[oid].on_battlefield:
         return frozenset()
@@ -2778,6 +2789,12 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
     obj = state.objects[oid]
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "protection":
+            continue
+        if (
+            attaching is not None
+            and source_obj.oid == attaching
+            and static.get("spares") == "self"
+        ):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
@@ -2906,14 +2923,23 @@ def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Map
     return out
 
 
-def protected_from(state: GameState, oid: int, source_oid: int | None) -> bool:
+def protected_from(
+    state: GameState, oid: int, source_oid: int | None, *, attaching: bool = False
+) -> bool:
     """Does ``oid`` have protection from ``source_oid``?
 
     ``source_oid`` is the *source* of the damage, spell or block -- a permanent
     on the battlefield or a spell on the stack.  A quality it does not have
     cannot be protected against, so a missing source is never protection.
+
+    ``attaching`` says the question is whether ``source_oid`` can enchant or
+    equip ``oid``, the one rule a ``spares: "self"`` static exempts its own
+    source from (:func:`protection_from`).
     """
-    return _matches_protection(state, protection_from(state, oid), source_oid)
+    qualities = protection_from(
+        state, oid, attaching=source_oid if attaching else None
+    )
+    return _matches_protection(state, qualities, source_oid)
 
 
 def _matches_protection(

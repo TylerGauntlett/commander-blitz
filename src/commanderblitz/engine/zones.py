@@ -1064,7 +1064,7 @@ def offer_aura_host(state: GameState, oid: int, controller: int):
     pool = [
         host
         for host in resolve_pool(ctx, selector)
-        if host != oid and not protected_from(state, host, oid)
+        if host != oid and not protected_from(state, host, oid, attaching=True)
     ]
     if not pool:
         return False

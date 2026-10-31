@@ -822,10 +822,19 @@ class AbilityModel(BaseModel):
     #: planeswalkers and from Wizards" is a type and a subtype, not two nouns.
     #: A ``from_types`` entry may also be ``{"chosen_card_type_of": "self"}``
     #: -- "protection from the chosen card type" (Serra's Emissary), read off
-    #: the source's `choose_type` answer when a rule asks.
+    #: the source's `choose_type` answer when a rule asks. A ``from_colors``
+    #: entry may likewise be ``{"chosen_color_of": "self"}`` -- "protection
+    #: from the chosen color" (Flickering Ward), read off `choose_color`'s
+    #: answer the same way.
     from_types: list[str | dict[str, str]] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
-    from_colors: list[str] = Field(default_factory=list)
+    from_colors: list[str | dict[str, str]] = Field(default_factory=list)
+    #: "This effect doesn't remove this Aura." ``"self"`` on a ``protection``
+    #: static an Aura or Equipment grants its host: the protection does not
+    #: stop the static's own source from being attached to that host
+    #: (`characteristics.protection_from`'s ``attaching``). Every other rule
+    #: protection touches -- damage, block, target -- still sees the quality.
+    spares: str | None = None
     #: "Protection from each color that's not in your commander's color
     #: identity" -- Commander's Plate. A colour set no printed list can name,
     #: because it is the five colours minus a set read off the *controller's*

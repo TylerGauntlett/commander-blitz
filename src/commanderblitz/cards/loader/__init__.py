@@ -5324,6 +5324,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown type {t!r} in from_types")
         for c in model.from_colors:
+            if isinstance(c, dict):
+                # "Protection from the chosen color." The colour twin of the
+                # chosen card type above, refused on a near miss for the same
+                # reason: it would resolve to nothing for ever.
+                if c != {"chosen_color_of": "self"}:
+                    raise DslError(
+                        f'{where}: the only dynamic from_colors entry is '
+                        f'{{"chosen_color_of": "self"}}, not {c!r}'
+                    )
+                continue
             if c in ("C", "colorless"):
                 raise DslError(
                     f"{where}: colorless is not a colour (105.2c) -- write "
@@ -5337,6 +5347,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"from_colors_outside_commander_identity need effect 'protection' "
             f"or 'player_protection'"
         )
+    if model.spares is not None:
+        # "This effect doesn't remove this Aura." Only the Aura or Equipment
+        # that grants the protection to its host can be the one spared; on any
+        # other static there is no attachment for the exemption to keep, and
+        # it would load and be read by nothing.
+        if model.effect != "protection" or model.spares != "self":
+            raise DslError(
+                f"{where}: 'spares' is \"self\" on a 'protection' static, "
+                f"the Aura or Equipment it does not remove from its host"
+            )
+        if not (model.affects or {}).get("attached"):
+            raise DslError(
+                f"{where}: 'spares': \"self\" needs affects "
+                f'{{"attached": true}} -- only the host of the static\'s '
+                f"own source can be protected from it and keep it"
+            )
 
     _validate_static_condition(model.condition, f"{where}.condition")
     if (
@@ -5478,6 +5504,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["from_colors_outside_commander_identity"] = True
     if model.from_colorless:
         static["from_colorless"] = True
+    if model.spares is not None:
+        static["spares"] = model.spares
     if model.blockers is not None:
         static["blockers"] = dict(model.blockers)
     if model.require_all:
