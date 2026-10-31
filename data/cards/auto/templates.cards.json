@@ -109851,6 +109851,87 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "one_per_player": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, for each player, put a +1/+1 counter on up to one target creature that player controls.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "affects": {
+            "controller": "any",
+            "has_counters": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "cost": {
+            "mana": "{X}"
+          },
+          "effect": "attack_tax",
+          "kind": "static",
+          "or_planeswalkers": true,
+          "text": "Each creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.",
+          "x_per_attacker": {
+            "counters": "any"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "nils_discipline_enforcer",
+      "mana_cost": "{2}{W}",
+      "name": "Nils, Discipline Enforcer",
+      "oracle_text": "At the beginning of your end step, for each player, put a +1/+1 counter on up to one target creature that player controls.\nEach creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

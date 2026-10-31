@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**114 cards** blocked by **101** capabilities.
+**113 cards** blocked by **100** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,7 +33,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [attack-tax-per-attacker-value](#attack-tax-per-attacker-value) | 1 | 3987 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -525,20 +524,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## attack-tax-per-attacker-value
-
-Blocks **1** card.
-
-- **(static_effect)** an attack_tax whose generic price is a value read off each attacking creature at declaration -- here {X} where X is the total number of counters (of any kind) on that creature -- so a creature with three counters pays {3} to attack you or a planeswalker you control
-  <br>Why the existing vocabulary won't do: The attack_tax static (affects: {has_counters: true}, or_planeswalkers: true) takes a 'cost' that the loader requires to be a fixed mana string, and player_statics.attack_tax sums those strings via _summed_mana with no access to the attacker; there is no static_value_keys hook (counters_on bound to the attacking creature) that could size the tax per creature. A fixed {1} or {2} would be a different card, and cant_attack would be a lock rather than a tax.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nils, Discipline Enforcer** (rank 3987) — `nils_discipline_enforcer`
-  - Each creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.
 
 </details>
 

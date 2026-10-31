@@ -187112,12 +187112,12 @@
     },
     "Nils, Discipline Enforcer": {
       "edhrec_rank": 3987,
-      "gate": "template",
+      "gate": null,
       "name": "Nils, Discipline Enforcer",
-      "reason": "no template for: At the beginning of your end step, for each player, put a +1/+1 counter on up to one targe",
+      "reason": "",
       "scryfall_id": "c34cff04-01b0-4849-85bf-9e0b034be0e6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nim Abomination": {
