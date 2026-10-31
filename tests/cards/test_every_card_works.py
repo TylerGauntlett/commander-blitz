@@ -1163,6 +1163,8 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         # was only unaimed. Tapped only when the spec asks, like the flag above.
         if spec.selector.get("tapped"):
             obj.tapped = True
+        if match.is_token:
+            obj.is_token = True
         game.state.battlefield.append(obj.oid)
     game.state.bump_chars()
 
@@ -1238,10 +1240,14 @@ def _target_fodder(registry, spec):
     types = {str(t) for t in selector.get("types") or either[:1] or ["Creature"]}
     subtypes = {str(s) for s in selector.get("subtypes") or []}
     forbidden = {str(s) for s in selector.get("not_supertypes") or []}
+    # Deekah, Fractal Theorist -- "{3}{U}: Target **creature token** can't be
+    # blocked this turn." The fodder is a card from hand by default, which a
+    # token-only spec can never point at; read only when the spec asks for it.
+    wants_token = selector.get("is_token") is True
 
     def eligible(card) -> bool:
         return (
-            not card.is_token
+            card.is_token == wants_token
             and types <= set(card.types)
             and (not subtypes or subtypes & set(card.subtypes))
             and not (forbidden & set(card.supertypes))
