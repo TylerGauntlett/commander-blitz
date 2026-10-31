@@ -951,6 +951,10 @@
     "artist": "Titus Lunter",
     "scryfall_id": "c11f10dc-0636-4a48-8294-11c0c84480fa"
   },
+  "azorius_ploy": {
+    "artist": "Michael Sutfin",
+    "scryfall_id": "763f2c68-77a9-43e9-8f9b-2f318afcd686"
+  },
   "azorius_signet": {
     "artist": "Raoul Vitale",
     "scryfall_id": "af690536-b0bc-4d85-8bb8-f6856b9f927b"
@@ -2467,6 +2471,10 @@
     "artist": "Ryan Alexander Lee",
     "scryfall_id": "499c1196-0b20-46d4-9494-6d98be659019"
   },
+  "commencement_of_festivities": {
+    "artist": "Zack Stella",
+    "scryfall_id": "473ca339-3ac9-4190-9ec7-65504857244e"
+  },
   "commercial_district": {
     "artist": "Sergey Glushakov",
     "scryfall_id": "3a9889ab-3527-414e-9c30-539f0608bd2b"
@@ -3107,6 +3115,10 @@
     "artist": "Daneen Wilkerson",
     "scryfall_id": "91493530-bc0a-4ed1-8a4a-9a732fcb3752"
   },
+  "defend_the_hearth": {
+    "artist": "Raymond Swanland",
+    "scryfall_id": "c3e4c4c3-db3c-49d4-8080-1c93470f8b4d"
+  },
   "defense_force_aggressor": {
     "artist": "Josu Hernaiz",
     "scryfall_id": "67380a35-1a15-4c45-8a24-3c6077af85db"
@@ -3590,6 +3602,10 @@
   "druid_of_the_cowl": {
     "artist": "Magali Villeneuve",
     "scryfall_id": "db2d0ee9-865c-4fc9-8cb6-540c597e1bf4"
+  },
+  "druid_s_deliverance": {
+    "artist": "Rudy Siswanto",
+    "scryfall_id": "eabb6ba4-4256-401c-96eb-6e2a14c50602"
   },
   "drumbellower": {
     "artist": "Lie Setiawan",
@@ -4535,6 +4551,10 @@
   "fleetfoot_dancer": {
     "artist": "Meel Tamphanon",
     "scryfall_id": "235929c8-a2eb-4afa-a058-ef733da01b66"
+  },
+  "fleeting_flight": {
+    "artist": "Leonardo Santanna",
+    "scryfall_id": "55139100-9342-41fd-b10a-8e9932e605d4"
   },
   "flensermite": {
     "artist": "Dave Allsop",

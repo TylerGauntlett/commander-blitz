@@ -18532,12 +18532,12 @@
     },
     "Azorius Ploy": {
       "edhrec_rank": 26998,
-      "gate": "template",
+      "gate": null,
       "name": "Azorius Ploy",
-      "reason": "no template for: Prevent all combat damage target creature would deal this turn",
+      "reason": "",
       "scryfall_id": "763f2c68-77a9-43e9-8f9b-2f318afcd686",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Azorius Signet": {
@@ -50842,12 +50842,12 @@
     },
     "Commencement of Festivities": {
       "edhrec_rank": 14612,
-      "gate": "template",
+      "gate": null,
       "name": "Commencement of Festivities",
-      "reason": "no template for: Prevent all combat damage that would be dealt to players this turn",
+      "reason": "",
       "scryfall_id": "473ca339-3ac9-4190-9ec7-65504857244e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commercial District": {
@@ -65092,12 +65092,12 @@
     },
     "Defend the Hearth": {
       "edhrec_rank": 14613,
-      "gate": "template",
+      "gate": null,
       "name": "Defend the Hearth",
-      "reason": "no template for: Prevent all combat damage that would be dealt to players this turn",
+      "reason": "",
       "scryfall_id": "c3e4c4c3-db3c-49d4-8080-1c93470f8b4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Defend the Rider": {
@@ -76222,12 +76222,12 @@
     },
     "Druid's Deliverance": {
       "edhrec_rank": 4065,
-      "gate": "template",
+      "gate": null,
       "name": "Druid's Deliverance",
-      "reason": "no template for: Prevent all combat damage that would be dealt to you this turn. Populate",
+      "reason": "",
       "scryfall_id": "eabb6ba4-4256-401c-96eb-6e2a14c50602",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Druid's Familiar": {
@@ -97832,12 +97832,12 @@
     },
     "Fleeting Flight": {
       "edhrec_rank": 8631,
-      "gate": "template",
+      "gate": null,
       "name": "Fleeting Flight",
-      "reason": "no template for: Put a +1/+1 counter on target creature. It gains flying until end of turn. Prevent all com",
+      "reason": "",
       "scryfall_id": "55139100-9342-41fd-b10a-8e9932e605d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fleeting Image": {

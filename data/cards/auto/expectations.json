@@ -1058,6 +1058,9 @@
   "aysen_abbey": {
     "zone": "battlefield"
   },
+  "azorius_ploy": {
+    "zone": "graveyard"
+  },
   "azorius_signet": {
     "zone": "battlefield"
   },
@@ -2599,6 +2602,9 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "commencement_of_festivities": {
+    "zone": "graveyard"
+  },
   "commercial_district": {
     "zone": "battlefield"
   },
@@ -3329,6 +3335,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "defend_the_hearth": {
+    "zone": "graveyard"
+  },
   "defense_force_aggressor": {
     "zone": "battlefield"
   },
@@ -3778,6 +3787,9 @@
   },
   "druid_of_the_cowl": {
     "zone": "battlefield"
+  },
+  "druid_s_deliverance": {
+    "zone": "graveyard"
   },
   "drumbellower": {
     "battlefield_count": 33,
@@ -4862,6 +4874,13 @@
   },
   "fleetfoot_dancer": {
     "zone": "battlefield"
+  },
+  "fleeting_flight": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "graveyard"
   },
   "flensermite": {
     "zone": "battlefield"
