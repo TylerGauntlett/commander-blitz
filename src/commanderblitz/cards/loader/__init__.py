@@ -3736,6 +3736,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"creatures it stops -- e.g. "
             f'{{"controller": "any", "subtypes": ["Inkling"]}}'
         )
+    if model.effect == "goaded" and model.affects is None:
+        # A missing filter matches nothing, so a filterless goad goads nobody:
+        # the Aura loads, prints "is goaded" and compels no attack. Every
+        # printed one names the creature it is attached to.
+        raise DslError(
+            f"{where}: goaded needs an 'affects' filter naming the creatures it "
+            f'goads -- e.g. {{"attached": true}} for the enchanted creature'
+        )
     if model.effect == "cant_sacrifice" and model.affects is None:
         # A missing filter matches nothing, so a filterless prohibition protects
         # nobody -- the card loads, prints "can't be sacrificed" and does not.

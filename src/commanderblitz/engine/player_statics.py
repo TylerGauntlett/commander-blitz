@@ -1476,6 +1476,46 @@ def static_attack_defenders(state: GameState, oid: int) -> list[frozenset[int]]:
     return out
 
 
+def goaders(state: GameState, oid: int) -> set[int]:
+    """Every player this creature is goaded by right now (701.38).
+
+    Two sources, one answer. The `goad` op writes a resolving spell's goad onto
+    the object (`GameObject.goaded_by`), with a clock the goader's untap step
+    reads. A ``goaded`` static -- the Impetus Auras' "Enchanted creature … is
+    goaded" -- is a continuous effect with no clock at all: it holds exactly as
+    long as the static applies to the creature, so it is read live off the
+    battlefield here and never written onto the object. Written down, it would
+    outlive the Aura leaving or moving, which is the one thing the printed
+    sentence rules out.
+
+    The goader is the **static's controller**. A creature its own controller
+    goads this way is goaded all the same: it attacks each combat if able, and
+    "a player other than you" is every player it could attack anyway. That is
+    the Impetus ruling, and why the timed op's refusal of a self-goad does not
+    apply -- here there is an author, the Aura on the battlefield.
+
+    Every reader of goad asks this, never the field alone:
+    `combat.attack_required` (the compulsion), `combat.attack_target_forbidden`
+    and the 508.1d count (the target restriction), and the ``goaded`` selector
+    and trigger-filter keys.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return set()
+    out = set(obj.goaded_by)
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "goaded":
+            continue
+        if source_obj.controller in out or not state.is_alive(source_obj.controller):
+            continue
+        # A requirement and a restriction on attacking are no layer (613), so
+        # the filter reads the creature as it now is, as `attack_compelled`'s
+        # does.
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
+            out.add(source_obj.controller)
+    return out
+
+
 def _defending_seats(state: GameState, pid: int, word: str) -> frozenset[int]:
     """The seats a static's ``defending`` word names, relative to ``pid``."""
     opponents = state.opponents(pid)

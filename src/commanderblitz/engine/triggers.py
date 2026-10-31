@@ -44,7 +44,7 @@ from .enums import Keyword, Zone
 from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
-from .player_statics import commander_subtypes, players_doubling_land_triggers
+from .player_statics import commander_subtypes, goaders, players_doubling_land_triggers
 from .state import MAX_TRIGGERS_PER_STEP
 from .structs import DelayedTrigger, TriggerInstance
 
@@ -2188,7 +2188,8 @@ def matches_card_filter(
     # anyone (701.38): the printed word names no goader. The creatures are
     # usually an opponent's, which is why the trigger beside this filter says
     # `controller: "any"` -- the schema's default `"you"` would refuse them.
-    if "goaded" in filt and bool(obj.goaded_by) != bool(filt["goaded"]):
+    # `goaders` reads the goad op's mark and the `goaded` static alike.
+    if "goaded" in filt and bool(goaders(state, oid)) != bool(filt["goaded"]):
         return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the

@@ -829,6 +829,8 @@ STATICS: dict[str, Entry] = {
     "free_cast_permission": ("The player may cast matching spells without paying their mana cost.",
                              "`free_cast_permission` — Dracogenesis' standing free cast"),
     "freeze_opponent_lands": ("The player's lands don't untap during their untap step.", None),
+    "goaded": ("Matching creatures are goaded by the static's controller while it applies.",
+               "Goaded for as long as a static applies"),
     "grant_ability": ("Matching permanents have one of the card's `grantable_abilities`.",
                       "`grant_ability` as a static, and where the line now runs"),
     "grant_keyword": ("Matching permanents have keywords.", None),

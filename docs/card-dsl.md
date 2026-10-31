@@ -5151,6 +5151,7 @@ Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`replace_draw`](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](card-dsl-cookbook.md#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
+[`goaded`](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) ·
 [`attack_tax`](#pricing-an-attack-rather-than-forbidding-it) ·
 [`block_tax`](#pricing-a-block-rather-than-forbidding-it) ·
 `extra_land_drops`, plus the player-wide ones in

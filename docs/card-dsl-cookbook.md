@@ -4494,6 +4494,38 @@ otherwise become impossible:
   party controls — is legally attackable, which is why a goad can never empty the
   defender list and never makes a creature unable to attack.
 
+### Goaded for as long as a static applies
+
+    Coercive Impetus — "Enchant creature / Enchanted creature gets +1/+1 and is
+                        goaded."
+
+```jsonc
+{ "kind": "static", "effect": "buff", "power": 1, "toughness": 1,
+  "affects": { "attached": true } },
+{ "kind": "static", "effect": "goaded", "affects": { "attached": true } }
+```
+
+The `goaded` static is goad (701.38a) as a continuous effect: every creature its
+`affects` matches is goaded by the **static's controller** for exactly as long
+as the static applies. It is never written onto the creature;
+`player_statics.goaders` reads it live off the battlefield beside the `goad`
+op's mark in `GameObject.goaded_by`, and every reader of goad asks `goaders` —
+the compulsion in `combat.attack_required`, the target restriction in
+`combat.attack_target_forbidden` and 508.1d's count, and the `goaded` selector
+and trigger-filter key. So the goad ends the moment the Aura leaves, moves with
+it when it moves, and is untouched by the goader's untap step. The loader
+refuses one without `affects`, which would goad nobody.
+
+A creature its own controller enchants is goaded too: it attacks each combat if
+able, and "a player other than you" is every player it could attack anyway. The
+timed op refuses that self-goad as vacuous; the static does not, because the
+compulsion is real and printed on a permanent.
+
+| Near miss | Why not |
+|---|---|
+| the `goad` op on an enters trigger | a mark with a clock: it ends at the goader's untap step (or never, with `"permanent"`), and in either case not when the Aura leaves or moves |
+| `attacks_if_able` + `cant_attack_you` | `cant_attack_you` forbids attacking the goader outright, where goad only steers away "if able" — in a two-player game a goaded creature must still attack you — and neither names a goader for the `goaded` filter |
+
 ### "Goaded creatures" — `goaded`
 
     Puppet Master, String Puller — "Whenever you attack, goad target creature an
@@ -4519,8 +4551,8 @@ otherwise become impossible:
                  "duration": "this_turn" } ] }
 ```
 
-`goaded` is a selector and trigger-filter key that reads `GameObject.goaded_by`:
-`true` matches a creature somebody has goaded right now, `false` one nobody
+`goaded` is a selector and trigger-filter key that reads `player_statics.goaders`
+(a resolved goad's mark or a `goaded` static): `true` matches a creature somebody has goaded right now, `false` one nobody
 has. **Anybody's** goad counts, because the printed word names no goader — a
 creature another player goaded is as much a goaded creature as one you goaded.
 It is a boolean only; the loader refuses a word such as `"you"`, which `bool()`

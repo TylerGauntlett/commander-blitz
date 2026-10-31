@@ -20,7 +20,7 @@ from ..characteristics import _base_pt, chars, creature_types_of, resolve_chosen
 from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
-from ..player_statics import commander_subtypes
+from ..player_statics import commander_subtypes, goaders
 from ..structs import CONVOKED_BINDING
 from .context import EffectContext, ask_objects
 
@@ -1095,10 +1095,10 @@ def matches(
         is_blocked = bool(combat and any(v == oid for v in combat.blockers.values()))
         if is_blocked != bool(selector["blocked"]):
             return False
-    # "…goaded creatures…" (701.38): goaded by anyone, read off the live
-    # object. `reset_permanent_state` clears the marks when it leaves the
-    # battlefield, so a card elsewhere is never goaded.
-    if "goaded" in selector and bool(obj.goaded_by) != bool(selector["goaded"]):
+    # "…goaded creatures…" (701.38): goaded by anyone, by a resolved goad's
+    # mark or a `goaded` static, both read by `goaders`. Only a permanent is
+    # ever goaded, so a card elsewhere never is.
+    if "goaded" in selector and bool(goaders(state, oid)) != bool(selector["goaded"]):
         return False
     if (blocking := selector.get("blocking")) is not None:
         if isinstance(blocking, Mapping) and "binding" in blocking:

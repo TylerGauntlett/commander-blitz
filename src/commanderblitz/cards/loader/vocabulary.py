@@ -475,6 +475,14 @@ STATIC_EFFECTS = frozenset(
         # printed "attacks each combat if able" is true again every turn, where
         # the op writes a one-shot flag that is spent on declaration.
         "attacks_if_able",
+        # Coercive Impetus and the Impetus cycle: "Enchanted creature … is
+        # goaded." Goad held as a continuous effect (701.38), read by
+        # `player_statics.goaders` beside the `goad` op's mark. Neither
+        # near miss will do: the op's mark has a clock and would outlive the
+        # Aura, and `attacks_if_able` plus `cant_attack_you` forbids attacking
+        # the goader outright where goad only steers away "if able", and names
+        # no goader for the `goaded` filter.
+        "goaded",
         # Propaganda, and the pillowfort family behind it. Parameterised on a
         # `cost` like `ward`, and for the same reason it cannot be a keyword.
         # Read by `characteristics.attack_tax` at declare-attackers, where it
