@@ -6894,6 +6894,14 @@
     },
     "zone": "battlefield"
   },
+  "intermediate_chirography": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "inkling_2_1_wb_flying"
+    },
+    "zone": "battlefield"
+  },
   "into_the_flood_maw": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 6,

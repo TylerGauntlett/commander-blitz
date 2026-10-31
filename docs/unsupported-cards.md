@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**115 cards** blocked by **102** capabilities.
+**114 cards** blocked by **101** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -78,7 +78,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
-| [modified-creature-died-this-turn](#modified-creature-died-this-turn) | 1 | 18700 | value |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -1175,20 +1174,6 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
-
-</details>
-
-## modified-creature-died-this-turn
-
-Blocks **1** card.
-
-- **(value)** a turn-ledger value or condition counting creatures that died this turn under a given player's control, filtered by their last-known state -- here 'modified' (had counters, an attached Equipment, or an Aura its controller controlled) at the moment it died -- usable as an end_step trigger's intervening-if condition
-  <br>Why the existing vocabulary won't do: `creatures_died_this_turn` takes only a player spec and counts every creature death with no filter; the `modified` selector key reads live permanents on the battlefield, not dead ones; writing an unprinted `dies` trigger that sets a turn flag would be an approximation the brief forbids (and it would miss deaths before the Class reached level 3 -- which the printed ledger condition counts)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Intermediate Chirography** (rank 18700) — `intermediate_chirography`
-  - At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying.
 
 </details>
 

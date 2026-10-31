@@ -138122,12 +138122,12 @@
     },
     "Intermediate Chirography": {
       "edhrec_rank": 18700,
-      "gate": "template",
+      "gate": null,
       "name": "Intermediate Chirography",
-      "reason": "no template for: When this Class enters, create a 2/1 white and black Inkling creature token with flying",
+      "reason": "",
       "scryfall_id": "d60c64aa-57a9-4082-82f4-af0d89c1a52d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Interplanar Beacon": {
