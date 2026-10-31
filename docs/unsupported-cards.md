@@ -10,16 +10,18 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**111 cards** blocked by **98** capabilities.
+**132 cards** blocked by **119** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
+| [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
@@ -28,17 +30,21 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
+| [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
@@ -49,15 +55,21 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
+| [distribute-moved-counters](#distribute-moved-counters) | 1 | 387 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
+| [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
+| [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -72,21 +84,29 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
+| [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
+| [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
+| [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
+| [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
+| [prime-number](#prime-number) | 1 | 11527 | value |
+| [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
+| [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
+| [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
@@ -111,7 +131,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [x-maximum](#x-maximum) | 1 | 17407 | engine |
+| [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
+| [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
 ## combat-only-permanent-shield
 
@@ -227,6 +248,38 @@ Blocks **8** cards.
 
 </details>
 
+## x-in-mana-cost-trigger-filter
+
+Blocks **5** cards.
+
+- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for "your first spell with {X} in its mana cost each turn"
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only in selector_keys / mana restrictions; the trigger matcher (triggers.py filter check) does not read it, so writing it in a trigger filter would load and fire on every spell
+- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for "your first spell with {X} in its mana cost each turn"
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` is a selector key only; `validate_trigger_filter` refuses it because TRIGGER_FILTER_KEYS does not include it and the trigger matcher never reads it
+- **(trigger_event)** a spell_cast trigger filter key `x_in_mana_cost` (printed {X} in the spell's mana cost) that is also counted by the `nth` ordinal, so `nth: 1` with `filter: {x_in_mana_cost: true}` means "your first spell with {X} in its mana cost each turn" rather than "your first spell, if it has {X}"
+  <br>Why the existing vocabulary won't do: x_in_mana_cost exists only as a selector key (selectors.py) and a mana-restriction predicate; it is not in the packet's trigger_filter_keys, and `nth` on spell_cast counts earlier spells only through ORDINAL_FILTER_KEYS (triggers._spell_ordinal / _matches_printed), which omits it. The trigger filter's `mana_cost` key matches an exact printed cost string, not the presence of {X}. Without a filtered ordinal, an unfiltered nth:1 would miss an X spell cast after a non-X spell, and max_per_turn cannot help because the trigger filter cannot name {X} in the first place
+- **(selector)** a trigger filter for spell_cast meaning 'its mana cost contains {X}', and for ability_activated meaning 'the activated ability's activation cost contains {X}', so one trigger can fire on either and copy_spell / copy_ability the cause
+  <br>Why the existing vocabulary won't do: The `mana_cost` filter key is an equality test against whole printed costs (has_printed_cost/printed_cost_is), not a contains-{X} test, and ability_activated has no filter on the ability's activation cost at all
+- **(selector)** a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher and counted by the `nth` ordinal so `nth: 1` with `filter: {x_in_mana_cost: true}` means "your first spell with {X} in its mana cost each turn"
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (printed_cost_is), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only as a selector key and a mana_restriction predicate; the trigger matcher and the spell_cast ordinal never read it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unbound Flourishing** (rank 2672) — `unbound_flourishing`
+  - Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.
+  - Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.
+- **Zimone, Infinite Analyst** (rank 8360) — `zimone_infinite_analyst`
+  - The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.
+  - Whenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone.
+- **Owlin Spiralmancer** (rank 8974) — `owlin_spiralmancer`
+  - Whenever you cast your first spell with {X} in its mana cost each turn, you may copy it. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)
+- **Nev, the Practical Dean** (rank 9566) — `nev_the_practical_dean`
+  - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
+- **Lattice Library** (rank 10607) — `lattice_library`
+  - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
+
+</details>
+
 ## copy-exception-ability
 
 Blocks **3** cards.
@@ -302,6 +355,24 @@ Blocks **2** cards.
 - **Delirium** (rank 12129) — `delirium`
   - Cast this spell only during an opponent's turn.
   - Tap target creature that player controls. That creature deals damage equal to its power to the player.
+
+</details>
+
+## cast-trigger-x
+
+Blocks **2** cards.
+
+- **(engine)** a cast trigger (`spell_cast`, `source: self`, `active_zones: ["stack"]`) whose effects read the X the spell was cast with through `{"x": true}` -- i.e. the SPELL_CAST event fired by `Game._cast` must carry `x=item.x` so `triggers.event_bindings` (which lists `x` in EVENT_BINDING_KEYS) overrides the permanent's `cast_x` the way the CYCLED event does for Shark Typhoon
+  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the trigger's `x` binding, which `event_bindings` takes from `obj.cast_x`; `cast_x` is written only in `stack.resolve` when the spell resolves, and the SPELL_CAST payload has no `x`, so the cast trigger would read 0 and gain/draw nothing. The only other route, `half` of (`mana_value_of` self minus 2), reads the mana value rather than X and would be a stand-in, not the printed referent
+- **(value)** a value reading the X chosen for the triggering spell (the spell bound as `subject` on a spell_cast trigger), e.g. the SPELL_CAST event payload carrying `x` so `event_bindings` overrides the source's `cast_x` and `{"x": true}` means the cast spell's X
+  <br>Why the existing vocabulary won't do: `{"x": true}` in a triggered ability reads the `x` binding, which `triggers.event_bindings` takes from the trigger source's own `cast_x` (Nev's, 0); the SPELL_CAST payload carries no `x` (only the cycle event does via EVENT_BINDING_KEYS), and `mana_value_of` the subject reads mana value, not X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hydroid Krasis** (rank 1521) — `hydroid_krasis`
+  - When you cast this spell, you gain half X life and draw half X cards. Round down each time.
+- **Nev, the Practical Dean** (rank 9566) — `nev_the_practical_dean`
+  - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 
 </details>
 
@@ -454,6 +525,26 @@ Blocks **2** cards.
 
 </details>
 
+## x-maximum
+
+Blocks **2** cards.
+
+- **(engine)** a card-level cap on the chosen value of X, read at cast time from a value (here {"player_count": ...}, the number of players in the game), so the cast offers no X above it
+  <br>Why the existing vocabulary won't do: No card_level_cost_key or card_level_rider_key bounds X; the engine's ask_x has only a min_x floor (from cast_lock_min_x) and max_x is merely what is affordable, so X would be unbounded and the spell would put arbitrarily many lands onto the battlefield, strictly better than printed. The second sentence is expressible with reveal_until (amount x, selector Land, destination battlefield, tapped, rest_to_bottom)
+- **(engine)** a card-level cap on the chosen value of X, read at cast time from a value (here {"count": {"zone": "battlefield", "controller": "you", "types": ["Land"], "supertypes": ["Snow"]}}), so the cast offers no X above it
+  <br>Why the existing vocabulary won't do: No card_level_cost_key or rider key bounds X; x_value is an activated-ability cost key and cost_reduction only discounts, so X is unbounded and the spell would be strictly better than printed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Open the Way** (rank 1665) — `open_the_way`
+  - X can't be greater than the number of players in the game.
+- **Winter's Chill** (rank 17407) — `winter_s_chill`
+  - Cast this spell only during combat before blockers are declared.
+  - X can't be greater than the number of snow lands you control.
+  - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -525,6 +616,20 @@ Blocks **1** card.
 
 </details>
 
+## base-power-trigger-filter
+
+Blocks **1** card.
+
+- **(selector)** a trigger filter key 'base_power' on creatures_deal_combat_damage matching creatures whose base (printed/copiable, pre-counters/buffs) power is 0
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `power` (current power) but not `base_power`; base_power appears only in selector_keys, and a creature with base power 0 and +1/+1 counters has nonzero current power, which is exactly the case this card cares about.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
+  - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
+
+</details>
+
 ## basic-land-type-mana
 
 Blocks **1** card.
@@ -536,6 +641,21 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
+
+</details>
+
+## block-restriction-relative-power
+
+Blocks **1** card.
+
+- **(static_effect)** a block_restriction whose `blockers` filter compares the blocker's power against the SOURCE creature's current (derived) power -- "creatures with power less than this creature's power can't block it" -- e.g. a power clause whose value is the source's power rather than a printed integer
+  <br>Why the existing vocabulary won't do: block_restriction's `blockers` filter is read by matches_static, whose `power` clause goes through characteristics.compare_pt, which takes only a plain integer `value` (the loader enforces it); there is no way to say 'less than the source's power', and the source's power changes with prowess so no constant is correct
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
+  - Creatures with power less than this creature's power can't block it.
+  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
 
 </details>
 
@@ -609,6 +729,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## combat-damage-amount-binding
+
+Blocks **1** card.
+
+- **(value)** a value on a batched creatures_deal_combat_damage trigger that is the total combat damage the matching (filtered) damagers dealt to the player(s) in that batch -- 'equal to the damage dealt' -- so add_counters on the created token can read it
+  <br>Why the existing vocabulary won't do: The CREATURES_DEALT_COMBAT_DAMAGE event fired by combat._fire_damage_batch carries damagers, damaged, damaged_battles and hits (oid lists only), no damage amounts, so the `amount`/`damage` bindings are absent; value_keys has damage_taken_this_turn/max_damage_taken_this_turn (per-player turn totals, not this batch from these creatures). Per-creature deals_combat_damage_to_player binds amount but fires once per creature, which is not 'one or more ... create a token' (one token for the batch).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
+  - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
 
 </details>
 
@@ -755,6 +889,35 @@ Blocks **1** card.
 
 </details>
 
+## distribute-counters-spell
+
+Blocks **1** card.
+
+- **(op)** the Adventure half Grove's Bounty ({X}{G} Sorcery -- Adventure): distribute X +1/+1 counters among any number of target creatures you control, on a SPELL with X as the amount; the packet also carries neither a back_face nor the adventure text in oracle_text, so the second_face entry cannot be authored from the packet
+  <br>Why the existing vocabulary won't do: distribute_counters exists but the packet's notes restrict it to activated abilities with a printed amount ('Not available on spells or triggered abilities'), so an X-sized distribution among any number of targets on a sorcery has no expression
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
+  - Creatures with power less than this creature's power can't block it.
+  - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
+
+</details>
+
+## distribute-moved-counters
+
+Blocks **1** card.
+
+- **(op)** a move_counters mode that, at resolution, lets the controller choose how many of the source's +1/+1 counters to move (0 up to the number on it) and divide them as they choose among any number of other creatures (untargeted, any controller), removing them from the source and putting each creature's share on it in a single placement event per creature
+  <br>Why the existing vocabulary won't do: move_counters puts the same `amount` on every chosen destination (and removes that amount once per source), so it cannot split N counters unevenly across several creatures; distribute_counters only adds (removes nothing from the source) and requires a division announced at activation on targets, which a resolving untargeted upkeep trigger never announces. A `may` with `repeat: true` around a one-counter move to one chosen creature reaches the same final split but moves counters one event at a time, so Hardened Scales-style replacements and 'whenever counters are put' triggers apply once per counter instead of once per creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Forgotten Ancient** (rank 387) — `forgotten_ancient`
+  - At the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures.
+
+</details>
+
 ## divided-damage-any-target
 
 Blocks **1** card.
@@ -766,6 +929,21 @@ Blocks **1** card.
 
 - **Magma Opus** (rank 5125) — `magma_opus`
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
+
+</details>
+
+## double-x
+
+Blocks **1** card.
+
+- **(op)** an op run by a spell_cast trigger that rewrites the announced X of the triggering spell on the stack (here X := 2X), so the permanent resolves with the doubled X for every 'X' it reads (counters, ETB values)
+  <br>Why the existing vocabulary won't do: No op touches a stack object's chosen X; the `x` value only reads it, and `cost.x_value` fixes X at announcement for the card's own cost, not another spell's
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unbound Flourishing** (rank 2672) — `unbound_flourishing`
+  - Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.
+  - Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.
 
 </details>
 
@@ -808,6 +986,20 @@ Blocks **1** card.
 
 - **Elvish Promenade** (rank 3100) — `elvish_promenade`
   - Create a 1/1 green Elf Warrior creature token for each Elf you control.
+
+</details>
+
+## enters-as-copy-x-counters
+
+Blocks **1** card.
+
+- **(engine)** the `self_enters_as_copy` replacement's `except_.enters_with` entries must evaluate their `amount` with the X announced when the permanent was cast (obj.cast_x), so `{"amount": {"x": true}, "counter": "+1/+1"}` puts X counters on the copy as it enters
+  <br>Why the existing vocabulary won't do: `self_enters_as_copy` with `except_.enters_with` exists (Spark Double), but `move_object` in engine/zones.py evaluates each entry with an EffectContext built without `x=obj.cast_x`, so `{"x": true}` silently evaluates to 0 and the copy enters with no counters. The separate `self_enters_with_counters` replacement does read cast_x, but it applies whether or not a copy is chosen, so a non-copied Altered Ego would survive as a 0/0 with X counters -- a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Altered Ego** (rank 4125) — `altered_ego`
+  - You may have this creature enter as a copy of any creature on the battlefield, except it enters with X additional +1/+1 counters on it.
 
 </details>
 
@@ -855,6 +1047,20 @@ Blocks **1** card.
 
 </details>
 
+## exiled-this-way-lki
+
+Blocks **1** card.
+
+- **(value)** A last-known-information record for a group of objects an op moved off the battlefield: the exile op's `as` binding should capture, per exiled object, its power and its controller as it last existed on the battlefield (counters, buffs and control changes included, tokens included even though they cease to exist), and a value leaf should sum that recorded power filtered by recorded controller -- e.g. {"power_had": {"binding": "exiled", "controller": {"binding": "each_player"}}} inside a `for_each_player` -- so each player's Fractal gets counters equal to the total power of the creatures THEY controlled that were exiled.
+  <br>Why the existing vocabulary won't do: exile's `as` binding stores bare oids, so `power_of {"objects": {"binding": "exiled", ...}}` reads chars() of the cards in exile: printed power (+1/+1 counters and pump effects gone), controller reset to owner (a stolen creature counts for the wrong player), and exiled tokens vanish and read 0. `snapshot` captures only one object (oids[0]) and `power_had` reads only a dies/leave trigger's single had_power binding. Creating the tokens first and reading power on the battlefield before exiling everything else changes the sequence (tokens enter while the creatures are still there) and is an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oversimplify** (rank 6960) — `oversimplify`
+  - Exile all creatures. Each player creates a 0/0 green and blue Fractal creature token and puts a number of +1/+1 counters on it equal to the total power of creatures they controlled that were exiled this way.
+
+</details>
+
 ## extra-turn
 
 Blocks **1** card.
@@ -881,6 +1087,21 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
+
+</details>
+
+## first-x-spell-cost-reduction
+
+Blocks **1** card.
+
+- **(static_effect)** a spell_cost_reduction whose affects_spells can match a spell with {X} in its printed mana cost (`x_in_mana_cost: true`) and that applies only to the first such spell its controller casts each turn, with amount {counters_on: self, kind +1/+1}
+  <br>Why the existing vocabulary won't do: cost_reduction_filter_keys has no x_in_mana_cost (only the exact-cost `mana_cost`), and spell_cost_reduction (player_statics.spell_cost_reduction) carries no per-turn 'first spell' limit; a static `condition` cmp on spells_cast_this_turn with a filter could gate it, but that filter goes through _matches_printed, which also cannot say 'contains {X}'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone, Infinite Analyst** (rank 8360) — `zimone_infinite_analyst`
+  - The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.
+  - Whenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone.
 
 </details>
 
@@ -1089,6 +1310,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-spent-enters-with-counters
+
+Blocks **1** card.
+
+- **(replacement)** a mana-ability rider (beside mana_grant / mana_spent_trigger) that, when this ability's mana is spent on a spell matching a filter (here is_commander), stages on that spell an 'enters with N additional +1/+1 counters' replacement for the permanent it becomes, with N a value read at spend time (command_zone_casts_of the spell, i.e. commander_casts_this_game for that commander)
+  <br>Why the existing vocabulary won't do: mana_grant carries only keywords to the resulting permanent, never counters; mana_spent_trigger is a triggered ability that resolves while the spell is still on the stack, so an add_counters on its subject would put counters on the spell, not make the permanent enter with them; enters_with_additional_counters / self_enters_with_counters are standing replacements on the entering card itself, not one-shots handed to a spell by the mana that paid for it. The add_mana half (in_commander_identity) and the count (command_zone_casts_of) both exist
+
+<details><summary>Cards waiting on this</summary>
+
+- **Opal Palace** (rank 653) — `opal_palace`
+  - {1}, {T}: Add one mana of any color in your commander's color identity. If you spend this mana to cast your commander, it enters with a number of additional +1/+1 counters on it equal to the number of times it's been cast from the command zone this game.
+
+</details>
+
 ## mana-spent-trigger-on-activation
 
 Blocks **1** card.
@@ -1128,6 +1363,20 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
+
+</details>
+
+## modal-variable-targets
+
+Blocks **1** card.
+
+- **(engine)** a target spec owned by one mode of a choose_mode spell whose count is caster-chosen ("up to three target cards", count 3 with up_to: true), so the stored target refs for that mode can be of variable length (0-3) while the other chosen modes' refs are still located correctly
+  <br>Why the existing vocabulary won't do: Targets carry `mode` and `up_to`, and the sibling-target clause `owner: {"target": "shuffler"}` with put_on_top + shuffle expresses the effect, but the loader (cards/loader/targets.py) refuses `variable_size` on a mode-owned target: `filter_legal` splits the stored refs by position per mode and a caster-chosen size leaves no way to say where the next mode's refs begin. Declaring the target at card level without `mode` would force the targets even when the mode is not chosen, and a fixed count of 3 would make the mode illegal with fewer than three cards and forbid choosing fewer.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Quandrix Command** (rank 4339) — `quandrix_command`
+  - • Target player shuffles up to three target cards from their graveyard into their library.
 
 </details>
 
@@ -1206,6 +1455,20 @@ Blocks **1** card.
 
 </details>
 
+## odd-or-even
+
+Blocks **1** card.
+
+- **(selector)** a selector comparison on a creature's live power (and, for sibling cards, mana value) that matches by parity -- e.g. power: {"parity": "odd"|"even"} with zero even, or {"parity": {"binding": "chosen"}} reading a resolution-time 'choose odd or even' decision
+  <br>Why the existing vocabulary won't do: The selector `power` key goes through selectors._compare, which only knows >=, <=, >, <, ==, != against a value; parity exists only for die rolls (`rolled` with `parity` in values.py). A choose_mode with an any_of list of power == 0, 2, 4 ... would be a finite approximation of an unbounded set.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone's Hypothesis** (rank 8504) — `zimone_s_hypothesis`
+  - Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)
+
+</details>
+
 ## omen
 
 Blocks **1** card.
@@ -1252,6 +1515,20 @@ Blocks **1** card.
 
 </details>
 
+## player-mana-ability-until-end-of-turn
+
+Blocks **1** card.
+
+- **(op)** a spell effect (the prepared face Channel) that gives its controller, until end of turn, a special action/mana ability owned by the player rather than a permanent: 'pay 1 life: add {C}', usable any time they could activate a mana ability, repeatable any number of times
+  <br>Why the existing vocabulary won't do: grant_ability only gives abilities to objects (selected permanents), so it cannot hand a mana ability to a player; emblems may not carry activated abilities (nothing offers activation from the command zone) and would be permanent rather than until end of turn; no static in static_effects grants a player a life-for-mana ability (add_mana_on_tap and double_*_mana only modify existing taps). The front face (end_step trigger, add_counters on a target, if power >= 7 then become_prepared with prepared_face) is expressible, but the prepared face must also be authored, so the card is blocked on the back.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yavimaya Bloomsage // Channel** (rank 12705) — `yavimaya_bloomsage_channel`
+  - Until end of turn, any time you could activate a mana ability, you may pay 1 life. If you do, add {C}.
+
+</details>
+
 ## players-dealt-combat-damage-by-subtype
 
 Blocks **1** card.
@@ -1294,6 +1571,48 @@ Blocks **1** card.
 
 </details>
 
+## prime-number
+
+Blocks **1** card.
+
+- **(value)** a condition that a value (here lands_you_control) is a prime number, true for every prime and not only those listed in the reminder text
+  <br>Why the existing vocabulary won't do: condition_keys offer cmp against a constant and any/all combinators; an any-of cmp == 2,3,5,...,31 would be false at 37, 41, ... lands, so it approximates the rule rather than stating it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone, All-Questioning** (rank 11527) — `zimone_all_questioning`
+  - At the beginning of your end step, if a land entered the battlefield under your control this turn and you control a prime number of lands, create Primo, the Indivisible, a legendary 0/0 green and blue Fractal creature token, then put that many +1/+1 counters on it.
+
+</details>
+
+## primo-the-indivisible
+
+Blocks **1** card.
+
+- **(token)** Primo, the Indivisible: a legendary 0/0 green and blue Fractal creature token with that name
+  <br>Why the existing vocabulary won't do: fractal_0_0_gu exists in the token pool but is neither named Primo, the Indivisible nor legendary, so the legend rule would not apply to it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zimone, All-Questioning** (rank 11527) — `zimone_all_questioning`
+  - At the beginning of your end step, if a land entered the battlefield under your control this turn and you control a prime number of lands, create Primo, the Indivisible, a legendary 0/0 green and blue Fractal creature token, then put that many +1/+1 counters on it.
+
+</details>
+
+## protection-from-multicolored
+
+Blocks **1** card.
+
+- **(static_effect)** a protection quality 'multicolored' on the `protection` static (e.g. `from_multicolored: true`), matched in `characteristics._matches_protection` against a source with two or more colors (derived on the battlefield, printed elsewhere), so damage, blocking, targeting and enchant/equip from multicolored sources are stopped
+  <br>Why the existing vocabulary won't do: The `protection` static and `grant_protection` op name qualities only by from_types, from_subtypes, from_colors, from_colorless and from_everything; listing all five colors in from_colors would be protection from every colored source, not just multicolored ones, and there is no sentinel like PROTECTION_COLORLESS for 'multicolored'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Stonecoil Serpent** (rank 1516) — `stonecoil_serpent`
+  - Reach, trample, protection from multicolored
+
+</details>
+
 ## raccoon-3-3-g
 
 Blocks **1** card.
@@ -1305,6 +1624,20 @@ Blocks **1** card.
 
 - **Gourmand's Talent** (rank 5861) — `gourmand_s_talent`
   - Whenever you gain life for the first time each turn, create a 3/3 green Raccoon creature token.
+
+</details>
+
+## remove-all-counters
+
+Blocks **1** card.
+
+- **(op)** remove_counters with an every-kind option (like move_counters' `all_kinds`) that removes the whole multiset of counters from the objects, plus an `as` binding recording how many were actually removed so a following `draw` amount can read "for each counter removed this way"
+  <br>Why the existing vocabulary won't do: remove_counters takes one `counter` kind and a fixed `amount` (op_remove_counters in ops_counters.py) and binds nothing; counters_on reads a single kind, not the sum of all kinds; counters_had reads only a dies-event snapshot. move_counters already has `all_kinds`, so the first mode and the choose_mode `up_to_if` commander clause are expressible -- only the second mode blocks the card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nexus Mentality** (rank 12132) — `nexus_mentality`
+  - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
 
 </details>
 
@@ -1648,18 +1981,30 @@ Blocks **1** card.
 
 </details>
 
-## x-maximum
+## x-cost-mana-restriction
 
 Blocks **1** card.
 
-- **(engine)** a card-level cap on the chosen value of X, read at cast time from a value (here {"count": {"zone": "battlefield", "controller": "you", "types": ["Land"], "supertypes": ["Snow"]}}), so the cast offers no X above it
-  <br>Why the existing vocabulary won't do: No card_level_cost_key or rider key bounds X; x_value is an activated-ability cost key and cost_reduction only discounts, so X is unbounded and the spell would be strictly better than printed
+- **(decision)** a mana_restriction predicate for 'spend this mana only on costs that contain {X}' that, on the activate half, asks whether the cost of the specific activated ability being paid contains {X} (e.g. '{X}, {T}: ...'), not whether the source permanent's printed mana cost does; the cast half is already {"x_in_mana_cost": true}
+  <br>Why the existing vocabulary won't do: mana_restriction's x_in_mana_cost predicate is answered for activations by costs.ability_purpose off the source card's printed mana cost (card.mana_cost.x_count), and the purpose carries no reference to the ability whose cost is paid. Writing only the cast half under-permits (Palette mana could not pay an {X} activation cost, which the card allows); writing activate with x_in_mana_cost would fund any ability of a permanent printed with {X} in its mana cost, X or not, and refuse '{X},{T}' abilities on permanents without X in their mana cost
 
 <details><summary>Cards waiting on this</summary>
 
-- **Winter's Chill** (rank 17407) — `winter_s_chill`
-  - Cast this spell only during combat before blockers are declared.
-  - X can't be greater than the number of snow lands you control.
-  - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+- **Elementalist's Palette** (rank 4046) — `elementalist_s_palette`
+  - {T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}.
+
+</details>
+
+## x-dependent-spell-targets
+
+Blocks **1** card.
+
+- **(engine)** Casting a spell whose target selector reads the announced X ("target creature with mana value X") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x
+  <br>Why the existing vocabulary won't do: The selector itself is expressible (mana_value {op: '=', value: {x: true}} with gain_control on the target), but casting._cast_variant enumerates a spell's targets with x=0 and CHOOSE_X is asked only after the targets are fixed; _targets_read_x is consulted for activated abilities only. Verified: the card is unplayable in the sandbox (no creature has mana value 0), and in play it could only ever target a mana value 0 creature and then pick a mismatched X
+
+<details><summary>Cards waiting on this</summary>
+
+- **Entrancing Melody** (rank 11545) — `entrancing_melody`
+  - Gain control of target creature with mana value X.
 
 </details>

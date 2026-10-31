@@ -13593,6 +13593,10 @@
   "strider_harness": {
     "zone": "battlefield"
   },
+  "striding_shotcaller_run_the_play": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "strip_mine": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14033,6 +14037,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "tanazir_quandrix": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "tandem_lookout": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14369,6 +14377,18 @@
     "life": {
       "0": 40,
       "1": 40
+    },
+    "zone": "battlefield"
+  },
+  "the_goose_mother": {
+    "battlefield_count": 43,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "tokens": {
+      "count": 10,
+      "id": "food_token"
     },
     "zone": "battlefield"
   },
@@ -15069,6 +15089,20 @@
   },
   "tyrox_saurid_tyrant": {
     "zone": "battlefield"
+  },
+  "tyvar_s_stand": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof",
+        "indestructible"
+      ]
+    },
+    "target_pt_delta": {
+      "power": 20,
+      "toughness": 20
+    },
+    "zone": "graveyard"
   },
   "ukud_cobra": {
     "zone": "battlefield"
@@ -16625,6 +16659,10 @@
     "zone": "battlefield"
   },
   "ziatora_s_proving_ground": {
+    "zone": "battlefield"
+  },
+  "zimone_quandrix_prodigy": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "zodiac_dog": {

@@ -267202,12 +267202,12 @@
     },
     "Striding Shotcaller // Run the Play": {
       "edhrec_rank": 12664,
-      "gate": "template",
+      "gate": null,
       "name": "Striding Shotcaller // Run the Play",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, this creature b",
+      "reason": "",
       "scryfall_id": "159c2891-c1e2-4ec3-8c20-d6b97315dd1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strife Scholar // Awaken the Ages": {
@@ -274882,12 +274882,12 @@
     },
     "Tanazir Quandrix": {
       "edhrec_rank": 8535,
-      "gate": "template",
+      "gate": null,
       "name": "Tanazir Quandrix",
-      "reason": "no template for: When enters, double the number of +1/+1 counters on target creature you control",
+      "reason": "",
       "scryfall_id": "194d29be-a145-41f2-a55a-a071816b5551",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tandem Lookout": {
@@ -281022,12 +281022,12 @@
     },
     "The Goose Mother": {
       "edhrec_rank": 2913,
-      "gate": "behaviour",
+      "gate": null,
       "name": "The Goose Mother",
-      "reason": "+1/+1 counters is 20, expected 28; food_token tokens is 10, expected 14; your battlefield is 43, expected 47",
+      "reason": "",
       "scryfall_id": "a094fa16-256f-4fb1-9738-3025085d1941",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Great Aurora": {
@@ -295592,12 +295592,12 @@
     },
     "Tyvar's Stand": {
       "edhrec_rank": 740,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Tyvar's Stand",
-      "reason": "target power delta is 20, expected 29; target toughness delta is 20, expected 29",
+      "reason": "",
       "scryfall_id": "b6ab0855-782a-498c-a885-b3ab3d1bb362",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyvar, Jubilant Brawler": {
@@ -322832,12 +322832,12 @@
     },
     "Zimone, Quandrix Prodigy": {
       "edhrec_rank": 6742,
-      "gate": "template",
+      "gate": null,
       "name": "Zimone, Quandrix Prodigy",
-      "reason": "no template for: {1}, {T}: You may put a land card from your hand onto the battlefield tapped",
+      "reason": "",
       "scryfall_id": "5a9a9f44-479e-47ca-afc4-d8372a11c9b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zinnia, Valley's Voice": {
