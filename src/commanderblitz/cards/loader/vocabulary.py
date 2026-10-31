@@ -13,6 +13,7 @@ from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
 )
 from commanderblitz.engine.enums import (
+    NUMBER_CARRYING_GRANTS,
     NUMBERED_KEYWORDS,
     CardType,
     Color,
@@ -89,16 +90,35 @@ KEYWORD_ALIASES = {"umbra_armor": Keyword.TOTEM_ARMOR.value}
 UNGRANTABLE_KEYWORDS = frozenset(k.value for k in NUMBERED_KEYWORDS)
 
 
-def refuse_numbered_grant(keywords: object, where: str) -> None:
-    """Refuse a grant of a keyword whose number lives on the card (toxic).
+#: `enums.NUMBER_CARRYING_GRANTS`, as strings: the numbered keywords a
+#: `grant_keyword` static may grant, with the N in a key of the keyword's name.
+NUMBER_CARRYING_GRANT_KEYWORDS = frozenset(k.value for k in NUMBER_CARRYING_GRANTS)
+
+
+def refuse_numbered_grant(
+    keywords: object, where: str, carried: frozenset[str] = frozenset()
+) -> None:
+    """Refuse a grant of a keyword whose number lives on the card (toxic N,
+    annihilator N).
 
     Called by every spelling of "gains/has <keyword>" the loader accepts. A
     grant is a bare word, so "gains toxic 1" written as ``["toxic"]`` would make
     a creature that filters as toxic and gives no poison -- a weaker card that
     loads clean, which is the failure this pass exists to refuse.
+
+    ``carried`` names the ones this grant spelling *does* carry a number for --
+    a `grant_keyword` static's ``annihilator`` key -- which its caller has
+    already checked is present.
     """
     for k in keywords or ():
-        if k in UNGRANTABLE_KEYWORDS:
+        if k in UNGRANTABLE_KEYWORDS and k not in carried:
+            if k in NUMBER_CARRYING_GRANT_KEYWORDS:
+                raise DslError(
+                    f"{where}: {k!r} carries a number ({k} N) that this grant has "
+                    f"no place for; it is printed -- 'keywords' plus the card-level "
+                    f"{k!r} field -- or granted only by a grant_keyword static with "
+                    f"its N in an {k!r} key"
+                )
             raise DslError(
                 f"{where}: {k!r} carries a number (toxic N) that a grant has no "
                 f"place for, so it may only be printed -- 'keywords' plus the "

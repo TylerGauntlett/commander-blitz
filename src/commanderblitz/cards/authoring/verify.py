@@ -1608,19 +1608,22 @@ _GRAVEYARD_ADDITIONAL_LINE = re.compile(
     r"(?:(\w+) )?card in addition to paying its other costs"
 )
 
-_TOXIC_PART = re.compile(r"toxic (\d+)")
+def _claims_numbered_line(card: CardDef, stripped: str, word: str, n: int) -> bool:
+    """Whether a printed keyword line holding "<word> N" is exactly this card's.
 
-
-def _claims_toxic_line(card: CardDef, stripped: str) -> bool:
-    """Whether a printed keyword line holding "toxic N" is exactly this card's."""
+    ``word`` is a numbered keyword (toxic, annihilator) and ``n`` the card's own
+    field for it: the printed number must be that one, exactly once, and every
+    other part a keyword the card really has, as `lift_keywords` would demand.
+    """
+    part_re = re.compile(rf"{word} (\d+)")
     bare = re.sub(r"\s*\([^)]*\)", "", stripped).strip().rstrip(".")
     parts = [p.strip().casefold() for p in re.split(r"[,;]", bare) if p.strip()]
-    numbered = [m for p in parts if (m := _TOXIC_PART.fullmatch(p))]
-    if len(numbered) != 1 or int(numbered[0].group(1)) != card.toxic:
+    numbered = [m for p in parts if (m := part_re.fullmatch(p))]
+    if len(numbered) != 1 or int(numbered[0].group(1)) != n:
         return False
     have = {str(k) for k in card.keywords}
     for part in parts:
-        if _TOXIC_PART.fullmatch(part):
+        if part_re.fullmatch(part):
             continue
         word = normalize_keyword(part.replace(" ", "_"))
         if word not in KNOWN_KEYWORDS or word not in have:
@@ -1677,7 +1680,18 @@ def _covered(card: CardDef, line: str) -> bool:
     # `lift_keywords` cannot consume it -- "toxic_2" is no keyword -- so it is
     # claimed here, strictly: the number must be the card's `toxic`, and every
     # other part a keyword the card really has, as the lift would demand.
-    if card.toxic and "toxic" in card.keywords and _claims_toxic_line(card, stripped):
+    if card.toxic and "toxic" in card.keywords and _claims_numbered_line(
+        card, stripped, "toxic", card.toxic
+    ):
+        return True
+    # "Annihilator 2", "Flying, annihilator 1": the same claim for the same
+    # reason. Only the printed instance's line -- a granted annihilator is a
+    # sentence on the granter, claimed by its grant_keyword static's text.
+    if (
+        card.annihilator
+        and "annihilator" in card.keywords
+        and _claims_numbered_line(card, stripped, "annihilator", card.annihilator)
+    ):
         return True
 
     # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an

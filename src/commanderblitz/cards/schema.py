@@ -871,6 +871,11 @@ class AbilityModel(BaseModel):
     #: one creature" -- the most creatures that may block it. A count, judged
     #: on the declaration, so neither of the two forms above.
     max_blockers: int | None = None
+    #: ``grant_keyword``: the N of a granted annihilator -- "enchanted creature
+    #: ... has trample and **annihilator 2**" (Eldrazi Conscription). Required
+    #: when ``keywords`` names ``"annihilator"`` and refused otherwise, because
+    #: the word alone would be a keyword that annihilates nothing.
+    annihilator: int | None = None
     #: ``attack_tax``: the tax also prices an attack on a planeswalker the
     #: static's controller controls -- "creatures can't attack you **or
     #: planeswalkers you control** unless ..." (Archangel of Tithes, Sphere of
@@ -1596,6 +1601,12 @@ class CardModel(BaseModel):
     #: together: either alone is a creature that filters as toxic and poisons
     #: nobody, or poisons and is not "with toxic".
     toxic: int = 0
+    #: **Annihilator N** (702.86a): "Whenever this creature attacks, defending
+    #: player sacrifices N permanents of their choice." The N of the printed
+    #: instance, written beside ``"annihilator"`` in ``keywords`` -- toxic's
+    #: pairing, and the loader requires the two together for toxic's reason. The
+    #: trigger is the rules', so the card writes no ability for it.
+    annihilator: int = 0
     #: **Madness** (702.35a): "If you would discard this card, exile it instead.
     #: Then you may cast it for its madness cost." The exile happens whether or
     #: not the cast is taken.

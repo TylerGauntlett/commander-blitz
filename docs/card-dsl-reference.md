@@ -23,7 +23,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 32 |
-| [Keywords](#keywords) | 43 |
+| [Keywords](#keywords) | 44 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
@@ -35,7 +35,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Mana rider ops](#mana-rider-ops) | 6 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
 | [Card-level face keys](#card-level-face-keys) | 6 |
-| [Card-level rider keys](#card-level-rider-keys) | 16 |
+| [Card-level rider keys](#card-level-rider-keys) | 17 |
 | [Engine events](#engine-events) | 77 |
 
 ## Effect ops
@@ -791,6 +791,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 
 | Name | Description | Defined in |
 |---|---|---|
+| `annihilator` | Annihilator; N is the card-level `annihilator` field, or a `grant_keyword` static's `annihilator` key. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
 | `banding` | Banding. | [Banding](card-dsl-cookbook.md#banding) |
 | `choose_a_background` | Choose a Background (inert; deck-building only). | [The inert keywords — partner, and choose a Background](card-dsl-cookbook.md#the-inert-keywords--partner-and-choose-a-background) |
 | `compleated` | Compleated. | [compleated — the keyword](card-dsl-cookbook.md#compleated--the-keyword) |
@@ -1055,6 +1056,7 @@ Things a card says about itself that are neither a price nor a second face. Defi
 | `melds_into` | The permanent the pair melds into. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `cant_cast_first_turns` | Can't be cast during its controller's first N turns of the game. | [Narrowing when a spell may be cast](card-dsl.md#narrowing-when-a-spell-may-be-cast) |
 | `toxic` | Toxic N: the N, beside `toxic` in `keywords`. | [Toxic N](card-dsl-cookbook.md#toxic-n) |
+| `annihilator` | Annihilator N: the N, beside `annihilator` in `keywords`. | [Annihilator N](card-dsl-cookbook.md#annihilator-n) |
 | `morph_counter` | Megamorph: turns face up with a +1/+1 counter, beside `morph`. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 
 ## Engine events

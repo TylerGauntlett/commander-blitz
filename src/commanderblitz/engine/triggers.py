@@ -22,11 +22,13 @@ from .carddef import (
     MELEE_TRIGGER,
     Ability,
     TriggerSpec,
+    annihilator_ability,
 )
 from .characteristics import (
     _battlefield_statics,
     _matches_printed,
     abilities_of,
+    annihilator_instances,
     chars,
     creature_types_of,
     enchanted_by,
@@ -1104,6 +1106,11 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # the trigger only schedules the sacrifice, at end of combat.
         if not obj.face_down and has_keyword(state, oid, Keyword.DECAYED.value):
             yield obj, DECAYED_TRIGGER
+        # Annihilator (702.86): the same shape, once per *instance* rather than
+        # per permanent (702.86b), each with its own N -- a printed one and a
+        # granted one (Eldrazi Conscription) are two triggers.
+        for n in annihilator_instances(state, oid):
+            yield obj, annihilator_ability(n)
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.

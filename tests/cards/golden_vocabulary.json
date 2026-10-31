@@ -162,6 +162,7 @@
    "W"
   ],
   "KNOWN_KEYWORDS": [
+   "annihilator",
    "banding",
    "choose_a_background",
    "compleated",
@@ -269,6 +270,9 @@
    "tap",
    "untap",
    "x_value"
+  ],
+  "NUMBER_CARRYING_GRANT_KEYWORDS": [
+   "annihilator"
   ],
   "PLAYER_TARGET_KINDS": [
    "any",

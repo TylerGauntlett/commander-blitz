@@ -1478,6 +1478,10 @@ class CardDef:
     #: Toxic N (702.164) -- the total N of every printed toxic instance, read
     #: with `Keyword.TOXIC` by `primitives.damage_player`. Zero means no toxic.
     toxic: int = 0
+    #: Annihilator N (702.86) -- the N of the printed instance, read with
+    #: `Keyword.ANNIHILATOR` by `characteristics.annihilator_instances`. Zero
+    #: means no printed annihilator; a granted one carries its N on the static.
+    annihilator: int = 0
     #: Madness -- the price of casting it out of the exile a discard sent it to.
     madness: ManaCost | None = None
     #: Miracle -- the price of casting it as the first card drawn this turn.
@@ -1771,6 +1775,54 @@ def ward_ability(cost: Mapping[str, Any]) -> Ability:
     )
     _RULES_ABILITIES.append(ability)
     _WARD_ABILITIES[key] = ability
+    return ability
+
+
+#: Interned annihilator abilities, keyed by their N.
+_ANNIHILATOR_ABILITIES: dict[int, Ability] = {}
+
+
+def annihilator_ability(n: int) -> Ability:
+    """The rules-supplied triggered ability a permanent with annihilator N has.
+
+    "Whenever this creature attacks, defending player sacrifices N permanents of
+    their choice" (702.86a). Ward's shape for ward's reason: the sentence is the
+    rules', one function builds it for every N, and the permanent that has it
+    need not be the one that gave it (Eldrazi Conscription's Aura). Interned, so
+    two creatures with annihilator 2 have the same ability object.
+
+    **Defending player** is the ``defender`` binding of the ``attacks`` event --
+    the seat the creature attacks, or the controller of the planeswalker or
+    battle it attacks (506.2, 508.5) -- named both as whose permanents and as
+    who chooses. ``controller: "opponent"`` is the near miss: at a pod it pools
+    every opponent's board and lets one of them choose for the table.
+    """
+    if isinstance(n, bool) or not isinstance(n, int) or n < 1:
+        raise ValueError(f"annihilator takes a positive N, not {n!r}")
+    existing = _ANNIHILATOR_ABILITIES.get(n)
+    if existing is not None:
+        return existing
+    defender = {"binding": "defender"}
+    ability = Ability(
+        kind=AbilityKind.TRIGGERED,
+        index=-len(_RULES_ABILITIES) - 1,
+        text=f"Annihilator {n}",
+        trigger=TriggerSpec(event="attacks", controller="you", source="self"),
+        effects=(
+            {
+                "op": "sacrifice",
+                "objects": {
+                    "zone": "battlefield",
+                    "controller": defender,
+                    "count": n,
+                    "chooser": defender,
+                },
+            },
+        ),
+        active_zones=(Zone.BATTLEFIELD,),
+    )
+    _RULES_ABILITIES.append(ability)
+    _ANNIHILATOR_ABILITIES[n] = ability
     return ability
 
 

@@ -4730,6 +4730,48 @@ printed keyword line such as "Trample, toxic 2" is claimed for the residual
 gate only when N equals the card's `toxic` and every other word is one of the
 card's keywords.
 
+### Annihilator N
+
+    It That Betrays — "Annihilator 2"
+    Eldrazi Conscription — "Enchanted creature gets +10/+10 and has trample and annihilator 2."
+
+```jsonc
+// printed
+"keywords": ["annihilator"],
+"annihilator": 2
+
+// granted
+{ "kind": "static", "effect": "grant_keyword", "affects": { "attached": true },
+  "keywords": ["trample", "annihilator"], "annihilator": 2 }
+```
+
+Toxic's pairing: the word goes in `keywords` and N beside it, and the loader
+refuses either without the other — on a card, the card-level `annihilator`
+field; on a `grant_keyword` static, the static's own `annihilator` key. The
+card writes **no ability**: "whenever this creature attacks, defending player
+sacrifices N permanents of their choice" is the rules' sentence, supplied by
+`carddef.annihilator_ability(n)` for each instance the permanent has
+(`characteristics.annihilator_instances`). Each instance triggers separately
+(702.86b), so a printed annihilator 2 wearing a Conscription makes two
+triggers.
+
+The defending player is the `defender` of the `attacks` event — the seat
+attacked, or the controller of the planeswalker attacked (506.2) — and they
+choose among their own permanents. A printed `attacks` trigger with a
+`sacrifice` over `controller: "opponent"` is the near miss twice over: it is not
+the keyword (so a grant cannot give it and nothing counts it), and at a pod it
+pools every opponent's permanents.
+
+Only the `grant_keyword` static can grant it, because only it has a place for
+N. The other grant spellings — the `grant_keyword` op ("gains annihilator 1
+until end of turn"), `animate`, a copy's `add_keywords` — are bare words, and
+the loader refuses `annihilator` in each (`enums.NUMBERED_KEYWORDS`,
+`enums.NUMBER_CARRYING_GRANTS`); there is no annihilator counter. The keyword
+is read on derived characteristics, so `lose_keyword` or "loses all abilities"
+switches the printed one off. A printed line such as "Flying, annihilator 1" is
+claimed for the residual gate only when N equals the card's `annihilator` and
+every other word is one of the card's keywords.
+
 ### Fear, intimidate, horsemanship, shadow and nonbasic landwalk
 
     Shriekmaw — "Fear."

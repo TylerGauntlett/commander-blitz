@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**117 cards** blocked by **106** capabilities.
+**117 cards** blocked by **105** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,7 +32,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
-| [annihilator](#annihilator) | 1 | 1597 | keyword |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-tax-per-attacker-value](#attack-tax-per-attacker-value) | 1 | 3987 | static_effect |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -516,20 +515,6 @@ Blocks **1** card.
 
 - **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
   - This creature can block only creatures with flying.
-
-</details>
-
-## annihilator
-
-Blocks **1** card.
-
-- **(keyword)** the parameterised keyword Annihilator N (702.86): a triggered ability 'Whenever this creature attacks, defending player sacrifices N permanents of their choice', grantable by a static grant_keyword with its N (here an Aura's affects: {attached: true} granting annihilator 2)
-  <br>Why the existing vocabulary won't do: annihilator is not in the packet's keywords list, so grant_keyword cannot hand it out. The nearest workaround -- a grant_ability static carrying a grantable 'attacks' triggered ability with a sacrifice op (the Bear Umbra shape) -- would give the creature an unnamed trigger rather than the keyword, would not stack or count as annihilator, and has no shown way to bind 'defending player' as the sacrificing chooser; the brief forbids that substitution
-
-<details><summary>Cards waiting on this</summary>
-
-- **Eldrazi Conscription** (rank 1597) — `eldrazi_conscription`
-  - Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)
 
 </details>
 

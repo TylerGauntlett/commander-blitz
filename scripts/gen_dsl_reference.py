@@ -1041,6 +1041,7 @@ RIDER_KEYS: dict[str, Entry] = {
     "cant_cast_first_turns": ("Can't be cast during its controller's first N turns of the game.",
                               "Narrowing when a spell may be cast"),
     "toxic": ("Toxic N: the N, beside `toxic` in `keywords`.", "Toxic N"),
+    "annihilator": ("Annihilator N: the N, beside `annihilator` in `keywords`.", "Annihilator N"),
     "morph_counter": ("Megamorph: turns face up with a +1/+1 counter, beside `morph`.", H_MORPH),
 }
 
@@ -1054,6 +1055,8 @@ DELAYED_TRIGGER: dict[str, Entry] = {
 }
 
 KEYWORDS: dict[str, Entry] = {
+    "annihilator": ("Annihilator; N is the card-level `annihilator` field, or a "
+                    "`grant_keyword` static's `annihilator` key.", "Annihilator N"),
     "banding": ("Banding.", "Banding"),
     "choose_a_background": ("Choose a Background (inert; deck-building only).",
                             "The inert keywords — partner, and choose a Background"),

@@ -2883,6 +2883,43 @@ def ward_abilities(state: GameState, oid: int) -> tuple[Ability, ...]:
     return granted_wards(state).get(oid, ())
 
 
+def annihilator_instances(state: GameState, oid: int) -> tuple[int, ...]:
+    """The N of every annihilator instance this permanent has, one per instance.
+
+    One entry per instance because each triggers separately (702.86b): an
+    Ulamog's Crusher wearing an Eldrazi Conscription has ``(2, 2)`` and its
+    attack makes the defending player sacrifice four permanents, in two goes.
+
+    Gated on the **derived** keyword first, so whatever removes the word --
+    `lose_all_abilities`, a `lose_keyword` static, a face-down shell -- removes
+    every instance with it. Then the two places an N can come from, and the only
+    two the loader lets the word arrive by (`enums.NUMBERED_KEYWORDS`):
+
+    * the printed instance, `CardDef.annihilator`, unless the permanent has
+      lost its abilities (the layer-1b removal `_compute` makes); and
+    * each `grant_keyword` static on the battlefield naming annihilator whose
+      `affects` reaches this permanent, with the N it carries. Matched the way
+      `_compute`'s keyword-grant layer matches, so the instance list and the
+      keyword can never disagree about who was granted it.
+    """
+    word = Keyword.ANNIHILATOR.value
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.face_down:
+        return ()
+    if not has_keyword(state, oid, word):
+        return ()
+    out: list[int] = []
+    card = state.card_of(obj)
+    if card.annihilator and word in card.keywords and not _loses_abilities(state, obj):
+        out.append(card.annihilator)
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "grant_keyword" or word not in static.get("keywords", ()):
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            out.append(int(static["annihilator"]))
+    return tuple(out)
+
+
 def matches_static(
     state: GameState,
     obj: GameObject,

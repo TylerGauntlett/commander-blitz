@@ -137,6 +137,7 @@ from .vocabulary import (  # noqa: F401
     MANA_AMOUNT_FORBIDDEN,
     MANA_RIDER_OPS,
     NOT_A_CAST_TIME_COST,
+    NUMBER_CARRYING_GRANT_KEYWORDS,
     PLAYER_TARGET_KINDS,
     PLAYER_WIDE_STATIC_EFFECTS,
     PLURAL_PLAYER_SPEC_NAMES,
@@ -1677,6 +1678,21 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: toxic N is the keyword 'toxic' in 'keywords' *and* the "
             f"card-level 'toxic' field holding N -- write both or neither"
         )
+    # Annihilator N (702.86): toxic's pairing, refused apart for toxic's
+    # reason. The word alone attacks and annihilates nothing; the number alone
+    # is a field `annihilator_instances` never reaches, because it is gated on
+    # the word.
+    if model.annihilator < 0:
+        raise DslError(
+            f"{where}: 'annihilator' is how many permanents are sacrificed, so it "
+            f"cannot be negative"
+        )
+    if (model.annihilator > 0) != ("annihilator" in model.keywords):
+        raise DslError(
+            f"{where}: annihilator N is the keyword 'annihilator' in 'keywords' "
+            f"*and* the card-level 'annihilator' field holding N -- write both or "
+            f"neither; the trigger is the rules', so write no ability for it"
+        )
     if model.morph_counter and model.morph is None:
         raise DslError(f"{where}: 'morph_counter' is megamorph's rider and needs a 'morph' cost")
     if model.morph is not None and "Creature" not in model.types:
@@ -2124,6 +2140,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
         toxic=model.toxic,
+        annihilator=model.annihilator,
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
@@ -4926,10 +4943,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     for k in model.keywords:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: unknown keyword {k!r}")
+    # Annihilator N granted with its number (Eldrazi Conscription's "has
+    # trample and annihilator 2"): the one numbered keyword a grant_keyword may
+    # hand out, because the static carries N in a key of its own. The word and
+    # the number together or not at all, as on a card -- the word alone
+    # annihilates nothing, and the number alone is a key nothing reads.
+    carried: frozenset[str] = frozenset()
+    if model.annihilator is not None or (
+        model.effect == "grant_keyword" and "annihilator" in model.keywords
+    ):
+        if model.effect != "grant_keyword" or "annihilator" not in model.keywords:
+            raise DslError(
+                f"{where}: 'annihilator' is the N of a granted annihilator and "
+                f"belongs on a grant_keyword static whose 'keywords' name it"
+            )
+        if (
+            isinstance(model.annihilator, bool)
+            or not isinstance(model.annihilator, int)
+            or model.annihilator < 1
+        ):
+            raise DslError(
+                f"{where}: granting annihilator needs its N as a positive whole "
+                f"number in 'annihilator' -- \"has annihilator 2\" is "
+                f"{{'keywords': ['annihilator'], 'annihilator': 2}}"
+            )
+        carried = NUMBER_CARRYING_GRANT_KEYWORDS
     # Losing toxic is sayable -- `chars` drops the word and `damage_player`
     # reads the derived keywords -- so only the granting statics are refused.
     if model.effect != "lose_keyword":
-        refuse_numbered_grant(model.keywords, where)
+        refuse_numbered_grant(model.keywords, where, carried)
 
     if model.effect == "activate_loyalty_as_though_instant":
         # Whose loyalty abilities, in the permanent-filter language every other
@@ -5512,6 +5554,10 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["require_all"] = True
     if model.max_blockers is not None:
         static["max_blockers"] = model.max_blockers
+    # A granted annihilator's N, whitelisted for `warp_cost`'s reason: dropped,
+    # the grant would load and `annihilator_instances` would have no N to read.
+    if model.annihilator is not None:
+        static["annihilator"] = model.annihilator
     if model.effect == "ward":
         # Pruned of the fields the model dump carries unset, because this
         # mapping is also what `carddef.ward_ability` keys its intern table on:

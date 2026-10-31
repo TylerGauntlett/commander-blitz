@@ -122,7 +122,7 @@ class TestTheEarlierGates:
         assert "draw_two" in verdict.reason
 
     def test_an_unknown_keyword_fails_on_compile(self, pool):
-        bad = {**BEAR, "keywords": ["annihilator"]}
+        bad = {**BEAR, "keywords": ["rampage"]}
         verdict = V.verify(bad, {"battlefield_count": 1}, pool)
         assert verdict.failed_gate == "compile"
 
