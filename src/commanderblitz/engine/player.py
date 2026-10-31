@@ -14,6 +14,12 @@ STARTING_LIFE = 40
 COMMANDER_DAMAGE_THRESHOLD = 21
 #: Maximum hand size at cleanup.
 MAX_HAND_SIZE = 7
+#: Every kind of counter a player can have that this model carries (122.1),
+#: each the name of its `PlayerState` field. The one list of them: proliferate
+#: reads it for what a player "already has", and `lose_all_player_counters`
+#: for what "loses all counters" takes. A new player counter kind (experience,
+#: rad, ticket) is a field below *and* an entry here, or those two miss it.
+PLAYER_COUNTER_KINDS: tuple[str, ...] = ("poison", "energy")
 
 
 @dataclass
@@ -53,8 +59,7 @@ class PlayerState:
     commander_tax: dict[int, int] = field(default_factory=dict)
     #: source player id -> combat damage their commander has dealt to me
     commander_damage_taken: dict[int, int] = field(default_factory=dict)
-    #: Poison counters (704.5c). Ten is lethal, and unlike life they only ever
-    #: go up in the cards this engine has -- but they are a *counter on the
+    #: Poison counters (704.5c). Ten is lethal, but they are a *counter on the
     #: player*, not a second life total, which is why they are their own field
     #: and their own loss reason rather than life paid in a different currency.
     poison: int = 0

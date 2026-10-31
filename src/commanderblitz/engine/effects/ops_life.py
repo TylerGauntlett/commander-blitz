@@ -8,6 +8,7 @@ from typing import Any
 from ..characteristics import chars
 from ..enums import Keyword
 from ..errors import DslError
+from ..player import PLAYER_COUNTER_KINDS
 from ..primitives import (
     add_energy,
     add_poison,
@@ -15,6 +16,7 @@ from ..primitives import (
     damage_player,
     gain_life,
     lose_life,
+    remove_player_counters,
 )
 from ..structs import (
     DAMAGE_SHIELD_DURATIONS,
@@ -79,9 +81,8 @@ def op_add_poison(ctx: EffectContext, spec: Mapping[str, Any]):
     life did not run out of life and a log saying so would be lying about how
     the game ended.
 
-    Poison only goes up in the cards this engine has, so there is no
-    `remove_poison` yet -- and adding one speculatively would be a vocabulary
-    item with no card behind it.
+    It comes off with every other player counter through
+    `lose_all_player_counters`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     if amount <= 0:
@@ -98,13 +99,38 @@ def op_add_energy(ctx: EffectContext, spec: Mapping[str, Any]):
 
     `add_poison`'s shape with the other default: energy is something a card
     gives its own controller, so ``player`` defaults to ``you``. Spent by a
-    ``pay_energy`` cost, which is the only way it goes down.
+    ``pay_energy`` cost, and taken away by `lose_all_player_counters`.
     """
     amount = evaluate_value(ctx, spec.get("amount", 1))
     if amount <= 0:
         return
     for pid in select_players(ctx, spec.get("player", "you")):
         add_energy(ctx.state, pid, amount, source=ctx.source_oid, by=ctx.controller)
+
+
+@register("lose_all_player_counters")
+def op_lose_all_player_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Each opponent loses all counters." (Final Act)
+
+    Every counter of every kind on each named player (122.1): poison and
+    energy, and any kind `player.PLAYER_COUNTER_KINDS` comes to list. Not
+    `remove_counters`, which takes one named kind off *objects* -- a player is
+    not one -- and not a kind-by-kind removal the author spells out, because a
+    card that listed poison and energy would stop being "all counters" the day
+    the player model carried a third kind.
+
+    ``player`` is required: the printed sentence always names who, and a
+    default would be a guess about whose counters an author forgot to name.
+    Each kind goes through `primitives.remove_player_counters`, so the poison
+    removal re-reads a corrupted static and the log hears each kind once.
+    """
+    state = ctx.state
+    for pid in select_players(ctx, spec["player"]):
+        player = state.players[pid]
+        for kind in PLAYER_COUNTER_KINDS:
+            remove_player_counters(
+                state, pid, kind, getattr(player, kind), source=ctx.source_oid
+            )
 
 
 @register("prevent_damage")

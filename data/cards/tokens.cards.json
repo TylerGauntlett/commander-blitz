@@ -1099,6 +1099,30 @@
       "is_token": true
     },
     {
+      "id": "fungus_beast_4_4_g_trample",
+      "name": "Fungus Beast Token",
+      "oracle_text": "4/4 green Fungus Beast creature token with trample.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Fungus",
+        "Beast"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "trample"
+      ]
+    },
+    {
       "id": "germ_0_0_b",
       "name": "Germ Token",
       "oracle_text": "0/0 black Phyrexian Germ creature token.",
@@ -1162,6 +1186,47 @@
       "is_token": true
     },
     {
+      "id": "pest_1_1_bg",
+      "name": "Pest Token",
+      "oracle_text": "1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pest"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this token dies, you gain 1 life.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {
+                "const": 1
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "phyrexian_myr_2_1_u_artifact",
       "name": "Phyrexian Myr Token",
       "oracle_text": "2/1 blue Phyrexian Myr artifact creature token.",
@@ -1201,6 +1266,51 @@
       ],
       "color_identity": [
         "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "snake_1_1_b_deathtouch",
+      "name": "Snake Token",
+      "oracle_text": "1/1 black Snake creature token with deathtouch.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Snake"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "deathtouch"
+      ]
+    },
+    {
+      "id": "worm_1_1_bg",
+      "name": "Worm Token",
+      "oracle_text": "1/1 black and green Worm creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Worm"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B",
+        "G"
+      ],
+      "color_identity": [
+        "B",
+        "G"
       ],
       "is_token": true
     },
@@ -2306,6 +2416,29 @@
       "is_token": true,
       "keywords": [
         "menace"
+      ]
+    },
+    {
+      "id": "zombie_2_2_b_decayed",
+      "name": "Zombie Token",
+      "oracle_text": "2/2 black Zombie creature token with decayed. (It can't block. When it attacks, sacrifice it at end of combat.)",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Zombie"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true,
+      "keywords": [
+        "decayed"
       ]
     },
     {

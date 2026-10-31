@@ -1175,15 +1175,15 @@ never fizzles and goes on the stack with nothing to exile.
   "selector": { "types": ["Creature"] } }
 ```
 
-Crackle with Power. The one computed `count` a **spell's** targets may carry, and
-the reason it is the only one is an ordering rule.
+Crackle with Power. One of the two computed `count`s a **spell's** targets may
+carry (the other is [sized by an additional cost](#targets-sized-by-an-additional-cost)),
+and the reason there are only two is an ordering rule.
 
 `_compile_targets` otherwise refuses a value-expression count on a card's own
-targets, because "a spell's are declared while it is being cast (601.2c), before
-X is chosen and before any additional cost is paid, so the expression would read
-0". That is right for `{"additional_paid": true}` — kicker is paid at 601.2h,
-long after — and wrong for X, because **601.2b announces X and 601.2c declares
-targets, in that order**.
+targets, because a spell's are declared while it is being cast (601.2c), before
+any additional cost is paid, so the expression would read 0. The exceptions are
+the numbers 601.2b has already announced when 601.2c declares targets: X, and how
+many times the additional cost will be paid.
 
 The engine runs them in that order. `Game._cast` asks `_ask_x`, then
 `_ask_modes`, then `_ask_mode_targets` — a target declaration made at cast time
@@ -1203,7 +1203,46 @@ targets are declared (601.2c)".
 
 Two refusals: `{"x": true}` on a card with no `{X}` in its mana cost (the spec
 would size to zero for ever — a spell that says it targets and never does), and
-every other computed count on a spell.
+every computed count on a spell but these two.
+
+### Targets sized by an additional cost
+
+```jsonc
+// Immoral Bargain: "As an additional cost to cast this spell, sacrifice X
+// creatures. Destroy X target nonland permanents."
+{ "additional_cost": { "sacrifice": { "controller": "you", "types": ["Creature"] } },
+  "additional_optional": true, "additional_repeatable": true,
+  "targets": [{ "id": "t1", "kind": "permanent", "count": { "additional_paid": true },
+                "selector": { "zone": "battlefield", "not_types": ["Land"] } }],
+  "spell_effects": [{ "op": "destroy", "objects": { "target": "t1" } }] }
+```
+
+`count: {"additional_paid": true}`, exactly that and nothing beside it in the
+expression, sizes a spell's target spec by the number of times its additional
+cost is paid. 601.2b announces that number one step before 601.2c declares the
+targets, so legality already knows it: each cast line carries it as
+`Action.additional_times`, and `casting._cast_variant` enumerates that line's
+targets from `targeting.additional_sized_targets` with the count in place.
+Sacrificing two offers exactly two targets; sacrificing none (107.3, X = 0) is a
+cast with no targets. A line whose X has too few legal targets is not offered,
+and each X's combinations are capped by `targeting.MAX_TARGET_OPTIONS` like any
+fixed count above one.
+
+Resolution keeps the printed expression, which is variable-size, so
+`filter_legal` hands the spec every remaining ref — the number the line declared,
+and the number a copy keeps (707.10). A resolution-time free cast (cascade,
+madness, suspend) pays no optional additional cost and declares no such target.
+
+Refused at load: the count on a card with no `additional_cost`, or with one that
+is neither `additional_optional` nor `additional_repeatable` (paid exactly once,
+it is `count: 1`); beside `up_to`, `optional`, `count_if_kicked` or `mode`, each
+a second size or a second moment for one spec; and anywhere but the last target,
+the variable-size rule. X is bounded by the board — the pool each payment
+draws from — and by `casting.MAX_ADDITIONAL_TIMES`, the cap on every repeatable
+cost ([rules-coverage.md](rules-coverage.md#simplified)).
+
+The near misses: `count: "any"` lets the caster destroy three permanents for one
+sacrifice, a strictly better card; a fixed `count` cannot follow the sacrifices.
 
 ### Plot
 
@@ -1350,6 +1389,7 @@ Anywhere a number is expected -- the leaf list is
 { "cards_in_hand": "each_opponent" }
 { "player_count": "each_opponent" }             // "the number of opponents you have"; seats, not a quantity
 { "commander_casts_this_game": "you" }          // casts of your commanders from the command zone (903.8)
+{ "command_zone_casts_of": { "binding": "subject" } }  // ONE commander's casts from the command zone
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
@@ -1363,7 +1403,8 @@ Anywhere a number is expected -- the leaf list is
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
 { "spells_cast_this_turn": "all" }              // storm
-{ "cards_to_graveyard_this_turn": true }        // gravestorm; every graveyard, so no spec
+{ "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
+{ "permanents_to_graveyard_this_turn": true }   // gravestorm; permanents, tokens too, from the battlefield
 { "cards_from_graveyard_this_turn": "you" }     // Gau; the mirror, and per-graveyard
 { "extreme_value": { "of": "mana_value", "pick": "greatest",   // Edgar; ONE number off a pool,
                      "objects": { … } } }                      //   where `mana_value_of` sums
@@ -1711,7 +1752,8 @@ The only ledger value that takes a **filter** rather than a player spec, because
 the printed sentence asks *which* permanents entered and not how many did. The
 clauses are the selector language's, spelled the same way: `controller` (a player
 spec), `types` (all-of), `not_types` (none-of — Celebration's "two or more
-**nonland** permanents"), `subtypes` and `colors` (any-of), and `exclude_self`.
+**nonland** permanents"), `subtypes` and `colors` (any-of), `is_token`, and
+`exclude_self`.
 `not_types` is not a list of every other card type written into `types`: that
 is all-of, so it would count only permanents that were all of them at once, and
 an any-of spelling would still count an artifact land.
@@ -1725,16 +1767,30 @@ an any-of spelling would still count an artifact land.
 `controller` is **required** — omitted, it would silently count the opponents'
 arrivals too. Say `"all"` when a card really does mean anybody's.
 
+**`is_token: false` is the printed word "nontoken"**, and `true` is "token"; it
+must be a boolean. Gyome, Master Chef counts "nontoken creatures you had enter
+the battlefield under your control this turn":
+
+```jsonc
+{ "permanents_entered_this_turn":
+    { "controller": "you", "types": ["Creature"], "is_token": false } }
+```
+
+Left out, every creature token made this turn is counted too. The near miss is
+`{"count": {"zone": "battlefield", "is_token": false, "entered_this_turn": true}}`,
+which forgets a creature that entered and was sacrificed before the end step.
+
 **`exclude_self` is the printed word "another".** Éowyn is herself a Human and
 may well have entered this turn, so without it her own arrival satisfies her own
 trigger. It matches on the recorded arrival's *oid*, so it excludes her rather
 than everything shaped like her.
 
 The record is `TurnLedger.permanents_entered`, a snapshot per arrival taken from
-**derived** characteristics as the permanent entered — so a changeling and a
-creature a static had made a Human both count, and so the entry survives the
-permanent leaving. That last part is the point: a Human that entered and died
-this turn still entered, and there is nothing left on the board to ask.
+**derived** characteristics and the token flag as the permanent entered — so a
+changeling and a creature a static had made a Human both count, and so the entry
+survives the permanent leaving. That last part is the point: a Human that
+entered and died this turn still entered, and there is nothing left on the board
+to ask.
 
 #### `has_counters` — "with counters on them"
 
@@ -5185,6 +5241,7 @@ smaller than the effect-side `value_keys`:
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
 | `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — the bare player spec only |
+| `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
@@ -5362,7 +5419,7 @@ Each node names **exactly one** form:
 | form | asks |
 |---|---|
 | `{"counters": {"counter": …, "op": …, "amount": …}}` | how many counters of a kind sit on the static's own source |
-| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn` and `max_count_of`/`min_count_of` |
+| `{"cmp": op, "left": …, "right": …}` | compares two [static values](#static-abilities) — `const`, `count`, `counters_on`, `mana_symbols`, `permanents_entered_this_turn`, `starting_life_of`, `times`/`sum`, and the per-player `min_life_of`/`max_life_of`, `max_poison_of`, `unspent_mana_count`, `spells_cast_this_turn`, `creatures_died_this_turn` and `max_count_of`/`min_count_of` |
 | `{"exists": filter}` | does anything match — `count > 0`, spelled the way it reads |
 | `{"all": [ … ]}` / `{"any": [ … ]}` / `{"not": …}` | combine the above |
 | `{"is_your_turn": true}` | whether it is the source's controller's turn |

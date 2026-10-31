@@ -330,7 +330,11 @@ class TestCardsToGraveyard:
         assert ledger.cards_to_graveyard == 1
 
     def test_a_token_does_not(self, builder):
-        """Gravestorm counts *cards*, and a token is the commonest non-card."""
+        """The tally counts *cards*, and a token is the commonest non-card.
+
+        Gravestorm counts the token, so it reads the other tally:
+        `test_permanents_to_graveyard.py`.
+        """
         from commanderblitz.engine.primitives import create_token
 
         game, ledger = position(builder)

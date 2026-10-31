@@ -2423,6 +2423,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(f"{where}: grant_flash_permission's 'next_spell' is true or false")
     if op in ("add_poison", "add_energy") and "amount" in effect:
         validate_value(effect["amount"], f"{where}.amount")
+    if op == "lose_all_player_counters":
+        # "Each opponent loses all counters" always names who; without a
+        # `player` the op would have to guess whose. And it takes every kind,
+        # so a narrowing key would be silently ignored -- "loses all poison
+        # counters" (Leeches) is a different sentence this op does not write.
+        if "player" not in effect:
+            raise DslError(
+                f"{where}: lose_all_player_counters needs 'player' naming who "
+                f"loses their counters, e.g. 'each_opponent'"
+            )
+        for key in ("counter", "kinds", "amount"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: lose_all_player_counters removes every kind of "
+                    f"counter from the player, so it takes no {key!r}"
+                )
     if op == "proliferate" and "objects" in effect:
         # The retired simplification's narrowing key. 701.27a is a free choice
         # over every permanent and player with a counter, which the op now asks;

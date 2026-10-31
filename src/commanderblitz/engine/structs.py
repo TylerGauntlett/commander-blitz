@@ -1332,6 +1332,8 @@ class StackItem:
     #: Read only when the granter object itself is gone -- a token popped by the
     #: token state-based action -- so the ability still resolves (608.2).
     granted_def_id: str = ""
+    #: See `TriggerInstance.mana_spent`. A copy keeps it (706.10).
+    mana_spent: bool = False
 
     @property
     def is_spell(self) -> bool:
@@ -1377,6 +1379,12 @@ class TriggerInstance:
     #: `grantable_abilities` it came from.  Resolution has to look there rather
     #: than at the source's own abilities, which do not include it.
     granted_by: int | None = None
+    #: "When you spend this mana to cast…" -- Study Hall. ``ability_index``
+    #: names the *mana* ability, and the ability that triggered is the one
+    #: riding it, `Ability.mana_spent_trigger`; `stack.ability_of` reads this
+    #: flag to step from one to the other. A flag beside the index rather than
+    #: an index of its own, because the rider is not in any abilities list.
+    mana_spent: bool = False
 
 
 @dataclass
@@ -1570,6 +1578,12 @@ class EnteredPermanent:
     types: frozenset[str] = frozenset()
     subtypes: frozenset[str] = frozenset()
     colors: frozenset[str] = frozenset()
+    #: Whether the arrival was a token (111.1). "Nontoken creatures you had
+    #: enter the battlefield under your control this turn" -- Gyome, Master
+    #: Chef -- asks it after the fact, and a token that has since left has been
+    #: popped out of `state.objects` (704.5d), so the answer has to travel with
+    #: the record like every other clause the filter reads.
+    is_token: bool = False
     #: The `state.event_batch` the arrival belonged to -- which permanents
     #: entered **together**. Giada, Font of Hope counts "each Angel you
     #: *already* control", and an Angel arriving in the same event is not one
@@ -1584,6 +1598,7 @@ class EnteredPermanent:
         not_types: Iterable[str] = (),
         subtypes: Iterable[str] = (),
         colors: Iterable[str] = (),
+        is_token: bool | None = None,
     ) -> bool:
         """Does this arrival answer a card's filter?
 
@@ -1591,7 +1606,9 @@ class EnteredPermanent:
         a card author who knows one knows the other: ``types`` is all-of ("an
         artifact creature" is both), ``not_types`` none-of ("two or more
         **nonland** permanents", Celebration), ``subtypes`` and ``colors`` are
-        any-of ("a Human or an Elf").  A clause left out filters nothing.
+        any-of ("a Human or an Elf").  ``is_token`` is the selector's boolean:
+        ``False`` is "nontoken", ``True`` is "token", and ``None`` (the clause
+        left out) asks neither.  A clause left out filters nothing.
         """
         if self.controller not in set(controllers):
             return False
@@ -1602,6 +1619,8 @@ class EnteredPermanent:
         if subtypes and not (set(subtypes) & self.subtypes):
             return False
         if colors and not (set(colors) & self.colors):
+            return False
+        if is_token is not None and self.is_token != is_token:
             return False
         return True
 
@@ -1817,10 +1836,26 @@ class TurnLedger:
     #: disturb cast turns the card over inside `push_spell`, and the half that
     #: was cast is the half the condition is asking about.
     spells_cast_ids: dict[int, list[str]] = field(default_factory=dict)
-    #: Cards put into any graveyard from anywhere this turn (gravestorm).
-    #: Tokens are excluded because they are not cards, and a token dying is the
-    #: single most common way this number would otherwise be wrong.
+    #: Cards put into any graveyard from anywhere this turn -- discards, mills,
+    #: resolved instants and sorceries and deaths alike. Tokens are excluded
+    #: because they are not cards. **Not** gravestorm's count, which is the
+    #: field below: that one asks about permanents, from the battlefield only.
     cards_to_graveyard: int = 0
+    #: Permanents put into any graveyard **from the battlefield** this turn, by
+    #: any player and under any controller -- gravestorm (702.69a). Tokens
+    #: count: a token is put into a graveyard before it ceases to exist
+    #: (111.7, 704.5d), and a dying token is the commonest case on a board.
+    #:
+    #: Beside `cards_to_graveyard` rather than derived from it, because the two
+    #: disagree in both directions: a discard or a mill is a card reaching a
+    #: graveyard and no permanent leaving the battlefield, and a token dying is
+    #: the reverse. `creatures_died` is the other near miss and counts only
+    #: creatures, where a sacrificed Treasure or a destroyed enchantment counts
+    #: here. Folded off ZONE_CHANGE's *final* destination, so a permanent
+    #: whose move was replaced -- exiled by Rest in Peace, or a commander the
+    #: engine's automatic 903.9a sends home -- never reached a graveyard and is
+    #: not counted (see the commander-replacement row of rules-coverage.md).
+    permanents_to_graveyard: int = 0
     #: Cards that **left** a graveyard this turn, per graveyard owner -- Gau,
     #: Feral Youth: "if a card left your graveyard this turn". The mirror of
     #: `cards_to_graveyard` above and deliberately not folded into it: that one
@@ -2063,6 +2098,7 @@ class TurnLedger:
         self.loyalty_activations.clear()
         self.extra_loyalty_activations.clear()
         self.cards_to_graveyard = 0
+        self.permanents_to_graveyard = 0
         self.cards_from_graveyard.clear()
         self.ability_resolutions.clear()
         self.object_flags.clear()

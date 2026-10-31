@@ -684,6 +684,60 @@ nothing reads on the board as a land whose second ability is strictly worse than
 its first. Refused on an ability that is not a mana ability, where it would load
 and never be read. Cashed by `tests/unit/mana/test_mana_granted_keyword.py`.
 
+### Mana that triggers when it is spent — `mana_spent_trigger`
+
+```jsonc
+// Study Hall's second mana ability
+{ "kind": "activated", "is_mana_ability": true,
+  "text": "{1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry X, where X is the number of times it's been cast from the command zone this game.",
+  "cost": { "mana": "{1}", "tap": true },
+  "effects": [ /* one choose_mode of five add_manas */ ],
+  "mana_spent_trigger": {
+    "spell": { "is_commander": true, "owner": "you" },
+    "effects": [ { "op": "scry", "player": "you",
+                   "amount": { "command_zone_casts_of": { "binding": "subject" } } } ] } }
+```
+
+Rule 106.6: a mana ability may create a delayed triggered ability that
+triggers when that mana is spent. The trigger belongs to the **mana**, so it
+rides the pip like the two riders above. `Ability.mana_spent_trigger` is the
+rider compiled into a triggered ability; `costs.activate_mana_ability` gives
+every pip of one activation the same `mana.ManaSpendTrigger` tag;
+`ManaPool.spend` reports the tags a payment consumed; and `costs.pay_mana`
+matches each against the spell being cast and queues a `TriggerInstance` whose
+`mana_spent` flag tells `stack.ability_of` to resolve the rider rather than the
+mana ability.
+
+- **`spell`** is the printed spell filter, read with a `spell_cast` trigger
+  filter's semantics and validated by the same compiler. Omitted, any spell.
+  "Your commander" is `{"is_commander": true, "owner": "you"}`: 903.3 makes it
+  the commander you own. The keys that ask about the ability's *source*
+  (`paid_by`, `self_only`, `exclude_self`, `attached`, `haunted_by`,
+  `created_with`, `damaged_by`, `shares_a_creature_type_with`) are refused,
+  because the mana can be spent after its source has gone and "this mana"
+  already says which mana.
+- **`effects`** is required and non-empty; **`targets`** is optional and declared
+  as the trigger goes on the stack (603.3d). The spell the mana paid for is bound
+  as `subject`.
+- **Who and when.** The trigger is controlled by whoever activated the mana
+  ability and goes on the stack the next time a player would receive priority,
+  above the spell it paid for. It resolves after the cast is complete, so a value
+  read on resolution counts this cast: `command_zone_casts_of` the subject is 1
+  on the first cast. "It" is that commander alone, so the count is
+  `command_zone_casts_of`, one object's tally, and not
+  `commander_casts_this_game`, which sums both partners.
+- **How many.** One trigger per activation whose mana paid for a matching spell.
+  Two pips of one activation are one "this mana"; two Study Halls are two
+  triggers. Mana left in the pool and emptied was never spent and triggers
+  nothing.
+- **The near misses.** A `spell_cast` trigger with `paid_by: "self"` (Path of
+  Ancestry's shape) is per permanent, so Study Hall's plain `{C}` would scry
+  too; and a `mana_rider` op runs at activation, before any spell exists to be
+  filtered.
+
+Refused on an ability that is not a mana ability, where it would load and never
+fire. Cashed by `tests/unit/mana/test_mana_spent_trigger.py`.
+
 ### Counting the spells you cast, by type
 
 ```jsonc
@@ -734,6 +788,38 @@ resolves; a commander carrying this text has already tallied its own cast by
 then. The near miss is `spells_cast_this_game`, which counts every spell from
 every zone. A copy of a permanent spell resolves as a token (706.10, via
 `put_copy_on_stack`), so the creature form needs nothing further.
+
+### Gravestorm — permanents put into a graveyard from the battlefield
+
+```jsonc
+{ "kind": "triggered",
+  "active_zones": ["stack"],
+  "trigger": { "event": "spell_cast", "source": "self", "controller": "you" },
+  "effects": [ { "op": "copy_spell",
+                 "amount": { "permanents_to_graveyard_this_turn": true },
+                 "new_targets": true } ] }
+```
+
+"Gravestorm (When you cast this spell, copy it for each permanent put into a
+graveyard from the battlefield this turn.)" (Ominous Harvest; rule 702.69a.)
+Storm's shape with a different count. `permanents_to_graveyard_this_turn` reads
+`TurnLedger.permanents_to_graveyard`, folded off every ZONE_CHANGE from the
+battlefield to a graveyard: every permanent type, every controller, and
+**tokens included** — a token is put into the graveyard before it ceases to
+exist (111.7, 704.5d). A move that a replacement sent somewhere else (Rest in
+Peace, a commander going home) reached no graveyard and is not counted. It takes
+`true` and nothing else; a player spec is refused at load time, because the
+count is the whole table's and "you" would read as a filter it does not apply.
+702.69a lets each copy take new targets, so `new_targets` is part of the
+keyword, not an option.
+
+The count is read when the trigger resolves, so a permanent that dies in
+response still adds a copy.
+
+Two near misses, each wrong quietly. `cards_to_graveyard_this_turn` counts
+**cards** from **any** zone: a discard or a mill inflates it, and a dying token
+is missing from it. `creatures_died_this_turn` misses every noncreature
+permanent — a sacrificed Treasure, a destroyed enchantment.
 
 ### Casting out of every graveyard, until end of turn
 
@@ -2040,9 +2126,9 @@ with an additional +1/+1 counter on it for each Angel you already control."
  "amount": {"count": {"controller": "you", "subtypes": ["Angel"]}}}
 ```
 
-`amount` is a whole number of 1 or more, or `{"count": <battlefield filter>}` and
-nothing else (the filter is the static `count` filter, judged from the static's
-source). The count is taken as the permanent enters and **leaves out the
+`amount` is a whole number of 1 or more, `{"count": <battlefield filter>}` or
+`{"creatures_died_this_turn": <player>}`, each alone (the filter is the static
+`count` filter, judged from the static's source). The count is taken as the permanent enters and **leaves out the
 entering group** — the arrival itself and everything that entered in the same
 simultaneous event (`state.event_batch`) — which is the word "already": two
 Angel tokens from one effect each count only the Angels that were there before.
@@ -2050,6 +2136,27 @@ A source in the entering group applies nothing (614.12), so Giada returned
 together with an Angel gives it no counters. A count of 0 adds none. A resolving
 permanent spell and a land drop are each their own event, so a token made while
 the spell waited on the stack is counted.
+
+**A death tally** — Gorma, the Gullet: "Nontoken creatures you control enter
+with an additional +1/+1 counter on them for each creature that died under your
+control this turn."
+
+```jsonc
+{"kind": "static", "effect": "enters_with_additional_counters",
+ "affects": {"controller": "you", "types": ["Creature"], "is_token": false},
+ "counter": "+1/+1",
+ "amount": {"creatures_died_this_turn": "you"}}
+```
+
+The turn ledger's static value, read as the creature enters: "you" is the
+static's controller, and a creature counts under whoever controlled it as it
+died, so an opponent's dead are not yours. Tokens that die count; "nontoken" is
+the `affects` filter and says who gets the counters. No deaths adds none, and a
+creature already on the battlefield does not grow when something dies later.
+`spells_cast_this_turn` and `permanents_entered_this_turn` are refused here,
+because each would count the arrival itself. **Not** a `permanent_enters`
+trigger running `add_counters`, which is respondable and lets the creature
+enter at its printed size.
 
 ### `empower` — "Empower Jace N"
 
@@ -4743,6 +4850,38 @@ whom, the second only the seats this one creature attacked, and both per turn
 rather than per combat. Write the keyword. A permanent holding melee twice
 triggers once, as exalted does.
 
+### Decayed
+
+    Jadar, Ghoulcaller of Nephalia — "At the beginning of your end step, if you
+    control no creatures with decayed, create a 2/2 black Zombie creature token
+    with decayed."
+
+```jsonc
+"keywords": ["decayed"]                                // the token, zombie_2_2_b_decayed
+
+{ "kind": "triggered",
+  "text": "At the beginning of your end step, if you control no creatures with decayed, create a 2/2 black Zombie creature token with decayed.",
+  "trigger": { "event": "end_step", "controller": "you",
+    "condition": { "not": { "exists": { "zone": "battlefield", "controller": "you",
+      "types": ["Creature"], "keywords": ["decayed"] } } } },
+  "effects": [ { "op": "create_token", "token": "zombie_2_2_b_decayed" } ] }
+```
+
+Two rules under one word (702.147a), both read off **derived** keywords.
+"This creature can't block" is `combat.can_block`. "When it attacks, sacrifice
+it at end of combat" is exalted's shape: the rules-supplied
+`carddef.DECAYED_TRIGGER`, yielded once for every battlefield permanent with the
+keyword, an `attacks` trigger from `source: "self"` whose resolution makes a
+`delay` at `end_of_combat` that sacrifices itself. So the creature deals its
+combat damage first, is sacrificed in the end of combat step of the combat it
+attacked in, and fires `sacrificed` like any other sacrifice; a creature put
+onto the battlefield attacking never attacked and is not sacrificed.
+
+**The near miss** is a `cant_block` static and a printed attack trigger with the
+same `delay`. It plays the same on its own card and it is not a creature *with
+decayed*: Jadar's `keywords: ["decayed"]` filter never sees it. Write the
+keyword. Its token is `zombie_2_2_b_decayed`, not `zombie_2_2_b`.
+
 ## Protection
 
 Parameterised, so it is a static rather than a `Keyword`:
@@ -5264,6 +5403,33 @@ both is refused rather than
 resolved — two prices from the graveyard is no answer to what it costs from
 there. `graveyard_cast` without a cost is refused for the mirror reason: it
 would claim to be an escape card and never be castable at all.
+
+**"Escapes with"** (702.138c-d) is "if this permanent escaped, it enters
+with…": a `self_enters_with_counters` replacement gated on the `escaped`
+condition.
+
+```jsonc
+// Woe Strider -- "This creature escapes with two +1/+1 counters on it."
+"replacements": [{
+  "event": "self_enters_with_counters", "counter": "+1/+1", "amount": 2,
+  "condition": { "escaped": true }
+}]
+```
+
+`escaped` is true of a spell cast for the card's own escape cost and of the
+permanent it resolves into, so it also answers Uro's "sacrifice it unless it
+escaped" in an enters trigger and "if this spell escaped" inside
+`spell_effects`. `stack._resolve_spell` writes `GameObject.cast_escaped` before
+the effects run and again just before the permanent lands, and
+`zones._enter_battlefield` clears it on every other arrival, so a reanimated or
+flickered permanent did not escape. The loader refuses it, anywhere on the card,
+unless the card has a `graveyard_cost` with `"graveyard_cast": "graveyard"`, and
+refuses a value that is not a boolean.
+
+The near miss is `cast_from_graveyard`, which is also true of a card cast out of
+a graveyard under another permission (Muldrotha, an Edgar-shaped
+`cast_from_graveyard` static). That cast pays the mana cost, not the escape
+cost, and an escape creature cast that way enters without its counters.
 
 **A card's own permission at its printed price** is not a graveyard cost. It is
 a `cast_from_graveyard` static that works from the graveyard:
@@ -9012,6 +9178,30 @@ spell, so every other spell is a permanent spell.
   leaving the battlefield between offer and charge cannot change what is billed.
 - Not `free_cast_permission`, which waives the cost rather than replacing it,
   and not `alternative_cost`, which only the card that prints it has.
+
+## A player losing all counters
+
+"Each opponent loses all counters" -- Final Act's fifth mode. Every counter of
+every kind on each named player (122.1):
+
+```jsonc
+{ "op": "lose_all_player_counters", "player": "each_opponent" }
+```
+
+`player` is required and is any player spec (`each_opponent`, `each_player`,
+`target`, ...). The kinds are `player.PLAYER_COUNTER_KINDS` -- poison and
+energy -- so the card says "all" once and needs no edit when the player model
+carries another kind. Each kind comes off through
+`primitives.remove_player_counters`, which bumps the characteristic cache (a
+corrupted static re-reads at once) and fires `counter_removed` with `player`,
+`counter`, `amount` and `total` for each kind that was there.
+
+- The loader refuses a missing `player`, and a `counter`, `kinds` or `amount`
+  key, which this op would ignore.
+- Not `remove_counters`, which takes one named kind off **objects**; a player is
+  not one. "Loses all poison counters" (one kind) is a different sentence this
+  op does not write.
+- Not a `pay_energy` cost: paying is a cost, this is an effect.
 
 ## Aura swap — an exchange, not two moves
 

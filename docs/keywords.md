@@ -245,6 +245,7 @@ This is the long tail, and where the build order comes from.
 | Cycling | shipped | `activated` + `active_zones: ["hand"]` + a `discard_self` cost | — |
 | Dash | free | `evoke` with an `evoke_label`, then a `self_enters` trigger on `evoked`: `grant_keyword` haste and a `delay`ed `return_to_hand`. The label also lifts evoke's cheaper-than-printed guard, since a dash may cost more | — |
 | Daybound / nightbound | shipped | `GameState.day_night` — the table's designation, switched by a turn-based action off `TurnLedger.spells_cast`, turning the permanents over with `transform` | `daybound` |
+| Decayed | shipped | `Keyword`, read on derived keywords twice: `combat.can_block` refuses it as a blocker, and the rules supply `carddef.DECAYED_TRIGGER` once per permanent with the keyword: `attacks` from itself, then a `delay` at `end_of_combat` that `sacrifice`s it. A keyword rather than a `cant_block` static plus a trigger because Jadar, Ghoulcaller of Nephalia filters on "creatures with decayed" — cashed by `test_decayed.py` | `decayed` |
 | Delve | free | `pay_generic_with: "exile_from_graveyard"` — convoke's shape with a different currency | `pay_generic_with` |
 | Dethrone | shipped | `Keyword`, whose trigger `carddef.DETHRONE_TRIGGER` the rules supply once per permanent with the keyword: `attacks` with `defending: "most_life"` (a player, not a planeswalker or battle, with the most life or tied, asked as part of the event), then `add_counters` +1/+1 on itself. A keyword for exalted's reason: Marchesa, the Black Rose grants it — cashed by `test_dethrone.py` | `dethrone` |
 | Detain | free | the `detain` op — one word, three restrictions, cleared by the *detaining* player's untap step | `detain` |
@@ -276,7 +277,7 @@ This is the long tail, and where the build order comes from.
 | Fuse † | shipped | a third cast line on a split card: one card built from both halves — costs added, target lists concatenated, both effect lists run through **one** `EffectContext`, which is splice's argument | `fuse` |
 | Frenzy | free | `attacks_unblocked` trigger, then `pump` | — |
 | Graft | free | `self_enters_with_counters`, then `permanent_enters` + `may` + `move_counters` onto the binding | `move_counters` |
-| Gravestorm | free | storm's shape, counting `cards_to_graveyard_this_turn` instead | `copy_spell` |
+| Gravestorm | free | storm's shape, counting `permanents_to_graveyard_this_turn` instead | `copy_spell` |
 | Haunt | shipped | the `haunt` op and a `haunted_by: "self"` trigger filter -- the exile link reversed, read off the ability source | `haunt` |
 | Hideaway | shipped | the `hideaway` op writes the `exiled_by` link and `revealed_to`; `play_exiled` is the permission, reading it back | `hideaway` |
 | Horsemanship | shipped | `Keyword`, read in `combat.can_block`: the blocker must carry it too | `horsemanship` |

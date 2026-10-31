@@ -165,6 +165,7 @@
    "compleated",
    "daybound",
    "deathtouch",
+   "decayed",
    "defender",
    "dethrone",
    "double_strike",
@@ -458,6 +459,9 @@
    "hand",
    "library"
   ],
+  "STATIC_DEATHS_KEYS": [
+   "creatures_died_this_turn"
+  ],
   "STATIC_DERIVED_CONDITION_EFFECTS": [
    "cant_attack",
    "cant_block"
@@ -596,6 +600,7 @@
    "const",
    "count",
    "counters_on",
+   "creatures_died_this_turn",
    "extreme_value",
    "greatest_commander_mana_value",
    "mana_symbols",
@@ -815,6 +820,16 @@
    "level",
    "sorcery_speed_only",
    "text"
+  ],
+  "_MANA_SPENT_SOURCE_KEYS": [
+   "attached",
+   "created_with",
+   "damaged_by",
+   "exclude_self",
+   "haunted_by",
+   "paid_by",
+   "self_only",
+   "shares_a_creature_type_with"
   ]
  },
  "ops": [
@@ -909,6 +924,7 @@
   "look_at_hand",
   "look_at_top",
   "lose_all_abilities",
+  "lose_all_player_counters",
   "lose_game",
   "lose_life",
   "manifest",

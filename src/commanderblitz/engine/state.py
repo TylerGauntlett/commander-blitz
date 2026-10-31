@@ -797,6 +797,11 @@ class GameState:
                 who = obj.controller if obj is not None else pid
                 if who is not None:
                     ledger.creatures_died[who] = ledger.creatures_died.get(who, 0) + 1
+                    # The count is a static's input (`creatures_died_this_turn`),
+                    # and `chars` caches per `char_version`. The zone change
+                    # bumped it before this event fired, and an answer read in
+                    # between would otherwise outlive the death.
+                    self.bump_chars()
         elif event.type == EventType.ATTACKERS_DECLARED:
             if pid is not None:
                 # The oids come off the event payload, which `finish_attackers`
@@ -884,6 +889,7 @@ class GameState:
                         types=frozenset(c.types),
                         subtypes=frozenset(c.subtypes),
                         colors=frozenset(c.colors),
+                        is_token=bool(obj.is_token),
                         batch=int(data.get("batch", -1)),
                     )
                 )
@@ -990,6 +996,14 @@ class GameState:
                 ledger.taps_by_permanent.pop(data.get("oid"), None)
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
+            # Gravestorm's count, and the token is *in* it: the token
+            # state-based action has not run yet, so the token reached the
+            # graveyard as a permanent and counts (111.7).
+            if (
+                data.get("from") == Zone.BATTLEFIELD.value
+                and data.get("to") == Zone.GRAVEYARD.value
+            ):
+                ledger.permanents_to_graveyard += 1
             # The departure half. Keyed by the graveyard's **owner** rather than
             # by whoever moved the card: "a card left *your* graveyard" is a
             # fact about the yard, and a Reanimate cast by an opponent on your

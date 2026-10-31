@@ -1,0 +1,21 @@
+{
+  "card_id": "uro_titan_of_nature_s_wrath",
+  "name": "Uro, Titan of Nature's Wrath",
+  "oracle_text": "When Uro enters, sacrifice it unless it escaped.\nWhenever Uro enters or attacks, you gain 3 life and draw a card, then you may put a land card from your hand onto the battlefield.\nEscape—{G}{G}{U}{U}, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+  "blocked_sentences": [
+    "When Uro enters, sacrifice it unless it escaped."
+  ],
+  "needs": [
+    {
+      "capability": "escape",
+      "kind": "engine",
+      "what": "a verification sandbox that can cast an escape card for its escape cost from the graveyard (the card in the graveyard plus at least five other cards there), or an argued exception in the playable gate for a creature whose own 'sacrifice it unless it escaped' trigger lawfully bins it when cast from hand",
+      "why_existing_wont_do": "Every line is expressible: graveyard_cost {mana: {G}{G}{U}{U}, exile_from_graveyard: {count: 5, exclude_self: true}} + graveyard_cast: graveyard, a self_enters trigger with if {escaped: false} -> sacrifice self_only, and self_enters/attacks triggers with gain_life 3, draw 1, may put_onto_battlefield a land from hand. A dry run of verify() passes schema/compile/residual but fails the playable gate: '_cast' always casts from hand via build_sandbox (graveyard holds only 2 cards, so escape is unpayable), Uro correctly sacrifices itself, and _play_once allows a permanent only on the battlefield. Its docstring forbids widening that set and says the fix is a sandbox role, not a weaker gate. Dropping or inverting the sacrifice clause would be an approximation."
+    }
+  ],
+  "closest_existing": [
+    "graveyard_cost",
+    "escaped"
+  ],
+  "confidence": "high"
+}

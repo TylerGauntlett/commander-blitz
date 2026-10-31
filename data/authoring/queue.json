@@ -15152,12 +15152,12 @@
     },
     "Assassin's Trophy": {
       "edhrec_rank": 123,
-      "gate": "template",
+      "gate": null,
       "name": "Assassin's Trophy",
-      "reason": "no template for: Destroy target permanent an opponent controls. Its controller may search their library for",
+      "reason": "",
       "scryfall_id": "aaf258fc-3ba4-4b83-bdbf-10a07e0b6c03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Assassinate": {
@@ -18032,12 +18032,12 @@
     },
     "Awakening Zone": {
       "edhrec_rank": 1553,
-      "gate": "template",
+      "gate": null,
       "name": "Awakening Zone",
-      "reason": "no template for: At the beginning of your upkeep, you may create a 0/1 colorless Eldrazi Spawn creature tok",
+      "reason": "",
       "scryfall_id": "13724768-83d3-4da2-82d7-35787c4f9877",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Awakening of Vitu-Ghazi": {
@@ -23282,12 +23282,12 @@
     },
     "Beledros Witherbloom": {
       "edhrec_rank": 1443,
-      "gate": "template",
+      "gate": null,
       "name": "Beledros Witherbloom",
-      "reason": "no template for: At the beginning of each upkeep, create a 1/1 black and green Pest creature token with \"Wh",
+      "reason": "",
       "scryfall_id": "144c2886-3d37-4a8a-8e37-99ccff66599e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Belfry Spirit": {
@@ -26982,12 +26982,12 @@
     },
     "Blight Mound": {
       "edhrec_rank": 3931,
-      "gate": "template",
+      "gate": null,
       "name": "Blight Mound",
-      "reason": "no template for: Attacking Pests you control get +1/+0 and have menace",
+      "reason": "",
       "scryfall_id": "dc060028-e01c-4bc7-8b52-7d0e2a350061",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blight Pile": {
@@ -29392,12 +29392,12 @@
     },
     "Blossoming Bogbeast": {
       "edhrec_rank": 4439,
-      "gate": "template",
+      "gate": null,
       "name": "Blossoming Bogbeast",
-      "reason": "no template for: Whenever this creature attacks, you gain 2 life. Then creatures you control gain trample a",
+      "reason": "",
       "scryfall_id": "764054f1-e848-4cee-b623-4861ce15c370",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blossoming Calm": {
@@ -40932,12 +40932,12 @@
     },
     "Casualties of War": {
       "edhrec_rank": 1767,
-      "gate": "template",
+      "gate": null,
       "name": "Casualties of War",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "2467f50a-bf45-4046-9086-1bfcf3438af4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cat Burglar": {
@@ -55672,12 +55672,12 @@
     },
     "Creakwood Liege": {
       "edhrec_rank": 5136,
-      "gate": "template",
+      "gate": null,
       "name": "Creakwood Liege",
-      "reason": "no template for: Other black creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "9a05c8f9-e810-498d-ab51-632661dd000d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creakwood Safewright": {
@@ -57992,12 +57992,12 @@
     },
     "Culling Ritual": {
       "edhrec_rank": 578,
-      "gate": "template",
+      "gate": null,
       "name": "Culling Ritual",
-      "reason": "no template for: Destroy each nonland permanent with mana value 2 or less. Add {B} or {G} for each permanen",
+      "reason": "",
       "scryfall_id": "2bcd7858-7ae6-4419-bc58-a5c133c97577",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Culling Scales": {
@@ -63012,12 +63012,12 @@
     },
     "Deadly Brew": {
       "edhrec_rank": 4864,
-      "gate": "template",
+      "gate": null,
       "name": "Deadly Brew",
-      "reason": "no template for: Each player sacrifices a creature or planeswalker of their choice. If you sacrificed a per",
+      "reason": "",
       "scryfall_id": "3e5493c3-0be2-467c-82f0-3ee1ca909d0c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deadly Complication": {
@@ -65452,12 +65452,12 @@
     },
     "Defiling Daemogoth": {
       "edhrec_rank": 7653,
-      "gate": "template",
+      "gate": null,
       "name": "Defiling Daemogoth",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, you gain 1 life",
+      "reason": "",
       "scryfall_id": "2cde79eb-91c3-4a42-a2d3-e733e3b56846",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Defiling Tears": {
@@ -68972,22 +68972,22 @@
     },
     "Dina, Essence Brewer": {
       "edhrec_rank": 6737,
-      "gate": "template",
+      "gate": null,
       "name": "Dina, Essence Brewer",
-      "reason": "no template for: Whenever you sacrifice a creature, draw a card. This ability triggers only once each turn",
+      "reason": "",
       "scryfall_id": "9fe237b8-c02c-41ea-9fc4-b771b91d2157",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dina, Soul Steeper": {
       "edhrec_rank": 2748,
-      "gate": "template",
+      "gate": null,
       "name": "Dina, Soul Steeper",
-      "reason": "no template for: Whenever you gain life, each opponent loses 1 life",
+      "reason": "",
       "scryfall_id": "6ae992b6-506b-4667-884f-4f7fc075b71e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dingus Egg": {
@@ -78982,12 +78982,12 @@
     },
     "Eccentric Pestfinder // Turn Stones": {
       "edhrec_rank": 7923,
-      "gate": "template",
+      "gate": null,
       "name": "Eccentric Pestfinder // Turn Stones",
-      "reason": "no template for: At the beginning of each end step, if you gained life this turn, this creature becomes pre",
+      "reason": "",
       "scryfall_id": "508e1dd7-edbd-4b76-90bc-ff58c55b58a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Echo Chamber": {
@@ -88812,12 +88812,12 @@
     },
     "Exsanguinate": {
       "edhrec_rank": 283,
-      "gate": "template",
+      "gate": null,
       "name": "Exsanguinate",
-      "reason": "no template for: Each opponent loses X life. You gain life equal to the life lost this way",
+      "reason": "",
       "scryfall_id": "333c8e71-fe90-408c-aabd-c5b7d83d0f03",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Exsanguinator Cavalry": {
@@ -93442,12 +93442,12 @@
     },
     "Feral Appetite": {
       "edhrec_rank": 9229,
-      "gate": "template",
+      "gate": null,
       "name": "Feral Appetite",
-      "reason": "no template for: Attacking Pests you control get +1/+0 and have deathtouch",
+      "reason": "",
       "scryfall_id": "69dda877-c176-456c-8cd8-5a1ea288e4c9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Feral Contest": {
@@ -94992,12 +94992,12 @@
     },
     "Final Act": {
       "edhrec_rank": 3775,
-      "gate": "template",
+      "gate": null,
       "name": "Final Act",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "c3a474a8-b2f0-4392-9f5d-0f78b3fb29e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Final Death": {
@@ -109392,12 +109392,12 @@
     },
     "Gilded Goose": {
       "edhrec_rank": 789,
-      "gate": "template",
+      "gate": null,
       "name": "Gilded Goose",
-      "reason": "no template for: When this creature enters, create a Food token",
+      "reason": "",
       "scryfall_id": "5ea59511-24b1-4925-9948-9d4c0d27d1c5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gilded Light": {
@@ -115432,12 +115432,12 @@
     },
     "Gorma, the Gullet": {
       "edhrec_rank": 8028,
-      "gate": "template",
+      "gate": null,
       "name": "Gorma, the Gullet",
-      "reason": "no template for: Whenever another creature you control dies, put a +1/+1 counter on Gorma",
+      "reason": "",
       "scryfall_id": "86f97dd8-8647-4938-aee0-690bb715f88b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gorn Captain": {
@@ -118062,12 +118062,12 @@
     },
     "Grim Backwoods": {
       "edhrec_rank": 2031,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Backwoods",
-      "reason": "no template for: {2}{B}{G}, {T}, Sacrifice a creature: Draw a card",
+      "reason": "",
       "scryfall_id": "606c5f42-fe5f-4dcd-b8f4-b67beabe3f0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Bauble": {
@@ -120912,12 +120912,12 @@
     },
     "Gyome, Master Chef": {
       "edhrec_rank": 4723,
-      "gate": "template",
+      "gate": null,
       "name": "Gyome, Master Chef",
-      "reason": "no template for: At the beginning of your end step, create a number of Food tokens equal to the number of n",
+      "reason": "",
       "scryfall_id": "8279d421-dd86-49d1-93f7-65f6046c542d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gyre Engineer": {
@@ -123922,12 +123922,12 @@
     },
     "Haywire Mite": {
       "edhrec_rank": 691,
-      "gate": "template",
+      "gate": null,
       "name": "Haywire Mite",
-      "reason": "no template for: When this creature dies, you gain 2 life",
+      "reason": "",
       "scryfall_id": "6f813bc3-6d81-4555-8e4b-6ecd9a6757b7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hazard of the Dunes": {
@@ -131042,12 +131042,12 @@
     },
     "Hulk's Thunderclap": {
       "edhrec_rank": 20956,
-      "gate": "template",
+      "gate": null,
       "name": "Hulk's Thunderclap",
-      "reason": "no template for: As an additional cost to cast this spell, you may behold a Gamma creature",
+      "reason": "",
       "scryfall_id": "ddd8d212-dc93-4986-9907-c7d37092f68f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hulk, Always Angry": {
@@ -134342,12 +134342,12 @@
     },
     "Immoral Bargain": {
       "edhrec_rank": 7425,
-      "gate": "template",
+      "gate": null,
       "name": "Immoral Bargain",
-      "reason": "no template for: As an additional cost to cast this spell, sacrifice X creatures",
+      "reason": "",
       "scryfall_id": "9d475a98-4561-4cbc-bd60-c3bfc33725be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Immortal Coil": {
@@ -141622,12 +141622,12 @@
     },
     "Jadar, Ghoulcaller of Nephalia": {
       "edhrec_rank": 1346,
-      "gate": "template",
+      "gate": null,
       "name": "Jadar, Ghoulcaller of Nephalia",
-      "reason": "no template for: At the beginning of your end step, if you control no creatures with decayed, create a 2/2 ",
+      "reason": "",
       "scryfall_id": "49d5d62b-72ed-446a-b280-ad04c38bdd0c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jaddi Lifestrider": {
@@ -169972,12 +169972,12 @@
     },
     "Mazirek, Kraul Death Priest": {
       "edhrec_rank": 1600,
-      "gate": "template",
+      "gate": null,
       "name": "Mazirek, Kraul Death Priest",
-      "reason": "no template for: Whenever a player sacrifices another permanent, put a +1/+1 counter on each creature you c",
+      "reason": "",
       "scryfall_id": "940ae3c2-7ac2-412b-afd0-c8b0099bc3aa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mazzy, Truesword Paladin": {
@@ -171312,12 +171312,12 @@
     },
     "Merchant of Venom": {
       "edhrec_rank": 11831,
-      "gate": "template",
+      "gate": null,
       "name": "Merchant of Venom",
-      "reason": "no template for: When this creature enters, each player sacrifices a creature of their choice",
+      "reason": "",
       "scryfall_id": "935e0dbb-76fd-4f4f-bcc6-d80a3061bb29",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Merchant of the Vale // Haggle": {
@@ -177442,12 +177442,12 @@
     },
     "Moldervine Reclamation": {
       "edhrec_rank": 959,
-      "gate": "template",
+      "gate": null,
       "name": "Moldervine Reclamation",
-      "reason": "no template for: Whenever a creature you control dies, you gain 1 life and draw a card",
+      "reason": "",
       "scryfall_id": "f3e93085-ffcb-4f48-8649-3fcbc5e97699",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Moldgraf Millipede": {
@@ -179592,12 +179592,12 @@
     },
     "Mortality Spear": {
       "edhrec_rank": 3352,
-      "gate": "template",
+      "gate": null,
       "name": "Mortality Spear",
-      "reason": "no template for: This spell costs {2} less to cast if you gained life this turn",
+      "reason": "",
       "scryfall_id": "f6cdff9b-bb09-45b9-aa3c-16a3136d183c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mortarion, Daemon Primarch": {
@@ -181612,12 +181612,12 @@
     },
     "Mycoloth": {
       "edhrec_rank": 2090,
-      "gate": "template",
+      "gate": null,
       "name": "Mycoloth",
-      "reason": "no template for: Devour 2",
+      "reason": "",
       "scryfall_id": "924976cf-9b46-4cbf-ab27-07ca72a21608",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Myconid Spore Tender": {
@@ -185462,12 +185462,12 @@
     },
     "Nether Traitor": {
       "edhrec_rank": 2454,
-      "gate": "template",
+      "gate": null,
       "name": "Nether Traitor",
-      "reason": "no template for: Whenever another creature is put into your graveyard from the battlefield, you may pay {B}",
+      "reason": "",
       "scryfall_id": "fae5d1cb-ead9-41e1-84ce-2f06dc8cf6ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nether Void": {
@@ -191542,12 +191542,12 @@
     },
     "Ohran Frostfang": {
       "edhrec_rank": 445,
-      "gate": "template",
+      "gate": null,
       "name": "Ohran Frostfang",
-      "reason": "no template for: Attacking creatures you control have deathtouch",
+      "reason": "",
       "scryfall_id": "55fb93e6-d057-4b70-ad12-e98291fd4a2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ohran Viper": {
@@ -192452,12 +192452,12 @@
     },
     "Ominous Harvest": {
       "edhrec_rank": 11154,
-      "gate": "template",
+      "gate": null,
       "name": "Ominous Harvest",
-      "reason": "no template for: Gravestorm",
+      "reason": "",
       "scryfall_id": "2271184b-08eb-4d2a-8ebf-a1807d51dd2a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ominous Parcel": {
@@ -193442,12 +193442,12 @@
     },
     "Ophiomancer": {
       "edhrec_rank": 663,
-      "gate": "template",
+      "gate": null,
       "name": "Ophiomancer",
-      "reason": "no template for: At the beginning of each upkeep, if you control no Snakes, create a 1/1 black Snake creatu",
+      "reason": "",
       "scryfall_id": "baf793b6-9612-43f3-9f1b-2e53e81cb89f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Opportunist": {
@@ -198942,12 +198942,12 @@
     },
     "Pawn of Ulamog": {
       "edhrec_rank": 1557,
-      "gate": "template",
+      "gate": null,
       "name": "Pawn of Ulamog",
-      "reason": "no template for: Whenever this creature or another nontoken creature you control dies, you may create a 0/1",
+      "reason": "",
       "scryfall_id": "c1b0377c-efd6-4fab-89f0-b219ca2c4c22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pawpatch Formation": {
@@ -200222,12 +200222,12 @@
     },
     "Pest Infestation": {
       "edhrec_rank": 1114,
-      "gate": "template",
+      "gate": null,
       "name": "Pest Infestation",
-      "reason": "no template for: Destroy up to X target artifacts and/or enchantments. Create twice X 1/1 black and green P",
+      "reason": "",
       "scryfall_id": "c9b8626d-d3d8-4460-9adf-112f48f173f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pest Mascot": {
@@ -200242,12 +200242,12 @@
     },
     "Pest Rescuer": {
       "edhrec_rank": 7037,
-      "gate": "template",
+      "gate": null,
       "name": "Pest Rescuer",
-      "reason": "no template for: At the beginning of each upkeep, if you don't control a Pest creature token, create a 1/1 ",
+      "reason": "",
       "scryfall_id": "1f2a066a-7bcd-4e9d-8e52-0769cd6c8124",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pest Summoning": {
@@ -206762,12 +206762,12 @@
     },
     "Priest of Forgotten Gods": {
       "edhrec_rank": 1401,
-      "gate": "template",
+      "gate": null,
       "name": "Priest of Forgotten Gods",
-      "reason": "no template for: {T}, Sacrifice two other creatures: Any number of target players each lose 2 life and sacr",
+      "reason": "",
       "scryfall_id": "363f8761-91a7-47e8-9e15-3b73d59bc020",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Priest of Gix": {
@@ -223412,12 +223412,12 @@
     },
     "Ribtruss Roaster": {
       "edhrec_rank": 7622,
-      "gate": "template",
+      "gate": null,
       "name": "Ribtruss Roaster",
-      "reason": "no template for: Devour 1",
+      "reason": "",
       "scryfall_id": "8217100d-8244-4565-97bd-6c0f38c3e2f0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Richard Garfield, Ph.D.": {
@@ -253102,12 +253102,12 @@
     },
     "Smothering Abomination": {
       "edhrec_rank": 3782,
-      "gate": "template",
+      "gate": null,
       "name": "Smothering Abomination",
-      "reason": "no template for: At the beginning of your upkeep, sacrifice a creature",
+      "reason": "",
       "scryfall_id": "aac33238-e4bd-4c72-aecc-9905232c3ab4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smothering Tithe": {
@@ -261232,12 +261232,12 @@
     },
     "Springbloom Druid": {
       "edhrec_rank": 770,
-      "gate": "template",
+      "gate": null,
       "name": "Springbloom Druid",
-      "reason": "no template for: When this creature enters, you may sacrifice a land. If you do, search your library for up",
+      "reason": "",
       "scryfall_id": "17d67b88-3f76-401f-b04a-f2bcaab4aa97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Springheart Nantuko": {
@@ -264122,12 +264122,12 @@
     },
     "Stensian Sanguinist // Exsanguinate": {
       "edhrec_rank": 5534,
-      "gate": "template",
+      "gate": null,
       "name": "Stensian Sanguinist // Exsanguinate",
-      "reason": "no template for: Whenever you attack, target creature gains deathtouch until end of turn. Whenever that cre",
+      "reason": "",
       "scryfall_id": "66d88104-c69d-4349-a4ae-4a3d855a3536",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Step Between Worlds": {
@@ -267792,12 +267792,12 @@
     },
     "Study Hall": {
       "edhrec_rank": 3830,
-      "gate": "template",
+      "gate": null,
       "name": "Study Hall",
-      "reason": "no template for: {1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry",
+      "reason": "",
       "scryfall_id": "93f812bc-7663-4504-b566-79e2c0a0f845",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Study the Classics": {
@@ -276002,12 +276002,12 @@
     },
     "Teacher's Pest": {
       "edhrec_rank": 7138,
-      "gate": "template",
+      "gate": null,
       "name": "Teacher's Pest",
-      "reason": "no template for: Whenever this creature attacks, you gain 1 life",
+      "reason": "",
       "scryfall_id": "eaa358ac-761d-4507-aa15-3d4684027207",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Teachings of the Archaics": {
@@ -277892,12 +277892,12 @@
     },
     "Tendershoot Dryad": {
       "edhrec_rank": 1291,
-      "gate": "template",
+      "gate": null,
       "name": "Tendershoot Dryad",
-      "reason": "no template for: Ascend",
+      "reason": "",
       "scryfall_id": "def3571c-01dd-4eee-8f60-0ac4d1928d33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tendo Ice Bridge": {
@@ -288032,12 +288032,12 @@
     },
     "Titan's Grave": {
       "edhrec_rank": 8262,
-      "gate": "template",
+      "gate": null,
       "name": "Titan's Grave",
-      "reason": "no template for: {2}{B}{G}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "a9ab41c8-3ee2-4676-9b8b-20c34d9f5f21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan's Presence": {
@@ -293492,12 +293492,12 @@
     },
     "Trudge Garden": {
       "edhrec_rank": 8902,
-      "gate": "template",
+      "gate": null,
       "name": "Trudge Garden",
-      "reason": "no template for: Whenever you gain life, you may pay {2}. If you do, create a 4/4 green Fungus Beast creatu",
+      "reason": "",
       "scryfall_id": "80dd8180-668a-41e4-a4e9-ebdd71345841",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "True Ancestry": {
@@ -294202,12 +294202,12 @@
     },
     "Turbulent Fen": {
       "edhrec_rank": 4155,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Fen",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "9737159b-256c-4004-ba5f-0417c35e1b30",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turbulent Moor": {
@@ -296412,12 +296412,12 @@
     },
     "Umbral Collar Zealot": {
       "edhrec_rank": 1438,
-      "gate": "template",
+      "gate": null,
       "name": "Umbral Collar Zealot",
-      "reason": "no template for: Sacrifice another creature or artifact: Surveil 1",
+      "reason": "",
       "scryfall_id": "98648b8a-2cf0-4c10-ab13-c88b2e03fc15",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Umbral Expanse": {
@@ -302202,12 +302202,12 @@
     },
     "Veinwitch Coven": {
       "edhrec_rank": 4146,
-      "gate": "template",
+      "gate": null,
       "name": "Veinwitch Coven",
-      "reason": "no template for: Whenever you gain life, you may pay {B}. If you do, return target creature card from your ",
+      "reason": "",
       "scryfall_id": "c5cc7d88-b9d3-425e-bef2-f1e3a85a3e4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vela the Night-Clad": {
@@ -314892,12 +314892,12 @@
     },
     "Wight of the Reliquary": {
       "edhrec_rank": 1256,
-      "gate": "template",
+      "gate": null,
       "name": "Wight of the Reliquary",
-      "reason": "no template for: This creature gets +1/+1 for each creature card in your graveyard",
+      "reason": "",
       "scryfall_id": "a8c6ee26-fa74-4859-9a94-89b476d218d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wiitigo": {
@@ -317552,32 +317552,32 @@
     },
     "Witherbloom Campus": {
       "edhrec_rank": 6507,
-      "gate": "template",
+      "gate": null,
       "name": "Witherbloom Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "e5af06c8-86ab-4731-aa4a-2eec2c664488",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Witherbloom Charm": {
       "edhrec_rank": 5629,
-      "gate": "template",
+      "gate": null,
       "name": "Witherbloom Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "254437f7-7a8a-4b11-9cea-e8e7ea23c59e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Witherbloom Command": {
       "edhrec_rank": 8685,
-      "gate": "template",
+      "gate": null,
       "name": "Witherbloom Command",
-      "reason": "no template for: Choose two —",
+      "reason": "",
       "scryfall_id": "0d68dee5-56ff-45bb-a37e-9e2dfc07c5a7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Witherbloom Pledgemage": {
@@ -317922,12 +317922,12 @@
     },
     "Woe Strider": {
       "edhrec_rank": 1679,
-      "gate": "template",
+      "gate": null,
       "name": "Woe Strider",
-      "reason": "no template for: When this creature enters, create a 0/1 white Goat creature token",
+      "reason": "",
       "scryfall_id": "f458ae68-5cda-4c40-a348-47b4196fba02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Woebearer": {
@@ -320402,12 +320402,12 @@
     },
     "Yahenni, Undying Partisan": {
       "edhrec_rank": 1020,
-      "gate": "template",
+      "gate": null,
       "name": "Yahenni, Undying Partisan",
-      "reason": "no template for: Whenever a creature an opponent controls dies, put a +1/+1 counter on Yahenni",
+      "reason": "",
       "scryfall_id": "518b155a-cb84-48d3-9aba-07577f60f091",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yamabushi's Flame": {

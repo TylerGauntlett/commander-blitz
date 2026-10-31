@@ -823,7 +823,11 @@ class Game:
                 ok = yield from pay(state, pid, additional.without_mana(), oid)
                 if not ok:  # pragma: no cover - legality already proved payability
                     return
-            obj.cast_additional = action.additional_times
+        # Written on every cast, a zero included: the count is a fact about this
+        # cast, and a card bounced off the stack and cast again unpaid must not
+        # read the last cast's sacrifices -- a copy re-choosing an Immoral
+        # Bargain's targets sizes them from it (707.10).
+        obj.cast_additional = action.additional_times
 
         if from_command:
             player = state.players[obj.owner]

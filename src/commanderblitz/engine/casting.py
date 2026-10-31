@@ -54,6 +54,7 @@ from .primitives import cast_locked_zones, life_locked
 from .stack import modal_cast_ok
 from .targeting import (
     _names_a_sibling,
+    additional_sized_targets,
     describe_ref,
     enumerate_target_tuples,
     kicked_targets,
@@ -623,13 +624,17 @@ def _cast_options(
     already replaced, and no printed card asks for that.
     """
     exclude_sid = state.objects[oid].stack_id
+    # Sized as the unpaid line, never read off the object: an additional-sized
+    # count evaluated here would read the *previous* cast's payments.
+    # `_cast_variant` re-sizes each line to the times it pays.
+    specs = additional_sized_targets(card.targets, 0)
     tuples = enumerate_target_tuples(
         state,
         pid,
-        card.targets,
+        specs,
         oid,
         exclude_sid=exclude_sid,
-        defer=deferred_target_spec(state, card, card.targets),
+        defer=deferred_target_spec(state, card, specs),
     )
     if not tuples:
         # Nothing the unpromised cast could point at -- but a promise may
@@ -1688,6 +1693,29 @@ def _cast_variant(
     # flashed-back spell than to a fresh one.
     if not modal_cast_ok(state, pid, card, oid):
         return []
+    # "Sacrifice X creatures. Destroy X target nonland permanents." -- Immoral
+    # Bargain. The line's own enumeration, because the size of its target list
+    # is the number of times this line pays the additional cost, announced at
+    # 601.2b before 601.2c declares targets. Here rather than in each caller,
+    # for `modal_cast_ok`'s reason: the plain line, flashback, foretell and
+    # every repeat count of `_charge_additional_cost` all pass through, and a
+    # caller that forgot would offer the unsized `tuples`. The variants with a
+    # target list of the rule's own (morph, overload, bestow, mutate) keep it.
+    specs = card.targets_for(gift_promised=gift_to is not None)
+    if not (face_down or overloaded or bestowed or mutated or fused) and any(
+        spec.additional_sized for spec in specs
+    ):
+        if kicked and (swapped := kicked_targets(specs)) is not None:
+            specs = swapped
+        specs = additional_sized_targets(specs, additional_times)
+        tuples = enumerate_target_tuples(
+            state,
+            pid,
+            specs,
+            oid,
+            exclude_sid=state.objects[oid].stack_id,
+            defer=deferred_target_spec(state, card, specs),
+        )
     # 601.2d: divided damage gives each of its targets at least one, so a line
     # naming more targets than there is damage cannot be divided and is not a
     # cast. Here for `modal_cast_ok`'s reason: every offered cast passes through.

@@ -1,0 +1,18 @@
+{
+  "card_id": "wilhelt_the_rotcleaver",
+  "name": "Wilhelt, the Rotcleaver",
+  "oracle_text": "Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zombie creature token with decayed. (It can't block. When it attacks, sacrifice it at end of combat.)\nAt the beginning of your end step, you may sacrifice a Zombie. If you do, draw a card.",
+  "blocked_sentences": [
+    "Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zombie creature token with decayed"
+  ],
+  "needs": [
+    {
+      "capability": "not_keywords_trigger_filter",
+      "kind": "selector",
+      "what": "`not_keywords` in a trigger filter (TRIGGER_FILTER_KEYS / triggers.matches_card_filter), answered from the dying creature's last-known keywords, so a `creature_dies` trigger can say \"another Zombie you control dies, if it didn't have decayed\" -- filter {controller: you, subtypes: [Zombie], exclude_self: true, not_keywords: [decayed]}",
+      "why_existing_wont_do": "trigger_filter_keys carries `keywords` but not its negation `not_keywords` (validate_trigger_filter refuses it), and matches_card_filter reads the printed card face only, so a creature that was granted decayed would not be seen either. A trigger `condition` has no last-known-keywords value (value_keys has counters_had, power_had, toughness_had but no keywords_had), and an `exists` over the subject reads a creature that has already left the battlefield. Dropping the clause would make every decayed token that dies replace itself forever."
+    }
+  ],
+  "closest_existing": ["keywords", "not_keywords", "counters_had"],
+  "confidence": "high"
+}

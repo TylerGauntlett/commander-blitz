@@ -42,6 +42,7 @@ PRECONS = {
     "msc_doom_prevails",
     "msc_the_fantastic_four",
     "msc_wakanda_forever",
+    "soc_witherbloom_pestilence",
 }
 
 #: Every deck a player sees on the shelf.

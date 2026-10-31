@@ -14452,6 +14452,66 @@
           ]
         }
       ]
+    },
+    {
+      "id": "t_study_hall",
+      "name": "Test Study Hall",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry X, where X is the number of times it's been cast from the command zone this game.",
+      "types": [
+        "Land"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "mana": "{C}"
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Add one mana of any color. When you spend this mana to cast your commander, scry X, where X is the number of times it's been cast from the command zone this game.",
+          "is_mana_ability": true,
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "modes": [
+                { "effects": [{ "op": "add_mana", "mana": "{W}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{U}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{B}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{R}" }] },
+                { "effects": [{ "op": "add_mana", "mana": "{G}" }] }
+              ]
+            }
+          ],
+          "mana_spent_trigger": {
+            "spell": {
+              "is_commander": true,
+              "owner": "you"
+            },
+            "effects": [
+              {
+                "op": "scry",
+                "player": "you",
+                "amount": {
+                  "command_zone_casts_of": { "binding": "subject" }
+                }
+              }
+            ]
+          }
+        }
+      ]
     }
   ]
 }

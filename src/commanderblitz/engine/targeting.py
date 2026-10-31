@@ -387,10 +387,13 @@ def target_count(
 
     A **spell's own** targets are a different moment and a different answer:
     601.2c fixes them while the spell is being cast, before it has been paid
-    for, and legality enumerates them before the player has chosen X or how many
-    times to kick.  There is nothing to read there, so `loader.targets._compile_targets`
-    refuses a value-expression count on a card's own `targets` outright rather
-    than letting it quietly evaluate to zero.
+    for. There is nothing on the object to read there, so
+    `loader.targets._compile_targets` refuses a value-expression count on a
+    card's own `targets` outright rather than letting it quietly evaluate to
+    zero -- except the two counts 601.2b has already announced: X
+    (`TargetSpec.x_sized`) and the times the additional cost is paid
+    (`TargetSpec.additional_sized`), which each cast line substitutes through
+    `additional_sized_targets` before it gets here.
     """
     if isinstance(spec.count, int) or spec.count == "any":
         return spec.count
@@ -893,6 +896,35 @@ def kicked_targets(specs):
         return None
     return tuple(
         spec if spec.count_if_kicked is None else replace(spec, count=spec.count_if_kicked)
+        for spec in specs
+    )
+
+
+def additional_sized_targets(specs, times: int):
+    """The same target specs with ``times`` as every additional-sized count.
+
+    "As an additional cost to cast this spell, sacrifice X creatures. Destroy
+    X target nonland permanents." -- Immoral Bargain. 601.2b announces how many
+    times the additional cost is paid, one step before 601.2c declares the
+    targets, so each cast line already knows the number and declares exactly
+    that many: sacrificing two offers two targets, sacrificing none offers none.
+
+    Returns the specs unchanged when none is `TargetSpec.additional_sized`,
+    which is every card but the handful printing the clause.
+
+    Only the **declaration** substitutes. `stack._resolve_spell` keeps the
+    printed expression, which is `TargetSpec.variable_size`, so `filter_legal`
+    hands the last spec every remaining ref -- the number the line declared,
+    and the number a copy keeps (707.10) without the copy having paid anything.
+    The loader keeps such a spec last for exactly that split.
+
+    `dataclasses.replace` for `kicked_targets`' reason: the specs are shared by
+    every line and every copy of the card.
+    """
+    if not any(spec.additional_sized for spec in specs):
+        return specs
+    return tuple(
+        replace(spec, count=max(0, int(times))) if spec.additional_sized else spec
         for spec in specs
     )
 

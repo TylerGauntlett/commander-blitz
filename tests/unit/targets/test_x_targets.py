@@ -179,9 +179,11 @@ class TestTheLoaderStillRefusesTheOthers:
             "spell_effects": [{"op": "damage", "target": "t1", "amount": {"const": 1}}],
         }
 
-    def test_additional_paid_is_still_refused(self):
-        """Kicker is paid at 601.2h -- after targets -- so it would read zero."""
-        with pytest.raises(DslError, match="computed 'count' only works on an"):
+    def test_additional_paid_without_a_cost_is_still_refused(self):
+        """A spell may size its targets by its additional cost
+        (`test_additional_sized_targets.py`), but with no cost to pay the count
+        would read zero for ever."""
+        with pytest.raises(DslError, match="has no 'additional_cost'"):
             compile_card(CardModel.model_validate(self.spell({"additional_paid": True})))
 
     def test_x_needs_an_x_in_the_cost(self):

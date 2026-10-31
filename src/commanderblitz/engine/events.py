@@ -125,6 +125,10 @@ class EventType:
     #: ``counter`` kind, the ``amount`` that arrived, ``put_by`` and ``before``,
     #: the count of that kind just before -- what an ``nth`` trigger compares.
     COUNTER_PLACED = "counter_placed"
+    #: Counters of one kind taken off. Off a permanent, ``source`` is that
+    #: permanent; off a player (`primitives.remove_player_counters`),
+    #: ``player`` is that player, ``source`` the effect's source and ``total``
+    #: what is left. Both carry the ``counter`` kind and the ``amount`` taken.
     COUNTER_REMOVED = "counter_removed"
     ATTACHED = "attached"
     #: A permanent changed controller without changing zones. Its own type,

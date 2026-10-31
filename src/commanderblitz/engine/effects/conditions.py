@@ -9,6 +9,7 @@ clauses on triggers, and static ability conditions.
     {"gift_promised": false}
     {"evoked": true}
     {"impending": true}
+    {"escaped": true}
     {"cast_during": "your_main"}
     {"was_cast": true}
     {"is_active_player": {"binding": "event_player"}}
@@ -70,6 +71,12 @@ CONDITION_KEYS = frozenset(
         # writes for a card's `impending` field -- the rule's two clauses that
         # say so -- and refused on a card without one.
         "impending",
+        # Escape (702.138c-d): "this creature **escapes with** two +1/+1
+        # counters on it", which is "if it escaped, it enters with...", and
+        # Uro's "sacrifice it unless it escaped". True only of the spell cast
+        # for the card's own escape cost and the permanent it resolved into --
+        # not of a cast from the graveyard under another permission.
+        "escaped",
         "cast_from_graveyard",
         #: Approach of the Second Sun's "if this spell was cast from your hand".
         #: The sibling of the key above and not its negation: a spell cast from
@@ -243,6 +250,13 @@ def evaluate(ctx: EffectContext, cond: Any) -> bool:
         obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
         paid = obj is not None and obj.cast_impending
         return paid == bool(cond["impending"])
+    if "escaped" in cond:
+        # `impending`'s reading, off the object, in both lifetimes: the stamp
+        # is written as the spell starts resolving and again as it lands, and
+        # wiped on any arrival that was not that resolution.
+        obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid else None
+        did = obj is not None and obj.cast_escaped
+        return did == bool(cond["escaped"])
     if "cast_from_graveyard" in cond:
         # "If this spell was cast from a graveyard, create ten of those tokens
         # instead." Read while the spell is still resolving, so `ctx.source_oid`
@@ -504,6 +518,8 @@ def validate_condition(cond: Any, where: str) -> None:
     # Gondor's trigger fire in exactly the case it must not.
     if "impending" in cond and not isinstance(cond["impending"], bool):
         raise DslError(f"{where}.impending: must be true or false")
+    if "escaped" in cond and not isinstance(cond["escaped"], bool):
+        raise DslError(f"{where}.escaped: must be true or false")
     if "no_monarch" in cond and not isinstance(cond["no_monarch"], bool):
         raise DslError(f"{where}.no_monarch: must be true or false")
     if "is_monarch" in cond:

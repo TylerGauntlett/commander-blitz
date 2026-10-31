@@ -511,6 +511,31 @@ class TestJosuVesssKnightsAreZombieKnightsWithMenace:
         assert "Knight" not in other.subtypes
 
 
+class TestJadarsZombiesHaveDecayed:
+    """Jadar, Ghoulcaller of Nephalia: *"if you control no creatures with
+    decayed, create a 2/2 black Zombie creature token **with decayed**."*
+
+    `zombie_2_2_b` is the right body without the keyword, and on this card the
+    keyword is the whole engine: the plain Zombie can block, is never
+    sacrificed, and never satisfies the intervening-if, so Jadar would make one
+    every end step instead of one at a time.
+    """
+
+    def test_it_is_a_two_two_black_zombie_with_decayed(self, pool):
+        token = pool.get("zombie_2_2_b_decayed")
+        assert token is not None
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Zombie"]
+        assert list(token.keywords) == ["decayed"]
+        assert token.is_creature and token.is_token
+
+    def test_the_plain_zombie_is_still_a_separate_token(self, pool):
+        other = pool.get("zombie_2_2_b")
+        assert other is not None
+        assert "decayed" not in other.keywords
+
+
 class TestCurrencyConvertersRogueIsATwoTwoBlack:
     """Currency Converter: *"If it's a nonland card, create a **2/2 black
     Rogue** creature token."*
@@ -1273,3 +1298,100 @@ class TestSkyclaveApparitionsIllusionIsAPlainXXBlue:
         other = pool.get("illusion_1_1_u")
         assert not other.variable_pt
         assert (other.power, other.toughness) == (1, 1)
+
+
+class TestWitherbloomsPestGainsLifeWhenItDies:
+    """Beledros Witherbloom, Blight Mound and the Witherbloom precon: *"create a
+    **1/1 black and green Pest** creature token with 'When this token dies, you
+    gain 1 life.'"*
+
+    The pool's nearest 1/1 is the green Insect, which has neither the black nor
+    the death trigger; a Pest that gains nothing is a weaker card everywhere.
+    """
+
+    def test_it_is_a_one_one_black_and_green_pest(self, pool):
+        pest = pool.get("pest_1_1_bg")
+        assert pest is not None and pest.is_token and pest.is_creature
+        assert (pest.power, pest.toughness) == (1, 1)
+        assert sorted(pest.colors) == ["B", "G"]
+        assert list(pest.types) == ["Creature"]
+        assert list(pest.subtypes) == ["Pest"]
+        assert not pest.keywords
+
+    def test_it_gains_one_life_when_it_dies(self, pool):
+        (ability,) = pool.get("pest_1_1_bg").abilities
+        assert ability.kind == "triggered"
+        assert ability.trigger.event == "dies" and ability.trigger.source == "self"
+        (effect,) = ability.effects
+        assert effect["op"] == "gain_life" and effect["player"] == "you"
+
+    def test_the_green_insect_is_still_a_separate_token(self, pool):
+        other = pool.get("insect_1_1_g")
+        assert (other.power, other.toughness) == (1, 1)
+        assert sorted(other.colors) == ["G"]
+
+
+class TestCreakwoodLiegesWormIsAPlainBlackAndGreen:
+    """Creakwood Liege: *"you may create a **1/1 black and green Worm**
+    creature token."*
+
+    The Pest is the same body in the same colours and still the wrong token:
+    it gains its controller life when it dies, and the Worm does nothing.
+    """
+
+    def test_it_is_a_plain_one_one_black_and_green_worm(self, pool):
+        worm = pool.get("worm_1_1_bg")
+        assert worm is not None and worm.is_token and worm.is_creature
+        assert (worm.power, worm.toughness) == (1, 1)
+        assert sorted(worm.colors) == ["B", "G"]
+        assert list(worm.types) == ["Creature"]
+        assert list(worm.subtypes) == ["Worm"]
+        assert not worm.keywords and not worm.abilities
+
+    def test_the_pest_is_still_a_separate_token(self, pool):
+        other = pool.get("pest_1_1_bg")
+        assert list(other.subtypes) == ["Pest"]
+        assert other.abilities
+
+
+class TestOphiomancersSnakeHasDeathtouch:
+    """Ophiomancer: *"create a **1/1 black Snake** creature token with
+    **deathtouch**."*
+
+    The pool had no Snake at all; the deathtouch is the whole point of the
+    card, which turns a 1/1 into a blocker nothing wants to attack into.
+    """
+
+    def test_it_is_a_one_one_black_snake_with_deathtouch(self, pool):
+        snake = pool.get("snake_1_1_b_deathtouch")
+        assert snake is not None and snake.is_token and snake.is_creature
+        assert (snake.power, snake.toughness) == (1, 1)
+        assert sorted(snake.colors) == ["B"]
+        assert list(snake.types) == ["Creature"]
+        assert list(snake.subtypes) == ["Snake"]
+        assert "deathtouch" in snake.keywords and len(snake.keywords) == 1
+        assert not snake.abilities
+
+
+class TestTrudgeGardensFungusBeastHasTrample:
+    """Trudge Garden: *"create a **4/4 green Fungus Beast** creature token with
+    **trample**."*
+
+    Two near misses, neither of them it: `beast_4_4_g` is the body without
+    trample, and `rhino_4_4_g_trample` is the body and keyword on a Rhino.
+    """
+
+    def test_it_is_a_four_four_green_fungus_beast_with_trample(self, pool):
+        token = pool.get("fungus_beast_4_4_g_trample")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.types) == ["Creature"]
+        assert sorted(token.subtypes) == ["Beast", "Fungus"]
+        assert "trample" in token.keywords and len(token.keywords) == 1
+        assert not token.abilities
+
+    def test_the_plain_beast_is_still_a_separate_token(self, pool):
+        other = pool.get("beast_4_4_g")
+        assert (other.power, other.toughness) == (4, 4)
+        assert "trample" not in other.keywords

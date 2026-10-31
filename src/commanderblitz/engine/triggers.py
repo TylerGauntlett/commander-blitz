@@ -16,6 +16,7 @@ from typing import TYPE_CHECKING, Any
 
 from .carddef import (
     CLOAK_WARD,
+    DECAYED_TRIGGER,
     DETHRONE_TRIGGER,
     EXALTED_TRIGGER,
     MELEE_TRIGGER,
@@ -1078,6 +1079,10 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # Melee (702.121): the same shape again, for Titania's granted melee.
         if not obj.face_down and has_keyword(state, oid, Keyword.MELEE.value):
             yield obj, MELEE_TRIGGER
+        # Decayed (702.147): the same shape, so a granted decayed listens too;
+        # the trigger only schedules the sacrifice, at end of combat.
+        if not obj.face_down and has_keyword(state, oid, Keyword.DECAYED.value):
+            yield obj, DECAYED_TRIGGER
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.

@@ -406,13 +406,15 @@ class TestTheSpellingsStayApart:
 
 
 class TestWhereTheValueCanBeRead:
-    def test_a_spell_may_not_compute_its_own_target_count(self):
-        """601.2c happens while legality is enumerating cast lines: X has not
-        been chosen and no additional cost has been paid, so the expression
-        would read 0 — or, on a second cast, the first cast's number."""
+    def test_a_spell_may_not_make_its_additional_count_a_ceiling(self):
+        """601.2c happens while legality is enumerating cast lines, before any
+        additional cost has been paid. A spell's `additional_paid` count is
+        legal only as the exact number its cast line announces
+        (`test_additional_sized_targets.py`); "up to" it would be a second
+        size on one spec."""
         card = copy.deepcopy(CARD)
         card["targets"][0]["count"] = {"additional_paid": True}
-        with pytest.raises(DslError, match="ability's targets"):
+        with pytest.raises(DslError, match="takes no 'up_to'"):
             compile_card(CardModel.model_validate(card))
 
     def test_an_ability_may(self, registry):

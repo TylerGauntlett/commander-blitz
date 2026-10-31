@@ -310,6 +310,21 @@ class Keyword(str, Enum):
     #: supplied by the rules for every permanent with the keyword; its count is
     #: the `opponents_attacked_this_combat` value, read on resolution.
     MELEE = "melee"
+    #: Decayed (702.147a).  "This creature can't block.  When it attacks,
+    #: sacrifice it at end of combat."  Two rules under one word, and a
+    #: `Keyword` rather than a `cant_block` static plus a printed attack
+    #: trigger because the word is what other cards read: Jadar, Ghoulcaller of
+    #: Nephalia asks whether you control "creatures **with decayed**", which
+    #: only a keyword can be filtered on -- the static-and-trigger pair would
+    #: play the same and never be counted.
+    #:
+    #: The can't-block half is read by `combat.can_block` on **derived**
+    #: keywords, so a decayed creature that loses its abilities may block.  The
+    #: attack half is exalted's shape: `carddef.DECAYED_TRIGGER`, supplied by
+    #: the rules for every permanent with the keyword, whose resolution
+    #: schedules the sacrifice with the `delay` op at `end_of_combat` -- the
+    #: end of the combat it attacked in, after combat damage.
+    DECAYED = "decayed"
     #: Compleated (702.150a): "If this permanent would enter with one or more
     #: loyalty counters on it, it enters with two fewer loyalty counters on it
     #: for each Phyrexian mana symbol life was paid for as it was cast."  A

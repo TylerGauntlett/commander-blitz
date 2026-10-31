@@ -13,6 +13,8 @@ forms::
     {"attacked_this_turn": "you"}          raid, bloodthirst, spectacle,
     {"attackers_this_turn": "you"}         storm and gravestorm -- and how
     {"spells_cast_this_turn": "all"}       many creatures attacked, not seats
+    {"permanents_to_graveyard_this_turn":  gravestorm: permanents, tokens
+        true}                               included, battlefield to graveyard
     {"attack_power_this_combat": "you"}  pack tactics: attackers' total power
                                         as declared, this combat
     {"opponents_attacked_this_combat":  melee: how many opponents they
@@ -187,6 +189,13 @@ VALUE_KEYS = frozenset(
         #: miss: it counts every cast from every zone, so a commander cast from
         #: hand or graveyard and every other spell would inflate it.
         "commander_casts_this_game",
+        #: "…scry X, where X is the number of times **it**'s been cast from the
+        #: command zone this game" -- Study Hall, where "it" is the commander
+        #: the mana paid for. One object's 903.8 tally, read off its owner's
+        #: `Player.commander_tax`. `commander_casts_this_game` is the near miss:
+        #: it sums both partners, so a partner deck would scry for the other's
+        #: casts too. Takes an object reference, `times_tapped_this_turn`'s.
+        "command_zone_casts_of",
         # "…if it's the first combat phase of the turn" (Genji Glove). A value
         # rather than a boolean head, so the ordinary `cmp` says it: the printed
         # clause is `== 1`, and "the second combat" or "a later combat" fall out
@@ -202,6 +211,13 @@ VALUE_KEYS = frozenset(
         # `cmp` `==` 1, which counts the tap that fired the trigger.
         "times_tapped_this_turn",
         "cards_to_graveyard_this_turn",
+        # Gravestorm (702.69a) -- "copy it for each **permanent** put into a
+        # graveyard from the battlefield this turn". Off
+        # `TurnLedger.permanents_to_graveyard`, tokens included. Neither near
+        # miss is the count: `cards_to_graveyard_this_turn` above takes
+        # discards and mills and skips tokens, and `creatures_died_this_turn`
+        # misses every noncreature permanent.
+        "permanents_to_graveyard_this_turn",
         "cards_from_graveyard_this_turn",
         "extreme_value",
         # "…if this is the second time this ability has resolved this turn."
@@ -643,6 +659,7 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                 not_types=spec.get("not_types") or (),
                 subtypes=spec.get("subtypes") or (),
                 colors=spec.get("colors") or (),
+                is_token=spec.get("is_token"),
             )
         )
     if "damage_taken_this_turn" in expr:
@@ -669,6 +686,17 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # permanent that left and came back reads from nought (400.7).
         taps = ledger.taps_by_permanent
         return sum(taps.get(oid, 0) for oid in _referenced_oids(ctx, expr["times_tapped_this_turn"]))
+    if "command_zone_casts_of" in expr:
+        # Keyed by the object, which keeps its oid through the zone change from
+        # the command zone to the stack, so the spell being cast reads its own
+        # tally -- this cast included, since `Game` bumps it as the cast is made.
+        # An object that is nobody's commander reads 0.
+        total = 0
+        for oid in _referenced_oids(ctx, expr["command_zone_casts_of"]):
+            obj = ctx.state.objects.get(oid)
+            if obj is not None:
+                total += ctx.state.players[obj.owner].commander_tax.get(oid, 0)
+        return total
     if "combats_this_turn" in expr:
         # Counting the combat in progress, so during the first combat this is 1.
         # `GameState.combat_number` is the near miss and is monotonic for the
@@ -765,9 +793,14 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             total += sum(tax.get(oid, 0) for oid in ctx.state.commanders_of(p))
         return total
     if "cards_to_graveyard_this_turn" in expr:
-        # Every graveyard, so it takes no player spec: gravestorm counts cards
-        # put into *a* graveyard, not into yours.
+        # Every graveyard, from every zone, cards only, so it takes no player
+        # spec. Not gravestorm's count -- that is the key below.
         return ledger.cards_to_graveyard
+    if "permanents_to_graveyard_this_turn" in expr:
+        # Gravestorm. Every permanent, every controller, tokens included, and
+        # only from the battlefield -- so `true` and no player spec, because
+        # the printed count is the whole table's.
+        return ledger.permanents_to_graveyard
     if "extreme_value" in expr:
         # "…where X is the **greatest** mana value among artifacts you control"
         # -- Edgar, Master Machinist. A single number off a pool, which neither
@@ -947,7 +980,7 @@ def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
     raise DslError(f"unparsable characteristic reference {ref!r}")
 
 
-#: The object references ``times_tapped_this_turn`` takes: one object the
+#: The object references ``times_tapped_this_turn`` and ``command_zone_casts_of`` take: one object the
 #: context already has in hand. Not a selector, because the printed question is
 #: about *that* creature and a selector sums a pool.
 OBJECT_REF_KEYS = ("binding", "self", "target")
@@ -1223,9 +1256,10 @@ def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = 
 
 #: What ``{"permanents_entered_this_turn": {...}}`` may filter on. Every clause
 #: is one the snapshot can honestly answer -- `EnteredPermanent` carries exactly
-#: these characteristics, taken as the permanent arrived.
+#: these characteristics, taken as the permanent arrived, and whether it was a
+#: token.
 ENTERED_FILTER_KEYS = frozenset(
-    {"controller", "types", "not_types", "subtypes", "colors", "exclude_self"}
+    {"controller", "types", "not_types", "subtypes", "colors", "is_token", "exclude_self"}
 )
 
 
@@ -1319,6 +1353,10 @@ def validate_entered_filter(spec: Any, where: str) -> None:
         # Truthiness would make `"false"` -- a non-empty string -- exclude the
         # source, quietly turning "a Human entered" into "another Human did".
         raise DslError(f"{where}.exclude_self: must be true or false")
+    if "is_token" in spec and not isinstance(spec["is_token"], bool):
+        # The same trap one key over: `"false"` is truthy, and Gyome's
+        # "nontoken creatures" would count only the tokens.
+        raise DslError(f"{where}.is_token: must be true or false")
 
 
 def validate_half(spec: Any, where: str) -> None:
@@ -1394,6 +1432,8 @@ def validate_value(expr: Any, where: str) -> None:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
     if "times_tapped_this_turn" in expr:
         validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
+    if "command_zone_casts_of" in expr:
+        validate_object_ref(expr["command_zone_casts_of"], f"{where}.command_zone_casts_of")
     if "attack_power_this_combat" in expr:
         who = expr["attack_power_this_combat"]
         if not isinstance(who, str) or who not in PLAYER_SPEC_NAMES:
@@ -1453,6 +1493,18 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.unspent_mana_count: needs a player spec, e.g. 'you' "
                 f"(whose mana pool), got {who!r}"
             )
+    # `true` only. Gravestorm counts every player's permanents, and a player
+    # spec here would read as a filter the count does not apply -- "you" would
+    # still count an opponent's dead creature.
+    if (
+        "permanents_to_graveyard_this_turn" in expr
+        and expr["permanents_to_graveyard_this_turn"] is not True
+    ):
+        raise DslError(
+            f"{where}.permanents_to_graveyard_this_turn: takes `true` -- the count "
+            f"is every permanent put into any graveyard from the battlefield, "
+            f"got {expr['permanents_to_graveyard_this_turn']!r}"
+        )
     if "permanents_entered_this_turn" in expr:
         validate_entered_filter(
             expr["permanents_entered_this_turn"], f"{where}.permanents_entered_this_turn"

@@ -11,6 +11,7 @@ from ..characteristics import chars
 from ..enums import Step
 from ..errors import DslError
 from ..objects import PLUS_ONE
+from ..player import PLAYER_COUNTER_KINDS
 from ..player_statics import proliferate_times
 from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
@@ -95,9 +96,9 @@ def op_proliferate(ctx: EffectContext, spec: Mapping[str, Any]):
     shroud do not stop it -- which is why the decision's purpose is
     ``"proliferate"`` and not ``"target"``.
 
-    A player's counters are `PlayerState.poison` and `PlayerState.energy`, and
-    a chosen player gets one more of each kind they already have, the way a
-    permanent does. Experience would join here when a card first needs it.
+    A player's counters are the kinds in `player.PLAYER_COUNTER_KINDS`, and a
+    chosen player gets one more of each kind they already have, the way a
+    permanent does.
 
     "If you would proliferate, proliferate twice instead" (Tekuthal, the
     `replace_proliferate` static) is read here, once, before the first: each
@@ -117,7 +118,7 @@ def _proliferate_once(ctx: EffectContext):
         if obj is not None and obj.on_battlefield and any(n > 0 for n in obj.counters.values()):
             refs.append((ctx.name_of(oid), TargetRef.obj(oid)))
     for player in state.players:
-        kinds = [k for k, n in (("poison", player.poison), ("energy", player.energy)) if n > 0]
+        kinds = [k for k in PLAYER_COUNTER_KINDS if getattr(player, k) > 0]
         if not player.has_lost and kinds:
             seat = player.name or f"Player {player.pid}"
             refs.append((f"{seat} ({', '.join(kinds)})", TargetRef.player(player.pid)))
@@ -137,7 +138,7 @@ def _proliferate_once(ctx: EffectContext):
             ref,
             list(state.objects[ref.id].counters.items())
             if ref.kind == "object"
-            else [("poison", state.players[ref.id].poison), ("energy", state.players[ref.id].energy)],
+            else [(k, getattr(state.players[ref.id], k)) for k in PLAYER_COUNTER_KINDS],
         )
         for ref in picked
     ]
@@ -150,7 +151,9 @@ def _proliferate_once(ctx: EffectContext):
             for kind, amount in kinds:
                 if amount <= 0:
                     continue
-                funnel = add_poison if kind == "poison" else add_energy
+                # Keyed, not an if/else: a kind added to PLAYER_COUNTER_KINDS
+                # without a funnel fails here instead of arriving as energy.
+                funnel = {"poison": add_poison, "energy": add_energy}[kind]
                 funnel(state, ref.id, 1, source=ctx.source_oid, by=ctx.controller)
             continue
         obj = state.objects.get(ref.id)

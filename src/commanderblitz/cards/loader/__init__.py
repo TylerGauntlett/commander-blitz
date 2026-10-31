@@ -148,6 +148,7 @@ from .vocabulary import (  # noqa: F401
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
     STATIC_COUNT_ZONES,
+    STATIC_DEATHS_KEYS,
     STATIC_DERIVED_CONDITION_EFFECTS,
     STATIC_EFFECTS,
     STATIC_FILTER_KEYS,
@@ -171,6 +172,7 @@ from .walk import (
     _mentions,
     _mentions_condition,
     _mentions_gift,
+    _mentions_key_anywhere,
     _mentions_kicked,
     _mentions_pair,
     _refuse_granted_chosen_qualities,
@@ -1621,6 +1623,19 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: reads 'additional_paid' but has no 'additional_cost', so it "
             f"would always read 0"
         )
+    if (
+        any(spec.additional_sized for spec in all_targets)
+        and not additional_optional
+        and not additional_repeatable
+    ):
+        # "Sacrifice X creatures. Destroy X target …" sizes the targets by a
+        # count the caster chooses. A mandatory cost paid exactly once has no
+        # count to choose: the spec is always one target, and 'count': 1 says so.
+        raise DslError(
+            f"{where}: a target sized by 'additional_paid' needs an additional cost "
+            f"that is 'additional_optional' or 'additional_repeatable' -- one paid "
+            f"exactly once is 'count': 1"
+        )
     # Strive: "This spell costs {1}{W} more to cast for each target beyond the
     # first." A cost *increase* (601.2f) whose size is the number of targets
     # declared at 601.2c, so it only means something beside a target list whose
@@ -1920,6 +1935,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # A destination with nothing to send there. Silently ignoring it would
         # let a card claim to be an escape card and never be castable at all.
         raise DslError(f"{where}: 'graveyard_cast' needs a 'graveyard_cost' to describe")
+    # Escape (702.138c-d): only a card with an escape cost can have escaped. A
+    # reader on any other card loads, prints "escapes with" and never fires --
+    # and on a flashback card it would fire for the wrong keyword.
+    if _mentions_key_anywhere(model, "escaped") and (
+        graveyard_spec is None or model.graveyard_cast != "graveyard"
+    ):
+        raise DslError(
+            f"{where}: reads the 'escaped' condition but has no escape cost -- "
+            f"give 'graveyard_cost' with \"graveyard_cast\": \"graveyard\""
+        )
     # Clash is two halves the same way kicker is, and half of it fails just as
     # silently. Every printed clash card reads "Clash with an opponent. If you
     # win, …", so a `clash` nothing reads is a spell that reveals two cards and
@@ -3170,6 +3195,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         # does not.
         raise DslError(f"{where}: 'mana_uncounterable' needs 'is_mana_ability'")
     mana_grant = _mana_grant(model.mana_grant, model.is_mana_ability, where)
+    mana_spent_trigger = _mana_spent_trigger(model, index, where)
 
     return Ability(
         kind=kind,
@@ -3193,6 +3219,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_restriction=mana_restriction,
         mana_uncounterable=model.mana_uncounterable,
         mana_grant=mana_grant,
+        mana_spent_trigger=mana_spent_trigger,
         # 606.3: a loyalty ability may be activated "any time they could cast a
         # sorcery". That is the rule speaking, not the card, so it is applied
         # here rather than left to an author to remember -- one omitted flag and
@@ -3213,6 +3240,77 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         effects=tuple(model.effects),
         static=None,
     )
+
+
+#: The `matches_card_filter` keys that ask about the ability's *source* rather
+#: than the spell. A spent-mana trigger is matched when the mana is spent, which
+#: may be after its source has left the battlefield (106.6: the trigger belongs
+#: to the mana, not the permanent), and "this mana" already says which mana --
+#: so each of these is a question with no permanent to answer it, or with the
+#: answer fixed by construction.
+_MANA_SPENT_SOURCE_KEYS = frozenset(
+    {
+        "self_only",
+        "exclude_self",
+        "attached",
+        "haunted_by",
+        "created_with",
+        "damaged_by",
+        "paid_by",
+        "shares_a_creature_type_with",
+    }
+)
+
+
+def _mana_spent_trigger(model: AbilityModel, index: int, where: str) -> Ability | None:
+    """ "…When you spend this mana to cast <spell>, <effects>" compiled to a
+    triggered `Ability` -- Study Hall, Gilanra, Scaled Nurturer.
+
+    Built by the ordinary triggered-ability compiler from a synthetic
+    `spell_cast` model, so the spell filter is validated exactly as a cast
+    trigger's is and the effects and targets get every guard a printed trigger
+    gets. The event is never listened for: the ability is not in the card's
+    abilities list, and `costs.pay_mana` is what queues it.
+    """
+    spec = model.mana_spent_trigger
+    if spec is None:
+        return None
+    if not model.is_mana_ability:
+        # It rides the mana, so on an ability that makes none it would load and
+        # never fire -- `mana_grant`'s refusal, for its reason.
+        raise DslError(f"{where}: 'mana_spent_trigger' needs 'is_mana_ability'")
+    unknown = set(spec) - {"spell", "effects", "targets"}
+    if unknown:
+        raise DslError(f"{where}: 'mana_spent_trigger' has unknown keys {sorted(unknown)}")
+    effects = spec.get("effects")
+    if not isinstance(effects, list) or not effects:
+        raise DslError(
+            f"{where}: 'mana_spent_trigger' needs a non-empty 'effects' list -- a "
+            f"trigger that does nothing is a sentence the card does not print"
+        )
+    spell = spec.get("spell", {})
+    if not isinstance(spell, Mapping):
+        raise DslError(f"{where}: 'mana_spent_trigger.spell' is a trigger filter object")
+    bad = sorted(set(spell) & _MANA_SPENT_SOURCE_KEYS)
+    if bad:
+        raise DslError(
+            f"{where}: 'mana_spent_trigger.spell' may not use {bad}: they ask about "
+            f"the ability's source, and this trigger belongs to the mana, which "
+            f"can be spent after its source has gone"
+        )
+    try:
+        synthetic = AbilityModel.model_validate(
+            {
+                "kind": "triggered",
+                "text": model.text,
+                "trigger": {"event": "spell_cast", "controller": "you", "filter": dict(spell)},
+                "effects": effects,
+                "targets": spec.get("targets") or [],
+            }
+        )
+    except Exception as exc:  # pydantic ValidationError
+        raise DslError(f"{where}.mana_spent_trigger: {exc}") from exc
+    return _compile_printed_ability(synthetic, index, f"{where}.mana_spent_trigger")
 
 
 def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> None:
@@ -4987,7 +5085,20 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"kind the arrival gets more of"
             )
         _check_counter_kind(model.counter, f"{where}.counter")
-        if isinstance(model.amount, Mapping):
+        if (
+            isinstance(model.amount, Mapping)
+            and len(model.amount) == 1
+            and set(model.amount) <= STATIC_DEATHS_KEYS
+        ):
+            # Gorma, the Gullet: "...for each creature that died under your
+            # control this turn." One turn-ledger death tally alone, read
+            # through the static value language as the creature enters, with
+            # the bare player specs that language allows. Only the deaths:
+            # `spells_cast_this_turn` and `permanents_entered_this_turn` would
+            # each count the arrival itself, which is the "already" question
+            # below again with no printed card to answer it.
+            _validate_static_value(model.amount, f"{where}.amount")
+        elif isinstance(model.amount, Mapping):
             # Giada, Font of Hope: "...for each Angel you already control." A
             # count of permanents and nothing else: the engine evaluates it
             # leaving out the entering group ("already"), which only means
@@ -4996,7 +5107,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if set(model.amount) != {"count"}:
                 raise DslError(
                     f"{where}: enters_with_additional_counters takes an 'amount' of "
-                    f"a whole number or {{'count': <battlefield filter>}} alone "
+                    f"a whole number, {{'count': <battlefield filter>}} or "
+                    f"{{'creatures_died_this_turn': <player>}} alone "
                     f"(got {sorted(model.amount)})"
                 )
             spec = model.amount["count"]
@@ -5011,7 +5123,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         ):
             raise DslError(
                 f"{where}: enters_with_additional_counters needs 'amount', a whole "
-                f"number of 1 or more or a {{'count': ...}} (got {model.amount!r})"
+                f"number of 1 or more, a {{'count': ...}} or a "
+                f"{{'creatures_died_this_turn': ...}} (got {model.amount!r})"
             )
 
     if model.effect == "lose_keyword":

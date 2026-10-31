@@ -31,7 +31,7 @@ from __future__ import annotations
 
 import re
 from collections.abc import Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
 from typing import Any
 
 from commanderblitz.engine.actions import PendingDecision
@@ -1410,6 +1410,29 @@ _NUMBER_WORDS = {
     "a": 1, "an": 1, "one": 1, "two": 2, "three": 3, "four": 4, "five": 5,
     "six": 6, "seven": 7, "eight": 8, "nine": 9, "ten": 10,
 }  # fmt: skip
+#: "Escape—{3}{B}{B}, Exile four other cards from your graveyard." (702.138a).
+_ESCAPE_LINE = re.compile(
+    r"escape\s*[—-]\s*(?P<mana>(?:\{[^}]+\})+)\s*,\s*"
+    r"exile (?P<count>\w+) other cards? from your graveyard\.?\s*(?:\(.*\))?$",
+    re.IGNORECASE,
+)
+
+
+def _declares_printed_escape(card: CardDef, match: re.Match[str]) -> bool:
+    """Whether ``card``'s graveyard cost is the escape cost ``match`` prints."""
+    cost = card.flashback
+    if cost is None or card.graveyard_cast_exiles or card.mayhem:
+        return False
+    if not _declares_printed_cost(match.group("mana"), cost.mana):
+        return False
+    exile = cost.exile_from_graveyard
+    if not exile or set(exile) - {"count", "exclude_self"} or not exile.get("exclude_self"):
+        return False
+    if _NUMBER_WORDS.get(match.group("count").lower(), -1) != int(exile.get("count", 1)):
+        return False
+    return replace(cost, mana=ManaCost(), exile_from_graveyard=None) == Cost()
+
+
 #: The `alternative_cost` fields the claimant below reads off the printed line.
 #: Any *other* field set on the node is a payment the claimant cannot see, so
 #: it fails closed rather than wave it through.
@@ -1820,6 +1843,16 @@ def _covered(card: CardDef, line: str) -> bool:
     if card.mayhem and card.flashback is not None and stripped.lower().startswith("mayhem "):
         return _declares_printed_cost(stripped[len("mayhem ") :], card.flashback.mana)
 
+    # "Escape—{3}{B}{B}, Exile four other cards from your graveyard." -- the
+    # graveyard-cost slot once more, with escape's destination (the card goes
+    # where it normally would, so `graveyard_cast_exiles` is False and it is not
+    # mayhem). Woe Strider is the first escape card the pipeline tried to
+    # author. Strict on the whole price: the mana must be the declared mana, the
+    # exile count the declared count of *other* cards, and a cost carrying any
+    # other payment fails closed, so a cheaper escape cannot wear the printed one.
+    if (match := _ESCAPE_LINE.match(stripped)) is not None:
+        return _declares_printed_escape(card, match)
+
     # "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost…)"
     # -- warp's shape with a count beside the price, and claimed by the field
     # for warp's reason: the price is no ability, and the counters, the type
@@ -1970,6 +2003,16 @@ def _covered(card: CardDef, line: str) -> bool:
         if event == "self_enters_tapped" and "tapped" in lowered:
             return True
         if event == "self_enters_with_counters" and "counter" in lowered and "enters" in lowered:
+            return True
+        # "This creature escapes with two +1/+1 counters on it." (702.138c) is
+        # that replacement gated on the `escaped` stamp; the word "escapes"
+        # claims only a replacement that carries the gate.
+        if (
+            event == "self_enters_with_counters"
+            and "counter" in lowered
+            and "escapes with" in lowered
+            and replacement.get("condition") == {"escaped": True}
+        ):
             return True
         if event == "self_enters_prepared" and "prepared" in lowered and "enters" in lowered:
             # "This creature enters prepared. (While it's prepared, you may cast

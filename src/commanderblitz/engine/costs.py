@@ -34,6 +34,7 @@ from .mana import (
     ManaOrigin,
     ManaRestriction,
     ManaSource,
+    ManaSpendTrigger,
     Requirement,
     RestrictionGroup,
     SpendPurpose,
@@ -2069,6 +2070,11 @@ def pay_mana(
             if grant.spell_types and not (set(grant.spell_types) & chars(state, obj.oid).types):
                 continue
             obj.mana_granted_keywords.update(grant.keywords)
+        # "When you spend this mana to cast your commander, …" -- Study Hall.
+        # Asked here for the grant's reason: the spell is what the filter is
+        # about, and only this payment knows which mana paid for it.
+        if spent.spend_triggers:
+            _queue_spend_triggers(state, pid, obj.oid, spent.spend_triggers)
         # Accumulated rather than assigned: a cast pays in more than one call
         # when it has an additional cost, and "how much mana was spent to cast
         # it" is all of them.
@@ -2175,6 +2181,10 @@ def activate_mana_ability(
         # hand out the haste its exerting one pays for.
         grant=ability.mana_grant,
         source_traits=source_traits,
+        # Study Hall's "When you spend this mana to cast your commander…", read
+        # off the **ability** for the reason above. One tag per activation,
+        # which every pip this activation made shares -- see `ManaSpendTrigger`.
+        spend_trigger=_spend_trigger_tag(state, oid, pid, ability),
     )
     state.emit(EventType.MANA_ADDED, player=pid, source=oid, mana=format_symbols(produced))
     # The triggered mana ability's mana is its source's, not the land's: tagged
@@ -2191,6 +2201,103 @@ def activate_mana_ability(
         _run_mana_rider(state, oid, pid, ability)
     if is_land and obj is not None:
         _lands_tapped_for_mana(state, obj)
+
+
+def _spend_trigger_tag(
+    state: GameState, oid: int, pid: int, ability: Ability
+) -> ManaSpendTrigger | None:
+    """The tag this activation's mana carries for a spent-mana trigger, if any.
+
+    Where the trigger's definition lives is settled **now**, while the source is
+    on the battlefield: a granted mana ability is addressed through its granter
+    (`triggers._granter_of`), and the source's card id is snapshotted so the
+    trigger can still be found once the source has gone -- 106.6 makes the
+    trigger the mana's, and the mana can outlive the permanent that made it.
+    """
+    if ability.mana_spent_trigger is None:
+        return None
+    # Local: `triggers` imports this module.
+    from .triggers import _granter_of
+
+    obj = state.objects[oid]
+    granted_by, index = _granter_of(state, obj, ability)
+    return ManaSpendTrigger(
+        source=oid,
+        ability_index=index,
+        def_id=obj.def_id,
+        controller=pid,
+        ability=ability.mana_spent_trigger,
+        granted_by=granted_by,
+    )
+
+
+def _queue_spend_triggers(
+    state: GameState, pid: int, spell_oid: int, tags: Sequence[ManaSpendTrigger]
+) -> None:
+    """Queue each spent-mana trigger whose spell filter the spell being cast meets.
+
+    "When you spend this mana to cast **your commander**" is a question about the
+    spell, asked at the instant the mana is spent (601.2h) -- the same instant
+    `mana_grant`'s "creature spell" is asked -- and answered with a `spell_cast`
+    trigger's filter semantics, which is what the loader validated it against.
+    Queued here rather than off the `spell_cast` event: that event cannot say
+    which mana paid, and the trigger has triggered by the time the spell is
+    cast. It goes on the stack when a player would next receive priority (603.3),
+    above the spell it paid for.
+
+    The ability source the filter compares against ("owner: you") is the source
+    permanent while it exists, and a stand-in carrying the activator otherwise:
+    the trigger belongs to the mana (106.6), and the loader refuses every filter
+    key that would need the real permanent.
+    """
+    from .objects import GameObject
+    from .structs import TriggerInstance
+    from .triggers import matches_card_filter
+
+    for tag in tags:
+        trigger = tag.ability
+        spec = trigger.trigger
+        source = state.objects.get(tag.source)
+        if source is None:
+            source = GameObject(
+                oid=tag.source,
+                def_id=tag.def_id,
+                owner=tag.controller,
+                controller=tag.controller,
+                zone=Zone.GRAVEYARD,
+            )
+        filt = spec.filter if spec is not None else None
+        if filt and not matches_card_filter(state, spell_oid, filt, source):
+            continue
+        name = state.registry.get(tag.def_id).name if tag.def_id in state.registry else "?"
+        state.pending_triggers.append(
+            TriggerInstance(
+                source_oid=tag.source,
+                ability_index=tag.ability_index,
+                controller=tag.controller,
+                # "Scry X, where X is the number of times **it**'s been cast":
+                # the spell the mana paid for is the subject, the shape a
+                # `spell_cast` trigger binds it in.
+                bindings={
+                    "self": tag.source,
+                    "subject": spell_oid,
+                    "event_player": pid,
+                    "event_type": EventType.MANA_SPENT,
+                },
+                description=f"{name}: {trigger.text or 'mana spent'}",
+                def_id=tag.def_id,
+                granted_by=tag.granted_by,
+                mana_spent=True,
+            )
+        )
+        state.emit(
+            EventType.ABILITY_TRIGGERED,
+            player=tag.controller,
+            source=tag.source,
+            card=tag.def_id,
+            ability=tag.ability_index,
+            trigger="mana_spent",
+        )
 
 
 def _run_mana_rider(state: GameState, oid: int, pid: int, ability: Any) -> None:

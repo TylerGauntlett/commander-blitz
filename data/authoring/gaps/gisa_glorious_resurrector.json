@@ -1,0 +1,19 @@
+{
+  "card_id": "gisa_glorious_resurrector",
+  "name": "Gisa, Glorious Resurrector",
+  "oracle_text": "If a creature an opponent controls would die, exile it instead.\nAt the beginning of your upkeep, put all creature cards exiled with Gisa onto the battlefield under your control. They gain decayed. (A creature with decayed can't block. When it attacks, sacrifice it at end of combat.)",
+  "blocked_sentences": [
+    "If a creature an opponent controls would die, exile it instead.",
+    "At the beginning of your upkeep, put all creature cards exiled with Gisa onto the battlefield under your control. They gain decayed."
+  ],
+  "needs": [
+    {
+      "capability": "replace_dies_link",
+      "kind": "replacement",
+      "what": "a `replace_dies` static whose exile records the replacement's source as the exiler (607.2a) -- e.g. a `link: true` flag on the static that makes zones.move_object call `link_exiled(state, oid, rider_source)` after the card lands in exile, so a later `exiled_with: \"self\"` selector on the same permanent (\"creature cards exiled with Gisa\") finds the cards its own replacement exiled; the upkeep trigger is then an `upkeep` trigger with `put_onto_battlefield` (controller you) over `{zone: exile, controller: any, exiled_with: self, types: [Creature]}` plus a permanent `grant_keyword` of `decayed` on the bound result",
+      "why_existing_wont_do": "`replace_dies` with `destination: \"exile\"` (Kalitas) expresses the first sentence, but `_dies_replacement` returns only a rider of (source oid, controller, and_create tokens) and move_object uses it solely to create tokens -- it never calls `link_exiled`, so the exiled card's `exiled_by` stays unset and `exiled_with: \"self\"` would match nothing. Writing the static unlinked and the upkeep trigger over all exiled creature cards would steal cards exiled by any other effect, which is a different card; and a `creature_dies` trigger that exiles cannot replace the death (614.6). The upkeep put_onto_battlefield and decayed grant are otherwise expressible."
+    }
+  ],
+  "closest_existing": ["replace_dies", "exile", "put_onto_battlefield"],
+  "confidence": "high"
+}

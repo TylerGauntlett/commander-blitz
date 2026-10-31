@@ -580,6 +580,17 @@ class AbilityModel(BaseModel):
     #: Only meaningful beside ``is_mana_ability``, and the loader refuses it
     #: anywhere else.
     mana_grant: dict[str, Any] | None = None
+    #: "…**When you spend this mana to cast your commander**, scry X" -- Study
+    #: Hall, Gilanra, Scaled Nurturer. A triggered ability riding the mana this
+    #: ability makes: ``{"spell": <trigger filter>, "effects": [...],
+    #: "targets": [...]}``. ``spell`` is the printed spell filter, read with a
+    #: `spell_cast` trigger's filter semantics; omitted, any spell. ``targets``
+    #: is optional and declared as the trigger goes on the stack. In bindings,
+    #: ``subject`` is the spell the mana paid for.
+    #:
+    #: Only meaningful beside ``is_mana_ability``, and the loader refuses it
+    #: anywhere else.
+    mana_spent_trigger: dict[str, Any] | None = None
     sorcery_speed_only: bool = False
     #: This activated ability *is* the cycling ability, so paying for it emits
     #: the `cycle` event a "When you cycle this card" trigger listens for.

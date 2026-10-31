@@ -175,11 +175,29 @@ class TargetSpec:
         targets." The one computed count a *spell* may carry, and it is legal
         for the reason every other computed count is not: 601.2b announces X
         and 601.2c chooses targets, in that order, so by the time the targets
-        are declared X is a number. `{"additional_paid": true}` reads a cost
-        paid at 601.2h and would still read zero here, which is what
-        `loader.targets._compile_targets` refuses.
+        are declared X is a number. A general value expression would still
+        read zero here, which is what `loader.targets._compile_targets`
+        refuses; :attr:`additional_sized` is the other exception.
         """
         return isinstance(self.count, dict) and bool(self.count.get("x"))
+
+    @property
+    def additional_sized(self) -> bool:
+        """Is this "**X** targets", X the times the additional cost is paid?
+
+        Immoral Bargain: "As an additional cost to cast this spell, sacrifice X
+        creatures. Destroy X target nonland permanents." Written
+        ``count: {"additional_paid": true}``, and legal on a *spell* for the
+        reason `x_sized` is: 601.2b announces how many times the additional
+        cost will be paid one step before 601.2c declares the targets. The
+        payment is later (601.2h), but the number is already fixed.
+
+        Each cast line carries that number as `Action.additional_times`, so
+        `casting._cast_variant` enumerates the line's targets from
+        `targeting.additional_sized_targets` with the count in place -- exactly
+        X targets for each X. Nothing reads the expression itself at cast time.
+        """
+        return isinstance(self.count, dict) and dict(self.count) == {"additional_paid": True}
 
 
 #: What a **bestowed** spell targets, fixed by rule 702.103a rather than by the
@@ -983,6 +1001,18 @@ class Ability:
     #: for free. ``None`` is ordinary mana; the loader refuses it on an ability
     #: that is not a mana ability, where it would load and never be read.
     mana_grant: ManaKeywordGrant | None = None
+    #: "…**When you spend this mana to cast your commander**, scry X" -- Study
+    #: Hall. The third rider this ability's mana carries, and the one that is a
+    #: whole ability: a triggered `Ability` compiled from the rider, whose
+    #: ``trigger.filter`` is the printed spell filter and whose effects go on
+    #: the stack (603) controlled by whoever activated this ability.
+    #:
+    #: On the ability for `mana_grant`'s reason -- Study Hall's plain ``{C}``
+    #: must not scry. Nothing collects it off an event: `costs.pay_mana` queues
+    #: it for each activation's mana a cast consumes (106.6, 603.7a), and the
+    #: queued trigger's `mana_spent` flag is how `stack.ability_of` finds this
+    #: rather than the mana ability itself. ``None`` is ordinary mana.
+    mana_spent_trigger: Ability | None = None
     sorcery_speed_only: bool = False
     #: "Activate only if you control five or more Vampires." An *activation
     #: restriction*, checked by `legality` before the ability is offered, and
@@ -1870,3 +1900,39 @@ MELEE_TRIGGER = Ability(
     active_zones=(Zone.BATTLEFIELD,),
 )
 _RULES_ABILITIES.append(MELEE_TRIGGER)
+
+
+#: Decayed's attack half (702.147a): "When it attacks, sacrifice it at end of
+#: combat."
+#:
+#: Rules-supplied for exalted's reason: the sentence is the rules', and the
+#: printings that carry the word are mostly *tokens* (Jadar's Zombies), which
+#: print no ability to hang a trigger on. `triggers._candidate_abilities`
+#: yields it once for every battlefield permanent whose derived keywords
+#: include decayed, with that permanent as the source.
+#:
+#: Two abilities, as the rule is: the attack trigger, which on resolution
+#: creates a **delayed** trigger (603.7) for the end of this combat -- the
+#: `delay` op at `end_of_combat`, stamped with the combat it was made in -- so
+#: the creature deals its combat damage first, and a trigger that is countered
+#: on the stack schedules nothing. The sacrifice is the controller's own
+#: (`controller: "you"`, the default), so a creature stolen before end of combat
+#: is not sacrificed by the player who attacked with it (701.17a).
+DECAYED_TRIGGER = Ability(
+    kind=AbilityKind.TRIGGERED,
+    index=-len(_RULES_ABILITIES) - 1,
+    text="Decayed",
+    trigger=TriggerSpec(event="attacks", controller="you", source="self"),
+    effects=(
+        {
+            "op": "delay",
+            "step": "end_of_combat",
+            "text": "Decayed: sacrifice it at end of combat.",
+            "effects": (
+                {"op": "sacrifice", "objects": {"zone": "battlefield", "self_only": True}},
+            ),
+        },
+    ),
+    active_zones=(Zone.BATTLEFIELD,),
+)
+_RULES_ABILITIES.append(DECAYED_TRIGGER)

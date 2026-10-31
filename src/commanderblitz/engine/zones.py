@@ -1026,9 +1026,20 @@ def _board_additional_counters(state: GameState, obj: GameObject) -> list[tuple[
     were there before, which is the printed ruling. For the same reason a
     source in that group applies nothing: Giada entering alongside an Angel was
     not on the battlefield when the Angel's entry was decided (614.12).
+
+    **Or a turn-ledger tally** -- Gorma, the Gullet: "...for each creature that
+    died under your control this turn." Read through the static value language
+    (`_static_value`) at the moment of entry, with "you" the source's
+    controller; no deaths is zero, and zero adds nothing. A death is never the
+    arrival, so "already" has nothing to leave out.
     """
     # Looked up per call: tests patch `characteristics._battlefield_statics`.
-    from .characteristics import _battlefield_statics, _matches, _matching_objects
+    from .characteristics import (
+        _battlefield_statics,
+        _matches,
+        _matching_objects,
+        _static_value,
+    )
 
     entering = {
         entry.oid
@@ -1044,12 +1055,14 @@ def _board_additional_counters(state: GameState, obj: GameObject) -> list[tuple[
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
         amount = static.get("amount", 1)
-        if isinstance(amount, Mapping):
+        if isinstance(amount, Mapping) and "count" in amount:
             amount = sum(
                 1
                 for other in _matching_objects(state, amount["count"], source_obj)
                 if other.oid not in entering
             )
+        elif isinstance(amount, Mapping):
+            amount = _static_value(state, amount, source_obj)
         if int(amount) > 0:
             out.append((str(static.get("counter")), int(amount)))
     return out
@@ -1443,6 +1456,9 @@ def _enter_battlefield(
     # replacement below.
     if cause != "resolved":
         obj.cast_impending = False
+        # Escape (702.138c) asks the same thing of the same arrival: a
+        # permanent that escaped, left and came back did not escape this time.
+        obj.cast_escaped = False
     # A fresh arrival answers for nothing that happened before it.
     obj.left_with = ()
     # What it carried in, so the counters it enters with -- and only those --

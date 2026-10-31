@@ -10,11 +10,11 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 155 |
+| [Effect ops](#effect-ops) | 156 |
 | [Selectors](#selectors) | 69 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 61 |
-| [Conditions](#conditions) | 32 |
+| [Values](#values) | 63 |
+| [Conditions](#conditions) | 33 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 35 |
 | [Static effects](#static-effects) | 87 |
@@ -23,13 +23,13 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Cost reduction](#cost-reduction) | 6 |
 | [Ability costs](#ability-costs) | 28 |
 | [Card-level costs](#card-level-costs) | 32 |
-| [Keywords](#keywords) | 42 |
+| [Keywords](#keywords) | 43 |
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 29 |
 | [Static conditions](#static-conditions) | 14 |
-| [Static values](#static-values) | 17 |
+| [Static values](#static-values) | 18 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
 | [Mana rider ops](#mana-rider-ops) | 6 |
@@ -153,6 +153,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `fight` | Life & damage |  | Two creatures fight. | [fight](card-dsl-cookbook.md#fight) |
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
 | `lock_life_total` | Life & damage |  | A player's life total can't change for a duration. | ["Your life total can't change"](card-dsl-cookbook.md#your-life-total-cant-change) |
+| `lose_all_player_counters` | Life & damage |  | Each named player loses every counter of every kind. | [A player losing all counters](card-dsl-cookbook.md#a-player-losing-all-counters) |
 | `lose_life` | Life & damage | yes | A player loses N life; `as` records how much. | [Effect ops](card-dsl.md#effect-ops) |
 | `prevent_combat_damage` | Life & damage |  | Prevent combat damage this turn, optionally only from sources matching `by`. | [Fog — combat damage prevented by its source](card-dsl-cookbook.md#fog--combat-damage-prevented-by-its-source) |
 | `prevent_damage` | Life & damage |  | Prevent damage to a player this turn. | [Preventing all damage to a player for the turn](card-dsl-cookbook.md#preventing-all-damage-to-a-player-for-the-turn) |
@@ -298,7 +299,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 
 | Name | Description | Defined in |
 |---|---|---|
-| `additional_paid` | Whether (or how often) an additional cost was paid. | [Value expressions](card-dsl.md#value-expressions) |
+| `additional_paid` | Whether (or how often) an additional cost was paid; as a spell's target `count`, the targets each cast line declares. | [Targets sized by an additional cost](card-dsl.md#targets-sized-by-an-additional-cost) |
 | `attack_power_this_combat` | Total power of the player's attackers as declared this combat (pack tactics). | [Pack tactics — attackers' total power as declared](card-dsl.md#pack-tactics--attackers-total-power-as-declared) |
 | `attacked_this_turn` | 1 if the player attacked this turn, else 0 (raid). | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `attackers_this_turn` | How many creatures the player attacked with this turn. | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
@@ -307,9 +308,10 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `cards_drawn_this_turn` | Cards the player drew this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_from_graveyard_this_turn` | Cards that left the player's graveyard this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_in_hand` | Cards in the player's hand. | [Value expressions](card-dsl.md#value-expressions) |
-| `cards_to_graveyard_this_turn` | Cards put into any graveyard this turn (gravestorm). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `cards_to_graveyard_this_turn` | Cards put into any graveyard from anywhere this turn; tokens excluded. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `colors_of_mana_spent` | Colors of mana spent to cast this (sunburst, converge). | [Counting the mana that was actually spent](card-dsl.md#counting-the-mana-that-was-actually-spent) |
 | `combats_this_turn` | Which combat phase of the turn this is. | [Which combat phase of the turn this is](card-dsl.md#which-combat-phase-of-the-turn-this-is) |
+| `command_zone_casts_of` | Times one commander has been cast from the command zone this game, off its owner's 903.8 tally. | [Mana that triggers when it is spent — mana_spent_trigger](card-dsl-cookbook.md#mana-that-triggers-when-it-is-spent--mana_spent_trigger) |
 | `commander_casts_this_game` | Times the player has cast their commanders from the command zone this game (903.8's tally). | [Copying a spell for each commander cast](card-dsl-cookbook.md#copying-a-spell-for-each-commander-cast) |
 | `commander_color_identity` | Colors in your commander's color identity. | [Commander-identity mana — "any color in your commander's color identity"](card-dsl-cookbook.md#commander-identity-mana--any-color-in-your-commanders-color-identity) |
 | `const` | A literal number. | [Value expressions](card-dsl.md#value-expressions) |
@@ -344,6 +346,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `most_sharing_a_name` | The largest group in a pool sharing one name. | [Value expressions](card-dsl.md#value-expressions) |
 | `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
+| `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |
 | `player_count` | How many players still in the game a player spec names ("the number of opponents you have"). | [Value expressions](card-dsl.md#value-expressions) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
@@ -376,6 +379,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `combat_damage_by` | A player was dealt combat damage this turn by one of these subtypes (prowl). | [Conditions](card-dsl.md#conditions) |
 | `cost_option` | Which of the tiered additional costs was paid. | [Tiered, and reading back which price was paid](card-dsl.md#tiered-and-reading-back-which-price-was-paid) |
 | `entered_from` | The source entered from the named zone. | [Conditions](card-dsl.md#conditions) |
+| `escaped` | The source was cast for its escape cost (702.138c-d), or resolved from that spell. | [Casting from the graveyard](card-dsl-cookbook.md#casting-from-the-graveyard) |
 | `evoked` | The source was cast with evoke. | [Conditions](card-dsl.md#conditions) |
 | `exists` | A selector finds at least one object. | [Conditions](card-dsl.md#conditions) |
 | `gift_promised` | A gift was promised as this spell was cast. | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |
@@ -786,6 +790,7 @@ Every keyword the `keywords` list may carry -- the engine's `Keyword` enum. Alia
 | `compleated` | Compleated. | [compleated — the keyword](card-dsl-cookbook.md#compleated--the-keyword) |
 | `daybound` | Daybound. | [Daybound and nightbound — one field for the whole table](card-dsl-cookbook.md#daybound-and-nightbound--one-field-for-the-whole-table) |
 | `deathtouch` | Deathtouch. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
+| `decayed` | Decayed: can't block; sacrificed at end of the combat it attacks in. | [Decayed](card-dsl-cookbook.md#decayed) |
 | `defender` | Defender. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
 | `dethrone` | Dethrone. | [Dethrone](card-dsl-cookbook.md#dethrone) |
 | `double_strike` | Double strike. | [Which mechanism a printed keyword lands on](card-dsl-cookbook.md#which-mechanism-a-printed-keyword-lands-on) |
@@ -939,6 +944,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `const` | A literal number. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `count` | How many objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `counters_on` | Counters of a kind on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `extreme_value` | The greatest/least printed mana value among a counting filter's pool, or a `union` of them. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `greatest_commander_mana_value` | The greatest printed mana value among your commanders, wherever they are. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `mana_symbols` | Pips of a color among a pool's mana costs (chroma). | [Counting mana symbols](card-dsl.md#counting-mana-symbols) |

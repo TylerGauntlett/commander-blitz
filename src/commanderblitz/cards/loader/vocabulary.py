@@ -1429,6 +1429,14 @@ STATIC_MANA_POOL_KEYS = frozenset({"unspent_mana_count"})
 #: printed faces, which no static has needed.
 STATIC_SPELLS_CAST_KEYS = frozenset({"spells_cast_this_turn"})
 
+#: The per-turn death leaf -- Gorma, the Gullet's "for each creature that died
+#: under your control this turn". `TurnLedger.creatures_died` is written only by
+#: `GameState._tally` folding DIES, keyed by the creature's controller as it
+#: died, and emptied only by the cleanup step, never by a layer, and both
+#: funnels bump `char_version`. So it is a pipeline input on
+#: `spells_cast_this_turn`'s terms, and takes the same bare player specs.
+STATIC_DEATHS_KEYS = frozenset({"creatures_died_this_turn"})
+
 
 #: Every leaf a static ability's magnitude may use -- a `buff`'s `power`, a
 #: `set_pt`, a `spell_cost_reduction`'s `amount`, either side of a `cmp`.
@@ -1478,6 +1486,7 @@ STATIC_VALUE_KEYS = (
     | STATIC_POISON_KEYS
     | STATIC_MANA_POOL_KEYS
     | STATIC_SPELLS_CAST_KEYS
+    | STATIC_DEATHS_KEYS
     | PER_PLAYER_COUNT_KEYS
 )
 

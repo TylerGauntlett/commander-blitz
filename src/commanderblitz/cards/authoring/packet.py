@@ -639,7 +639,11 @@ def reference() -> dict:
             " `{\"keywords\": [\"haste\"], \"spell_types\": [\"Creature\"]}`,"
             " where `spell_types` narrows *who is given* the keyword rather than"
             " what the mana may buy. The keyword reaches the permanent the spell"
-            " becomes, which no trigger can do. And `exert` in `cost_keys` is"
+            " becomes, which no trigger can do. `mana_spent_trigger` is \"When you"
+            " spend this mana to cast <spell>, <effects>\" -- `{\"spell\": <trigger"
+            " filter>, \"effects\": [...]}`, a triggered ability that goes on the"
+            " stack when *this ability's* mana pays for a matching spell, with the"
+            " spell bound as `subject`. And `exert` in `cost_keys` is"
             " \"Exert this permanent\" as a **cost** (Arena of Glory): it does"
             " not untap during its controller's next untap step, and it is not"
             " `tap`, which a card may charge alongside it.",
