@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**116 cards** blocked by **97** capabilities.
+**121 cards** blocked by **102** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [cat-2-2-w](#cat-2-2-w) | 1 | 3948 | token |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
@@ -53,6 +54,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
+| [enchant-graveyard-card](#enchant-graveyard-card) | 1 | 224 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
@@ -69,6 +71,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [lose-keyword-until-end-of-turn](#lose-keyword-until-end-of-turn) | 1 | 1064 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
@@ -82,6 +85,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [pegasus-2-2-w-flying](#pegasus-2-2-w-flying) | 1 | 1172 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
@@ -100,6 +104,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
+| [static-goad](#static-goad) | 1 | 7990 | static_effect |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -641,6 +646,20 @@ Blocks **1** card.
 
 </details>
 
+## cat-2-2-w
+
+Blocks **1** card.
+
+- **(token)** a 2/2 white Cat creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has cat_1_1_w (wrong size) and cat_beast_2_2_w (wrong creature type, Cat Beast); neither is a plain 2/2 white Cat. The rest of the line looks expressible: a permanent_enters trigger filtered to controller you and types Enchantment, create_token with `as`, then an `if` on the entering enchantment's Aura subtype wrapping a `may` attach to the bound token
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ajani's Chosen** (rank 3948) — `ajani_s_chosen`
+  - Whenever an enchantment you control enters, create a 2/2 white Cat creature token. If that enchantment is an Aura, you may attach it to the token.
+
+</details>
+
 ## conditional-mana-ability
 
 Blocks **1** card.
@@ -838,6 +857,21 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
+
+</details>
+
+## enchant-graveyard-card
+
+Blocks **1** card.
+
+- **(engine)** An Aura whose enchant restriction targets a creature card in any graveyard (cast targeting a graveyard card, resolves attached to that card in the graveyard), plus an enters trigger that swaps its enchant ability to 'enchant creature put onto the battlefield with this Aura', returns the enchanted card to the battlefield under the Aura controller's control and re-attaches the Aura to it, and a linked leaves-the-battlefield trigger making that creature's controller sacrifice it (Animate Dead, Dance of the Dead, Necromancy).
+  <br>Why the existing vocabulary won't do: Aura `targets` and `attach` work only on battlefield permanents; there is no attachment to a card in a graveyard and no way to change an Aura's enchant restriction. `return_from_graveyard`/`put_onto_battlefield` plus `attach` could reanimate on an enters trigger, but the targeting at cast time from the graveyard, the enchant-ability swap, and the link from the Aura's leaves_battlefield trigger to 'that creature' (no binding persists across triggers) cannot be said; `until_leaves` exists only on exile/phase_out.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Animate Dead** (rank 224) — `animate_dead`
+  - Enchant creature card in a graveyard
+  - When this Aura enters, if it's on the battlefield, it loses "enchant creature card in a graveyard" and gains "enchant creature put onto the battlefield with this Aura." Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.
 
 </details>
 
@@ -1075,6 +1109,20 @@ Blocks **1** card.
 
 </details>
 
+## lose-keyword-until-end-of-turn
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect op that, for a duration (until end of turn), makes every permanent matching a selector (creatures your opponents control, including ones that come under their control later in the turn) lose the named keywords (hexproof, shroud) and prevents them from gaining those keywords from any source for that duration
+  <br>Why the existing vocabulary won't do: `lose_keyword` exists only as a static effect, which lasts while its source is on the battlefield and cannot be switched on for one turn by an activated ability; `grant_ability` could hand over a static but only to objects, not as a player/board-wide timed effect, and there is no op counterpart to `lose_keyword` (`lose_all_abilities` and `lock_abilities` strip far more than the two keywords)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Arcane Lighthouse** (rank 1064) — `arcane_lighthouse`
+  - {1}, {T}: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud.
+
+</details>
+
 ## lose-the-game
 
 Blocks **1** card.
@@ -1265,6 +1313,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## pegasus-2-2-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 2/2 white Pegasus creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has no Pegasus token; the nearest 2/2 white or flying tokens (knight_2_2_w, spirit_2_2_w, bird_2_2_u_flying, drake_2_2_u_flying) differ in creature type or colour, and the Pegasus subtype matters because the card's own static grants lifelink to Pegasus creatures. The trigger itself (permanent_enters filtered to controller you, types Enchantment) and the static (grant_keyword lifelink to subtypes Pegasus, controller you) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Archon of Sun's Grace** (rank 1172) — `archon_of_sun_s_grace`
+  - Constellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying.
 
 </details>
 
@@ -1521,6 +1583,20 @@ Blocks **1** card.
 
 - **Vanguard of the Restless** (rank 11948) — `vanguard_of_the_restless`
   - Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game.
+
+</details>
+
+## static-goad
+
+Blocks **1** card.
+
+- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
+  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter
+
+<details><summary>Cards waiting on this</summary>
+
+- **Coercive Impetus** (rank 7990) — `coercive_impetus`
+  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
 
 </details>
 

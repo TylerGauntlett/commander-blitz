@@ -815,6 +815,16 @@
   "armored_pegasus": {
     "zone": "battlefield"
   },
+  "armored_skyhunter": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "armored_warhorse": {
     "zone": "battlefield"
   },
@@ -1773,6 +1783,10 @@
   "breeding_pool": {
     "zone": "battlefield"
   },
+  "breena_the_demagogue": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "breezekeeper": {
     "zone": "battlefield"
   },
@@ -2236,6 +2250,11 @@
     },
     "zone": "graveyard"
   },
+  "chains_of_custody": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "challenger_troll": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2279,6 +2298,10 @@
     "zone": "graveyard"
   },
   "changeling_sentinel": {
+    "zone": "battlefield"
+  },
+  "changing_loyalty": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "chant_of_the_skifsang": {
@@ -3126,6 +3149,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "darksteel_mutation": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "darksteel_myr": {
     "zone": "battlefield"
   },
@@ -3287,6 +3315,10 @@
     "zone": "battlefield"
   },
   "deer_dog": {
+    "zone": "battlefield"
+  },
+  "defacing_duskmage_vandal_s_edit": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "defense_force_aggressor": {
@@ -3549,6 +3581,10 @@
     "zone": "battlefield"
   },
   "doom_s_time_platform": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "doomwake_giant": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

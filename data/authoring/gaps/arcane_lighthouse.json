@@ -1,0 +1,16 @@
+{
+  "card_id": "arcane_lighthouse",
+  "name": "Arcane Lighthouse",
+  "oracle_text": "{T}: Add {C}.\n{1}, {T}: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud.",
+  "blocked_sentences": [
+    "{1}, {T}: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud."
+  ],
+  "needs": [{
+    "capability": "lose_keyword_until_end_of_turn",
+    "kind": "op",
+    "what": "a one-shot effect op that, for a duration (until end of turn), makes every permanent matching a selector (creatures your opponents control, including ones that come under their control later in the turn) lose the named keywords (hexproof, shroud) and prevents them from gaining those keywords from any source for that duration",
+    "why_existing_wont_do": "`lose_keyword` exists only as a static effect, which lasts while its source is on the battlefield and cannot be switched on for one turn by an activated ability; `grant_ability` could hand over a static but only to objects, not as a player/board-wide timed effect, and there is no op counterpart to `lose_keyword` (`lose_all_abilities` and `lock_abilities` strip far more than the two keywords)"
+  }],
+  "closest_existing": ["lose_keyword", "lose_all_abilities", "grant_keyword"],
+  "confidence": "high"
+}

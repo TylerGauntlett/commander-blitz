@@ -13532,12 +13532,12 @@
     },
     "Armored Skyhunter": {
       "edhrec_rank": 2555,
-      "gate": "template",
+      "gate": null,
       "name": "Armored Skyhunter",
-      "reason": "no template for: Whenever this creature attacks, look at the top six cards of your library. You may put an ",
+      "reason": "",
       "scryfall_id": "707e9d2e-3934-4b90-878d-4699ac1cbe89",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armored Transport": {
@@ -33962,12 +33962,12 @@
     },
     "Breena, the Demagogue": {
       "edhrec_rank": 1887,
-      "gate": "template",
+      "gate": null,
       "name": "Breena, the Demagogue",
-      "reason": "no template for: Whenever a player attacks one of your opponents, if that opponent has more life than anoth",
+      "reason": "",
       "scryfall_id": "599f87c8-643e-4224-93a5-853c0bd4e497",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breezekeeper": {
@@ -43142,12 +43142,12 @@
     },
     "Chains of Custody": {
       "edhrec_rank": 5155,
-      "gate": "template",
+      "gate": null,
       "name": "Chains of Custody",
-      "reason": "no template for: When this Aura enters, exile target nonland permanent an opponent controls until this Aura",
+      "reason": "",
       "scryfall_id": "3484b0bb-f305-404b-b4a9-430296061365",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chains of Mephistopheles": {
@@ -44212,12 +44212,12 @@
     },
     "Changing Loyalty": {
       "edhrec_rank": 7532,
-      "gate": "template",
+      "gate": null,
       "name": "Changing Loyalty",
-      "reason": "no template for: Replicate {2}",
+      "reason": "",
       "scryfall_id": "4260fab8-5597-45d8-8a1c-22ef96939071",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Channel": {
@@ -61532,12 +61532,12 @@
     },
     "Darksteel Mutation": {
       "edhrec_rank": 580,
-      "gate": "template",
+      "gate": null,
       "name": "Darksteel Mutation",
-      "reason": "no template for: Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and ha",
+      "reason": "",
       "scryfall_id": "6e776a1e-266d-4b30-83da-be4721a55ed2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Darksteel Myr": {
@@ -65042,12 +65042,12 @@
     },
     "Defacing Duskmage // Vandal's Edit": {
       "edhrec_rank": 9643,
-      "gate": "template",
+      "gate": null,
       "name": "Defacing Duskmage // Vandal's Edit",
-      "reason": "no template for: Whenever an opponent draws their second card each turn, this creature becomes prepared",
+      "reason": "",
       "scryfall_id": "91493530-bc0a-4ed1-8a4a-9a732fcb3752",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Defang": {
@@ -72172,12 +72172,12 @@
     },
     "Doomwake Giant": {
       "edhrec_rank": 1766,
-      "gate": "template",
+      "gate": null,
       "name": "Doomwake Giant",
-      "reason": "no template for: Constellation — Whenever this creature or another enchantment you control enters, creature",
+      "reason": "",
       "scryfall_id": "0be3f848-ba01-4890-a3a1-ed0dfb564632",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Door of Destinies": {

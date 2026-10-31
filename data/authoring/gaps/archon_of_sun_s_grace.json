@@ -1,0 +1,18 @@
+{
+  "card_id": "archon_of_sun_s_grace",
+  "name": "Archon of Sun's Grace",
+  "oracle_text": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nPegasus creatures you control have lifelink.\nConstellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying.",
+  "blocked_sentences": [
+    "Constellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying."
+  ],
+  "needs": [
+    {
+      "capability": "pegasus_2_2_w_flying",
+      "kind": "token",
+      "what": "a 2/2 white Pegasus creature token with flying",
+      "why_existing_wont_do": "token_ids has no Pegasus token; the nearest 2/2 white or flying tokens (knight_2_2_w, spirit_2_2_w, bird_2_2_u_flying, drake_2_2_u_flying) differ in creature type or colour, and the Pegasus subtype matters because the card's own static grants lifelink to Pegasus creatures. The trigger itself (permanent_enters filtered to controller you, types Enchantment) and the static (grant_keyword lifelink to subtypes Pegasus, controller you) are expressible"
+    }
+  ],
+  "closest_existing": ["spirit_2_2_w", "bird_2_2_u_flying"],
+  "confidence": "high"
+}
