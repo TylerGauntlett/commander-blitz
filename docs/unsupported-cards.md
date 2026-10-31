@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**112 cards** blocked by **99** capabilities.
+**111 cards** blocked by **98** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,7 +53,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
-| [enchant-graveyard-card](#enchant-graveyard-card) | 1 | 224 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
@@ -809,21 +808,6 @@ Blocks **1** card.
 
 - **Elvish Promenade** (rank 3100) — `elvish_promenade`
   - Create a 1/1 green Elf Warrior creature token for each Elf you control.
-
-</details>
-
-## enchant-graveyard-card
-
-Blocks **1** card.
-
-- **(engine)** An Aura whose enchant restriction targets a creature card in any graveyard (cast targeting a graveyard card, resolves attached to that card in the graveyard), plus an enters trigger that swaps its enchant ability to 'enchant creature put onto the battlefield with this Aura', returns the enchanted card to the battlefield under the Aura controller's control and re-attaches the Aura to it, and a linked leaves-the-battlefield trigger making that creature's controller sacrifice it (Animate Dead, Dance of the Dead, Necromancy).
-  <br>Why the existing vocabulary won't do: Aura `targets` and `attach` work only on battlefield permanents; there is no attachment to a card in a graveyard and no way to change an Aura's enchant restriction. `return_from_graveyard`/`put_onto_battlefield` plus `attach` could reanimate on an enters trigger, but the targeting at cast time from the graveyard, the enchant-ability swap, and the link from the Aura's leaves_battlefield trigger to 'that creature' (no binding persists across triggers) cannot be said; `until_leaves` exists only on exile/phase_out.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Animate Dead** (rank 224) — `animate_dead`
-  - Enchant creature card in a graveyard
-  - When this Aura enters, if it's on the battlefield, it loses "enchant creature card in a graveyard" and gains "enchant creature put onto the battlefield with this Aura." Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.
 
 </details>
 

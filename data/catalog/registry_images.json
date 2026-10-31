@@ -499,6 +499,10 @@
     "artist": "Phima",
     "scryfall_id": "a3e6ff4d-bf7d-488f-a02f-f40e7f8761ca"
   },
+  "animate_dead": {
+    "artist": "MSCHF",
+    "scryfall_id": "9ad691e5-a920-4d9a-8424-926f8c4b2a4d"
+  },
   "ankle_biter": {
     "artist": "Monztre",
     "scryfall_id": "424972d6-3b2c-449b-b786-749a77020fa1"
@@ -2918,6 +2922,10 @@
   "damocles_base_sword_of_kang": {
     "artist": "Anthony Devine",
     "scryfall_id": "32d79eb7-307a-4c26-b7dc-9ec019f2d2c0"
+  },
+  "dance_of_the_dead": {
+    "artist": "Randy Gallegos",
+    "scryfall_id": "e7c53ba4-9956-4cd6-85ca-2d6b61a5127c"
   },
   "dance_with_calamity": {
     "artist": "Fajareka Setiawan",

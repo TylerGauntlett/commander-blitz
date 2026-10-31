@@ -9382,12 +9382,12 @@
     },
     "Animate Dead": {
       "edhrec_rank": 224,
-      "gate": "template",
+      "gate": null,
       "name": "Animate Dead",
-      "reason": "no template for: Enchant creature card in a graveyard",
+      "reason": "",
       "scryfall_id": "cc0c2bab-4392-4e7b-9d14-2901f4ffbae8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Animate Land": {
@@ -60352,12 +60352,12 @@
     },
     "Dance of the Dead": {
       "edhrec_rank": 2282,
-      "gate": "template",
+      "gate": null,
       "name": "Dance of the Dead",
-      "reason": "no template for: Enchant creature card in a graveyard",
+      "reason": "",
       "scryfall_id": "e7c53ba4-9956-4cd6-85ca-2d6b61a5127c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dance of the Manse": {

@@ -554,6 +554,13 @@
   "animal_attendant": {
     "zone": "battlefield"
   },
+  "animate_dead": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ankle_biter": {
     "zone": "battlefield"
   },
@@ -3106,6 +3113,13 @@
     "zone": "graveyard"
   },
   "damocles_base_sword_of_kang": {
+    "zone": "battlefield"
+  },
+  "dance_of_the_dead": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "dance_with_calamity": {
