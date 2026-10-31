@@ -405,3 +405,23 @@ class TestTheWitnesses:
 
         assert game.state.objects[card_oid(game, AURA)].attached_to == bear
         assert game.state.objects[card_oid(game, AURA)].zone is Zone.BATTLEFIELD
+
+    @pytest.mark.parametrize("card_id", ["screams_from_within", "ghoulish_impetus"])
+    def test_a_returning_aura_chooses_its_host_or_stays(self, builder, card_id):
+        """"Return this card to the battlefield": the host is chosen as it
+        returns, with no `attach` after it; with no creature left it never
+        leaves the graveyard. Ghoulish Impetus's return is the delayed half."""
+        effects = self._effects(game := position(builder, graveyard=[card_id]), card_id, -1)
+        if effects[0]["op"] == "delay":
+            effects = list(effects[0]["effects"])
+        assert [e["op"] for e in effects] == ["return_from_graveyard"]
+        aura = card_oid(game, card_id)
+
+        run(game, effects, source=aura)
+        assert game.state.objects[aura].zone is Zone.GRAVEYARD
+
+        game = position(builder, theirs=[BEAR], graveyard=[card_id])
+        aura, bear = card_oid(game, card_id), only_oid(game, BEAR, 1)
+        asked = run(game, effects, source=aura)
+        assert game.state.objects[aura].attached_to == bear
+        assert len([d for d in asked if d.kind is DecisionKind.CHOOSE_OBJECTS]) <= 1
