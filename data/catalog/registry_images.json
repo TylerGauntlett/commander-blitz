@@ -2583,6 +2583,10 @@
     "artist": "Ryan Yee",
     "scryfall_id": "40dc6986-202e-4f65-aee7-a631dda88ed0"
   },
+  "contract": {
+    "artist": "Brian Valeza",
+    "scryfall_id": "4c5e0caa-a043-41de-acbf-cdf3a6b6ab18"
+  },
   "cooperation": {
     "artist": "Phil Foglio",
     "scryfall_id": "21a815ed-c8b4-4414-8b27-ea612e2977e2"
@@ -11327,6 +11331,10 @@
   "screams_from_within": {
     "artist": "Diego Gisbert",
     "scryfall_id": "27e2a759-971d-455b-845c-2e9b471950bb"
+  },
+  "scriv_the_obligator": {
+    "artist": "Brian Valeza",
+    "scryfall_id": "c133a860-7b8d-485d-b9a2-bf8ae3a68f47"
   },
   "scrounger_of_souls": {
     "artist": "Zezhou Chen",

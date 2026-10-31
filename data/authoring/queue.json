@@ -236832,12 +236832,12 @@
     },
     "Scriv, the Obligator": {
       "edhrec_rank": 8584,
-      "gate": "template",
+      "gate": null,
       "name": "Scriv, the Obligator",
-      "reason": "no template for: Whenever Scriv enters or attacks, create a white Aura enchantment token named Contract att",
+      "reason": "",
       "scryfall_id": "c133a860-7b8d-485d-b9a2-bf8ae3a68f47",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scrivener": {

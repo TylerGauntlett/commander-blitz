@@ -11881,6 +11881,14 @@
       "graveyard"
     ]
   },
+  "scriv_the_obligator": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "contract"
+    },
+    "zone": "battlefield"
+  },
   "scrounger_of_souls": {
     "zone": "battlefield"
   },

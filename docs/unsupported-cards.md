@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**113 cards** blocked by **100** capabilities.
+**112 cards** blocked by **99** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -40,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
-| [contract-token](#contract-token) | 1 | 8584 | token |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
@@ -626,20 +625,6 @@ Blocks **1** card.
 - **Gemstone Caverns** (rank 180) — `gemstone_caverns`
   - If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
-
-</details>
-
-## contract-token
-
-Blocks **1** card.
-
-- **(token)** a white Aura enchantment token named Contract with enchant creature and "Whenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life." ("your opponents" and "its controller" read relative to the token's controller, Scriv's controller), created attached to target creature an opponent controls
-  <br>Why the existing vocabulary won't do: token_ids has no Contract token; the only Aura token is wicked_role (a colorless Role giving +1/+1), which is a different token. create_token with attached_to would carry the attachment once the token exists.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Scriv, the Obligator** (rank 8584) — `scriv_the_obligator`
-  - Whenever Scriv enters or attacks, create a white Aura enchantment token named Contract attached to target creature an opponent controls. The token has enchant creature and "Whenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life."
 
 </details>
 
