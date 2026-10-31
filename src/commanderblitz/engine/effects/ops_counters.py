@@ -334,12 +334,11 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
     asking and then silently attaching nothing. With ``optional`` on ``objects``
     the remaining question is the printed "you **may** attach it".
 
-    The Aura half is the same op with a wider ``attachment``. An Aura put onto
-    the battlefield without being cast never targeted anything, so nothing
-    attached it -- `stack._attach_aura` reads the *spell's* targets -- and
-    `sba` bins an Aura enchanting nothing the moment it arrives. Which host is
-    legal for it is the card's own selector to state; the engine models no
-    "enchant creature" restriction off the stack (see `docs/rules-coverage.md`).
+    The Aura half needs no attach at all: an Aura put onto the battlefield by an
+    effect that names no host chooses one as it enters (303.4f,
+    `zones.offer_aura_host`). This op is for the effect that *does* name it --
+    "…attached to that token" -- beside ``host_named`` on the arrival, and the
+    host it names is trusted (see `docs/rules-coverage.md`).
 
     ``player`` in place of ``objects`` moves **this Aura onto a player** --
     Archnemesis's "you may attach this Aura to that player". See

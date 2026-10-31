@@ -1224,18 +1224,46 @@ creature. Asking and then attaching nothing would show a player a decision that
 cannot change the game. `optional` on `objects` is the remaining "you **may**
 attach it".
 
-The **Aura** half of the same sentence is the same op with the `subtypes` filter
-dropped, and it is not optional flavour — an Aura put onto the battlefield
-without being cast targeted nothing, `stack._attach_aura` reads the *spell's*
-targets, and state-based actions bin it a moment later (704.5m). Which host is
-legal for a given Aura is the card's own selector to state: the engine models no
-"Enchant creature" restriction off the stack, because "Enchant creature" is a
-targeting clause on the spell (see `docs/rules-coverage.md`).
+The **Aura** half of the same sentence needs nothing: the effect names no host
+for an Aura, so its controller chooses one as it enters (303.4f) — see
+[the next section](#an-aura-put-onto-the-battlefield-without-being-cast).
 
 `attachment` is refused at load time on every op but `attach`. The near miss is
 writing it on `put_onto_battlefield` beside its `tapped` and `counters` — the op
 that actually puts the Equipment down — where it would be accepted, ignored, and
 silent.
+
+### An Aura put onto the battlefield without being cast
+
+    Ghoulish Impetus — "When enchanted creature dies, return this card to the
+    battlefield at the beginning of the next end step."
+
+```jsonc
+{ "op": "return_from_graveyard", "destination": "battlefield",
+  "objects": { "self_only": true, "zone": "graveyard" } }
+```
+
+Nothing else. An Aura that arrives by any route but resolving as an Aura spell,
+from an effect that names no host, enters enchanting what the player it enters
+under chooses (303.4f). The engine asks it on every arrival path —
+`put_onto_battlefield`, `return_from_graveyard`, `return_to_origin`,
+`exile_and_return`, `search_library`, `search_zones`, `look_at_top` and
+`reveal_until` — through `zones.offer_aura_host`. The legal hosts are the
+Aura's enchant clause, its first target spec, read for that player: "enchant
+creature you control" is a creature *they* control. It is not targeting, so
+hexproof, shroud and ward do not narrow it; protection does (702.16c). With no
+legal host the Aura stays in the zone it was in (303.4g) — a reanimated Aura
+stays in the graveyard, and one looked at off the library is one of "the rest".
+
+A following `attach` is the near miss. It asks a second question after the
+first, and when nothing is legal the Aura has already left its zone.
+
+`host_named: true`, on `return_from_graveyard` (beside `destination:
+"battlefield"`) and `put_onto_battlefield`, is the other case: the effect names
+the host itself — Forum Filibuster's "…to the battlefield **attached to that
+token**", Gift of Immortality's "…attached to that creature" — and a following
+`attach` says which. No 303.4f question is asked. The loader refuses the key on
+any other op or destination, and anything but a boolean.
 
 ## Player-wide statics
 

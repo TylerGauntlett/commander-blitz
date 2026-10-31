@@ -65,6 +65,7 @@ from .vocabulary import (
     CONTROLLED_TARGET_KINDS,
     COUNTERS_ON_ARRIVAL_OPS,
     DELAYED_TRIGGER_KEYS,
+    HOST_NAMED_OPS,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
@@ -748,6 +749,22 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'counters' is what a permanent arrives with and only "
                 f"{sorted(COUNTERS_ON_ARRIVAL_OPS)} read it, not {op!r} "
                 f"(use a separate add_counters)"
+            )
+
+    # "…to the battlefield **attached to that token**": the effect names the
+    # Aura's host itself, with a following `attach`, so 303.4f's choice is not
+    # asked. Only the two ops that put a card onto the battlefield and are
+    # followed by such an `attach` read it, and only beside the battlefield.
+    if "host_named" in effect:
+        if op not in HOST_NAMED_OPS or not isinstance(effect["host_named"], bool):
+            raise DslError(
+                f"{where}: 'host_named' is a boolean read by {sorted(HOST_NAMED_OPS)}, "
+                f"not {op!r}"
+            )
+        if op == "return_from_graveyard" and effect.get("destination") != "battlefield":
+            raise DslError(
+                f"{where}: 'host_named' needs destination 'battlefield'; an Aura "
+                f"enchants nothing anywhere else"
             )
 
     if "target" in effect and str(effect["target"]) not in target_kinds:

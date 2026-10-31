@@ -14,10 +14,15 @@ from typing import TYPE_CHECKING, Any
 
 from . import sagas
 from .carddef import CardDef, Cost
-from .characteristics import chars, keyword_as_it_enters
+from .characteristics import (
+    chars,
+    keyword_as_it_enters,
+    player_protected_from,
+    protected_from,
+)
 from .effects.conditions import evaluate_condition
-from .effects.context import EffectContext, ask_mode, ask_objects, ask_yes_no
-from .effects.selectors import resolve_pool
+from .effects.context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
+from .effects.selectors import resolve_pool, select_players
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
@@ -953,6 +958,85 @@ def offer_read_ahead(state: GameState, oid: int, controller: int):
     obj.read_ahead_chapter = chosen[0] + 1 if chosen else 1
 
 
+def offer_aura_host(state: GameState, oid: int, controller: int):
+    """303.4f: an Aura put onto the battlefield without being cast **chooses
+    what it will enchant as it enters**. Returns whether it may enter at all.
+
+    "Return this card to the battlefield", "you may put an Aura or Equipment
+    card from among them onto the battlefield" -- the effect names no host, so
+    ``controller``, the player it enters under, chooses one its enchant clause
+    allows. The clause is the Aura's first target spec, the same one
+    `stack._attach_aura` reads off a cast Aura: "enchant creature you control"
+    is ``{"controller": "you"}`` read for that player, and "enchant opponent" a
+    seat other than theirs.
+
+    **Not targeting.** Nothing is targeted (115.1), so hexproof, shroud and
+    ward do not narrow the pool; protection does, because a permanent or player
+    with protection can't be *enchanted* by an Aura with that quality (702.16c)
+    -- the half `primitives.attach` and `attach_to_player` already enforce.
+
+    **No legal host, no arrival** (303.4f, 303.4g): the answer is ``False`` and
+    the caller leaves the card in the zone it was in. Without this the Aura
+    entered enchanting nothing, every enters trigger saw it, and `sba` put it
+    into a graveyard -- a different zone change from the one the rules allow,
+    and a card leaving the library or exile that should have stayed there.
+
+    Asked from every arrival path that can stop to ask, for
+    `offer_enters_costs`' reason: `move_object` is not a generator. The answer
+    is left on `obj.enters_attached_to` (or `enters_attached_to_player`) for
+    `_enter_battlefield`, which attaches the Aura as it enters. The cast path
+    never calls this -- the spell's target is the host -- and neither does an
+    effect that names the host itself (``host_named`` on the arrival op, with a
+    following `attach`).
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return True
+    card = state.card_of(obj)
+    obj.enters_attached_to = None
+    obj.enters_attached_to_player = None
+    # A bestow card arriving uncast is a creature (702.103e), and the printed
+    # face is what is arriving: `is_aura` is the test. An Aura with no enchant
+    # clause written -- a Role token, attached by the op that creates it --
+    # has nothing to choose against and arrives as before.
+    if not card.is_aura or not card.targets:
+        return True
+    spec = card.targets[0]
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    if spec.kind == "player":
+        clause = spec.selector.get("controller", "any")
+        allowed = None if clause == "any" else set(select_players(ctx, clause))
+        seats = [
+            pid
+            for pid in state.alive()
+            if (allowed is None or pid in allowed) and not player_protected_from(state, pid, oid)
+        ]
+        if not seats:
+            return False
+        chosen = yield from ask_player(
+            ctx, f"Which player will {card.name} enchant?", seats, controller
+        )
+        if chosen is None:
+            return False
+        obj.enters_attached_to_player = chosen
+        return True
+    selector = {**dict(spec.selector), "zone": "battlefield"}
+    pool = [
+        host
+        for host in resolve_pool(ctx, selector)
+        if host != oid and not protected_from(state, host, oid)
+    ]
+    if not pool:
+        return False
+    chosen = yield from ask_objects(ctx, f"What will {card.name} enchant?", pool, 1, 1, controller)
+    if not chosen:
+        return False
+    obj.enters_attached_to = chosen[0]
+    return True
+
+
 def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
     """"Creatures your opponents control enter tapped." Authority of the Consuls.
 
@@ -1696,6 +1780,22 @@ def _enter_battlefield(
 
         for keyword in sorted(granted):
             grant_keyword(state, obj.oid, keyword)
+
+    # 303.4f: an Aura put onto the battlefield without being cast enters
+    # attached to the host `offer_aura_host` had its controller choose a moment
+    # ago, before ENTERS_BATTLEFIELD goes out, so no enters trigger and no
+    # state-based action sees it enchanting nothing. Read and cleared here for
+    # `riot_choice`'s reason: the answer belongs to this arrival.
+    host, seat = obj.enters_attached_to, obj.enters_attached_to_player
+    obj.enters_attached_to = obj.enters_attached_to_player = None
+    if host is not None or seat is not None:
+        # Local: `primitives` imports `zones` for `move_object`.
+        from .primitives import attach, attach_to_player
+
+        if host is not None:
+            attach(state, obj.oid, host)
+        else:
+            attach_to_player(state, obj.oid, seat)
 
     state.bump_chars()
     fire(

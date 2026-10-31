@@ -63,7 +63,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
-| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield. | [Effect ops](card-dsl.md#effect-ops) |
+| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters unless `host_named`. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_origin` | Cards |  | Return an exiled card to the zone it came from. | ["…until this permanent leaves the battlefield" — giving it back](card-dsl-cookbook.md#until-this-permanent-leaves-the-battlefield--giving-it-back) |
@@ -119,7 +119,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
 | `proliferate` | Board |  | Proliferate: choose permanents and players, add one of each counter. | [Proliferate — a choice over permanents and players](card-dsl.md#proliferate--a-choice-over-permanents-and-players) |
-| `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped or with counters. | [Effect ops](card-dsl.md#effect-ops) |
+| `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped or with counters; an Aura chooses its host as it enters unless `host_named`. | [Effect ops](card-dsl.md#effect-ops) |
 | `redirect_attack` | Board |  | Reselect what an attacking creature attacks; nothing is declared. | [Reselecting an attack — redirect_attack](card-dsl-cookbook.md#reselecting-an-attack--redirect_attack) |
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board |  | Remove N counters of a kind. | [Effect ops](card-dsl.md#effect-ops) |

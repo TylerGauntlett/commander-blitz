@@ -7,12 +7,16 @@
   ],
   "needs": [
     {
-      "capability": "aura_onto_battlefield",
+      "capability": "reveal_until_may_destination",
       "kind": "engine",
-      "what": "when an Aura card is put onto the battlefield without being cast (here from reveal_until, destination battlefield), its controller chooses an object or player it could legally enchant and it enters attached to that (303.4f); together with a per-card yes/no on reveal_until's match -- 'you may put that card onto the battlefield; if you don't, put it into your hand' -- e.g. a `may_destination: \"battlefield\"` with `destination: \"hand\"` as the fallback, asked of the controller before the rest is bottomed",
-      "why_existing_wont_do": "Auras attach only through stack._attach_aura, which reads the spell's targets, so an Aura moved by _move_found to the battlefield arrives attached to nothing and is put into the graveyard by state-based actions; the `attach` op after the move cannot help because a non-cast Aura is never legally on the battlefield unattached. reveal_until makes no decision at all (destination and destination_if are fixed, selector-driven), and reveal_until to hand followed by `may put_onto_battlefield` moves the card from the hand rather than the library and bottoms the rest before the choice"
+      "what": "a per-card yes/no on reveal_until's match -- 'you may put that card onto the battlefield; if you don't, put it into your hand' -- e.g. a `may_destination: \"battlefield\"` with `destination: \"hand\"` as the fallback, asked of the controller while the match is still in the library and before the rest is bottomed. The Aura's host is already chosen as it enters (303.4f, zones.offer_aura_host)",
+      "why_existing_wont_do": "reveal_until makes no yes/no decision (destination and destination_if are fixed, selector-driven), and reveal_until to hand followed by `may put_onto_battlefield` moves the card from the hand rather than the library -- a second zone change, through a hand -- and bottoms the rest before the choice"
     }
   ],
-  "closest_existing": ["reveal_until", "put_onto_battlefield", "attach", "search_aura_attached"],
+  "closest_existing": [
+    "reveal_until",
+    "put_onto_battlefield",
+    "may"
+  ],
   "confidence": "high"
 }

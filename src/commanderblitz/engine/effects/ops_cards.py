@@ -26,6 +26,7 @@ from ..zones import (
     end_permissions_until_next_exile,
     link_exiled,
     move_object,
+    offer_aura_host,
     offer_enters_replacement,
     offer_read_ahead,
     offer_riot_choice,
@@ -423,7 +424,7 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         if shuffles and to_top:
             shuffle_library(ctx.state, pid)
         if picked:
-            _move_found(ctx, picked, pid, destination, spec, tapped, "search")
+            picked = yield from _move_found(ctx, picked, pid, destination, spec, tapped, "search")
         if shuffles and not to_top:
             shuffle_library(ctx.state, pid)
         found.extend(picked)
@@ -584,8 +585,12 @@ def _move_found(
     tapped: bool,
     cause: str,
     controller: int | None = None,
-) -> None:
+):
     """Send the cards a library lookup turned up to their destination.
+
+    Returns the cards that went: an Aura with nothing it could enchant stays
+    where it was found (303.4f), and "the rest" and an ``as`` binding are about
+    what moved. See `zones.offer_aura_host`.
 
     Usually one destination for the whole search. ``destination_if`` is the
     exception -- "Search your library for a creature or land card and reveal it.
@@ -606,18 +611,25 @@ def _move_found(
     # lookup exiles ends what its source granted before. Once, so the cards
     # exiled together here keep the permissions granted together below.
     ended_earlier_grants = False
+    moved: list[int] = []
     for oid in picked:
         destination, tapped = _destination_for(ctx, oid, spec, destination, tapped)
         if destination is Zone.EXILE and not ended_earlier_grants:
             end_permissions_until_next_exile(ctx.state, ctx.source_oid)
             ended_earlier_grants = True
         if destination is Zone.BATTLEFIELD:
+            # 303.4f: an Aura found this way chooses its host as it enters,
+            # and with none to choose it stays in the zone it was found in.
+            entering_under = pid if controller is None else controller
+            if not (yield from offer_aura_host(ctx.state, oid, entering_under)):
+                continue
             # to_player only picks the destination zone list; the battlefield
             # is global, so controller has to be set explicitly or the
             # `controller: "you"` clause on landfall reads the owner.
             obj = ctx.state.objects.get(oid)
             if obj is not None:
-                obj.controller = pid if controller is None else controller
+                obj.controller = entering_under
+        moved.append(oid)
         move_object(
             ctx.state,
             oid,
@@ -691,6 +703,7 @@ def _move_found(
                 # would be a blind pick (Extract Power). Everybody else still
                 # sees only that a card is there.
                 obj.revealed_to = {obj.playable_by} if obj.playable_by is not None else set()
+    return moved
 
 
 @register("look_at_top")
@@ -803,7 +816,7 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
                 # The step carries its own destination flags -- `to` reads as
                 # `destination` for `_move_found`'s `library_top` test, and
                 # `playable_this_turn` belongs to the exile step alone.
-                _move_found(
+                picked = yield from _move_found(
                     ctx,
                     picked,
                     pid,
@@ -822,8 +835,9 @@ def op_look_at_top(ctx: EffectContext, spec: Mapping[str, Any]):
             if cast_free:
                 taken = set((yield from _cast_from_window(ctx, pid, picked)))
             else:
-                _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top")
-                taken = set(picked)
+                taken = set(
+                    (yield from _move_found(ctx, picked, pid, destination, spec, tapped, "look_at_top"))
+                )
             # Accumulated across seats rather than assigned, for the reason
             # `exile`'s own `as` accumulates: a `player: "each_player"` look
             # would otherwise bind only the last seat's cards and strand the
@@ -1105,6 +1119,10 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
         if origin is None or origin is _Zone.EXILE:
             continue
         if origin is _Zone.BATTLEFIELD:
+            # 303.4f: a blinked Aura comes back enchanting whatever its
+            # controller chooses now, and stays in exile when nothing is legal.
+            if not (yield from offer_aura_host(ctx.state, oid, obj.controller)):
+                continue
             # A blink is an arrival too: what comes back is a new object (400.7)
             # and "if this would enter" is asked of it afresh. See
             # `zones.offer_enters_replacement`.
@@ -1187,7 +1205,16 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
         if destination is Zone.BATTLEFIELD:
             # Same reason as op_search_library: the battlefield is one global
             # list, so nothing else sets controller. Mirrors put_onto_battlefield.
-            obj.controller = ctx.controller if spec.get("controller") == "you" else obj.owner
+            controller = ctx.controller if spec.get("controller") == "you" else obj.owner
+            # 303.4f: "return this card to the battlefield" names no host, so
+            # an Aura chooses one as it enters and stays in the graveyard when
+            # none is legal. ``host_named`` is "…attached to that creature",
+            # the host named by a following `attach`.
+            if not spec.get("host_named") and not (
+                yield from offer_aura_host(ctx.state, oid, controller)
+            ):
+                continue
+            obj.controller = controller
             # "If this artifact **would enter**…" -- reanimation is an arrival,
             # and a replacement wired into the cast line alone would let a
             # reanimated Mox Diamond enter for free. See
@@ -2377,8 +2404,9 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
       would reveal the whole deck and randomize all of it every time the
       trigger resolved.
     - there is **no choice**: the scan stops at the first match (or the
-      ``amount``-th) and the matches are what move, so nothing here is a
-      decision and the op is not a generator. `look_at_top` offers every match inside its window and lets the
+      ``amount``-th) and the matches are what move, so nothing here chooses
+      a card -- the one question asked is an Aura's host as it enters
+      (303.4f). `look_at_top` offers every match inside its window and lets the
       player take the best one, which is a strictly better card.
     - the cards walked past are **public**. That is the difference between a
       reveal and a look, and it is information the whole table paid for.
@@ -2464,7 +2492,7 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
         # land never arrives off a card that printed a tapped one.
         if hits:
             with entering_together(ctx.state):
-                _move_found(
+                hits = yield from _move_found(
                     ctx,
                     hits,
                     pid,
