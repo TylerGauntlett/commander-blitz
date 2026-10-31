@@ -5825,6 +5825,10 @@
   "gongaga_reactor_town": {
     "zone": "battlefield"
   },
+  "gonti_s_machinations": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "goobbue_gardener": {
     "zone": "battlefield"
   },
@@ -15088,6 +15092,10 @@
     },
     "zone": "battlefield"
   },
+  "valgavoth_harrower_of_souls": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "valiant_guard": {
     "zone": "battlefield"
   },
@@ -15262,6 +15270,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "vengeful_warchief": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "venomous_changeling": {

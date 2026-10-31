@@ -396,6 +396,7 @@ class TestActivatedAbilities:
             _enchant_something(game, oid, zone)
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
+            _afford_the_energy(game, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
             _provide_the_untap_fodder(game, registry, ability)
@@ -509,6 +510,21 @@ def _afford_the_life(game: Game, ability) -> None:
     # exceeds.
     floor = int(needed) + 10 if isinstance(needed, int) else 60
     game.state.players[0].life = max(game.state.players[0].life, floor)
+
+
+def _afford_the_energy(game: Game, ability) -> None:
+    """Give the activating seat the energy the ability's cost spends.
+
+    The life cost's argument again: a sandbox seat starts with no energy, and
+    107.14 forbids paying energy you do not have, so Gonti's Machinations'
+    "Pay {E}{E}, Sacrifice this enchantment" would report as unusable when it
+    is only unaffordable. Exactly the cost, since energy left over changes
+    nothing a cost can read.
+    """
+    cost = ability.cost
+    needed = getattr(cost, "pay_energy", 0) if cost is not None else 0
+    if needed:
+        game.state.players[0].energy = max(game.state.players[0].energy, int(needed))
 
 
 def _pay_the_counters(game: Game, oid: int, ability) -> None:

@@ -65742,6 +65742,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you lose life for the first time each turn, you get {E}. (You get an energy counter. Damage causes loss of life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "life_lost",
+            "nth": 1
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 2,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "as": "lost",
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "binding": "lost"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay {E}{E}, Sacrifice this enchantment: Each opponent loses 3 life. You gain life equal to the life lost this way."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gonti_s_machinations",
+      "mana_cost": "{B}",
+      "name": "Gonti's Machinations",
+      "oracle_text": "Whenever you lose life for the first time each turn, you get {E}. (You get an energy counter. Damage causes loss of life.)\nPay {E}{E}, Sacrifice this enchantment: Each opponent loses 3 life. You gain life equal to the life lost this way.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -176021,6 +176084,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "pay_life": 2
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward—Pay 2 life."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent loses life for the first time during each of their turns, put a +1/+1 counter on Valgavoth and draw a card.",
+          "trigger": {
+            "condition": {
+              "is_active_player": {
+                "binding": "event_player"
+              }
+            },
+            "controller": "opponent",
+            "event": "life_lost",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "valgavoth_harrower_of_souls",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Valgavoth, Harrower of Souls",
+      "oracle_text": "Flying\nWard—Pay 2 life.\nWhenever an opponent loses life for the first time during each of their turns, put a +1/+1 counter on Valgavoth and draw a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Demon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -177772,6 +177911,51 @@
         "Zombie"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you lose life for the first time each turn, put a +1/+1 counter on this creature. (Damage causes loss of life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "life_lost",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vengeful_warchief",
+      "mana_cost": "{4}{B}",
+      "name": "Vengeful Warchief",
+      "oracle_text": "Whenever you lose life for the first time each turn, put a +1/+1 counter on this creature. (Damage causes loss of life.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Warrior"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

@@ -5468,6 +5468,10 @@
     "artist": "Le Vuong",
     "scryfall_id": "7beccfa6-3e4b-4460-954e-870cb39e462d"
   },
+  "gonti_s_machinations": {
+    "artist": "Daarken",
+    "scryfall_id": "6c97f5a9-6e04-45c3-aa8d-dcf0fd81d5b9"
+  },
   "goobbue_gardener": {
     "artist": "Janna Sophia",
     "scryfall_id": "b7c3544a-5dd5-423e-8a40-ac4803db8adc"
@@ -14375,6 +14379,10 @@
     "artist": "Justyna Dura",
     "scryfall_id": "5e0c357b-c5e8-4082-b1ec-85d40d10524c"
   },
+  "valgavoth_harrower_of_souls": {
+    "artist": "Chris Cold",
+    "scryfall_id": "8d7c1f6c-af45-4449-8cf8-e13830b3df8a"
+  },
   "valiant_guard": {
     "artist": "Chris Rahn",
     "scryfall_id": "83ec1486-900b-4763-9b5b-390cb00aff02"
@@ -14574,6 +14582,10 @@
   "vengeful_dead": {
     "artist": "Alex Horley-Orlandelli",
     "scryfall_id": "81197564-19bb-423d-87d4-3d83deac85a2"
+  },
+  "vengeful_warchief": {
+    "artist": "Karl Kopinski",
+    "scryfall_id": "d405e1bc-bf58-4cce-8abe-57fb40ef0996"
   },
   "venomous_changeling": {
     "artist": "Aaron Miller",

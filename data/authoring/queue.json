@@ -115102,12 +115102,12 @@
     },
     "Gonti's Machinations": {
       "edhrec_rank": 15555,
-      "gate": "template",
+      "gate": null,
       "name": "Gonti's Machinations",
-      "reason": "no template for: Whenever you lose life for the first time each turn, you get {E}",
+      "reason": "",
       "scryfall_id": "6c97f5a9-6e04-45c3-aa8d-dcf0fd81d5b9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gonti, Canny Acquisitor": {
@@ -300352,12 +300352,12 @@
     },
     "Valgavoth, Harrower of Souls": {
       "edhrec_rank": 2237,
-      "gate": "template",
+      "gate": null,
       "name": "Valgavoth, Harrower of Souls",
-      "reason": "no template for: Ward—Pay 2 life",
+      "reason": "",
       "scryfall_id": "8d7c1f6c-af45-4449-8cf8-e13830b3df8a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Valgavoth, Terror Eater": {
@@ -302642,12 +302642,12 @@
     },
     "Vengeful Warchief": {
       "edhrec_rank": 24588,
-      "gate": "template",
+      "gate": null,
       "name": "Vengeful Warchief",
-      "reason": "no template for: Whenever you lose life for the first time each turn, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "d405e1bc-bf58-4cce-8abe-57fb40ef0996",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vengevine": {
