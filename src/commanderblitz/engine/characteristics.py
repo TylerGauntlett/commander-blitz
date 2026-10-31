@@ -2204,20 +2204,49 @@ def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool
     **input**, so a static's filter can read it without depending on another
     static's output (ADR 0001).
     """
-    want_controller = spec.get("controller", "any") if isinstance(spec, Mapping) else "any"
-    found = False
+    return enchanted_by_answer(aura_controllers(state, oid), spec, controller)
+
+
+def aura_controllers(state: GameState, oid: int) -> list[int]:
+    """Who controls each Aura attached to ``oid`` right now, one seat per Aura.
+
+    The one place an Aura is told from any other attachment, for both readers of
+    "enchanted": `enchanted_by` asks it of a permanent on the battlefield, and
+    `zones.move_object` asks it of a permanent that is leaving, before
+    `_detach_all` unattaches everything, and puts the answer on the departure
+    event as ``had_auras`` -- the last-known information (603.10a) that "whenever
+    an enchanted creature dies" and "for each Aura you controlled that was
+    attached to it" (Hateful Eidolon) read once the Auras have fallen off.
+    """
+    seats: list[int] = []
     for aura_oid in state.battlefield:
         aura = state.objects.get(aura_oid)
         if aura is None or aura.attached_to != oid:
             continue
         if not (state.card_of(aura).is_aura or aura.cast_bestowed):
             continue
-        if want_controller == "you" and aura.controller != controller:
-            continue
-        if want_controller == "opponent" and aura.controller == controller:
-            continue
-        found = True
-        break
+        seats.append(aura.controller)
+    return seats
+
+
+def auras_matching(seats: Any, spec: Any, controller: int) -> int:
+    """How many of ``seats`` (one per Aura) a `enchanted_by`-shaped ``spec`` names.
+
+    ``spec`` is ``true`` or ``{"controller": "you" | "opponent" | "any"}``,
+    relative to ``controller``. Shared by the live answer and the departure
+    snapshot so the two readings of "an Aura you control" cannot drift.
+    """
+    want = spec.get("controller", "any") if isinstance(spec, Mapping) else "any"
+    if want == "you":
+        return sum(1 for seat in seats if seat == controller)
+    if want == "opponent":
+        return sum(1 for seat in seats if seat != controller)
+    return len(seats)
+
+
+def enchanted_by_answer(seats: Any, spec: Any, controller: int) -> bool:
+    """The ``enchanted_by`` verdict for a host whose Auras' controllers are ``seats``."""
+    found = auras_matching(seats, spec, controller) > 0
     return found if spec is not False else not found
 
 

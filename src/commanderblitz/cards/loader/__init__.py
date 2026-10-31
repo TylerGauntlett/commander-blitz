@@ -68,7 +68,6 @@ from commanderblitz.engine.objects import TIME_COUNTER
 from commanderblitz.engine.sagas import LORE, SAGA
 from commanderblitz.engine.triggers import (
     BATCHED_EVENTS,
-    LOOK_BACK_EVENTS,
     ORDINAL_FILTER_KEYS,
     STATE_TRIGGER,
     TRIGGER_EVENTS,
@@ -2636,19 +2635,6 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             )
         validate_selector(model.trigger.filter, f"{where}.trigger.filter")
         validate_trigger_filter(model.trigger.filter, f"{where}.trigger.filter")
-        filt = model.trigger.filter or {}
-        if TRIGGER_EVENTS[model.trigger.event] in LOOK_BACK_EVENTS and any(
-            "enchanted_by" in part for part in (filt, *filt.get("any_of", ()))
-        ):
-            # `zones._detach_all` unattaches every Aura before the departure
-            # fires, so asked of the creature that left, `true` never matches
-            # and `false` always does -- "whenever an enchanted creature dies"
-            # would load and never fire. What was attached as it left is not
-            # recorded.
-            raise DslError(
-                f"{where}.trigger.filter: enchanted_by reads the Auras attached "
-                f"now, and a creature that has left the battlefield has none"
-            )
         if isinstance((model.trigger.filter or {}).get("attacking_player"), dict):
             # Nothing is bound when a trigger filter is asked, so "attacking
             # the player in binding X" would match nothing and the trigger

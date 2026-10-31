@@ -212,19 +212,6 @@ class TestTheLoader:
         with pytest.raises(DslError, match=message):
             _compile(trigger)
 
-    @pytest.mark.parametrize("event", ["creature_dies", "dies", "leaves_battlefield"])
-    def test_a_departure_trigger_is_refused(self, event):
-        """`_detach_all` unattaches the Auras first: the creature that left is
-        never enchanted, so the trigger would never fire."""
-        trigger = {
-            "kind": "triggered",
-            "text": "Probe.",
-            "trigger": {"event": event, "controller": "any", "filter": {"enchanted_by": True}},
-            "effects": [{"op": "draw", "amount": {"const": 1}}],
-        }
-        with pytest.raises(DslError, match="has left the battlefield"):
-            _compile(trigger)
-
     def test_the_witness_shapes_load(self):
         _compile(
             {

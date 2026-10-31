@@ -197,6 +197,14 @@ class GameState:
     #: simultaneous event of its own (704.3) and shares the batch counter with
     #: whatever ran before it.
     leaving_dies_replacers: list[tuple[int, Any, Any]] = field(default_factory=list)
+    #: Auras that have just left the battlefield while attached to a permanent
+    #: still on it, as ``(event_batch, host oid, Aura's controller)``. The same
+    #: one-at-a-time problem `leaving_dies_replacers` answers: a wrath that
+    #: destroys an Aura and its host together may move the Aura first, and the
+    #: host's departure must still see it attached (603.10a). Read by
+    #: `zones._auras_had` only while the batch is unchanged, and emptied by every
+    #: state-based-action pass for the same reason.
+    leaving_auras: list[tuple[int, int, int]] = field(default_factory=list)
     #: "Whenever a creature dealt damage by this creature this turn dies…"
     #:
     #: victim oid -> the oids of everything that has damaged it this turn.

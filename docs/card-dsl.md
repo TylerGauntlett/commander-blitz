@@ -1333,10 +1333,14 @@ One word in every filter language — the selector, static and counting filters,
 the trigger filter and the cost-reduction count — answered by one function,
 `characteristics.enchanted_by`, from the host's end of `attached_to`. Every half
 of the answer is a pipeline input, so a static may read it (ADR 0001). The
-loader refuses a word (`"you"` would read as "anybody's Aura"), an empty filter,
-any key on the Auras but `controller`, and the key on a trigger watching a
-permanent leave the battlefield: `zones._detach_all` unattaches its Auras first,
-so the departed creature is never enchanted.
+loader refuses a word (`"you"` would read as "anybody's Aura"), an empty filter
+and any key on the Auras but `controller`.
+
+On a trigger watching a permanent leave the battlefield (`dies`,
+`creature_dies`, `leaves_battlefield`, `sacrificed`) the key looks back in time
+(603.10a): `zones._detach_all` unattaches every Aura before the event goes out,
+so the filter is answered from the Auras the permanent wore as it left, which
+the event carries as `had_auras` — see `auras_had` below.
 
 "Whenever one or more creatures that are enchanted by an Aura you control
 attack" (Killian, Decisive Mentor) is `you_attack` with `controller: "any"` and
@@ -1353,6 +1357,39 @@ the question asked of the declaration, checked as it triggers only:
 | `modified` | also counts counters and Equipment, and only Auras you control |
 | `attached` | names the one permanent the ability's own source is attached to |
 | `attached_to_host` | names the *other* attachments sharing the source's host, not a host |
+
+### "For each Aura that was attached to it" — `auras_had`
+
+```jsonc
+// Hateful Eidolon: "Whenever an enchanted creature dies, draw a card for each
+// Aura you controlled that was attached to it."
+{ "kind": "triggered",
+  "trigger": { "event": "creature_dies", "controller": "any", "filter": { "enchanted_by": true } },
+  "effects": [ { "op": "draw", "amount": { "auras_had": { "controller": "you" } } } ] }
+```
+
+A value, on a trigger about a permanent that has just left the battlefield: how
+many Auras were attached to it as it left (603.10a). `true` counts every one,
+anybody's; `{"controller": "you" | "opponent" | "any"}` counts those whose
+controller, as each was controlled as it left, stands that way to the
+ability's controller — the `enchanted_by` spelling, and the same snapshot an
+`enchanted_by` trigger filter reads on a departure.
+
+`zones.move_object` writes the snapshot as `had_auras` on the `dies`,
+`leaves_battlefield` and `sacrificed` events, one seat per Aura, before
+`_detach_all`, and an Aura is told as `enchanted_by` tells it (printed, or
+bestowed). The engine moves a simultaneous event's permanents one at a time, so
+an Aura that left in the same event as its host, a "destroy all nonland
+permanents" reaching it first, is recovered from `GameState.leaving_auras`
+for the rest of that event. A trigger that never fired binds nothing and reads
+0. The loader refuses `false`, a word, an empty filter and any key on the Auras
+but `controller`.
+
+| Near miss | Why not |
+|---|---|
+| `{"count": {"subtypes": ["Aura"], "attached_to": …}}` | reads the board at resolution, when the Auras are graveyard cards |
+| `attached` | names the one permanent the ability's own source was attached to |
+| `counters_had` | the counters it died with, not its attachments |
 
 ### "Attached to a creature" — `attached_to`
 
@@ -1497,6 +1534,7 @@ Anywhere a number is expected -- the leaf list is
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
+{ "auras_had": { "controller": "you" } }        // …and the Auras you controlled on it
 { "most_sharing_a_name": { "objects": { … } } } // Endless Atlas; the biggest same-name group
 { "distinct": { "of": "basic_land_type",        // domain; "power" is coven
                 "objects": { "controller": "you", "types": ["Land"] } } }

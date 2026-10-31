@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 156 |
 | [Selectors](#selectors) | 71 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 63 |
+| [Values](#values) | 64 |
 | [Conditions](#conditions) | 33 |
 | [Trigger events](#trigger-events) | 48 |
 | [Trigger filters](#trigger-filters) | 36 |
@@ -305,6 +305,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `attack_power_this_combat` | Total power of the player's attackers as declared this combat (pack tactics). | [Pack tactics — attackers' total power as declared](card-dsl.md#pack-tactics--attackers-total-power-as-declared) |
 | `attacked_this_turn` | 1 if the player attacked this turn, else 0 (raid). | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `attackers_this_turn` | How many creatures the player attacked with this turn. | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
+| `auras_had` | The Auras attached to the departed permanent as it left (`true`), or those whose controller was `you`/`opponent`. | ["For each Aura that was attached to it" — auras_had](card-dsl.md#for-each-aura-that-was-attached-to-it--auras_had) |
 | `binding` | A number a trigger or an `as` carried. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
 | `cards_discarded_this_turn` | Cards the player discarded this turn, wherever they went after. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `cards_drawn_this_turn` | Cards the player drew this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |

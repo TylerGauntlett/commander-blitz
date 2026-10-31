@@ -15,6 +15,7 @@ from typing import TYPE_CHECKING, Any
 from . import sagas
 from .carddef import CardDef, Cost
 from .characteristics import (
+    aura_controllers,
     chars,
     keyword_as_it_enters,
     player_protected_from,
@@ -253,6 +254,12 @@ def move_object(
     # way out. Read afterwards it is always zero, so both keywords would return
     # every creature for ever.
     had_counters = dict(obj.counters) if was_on_battlefield else {}
+    # "Whenever an enchanted creature dies, draw a card for each Aura you
+    # controlled that was attached to it" (Hateful Eidolon). Asked about a
+    # creature that has left, which `_detach_all` below has stripped of every
+    # Aura before the event goes out: the Auras attached as it left, one seat
+    # per Aura, are the look-back (603.10a). See `_auras_had`.
+    had_auras = _auras_had(state, obj) if was_on_battlefield else []
     # "…create a number of Treasure tokens equal to **its power**" (Goldvein
     # Hydra), asked about a creature that has just died. `power_of {"self":
     # true}` reads `chars()`, and by the time the trigger resolves the object is
@@ -436,6 +443,7 @@ def move_object(
             had_counters=had_counters,
             had_power=had_power,
             had_toughness=had_toughness,
+            had_auras=had_auras,
             # Where it went, for a trigger's `to_zones`: "when this creature
             # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
             # must not fire on a bounce or a tuck.
@@ -455,6 +463,7 @@ def move_object(
                 oid=oid,
                 card=card.id,
                 was_creature=was_creature,
+                had_auras=had_auras,
             )
         if to_zone is Zone.GRAVEYARD:
             fire(
@@ -468,6 +477,7 @@ def move_object(
                 had_counters=had_counters,
                 had_power=had_power,
                 had_toughness=had_toughness,
+                had_auras=had_auras,
             )
         # The departure has been heard, so a subscription waiting for it has
         # had its one chance: the object that comes back is a new one (400.7)
@@ -552,6 +562,34 @@ def _add_to_zone(
         lst.insert(0, obj.oid)
     else:
         lst.append(obj.oid)
+
+
+def _auras_had(state: GameState, obj: GameObject) -> list[int]:
+    """The controllers of the Auras attached to a leaving permanent, one per Aura.
+
+    Read before `_detach_all` unattaches them, so a departure trigger can look
+    back at what the creature wore (603.10a). The engine moves a simultaneous
+    event's permanents one at a time, so an Aura destroyed in the same event as
+    its host -- a "destroy all nonland permanents" that reaches the Aura first
+    -- has already left and is recovered from `GameState.leaving_auras`, the
+    batch-scoped record `_remember_leaving_dies_replacer` keeps for Kalitas.
+
+    A leaving Aura that is itself attached to a permanent still on the
+    battlefield is recorded there, under its controller as it left.
+    """
+    batch = state.event_batch
+    kept = [entry for entry in state.leaving_auras if entry[0] == batch]
+    seats = aura_controllers(state, obj.oid)
+    seats.extend(seat for _, host, seat in kept if host == obj.oid)
+    host = obj.attached_to
+    if (
+        host is not None
+        and host in state.battlefield
+        and (state.card_of(obj).is_aura or obj.cast_bestowed)
+    ):
+        kept.append((batch, host, obj.controller))
+    state.leaving_auras[:] = kept
+    return seats
 
 
 def _detach_all(state: GameState, oid: int) -> None:

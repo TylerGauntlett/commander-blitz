@@ -565,6 +565,8 @@ VALUES: dict[str, Entry] = {
     "attack_power_this_combat": ("Total power of the player's attackers as declared this combat (pack tactics).",
                                  "Pack tactics — attackers' total power as declared"),
     "attackers_this_turn": ("How many creatures the player attacked with this turn.", H_ATTACKED),
+    "auras_had": ("The Auras attached to the departed permanent as it left (`true`), or those whose controller was `you`/`opponent`.",
+                  '"For each Aura that was attached to it" — `auras_had`'),
     "binding": ("A number a trigger or an `as` carried.", H_RECORDING),
     "cards_drawn_this_turn": ("Cards the player drew this turn.", H_LEDGER),
     "cards_discarded_this_turn": ("Cards the player discarded this turn, wherever they went after.", H_LEDGER),
