@@ -9,6 +9,7 @@ from __future__ import annotations
 
 from collections.abc import Generator, Sequence
 from dataclasses import replace
+from itertools import combinations
 from typing import TYPE_CHECKING, Any
 
 from .actions import DecisionOption, PendingDecision
@@ -25,9 +26,11 @@ from .effects import execute
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_targets, ask_yes_no
 from .effects.modes import (
+    ask_none_or_exactly,
     chosen_at_random,
     modal_bounds,
     mode_labels,
+    none_or_exactly,
     pick_at_random,
     record_per_turn,
     unspent,
@@ -526,6 +529,35 @@ def _choose_trigger_modes(
     # it from the stack. Clamped rather than refused because the two are
     # indistinguishable from the board: with no mode chosen the ability resolves
     # having done nothing, which is what being removed looks like.
+    if none_or_exactly(spec):
+        # "You may choose two" (Shadrix Silverquill): none, or exactly two --
+        # never the one in between, and never a pair whose targets cannot all
+        # be declared together. Each mode's own target was checked above; the
+        # pair is checked here, because the engine never lets one ref fill two
+        # specs and so "each mode must target a different player" is a joint
+        # question a lone mode cannot answer.
+        subsets = list(combinations(offered, floor))
+        legal = [
+            subset
+            for subset in subsets
+            if enumerate_target_tuples(
+                state,
+                trig.controller,
+                ability.specs_for_modes(subset),
+                trig.source_oid,
+                # Not `limit=1`: the cap is applied per spec, so one option for
+                # the first mode's player leaves the second nobody else to name.
+                # The same enumeration `_choose_trigger_targets` declares from.
+                bindings=trig.bindings,
+            )
+        ]
+        groups = None if len(legal) == len(subsets) else [
+            [offered.index(i) for i in subset] for subset in legal
+        ]
+        picked = yield from ask_none_or_exactly(
+            ctx, [labels[i] for i in offered], trig.controller, floor, groups
+        )
+        return tuple(sorted(offered[i] for i in picked))
     floor = min(floor, len(offered))
     if chosen_at_random(ctx, spec):
         # "Choose one at random" -- chosen here as well, as the trigger is put

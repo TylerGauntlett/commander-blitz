@@ -1,0 +1,45 @@
+{
+  "_comment": "Shapes for tests/unit/ledger/test_modified_creatures_died.py. t_md_scribe is Intermediate Chirography's level-3 trigger alone, on an enchantment with nothing else printed, gaining 1 life instead of making an Inkling so the test reads a life total. The creatures, Auras and Equipment are tests/data/enchanted_by.cards.json's and tests/data/attached_to_host.cards.json's.",
+  "cards": [
+    {
+      "id": "t_md_scribe",
+      "name": "Test Modified Scribe",
+      "oracle_text": "At the beginning of each end step, if a modified creature died under your control this turn, you gain 1 life.",
+      "mana_cost": "{B}",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if a modified creature died under your control this turn, you gain 1 life.",
+          "trigger": {
+            "event": "end_step",
+            "controller": "any",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "modified_creatures_died_this_turn": "you"
+              },
+              "right": {
+                "const": 1
+              }
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": 1
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -42,6 +42,7 @@ PRECONS = {
     "msc_doom_prevails",
     "msc_the_fantastic_four",
     "msc_wakanda_forever",
+    "soc_silverquill_influence",
     "soc_witherbloom_pestilence",
 }
 

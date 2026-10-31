@@ -411,7 +411,10 @@ class TriggerModel(BaseModel):
     #: turn", counted over the spells matching ``filter`` when there is one
     #: ("their first **noncreature** spell").  For ``attacks``: "whenever this
     #: creature attacks **for the first time each turn**", the creature's own
-    #: count of attacks this turn.  For ``counter_placed`` with ``counter``:
+    #: count of attacks this turn.  For ``you_gain_life`` and ``life_lost``:
+    #: "whenever you gain (lose) life **for the first time** each turn", the
+    #: losing or gaining player's count of separate gains or losses this turn.
+    #: For ``counter_placed`` with ``counter``:
     #: "when the **tenth** +1/+1 counter is put on Shang-Chi", the placement
     #: that carries the count of that kind across N.  Matched where
     #: the ability queues and never re-asked, unlike a ``condition`` on the same
@@ -822,10 +825,19 @@ class AbilityModel(BaseModel):
     #: planeswalkers and from Wizards" is a type and a subtype, not two nouns.
     #: A ``from_types`` entry may also be ``{"chosen_card_type_of": "self"}``
     #: -- "protection from the chosen card type" (Serra's Emissary), read off
-    #: the source's `choose_type` answer when a rule asks.
+    #: the source's `choose_type` answer when a rule asks. A ``from_colors``
+    #: entry may likewise be ``{"chosen_color_of": "self"}`` -- "protection
+    #: from the chosen color" (Flickering Ward), read off `choose_color`'s
+    #: answer the same way.
     from_types: list[str | dict[str, str]] = Field(default_factory=list)
     from_subtypes: list[str] = Field(default_factory=list)
-    from_colors: list[str] = Field(default_factory=list)
+    from_colors: list[str | dict[str, str]] = Field(default_factory=list)
+    #: "This effect doesn't remove this Aura." ``"self"`` on a ``protection``
+    #: static an Aura or Equipment grants its host: the protection does not
+    #: stop the static's own source from being attached to that host
+    #: (`characteristics.protection_from`'s ``attaching``). Every other rule
+    #: protection touches -- damage, block, target -- still sees the quality.
+    spares: str | None = None
     #: "Protection from each color that's not in your commander's color
     #: identity" -- Commander's Plate. A colour set no printed list can name,
     #: because it is the five colours minus a set read off the *controller's*
@@ -862,6 +874,11 @@ class AbilityModel(BaseModel):
     #: one creature" -- the most creatures that may block it. A count, judged
     #: on the declaration, so neither of the two forms above.
     max_blockers: int | None = None
+    #: ``grant_keyword``: the N of a granted annihilator -- "enchanted creature
+    #: ... has trample and **annihilator 2**" (Eldrazi Conscription). Required
+    #: when ``keywords`` names ``"annihilator"`` and refused otherwise, because
+    #: the word alone would be a keyword that annihilates nothing.
+    annihilator: int | None = None
     #: ``attack_tax``: the tax also prices an attack on a planeswalker the
     #: static's controller controls -- "creatures can't attack you **or
     #: planeswalkers you control** unless ..." (Archangel of Tithes, Sphere of
@@ -869,6 +886,13 @@ class AbilityModel(BaseModel):
     #: player and attacking a planeswalker is not attacking its controller
     #: (506.2).
     or_planeswalkers: bool = False
+    #: ``attack_tax``: the X of a ``cost`` of ``{"mana": "{X}"}``, read off
+    #: **each attacking creature** as it is declared (508.1g-h) -- Nils,
+    #: Discipline Enforcer's "unless its controller pays {X}, where X is the
+    #: number of counters on that creature" is ``{"counters": "any"}``. One
+    #: leaf: ``counters``, a counter kind or ``"any"`` for every kind summed.
+    #: Required with an ``{X}`` price and refused beside a fixed one.
+    x_per_attacker: dict[str, Any] | None = None
     #: ``cant_attack_you``: the wall stands in front of the static's controller
     #: **only**, not their planeswalkers or battles -- Queen Mother Ramonda's
     #: "creatures with power 2 or less can't attack you". Off by default,
@@ -1587,6 +1611,12 @@ class CardModel(BaseModel):
     #: together: either alone is a creature that filters as toxic and poisons
     #: nobody, or poisons and is not "with toxic".
     toxic: int = 0
+    #: **Annihilator N** (702.86a): "Whenever this creature attacks, defending
+    #: player sacrifices N permanents of their choice." The N of the printed
+    #: instance, written beside ``"annihilator"`` in ``keywords`` -- toxic's
+    #: pairing, and the loader requires the two together for toxic's reason. The
+    #: trigger is the rules', so the card writes no ability for it.
+    annihilator: int = 0
     #: **Madness** (702.35a): "If you would discard this card, exile it instead.
     #: Then you may cast it for its madness cost." The exile happens whether or
     #: not the cast is taken.

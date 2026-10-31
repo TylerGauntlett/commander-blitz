@@ -13,6 +13,7 @@ from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
 )
 from commanderblitz.engine.enums import (
+    NUMBER_CARRYING_GRANTS,
     NUMBERED_KEYWORDS,
     CardType,
     Color,
@@ -89,16 +90,35 @@ KEYWORD_ALIASES = {"umbra_armor": Keyword.TOTEM_ARMOR.value}
 UNGRANTABLE_KEYWORDS = frozenset(k.value for k in NUMBERED_KEYWORDS)
 
 
-def refuse_numbered_grant(keywords: object, where: str) -> None:
-    """Refuse a grant of a keyword whose number lives on the card (toxic).
+#: `enums.NUMBER_CARRYING_GRANTS`, as strings: the numbered keywords a
+#: `grant_keyword` static may grant, with the N in a key of the keyword's name.
+NUMBER_CARRYING_GRANT_KEYWORDS = frozenset(k.value for k in NUMBER_CARRYING_GRANTS)
+
+
+def refuse_numbered_grant(
+    keywords: object, where: str, carried: frozenset[str] = frozenset()
+) -> None:
+    """Refuse a grant of a keyword whose number lives on the card (toxic N,
+    annihilator N).
 
     Called by every spelling of "gains/has <keyword>" the loader accepts. A
     grant is a bare word, so "gains toxic 1" written as ``["toxic"]`` would make
     a creature that filters as toxic and gives no poison -- a weaker card that
     loads clean, which is the failure this pass exists to refuse.
+
+    ``carried`` names the ones this grant spelling *does* carry a number for --
+    a `grant_keyword` static's ``annihilator`` key -- which its caller has
+    already checked is present.
     """
     for k in keywords or ():
-        if k in UNGRANTABLE_KEYWORDS:
+        if k in UNGRANTABLE_KEYWORDS and k not in carried:
+            if k in NUMBER_CARRYING_GRANT_KEYWORDS:
+                raise DslError(
+                    f"{where}: {k!r} carries a number ({k} N) that this grant has "
+                    f"no place for; it is printed -- 'keywords' plus the card-level "
+                    f"{k!r} field -- or granted only by a grant_keyword static with "
+                    f"its N in an {k!r} key"
+                )
             raise DslError(
                 f"{where}: {k!r} carries a number (toxic N) that a grant has no "
                 f"place for, so it may only be printed -- 'keywords' plus the "
@@ -475,6 +495,14 @@ STATIC_EFFECTS = frozenset(
         # printed "attacks each combat if able" is true again every turn, where
         # the op writes a one-shot flag that is spent on declaration.
         "attacks_if_able",
+        # Coercive Impetus and the Impetus cycle: "Enchanted creature … is
+        # goaded." Goad held as a continuous effect (701.38), read by
+        # `player_statics.goaders` beside the `goad` op's mark. Neither
+        # near miss will do: the op's mark has a clock and would outlive the
+        # Aura, and `attacks_if_able` plus `cant_attack_you` forbids attacking
+        # the goader outright where goad only steers away "if able", and names
+        # no goader for the `goaded` filter.
+        "goaded",
         # Propaganda, and the pillowfort family behind it. Parameterised on a
         # `cost` like `ward`, and for the same reason it cannot be a keyword.
         # Read by `characteristics.attack_tax` at declare-attackers, where it
@@ -1055,6 +1083,20 @@ STATIC_FILTER_KEYS = frozenset(
         # state read the other way round, so it is safe here for `attached`'s
         # reason.
         "attached_to_host",
+        # "Each creature that's **enchanted by an Aura you control** can't
+        # attack you" (Eriette of the Charmed Apple). Whether any Aura -- or,
+        # with `{"controller": ...}`, whose -- is attached to the permanent:
+        # `attached_to` read from the host's end, and every half of the answer
+        # is board state or a printed face, so it is safe here for `attached`'s
+        # reason. `characteristics.enchanted_by` is the one reader.
+        "enchanted_by",
+        # "…for each Aura you control **that's attached to a creature**"
+        # (Sage's Reverie), "+2/+2 for each Aura **attached to it**" (Kor
+        # Spiritdancer): `enchanted_by` from the attachment's end, a filter in
+        # this same language on the permanent it is attached to. `attached_to`
+        # is board state no layer writes, and the host filter is held to this
+        # list, so it is safe here for `attached`'s reason.
+        "attached_to",
         # Soulbond: "as long as this creature is paired, **both** creatures
         # have…". `paired: true` matches the source while it has a partner, and
         # `paired_with_source: true` matches the partner. Board state like
@@ -1232,14 +1274,14 @@ COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "any_of"})
 #: a key that means nothing here should say so at load time rather than price
 #: an ability off a filter nobody honoured.
 #:
-#: `attached_to_host` joins them for the near reason rather than the same one:
-#: counting a permanent's attachments *is* a number a reduction could price off,
-#: but `costs._reduction_matches` does not read the key, so one written there
-#: would load and be ignored -- the quiet failure this list exists to convert
-#: into a load-time refusal. It belongs here until a printed card asks for it
-#: and `_reduction_matches` is taught the word.
+#: `attached_to_host` and `attached_to` join them for the near reason rather
+#: than the same one: counting a permanent's attachments *is* a number a
+#: reduction could price off, but `costs._reduction_matches` does not read the
+#: keys, so one written there would load and be ignored -- the quiet failure
+#: this list exists to convert into a load-time refusal. They belong here until
+#: a printed card asks for one and `_reduction_matches` is taught the word.
 COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset(
-    {"attached", "attached_to_host", "paired", "paired_with_source"}
+    {"attached", "attached_to_host", "attached_to", "paired", "paired_with_source"}
 )
 
 #: Condition heads a *cost* reduction may use.
@@ -1533,6 +1575,12 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
     {"return_from_graveyard", "put_onto_battlefield", "look_at_top"}
 )
 
+
+#: The ops that read ``host_named``: "return … to the battlefield **attached to
+#: that token**" (Forum Filibuster, Gift of Immortality), where the effect names
+#: the Aura's host with a following `attach` and 303.4f's choice is not asked.
+#: Every other arrival of an Aura asks it -- `zones.offer_aura_host`.
+HOST_NAMED_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
 
 #: The one non-string ``counter`` an ``add_counters`` may name: "the same
 #: **kind** of counters" (Captain Marvel, Apex Avenger), the kind the

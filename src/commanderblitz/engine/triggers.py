@@ -22,13 +22,17 @@ from .carddef import (
     MELEE_TRIGGER,
     Ability,
     TriggerSpec,
+    annihilator_ability,
 )
 from .characteristics import (
     _battlefield_statics,
     _matches_printed,
     abilities_of,
+    annihilator_instances,
     chars,
     creature_types_of,
+    enchanted_by,
+    enchanted_by_answer,
     granted_abilities,
     granted_ability_origin,
     granted_wards,
@@ -44,7 +48,7 @@ from .enums import Keyword, Zone
 from .errors import DslError, RulesLoopError
 from .events import EventType, GameEvent
 from .objects import GameObject
-from .player_statics import commander_subtypes, players_doubling_land_triggers
+from .player_statics import commander_subtypes, goaders, players_doubling_land_triggers
 from .state import MAX_TRIGGERS_PER_STEP
 from .structs import DelayedTrigger, TriggerInstance
 
@@ -590,6 +594,20 @@ LOOK_BACK_EVENTS = frozenset(
 )
 
 
+def departed_auras(event: GameEvent) -> list[int] | None:
+    """The Auras a departure event's subject wore as it left, or ``None``.
+
+    One seat per Aura, snapshotted by `zones._auras_had` before `_detach_all`.
+    ``None`` on any event that is not a departure, so a trigger filter's
+    `enchanted_by` reads the board there; a departure that carried no snapshot
+    reads as wearing nothing, never as the live board, whose answer about a
+    permanent that has left is "nothing" anyway.
+    """
+    if event.type not in LOOK_BACK_EVENTS:
+        return None
+    return list(event.data.get("had_auras") or ())
+
+
 def delayed_watches_departure(delayed: DelayedTrigger) -> bool:
     """Whether a delayed ability's event is its subject leaving the battlefield.
 
@@ -821,6 +839,11 @@ def _delayed_matches(
     # the one a delayed ability can still be asked. See `_half_matches`.
     if not _half_matches(spec.event, event):
         return False
+    if delayed.shield is not None and event.data.get("shield") != delayed.shield:
+        # "If damage is prevented **this way**" (615.5): the one shield this
+        # rider was installed beside, and no other prevention of the same
+        # damage. See `DamageShield.link`.
+        return False
 
     subject = _subject_oid(spec.event, event)
     if delayed.subject_oids is not None and subject not in delayed.subject_oids:
@@ -990,7 +1013,7 @@ def _cause_matches(
     if filt:
         if subject is None:
             return False
-        if not matches_card_filter(state, subject, filt, source_obj):
+        if not matches_card_filter(state, subject, filt, source_obj, departed_auras(event)):
             return False
     return True
 
@@ -1083,6 +1106,11 @@ def _candidate_abilities(state: GameState, event: GameEvent):
         # the trigger only schedules the sacrifice, at end of combat.
         if not obj.face_down and has_keyword(state, oid, Keyword.DECAYED.value):
             yield obj, DECAYED_TRIGGER
+        # Annihilator (702.86): the same shape, once per *instance* rather than
+        # per permanent (702.86b), each with its own N -- a printed one and a
+        # granted one (Eldrazi Conscription) are two triggers.
+        for n in annihilator_instances(state, oid):
+            yield obj, annihilator_ability(n)
         # Abilities granted by something else. Yielded with `obj` as the source,
         # so "whenever *this creature* deals combat damage" means the creature
         # that was granted the ability, not the permanent that granted it.
@@ -1398,7 +1426,9 @@ def _matches(
     if spec.filter is not None and spec.event != "creatures_deal_combat_damage":
         if subject_oid is None:
             return False
-        if not matches_card_filter(state, subject_oid, spec.filter, obj):
+        if not matches_card_filter(
+            state, subject_oid, spec.filter, obj, departed_auras(event)
+        ):
             return False
 
     if spec.condition is not None and not evaluate_condition(
@@ -1648,6 +1678,11 @@ EVENT_BINDING_KEYS = (
     # `power_had` / `toughness_had` value keys.
     "had_power",
     "had_toughness",
+    # "…draw a card for each Aura you controlled that was attached to it"
+    # (Hateful Eidolon): the controllers of the Auras the departed permanent
+    # wore, one seat per Aura, snapshotted by `zones._auras_had` before
+    # `_detach_all`. Read through the `auras_had` value key.
+    "had_auras",
     # The X paid for the ability whose event this is, written over the `x`
     # `event_bindings` reads off the permanent. Only `cycle` carries it: "When
     # you cycle this card, create an X/X…" (Shark Typhoon) means the X in the
@@ -1858,6 +1893,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "tapped",
         "has_counters",
         "goaded",
+        "enchanted_by",
         "entered_this_turn",
         "attacking_player",
         "mana_value",
@@ -1926,12 +1962,17 @@ def matches_card_filter(
     oid: int,
     filt: Mapping[str, Any],
     ability_source: GameObject,
+    had_auras: Any = None,
 ) -> bool:
     """Match a trigger filter against an object's *printed* card characteristics.
 
     Trigger subjects are frequently gone by the time we look (a creature that
     died, a spell that resolved), so this deliberately reads the card face plus
     the object's last-known controller rather than derived characteristics.
+
+    ``had_auras`` is the departure event's snapshot of the Auras the subject
+    wore as it left (`departed_auras`), and ``None`` on every other event:
+    given, `enchanted_by` is answered from it rather than from the board.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -1952,7 +1993,8 @@ def matches_card_filter(
     # it still apply to every branch.
     branches = filt.get("any_of")
     if branches is not None and not any(
-        matches_card_filter(state, oid, branch, ability_source) for branch in branches
+        matches_card_filter(state, oid, branch, ability_source, had_auras)
+        for branch in branches
     ):
         return False
 
@@ -2188,8 +2230,24 @@ def matches_card_filter(
     # anyone (701.38): the printed word names no goader. The creatures are
     # usually an opponent's, which is why the trigger beside this filter says
     # `controller: "any"` -- the schema's default `"you"` would refuse them.
-    if "goaded" in filt and bool(obj.goaded_by) != bool(filt["goaded"]):
+    # `goaders` reads the goad op's mark and the `goaded` static alike.
+    if "goaded" in filt and bool(goaders(state, oid)) != bool(filt["goaded"]):
         return False
+    # "…creatures **enchanted by an Aura you control**" -- live board state,
+    # sound for `goaded`'s reason: asked once, as the event fires, about a
+    # creature that is still on the battlefield. "You" is the ability's
+    # controller. "Whenever **an enchanted creature** dies" (Hateful Eidolon)
+    # asks it of a creature that has already shed its Auras
+    # (`zones._detach_all`), so a departure is answered from the Auras it wore
+    # as it left (603.10a), which the event carries.
+    if "enchanted_by" in filt:
+        spec = filt["enchanted_by"]
+        who = ability_source.controller
+        if had_auras is not None:
+            if not enchanted_by_answer(had_auras, spec, who):
+                return False
+        elif not enchanted_by(state, oid, spec, who):
+            return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the
     # silently-wider filter the two clauses above exist to prevent. It reads the

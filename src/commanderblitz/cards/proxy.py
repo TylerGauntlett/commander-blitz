@@ -68,7 +68,12 @@ _UNMODELLED_TYPES = frozenset(
 )
 
 #: Always co-occur with a real type, so dropping them loses nothing structural.
-_NOISE_TYPES = frozenset({"Kindred", "Tribal", "Summon"})
+_NOISE_TYPES = frozenset({"Summon"})
+
+#: Older printings and older data name a card type by a name it has since lost.
+#: "Tribal" became Kindred (308): the same card type, so "Tribal Instant --
+#: Goblin" is read as Kindred and the Goblin stays a creature type.
+_RENAMED_TYPES = {"Tribal": CardType.KINDRED.value}
 
 #: Layouts that are not a deck-legal card at all.
 _UNPLAYABLE_LAYOUTS = frozenset(
@@ -230,6 +235,7 @@ def split_type_line(type_line: str) -> tuple[list[str], list[str], list[str], li
     types: list[str] = []
     dropped: list[str] = []
     for word in left.split():
+        word = _RENAMED_TYPES.get(word, word)
         if word in KNOWN_SUPERTYPES:
             supertypes.append(word)
         elif word in KNOWN_TYPES:

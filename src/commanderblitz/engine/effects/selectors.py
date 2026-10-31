@@ -16,11 +16,17 @@ from __future__ import annotations
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from ..characteristics import _base_pt, chars, creature_types_of, resolve_chosen_subtypes
-from ..enums import CardType, Supertype, Zone
+from ..characteristics import (
+    _base_pt,
+    chars,
+    creature_types_of,
+    enchanted_by,
+    resolve_chosen_subtypes,
+)
+from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
-from ..player_statics import commander_subtypes
+from ..player_statics import commander_subtypes, goaders
 from ..structs import CONVOKED_BINDING
 from .context import EffectContext, ask_objects
 
@@ -30,6 +36,9 @@ if TYPE_CHECKING:  # pragma: no cover
 #: Card types a selector may name.  Derived from the enum rather than imported
 #: from ``cards.loader``, which imports this module.
 KNOWN_TYPES = frozenset(t.value for t in CardType)
+
+#: The permanent types of 110.4a, by name -- Kindred is a card type and not one.
+_PERMANENT_TYPE_NAMES = frozenset(t.value for t in PERMANENT_TYPES)
 
 #: Supertypes a selector may name, from the enum for the same reason.  There are
 #: three of them, which is what makes a typo here so much worse than a typo in a
@@ -99,6 +108,30 @@ SELECTOR_KEYS = frozenset(
         #: have to say "or" across three unrelated relationships, and the
         #: selector language is a conjunction.
         "modified",
+        #: "Destroy all creatures that **aren't enchanted**" (Winds of Rath);
+        #: "…creatures **enchanted by an Aura you control**" (Eriette of the
+        #: Charmed Apple, Killian, Decisive Mentor). `true`, `false`, or
+        #: `{"controller": "you" | "opponent" | "any"}` naming whose Aura it
+        #: must be, relative to the ability's controller. The same word in the
+        #: static, trigger and cost-reduction filters, all answered by
+        #: `characteristics.enchanted_by`.
+        #:
+        #: `modified` is the near miss: it also counts counters and Equipment,
+        #: and only Auras you control. `attached` is the other, and names the
+        #: one permanent the ability's own source is attached to.
+        "enchanted_by",
+        #: "…for each Aura you control **that's attached to a creature**"
+        #: (Sage's Reverie); "+2/+2 for each Aura **attached to it**" (Kor
+        #: Spiritdancer). The other end of `enchanted_by`: an attachment matched
+        #: by a filter on the permanent it is attached to, read off its
+        #: `attached_to`. The value is a selector on that host, so
+        #: `{"self_only": true}` is "attached to this permanent". An Aura on a
+        #: player is attached to no permanent and matches no host filter.
+        #:
+        #: `attached` is the near miss -- it names the one host the ability's
+        #: own source is attached to, the opposite direction -- and
+        #: `attached_to_host` names the other attachments sharing that host.
+        "attached_to",
         "types",
         #: "target artifact **or** enchantment".  ``types`` is a conjunction --
         #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
@@ -376,6 +409,11 @@ SELECTOR_KEYS = frozenset(
         # *this* source put there, read back by its own leaves-trigger.
         "exiled_with",
         "phased_out_with",
+        #: "…enchant creature **put onto the battlefield with this Aura**" --
+        #: Animate Dead. The permanent whose `returned_by` names the source,
+        #: written by `return_from_graveyard`'s ``link``; `"self"` is the only
+        #: spelling. The return's twin of `exiled_with`.
+        "returned_with",
         #: "…exile all other tokens **created with this creature**" -- Faerie
         #: Artisans. The tokens this object's own effects created, read off the
         #: source's `created_tokens`; `"self"` is the only spelling. Scoped to
@@ -712,6 +750,19 @@ def _is_modified(ctx: EffectContext, oid: int) -> bool:
     return False
 
 
+def _host_matches(ctx: EffectContext, host: int | None, host_filter: Mapping[str, Any]) -> bool:
+    """The ``attached_to`` key: is the permanent this one is attached to a match?
+
+    ``host`` is the attachment's `attached_to` -- ``None`` for an unattached
+    permanent and for an Aura on a player (303.4), which `attach_to_player`
+    links by `attached_to_player` instead, so neither has a host to match. The
+    host filter is an ordinary selector, read with the same controller, so
+    ``self_only`` is the ability's own source and a host's controller is a
+    clause of its own: none, by the effect side's default, is anybody's.
+    """
+    return host is not None and matches(ctx, host, host_filter)
+
+
 def matches(
     ctx: EffectContext,
     oid: int,
@@ -782,6 +833,14 @@ def matches(
             return False
     if selector.get("modified") and not _is_modified(ctx, oid):
         return False
+    if "enchanted_by" in selector and not enchanted_by(
+        state, oid, selector["enchanted_by"], ctx.controller
+    ):
+        return False
+    if (host_filter := selector.get("attached_to")) is not None and not _host_matches(
+        ctx, obj.attached_to, host_filter
+    ):
+        return False
     if selector.get("convoked") and oid not in _bound_oids(ctx, CONVOKED_BINDING):
         return False
     if selector.get("drawn_this_turn") and obj.drawn_turn != state.turn:
@@ -825,9 +884,10 @@ def matches(
         # artifacts and the creatures -- 205.2a lets an object have several card
         # types, and the printed "a permanent type" is satisfied by any one of
         # them. Spell types (Instant, Sorcery) cannot appear on either side
-        # here: both objects are on the battlefield, where every card type is a
-        # permanent type (110.4a).
-        if not (set(types) & set(theirs)):
+        # here: both objects are on the battlefield. Kindred can, and is not a
+        # permanent type (110.4a), so it is left out of the intersection -- a
+        # Kindred artifact and a Kindred enchantment share no permanent type.
+        if not (set(types) & set(theirs) & _PERMANENT_TYPE_NAMES):
             return False
     if (name := selector.get("shares_a_creature_type_with")) is not None:
         # The creature-types-only twin of `shares_a_type_with` (205.3m), which
@@ -1024,6 +1084,16 @@ def matches(
         want = ctx.source_oid if who == "self" else who
         if obj.exiled_by is None or obj.exiled_by != want:
             return False
+    if "returned_with" in selector:
+        # "…that creature's controller sacrifices it" -- the creature this
+        # Aura put onto the battlefield, and no other. `attached` is the near
+        # miss: it names what the Aura is attached to *now*, which is nothing
+        # once the Aura has left and nothing either when protection refused
+        # the attach that followed the return.
+        who = selector["returned_with"]
+        want = ctx.source_oid if who == "self" else who
+        if obj.returned_by is None or obj.returned_by != want:
+            return False
     if "created_with" in selector:
         # "…tokens created with this creature" -- the ones this object's
         # effects made, and no others. `is_token` plus `controller: "you"` is
@@ -1095,10 +1165,10 @@ def matches(
         is_blocked = bool(combat and any(v == oid for v in combat.blockers.values()))
         if is_blocked != bool(selector["blocked"]):
             return False
-    # "…goaded creatures…" (701.38): goaded by anyone, read off the live
-    # object. `reset_permanent_state` clears the marks when it leaves the
-    # battlefield, so a card elsewhere is never goaded.
-    if "goaded" in selector and bool(obj.goaded_by) != bool(selector["goaded"]):
+    # "…goaded creatures…" (701.38): goaded by anyone, by a resolved goad's
+    # mark or a `goaded` static, both read by `goaders`. Only a permanent is
+    # ever goaded, so a card elsewhere never is.
+    if "goaded" in selector and bool(goaders(state, oid)) != bool(selector["goaded"]):
         return False
     if (blocking := selector.get("blocking")) is not None:
         if isinstance(blocking, Mapping) and "binding" in blocking:
@@ -1585,6 +1655,102 @@ def validate_colorless_key(filt: Any, where: str) -> None:
         )
 
 
+#: The keys an ``enchanted_by`` filter may put on the Auras themselves.
+ENCHANTED_BY_KEYS = frozenset({"controller"})
+
+#: Whose Aura it must be, relative to the player the filter is read for.
+ENCHANTED_BY_CONTROLLERS = ("you", "opponent", "any")
+
+
+def validate_enchanted_by_key(filt: Any, where: str) -> None:
+    """``enchanted_by`` is ``true``, ``false`` or a filter on the Auras.
+
+    The same check in every filter language, as `validate_colorless_key` is.
+    A word is the tempting spelling -- ``"you"`` for "enchanted by an Aura you
+    control" -- and every reader would take it for a filter on nothing and read
+    "enchanted by anybody's Aura", so it is refused, as are a filter key the
+    readers do not answer about an Aura and an empty filter, which is ``true``
+    written the long way.
+    """
+    if not isinstance(filt, Mapping) or "enchanted_by" not in filt:
+        return
+    spec = filt["enchanted_by"]
+    if isinstance(spec, bool):
+        return
+    if not isinstance(spec, Mapping) or not spec:
+        raise DslError(
+            f"{where}.enchanted_by: true, false, or a filter on the Auras such as "
+            f'{{"controller": "you"}}, got {spec!r}'
+        )
+    unknown = set(spec) - ENCHANTED_BY_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}.enchanted_by: {sorted(unknown)} are not asked of the Auras; "
+            f"only {sorted(ENCHANTED_BY_KEYS)}"
+        )
+    if spec["controller"] not in ENCHANTED_BY_CONTROLLERS:
+        raise DslError(
+            f"{where}.enchanted_by.controller: one of "
+            f"{list(ENCHANTED_BY_CONTROLLERS)}, got {spec['controller']!r}"
+        )
+
+
+#: Selector keys an ``attached_to`` host filter refuses. Each shapes a *pool*
+#: -- names it, counts it, chooses from it or gathers it from a zone -- and
+#: `matches`, which is what asks the host filter, reads none of them, so one
+#: written there would load and be ignored. A host filter nested in a host
+#: filter is refused as well: no printed card asks it.
+ATTACHED_TO_REFUSED_KEYS = frozenset(
+    {
+        "target",
+        "binding",
+        "union",
+        "count",
+        "chooser",
+        "optional",
+        "random",
+        "extreme",
+        "player",
+        "ability_kind",
+        "object_kind",
+        "encoded_by",
+        "haunted_by",
+        "paid_by",
+        "attached_to",
+    }
+)
+
+
+def validate_attached_to_key(filt: Any, where: str) -> None:
+    """``attached_to`` is a non-empty selector on the host, on the battlefield.
+
+    The shape every filter language shares; each validates the host filter's
+    keys against its own vocabulary besides. An empty filter is "attached to
+    anything", which is ``attached_to_host``'s question or none at all, and
+    ``attached`` beside it would short-circuit the static reading of the
+    filter, so both are refused rather than left to mean less than written.
+    """
+    if not isinstance(filt, Mapping) or "attached_to" not in filt:
+        return
+    spec = filt["attached_to"]
+    if not isinstance(spec, Mapping) or not spec:
+        raise DslError(
+            f"{where}.attached_to: a non-empty filter on the permanent it is "
+            f'attached to, such as {{"types": ["Creature"]}} or '
+            f'{{"self_only": true}}, got {spec!r}'
+        )
+    if filt.get("attached"):
+        raise DslError(
+            f"{where}: 'attached' names the one permanent the source is attached "
+            f"to and cannot be narrowed by 'attached_to'"
+        )
+    if spec.get("zone", "battlefield") != "battlefield":
+        raise DslError(
+            f"{where}.attached_to.zone: a permanent is attached to a permanent, "
+            f"on the battlefield"
+        )
+
+
 def validate_selector(selector: Any, where: str) -> None:
     """Load-time check that a selector uses only known keys."""
     if selector is None:
@@ -1636,6 +1802,10 @@ def validate_selector(selector: Any, where: str) -> None:
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.
         raise DslError(f"{where}: created_with must be 'self', got {selector['created_with']!r}")
+    if "returned_with" in selector and selector["returned_with"] != "self":
+        # The link is written by this source's own return, so "self" is the
+        # only answer; anything else would load and match nothing.
+        raise DslError(f"{where}: returned_with must be 'self', got {selector['returned_with']!r}")
     chooser = selector.get("chooser")
     if chooser is not None and chooser not in ("controller", "owner", "none"):
         # Anything else is an ordinary player spec -- "each opponent chooses a
@@ -1679,6 +1849,17 @@ def validate_selector(selector: Any, where: str) -> None:
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
     validate_colorless_key(selector, where)
+    validate_enchanted_by_key(selector, where)
+    validate_attached_to_key(selector, where)
+    if "attached_to" in selector:
+        host_filter = selector["attached_to"]
+        refused = set(host_filter) & ATTACHED_TO_REFUSED_KEYS
+        if refused:
+            raise DslError(
+                f"{where}.attached_to: {sorted(refused)} shape a pool, and a host "
+                f"filter is asked of one permanent"
+            )
+        validate_selector(host_filter, f"{where}.attached_to")
     if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "

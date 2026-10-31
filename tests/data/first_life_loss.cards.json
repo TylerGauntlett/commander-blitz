@@ -1,0 +1,45 @@
+{
+  "_comment": "Shapes for tests/unit/ledger/test_life_loss_nth.py. t_fll_watcher is Intermediate Chirography's level-2 trigger with a draw in place of the counter, so the count of triggers is the count of cards drawn; t_fll_spy is the same clause read for each opponent.",
+  "cards": [
+    {
+      "id": "t_fll_watcher",
+      "name": "Test First Loss Watcher",
+      "oracle_text": "Whenever you lose life for the first time each turn, draw a card.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you lose life for the first time each turn, draw a card.",
+          "trigger": {"event": "life_lost", "controller": "you", "nth": 1},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    },
+    {
+      "id": "t_fll_spy",
+      "name": "Test First Loss Spy",
+      "oracle_text": "Whenever an opponent loses life for the first time each turn, draw a card.",
+      "mana_cost": "{2}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an opponent loses life for the first time each turn, draw a card.",
+          "trigger": {"event": "life_lost", "controller": "opponent", "nth": 1},
+          "effects": [{"op": "draw", "player": "you", "amount": {"const": 1}}]
+        }
+      ]
+    }
+  ]
+}

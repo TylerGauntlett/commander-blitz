@@ -60,7 +60,9 @@ class TempEffect:
     addition to its other types": ``subtypes`` added, base P/T untouched), or
     ``"control"`` ("gain control of target permanent until end of turn"), or
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
-    read by `temp_effects.sacrifice_forbidden`).  The lock is not a keyword because it is not a characteristic: it is
+    read by `temp_effects.sacrifice_forbidden`), or ``"lose_keyword"`` ("…lose
+    hexproof **and can't have** hexproof": ``keyword`` is taken away by the last
+    keyword step of ``chars``, after every grant).  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 
@@ -613,12 +615,34 @@ class DamageShield:
     #: lifetime: the Squire may be killed in response to its own ETB trigger and
     #: the shield still covers the turn.
     source: int | None = None
+    #: "Prevent all **combat** damage that would be dealt to you this turn"
+    #: (Druid's Deliverance, Defend the Hearth): the shield stops only damage
+    #: dealt as combat damage (510.2), and burn, drain and fight damage still
+    #: land.  Part of the record rather than a second table, because it is the
+    #: same prevention over the same seat with one narrower question asked.
+    combat_only: bool = False
+    #: "For each 1 damage prevented **this way**, create a 2/1 … Inkling"
+    #: (Inkshield, 615.5): the id tying this shield to the delayed rider its
+    #: spell installed beside it (`DelayedTrigger.shield`), and carried as
+    #: ``shield`` on every `DAMAGE_PREVENTED` this shield fires.  ``None`` is a
+    #: shield with no rider.  An id rather than the rider itself, because the
+    #: rider is DSL effects that may ask questions and `damage_player` is four
+    #: frames below anything that can; drawn from `GameState.alloc_timestamp`,
+    #: so it is unique game-wide and two Inkshields are two shields rather than
+    #: one deduplicated entry.
+    link: int | None = None
+
+    def stops(self, *, is_combat: bool) -> bool:
+        """Whether this shield prevents damage of that kind."""
+        return is_combat or not self.combat_only
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "player": self.player,
             "duration": self.duration,
             "source": self.source,
+            "combat_only": self.combat_only,
+            "link": self.link,
         }
 
 
@@ -756,6 +780,11 @@ class PermanentShield:
     player: int | None = None
     #: The permanent or spell that installed it, for the log.
     source: int | None = None
+    #: "Prevent all **combat** damage that would be dealt to it this turn"
+    #: (Fleeting Flight, Azorius Ploy): only damage dealt as combat damage
+    #: (510.2) is stopped, so a burn spell or a fight still lands.
+    #: `DamageShield.combat_only`'s permanent twin.
+    combat_only: bool = False
 
     @property
     def stops_damage_to(self) -> bool:
@@ -765,12 +794,19 @@ class PermanentShield:
     def stops_damage_by(self) -> bool:
         return self.dealt in ("by", "to_and_by")
 
+    def stops(self, *, by: bool, is_combat: bool) -> bool:
+        """Whether this shield prevents damage dealt to (or, with ``by``, by) its object."""
+        if self.combat_only and not is_combat:
+            return False
+        return self.stops_damage_by if by else self.stops_damage_to
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "dealt": self.dealt,
             "duration": self.duration,
             "player": self.player,
             "source": self.source,
+            "combat_only": self.combat_only,
         }
 
 
@@ -1475,6 +1511,13 @@ class DelayedTrigger:
     recipient_oids: tuple[int, ...] | None = None
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
+    #: "If damage is prevented **this way**" (615.5): the `DamageShield.link`
+    #: of the one shield this rider answers.  Set only by the `prevent_damage`
+    #: op's ``effects``, on a ``damage_prevented`` subscription, and compared
+    #: against the event's ``shield`` key -- so a Fog, a Selfless Squire or
+    #: protection preventing the same damage pays nothing, and a second
+    #: Inkshield's tokens come from its own shield only.
+    shield: int | None = None
 
 
 #: How long an event-watching delayed ability stays subscribed, and what firing
@@ -1654,6 +1697,13 @@ class TurnLedger:
     #: controlled them.  "A creature died this turn" is the sum over every
     #: player; "a creature you controlled died" is one entry.
     creatures_died: dict[int, int] = field(default_factory=dict)
+    #: Those of them that were **modified** as they died (700.9: a counter on
+    #: it, an Equipment attached, or an Aura its controller controlled), keyed
+    #: the same way -- Intermediate Chirography's "if a modified creature died
+    #: under your control this turn". Folded off the DIES event's
+    #: `was_modified` snapshot, because every limb is gone by the time the
+    #: event goes out.
+    modified_creatures_died: dict[int, int] = field(default_factory=dict)
     #: How many combat phases have **begun** this turn, counting the one in
     #: progress. "If it's the first combat phase of the turn" (Genji Glove,
     #: Aggravated Assault's cousins) is this being 1.
@@ -1819,6 +1869,10 @@ class TurnLedger:
     #: each turn" asks for the ordinal, which `life_gained` cannot give: one
     #: gain of 4 and four gains of 1 are the same total.
     life_gains: dict[int, int] = field(default_factory=dict)
+    #: How many separate life losses each player has had this turn -- events,
+    #: not life, for `life_gains`' reason. Intermediate Chirography's "whenever
+    #: you lose life **for the first time** each turn".
+    life_losses: dict[int, int] = field(default_factory=dict)
     #: Spells cast this turn, per caster.  Storm counts every spell cast before
     #: it by anybody, which is the sum.
     spells_cast: dict[int, int] = field(default_factory=dict)
@@ -2079,6 +2133,7 @@ class TurnLedger:
 
     def clear(self) -> None:
         self.creatures_died.clear()
+        self.modified_creatures_died.clear()
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
         self.opponents_attacked_this_combat.clear()
@@ -2091,6 +2146,7 @@ class TurnLedger:
         self.life_lost.clear()
         self.life_gained.clear()
         self.life_gains.clear()
+        self.life_losses.clear()
         self.spells_cast.clear()
         self.spells_cast_ids.clear()
         self.combat_damage_types.clear()

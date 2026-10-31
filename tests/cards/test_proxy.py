@@ -801,17 +801,20 @@ class TestPartiallyModelledCards:
         assert result.model is None
         assert "defense" in (result.error or "")
 
-    def test_a_kindred_card_drops_the_noise_type(self):
+    @pytest.mark.parametrize("word", ["Kindred", "Tribal"])
+    def test_a_kindred_card_keeps_the_type(self, word):
+        """308: Kindred is a card type, and "Tribal" is its old name."""
         result, card = built(
             name="Bound in Silence",
-            type_line="Kindred Enchantment — Rebel Aura",
+            type_line=f"{word} Enchantment — Rebel Aura",
             mana_cost="{2}{W}",
             oracle_text="Enchant creature\nEnchanted creature can't attack or block.",
             colors="W",
             color_identity="W",
         )
-        assert card.types == frozenset({"Enchantment"})
-        assert any("Kindred" in n for n in result.notes)
+        assert card.types == frozenset({"Kindred", "Enchantment"})
+        assert card.subtypes == frozenset({"Rebel", "Aura"})
+        assert not any("Kindred" in n or "Tribal" in n for n in result.notes)
 
     def test_a_modal_dfc_generates_its_front_face_loudly(self):
         result, card = built(

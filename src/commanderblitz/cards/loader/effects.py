@@ -16,6 +16,7 @@ from commanderblitz.engine.effects.ops_cards import (
     DESTINATIONS,
     EXILE_UNTIL_ELSE_DESTINATIONS,
     LOOK_STEP_KEYS,
+    REVEAL_UNTIL_MAY_DESTINATIONS,
     SEARCHABLE,
 )
 from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
@@ -65,6 +66,7 @@ from .vocabulary import (
     CONTROLLED_TARGET_KINDS,
     COUNTERS_ON_ARRIVAL_OPS,
     DELAYED_TRIGGER_KEYS,
+    HOST_NAMED_OPS,
     KNOWN_COLORS,
     KNOWN_KEYWORDS,
     KNOWN_SUPERTYPES,
@@ -750,6 +752,35 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"(use a separate add_counters)"
             )
 
+    # "…to the battlefield **attached to that token**": the effect names the
+    # Aura's host itself, with a following `attach`, so 303.4f's choice is not
+    # asked. Only the two ops that put a card onto the battlefield and are
+    # followed by such an `attach` read it, and only beside the battlefield.
+    if "host_named" in effect:
+        if op not in HOST_NAMED_OPS or not isinstance(effect["host_named"], bool):
+            raise DslError(
+                f"{where}: 'host_named' is a boolean read by {sorted(HOST_NAMED_OPS)}, "
+                f"not {op!r}"
+            )
+        if op == "return_from_graveyard" and effect.get("destination") != "battlefield":
+            raise DslError(
+                f"{where}: 'host_named' needs destination 'battlefield'; an Aura "
+                f"enchants nothing anywhere else"
+            )
+
+    # "…put onto the battlefield with this Aura" (Animate Dead): `link` on a
+    # return is written on the creature as it arrives, so anywhere but the
+    # battlefield it would load and link nothing -- the Aura's "that creature's
+    # controller sacrifices it" then finding no creature at all.
+    if op == "return_from_graveyard" and "link" in effect and (
+        not isinstance(effect["link"], bool)
+        or (effect["link"] and effect.get("destination") != "battlefield")
+    ):
+        raise DslError(
+            f"{where}: return_from_graveyard 'link' is a boolean and needs "
+            f"destination 'battlefield'"
+        )
+
     if "target" in effect and str(effect["target"]) not in target_kinds:
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"
@@ -1331,14 +1362,37 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown reveal_until destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+        # "You may put that card onto the battlefield. If you don't, put it
+        # into your hand." The may is the battlefield and the fallback is
+        # `destination`; a may to where the card would go anyway asks nothing,
+        # and "that card" is one card, so an `amount` would ask about a group
+        # the sentence never names.
+        may_destination = effect.get("may_destination")
+        if "may_destination" in effect:
+            if may_destination not in REVEAL_UNTIL_MAY_DESTINATIONS:
+                raise DslError(
+                    f"{where}: unknown reveal_until may_destination {may_destination!r} "
+                    f"(implemented: {sorted(REVEAL_UNTIL_MAY_DESTINATIONS)})"
+                )
+            if destination == may_destination:
+                raise DslError(
+                    f"{where}: reveal_until 'may_destination' needs a 'destination' "
+                    f"other than {may_destination!r} -- the fallback if you don't"
+                )
+            if "amount" in effect:
+                raise DslError(
+                    f"{where}: reveal_until 'may_destination' asks about one card "
+                    f"and takes no 'amount'"
+                )
+        arrival = may_destination or destination
         # "Put that card onto the battlefield tapped." Anywhere else a card is
         # never tapped, so the key would load and say nothing.
         if "tapped" in effect and (
-            not isinstance(effect["tapped"], bool) or destination != "battlefield"
+            not isinstance(effect["tapped"], bool) or arrival != "battlefield"
         ):
             raise DslError(
                 f"{where}: reveal_until 'tapped' is a boolean and needs "
-                f"destination 'battlefield'"
+                f"destination or may_destination 'battlefield'"
             )
         # "You put that card onto the battlefield **under your control**."
         # The only value is "you": every other seat a match could enter under is
@@ -1346,11 +1400,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # battlefield a card has no controller to set, so the key would say
         # nothing.
         if "controller" in effect and (
-            effect["controller"] != "you" or destination != "battlefield"
+            effect["controller"] != "you" or arrival != "battlefield"
         ):
             raise DslError(
                 f"{where}: reveal_until 'controller' is \"you\" and needs "
-                f"destination 'battlefield'"
+                f"destination or may_destination 'battlefield'"
             )
     # Same argument as look_at_top, and the printed keyword is *named* for the
     # number -- "hideaway 4". Defaulted it would look at one card, and the
@@ -1752,6 +1806,33 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"'prevent_damage_permanent' op, and a continuous one the "
                 f"'prevent_damage' static effect or 'protection'"
             )
+    if op == "prevent_damage" and "effects" in effect:
+        # "If damage is prevented this way…" (615.5): the rider the op installs
+        # as a delayed ability beside its shield. An empty list is a rider that
+        # does nothing, and a `target` inside one names nothing when it fires --
+        # the delayed half resolves with no targets of its own, as `delay`'s does.
+        if not isinstance(effect["effects"], list) or not effect["effects"]:
+            raise DslError(
+                f"{where}: prevent_damage's 'effects' is the non-empty list of "
+                f"effects run each time this shield prevents damage"
+            )
+        _refuse_targets_inside_a_delay(effect["effects"], f"{where}.effects")
+    if op == "prevent_damage_permanent" and "effects" in effect:
+        # Accepted, it would be validated and never run: the rider is linked to
+        # the player shield only.
+        raise DslError(
+            f"{where}: a 'prevented this way' rider ('effects') is implemented on "
+            f"the 'prevent_damage' player shield only, not on {op!r}"
+        )
+    if op in ("prevent_damage", "prevent_damage_permanent") and not isinstance(
+        effect.get("combat_only", False), bool
+    ):
+        # "Prevent all combat damage..." is a yes or no. A string "false" would
+        # be truthy at resolution and narrow a shield the card meant to be total.
+        raise DslError(
+            f"{where}: {op}'s 'combat_only' is true or false "
+            f"(got {effect.get('combat_only')!r})"
+        )
     if op == "prevent_damage_permanent":
         # All three keys required, and every omission loads clean and plays a
         # different card: no `objects` shields nothing, a guessed `dealt` swaps a
@@ -2392,6 +2473,41 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: unknown {op} duration {effect['duration']!r} "
             f"(use 'until_end_of_turn' or 'until_your_next_turn')"
         )
+    if op == "lose_keyword":
+        # "…lose hexproof and shroud **and can't have** hexproof or shroud."
+        # The op is that prohibition and nothing weaker, so the clause is
+        # written out: a bare "loses flying until end of turn" is a removal a
+        # later grant survives (613.7), and loading it here would be a
+        # stronger card that reads the same.
+        if effect.get("cant_have") is not True:
+            raise DslError(
+                f"{where}: lose_keyword is \"lose X and can't have X\" and needs "
+                f"'cant_have': true; a plain \"loses X until end of turn\" is not "
+                f"implemented"
+            )
+        if not effect.get("objects"):
+            # An absent selector would choose nothing, and a printed hoser
+            # would resolve doing nothing.
+            raise DslError(
+                f"{where}: lose_keyword needs 'objects' (the permanents that lose "
+                f"the keywords, chosen as it resolves)"
+            )
+        words = effect.get("keywords")
+        if not isinstance(words, list) or not words:
+            raise DslError(
+                f"{where}: lose_keyword needs 'keywords', a non-empty list of the "
+                f"keywords it removes"
+            )
+        for k in words:
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}: unknown keyword {k!r}")
+        # Until end of turn, the one clock printed. Any other word would load
+        # and quietly wear off at this turn's cleanup.
+        if str(effect.get("duration", "until_end_of_turn")) != "until_end_of_turn":
+            raise DslError(
+                f"{where}: unknown lose_keyword duration {effect['duration']!r} "
+                f"(implemented: 'until_end_of_turn')"
+            )
     if op == "grant_flash_permission":
         # Without a duration the permission would have no clock to end on, and a
         # misspelt type would narrow it to nothing -- the +1 doing nothing.
@@ -2648,6 +2764,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         validate_condition(more["condition"], f"{where}.up_to_if.condition")
         if "count" in more:
             validate_value(more["count"], f"{where}.up_to_if.count")
+    if op == "choose_mode" and "optional" in effect:
+        # "You may choose two" (Shadrix Silverquill): none, or exactly `count`.
+        # Every other clause that reshapes the count would either contradict it
+        # or be silently ignored by `modes.ask_none_or_exactly`, which asks the
+        # exact number and nothing else.
+        if not isinstance(effect["optional"], bool):
+            raise DslError(f"{where}: 'optional' is a boolean, got {effect['optional']!r}")
+        if effect["optional"]:
+            clash = [
+                key
+                for key in (
+                    "up_to", "up_to_if", "or_more", "all_if", "budget", "random",
+                    "chooser", "once_each",
+                )
+                if effect.get(key) not in (None, False)
+            ]
+            if clash:
+                raise DslError(
+                    f"{where}: an 'optional' choose_mode is none or exactly 'count' "
+                    f"modes, so {clash} cannot apply to it"
+                )
+            count = effect.get("count", 1)
+            if isinstance(count, dict) and "const" in count:
+                count = count["const"]
+            modes = effect.get("modes") or []
+            if not isinstance(count, int) or isinstance(count, bool) or count < 2:
+                # "You may choose one" is `up_to` with a count of one, and a
+                # computed count has no load-time answer to check.
+                raise DslError(
+                    f"{where}: 'optional' needs a fixed 'count' of at least 2 "
+                    f"(\"you may choose one\" is 'up_to'); got {count!r}"
+                )
+            if count > len(modes):
+                raise DslError(
+                    f"{where}: 'optional' asks for {count} modes of {len(modes)}, "
+                    f"which can never be chosen"
+                )
+            if ".spell_effects[" in where:
+                # A spell's modes are answered at 601.2b by `Game._ask_modes`,
+                # which has no "or none"; and a modal spell that chooses no
+                # mode at all is not a spell the rules let you cast.
+                raise DslError(
+                    f"{where}: 'optional' is for a triggered ability's \"you may "
+                    f"choose N\", chosen as it goes on the stack (603.3c); a "
+                    f"spell chooses its modes as it is cast"
+                )
     if op == "choose_mode" and "random" in effect:
         # "Choose one at random" -- the game picks exactly `count` modes off its
         # seeded rng. Every clause that shapes a *player's* answer is
@@ -2658,7 +2820,9 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if effect["random"]:
             clash = [
                 key
-                for key in ("chooser", "budget", "up_to", "up_to_if", "or_more", "all_if")
+                for key in (
+                    "chooser", "budget", "up_to", "up_to_if", "or_more", "all_if", "optional",
+                )
                 if effect.get(key) not in (None, False)
             ]
             if clash:

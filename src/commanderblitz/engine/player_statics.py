@@ -915,6 +915,10 @@ def attack_tax(
     Safety say "you **or planeswalkers you control**" out loud, Propaganda does
     not, and attacking a planeswalker is not attacking its controller (506.2),
     so the printed sentence decides it and nothing is inferred.
+
+    A static carrying ``x_per_attacker`` prices ``{X}`` per creature instead:
+    X is read off ``oid`` itself (`attacker_x`), so Nils, Discipline
+    Enforcer's three-counter creature pays {3} where a one-counter one pays {1}.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -933,8 +937,35 @@ def attack_tax(
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
+        x_spec = static.get("x_per_attacker")
+        if x_spec is not None:
+            # Nils, Discipline Enforcer's {X}, "where X is the number of
+            # counters on **that creature**": read off this attacker now, as it
+            # is declared (508.1g-h), so the same price goes in the label, the
+            # payability check and the charge. X of 0 is a tax of nothing --
+            # the creature attacks free, as "unless its controller pays {0}"
+            # asks nothing of anybody.
+            x = attacker_x(obj, x_spec)
+            if x > 0:
+                specs.append({"mana": "{" + str(x) + "}"})
+            continue
         specs.append(static.get("cost"))
     return _summed_mana(specs)
+
+
+def attacker_x(obj: GameObject, spec: Mapping[str, Any]) -> int:
+    """The X of an ``x_per_attacker`` tax, read off the attacking creature.
+
+    One leaf, ``counters``: a counter kind, or ``"any"`` for every kind summed
+    -- the spelling `counters_had` already uses for "counters on it", where the
+    kinds are open-ended and no list of them would be the printed card. Live
+    counters, not a snapshot: the tax is determined as the creature is declared
+    (508.1g), and a counter placed or removed before then is part of the price.
+    """
+    kind = str(spec.get("counters", "any"))
+    if kind == "any":
+        return sum(n for n in obj.counters.values() if n > 0)
+    return obj.counter(kind)
 
 
 def _summed_mana(specs: list[Any]) -> str:
@@ -1473,6 +1504,46 @@ def static_attack_defenders(state: GameState, oid: int) -> list[frozenset[int]]:
         if not _static_active(state, source_obj, static, affected=obj):
             continue
         out.append(_defending_seats(state, source_obj.controller, str(static["defending"])))
+    return out
+
+
+def goaders(state: GameState, oid: int) -> set[int]:
+    """Every player this creature is goaded by right now (701.38).
+
+    Two sources, one answer. The `goad` op writes a resolving spell's goad onto
+    the object (`GameObject.goaded_by`), with a clock the goader's untap step
+    reads. A ``goaded`` static -- the Impetus Auras' "Enchanted creature … is
+    goaded" -- is a continuous effect with no clock at all: it holds exactly as
+    long as the static applies to the creature, so it is read live off the
+    battlefield here and never written onto the object. Written down, it would
+    outlive the Aura leaving or moving, which is the one thing the printed
+    sentence rules out.
+
+    The goader is the **static's controller**. A creature its own controller
+    goads this way is goaded all the same: it attacks each combat if able, and
+    "a player other than you" is every player it could attack anyway. That is
+    the Impetus ruling, and why the timed op's refusal of a self-goad does not
+    apply -- here there is an author, the Aura on the battlefield.
+
+    Every reader of goad asks this, never the field alone:
+    `combat.attack_required` (the compulsion), `combat.attack_target_forbidden`
+    and the 508.1d count (the target restriction), and the ``goaded`` selector
+    and trigger-filter keys.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return set()
+    out = set(obj.goaded_by)
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "goaded":
+            continue
+        if source_obj.controller in out or not state.is_alive(source_obj.controller):
+            continue
+        # A requirement and a restriction on attacking are no layer (613), so
+        # the filter reads the creature as it now is, as `attack_compelled`'s
+        # does.
+        if _matches(state, obj, source_obj, static.get("affects"), derived=True):
+            out.add(source_obj.controller)
     return out
 
 

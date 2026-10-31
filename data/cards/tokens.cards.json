@@ -404,6 +404,26 @@
       "is_token": true
     },
     {
+      "id": "cat_2_2_w",
+      "name": "Cat Token",
+      "oracle_text": "2/2 white Cat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "cat_beast_2_2_w",
       "name": "Cat Beast Token",
       "oracle_text": "",
@@ -546,6 +566,73 @@
       "keywords": [
         "flying",
         "haste"
+      ]
+    },
+    {
+      "id": "contract",
+      "name": "Contract",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life.",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "any",
+            "filter": {
+              "attached": true
+            }
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "attacking_player": "opponent"
+                }
+              },
+              "then": [
+                {
+                  "op": "pump",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "lose_life",
+                  "player": {
+                    "controller_of": "subject"
+                  },
+                  "amount": {
+                    "const": 2
+                  }
+                }
+              ]
+            }
+          ]
+        }
       ]
     },
     {
@@ -1182,6 +1269,29 @@
       ],
       "color_identity": [
         "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "pegasus_2_2_w_flying",
+      "name": "Pegasus Token",
+      "oracle_text": "2/2 white Pegasus creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pegasus"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
       ],
       "is_token": true
     },

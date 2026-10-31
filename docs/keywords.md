@@ -217,7 +217,7 @@ This is the long tail, and where the build order comes from.
 | Aftermath | shipped | the same `second_face`, with `second_face_zone: "graveyard"` — the restriction is *where the half is offered*, and the exile is the same rider adventure uses | `second_face_zone` |
 | Alliance | free | `permanent_enters`, `types: ["Creature"]`, `exclude_self` | — |
 | Amplify | free | `self_enters` trigger: `reveal` with `count: "any"` and `as`, then `add_counters` off `{"count": {"binding": …}}` | `as` |
-| Annihilator | free | `attacks` trigger, then `sacrifice` over `controller: "opponent"` with `chooser: "owner"` — they pick their own | — |
+| Annihilator | shipped | `Keyword` **plus** N beside it — the card-level `annihilator` field, or a `grant_keyword` static's `annihilator` key — whose trigger `carddef.annihilator_ability(n)` the rules supply once per instance (702.86b, `characteristics.annihilator_instances`): `attacks`, then `sacrifice` N over the `defender` binding, who chooses. A keyword rather than a printed trigger because Eldrazi Conscription grants it with its N — cashed by `test_annihilator.py` | `annihilator` |
 | Aura swap | shipped | the `aura_swap` op -- one op because the incoming Aura has no targeting clause to carry the creature | `aura_swap` |
 | Banding | shipped | `CombatState.bands` for 702.21b, and the `block_order` the engine already had — it was *sorting* the damage assignment order, and banding is "ask, and ask the other player" | `banding` |
 | Battle cry | free | `attacks` trigger, then `pump` the other attackers | — |

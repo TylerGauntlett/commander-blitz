@@ -31,10 +31,10 @@ half-built:
   It is the ``attachment`` pool coming back empty when an *Aura* was taken
   instead, which must skip the host question entirely rather than ask it and
   then attach nothing.
-- **An Aura put onto the battlefield without being cast enchants nothing.**
-  `stack._attach_aura` reads the *spell's* targets and there was no spell, so
-  `sba` bins it (704.5m) unless something attaches it. That is the same op with
-  a wider ``attachment``, and it is asserted in both directions.
+- **An Aura put onto the battlefield without being cast is not this op's.**
+  The effect names no host for it, so its controller chooses one as it enters
+  (303.4f, `zones.offer_aura_host`) and the Equipment-only ``attachment`` never
+  sees it. A wider ``attachment`` attaches whatever arrived, Aura included.
 """
 
 from __future__ import annotations
@@ -275,21 +275,21 @@ class TestTheConditionalIsAnEmptyPool:
 
         assert prompts == ["Search"], "the attach half never came up"
 
-    def test_and_that_aura_is_binned_by_state_based_actions(self, builder):
-        """704.5m, and the reason the Aura half needs the same op.
+    def test_and_that_aura_enchants_what_it_chose_as_it_entered(self, builder):
+        """303.4f, and the reason the Aura needs no `attach` of its own.
 
-        An Aura put onto the battlefield without being cast targeted nothing, so
-        `stack._attach_aura` -- which reads the spell's targets -- never runs.
-        Nothing is enchanted, and state-based actions put it in the graveyard.
+        The Aura was not cast, so `stack._attach_aura` never runs; the effect
+        names no host, so it entered enchanting the one creature it could, and
+        state-based actions have nothing to put away (704.5m).
         """
         game, rite = board(builder, hand=[WINGS])
+        bear = oids_of(game, BEAR, 0)[0]
 
         activate(game, rite)
         resolve(game)
 
-        aura = game.state.objects[game.state.players[0].graveyard[-1]]
-        assert aura.def_id == WINGS
-        assert aura.zone is Zone.GRAVEYARD
+        assert attached_to(game, WINGS) == bear
+        assert power(game, bear) == 3, "enchanted creature gets +1/+1"
 
     def test_a_wider_attachment_saves_it(self, builder):
         """The same op, the same key, the ``subtypes`` filter dropped."""

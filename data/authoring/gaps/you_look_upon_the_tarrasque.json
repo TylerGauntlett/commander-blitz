@@ -7,10 +7,10 @@
   ],
   "needs": [
     {
-      "capability": "combat-only-fog",
+      "capability": "prevent_damage_to_controlled_permanents",
       "kind": "op",
-      "what": "a combat-only option on the resolving prevention ops: `combat_only: true` on `prevent_damage` (the player's DamageShield) and on `prevent_damage_permanent` (or a selector-scoped variant covering 'creatures you control' for the turn), so a spell can say 'Prevent all combat damage that would be dealt to you and creatures you control this turn' while noncombat damage still gets through",
-      "why_existing_wont_do": "The `prevent_damage` op (player, duration) and `prevent_damage_permanent` op (objects, dealt, duration) both prevent ALL damage, combat and noncombat, which is a strictly better card; the new `combat_only` flag exists only on the `prevent_damage` STATIC, which lives on a permanent and has no 'this turn' clock and cannot be installed by an instant"
+      "what": "a one-shot, this-turn, combat-only prevention over the permanents a player controls that match a selector ('creatures you control'), matched on the damaged permanent's current characteristics as the damage would be dealt (615.1), alongside the combat_only prevent_damage shield over the player",
+      "why_existing_wont_do": "prevent_damage with combat_only covers the seat ('you') but not its permanents; prevent_damage_permanent with combat_only shields objects chosen at resolution, so a creature that arrives or changes control later in the turn would be judged by the board the spell saw; prevent_combat_damage is keyed to the dealer, not the recipient"
     }
   ],
   "closest_existing": [

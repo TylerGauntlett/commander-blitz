@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef, Cost
-from .characteristics import chars, compare_pt
+from .characteristics import chars, compare_pt, enchanted_by
 from .effects.conditions import evaluate_condition
 from .effects.selectors import has_printed_cost
 from .player_statics import spell_cost_reduction, spell_mana_tax
@@ -348,6 +348,10 @@ def _object_matches(
     ):
         return False
     if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
+        return False
+    # Whether it is enchanted, an input for the same reason: nothing in the
+    # characteristics layer attaches an Aura. "You" is the player paying.
+    if "enchanted_by" in filt and not enchanted_by(state, oid, filt["enchanted_by"], pid):
         return False
     # "…for each creature that entered this turn". Honoured here because the
     # docstring above promises it: **every key the loader accepts is read here**,

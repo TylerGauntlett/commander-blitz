@@ -1395,3 +1395,67 @@ class TestTrudgeGardensFungusBeastHasTrample:
         other = pool.get("beast_4_4_g")
         assert (other.power, other.toughness) == (4, 4)
         assert "trample" not in other.keywords
+
+
+class TestAjanisChosensCatIsATwoTwo:
+    """Ajani's Chosen: *"create a **2/2 white Cat** creature token."*
+
+    Two near misses, neither of them it: `cat_1_1_w` is the right creature
+    type at the wrong size, and `cat_beast_2_2_w` is the right body that is
+    also a Beast.
+    """
+
+    def test_it_is_a_two_two_white_cat(self, pool):
+        cat = pool.get("cat_2_2_w")
+        assert cat is not None and cat.is_token and cat.is_creature
+        assert (cat.power, cat.toughness) == (2, 2)
+        assert sorted(cat.colors) == ["W"]
+        assert list(cat.types) == ["Creature"]
+        assert list(cat.subtypes) == ["Cat"]
+        assert not cat.keywords and not cat.abilities
+
+    def test_the_near_misses_are_still_separate_tokens(self, pool):
+        assert (pool.get("cat_1_1_w").power, pool.get("cat_1_1_w").toughness) == (1, 1)
+        assert sorted(pool.get("cat_beast_2_2_w").subtypes) == ["Beast", "Cat"]
+
+
+class TestArchonOfSunsGracesPegasusFlies:
+    """Archon of Sun's Grace: *"create a **2/2 white Pegasus** creature token
+    with **flying**."*
+
+    The pool had no Pegasus; flying is the point of the body.
+    """
+
+    def test_it_is_a_two_two_white_pegasus_with_flying(self, pool):
+        token = pool.get("pegasus_2_2_w_flying")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (2, 2)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.types) == ["Creature"]
+        assert list(token.subtypes) == ["Pegasus"]
+        assert "flying" in token.keywords and len(token.keywords) == 1
+        assert not token.abilities
+
+
+class TestScrivsContractIsAWhiteAura:
+    """Scriv, the Obligator: *"create a **white Aura** enchantment token named
+    **Contract** attached to target creature an opponent controls."*
+
+    The near miss is `wicked_role`, the pool's other Aura token: colorless, a
+    Role (so 704.5y would bin one Contract for the next Role its controller
+    put on the same creature), and a +1/+1 static where the Contract has only
+    its attack trigger. Its behaviour is `test_contract_token.py`.
+    """
+
+    def test_it_is_a_white_aura_with_one_triggered_ability(self, pool):
+        token = pool.get("contract")
+        assert token is not None and token.is_token and token.is_aura
+        assert token.name == "Contract"
+        assert sorted(token.colors) == ["W"]
+        assert list(token.types) == ["Enchantment"]
+        assert list(token.subtypes) == ["Aura"]
+        assert [a.kind for a in token.abilities] == ["triggered"]
+
+    def test_the_wicked_role_is_still_a_separate_token(self, pool):
+        role = pool.get("wicked_role")
+        assert "Role" in role.subtypes and not role.colors

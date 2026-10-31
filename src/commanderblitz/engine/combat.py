@@ -31,6 +31,7 @@ from .player_statics import (
     block_alone_forbidden,
     block_forbidden,
     block_tax,
+    goaders,
     static_attack_defenders,
 )
 from .primitives import become_monarch, damage_permanent, damage_player, tap_permanent
@@ -219,7 +220,8 @@ def attack_required(state: GameState, oid: int) -> bool:
     # `discharge_attack_requirements` touches `must_attack` and nothing else, so
     # a goaded creature is compelled again by the *next* combat and the one
     # after, until its goader untaps. That is the whole reason goad could not be
-    # `must_attack` with a third duration.
+    # `must_attack` with a third duration. `goaders` also reads the `goaded`
+    # static, a goad with no clock that lasts while the static applies.
     #
     # All three are "…if able", so all three go through `can_attack` below.
     # A fourth: Gideon Jura's mark on a planeswalker, read live for its turn
@@ -229,7 +231,7 @@ def attack_required(state: GameState, oid: int) -> bool:
     # those seats is open to this creature.
     if (
         not attack_compelled(state, oid)
-        and not obj.goaded_by
+        and not goaders(state, oid)
         and not required_attack_walkers(state, oid)
         and not required_attack_defenders(state, oid)
     ):
@@ -399,8 +401,9 @@ def attack_target_forbidden(
     # "…if able" is the guard, and it is the difference between a restriction and
     # a rule that can make a declaration impossible: with the goader the only
     # thing left to attack, the creature attacks the goader.
-    if obj is not None and obj.goaded_by and defender in obj.goaded_by:
-        return _has_non_goader_defender(state, oid, obj.goaded_by)
+    goaded_by = goaders(state, oid)
+    if goaded_by and defender in goaded_by:
+        return _has_non_goader_defender(state, oid, goaded_by)
     return False
 
 
@@ -559,14 +562,13 @@ def _misses_attack_requirements(
     target is scored and anything below the best is refused; ties are all
     allowed, so the player still chooses between equally obedient attacks.
     """
-    obj = state.objects.get(oid)
-    goaders = obj.goaded_by if obj is not None else set()
+    goaded_by = goaders(state, oid)
 
     def score(seat: int, pw: int | None) -> int:
         points = 1 if pw is not None and pw in required else 0
         if pw is None:
             points += sum(1 for seats in named if seat in seats)
-        if goaders and seat not in goaders:
+        if goaded_by and seat not in goaded_by:
             points += 1
         return points
 

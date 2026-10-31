@@ -19,9 +19,11 @@ from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
 from .modes import (
     _mode_flag,
+    ask_none_or_exactly,
     chosen_at_random,
     modal_bounds,
     mode_labels,
+    none_or_exactly,
     per_turn,
     pick_at_random,
     record_per_turn,
@@ -311,9 +313,8 @@ PERMANENT_TYPE_CHOICES: tuple[str, ...] = (
 #: Instant, Sorcery and Kindred are the three it adds, and they are the reason
 #: the axis exists: "protection from instants" is the commonest answer on the
 #: card that motivated it, and a list without them offers the wrong choices.
-#: Kindred is offered although no card in this engine is a Kindred card (the
-#: importer drops the word as noise): it is a legal answer at a real table, and
-#: naming it protects from exactly what it would protect from here -- nothing.
+#: Naming Kindred protects from the Kindred cards (308), Eldrazi Conscription
+#: among them.
 CARD_TYPE_CHOICES: tuple[str, ...] = (
     "Artifact",
     "Battle",
@@ -417,8 +418,8 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
     down to the two decisions below. Stored on the permanent as a colour letter
     and read back by its own abilities through ``{"chosen_color_of": "self"}``,
     which stands wherever a literal colour letter does: a static filter's
-    ``colors``, an ``add_mana``'s ``mana``, and ``grant_protection``'s
-    ``from_colors``.
+    ``colors``, an ``add_mana``'s ``mana``, and the ``from_colors`` of
+    ``grant_protection`` and of the ``protection`` static.
 
     **No new `DecisionKind`.** `ask_mode` already asks "pick one of these
     labels" and hands back the index, which is exactly this question -- so
@@ -785,6 +786,11 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
         # earlier. Off the seeded `state.rng`, so a replay picks the same.
         chosen = pick_at_random(ctx.state, offered, min(floor, len(offered)))
         record_per_turn(ctx.state, ctx.source_oid, spec, labels, chosen)
+    elif none_or_exactly(spec):
+        # "You may choose two" -- a nested one, or one nobody answered as it
+        # went on the stack. No mode owns a target here (the loader keeps
+        # those to the top-level question), so every pair is a legal pair.
+        chosen = yield from ask_none_or_exactly(ctx, labels, chooser, floor)
     elif once_each:
         picked = yield from ask_mode(
             ctx,

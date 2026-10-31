@@ -13,10 +13,10 @@
       "why_existing_wont_do": "creatures_attack_player with defending: you covers 'a player attacks you', but condition_keys and value_keys have nothing that enumerates the active player's opponents and reads who is being attacked; attacked_this_turn / attackers_this_turn / count over {binding: attackers} count creatures, not unattacked defending players, and selectors are object-based so no player-level 'not being attacked' filter exists"
     },
     {
-      "capability": "combat-only-fog",
+      "capability": "this_combat_duration",
       "kind": "op",
-      "what": "a one-shot effect that prevents all combat damage that would be dealt to a player (you) for the rest of the current combat",
-      "why_existing_wont_do": "the prevent_damage op takes only duration and player, with no combat_only narrowing and no 'this combat' duration; combat_only exists only on the prevent_damage static, which lasts while the permanent does rather than for one combat"
+      "what": "a 'this_combat' duration on the prevent_damage op's combat_only player shield, so a trigger can prevent all combat damage that would be dealt to you for the rest of the current combat only, cleared at the end of combat step rather than at cleanup",
+      "why_existing_wont_do": "prevent_damage takes combat_only now, but DAMAGE_SHIELD_DURATIONS has only this_turn, so the shield would also cover an additional combat phase later in the turn (a strictly better card); nothing clears a DamageShield at end of combat"
     }
   ],
   "closest_existing": [

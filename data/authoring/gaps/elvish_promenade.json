@@ -1,0 +1,20 @@
+{
+  "card_id": "elvish_promenade",
+  "name": "Elvish Promenade",
+  "oracle_text": "Create a 1/1 green Elf Warrior creature token for each Elf you control.",
+  "blocked_sentences": [
+    "Create a 1/1 green Elf Warrior creature token for each Elf you control."
+  ],
+  "needs": [
+    {
+      "capability": "elf_warrior_1_1_g_token",
+      "kind": "token",
+      "what": "a 1/1 green Elf Warrior creature token",
+      "why_existing_wont_do": "the packet's token_ids has no Elf Warrior; elf_* tokens of other sizes or subtypes would be a different card (111.4)"
+    }
+  ],
+  "closest_existing": [
+    "create_token"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,134 @@
+{
+  "_comment": "Shapes for tests/unit/attachments/test_enchant_graveyard_card.py. t_animate_dead is Animate Dead as the card pool writes it; t_ad_white_knight is a creature with protection from black, which a black Aura returns and cannot enchant.",
+  "cards": [
+    {
+      "id": "t_animate_dead",
+      "name": "Test Animate Dead",
+      "oracle_text": "Enchant creature card in a graveyard\nWhen this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Return enchanted creature card to the battlefield under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.\nEnchanted creature gets -1/-0.",
+      "mana_cost": "{1}{B}",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self",
+            "condition": {
+              "zone_is": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "op": "return_from_graveyard",
+              "destination": "battlefield",
+              "controller": "you",
+              "host_named": true,
+              "link": true,
+              "objects": {
+                "attached": true,
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            },
+            {
+              "op": "attach",
+              "objects": {
+                "returned_with": "self"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "triggered",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "sacrifice",
+              "objects": {
+                "returned_with": "self",
+                "controller": "any",
+                "count": "all"
+              }
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "const": -1
+          },
+          "toughness": {
+            "const": 0
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_ad_white_knight",
+      "name": "Test Black-Proof Knight",
+      "oracle_text": "Protection from black",
+      "mana_cost": "{W}{W}",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Knight"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            "B"
+          ],
+          "kind": "static",
+          "text": "Protection from black"
+        }
+      ]
+    }
+  ]
+}

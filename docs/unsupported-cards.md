@@ -10,12 +10,11 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**116 cards** blocked by **97** capabilities.
+**111 cards** blocked by **98** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
-| [combat-only-fog](#combat-only-fog) | 9 | 806 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -25,6 +24,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
+| [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -46,13 +46,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
+| [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
@@ -105,6 +105,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
+| [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
@@ -183,63 +184,14 @@ Blocks **15** cards.
 
 </details>
 
-## combat-only-fog
-
-Blocks **9** cards.
-
-- **(op)** a combat_only flag on the prevent_damage_permanent op, so a one-shot shield installed by a resolving spell on a targeted permanent (dealt 'by' or 'to', duration this_turn) prevents only combat damage and lets noncombat damage through
-  <br>Why the existing vocabulary won't do: prevent_damage_permanent takes only objects, dealt and duration and prevents ALL damage, so it would also stop burn and fight damage; the prevent_damage static has combat_only but lives on a printed permanent, has no 'this turn' duration, cannot be installed by a spell, and only stops damage dealt to what it matches, never damage a creature would deal
-- **(op)** a combat_only flag on the prevent_damage op (the player DamageShield), so a resolving instant installs a this_turn shield over every player (player: each/any) that prevents only combat damage and lets noncombat damage to players through
-  <br>Why the existing vocabulary won't do: prevent_damage the op takes only player and duration and its DamageShield prevents ALL damage to the player, so burn and drain would also be stopped -- a strictly better card; the prevent_damage static has combat_only but lives on a printed permanent, matches only permanents via affects (no way to name a seat), and has no 'this turn' duration, so a spell cannot install it
-- **(op)** a combat-only form of the one-shot player damage shield: `combat_only: true` on the `prevent_damage` op (and on structs.DamageShield, read by primitives.damage_player), so a spell can say "prevent all combat damage that would be dealt to players this turn" with player: "any" while noncombat damage to players still lands
-  <br>Why the existing vocabulary won't do: The `prevent_damage` op (op_options: duration, player) installs a DamageShield that prevents ALL damage to the player, noncombat included, so it would be a strictly better card; `combat_only` exists only on the `prevent_damage` static, which lives on a permanent's battlefield statics, matches permanents not players, and has no this-turn duration, so an instant cannot carry it
-- **(op)** a combat_only flag on the prevent_damage op (the player DamageShield), so a resolving instant installs a this_turn shield over its controller (player: you) that prevents only combat damage and lets noncombat damage to that player through
-  <br>Why the existing vocabulary won't do: prevent_damage the op takes only player and duration and its DamageShield prevents ALL damage to the player, so burn and drain would also be stopped -- a strictly better card; the prevent_damage static has combat_only but lives on a printed permanent, matches only permanents via affects (no way to name a seat), and has no 'this turn' duration, so a spell cannot install it. Populate itself is expressible (choose_permanents over creature tokens you control, then copy_permanent of the binding), so only the first sentence is blocked
-- **(op)** a combat-only form of the one-shot `prevent_damage_permanent` op (e.g. `combat_only: true` beside `dealt: "to"` and `duration: "this_turn"`), installed on the spell's target at resolution, that prevents combat damage dealt to that permanent this turn while letting noncombat damage through
-  <br>Why the existing vocabulary won't do: `prevent_damage_permanent` takes only objects, dealt and duration and its shield stops all damage, combat and noncombat (a strictly better card); `combat_only` exists only on the `prevent_damage` static, which lives on a printed permanent and cannot be installed on a target by a resolving spell; the `grant_ability` op grants only triggered or activated abilities, not a static. The first two sentences are expressible (add_counters +1/+1 on the target, grant_keyword flying until end of turn)
-- **(op)** a combat-only form of the prevent_damage op (e.g. combat_only: true on the op's player DamageShield), so a spell can say "prevent all combat damage that would be dealt to you this turn" without also shielding the player from noncombat damage
-  <br>Why the existing vocabulary won't do: The prevent_damage op takes only player and duration and prevents ALL damage to the player; combat_only exists only on the prevent_damage static, which is per-permanent, continuous while its source is on the battlefield and cannot name a seat, so neither fits a one-shot instant
-- **(op)** a one-shot effect that prevents all combat damage that would be dealt to a player (you) for the rest of the current combat
-  <br>Why the existing vocabulary won't do: the prevent_damage op takes only duration and player, with no combat_only narrowing and no 'this combat' duration; combat_only exists only on the prevent_damage static, which lasts while the permanent does rather than for one combat
-- **(op)** a one-shot, this-turn prevention of all COMBAT damage dealt to a player and to the planeswalkers that player controls (e.g. `combat_only: true` and `or_planeswalkers: true` on the `prevent_damage` op)
-  <br>Why the existing vocabulary won't do: the `prevent_damage` op takes only `duration` and `player`, so it would prevent noncombat damage too and would not cover planeswalkers; `combat_only` / `or_planeswalkers` exist only on the `prevent_damage` static, which a spell cannot create for a turn, and `prevent_damage_permanent` covers permanents only, not the player and not combat-only
-- **(op)** a combat-only option on the resolving prevention ops: `combat_only: true` on `prevent_damage` (the player's DamageShield) and on `prevent_damage_permanent` (or a selector-scoped variant covering 'creatures you control' for the turn), so a spell can say 'Prevent all combat damage that would be dealt to you and creatures you control this turn' while noncombat damage still gets through
-  <br>Why the existing vocabulary won't do: The `prevent_damage` op (player, duration) and `prevent_damage_permanent` op (objects, dealt, duration) both prevent ALL damage, combat and noncombat, which is a strictly better card; the new `combat_only` flag exists only on the `prevent_damage` STATIC, which lives on a permanent and has no 'this turn' clock and cannot be installed by an instant
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inkshield** (rank 806) — `inkshield`
-  - Prevent all combat damage that would be dealt to you this turn.
-  - For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.
-- **Take the Bait** (rank 3254) — `take_the_bait`
-  - Cast this spell only during combat on an opponent's turn.
-  - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
-- **Druid's Deliverance** (rank 4065) — `druid_s_deliverance`
-  - Prevent all combat damage that would be dealt to you this turn.
-- **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
-  - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
-- **Fleeting Flight** (rank 8631) — `fleeting_flight`
-  - Prevent all combat damage that would be dealt to it this turn.
-- **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
-  - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-- **Commencement of Festivities** (rank 14612) — `commencement_of_festivities`
-  - Prevent all combat damage that would be dealt to players this turn.
-- **Defend the Hearth** (rank 14613) — `defend_the_hearth`
-  - Prevent all combat damage that would be dealt to players this turn.
-- **Azorius Ploy** (rank 26998) — `azorius_ploy`
-  - Prevent all combat damage target creature would deal this turn.
-  - Prevent all combat damage that would be dealt to target creature this turn.
-
-</details>
-
 ## prevent-damage-by-source
 
 Blocks **8** cards.
 
 - **(static_effect)** a `prevent_damage` static (prevent_all, combat_only, affects self_only) that also filters the damage's SOURCE, and a source filter meaning 'a creature blocking this permanent' (blocking the source of the static specifically, not any blocking creature)
   <br>Why the existing vocabulary won't do: `prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'.
-- **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, plus a filter key matching an 'enchanted' creature (a creature with at least one Aura attached to it)
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. No static filter key means 'has an Aura attached' -- `attached` / `attached_to_host` describe the attachment itself, not the creature it enchants.
+- **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, e.g. a dealer filter of {"enchanted_by": true} (a creature with at least one Aura attached to it)
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. The `enchanted_by` filter key says 'enchanted creatures'; nothing lets the prevention shield read it of the dealer.
 - **(static_effect)** a dealer filter (`damage_source`) on the `prevent_damage` static, so that `{"effect": "prevent_damage", "prevent_all": true, "combat_only": true, "damage_source": {"self_only": true}}` prevents all combat damage this creature would deal to any recipient (creatures, players and planeswalkers alike); the 'dealt to' half is already a second static with `affects: {"self_only": true}`
   <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` + `combat_only` reads only the recipient (`affects`, via `prevents_all_damage`), so it covers 'dealt to this creature' but never 'dealt by' it. `damage_source` filters the dealer but the loader accepts it only on `replace_damage`, whose `damage_multiplier` must be 2 or more and so cannot prevent. `prevent_all_but` caps by recipient too. Writing only the 'dealt to' half would leave Fog Bank dealing combat damage, a different card.
 - **(static_effect)** a damage_source (dealer) filter on the prevent_damage static, so 'prevent all combat damage that would be dealt by enchanted creature' is {effect: prevent_damage, prevent_all: true, combat_only: true, damage_source: {attached: true}} -- prevention keyed on the source rather than the recipient, applied wherever combat damage is dealt (to players and permanents alike)
@@ -425,6 +377,25 @@ Blocks **2** cards.
   - {T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.
 - **Leyline of Sanctity** (rank 7441) — `leyline_of_sanctity`
   - If this card is in your opening hand, you may begin the game with it on the battlefield.
+
+</details>
+
+## prevent-damage-to-controlled-permanents
+
+Blocks **2** cards.
+
+- **(op)** a one-shot, this-turn, combat-only prevention over the permanents a player controls that match a selector ('planeswalkers you control'), matched on the damaged permanent's current characteristics as the damage would be dealt (615.1), alongside the combat_only prevent_damage shield over the player
+  <br>Why the existing vocabulary won't do: prevent_damage with combat_only covers the seat ('you') but not its permanents; prevent_damage_permanent with combat_only shields objects chosen at resolution, so a planeswalker that arrives or changes control later in the turn would be judged by the board the spell saw; prevent_combat_damage is keyed to the dealer, not the recipient
+- **(op)** a one-shot, this-turn, combat-only prevention over the permanents a player controls that match a selector ('creatures you control'), matched on the damaged permanent's current characteristics as the damage would be dealt (615.1), alongside the combat_only prevent_damage shield over the player
+  <br>Why the existing vocabulary won't do: prevent_damage with combat_only covers the seat ('you') but not its permanents; prevent_damage_permanent with combat_only shields objects chosen at resolution, so a creature that arrives or changes control later in the turn would be judged by the board the spell saw; prevent_combat_damage is keyed to the dealer, not the recipient
+
+<details><summary>Cards waiting on this</summary>
+
+- **Take the Bait** (rank 3254) — `take_the_bait`
+  - Cast this spell only during combat on an opponent's turn.
+  - Prevent all combat damage that would be dealt to you and planeswalkers you control this turn.
+- **You Look Upon the Tarrasque** (rank 8030) — `you_look_upon_the_tarrasque`
+  - • Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn
 
 </details>
 
@@ -742,21 +713,6 @@ Blocks **1** card.
 
 </details>
 
-## damage-prevented-this-way
-
-Blocks **1** card.
-
-- **(value)** a link from a resolved prevention shield to the amount it later prevents: each time the shield installed by this spell prevents N damage, its controller creates N inkling_2_1_wb_flying tokens (a delayed trigger keyed to that specific shield, carrying the prevented amount as a value)
-  <br>Why the existing vocabulary won't do: The damage_prevented trigger event exists, but a delayed_trigger on it has no filter tying the event to the shield this spell made ("prevented this way") and no value_keys entry reads the event's prevented amount, so create_token's amount cannot be the number of damage prevented
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inkshield** (rank 806) — `inkshield`
-  - Prevent all combat damage that would be dealt to you this turn.
-  - For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.
-
-</details>
-
 ## dealt-damage-to-player-this-turn
 
 Blocks **1** card.
@@ -838,6 +794,20 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
+
+</details>
+
+## elf-warrior-1-1-g-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 green Elf Warrior creature token
+  <br>Why the existing vocabulary won't do: the packet's token_ids has no Elf Warrior; elf_* tokens of other sizes or subtypes would be a different card (111.4)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elvish Promenade** (rank 3100) — `elvish_promenade`
+  - Create a 1/1 green Elf Warrior creature token for each Elf you control.
 
 </details>
 
@@ -1591,6 +1561,20 @@ Blocks **1** card.
 
 - **Imperial Mask** (rank 26785) — `imperial_mask`
   - When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.
+
+</details>
+
+## this-combat-duration
+
+Blocks **1** card.
+
+- **(op)** a 'this_combat' duration on the prevent_damage op's combat_only player shield, so a trigger can prevent all combat damage that would be dealt to you for the rest of the current combat only, cleared at the end of combat step rather than at cleanup
+  <br>Why the existing vocabulary won't do: prevent_damage takes combat_only now, but DAMAGE_SHIELD_DURATIONS has only this_turn, so the shield would also cover an additional combat phase later in the turn (a strictly better card); nothing clears a DamageShield at end of combat
+
+<details><summary>Cards waiting on this</summary>
+
+- **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
+  - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
 
 </details>
 

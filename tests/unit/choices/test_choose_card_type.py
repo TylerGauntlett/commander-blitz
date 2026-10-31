@@ -15,8 +15,8 @@ read back the same way, by ``{"chosen_card_type_of": "self"}``: a permanent type
 *is* a card type, so every reader of the slot reads either answer, and the
 creature-type slot stays untouched.
 
-Kindred is offered although no card in this engine carries the type: it is a
-legal answer, and naming it matches what it would match here -- nothing.
+Kindred is offered because it is one of the nine, and naming it matches the
+Kindred cards (308) -- Eldrazi Conscription among them.
 """
 
 from __future__ import annotations

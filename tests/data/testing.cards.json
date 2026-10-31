@@ -1080,23 +1080,86 @@
       ],
       "power": 5,
       "toughness": 5,
+      "keywords": [
+        "annihilator"
+      ],
+      "annihilator": 2
+    },
+    {
+      "id": "t_conscription",
+      "name": "Test Conscription",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)",
+      "mana_cost": "{8}",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
       "abilities": [
         {
-          "kind": "triggered",
-          "text": "Annihilator 2",
-          "trigger": {
-            "event": "attacks",
-            "source": "self"
+          "kind": "static",
+          "text": "Enchanted creature gets +10/+10 and has trample and annihilator 2.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
           },
-          "effects": [
-            {
-              "op": "sacrifice",
-              "objects": {
-                "controller": "opponent",
-                "count": 2,
-                "chooser": "owner"
-              }
-            }
+          "power": {
+            "const": 10
+          },
+          "toughness": {
+            "const": 10
+          }
+        },
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +10/+10 and has trample and annihilator 2.",
+          "effect": "grant_keyword",
+          "affects": {
+            "attached": true
+          },
+          "keywords": [
+            "trample",
+            "annihilator"
+          ],
+          "annihilator": 2
+        }
+      ]
+    },
+    {
+      "id": "t_annihilator_suppressor",
+      "name": "Test Annihilator Suppressor",
+      "oracle_text": "Creatures lose annihilator.",
+      "mana_cost": "{1}{U}",
+      "types": [
+        "Enchantment"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures lose annihilator.",
+          "effect": "lose_keyword",
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          },
+          "keywords": [
+            "annihilator"
           ]
         }
       ]
@@ -12299,6 +12362,42 @@
           "counter": "+1/+1",
           "amount": {
             "x": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_counter_toll",
+      "name": "Test Counter Toll",
+      "oracle_text": "Each creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.",
+      "mana_cost": "{2}{W}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Each creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.",
+          "effect": "attack_tax",
+          "cost": {
+            "mana": "{X}"
+          },
+          "x_per_attacker": {
+            "counters": "any"
+          },
+          "or_planeswalkers": true,
+          "affects": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "has_counters": true
           }
         }
       ]

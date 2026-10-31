@@ -1,0 +1,271 @@
+{
+  "_comment": "Test-only cards for tests/unit/modes/test_modal_none_or_exactly.py -- \"you may choose two\": a triggered ability that takes no modes or exactly two, each mode owning a player target, chosen as it goes on the stack (603.3c). Shaped on Shadrix Silverquill. The split twin has two opponent-only modes, so with one opponent those two cannot be taken together.",
+  "cards": [
+    {
+      "id": "t_silverquill",
+      "name": "Test Silverquill",
+      "oracle_text": "Flying\nAt the beginning of combat on your turn, you may choose two. Each mode must target a different player.\n• Target player creates a 2/1 white and black Inkling creature token with flying.\n• Target player draws a card and loses 1 life.\n• Target player puts a +1/+1 counter on each creature they control.",
+      "mana_cost": "{2}{W}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, you may choose two. Each mode must target a different player. • Target player creates a 2/1 white and black Inkling creature token with flying. • Target player draws a card and loses 1 life. • Target player puts a +1/+1 counter on each creature they control.",
+          "trigger": {
+            "event": "begin_combat",
+            "controller": "you"
+          },
+          "targets": [
+            {
+              "id": "maker",
+              "kind": "player",
+              "count": 1,
+              "mode": 0,
+              "selector": {
+                "controller": "any"
+              }
+            },
+            {
+              "id": "drawer",
+              "kind": "player",
+              "count": 1,
+              "mode": 1,
+              "selector": {
+                "controller": "any"
+              }
+            },
+            {
+              "id": "grower",
+              "kind": "player",
+              "count": 1,
+              "mode": 2,
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 2,
+              "optional": true,
+              "modes": [
+                {
+                  "label": "Target player creates a 2/1 white and black Inkling creature token with flying.",
+                  "effects": [
+                    {
+                      "op": "create_token",
+                      "token": "inkling_2_1_wb_flying",
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": {
+                        "target": "maker"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Target player draws a card and loses 1 life.",
+                  "effects": [
+                    {
+                      "op": "draw",
+                      "amount": {
+                        "const": 1
+                      },
+                      "player": {
+                        "target": "drawer"
+                      }
+                    },
+                    {
+                      "op": "lose_life",
+                      "amount": {
+                        "const": 1
+                      },
+                      "player": {
+                        "target": "drawer"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Target player puts a +1/+1 counter on each creature they control.",
+                  "effects": [
+                    {
+                      "op": "add_counters",
+                      "counter": "+1/+1",
+                      "amount": {
+                        "const": 1
+                      },
+                      "objects": {
+                        "zone": "battlefield",
+                        "types": [
+                          "Creature"
+                        ],
+                        "count": "all",
+                        "controller": {
+                          "target": "grower"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_silverquill_split",
+      "name": "Test Silverquill Split",
+      "oracle_text": "Flying\nAt the beginning of combat on your turn, you may choose two. Each mode must target a different player.\n• Target player creates a 2/1 white and black Inkling creature token with flying.\n• Target opponent draws a card and loses 1 life.\n• Target opponent puts a +1/+1 counter on each creature they control.",
+      "mana_cost": "{2}{W}{B}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "W",
+        "B"
+      ],
+      "color_identity": [
+        "W",
+        "B"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, you may choose two. Each mode must target a different player. • Target player creates a 2/1 white and black Inkling creature token with flying. • Target opponent draws a card and loses 1 life. • Target opponent puts a +1/+1 counter on each creature they control.",
+          "trigger": {
+            "event": "begin_combat",
+            "controller": "you"
+          },
+          "targets": [
+            {
+              "id": "maker",
+              "kind": "player",
+              "count": 1,
+              "mode": 0,
+              "selector": {
+                "controller": "any"
+              }
+            },
+            {
+              "id": "drawer",
+              "kind": "player",
+              "count": 1,
+              "mode": 1,
+              "selector": {
+                "controller": "opponent"
+              }
+            },
+            {
+              "id": "grower",
+              "kind": "player",
+              "count": 1,
+              "mode": 2,
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 2,
+              "optional": true,
+              "modes": [
+                {
+                  "label": "Target player creates a 2/1 white and black Inkling creature token with flying.",
+                  "effects": [
+                    {
+                      "op": "create_token",
+                      "token": "inkling_2_1_wb_flying",
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": {
+                        "target": "maker"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Target opponent draws a card and loses 1 life.",
+                  "effects": [
+                    {
+                      "op": "draw",
+                      "amount": {
+                        "const": 1
+                      },
+                      "player": {
+                        "target": "drawer"
+                      }
+                    },
+                    {
+                      "op": "lose_life",
+                      "amount": {
+                        "const": 1
+                      },
+                      "player": {
+                        "target": "drawer"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "Target opponent puts a +1/+1 counter on each creature they control.",
+                  "effects": [
+                    {
+                      "op": "add_counters",
+                      "counter": "+1/+1",
+                      "amount": {
+                        "const": 1
+                      },
+                      "objects": {
+                        "zone": "battlefield",
+                        "types": [
+                          "Creature"
+                        ],
+                        "count": "all",
+                        "controller": {
+                          "target": "grower"
+                        }
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

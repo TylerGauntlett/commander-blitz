@@ -1308,6 +1308,126 @@ trigger filter (the printed face, as `colors` is), and the cost-reduction count
 (derived on the battlefield). It is the reading protection's `from_colorless`
 already makes of a source.
 
+### "Enchanted creatures" — `enchanted_by`
+
+```jsonc
+// Winds of Rath: "Destroy all creatures that aren't enchanted."
+{ "op": "destroy", "no_regeneration": true,
+  "objects": { "zone": "battlefield", "types": ["Creature"], "enchanted_by": false, "count": "all" } }
+// Eriette of the Charmed Apple: "Each creature that's enchanted by an Aura you control can't attack you…"
+{ "kind": "static", "effect": "cant_attack_you",
+  "affects": { "controller": "any", "types": ["Creature"], "enchanted_by": { "controller": "you" } } }
+```
+
+Whether one or more Auras are attached to the permanent (303.4): `true` is
+enchanted by anybody's Aura, `false` by none at all, and
+`{"controller": "you" | "opponent" | "any"}` asks for an Aura whose controller
+stands that way to the player the filter is read for — the ability's controller,
+the static's, or the player paying a reduced cost. The creature's own controller
+is a separate clause: a static filter still defaults `controller: "you"`, so
+Eriette writes `"any"` to reach the opponents' creatures carrying her Auras. An
+Aura is told by its printed face or by bestow (702.103b); a Curse enchants a
+player and no permanent.
+
+One word in every filter language — the selector, static and counting filters,
+the trigger filter and the cost-reduction count — answered by one function,
+`characteristics.enchanted_by`, from the host's end of `attached_to`. Every half
+of the answer is a pipeline input, so a static may read it (ADR 0001). The
+loader refuses a word (`"you"` would read as "anybody's Aura"), an empty filter
+and any key on the Auras but `controller`.
+
+On a trigger watching a permanent leave the battlefield (`dies`,
+`creature_dies`, `leaves_battlefield`, `sacrificed`) the key looks back in time
+(603.10a): `zones._detach_all` unattaches every Aura before the event goes out,
+so the filter is answered from the Auras the permanent wore as it left, which
+the event carries as `had_auras` — see `auras_had` below.
+
+"Whenever one or more creatures that are enchanted by an Aura you control
+attack" (Killian, Decisive Mentor) is `you_attack` with `controller: "any"` and
+the question asked of the declaration, checked as it triggers only:
+
+```jsonc
+"trigger": { "event": "you_attack", "controller": "any", "recheck": false,
+             "condition": { "exists": { "binding": "attackers",
+                                        "enchanted_by": { "controller": "you" } } } }
+```
+
+| Near miss | Why not |
+|---|---|
+| `modified` | also counts counters and Equipment, and only Auras you control |
+| `attached` | names the one permanent the ability's own source is attached to |
+| `attached_to_host` | names the *other* attachments sharing the source's host, not a host |
+
+### "For each Aura that was attached to it" — `auras_had`
+
+```jsonc
+// Hateful Eidolon: "Whenever an enchanted creature dies, draw a card for each
+// Aura you controlled that was attached to it."
+{ "kind": "triggered",
+  "trigger": { "event": "creature_dies", "controller": "any", "filter": { "enchanted_by": true } },
+  "effects": [ { "op": "draw", "amount": { "auras_had": { "controller": "you" } } } ] }
+```
+
+A value, on a trigger about a permanent that has just left the battlefield: how
+many Auras were attached to it as it left (603.10a). `true` counts every one,
+anybody's; `{"controller": "you" | "opponent" | "any"}` counts those whose
+controller, as each was controlled as it left, stands that way to the
+ability's controller — the `enchanted_by` spelling, and the same snapshot an
+`enchanted_by` trigger filter reads on a departure.
+
+`zones.move_object` writes the snapshot as `had_auras` on the `dies`,
+`leaves_battlefield` and `sacrificed` events, one seat per Aura, before
+`_detach_all`, and an Aura is told as `enchanted_by` tells it (printed, or
+bestowed). The engine moves a simultaneous event's permanents one at a time, so
+an Aura that left in the same event as its host, a "destroy all nonland
+permanents" reaching it first, is recovered from `GameState.leaving_auras`
+for the rest of that event. A trigger that never fired binds nothing and reads
+0. The loader refuses `false`, a word, an empty filter and any key on the Auras
+but `controller`.
+
+| Near miss | Why not |
+|---|---|
+| `{"count": {"subtypes": ["Aura"], "attached_to": …}}` | reads the board at resolution, when the Auras are graveyard cards |
+| `attached` | names the one permanent the ability's own source was attached to |
+| `counters_had` | the counters it died with, not its attachments |
+
+### "Attached to a creature" — `attached_to`
+
+```jsonc
+// Sage's Reverie: "…draw a card for each Aura you control that's attached to a creature."
+{ "op": "draw", "amount": { "count": {
+    "subtypes": ["Aura"], "controller": "you", "attached_to": { "types": ["Creature"] } } } }
+// Kor Spiritdancer: "This creature gets +2/+2 for each Aura attached to it."
+{ "kind": "static", "effect": "buff", "affects": { "self_only": true },
+  "power": { "times": [ { "const": 2 },
+    { "count": { "subtypes": ["Aura"], "attached_to": { "self_only": true } } } ] }, … }
+```
+
+`enchanted_by` from the other end: an attachment — an Aura, an Equipment, a
+Fortification, whatever the outer filter names — matched by a filter on the
+permanent it is attached to. The value is a non-empty filter in the language it
+sits in, so `self_only` there is the ability's own source ("attached to it").
+Neither end has a controller by default: a static filter's `controller: "you"`
+is switched off for the attachment, as `attached_to_host` switches it off,
+because Kor Spiritdancer counts the opponent's Pacifism on it too; "Auras you
+control" writes `controller: "you"`. An Aura on a player is attached to no
+permanent and matches no host filter, and a bestowed creature is an Aura while
+attached (702.103b) in the static filter's printed face as everywhere else.
+
+Read by `selectors.matches` and `characteristics._matches_wherever`, so it
+works in a selector, a static's `affects` and its counting filters. The loader
+refuses an empty or non-filter value, a host `zone` off the battlefield, a host
+filter nested inside the host filter, `attached` beside it (which names one
+host already), the pool-shaping keys (`target`, `binding`, `count`, …) inside
+it, and the key in a trigger filter and a cost reduction, whose matchers do not
+read it.
+
+| Near miss | Why not |
+|---|---|
+| `attached` | names the one permanent the ability's own source is attached to |
+| `attached_to_host` | the attachments sharing the source's host; a host has none |
+| `subtypes: ["Aura"]` alone | counts an Aura on a land, an artifact or a player too |
+
 ### "Two cards that share a color" — `two_share_a_color`
 
 ```jsonc
@@ -1393,6 +1513,7 @@ Anywhere a number is expected -- the leaf list is
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
+{ "modified_creatures_died_this_turn": "you" }  // …of them, the ones modified (700.9) as they died
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
 { "permanents_entered_this_turn":               // WHICH permanents entered; see below
@@ -1414,6 +1535,7 @@ Anywhere a number is expected -- the leaf list is
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
+{ "auras_had": { "controller": "you" } }        // …and the Auras you controlled on it
 { "most_sharing_a_name": { "objects": { … } } } // Endless Atlas; the biggest same-name group
 { "distinct": { "of": "basic_land_type",        // domain; "power" is coven
                 "objects": { "controller": "you", "types": ["Land"] } } }
@@ -1506,6 +1628,29 @@ because Propaganda's sentence names only the player and attacking a
 planeswalker is not attacking its controller (506.2). Priced, withheld and
 labelled on the walker's ADD_ATTACKER exactly as on the player's. Refused on any
 static but `attack_tax`.
+
+**A price read off each attacker.** Nils, Discipline Enforcer's "each creature
+with one or more counters on it can't attack you ... unless its controller pays
+{X}, where X is the number of counters on that creature" is a `cost` of
+`{"mana": "{X}"}` with `x_per_attacker` saying what X is:
+
+```jsonc
+{ "effect": "attack_tax",
+  "cost": { "mana": "{X}" },
+  "x_per_attacker": { "counters": "any" },
+  "or_planeswalkers": true,
+  "affects": { "controller": "any", "types": ["Creature"], "has_counters": true } }
+```
+
+X is evaluated against the creature being declared (508.1g-h), live, by
+`player_statics.attacker_x`, so the label, the payability check and the charge
+all read the same per-creature number, and it sums with any fixed tax beside it.
+One leaf, `counters`: a counter kind, or `"any"` for every kind summed (the
+spelling `counters_had` uses). An X of 0 charges nothing. The loader refuses an
+`{X}` price without `x_per_attacker`, `x_per_attacker` beside any price other
+than `{X}` alone, and the key on any static but `attack_tax`. A source-side X
+(Sphere of Safety's "the number of enchantments you control") is not this key:
+it reads the taxing permanent's board, not the attacker.
 
 ### Pricing a block rather than forbidding it
 
@@ -3085,9 +3230,8 @@ refuses.
 (`CARD_TYPE_CHOICES`): the six permanent types plus Instant, Kindred and
 Sorcery — "as this enters, choose a card type" (Serra's Emissary), where an
 instant is a legal and common answer. A permanent type is a card type, so both
-axes share the slot and every reader of it reads either answer. Kindred is
-offered although no card in the engine carries it; naming it matches nothing,
-which is what it would match here.
+axes share the slot and every reader of it reads either answer. Naming Kindred
+matches the [Kindred](card-dsl-cookbook.md#kindred) cards.
 
 A source that has chosen nothing yet matches **nothing** — "all cards of the
 chosen type" before a type is chosen returns nothing, not the whole graveyard.
@@ -3346,6 +3490,16 @@ Two things about that ledger are load-bearing:
   with mayhem, or replaced into exile by madness or Rest in Peace still counts.
   Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
   and forgets it at its next zone change (400.7).
+- **A death can be filtered by what the creature was as it died, and only by
+  that.** `modified_creatures_died_this_turn` ("if a modified creature died
+  under your control this turn", Intermediate Chirography) counts the deaths
+  that were modified (700.9): a counter of any kind, any player's Equipment
+  attached, or an Aura the creature's own controller controlled. Every limb is
+  gone before DIES goes out, so `zones.move_object` answers it from the
+  departure's snapshots and the event carries it as `was_modified`; the
+  `modified` selector key is the near miss and reads only the board, where a
+  dead creature is modified by nothing. Takes a player spec, keyed by the
+  controller the creature died under.
 
 It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn`
 — nothing it counts can happen before turn 1, so it has no opening hand to
@@ -4270,7 +4424,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast`, a `you_gain_life`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life`, a `life_lost`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -4325,6 +4479,22 @@ is four gains of 1 to it.
 ```jsonc
 // Vanguard Seraph
 { "event": "you_gain_life", "nth": 1 }
+```
+
+On `life_lost` it is "whenever you lose life **for the first time** each turn"
+(Intermediate Chirography, Vengeful Warchief): the same fold counts each
+player's loss events in `TurnLedger.life_losses` and writes the count onto
+LIFE_LOST. Every loss is one of those events — a drain, life paid as a cost
+(119.4) and damage to a player (119.3) — and a loss of 0, a locked life total or
+infect damage fires none, so it spends no ordinal. The count is per losing
+player, so with `controller: "opponent"` every opponent has a first loss of
+their own. `max_per_turn: 1` is the near miss: it counts from when the ability
+appeared, so a Class reaching level 2 after its controller had already lost
+life would fire on the second loss.
+
+```jsonc
+// Intermediate Chirography, level 2
+{ "event": "life_lost", "controller": "you", "nth": 1 }
 ```
 
 On `attacks` it is "whenever this creature attacks **for the first time each
@@ -5151,6 +5321,7 @@ Effects: `buff` · `grant_keyword` · `set_pt` ·
 [`replace_draw`](card-dsl-cookbook.md#if-you-would-draw-a-card-draw-two-cards-instead) ·
 [`cant_attack_alone` / `cant_block_alone`](card-dsl-cookbook.md#cant-attack-or-block-alone) ·
 [`cant_attack_you`](#forbidding-an-attack-on-you-rather-than-pricing-it) ·
+[`goaded`](card-dsl-cookbook.md#goaded-for-as-long-as-a-static-applies) ·
 [`attack_tax`](#pricing-an-attack-rather-than-forbidding-it) ·
 [`block_tax`](#pricing-a-block-rather-than-forbidding-it) ·
 `extra_land_drops`, plus the player-wide ones in
