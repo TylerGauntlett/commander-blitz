@@ -1265,6 +1265,54 @@ token**", Gift of Immortality's "…attached to that creature" — and a followi
 `attach` says which. No 303.4f question is asked. The loader refuses the key on
 any other op or destination, and anything but a boolean.
 
+### An Aura that enchants a card in a graveyard — Animate Dead
+
+    Enchant creature card in a graveyard
+    When this Aura enters, if it's on the battlefield, it loses "enchant
+    creature card in a graveyard" and gains "enchant creature put onto the
+    battlefield with this Aura." Return enchanted creature card to the
+    battlefield under your control and attach this Aura to it. When this Aura
+    leaves the battlefield, that creature's controller sacrifices it.
+
+```jsonc
+"targets": [{ "id": "enchanted", "kind": "card_in_graveyard",
+              "selector": { "controller": "any", "types": ["Creature"], "zone": "graveyard" } }],
+"abilities": [
+  { "kind": "triggered",
+    "trigger": { "event": "self_enters", "source": "self", "condition": { "zone_is": "battlefield" } },
+    "effects": [
+      { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+        "host_named": true, "link": true,
+        "objects": { "attached": true, "controller": "any", "types": ["Creature"], "zone": "graveyard" } },
+      { "op": "attach", "objects": { "returned_with": "self" } } ] },
+  { "kind": "triggered", "trigger": { "event": "leaves_battlefield", "source": "self" },
+    "effects": [{ "op": "sacrifice",
+                  "objects": { "returned_with": "self", "controller": "any", "count": "all" } }] }
+]
+```
+
+An Aura whose enchant clause — its first target — is `card_in_graveyard` is
+cast targeting the card and resolves attached to it in the graveyard (303.4a,
+608.3b). There it is a legal Aura, so the state-based action leaves it alone
+while its enters trigger waits (704.5m); `zones.graveyard_hosts` is the
+clause, read by `primitives.attach`, `sba` and, for an Aura put onto the
+battlefield uncast, `zones.offer_aura_host` (303.4f). A card that leaves the
+graveyard is a new object wherever it lands (400.7), so the Aura falls off it.
+Protection is not asked of a card in a graveyard; it is asked of the returned
+creature, and a creature the Aura can't enchant comes back, the Aura goes to
+the graveyard, and the leaves trigger sacrifices it.
+
+"Gains 'enchant creature put onto the battlefield with this Aura'" needs no key:
+the returned creature is on the battlefield, where nothing re-tests an Aura's
+clause. `attached: true` on the return is "enchanted creature card".
+
+`link: true` on `return_from_graveyard` (destination `battlefield` only, a
+boolean) records each returned card as put onto the battlefield with this
+source, and `{"returned_with": "self"}` reads it back — "that creature", even
+once the Aura has left. A creature that left the battlefield and came back is
+not it. `attached: true` is the near miss for the sacrifice: once the Aura has
+left it is attached to nothing.
+
 ## Player-wide statics
 
 Some static effects describe the *player* rather than a characteristic, so

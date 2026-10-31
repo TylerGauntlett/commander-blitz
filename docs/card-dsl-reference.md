@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 157 |
-| [Selectors](#selectors) | 71 |
+| [Selectors](#selectors) | 72 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 65 |
 | [Conditions](#conditions) | 33 |
@@ -63,7 +63,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `mill` | Cards | yes | Put the top N cards of a library into its graveyard. | [Effect ops](card-dsl.md#effect-ops) |
 | `play_exiled` | Cards | yes | Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast. | ["You may play the exiled card this turn" — impulse draw](card-dsl-cookbook.md#you-may-play-the-exiled-card-this-turn--impulse-draw) |
 | `put_on_top` | Cards | yes | Put objects on top (or bottom) of their owners' libraries; `from_top` is the depth. | [Effect ops](card-dsl.md#effect-ops) |
-| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters unless `host_named`. | [Effect ops](card-dsl.md#effect-ops) |
+| `return_from_graveyard` | Cards |  | Return cards from a graveyard to hand or the battlefield; an Aura chooses its host as it enters unless `host_named`; `link` records the card as returned with this source. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_command_zone` | Cards |  | Return a commander from wherever it is to the command zone. | ["Return it to the command zone" — return_to_command_zone](card-dsl-cookbook.md#return-it-to-the-command-zone--return_to_command_zone) |
 | `return_to_hand` | Cards | yes | Return objects to their owners' hands. | [Effect ops](card-dsl.md#effect-ops) |
 | `return_to_origin` | Cards |  | Return an exiled card to the zone it came from. | ["…until this permanent leaves the battlefield" — giving it back](card-dsl-cookbook.md#until-this-permanent-leaves-the-battlefield--giving-it-back) |
@@ -263,6 +263,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `player` | Whose zone to walk (for hand, library, graveyard, exile). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `power` | A comparison on live power. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `random` | Pick at random rather than by choice; on a triggered ability's one target spec, the target is drawn at random. | ["Target … chosen at random"](card-dsl.md#target--chosen-at-random) |
+| `returned_with` | Put onto the battlefield by the named source's linked return. | [An Aura that enchants a card in a graveyard — Animate Dead](card-dsl-cookbook.md#an-aura-that-enchants-a-card-in-a-graveyard--animate-dead) |
 | `self_only` | This permanent only. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `shares_a_color_with` | Shares a color with the named object. | [Describing objects relative to another object](card-dsl.md#describing-objects-relative-to-another-object) |
 | `shares_a_creature_type_with` | Shares a creature type with the named object. | ["…that shares a creature type with this creature"](card-dsl-cookbook.md#that-shares-a-creature-type-with-this-creature) |

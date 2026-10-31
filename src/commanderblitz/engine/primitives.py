@@ -52,7 +52,7 @@ from .temp_effects import (
     preventing_shield,
 )
 from .triggers import fire
-from .zones import move_object
+from .zones import graveyard_hosts, move_object
 
 if TYPE_CHECKING:  # pragma: no cover
     from .state import GameState
@@ -1580,9 +1580,18 @@ def create_token(
 def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     aura = state.objects.get(aura_oid)
     target = state.objects.get(target_oid)
-    if aura is None or target is None or not target.on_battlefield:
+    if aura is None or target is None:
         return False
-    if aura_oid == target_oid:
+    if target.zone is Zone.GRAVEYARD:
+        # "Enchant creature card in a graveyard" (Animate Dead): the one host
+        # off the battlefield, and only for an Aura whose clause names it.
+        # Protection is not asked below -- it is an ability of a permanent
+        # (113.6) -- and the clause never offers the Aura itself.
+        if target_oid not in graveyard_hosts(state, aura_oid, aura.controller):
+            return False
+    elif not target.on_battlefield:
+        return False
+    elif aura_oid == target_oid:
         # Rule 301.5c -- an Equipment can't equip itself. Unreachable until
         # reconfigure, which prints the first Equipment that is also a creature
         # and so the first one its own "target creature you control" can find.
@@ -1593,7 +1602,7 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
     # is left where it is; state-based actions bin an Aura attached to nothing.
     # Asked as an attachment, so "this effect doesn't remove this Aura" spares
     # the one Aura whose own static it is.
-    if protected_from(state, target_oid, aura_oid, attaching=True):
+    elif protected_from(state, target_oid, aura_oid, attaching=True):
         return False
     aura.attached_to = target_oid
     aura.attached_timestamp = state.alloc_timestamp()

@@ -23,7 +23,7 @@ from .temp_effects import (
     clear_permanent_shields,
     drop_attack_requirements,
 )
-from .zones import destroy, move_object, sacrifice
+from .zones import destroy, graveyard_hosts, move_object, sacrifice
 
 if TYPE_CHECKING:  # pragma: no cover
     from collections.abc import Iterable
@@ -482,6 +482,16 @@ def _tokens_and_attachments(state: GameState) -> bool:
             obj.attached_to_player = None
             changed = True
         target = state.objects.get(obj.attached_to) if obj.attached_to else None
+        # "Enchant creature card in a graveyard" (Animate Dead): a card in a
+        # graveyard is a legal host for the Aura whose clause names it, which is
+        # what keeps it on the battlefield while its enters trigger waits on
+        # the stack (303.4a, 608.3b).
+        if (
+            target is not None
+            and target.zone is Zone.GRAVEYARD
+            and target.oid in graveyard_hosts(state, oid, obj.controller)
+        ):
+            continue
         if target is None or not target.on_battlefield:
             if obj.attached_to is not None:
                 obj.attached_to = None

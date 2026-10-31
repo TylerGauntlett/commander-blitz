@@ -1100,6 +1100,19 @@ class GameObject:
     #: `reset_permanent_state` on the way, which clears this for the reason it
     #: clears `exiled_by` -- a card that has since left exile came from nowhere.
     exiled_from: str | None = None
+    #: "…enchant creature **put onto the battlefield with this Aura**" --
+    #: Animate Dead. The Aura whose effect returned this creature, written by
+    #: `return_from_graveyard`'s ``link`` after the move and read back by a
+    #: ``{"returned_with": "self"}`` selector: the attach that follows the
+    #: return, and the Aura's own "when this Aura leaves the battlefield, that
+    #: creature's controller sacrifices it" (607.2a's linked pair).
+    #:
+    #: On the creature rather than on the Aura, because the second reader runs
+    #: after the Aura has left and `reset_permanent_state` has emptied it.
+    #: Cleared by this object's own reset: a creature that left and came back is
+    #: a new object (400.7) and no longer the one put onto the battlefield with
+    #: anything.
+    returned_by: int | None = None
     #: **Prepared** (Emeritus of Woe // Demonic Tutor). "This creature enters
     #: prepared. (While it's prepared, you may cast a copy of its spell. Doing
     #: so unprepares it.)"
@@ -1209,6 +1222,7 @@ class GameObject:
         self.frozen_by = None
         self.skip_next_untap = False
         self.exiled_by = None
+        self.returned_by = None
         # A phased-out permanent that changes zones anyway (a player leaving the
         # game takes it along) is a new object, and must not arrive on its next
         # battlefield still flagged -- the untap walk would "phase in" a recast

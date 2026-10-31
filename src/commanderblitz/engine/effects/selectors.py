@@ -409,6 +409,11 @@ SELECTOR_KEYS = frozenset(
         # *this* source put there, read back by its own leaves-trigger.
         "exiled_with",
         "phased_out_with",
+        #: "…enchant creature **put onto the battlefield with this Aura**" --
+        #: Animate Dead. The permanent whose `returned_by` names the source,
+        #: written by `return_from_graveyard`'s ``link``; `"self"` is the only
+        #: spelling. The return's twin of `exiled_with`.
+        "returned_with",
         #: "…exile all other tokens **created with this creature**" -- Faerie
         #: Artisans. The tokens this object's own effects created, read off the
         #: source's `created_tokens`; `"self"` is the only spelling. Scoped to
@@ -1078,6 +1083,16 @@ def matches(
         who = selector["exiled_with"]
         want = ctx.source_oid if who == "self" else who
         if obj.exiled_by is None or obj.exiled_by != want:
+            return False
+    if "returned_with" in selector:
+        # "…that creature's controller sacrifices it" -- the creature this
+        # Aura put onto the battlefield, and no other. `attached` is the near
+        # miss: it names what the Aura is attached to *now*, which is nothing
+        # once the Aura has left and nothing either when protection refused
+        # the attach that followed the return.
+        who = selector["returned_with"]
+        want = ctx.source_oid if who == "self" else who
+        if obj.returned_by is None or obj.returned_by != want:
             return False
     if "created_with" in selector:
         # "…tokens created with this creature" -- the ones this object's
@@ -1787,6 +1802,10 @@ def validate_selector(selector: Any, where: str) -> None:
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.
         raise DslError(f"{where}: created_with must be 'self', got {selector['created_with']!r}")
+    if "returned_with" in selector and selector["returned_with"] != "self":
+        # The link is written by this source's own return, so "self" is the
+        # only answer; anything else would load and match nothing.
+        raise DslError(f"{where}: returned_with must be 'self', got {selector['returned_with']!r}")
     chooser = selector.get("chooser")
     if chooser is not None and chooser not in ("controller", "owner", "none"):
         # Anything else is an ordinary player spec -- "each opponent chooses a

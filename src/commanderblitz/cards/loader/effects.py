@@ -768,6 +768,19 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"enchants nothing anywhere else"
             )
 
+    # "…put onto the battlefield with this Aura" (Animate Dead): `link` on a
+    # return is written on the creature as it arrives, so anywhere but the
+    # battlefield it would load and link nothing -- the Aura's "that creature's
+    # controller sacrifices it" then finding no creature at all.
+    if op == "return_from_graveyard" and "link" in effect and (
+        not isinstance(effect["link"], bool)
+        or (effect["link"] and effect.get("destination") != "battlefield")
+    ):
+        raise DslError(
+            f"{where}: return_from_graveyard 'link' is a boolean and needs "
+            f"destination 'battlefield'"
+        )
+
     if "target" in effect and str(effect["target"]) not in target_kinds:
         raise DslError(
             f"{where}: references target {effect['target']!r} which the card does not declare"

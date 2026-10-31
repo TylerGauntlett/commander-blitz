@@ -335,6 +335,17 @@ def move_object(
 
     _remove_from_zone(state, obj)
 
+    if from_zone is Zone.GRAVEYARD:
+        # An Aura enchanting this card in its graveyard (Animate Dead, 303.4a)
+        # is attached to nothing once the card leaves: what arrives anywhere
+        # else is a new object (400.7) under the same oid, and a link left in
+        # place would have the Aura enchanting a creature someone else
+        # reanimated. `sba` puts the Aura into its owner's graveyard (704.5m).
+        for other_id in state.battlefield:
+            other = state.objects.get(other_id)
+            if other is not None and other.attached_to == oid:
+                other.attached_to = None
+
     if was_on_battlefield:
         _detach_all(state, oid)
         # Every subscription but the ones waiting for this very departure; those
@@ -1043,6 +1054,38 @@ def offer_read_ahead(state: GameState, oid: int, controller: int):
     obj.read_ahead_chapter = chosen[0] + 1 if chosen else 1
 
 
+def graveyard_hosts(state: GameState, aura_oid: int, controller: int) -> list[int]:
+    """The cards in graveyards an Aura's enchant clause allows it to enchant.
+
+    "Enchant creature card in a graveyard" (Animate Dead, 303.4a): an Aura
+    whose first target spec is ``card_in_graveyard`` enchants a *card*, and
+    resolves attached to it in the graveyard (608.3b). Empty for every other
+    Aura, which is what keeps `primitives.attach` and `sba` refusing a
+    graveyard host to them. The clause is read for ``controller``, the Aura's
+    controller, as `offer_aura_host` reads a battlefield clause.
+
+    The other half of Animate Dead's enchant ability -- "enchant creature put
+    onto the battlefield with this Aura", gained as its enters trigger
+    resolves -- needs nothing here: that host is on the battlefield, where
+    nothing re-tests an Aura's enchant clause (`docs/rules-coverage.md`).
+    """
+    aura = state.objects.get(aura_oid)
+    if aura is None:
+        return []
+    card = state.card_of(aura)
+    if not card.is_aura or not card.targets or card.targets[0].kind != "card_in_graveyard":
+        return []
+    spec = card.targets[0]
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=aura_oid, source_name=card.name
+    )
+    return [
+        host
+        for host in resolve_pool(ctx, {**dict(spec.selector), "zone": "graveyard"})
+        if host != aura_oid
+    ]
+
+
 def offer_aura_host(state: GameState, oid: int, controller: int):
     """303.4f: an Aura put onto the battlefield without being cast **chooses
     what it will enchant as it enters**. Returns whether it may enter at all.
@@ -1107,12 +1150,18 @@ def offer_aura_host(state: GameState, oid: int, controller: int):
             return False
         obj.enters_attached_to_player = chosen
         return True
-    selector = {**dict(spec.selector), "zone": "battlefield"}
-    pool = [
-        host
-        for host in resolve_pool(ctx, selector)
-        if host != oid and not protected_from(state, host, oid, attaching=True)
-    ]
+    if spec.kind == "card_in_graveyard":
+        # "Enchant creature card in a graveyard" (Animate Dead): the host is a
+        # card, so protection -- an ability that functions on the battlefield
+        # (113.6) -- does not narrow it.
+        pool = graveyard_hosts(state, oid, controller)
+    else:
+        selector = {**dict(spec.selector), "zone": "battlefield"}
+        pool = [
+            host
+            for host in resolve_pool(ctx, selector)
+            if host != oid and not protected_from(state, host, oid, attaching=True)
+        ]
     if not pool:
         return False
     chosen = yield from ask_objects(ctx, f"What will {card.name} enchant?", pool, 1, 1, controller)

@@ -1244,6 +1244,16 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
         # observable only by another trigger ordered between the two.
         for kind, amount in (spec.get("counters") or {}).items():
             add_counters(ctx.state, oid, str(kind), int(amount), source=ctx.source_oid)
+        # "Return enchanted creature card to the battlefield … and attach this
+        # Aura to it. When this Aura leaves the battlefield, that creature's
+        # controller sacrifices it" -- Animate Dead. ``link`` records the
+        # creature as put onto the battlefield with this source, read back by
+        # `{"returned_with": "self"}`. After the move, for `exiled_by`'s
+        # reason: `reset_permanent_state` runs during it. Only on a card that
+        # arrived: one a replacement sent elsewhere was not put onto the
+        # battlefield with anything.
+        if spec.get("link") and obj.zone is Zone.BATTLEFIELD and ctx.source_oid is not None:
+            obj.returned_by = ctx.source_oid
 
 
 @register("reveal")
