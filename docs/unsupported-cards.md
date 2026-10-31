@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**121 cards** blocked by **110** capabilities.
+**120 cards** blocked by **109** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [annihilator](#annihilator) | 1 | 1597 | keyword |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attack-tax-per-attacker-value](#attack-tax-per-attacker-value) | 1 | 3987 | static_effect |
-| [auras-attached-last-known](#auras-attached-last-known) | 1 | 4856 | value |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -562,20 +561,6 @@ Blocks **1** card.
 
 - **Nils, Discipline Enforcer** (rank 3987) — `nils_discipline_enforcer`
   - Each creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.
-
-</details>
-
-## auras-attached-last-known
-
-Blocks **1** card.
-
-- **(value)** Last-known information of what was attached to a creature as it died: a `creature_dies` trigger filter meaning "the dying creature had one or more Auras attached" (any controller), and a value counting the Auras attached to the dying creature at the moment it left, narrowed by the Auras' controller (here: you), for use as a `draw` amount
-  <br>Why the existing vocabulary won't do: The trigger filter `attached` matches only the dying creature the ability's SOURCE was attached to (via `last_attached_to`), not any creature with Auras on it; `zones.move_object` detaches everything before DIES fires, and triggers.py notes a dying creature does not know what was attached to it. Values have `counters_had`, `power_had` and `toughness_had` but nothing like an `attachments_had`, and `count` over the battlefield reads after the Auras are already in the graveyard
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hateful Eidolon** (rank 4856) — `hateful_eidolon`
-  - Whenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.
 
 </details>
 

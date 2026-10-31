@@ -123352,12 +123352,12 @@
     },
     "Hateful Eidolon": {
       "edhrec_rank": 4856,
-      "gate": "template",
+      "gate": null,
       "name": "Hateful Eidolon",
-      "reason": "no template for: Whenever an enchanted creature dies, draw a card for each Aura you controlled that was att",
+      "reason": "",
       "scryfall_id": "ff028d0b-066a-4769-89bc-f267d15eb707",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hatred": {

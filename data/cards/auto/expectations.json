@@ -6164,6 +6164,10 @@
     },
     "zone": "graveyard"
   },
+  "hateful_eidolon": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hatut_zeraze_strike_force": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,

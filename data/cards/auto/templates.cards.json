@@ -69641,6 +69641,54 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "auras_had": {
+                  "controller": "you"
+                }
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "enchanted_by": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "hateful_eidolon",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{B}",
+      "name": "Hateful Eidolon",
+      "oracle_text": "Lifelink\nWhenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
