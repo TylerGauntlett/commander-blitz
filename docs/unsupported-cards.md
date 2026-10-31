@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**127 cards** blocked by **113** capabilities.
+**124 cards** blocked by **112** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
-| [enchanted-by](#enchanted-by) | 3 | 1622 | selector |
 | [attached-to-filter](#attached-to-filter) | 2 | 1812 | selector |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -205,8 +204,8 @@ Blocks **8** cards.
 
 - **(static_effect)** a `prevent_damage` static (prevent_all, combat_only, affects self_only) that also filters the damage's SOURCE, and a source filter meaning 'a creature blocking this permanent' (blocking the source of the static specifically, not any blocking creature)
   <br>Why the existing vocabulary won't do: `prevent_damage` with `combat_only` + `prevent_all` + `affects: {self_only: true}` prevents ALL combat damage to the creature, which is strictly better than printed (it would also stop damage from creatures it is blocking, if it blocks). `damage_source` exists but the loader refuses it on anything but `replace_damage`, and the static filter key `blocking` is a boolean ('is blocking'), not 'is blocking this creature', so even on a source filter it could not say 'blocking it'.
-- **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, plus a filter key matching an 'enchanted' creature (a creature with at least one Aura attached to it)
-  <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. No static filter key means 'has an Aura attached' -- `attached` / `attached_to_host` describe the attachment itself, not the creature it enchants.
+- **(static_effect)** a source filter on the `prevent_damage` static (prevent_all + combat_only + affects self_only) restricting the shield to damage dealt by sources matching a filter, e.g. a dealer filter of {"enchanted_by": true} (a creature with at least one Aura attached to it)
+  <br>Why the existing vocabulary won't do: The `prevent_damage` static's `combat_only` + `prevent_all` read only the recipient (`affects`), never the dealer, so it would prevent combat damage from every creature. `damage_source` filters the dealer but is honoured only by `replace_damage` (a multiplier), not by prevention. The `enchanted_by` filter key says 'enchanted creatures'; nothing lets the prevention shield read it of the dealer.
 - **(static_effect)** a dealer filter (`damage_source`) on the `prevent_damage` static, so that `{"effect": "prevent_damage", "prevent_all": true, "combat_only": true, "damage_source": {"self_only": true}}` prevents all combat damage this creature would deal to any recipient (creatures, players and planeswalkers alike); the 'dealt to' half is already a second static with `affects: {"self_only": true}`
   <br>Why the existing vocabulary won't do: The `prevent_damage` static with `prevent_all` + `combat_only` reads only the recipient (`affects`, via `prevents_all_damage`), so it covers 'dealt to this creature' but never 'dealt by' it. `damage_source` filters the dealer but the loader accepts it only on `replace_damage`, whose `damage_multiplier` must be 2 or more and so cannot prevent. `prevent_all_but` caps by recipient too. Writing only the 'dealt to' half would leave Fog Bank dealing combat damage, a different card.
 - **(static_effect)** a damage_source (dealer) filter on the prevent_damage static, so 'prevent all combat damage that would be dealt by enchanted creature' is {effect: prevent_damage, prevent_all: true, combat_only: true, damage_source: {attached: true}} -- prevention keyed on the source rather than the recipient, applied wherever combat damage is dealt (to players and permanents alike)
@@ -261,28 +260,6 @@ Blocks **3** cards.
   - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
 - **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
   - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
-
-</details>
-
-## enchanted-by
-
-Blocks **3** cards.
-
-- **(selector)** a static affects-filter key matching a creature that has at least one Aura attached to it whose controller is the static's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on the `cant_attack_you` static so any creature, the opponents' included, enchanted by your Aura can't attack you or your planeswalkers
-  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attached` (only the one permanent the source itself is attached to, i.e. 'enchanted/equipped creature') and `attached_to_host` (other attachments sharing the source's host); neither reads the Auras attached to an arbitrary creature or their controller, so `cant_attack_you` cannot be scoped to creatures enchanted by any Aura you control from a non-Aura source
-- **(selector)** a trigger-filter key matching a creature that has at least one Aura attached to it whose controller is the trigger source's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on a batched `attacks` trigger with no controller restriction, so the ability fires once when any creatures -- an opponent's goaded creatures included -- enchanted by your Auras attack
-  <br>Why the existing vocabulary won't do: trigger_filter_keys has `attached`, which in triggers.py matches only the one object the ability source itself is attached to (Skullclamp's 'equipped creature'); nothing reads the Auras attached to an arbitrary attacker or their controller. `controller: you` on the attacks trigger would be both wrong (misses opponents' creatures carrying your Auras) and too wide (fires for your unenchanted creatures)
-- **(selector)** a selector key matching a permanent that is (or, negated, is not) enchanted -- i.e. has one or more Auras attached to it, controlled by any player -- e.g. `enchanted: false` on a destroy-all selector
-  <br>Why the existing vocabulary won't do: `attached` matches only the permanent the ability's own source is attached to; `modified` also counts counters and Equipment and only Auras you control; no selector key reads whether any Aura is attached to the object, so `destroy` with `no_regeneration` cannot spare enchanted creatures
-
-<details><summary>Cards waiting on this</summary>
-
-- **Winds of Rath** (rank 1622) — `winds_of_rath`
-  - Destroy all creatures that aren't enchanted.
-- **Eriette of the Charmed Apple** (rank 3924) — `eriette_of_the_charmed_apple`
-  - Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.
-- **Killian, Decisive Mentor** (rank 7931) — `killian_decisive_mentor`
-  - Whenever one or more creatures that are enchanted by an Aura you control attack, draw a card.
 
 </details>
 

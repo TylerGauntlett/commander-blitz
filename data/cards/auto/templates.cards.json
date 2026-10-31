@@ -48120,6 +48120,85 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "enchanted_by": {
+              "controller": "you"
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each opponent loses X life and you gain X life, where X is the number of Auras you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "eriette_of_the_charmed_apple",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Eriette of the Charmed Apple",
+      "oracle_text": "Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.\nAt the beginning of your end step, each opponent loses X life and you gain X life, where X is the number of Auras you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -85120,6 +85199,102 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever an enchantment you control enters, tap up to one target creature and goad it.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures that are enchanted by an Aura you control attack, draw a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "enchanted_by": {
+                  "controller": "you"
+                }
+              }
+            },
+            "controller": "any",
+            "event": "you_attack",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "killian_decisive_mentor",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Killian, Decisive Mentor",
+      "oracle_text": "Whenever an enchantment you control enters, tap up to one target creature and goad it. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)\nWhenever one or more creatures that are enchanted by an Aura you control attack, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -184318,6 +184493,36 @@
       "toughness": 7,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "winds_of_rath",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Winds of Rath",
+      "oracle_text": "Destroy all creatures that aren't enchanted. They can't be regenerated.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "no_regeneration": true,
+          "objects": {
+            "count": "all",
+            "enchanted_by": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

@@ -4217,6 +4217,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "eriette_of_the_charmed_apple": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "erkenbrand_lord_of_westfold": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7343,6 +7347,10 @@
     "zone": "battlefield"
   },
   "kher_keep": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "killian_decisive_mentor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -15927,6 +15935,14 @@
   "windreader_sphinx": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "winds_of_rath": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "windseeker_centaur": {
     "zone": "battlefield"

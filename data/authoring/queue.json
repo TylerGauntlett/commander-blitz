@@ -85402,12 +85402,12 @@
     },
     "Eriette of the Charmed Apple": {
       "edhrec_rank": 3924,
-      "gate": "template",
+      "gate": null,
       "name": "Eriette of the Charmed Apple",
-      "reason": "no template for: Each creature that's enchanted by an Aura you control can't attack you or planeswalkers yo",
+      "reason": "",
       "scryfall_id": "baf256c5-1b4c-4fbe-94e4-1538d2577f8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eriette's Lullaby": {
@@ -148772,12 +148772,12 @@
     },
     "Killian, Decisive Mentor": {
       "edhrec_rank": 7931,
-      "gate": "template",
+      "gate": null,
       "name": "Killian, Decisive Mentor",
-      "reason": "no template for: Whenever an enchantment you control enters, tap up to one target creature and goad it",
+      "reason": "",
       "scryfall_id": "76b6c35a-bb92-4ad3-8f85-88b9bafc6266",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Killian, Ink Duelist": {
@@ -316262,12 +316262,12 @@
     },
     "Winds of Rath": {
       "edhrec_rank": 1622,
-      "gate": "template",
+      "gate": null,
       "name": "Winds of Rath",
-      "reason": "no template for: Destroy all creatures that aren't enchanted. They can't be regenerated",
+      "reason": "",
       "scryfall_id": "8dee155b-1f06-4d74-afa8-a1244c254978",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winds of Rebuke": {

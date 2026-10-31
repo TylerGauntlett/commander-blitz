@@ -4016,6 +4016,10 @@
     "artist": "Jason A. Engle",
     "scryfall_id": "ac8bdb4c-2d68-4cb4-904f-1649427751dc"
   },
+  "eriette_of_the_charmed_apple": {
+    "artist": "Magali Villeneuve",
+    "scryfall_id": "baf256c5-1b4c-4fbe-94e4-1538d2577f8f"
+  },
   "erkenbrand_lord_of_westfold": {
     "artist": "Alexander Mokhov",
     "scryfall_id": "38f81e68-cddd-47f4-b1d1-a297c3298c25"
@@ -6992,6 +6996,10 @@
   "kher_keep": {
     "artist": "Paolo Parente",
     "scryfall_id": "15ca0b68-33a1-4d25-b622-d3f5ba05b0a5"
+  },
+  "killian_decisive_mentor": {
+    "artist": "Billy Christian",
+    "scryfall_id": "76b6c35a-bb92-4ad3-8f85-88b9bafc6266"
   },
   "killian_ink_duelist": {
     "artist": "Ryan Pancoast",
@@ -15250,6 +15258,10 @@
   "windreader_sphinx": {
     "artist": "Min Yum",
     "scryfall_id": "11fac13f-bb14-48d5-90c2-0b70b252287c"
+  },
+  "winds_of_rath": {
+    "artist": "Drew Tucker",
+    "scryfall_id": "8dee155b-1f06-4d74-afa8-a1244c254978"
   },
   "windseeker_centaur": {
     "artist": "Anson Maddocks",
