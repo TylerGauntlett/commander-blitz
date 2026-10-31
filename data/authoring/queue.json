@@ -151682,12 +151682,12 @@
     },
     "Kor Spiritdancer": {
       "edhrec_rank": 1945,
-      "gate": "template",
+      "gate": null,
       "name": "Kor Spiritdancer",
-      "reason": "no template for: This creature gets +2/+2 for each Aura attached to it",
+      "reason": "",
       "scryfall_id": "48da45bd-ed72-4239-af02-e848703a1d02",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Korlash, Heir to Blackblade": {
@@ -231092,12 +231092,12 @@
     },
     "Sage's Reverie": {
       "edhrec_rank": 1812,
-      "gate": "template",
+      "gate": null,
       "name": "Sage's Reverie",
-      "reason": "no template for: When this Aura enters, draw a card for each Aura you control that's attached to a creature",
+      "reason": "",
       "scryfall_id": "5515393a-7d4d-454f-a550-156862ab02f1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage's Row Denizen": {

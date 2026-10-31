@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**124 cards** blocked by **112** capabilities.
+**122 cards** blocked by **111** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
-| [attached-to-filter](#attached-to-filter) | 2 | 1812 | selector |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
@@ -260,25 +259,6 @@ Blocks **3** cards.
   - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
 - **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
   - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
-
-</details>
-
-## attached-to-filter
-
-Blocks **2** cards.
-
-- **(selector)** a static filter key (usable inside a static value's `count`) matching the permanents attached to the static's SOURCE itself -- obj.attached_to == source.oid, any controller -- so a creature can say "+2/+2 for each Aura attached to it" as a self_only `buff` whose power and toughness are `times [2, count {attached_to_self: true, subtypes: [Aura]}]`
-  <br>Why the existing vocabulary won't do: `attached` matches the one permanent the source is attached TO (the enchanted/equipped creature), and `attached_to_host` matches other attachments that share the source's host and requires the source itself to be attached; both read the relationship from the attachment's end. Kor Spiritdancer is the host, and no static_filter_key or selector_key matches objects attached to the source (characteristics._static_filter_matches and selectors both lack it), so Strong Back's `count {attached_to_host}` pattern cannot be reused
-- **(selector)** A filter key matching a permanent whose host (obj.attached_to) is a permanent matching a nested filter, e.g. `attached_to: {"types": ["Creature"]}` -- "an Aura you control that's attached to a creature". Needed in both the effect selector language (a `count` value for the `draw` amount) and the static filter language (a `count` static value for a `buff` whose `affects` is `{attached: true}`), any host controller, so an Aura on an opponent's creature counts and one enchanting a land, artifact or player does not
-  <br>Why the existing vocabulary won't do: `attached` names the permanent the SOURCE is attached to (the opposite direction); `attached_to_host` matches only attachments sharing the source's own host, so it misses Auras you control on other creatures; `modified` and `has_counters` test the host side. Counting plain `subtypes: [Aura], controller: you` would wrongly include Auras enchanting noncreature permanents or players
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sage's Reverie** (rank 1812) — `sage_s_reverie`
-  - When this Aura enters, draw a card for each Aura you control that's attached to a creature.
-  - Enchanted creature gets +1/+1 for each Aura you control that's attached to a creature.
-- **Kor Spiritdancer** (rank 1945) — `kor_spiritdancer`
-  - This creature gets +2/+2 for each Aura attached to it.
 
 </details>
 

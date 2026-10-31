@@ -7237,6 +7237,10 @@
     "artist": "Bastien L. Deharme",
     "scryfall_id": "a4705327-ada6-4575-82fc-351e183d060e"
   },
+  "kor_spiritdancer": {
+    "artist": "Nils Hamm",
+    "scryfall_id": "48da45bd-ed72-4239-af02-e848703a1d02"
+  },
   "korvold_fae_cursed_king": {
     "artist": "Wisnu Tan",
     "scryfall_id": "db6630f0-3626-47f9-ba02-a77f83aa5b13"
@@ -11003,6 +11007,10 @@
   "sacred_wolf": {
     "artist": "Matt Stewart",
     "scryfall_id": "ff4661dd-2075-48c3-b19b-fc7f8aaba1b8"
+  },
+  "sage_s_reverie": {
+    "artist": "Jason Rainville",
+    "scryfall_id": "5515393a-7d4d-454f-a550-156862ab02f1"
   },
   "sage_s_row_savant": {
     "artist": "Bastien L. Deharme",

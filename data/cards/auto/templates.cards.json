@@ -87940,6 +87940,105 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "attached_to": {
+                    "self_only": true
+                  },
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "text": "This creature gets +2/+2 for each Aura attached to it.",
+          "toughness": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "attached_to": {
+                    "self_only": true
+                  },
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an Aura spell, you may draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Aura"
+              ],
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kor_spiritdancer",
+      "mana_cost": "{1}{W}",
+      "name": "Kor Spiritdancer",
+      "oracle_text": "This creature gets +2/+2 for each Aura attached to it.\nWhenever you cast an Aura spell, you may draw a card.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -133798,6 +133897,104 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "attached_to": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, draw a card for each Aura you control that's attached to a creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "attached_to": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "controller": "you",
+              "subtypes": [
+                "Aura"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "Enchanted creature gets +1/+1 for each Aura you control that's attached to a creature.",
+          "toughness": {
+            "count": {
+              "attached_to": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "controller": "you",
+              "subtypes": [
+                "Aura"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sage_s_reverie",
+      "mana_cost": "{3}{W}",
+      "name": "Sage's Reverie",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, draw a card for each Aura you control that's attached to a creature.\nEnchanted creature gets +1/+1 for each Aura you control that's attached to a creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "aura_target",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
