@@ -137,6 +137,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ajani_s_chosen": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ajani_s_sunstriker": {
     "zone": "battlefield"
   },
@@ -756,6 +760,10 @@
       "1": 37
     },
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "archon_of_sun_s_grace": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "archweaver": {
@@ -5033,6 +5041,14 @@
     "zone": "battlefield"
   },
   "fortress_crab": {
+    "zone": "battlefield"
+  },
+  "forum_filibuster": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "forum_of_amity": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "foul_orchard": {

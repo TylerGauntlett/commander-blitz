@@ -1725,6 +1725,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "cat",
+              "controller": "you",
+              "op": "create_token",
+              "token": "cat_2_2_w"
+            },
+            {
+              "attachment": {
+                "binding": "subject",
+                "subtypes": [
+                  "Aura"
+                ],
+                "zone": "battlefield"
+              },
+              "objects": {
+                "binding": "cat",
+                "count": 1,
+                "optional": true,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an enchantment you control enters, create a 2/2 white Cat creature token. If that enchantment is an Aura, you may attach it to the token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ajani_s_chosen",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Ajani's Chosen",
+      "oracle_text": "Whenever an enchantment you control enters, create a 2/2 white Cat creature token. If that enchantment is an Aura, you may attach it to the token.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -7915,6 +7979,72 @@
         "Archon"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Pegasus"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Pegasus creatures you control have lifelink."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "pegasus_2_2_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Constellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "archon_of_sun_s_grace",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Archon of Sun's Grace",
+      "oracle_text": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nPegasus creatures you control have lifelink.\nConstellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Archon"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -56205,6 +56335,160 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "inkling",
+              "controller": "you",
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying"
+            },
+            {
+              "ability": "filibuster_return",
+              "op": "reflexive_trigger"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, create a 2/1 white and black Inkling creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "attachment": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "objects": {
+                "binding": "inkling",
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "id": "filibuster_return",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Aura",
+                  "Equipment"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When you do, return up to one target Aura or Equipment card from your graveyard to the battlefield attached to that token."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "forum_filibuster",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Forum Filibuster",
+      "oracle_text": "At the beginning of your upkeep, create a 2/1 white and black Inkling creature token with flying. When you do, return up to one target Aura or Equipment card from your graveyard to the battlefield attached to that token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}{B}, {T}: Surveil 1"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "forum_of_amity",
+      "mana_cost": "",
+      "name": "Forum of Amity",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {B}.\n{2}{W}{B}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

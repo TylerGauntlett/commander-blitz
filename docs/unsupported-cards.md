@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**122 cards** blocked by **104** capabilities.
+**124 cards** blocked by **105** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,6 +25,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
+| [static-goad](#static-goad) | 2 | 2665 | static_effect |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -34,6 +35,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [annihilator](#annihilator) | 1 | 1597 | keyword |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [auras-attached-last-known](#auras-attached-last-known) | 1 | 4856 | value |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -106,7 +108,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
-| [static-goad](#static-goad) | 1 | 7990 | static_effect |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -435,6 +436,24 @@ Blocks **2** cards.
 
 </details>
 
+## static-goad
+
+Blocks **2** cards.
+
+- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
+  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter
+- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
+  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter. The +1/+1 (`buff`) and deathtouch (`grant_keyword` static) halves of the sentence are expressible; only the goad clause blocks it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ghoulish Impetus** (rank 2665) — `ghoulish_impetus`
+  - Enchanted creature gets +1/+1, has deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
+- **Coercive Impetus** (rank 7990) — `coercive_impetus`
+  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
+
+</details>
+
 ## targeted-discard
 
 Blocks **2** cards.
@@ -572,6 +591,20 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
+
+</details>
+
+## auras-attached-last-known
+
+Blocks **1** card.
+
+- **(value)** Last-known information of what was attached to a creature as it died: a `creature_dies` trigger filter meaning "the dying creature had one or more Auras attached" (any controller), and a value counting the Auras attached to the dying creature at the moment it left, narrowed by the Auras' controller (here: you), for use as a `draw` amount
+  <br>Why the existing vocabulary won't do: The trigger filter `attached` matches only the dying creature the ability's SOURCE was attached to (via `last_attached_to`), not any creature with Auras on it; `zones.move_object` detaches everything before DIES fires, and triggers.py notes a dying creature does not know what was attached to it. Values have `counters_had`, `power_had` and `toughness_had` but nothing like an `attachments_had`, and `count` over the battlefield reads after the Auras are already in the graveyard
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hateful Eidolon** (rank 4856) — `hateful_eidolon`
+  - Whenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.
 
 </details>
 
@@ -1613,20 +1646,6 @@ Blocks **1** card.
 
 - **Vanguard of the Restless** (rank 11948) — `vanguard_of_the_restless`
   - Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game.
-
-</details>
-
-## static-goad
-
-Blocks **1** card.
-
-- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter
-
-<details><summary>Cards waiting on this</summary>
-
-- **Coercive Impetus** (rank 7990) — `coercive_impetus`
-  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
 
 </details>
 

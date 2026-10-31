@@ -4742,12 +4742,12 @@
     },
     "Ajani's Chosen": {
       "edhrec_rank": 3948,
-      "gate": "template",
+      "gate": null,
       "name": "Ajani's Chosen",
-      "reason": "no template for: Whenever an enchantment you control enters, create a 2/2 white Cat creature token. If that",
+      "reason": "",
       "scryfall_id": "bc20cca0-303f-4463-85ae-26b80ff26211",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ajani's Comrade": {
@@ -12302,12 +12302,12 @@
     },
     "Archon of Sun's Grace": {
       "edhrec_rank": 1172,
-      "gate": "template",
+      "gate": null,
       "name": "Archon of Sun's Grace",
-      "reason": "no template for: Pegasus creatures you control have lifelink",
+      "reason": "",
       "scryfall_id": "0d3af89d-d22c-45e8-9fec-170ac9bb0a34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archon of Valor's Reach": {
@@ -101032,12 +101032,12 @@
     },
     "Forum Filibuster": {
       "edhrec_rank": 13311,
-      "gate": "template",
+      "gate": null,
       "name": "Forum Filibuster",
-      "reason": "no template for: At the beginning of your upkeep, create a 2/1 white and black Inkling creature token with ",
+      "reason": "",
       "scryfall_id": "1c2fcf3e-63ce-45bd-afc4-2c11f54c70c4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forum Necroscribe": {
@@ -101052,12 +101052,12 @@
     },
     "Forum of Amity": {
       "edhrec_rank": 9795,
-      "gate": "template",
+      "gate": null,
       "name": "Forum of Amity",
-      "reason": "no template for: {2}{W}{B}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "1de6c6cc-0c55-4997-8623-d7f796bd9ab8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fossil Find": {
