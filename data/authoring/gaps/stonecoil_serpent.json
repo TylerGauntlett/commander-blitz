@@ -1,0 +1,14 @@
+{
+  "card_id": "stonecoil_serpent",
+  "name": "Stonecoil Serpent",
+  "oracle_text": "Reach, trample, protection from multicolored\nThis creature enters with X +1/+1 counters on it.",
+  "blocked_sentences": ["Reach, trample, protection from multicolored"],
+  "needs": [{
+    "capability": "protection_from_multicolored",
+    "kind": "static_effect",
+    "what": "a protection quality 'multicolored' on the `protection` static (e.g. `from_multicolored: true`), matched in `characteristics._matches_protection` against a source with two or more colors (derived on the battlefield, printed elsewhere), so damage, blocking, targeting and enchant/equip from multicolored sources are stopped",
+    "why_existing_wont_do": "The `protection` static and `grant_protection` op name qualities only by from_types, from_subtypes, from_colors, from_colorless and from_everything; listing all five colors in from_colors would be protection from every colored source, not just multicolored ones, and there is no sentinel like PROTECTION_COLORLESS for 'multicolored'"
+  }],
+  "closest_existing": ["protection", "grant_protection"],
+  "confidence": "high"
+}

@@ -1,0 +1,28 @@
+{
+  "card_id": "primo_the_unbounded",
+  "name": "Primo, the Unbounded",
+  "oracle_text": "Trample\nPrimo enters with twice X +1/+1 counters on it.\nWhenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.",
+  "blocked_sentences": [
+    "Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt."
+  ],
+  "needs": [
+    {
+      "capability": "combat_damage_amount_binding",
+      "kind": "value",
+      "what": "a value on a batched creatures_deal_combat_damage trigger that is the total combat damage the matching (filtered) damagers dealt to the player(s) in that batch -- 'equal to the damage dealt' -- so add_counters on the created token can read it",
+      "why_existing_wont_do": "The CREATURES_DEALT_COMBAT_DAMAGE event fired by combat._fire_damage_batch carries damagers, damaged, damaged_battles and hits (oid lists only), no damage amounts, so the `amount`/`damage` bindings are absent; value_keys has damage_taken_this_turn/max_damage_taken_this_turn (per-player turn totals, not this batch from these creatures). Per-creature deals_combat_damage_to_player binds amount but fires once per creature, which is not 'one or more ... create a token' (one token for the batch)."
+    },
+    {
+      "capability": "base_power_trigger_filter",
+      "kind": "selector",
+      "what": "a trigger filter key 'base_power' on creatures_deal_combat_damage matching creatures whose base (printed/copiable, pre-counters/buffs) power is 0",
+      "why_existing_wont_do": "trigger_filter_keys has `power` (current power) but not `base_power`; base_power appears only in selector_keys, and a creature with base power 0 and +1/+1 counters has nonzero current power, which is exactly the case this card cares about."
+    }
+  ],
+  "closest_existing": [
+    "creatures_deal_combat_damage",
+    "deals_combat_damage_to_player",
+    "fractal_0_0_gu"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,22 @@
+{
+  "card_id": "elementalist_s_palette",
+  "name": "Elementalist's Palette",
+  "oracle_text": "Whenever you cast a spell with {X} in its mana cost, put two charge counters on this artifact.\n{T}: Add one mana of any color.\n{T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}.",
+  "blocked_sentences": [
+    "{T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}."
+  ],
+  "needs": [
+    {
+      "capability": "x_cost_mana_restriction",
+      "kind": "decision",
+      "what": "a mana_restriction predicate for 'spend this mana only on costs that contain {X}' that, on the activate half, asks whether the cost of the specific activated ability being paid contains {X} (e.g. '{X}, {T}: ...'), not whether the source permanent's printed mana cost does; the cast half is already {\"x_in_mana_cost\": true}",
+      "why_existing_wont_do": "mana_restriction's x_in_mana_cost predicate is answered for activations by costs.ability_purpose off the source card's printed mana cost (card.mana_cost.x_count), and the purpose carries no reference to the ability whose cost is paid. Writing only the cast half under-permits (Palette mana could not pay an {X} activation cost, which the card allows); writing activate with x_in_mana_cost would fund any ability of a permanent printed with {X} in its mana cost, X or not, and refuse '{X},{T}' abilities on permanents without X in their mana cost"
+    }
+  ],
+  "closest_existing": [
+    "mana_restriction",
+    "x_in_mana_cost",
+    "add_mana_per"
+  ],
+  "confidence": "high"
+}

@@ -5822,12 +5822,12 @@
     },
     "Alchemist's Refuge": {
       "edhrec_rank": 1098,
-      "gate": "template",
+      "gate": null,
       "name": "Alchemist's Refuge",
-      "reason": "no template for: {G}{U}, {T}: You may cast spells this turn as though they had flash",
+      "reason": "",
       "scryfall_id": "36a11c11-1ea9-48e2-b1bc-49cba1390620",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alchemist's Retrieval": {
@@ -9432,12 +9432,12 @@
     },
     "Animist's Awakening": {
       "edhrec_rank": 2561,
-      "gate": "template",
+      "gate": null,
       "name": "Animist's Awakening",
-      "reason": "no template for: Reveal the top X cards of your library. Put all land cards from among them onto the battle",
+      "reason": "",
       "scryfall_id": "d5ace571-0644-40d6-a05f-15f2e47d8861",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Animist's Might": {
@@ -15452,12 +15452,12 @@
     },
     "Astral Cornucopia": {
       "edhrec_rank": 1316,
-      "gate": "template",
+      "gate": null,
       "name": "Astral Cornucopia",
-      "reason": "no template for: This artifact enters with X charge counters on it",
+      "reason": "",
       "scryfall_id": "15175742-11ae-4819-a5bd-412084b0b686",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Astral Dragon": {
@@ -23852,12 +23852,12 @@
     },
     "Benevolent Hydra": {
       "edhrec_rank": 2989,
-      "gate": "template",
+      "gate": null,
       "name": "Benevolent Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "064595cb-089e-4cf2-afe3-223235ce3f92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Benevolent Offering": {
@@ -24972,12 +24972,12 @@
     },
     "Biomass Mutation": {
       "edhrec_rank": 4860,
-      "gate": "template",
+      "gate": null,
       "name": "Biomass Mutation",
-      "reason": "no template for: Creatures you control have base power and toughness X/X until end of turn",
+      "reason": "",
       "scryfall_id": "9894bed2-c5dc-4569-9ed9-1d40df906f58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Biomathematician": {
@@ -50782,12 +50782,12 @@
     },
     "Commander's Insight": {
       "edhrec_rank": 8357,
-      "gate": "template",
+      "gate": null,
       "name": "Commander's Insight",
-      "reason": "no template for: Target player draws X cards plus an additional card for each time they've cast a commander",
+      "reason": "",
       "scryfall_id": "1a40e4da-a631-4423-b70f-701b27b09f79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commander's Insignia": {
@@ -58962,12 +58962,12 @@
     },
     "Curse of the Swine": {
       "edhrec_rank": 826,
-      "gate": "template",
+      "gate": null,
       "name": "Curse of the Swine",
-      "reason": "no template for: Exile X target creatures. For each creature exiled this way, its controller creates a 2/2 ",
+      "reason": "",
       "scryfall_id": "91eb9067-0bc7-4497-ba9c-c1ea41e5a379",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Curse of the Werefox": {
@@ -64352,12 +64352,12 @@
     },
     "Decisive Denial": {
       "edhrec_rank": 3280,
-      "gate": "template",
+      "gate": null,
       "name": "Decisive Denial",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "b1ad1949-1c8e-4566-9286-caf240c88fcc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Declaration in Stone": {
@@ -64592,12 +64592,12 @@
     },
     "Deekah, Fractal Theorist": {
       "edhrec_rank": 4828,
-      "gate": "template",
+      "gate": null,
       "name": "Deekah, Fractal Theorist",
-      "reason": "no template for: Magecraft — Whenever you cast or copy an instant or sorcery spell, create a 0/0 green and ",
+      "reason": "",
       "scryfall_id": "186e15a7-d97e-40df-adaa-96d9bd64f3ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Deem Inferior": {
@@ -87032,12 +87032,12 @@
     },
     "Eureka Moment": {
       "edhrec_rank": 1967,
-      "gate": "template",
+      "gate": null,
       "name": "Eureka Moment",
-      "reason": "no template for: Draw two cards. You may put a land card from your hand onto the battlefield",
+      "reason": "",
       "scryfall_id": "4d267ed8-e760-4f92-962b-f83dea822c45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Euru, Acorn Scrounger": {
@@ -88212,12 +88212,12 @@
     },
     "Expansion Algorithm": {
       "edhrec_rank": 7344,
-      "gate": "template",
+      "gate": null,
       "name": "Expansion Algorithm",
-      "reason": "no template for: Proliferate X times",
+      "reason": "",
       "scryfall_id": "06147ee1-0fe8-4daf-962a-317dc908add5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Expedite": {
@@ -101462,12 +101462,12 @@
     },
     "Fractal Harness": {
       "edhrec_rank": 6497,
-      "gate": "template",
+      "gate": null,
       "name": "Fractal Harness",
-      "reason": "no template for: When this Equipment enters, create a 0/0 green and blue Fractal creature token. Put X +1/+",
+      "reason": "",
       "scryfall_id": "8d196dcf-80bc-4a0a-83c9-ae87da5e74bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fractal Mascot": {
@@ -119722,12 +119722,12 @@
     },
     "Guardian Augmenter": {
       "edhrec_rank": 2814,
-      "gate": "template",
+      "gate": null,
       "name": "Guardian Augmenter",
-      "reason": "no template for: Commander creatures you control get +2/+2",
+      "reason": "",
       "scryfall_id": "78ba1a2a-a2dd-4e90-900e-1421b5e3924a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guardian Automaton": {
@@ -122192,12 +122192,12 @@
     },
     "Hangarback Walker": {
       "edhrec_rank": 1532,
-      "gate": "template",
+      "gate": null,
       "name": "Hangarback Walker",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "cc387ccf-f746-4855-81e5-64f5a5e0fdda",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hanged Executioner": {
@@ -122622,12 +122622,12 @@
     },
     "Hardened Scales": {
       "edhrec_rank": 186,
-      "gate": "template",
+      "gate": null,
       "name": "Hardened Scales",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a creature you control, that many plus one +",
+      "reason": "",
       "scryfall_id": "99cfd1a8-49fd-4cc0-96f2-f9f159ce5d55",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hardened Tactician": {
@@ -136752,12 +136752,12 @@
     },
     "Ingenious Prodigy": {
       "edhrec_rank": 3200,
-      "gate": "template",
+      "gate": null,
       "name": "Ingenious Prodigy",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "8d242dc2-5117-4bd6-a0c9-813d36d01e11",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ingenious Skaab": {
@@ -145642,12 +145642,12 @@
     },
     "Kami of Whispered Hopes": {
       "edhrec_rank": 403,
-      "gate": "template",
+      "gate": null,
       "name": "Kami of Whispered Hopes",
-      "reason": "no template for: If one or more +1/+1 counters would be put on a permanent you control, that many plus one ",
+      "reason": "",
       "scryfall_id": "0be4e5f6-a1fc-4a91-aafe-f963878cd1b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kami of the Crescent Moon": {
@@ -149112,12 +149112,12 @@
     },
     "Kinetic Ooze": {
       "edhrec_rank": 8256,
-      "gate": "template",
+      "gate": null,
       "name": "Kinetic Ooze",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "543877dd-c685-46a0-b3e8-db89090c7e31",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "King Cheetah": {
@@ -157782,12 +157782,12 @@
     },
     "Lifeblood Hydra": {
       "edhrec_rank": 3067,
-      "gate": "template",
+      "gate": null,
       "name": "Lifeblood Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "3431a77c-2027-406b-9230-5d0f8837af62",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lifecraft Awakening": {
@@ -166112,12 +166112,12 @@
     },
     "Mana Bloom": {
       "edhrec_rank": 9269,
-      "gate": "template",
+      "gate": null,
       "name": "Mana Bloom",
-      "reason": "no template for: This enchantment enters with X charge counters on it",
+      "reason": "",
       "scryfall_id": "03a40bf7-5eb9-4b36-9388-48b482a6fcf2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mana Breach": {
@@ -193732,12 +193732,12 @@
     },
     "Oran-Rief, the Vastwood": {
       "edhrec_rank": 724,
-      "gate": "template",
+      "gate": null,
       "name": "Oran-Rief, the Vastwood",
-      "reason": "no template for: {T}: Put a +1/+1 counter on each green creature that entered this turn",
+      "reason": "",
       "scryfall_id": "d46d3ef7-b81f-42f4-9c1b-fa53f11eae65",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Orator of Ojutai": {
@@ -196572,12 +196572,12 @@
     },
     "Ozolith, the Shattered Spire": {
       "edhrec_rank": 637,
-      "gate": "template",
+      "gate": null,
       "name": "Ozolith, the Shattered Spire",
-      "reason": "no template for: If one or more +1/+1 counters would be put on an artifact or creature you control, that ma",
+      "reason": "",
       "scryfall_id": "1d5bab94-362e-45e6-8988-69e2b2c681b1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ozox, the Clattering King": {
@@ -197612,12 +197612,12 @@
     },
     "Paradox Gardens": {
       "edhrec_rank": 10234,
-      "gate": "template",
+      "gate": null,
       "name": "Paradox Gardens",
-      "reason": "no template for: {2}{G}{U}, {T}: Surveil 1",
+      "reason": "",
       "scryfall_id": "dbc3447e-1329-4ea1-b4ca-b321b0ffec8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Paradox Haze": {
@@ -200062,12 +200062,12 @@
     },
     "Perplexing Test": {
       "edhrec_rank": 2087,
-      "gate": "template",
+      "gate": null,
       "name": "Perplexing Test",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "cf5fe687-91e0-4a2b-b973-3190c268a8e2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Perrie, the Pulverizer": {
@@ -207022,12 +207022,12 @@
     },
     "Primal Might": {
       "edhrec_rank": 3915,
-      "gate": "template",
+      "gate": null,
       "name": "Primal Might",
-      "reason": "no template for: Target creature you control gets +X/+X until end of turn. Then it fights up to one target ",
+      "reason": "",
       "scryfall_id": "69b3f7b9-9499-4883-b5c5-c5474e470b21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primal Order": {
@@ -207322,12 +207322,12 @@
     },
     "Primordial Hydra": {
       "edhrec_rank": 2478,
-      "gate": "template",
+      "gate": null,
       "name": "Primordial Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "29515c55-3b48-4c1d-a10b-b27fd1eb7a93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primordial Mist": {
@@ -211332,32 +211332,32 @@
     },
     "Quandrix Apprentice": {
       "edhrec_rank": 9251,
-      "gate": "template",
+      "gate": null,
       "name": "Quandrix Apprentice",
-      "reason": "no template for: Magecraft — Whenever you cast or copy an instant or sorcery spell, look at the top three c",
+      "reason": "",
       "scryfall_id": "f9166814-8748-480a-b7a0-816f9f582420",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quandrix Campus": {
       "edhrec_rank": 4684,
-      "gate": "template",
+      "gate": null,
       "name": "Quandrix Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "ce75bbae-99ff-4822-9835-5372ebaedb07",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quandrix Charm": {
       "edhrec_rank": 8570,
-      "gate": "template",
+      "gate": null,
       "name": "Quandrix Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "318486e0-f255-40f5-8150-dc272eec9d7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quandrix Command": {
@@ -263842,12 +263842,12 @@
     },
     "Steelbane Hydra": {
       "edhrec_rank": 2423,
-      "gate": "template",
+      "gate": null,
       "name": "Steelbane Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "c9889a59-519c-4adb-9002-dbed400a0d33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steelburr Champion": {
@@ -267202,12 +267202,12 @@
     },
     "Striding Shotcaller // Run the Play": {
       "edhrec_rank": 12664,
-      "gate": "template",
+      "gate": null,
       "name": "Striding Shotcaller // Run the Play",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, this creature b",
+      "reason": "",
       "scryfall_id": "159c2891-c1e2-4ec3-8c20-d6b97315dd1c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strife Scholar // Awaken the Ages": {
@@ -267342,12 +267342,12 @@
     },
     "Stroke of Genius": {
       "edhrec_rank": 3564,
-      "gate": "template",
+      "gate": null,
       "name": "Stroke of Genius",
-      "reason": "no template for: Target player draws X cards",
+      "reason": "",
       "scryfall_id": "beeb5419-828e-4a84-b4f3-87bc6f4cc594",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stroke of Midnight": {
@@ -274882,12 +274882,12 @@
     },
     "Tanazir Quandrix": {
       "edhrec_rank": 8535,
-      "gate": "template",
+      "gate": null,
       "name": "Tanazir Quandrix",
-      "reason": "no template for: When enters, double the number of +1/+1 counters on target creature you control",
+      "reason": "",
       "scryfall_id": "194d29be-a145-41f2-a55a-a071816b5551",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tandem Lookout": {
@@ -281022,12 +281022,12 @@
     },
     "The Goose Mother": {
       "edhrec_rank": 2913,
-      "gate": "template",
+      "gate": null,
       "name": "The Goose Mother",
-      "reason": "no template for: enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "a094fa16-256f-4fb1-9738-3025085d1941",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Great Aurora": {
@@ -293462,12 +293462,12 @@
     },
     "Troyan, Gutsy Explorer": {
       "edhrec_rank": 5585,
-      "gate": "template",
+      "gate": null,
       "name": "Troyan, Gutsy Explorer",
-      "reason": "no template for: {T}: Add {G}{U}. Spend this mana only to cast spells with mana value 5 or greater or spell",
+      "reason": "",
       "scryfall_id": "72968bfe-0fa4-432f-9599-4c32cb143716",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Truce": {
@@ -294262,12 +294262,12 @@
     },
     "Turbulent Wilderness": {
       "edhrec_rank": 4818,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Wilderness",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "aa9c37ec-7f03-44b7-b973-9ae5edff3149",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turf War": {
@@ -295592,12 +295592,12 @@
     },
     "Tyvar's Stand": {
       "edhrec_rank": 740,
-      "gate": "template",
+      "gate": null,
       "name": "Tyvar's Stand",
-      "reason": "no template for: Target creature you control gets +X/+X and gains hexproof and indestructible until end of ",
+      "reason": "",
       "scryfall_id": "b6ab0855-782a-498c-a885-b3ab3d1bb362",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tyvar, Jubilant Brawler": {
@@ -322832,12 +322832,12 @@
     },
     "Zimone, Quandrix Prodigy": {
       "edhrec_rank": 6742,
-      "gate": "template",
+      "gate": null,
       "name": "Zimone, Quandrix Prodigy",
-      "reason": "no template for: {1}, {T}: You may put a land card from your hand onto the battlefield tapped",
+      "reason": "",
       "scryfall_id": "5a9a9f44-479e-47ca-afc4-d8372a11c9b3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zinnia, Valley's Voice": {

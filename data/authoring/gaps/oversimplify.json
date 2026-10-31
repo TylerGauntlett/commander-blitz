@@ -1,0 +1,18 @@
+{
+  "card_id": "oversimplify",
+  "name": "Oversimplify",
+  "oracle_text": "Exile all creatures. Each player creates a 0/0 green and blue Fractal creature token and puts a number of +1/+1 counters on it equal to the total power of creatures they controlled that were exiled this way.",
+  "blocked_sentences": [
+    "Exile all creatures. Each player creates a 0/0 green and blue Fractal creature token and puts a number of +1/+1 counters on it equal to the total power of creatures they controlled that were exiled this way."
+  ],
+  "needs": [
+    {
+      "capability": "exiled_this_way_lki",
+      "kind": "value",
+      "what": "A last-known-information record for a group of objects an op moved off the battlefield: the exile op's `as` binding should capture, per exiled object, its power and its controller as it last existed on the battlefield (counters, buffs and control changes included, tokens included even though they cease to exist), and a value leaf should sum that recorded power filtered by recorded controller -- e.g. {\"power_had\": {\"binding\": \"exiled\", \"controller\": {\"binding\": \"each_player\"}}} inside a `for_each_player` -- so each player's Fractal gets counters equal to the total power of the creatures THEY controlled that were exiled.",
+      "why_existing_wont_do": "exile's `as` binding stores bare oids, so `power_of {\"objects\": {\"binding\": \"exiled\", ...}}` reads chars() of the cards in exile: printed power (+1/+1 counters and pump effects gone), controller reset to owner (a stolen creature counts for the wrong player), and exiled tokens vanish and read 0. `snapshot` captures only one object (oids[0]) and `power_had` reads only a dies/leave trigger's single had_power binding. Creating the tokens first and reading power on the battlefield before exiling everything else changes the sequence (tokens enter while the creatures are still there) and is an approximation."
+    }
+  ],
+  "closest_existing": ["snapshot", "power_had", "exile.as"],
+  "confidence": "high"
+}

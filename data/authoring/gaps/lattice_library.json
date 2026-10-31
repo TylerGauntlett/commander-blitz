@@ -1,0 +1,19 @@
+{
+  "card_id": "lattice_library",
+  "name": "Lattice Library",
+  "oracle_text": "This enchantment enters with X study counters on it.\nWhen this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.",
+  "blocked_sentences": [
+    "When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment."
+  ],
+  "needs": [
+    {
+      "capability": "x_in_mana_cost_trigger_filter",
+      "kind": "selector",
+      "what": "a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher so `nth: 1` counts only X spells for \"your first spell with {X} in its mana cost each turn\"",
+      "why_existing_wont_do": "trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (has_printed_cost), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only in selector_keys / mana restrictions; the trigger matcher (triggers.py filter check) does not read it, so writing it in a trigger filter would load and fire on every spell",
+      "closest_existing": "mana_cost trigger filter; x_in_mana_cost selector key"
+    }
+  ],
+  "closest_existing": ["mana_cost", "x_in_mana_cost", "nth"],
+  "confidence": "high"
+}

@@ -1,0 +1,16 @@
+{
+  "card_id": "yavimaya_bloomsage_channel",
+  "name": "Yavimaya Bloomsage // Channel",
+  "oracle_text": "At the beginning of your end step, put a +1/+1 counter on target creature you control. Then if that creature has power 7 or greater, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+  "blocked_sentences": [
+    "Until end of turn, any time you could activate a mana ability, you may pay 1 life. If you do, add {C}."
+  ],
+  "needs": [{
+    "capability": "player_mana_ability_until_end_of_turn",
+    "kind": "op",
+    "what": "a spell effect (the prepared face Channel) that gives its controller, until end of turn, a special action/mana ability owned by the player rather than a permanent: 'pay 1 life: add {C}', usable any time they could activate a mana ability, repeatable any number of times",
+    "why_existing_wont_do": "grant_ability only gives abilities to objects (selected permanents), so it cannot hand a mana ability to a player; emblems may not carry activated abilities (nothing offers activation from the command zone) and would be permanent rather than until end of turn; no static in static_effects grants a player a life-for-mana ability (add_mana_on_tap and double_*_mana only modify existing taps). The front face (end_step trigger, add_counters on a target, if power >= 7 then become_prepared with prepared_face) is expressible, but the prepared face must also be authored, so the card is blocked on the back."
+  }],
+  "closest_existing": ["grant_ability", "emblem", "add_mana_on_tap"],
+  "confidence": "high"
+}

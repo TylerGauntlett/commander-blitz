@@ -1,0 +1,18 @@
+{
+  "card_id": "nexus_mentality",
+  "name": "Nexus Mentality",
+  "oracle_text": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Move all counters from target nonland permanent you control onto another target nonland permanent you control.\n• Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.",
+  "blocked_sentences": [
+    "• Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way."
+  ],
+  "needs": [
+    {
+      "capability": "remove_all_counters",
+      "kind": "op",
+      "what": "remove_counters with an every-kind option (like move_counters' `all_kinds`) that removes the whole multiset of counters from the objects, plus an `as` binding recording how many were actually removed so a following `draw` amount can read \"for each counter removed this way\"",
+      "why_existing_wont_do": "remove_counters takes one `counter` kind and a fixed `amount` (op_remove_counters in ops_counters.py) and binds nothing; counters_on reads a single kind, not the sum of all kinds; counters_had reads only a dies-event snapshot. move_counters already has `all_kinds`, so the first mode and the choose_mode `up_to_if` commander clause are expressible -- only the second mode blocks the card"
+    }
+  ],
+  "closest_existing": ["remove_counters", "move_counters", "counters_had"],
+  "confidence": "high"
+}

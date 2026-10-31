@@ -1,0 +1,18 @@
+{
+  "card_id": "quandrix_command",
+  "name": "Quandrix Command",
+  "oracle_text": "Choose two —\n• Return target creature or planeswalker to its owner's hand.\n• Counter target artifact or enchantment spell.\n• Put two +1/+1 counters on target creature.\n• Target player shuffles up to three target cards from their graveyard into their library.",
+  "blocked_sentences": [
+    "• Target player shuffles up to three target cards from their graveyard into their library."
+  ],
+  "needs": [
+    {
+      "capability": "modal_variable_targets",
+      "kind": "engine",
+      "what": "a target spec owned by one mode of a choose_mode spell whose count is caster-chosen (\"up to three target cards\", count 3 with up_to: true), so the stored target refs for that mode can be of variable length (0-3) while the other chosen modes' refs are still located correctly",
+      "why_existing_wont_do": "Targets carry `mode` and `up_to`, and the sibling-target clause `owner: {\"target\": \"shuffler\"}` with put_on_top + shuffle expresses the effect, but the loader (cards/loader/targets.py) refuses `variable_size` on a mode-owned target: `filter_legal` splits the stored refs by position per mode and a caster-chosen size leaves no way to say where the next mode's refs begin. Declaring the target at card level without `mode` would force the targets even when the mode is not chosen, and a fixed count of 3 would make the mode illegal with fewer than three cards and forbid choosing fewer."
+    }
+  ],
+  "closest_existing": ["choose_mode", "put_on_top", "shuffle"],
+  "confidence": "high"
+}

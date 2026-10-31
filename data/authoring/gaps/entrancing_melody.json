@@ -1,0 +1,14 @@
+{
+  "card_id": "entrancing_melody",
+  "name": "Entrancing Melody",
+  "oracle_text": "Gain control of target creature with mana value X.",
+  "blocked_sentences": ["Gain control of target creature with mana value X."],
+  "needs": [{
+    "capability": "x_dependent_spell_targets",
+    "kind": "engine",
+    "what": "Casting a spell whose target selector reads the announced X (\"target creature with mana value X\") must announce X before declaring targets (601.2b before 601.2c): offer one cast action per payable X, each carrying the targets legal at that X, the way legality._ability_aims already does for activated abilities via _targets_read_x",
+    "why_existing_wont_do": "The selector itself is expressible (mana_value {op: '=', value: {x: true}} with gain_control on the target), but casting._cast_variant enumerates a spell's targets with x=0 and CHOOSE_X is asked only after the targets are fixed; _targets_read_x is consulted for activated abilities only. Verified: the card is unplayable in the sandbox (no creature has mana value 0), and in play it could only ever target a mana value 0 creature and then pick a mismatched X"
+  }],
+  "closest_existing": ["tamiyo_compleated_sage", "steel_hellkite"],
+  "confidence": "high"
+}

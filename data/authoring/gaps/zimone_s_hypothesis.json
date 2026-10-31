@@ -1,0 +1,18 @@
+{
+  "card_id": "zimone_s_hypothesis",
+  "name": "Zimone's Hypothesis",
+  "oracle_text": "You may put a +1/+1 counter on a creature. Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)",
+  "blocked_sentences": [
+    "Then choose odd or even. Return each creature with power of the chosen quality to its owner's hand. (Zero is even.)"
+  ],
+  "needs": [
+    {
+      "capability": "odd_or_even",
+      "kind": "selector",
+      "what": "a selector comparison on a creature's live power (and, for sibling cards, mana value) that matches by parity -- e.g. power: {\"parity\": \"odd\"|\"even\"} with zero even, or {\"parity\": {\"binding\": \"chosen\"}} reading a resolution-time 'choose odd or even' decision",
+      "why_existing_wont_do": "The selector `power` key goes through selectors._compare, which only knows >=, <=, >, <, ==, != against a value; parity exists only for die rolls (`rolled` with `parity` in values.py). A choose_mode with an any_of list of power == 0, 2, 4 ... would be a finite approximation of an unbounded set."
+    }
+  ],
+  "closest_existing": ["choose_mode", "return_to_hand", "rolled.parity"],
+  "confidence": "high"
+}

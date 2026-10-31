@@ -877,6 +877,26 @@
       "is_token": true
     },
     {
+      "id": "boar_2_2_g",
+      "name": "Boar Token",
+      "oracle_text": "2/2 green Boar creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Boar"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
       "id": "elemental_2_2_g",
       "name": "Elemental Token",
       "oracle_text": "2/2 green Elemental creature token.",

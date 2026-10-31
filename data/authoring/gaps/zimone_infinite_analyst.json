@@ -1,0 +1,25 @@
+{
+  "card_id": "zimone_infinite_analyst",
+  "name": "Zimone, Infinite Analyst",
+  "oracle_text": "The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.\nWhenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone.",
+  "blocked_sentences": [
+    "The first spell you cast with {X} in its mana cost each turn costs {1} less to cast for each +1/+1 counter on Zimone.",
+    "Whenever you cast your first spell with {X} in its mana cost each turn, put two +1/+1 counters on Zimone."
+  ],
+  "needs": [
+    {
+      "capability": "x_in_mana_cost_trigger_filter",
+      "kind": "selector",
+      "what": "a spell_cast trigger filter key that matches a spell whose printed mana cost contains {X} (the selector-side `x_in_mana_cost: true`), honoured by the trigger matcher and counted by the `nth` ordinal so `nth: 1` with `filter: {x_in_mana_cost: true}` means \"your first spell with {X} in its mana cost each turn\"",
+      "why_existing_wont_do": "trigger_filter_keys has `mana_cost`, but that is an exact printed-cost list match (printed_cost_is), so it cannot say 'any cost containing {X}'. `x_in_mana_cost` exists only as a selector key and a mana_restriction predicate; the trigger matcher and the spell_cast ordinal never read it"
+    },
+    {
+      "capability": "first_x_spell_cost_reduction",
+      "kind": "static_effect",
+      "what": "a spell_cost_reduction whose affects_spells can match a spell with {X} in its printed mana cost (`x_in_mana_cost: true`) and that applies only to the first such spell its controller casts each turn, with amount {counters_on: self, kind +1/+1}",
+      "why_existing_wont_do": "cost_reduction_filter_keys has no x_in_mana_cost (only the exact-cost `mana_cost`), and spell_cost_reduction (player_statics.spell_cost_reduction) carries no per-turn 'first spell' limit; a static `condition` cmp on spells_cast_this_turn with a filter could gate it, but that filter goes through _matches_printed, which also cannot say 'contains {X}'"
+    }
+  ],
+  "closest_existing": ["spell_cost_reduction", "spell_cast trigger with nth", "mana_cost filter key"],
+  "confidence": "high"
+}

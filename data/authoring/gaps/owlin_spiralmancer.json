@@ -1,0 +1,23 @@
+{
+  "card_id": "owlin_spiralmancer",
+  "name": "Owlin Spiralmancer",
+  "oracle_text": "Flying, vigilance\nWhenever you cast your first spell with {X} in its mana cost each turn, you may copy it. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)",
+  "blocked_sentences": [
+    "Whenever you cast your first spell with {X} in its mana cost each turn, you may copy it. You may choose new targets for the copy. (A copy of a permanent spell becomes a token.)"
+  ],
+  "needs": [
+    {
+      "capability": "x_in_mana_cost_trigger_filter",
+      "kind": "trigger_event",
+      "what": "a spell_cast trigger filter key `x_in_mana_cost` (printed {X} in the spell's mana cost) that is also counted by the `nth` ordinal, so `nth: 1` with `filter: {x_in_mana_cost: true}` means \"your first spell with {X} in its mana cost each turn\" rather than \"your first spell, if it has {X}\"",
+      "why_existing_wont_do": "x_in_mana_cost exists only as a selector key (selectors.py) and a mana-restriction predicate; it is not in the packet's trigger_filter_keys, and `nth` on spell_cast counts earlier spells only through ORDINAL_FILTER_KEYS (triggers._spell_ordinal / _matches_printed), which omits it. The trigger filter's `mana_cost` key matches an exact printed cost string, not the presence of {X}. Without a filtered ordinal, an unfiltered nth:1 would miss an X spell cast after a non-X spell, and max_per_turn cannot help because the trigger filter cannot name {X} in the first place"
+    }
+  ],
+  "closest_existing": [
+    "spell_cast",
+    "nth",
+    "max_per_turn",
+    "copy_spell"
+  ],
+  "confidence": "high"
+}
