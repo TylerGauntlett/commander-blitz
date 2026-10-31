@@ -254912,12 +254912,12 @@
     },
     "Songbirds' Blessing": {
       "edhrec_rank": 3341,
-      "gate": "template",
+      "gate": null,
       "name": "Songbirds' Blessing",
-      "reason": "no template for: Whenever enchanted creature attacks, reveal cards from the top of your library until you r",
+      "reason": "",
       "scryfall_id": "4d1e229a-ed04-4d8d-90a9-5a451ca81470",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Songcrafter Mage": {

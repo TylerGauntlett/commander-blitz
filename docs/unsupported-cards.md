@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**122 cards** blocked by **111** capabilities.
+**121 cards** blocked by **110** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -103,7 +103,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
-| [reveal-until-may-destination](#reveal-until-may-destination) | 1 | 3341 | engine |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -1546,20 +1545,6 @@ Blocks **1** card.
 
 - **Throes of Chaos** (rank 5451) — `throes_of_chaos`
   - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
-
-</details>
-
-## reveal-until-may-destination
-
-Blocks **1** card.
-
-- **(engine)** a per-card yes/no on reveal_until's match -- 'you may put that card onto the battlefield; if you don't, put it into your hand' -- e.g. a `may_destination: "battlefield"` with `destination: "hand"` as the fallback, asked of the controller while the match is still in the library and before the rest is bottomed. The Aura's host is already chosen as it enters (303.4f, zones.offer_aura_host)
-  <br>Why the existing vocabulary won't do: reveal_until makes no yes/no decision (destination and destination_if are fixed, selector-driven), and reveal_until to hand followed by `may put_onto_battlefield` moves the card from the hand rather than the library -- a second zone change, through a hand -- and bottoms the rest before the choice
-
-<details><summary>Cards waiting on this</summary>
-
-- **Songbirds' Blessing** (rank 3341) — `songbirds_blessing`
-  - Whenever enchanted creature attacks, reveal cards from the top of your library until you reveal an Aura card. You may put that card onto the battlefield. If you don't, put it into your hand. Put the rest on the bottom of your library in a random order.
 
 </details>
 

@@ -192,3 +192,21 @@ class TestTheLoaderRefuses:
     def test_an_amount(self):
         with pytest.raises(DslError, match="takes no 'amount'"):
             compile_card(self._card({**SONGBIRDS, "amount": {"const": 2}}))
+
+
+class TestSongbirdsBlessing:
+    """The shipped card's attack trigger, resolved as written."""
+
+    def _effects(self, game):
+        return list(game.state.registry.get("songbirds_blessing").abilities[0].effects)
+
+    @pytest.mark.parametrize(("yes", "zone"), [(True, "battlefield"), (False, "hand")])
+    def test_the_aura_goes_where_you_choose(self, builder, yes, zone):
+        game = position(builder, mine=[BEAR], library=[ISLAND, AURA, FOREST])
+
+        asked, _ = run(game, self._effects(game), yes=yes)
+
+        assert len(mays(asked)) == 1
+        assert (AURA in battlefield_ids(game, 0)) is (zone == "battlefield")
+        assert (AURA in hand_ids(game, 0)) is (zone == "hand")
+        assert library_ids(game, 0) == [FOREST, ISLAND]

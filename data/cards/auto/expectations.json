@@ -12809,6 +12809,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "songbirds_blessing": {
+    "zone": "battlefield"
+  },
   "sorin_grim_nemesis": {
     "battlefield_count": 33,
     "counters": {
