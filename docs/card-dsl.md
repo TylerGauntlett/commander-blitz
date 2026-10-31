@@ -1308,6 +1308,52 @@ trigger filter (the printed face, as `colors` is), and the cost-reduction count
 (derived on the battlefield). It is the reading protection's `from_colorless`
 already makes of a source.
 
+### "Enchanted creatures" — `enchanted_by`
+
+```jsonc
+// Winds of Rath: "Destroy all creatures that aren't enchanted."
+{ "op": "destroy", "no_regeneration": true,
+  "objects": { "zone": "battlefield", "types": ["Creature"], "enchanted_by": false, "count": "all" } }
+// Eriette of the Charmed Apple: "Each creature that's enchanted by an Aura you control can't attack you…"
+{ "kind": "static", "effect": "cant_attack_you",
+  "affects": { "controller": "any", "types": ["Creature"], "enchanted_by": { "controller": "you" } } }
+```
+
+Whether one or more Auras are attached to the permanent (303.4): `true` is
+enchanted by anybody's Aura, `false` by none at all, and
+`{"controller": "you" | "opponent" | "any"}` asks for an Aura whose controller
+stands that way to the player the filter is read for — the ability's controller,
+the static's, or the player paying a reduced cost. The creature's own controller
+is a separate clause: a static filter still defaults `controller: "you"`, so
+Eriette writes `"any"` to reach the opponents' creatures carrying her Auras. An
+Aura is told by its printed face or by bestow (702.103b); a Curse enchants a
+player and no permanent.
+
+One word in every filter language — the selector, static and counting filters,
+the trigger filter and the cost-reduction count — answered by one function,
+`characteristics.enchanted_by`, from the host's end of `attached_to`. Every half
+of the answer is a pipeline input, so a static may read it (ADR 0001). The
+loader refuses a word (`"you"` would read as "anybody's Aura"), an empty filter,
+any key on the Auras but `controller`, and the key on a trigger watching a
+permanent leave the battlefield: `zones._detach_all` unattaches its Auras first,
+so the departed creature is never enchanted.
+
+"Whenever one or more creatures that are enchanted by an Aura you control
+attack" (Killian, Decisive Mentor) is `you_attack` with `controller: "any"` and
+the question asked of the declaration, checked as it triggers only:
+
+```jsonc
+"trigger": { "event": "you_attack", "controller": "any", "recheck": false,
+             "condition": { "exists": { "binding": "attackers",
+                                        "enchanted_by": { "controller": "you" } } } }
+```
+
+| Near miss | Why not |
+|---|---|
+| `modified` | also counts counters and Equipment, and only Auras you control |
+| `attached` | names the one permanent the ability's own source is attached to |
+| `attached_to_host` | names the *other* attachments sharing the source's host, not a host |
+
 ### "Two cards that share a color" — `two_share_a_color`
 
 ```jsonc

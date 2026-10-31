@@ -2183,6 +2183,44 @@ def has_any_counter(obj: GameObject) -> bool:
     return any(n > 0 for n in obj.counters.values())
 
 
+def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool:
+    """The ``enchanted_by`` filter key: is ``oid`` enchanted, by whose Aura?
+
+    "Destroy all creatures that **aren't enchanted**" (Winds of Rath),
+    "each creature that's **enchanted by an Aura you control**" (Eriette of the
+    Charmed Apple). A permanent is enchanted when an Aura is attached to it
+    (303.4); ``spec`` is ``true`` (one or more Auras, anybody's), ``false``
+    (none at all) or ``{"controller": "you" | "opponent" | "any"}``, which asks
+    for one or more Auras whose controller stands that way to ``controller`` --
+    the player the filter is read for. A player's Curse is attached to a seat,
+    not to a permanent, and enchants no permanent.
+
+    Answered by walking the battlefield for attachments, because attachment is
+    stored one way -- on the Aura, as `attached_to` -- the walk `modified`
+    makes in `selectors._is_modified`. An Aura is told by its printed face or by
+    being cast bestowed (702.103b), the test `stack` attaches by and `sba` bins
+    by, rather than by `chars`: every part of the answer -- `attached_to`, the
+    Aura's controller, its printed type line, the bestow stamp -- is a pipeline
+    **input**, so a static's filter can read it without depending on another
+    static's output (ADR 0001).
+    """
+    want_controller = spec.get("controller", "any") if isinstance(spec, Mapping) else "any"
+    found = False
+    for aura_oid in state.battlefield:
+        aura = state.objects.get(aura_oid)
+        if aura is None or aura.attached_to != oid:
+            continue
+        if not (state.card_of(aura).is_aura or aura.cast_bestowed):
+            continue
+        if want_controller == "you" and aura.controller != controller:
+            continue
+        if want_controller == "opponent" and aura.controller == controller:
+            continue
+        found = True
+        break
+    return found if spec is not False else not found
+
+
 def _matches(
     state: GameState,
     obj: GameObject,
@@ -2380,6 +2418,14 @@ def _matches_wherever(
     # static never puts one on -- so this is a pipeline input for `tapped`'s
     # reason, and the answer moves the moment a counter arrives or leaves.
     if "has_counters" in selector and has_any_counter(obj) != bool(selector["has_counters"]):
+        return False
+    # "Each creature that's **enchanted by an Aura you control**" (Eriette of
+    # the Charmed Apple). Attachment is board state no layer writes, so it is a
+    # pipeline input for `has_counters`' reason; `enchanted_by` says why every
+    # half of it is. "You" is the static's controller.
+    if "enchanted_by" in selector and not enchanted_by(
+        state, obj.oid, selector["enchanted_by"], source.controller
+    ):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False

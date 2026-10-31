@@ -29,6 +29,7 @@ from .characteristics import (
     abilities_of,
     chars,
     creature_types_of,
+    enchanted_by,
     granted_abilities,
     granted_ability_origin,
     granted_wards,
@@ -1858,6 +1859,7 @@ TRIGGER_FILTER_KEYS = frozenset(
         "tapped",
         "has_counters",
         "goaded",
+        "enchanted_by",
         "entered_this_turn",
         "attacking_player",
         "mana_value",
@@ -2190,6 +2192,15 @@ def matches_card_filter(
     # `controller: "any"` -- the schema's default `"you"` would refuse them.
     # `goaders` reads the goad op's mark and the `goaded` static alike.
     if "goaded" in filt and bool(goaders(state, oid)) != bool(filt["goaded"]):
+        return False
+    # "…creatures **enchanted by an Aura you control**" -- live board state,
+    # sound for `goaded`'s reason: asked once, as the event fires, about a
+    # creature that is still on the battlefield. "You" is the ability's
+    # controller. The loader refuses it on a departure trigger, whose subject
+    # has already shed its Auras (`zones._detach_all`).
+    if "enchanted_by" in filt and not enchanted_by(
+        state, oid, filt["enchanted_by"], ability_source.controller
+    ):
         return False
     # "…that entered this turn". Honoured here because a `cause_filter` is
     # validated against `STATIC_FILTER_KEYS`, so leaving it unread would be the

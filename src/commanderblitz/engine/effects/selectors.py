@@ -16,7 +16,13 @@ from __future__ import annotations
 from collections.abc import Generator, Mapping
 from typing import TYPE_CHECKING, Any
 
-from ..characteristics import _base_pt, chars, creature_types_of, resolve_chosen_subtypes
+from ..characteristics import (
+    _base_pt,
+    chars,
+    creature_types_of,
+    enchanted_by,
+    resolve_chosen_subtypes,
+)
 from ..enums import CardType, Supertype, Zone
 from ..errors import DslError
 from ..mana import printed_cost_is, validate_printed_cost_list
@@ -99,6 +105,18 @@ SELECTOR_KEYS = frozenset(
         #: have to say "or" across three unrelated relationships, and the
         #: selector language is a conjunction.
         "modified",
+        #: "Destroy all creatures that **aren't enchanted**" (Winds of Rath);
+        #: "…creatures **enchanted by an Aura you control**" (Eriette of the
+        #: Charmed Apple, Killian, Decisive Mentor). `true`, `false`, or
+        #: `{"controller": "you" | "opponent" | "any"}` naming whose Aura it
+        #: must be, relative to the ability's controller. The same word in the
+        #: static, trigger and cost-reduction filters, all answered by
+        #: `characteristics.enchanted_by`.
+        #:
+        #: `modified` is the near miss: it also counts counters and Equipment,
+        #: and only Auras you control. `attached` is the other, and names the
+        #: one permanent the ability's own source is attached to.
+        "enchanted_by",
         "types",
         #: "target artifact **or** enchantment".  ``types`` is a conjunction --
         #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
@@ -781,6 +799,10 @@ def matches(
         if source is None or oid not in (source.attached_to, source.last_attached_to):
             return False
     if selector.get("modified") and not _is_modified(ctx, oid):
+        return False
+    if "enchanted_by" in selector and not enchanted_by(
+        state, oid, selector["enchanted_by"], ctx.controller
+    ):
         return False
     if selector.get("convoked") and oid not in _bound_oids(ctx, CONVOKED_BINDING):
         return False
@@ -1585,6 +1607,46 @@ def validate_colorless_key(filt: Any, where: str) -> None:
         )
 
 
+#: The keys an ``enchanted_by`` filter may put on the Auras themselves.
+ENCHANTED_BY_KEYS = frozenset({"controller"})
+
+#: Whose Aura it must be, relative to the player the filter is read for.
+ENCHANTED_BY_CONTROLLERS = ("you", "opponent", "any")
+
+
+def validate_enchanted_by_key(filt: Any, where: str) -> None:
+    """``enchanted_by`` is ``true``, ``false`` or a filter on the Auras.
+
+    The same check in every filter language, as `validate_colorless_key` is.
+    A word is the tempting spelling -- ``"you"`` for "enchanted by an Aura you
+    control" -- and every reader would take it for a filter on nothing and read
+    "enchanted by anybody's Aura", so it is refused, as are a filter key the
+    readers do not answer about an Aura and an empty filter, which is ``true``
+    written the long way.
+    """
+    if not isinstance(filt, Mapping) or "enchanted_by" not in filt:
+        return
+    spec = filt["enchanted_by"]
+    if isinstance(spec, bool):
+        return
+    if not isinstance(spec, Mapping) or not spec:
+        raise DslError(
+            f"{where}.enchanted_by: true, false, or a filter on the Auras such as "
+            f'{{"controller": "you"}}, got {spec!r}'
+        )
+    unknown = set(spec) - ENCHANTED_BY_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}.enchanted_by: {sorted(unknown)} are not asked of the Auras; "
+            f"only {sorted(ENCHANTED_BY_KEYS)}"
+        )
+    if spec["controller"] not in ENCHANTED_BY_CONTROLLERS:
+        raise DslError(
+            f"{where}.enchanted_by.controller: one of "
+            f"{list(ENCHANTED_BY_CONTROLLERS)}, got {spec['controller']!r}"
+        )
+
+
 def validate_selector(selector: Any, where: str) -> None:
     """Load-time check that a selector uses only known keys."""
     if selector is None:
@@ -1679,6 +1741,7 @@ def validate_selector(selector: Any, where: str) -> None:
     # "two or more X symbols" is not a printing, so there is nothing to widen
     # this into; there is only a spelling to refuse.
     validate_colorless_key(selector, where)
+    validate_enchanted_by_key(selector, where)
     if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "

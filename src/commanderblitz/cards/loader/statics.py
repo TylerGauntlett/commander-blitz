@@ -10,7 +10,10 @@ from collections.abc import Mapping
 from typing import Any
 
 from commanderblitz.engine.effects.conditions import validate_condition
-from commanderblitz.engine.effects.selectors import validate_colorless_key
+from commanderblitz.engine.effects.selectors import (
+    validate_colorless_key,
+    validate_enchanted_by_key,
+)
 from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
     validate_counters_on,
@@ -214,6 +217,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         _check_mana_cost_key(filt, f"{where}.{key}")
         _check_pt_keys(filt, f"{where}.{key}")
         validate_colorless_key(filt, f"{where}.{key}")
+        validate_enchanted_by_key(filt, f"{where}.{key}")
         _check_reduction_type_names(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
@@ -227,6 +231,7 @@ def _validate_static_count_filter(spec: Any, where: str) -> None:
     _check_mana_cost_key(spec, where)
     _check_pt_keys(spec, where)
     validate_colorless_key(spec, where)
+    validate_enchanted_by_key(spec, where)
     zone = str(spec.get("zone", "battlefield"))
     if zone not in STATIC_COUNT_ZONES:
         raise DslError(

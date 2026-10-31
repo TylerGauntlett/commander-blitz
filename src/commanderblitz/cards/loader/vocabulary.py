@@ -1063,6 +1063,13 @@ STATIC_FILTER_KEYS = frozenset(
         # state read the other way round, so it is safe here for `attached`'s
         # reason.
         "attached_to_host",
+        # "Each creature that's **enchanted by an Aura you control** can't
+        # attack you" (Eriette of the Charmed Apple). Whether any Aura -- or,
+        # with `{"controller": ...}`, whose -- is attached to the permanent:
+        # `attached_to` read from the host's end, and every half of the answer
+        # is board state or a printed face, so it is safe here for `attached`'s
+        # reason. `characteristics.enchanted_by` is the one reader.
+        "enchanted_by",
         # Soulbond: "as long as this creature is paired, **both** creatures
         # have…". `paired: true` matches the source while it has a partner, and
         # `paired_with_source: true` matches the partner. Board state like

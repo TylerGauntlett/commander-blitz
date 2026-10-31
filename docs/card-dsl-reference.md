@@ -11,12 +11,12 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 156 |
-| [Selectors](#selectors) | 69 |
+| [Selectors](#selectors) | 70 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 63 |
 | [Conditions](#conditions) | 33 |
 | [Trigger events](#trigger-events) | 48 |
-| [Trigger filters](#trigger-filters) | 35 |
+| [Trigger filters](#trigger-filters) | 36 |
 | [Static effects](#static-effects) | 88 |
 | [Player-wide statics](#player-wide-statics) | 44 |
 | [Grantable statics](#grantable-statics) | 41 |
@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 29 |
+| [Static filter keys](#static-filter-keys) | 30 |
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 18 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -229,6 +229,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `damaged` | Was dealt damage this turn. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `damaged_by` | Was dealt damage this turn by the named object. | ["…dealt damage by this creature this turn"](card-dsl-cookbook.md#dealt-damage-by-this-creature-this-turn) |
 | `drawn_this_turn` | Cards drawn this turn (hand only). | [Cards in a hand drawn this turn](card-dsl.md#cards-in-a-hand-drawn-this-turn) |
+| `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `encoded_by` | Cards encoded on the named creature (cipher). | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_binding` | Everything except the objects under a binding ("each other"). | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
@@ -473,6 +474,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Triggers](card-dsl.md#triggers) |
 | `created_with` | Tokens created with the named permanent. | [Tokens "created with this creature" — created_with](card-dsl.md#tokens-created-with-this-creature--created_with) |
 | `damaged_by` | Was dealt damage this turn by the named object. | ["…dealt damage by this creature this turn"](card-dsl-cookbook.md#dealt-damage-by-this-creature-this-turn) |
+| `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `encoded_by` | Cards encoded on the named creature (cipher). | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Triggers](card-dsl.md#triggers) |
@@ -895,6 +897,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
 | `colors` | Has one of these colors. | [Static abilities](card-dsl.md#static-abilities) |
 | `controller` | Controlled by `you`/`opponent`/`any` or a player spec. | [Static abilities](card-dsl.md#static-abilities) |
+| `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Static abilities](card-dsl.md#static-abilities) |
 | `has_counters` | Has counters (of a kind) on it. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
