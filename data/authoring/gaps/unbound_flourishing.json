@@ -1,0 +1,29 @@
+{
+  "card_id": "unbound_flourishing",
+  "name": "Unbound Flourishing",
+  "oracle_text": "Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.\nWhenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy.",
+  "blocked_sentences": [
+    "Whenever you cast a permanent spell with a mana cost that contains {X}, double the value of X.",
+    "Whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains {X}, copy that spell or ability. You may choose new targets for the copy."
+  ],
+  "needs": [
+    {
+      "capability": "double_x",
+      "kind": "op",
+      "what": "an op run by a spell_cast trigger that rewrites the announced X of the triggering spell on the stack (here X := 2X), so the permanent resolves with the doubled X for every 'X' it reads (counters, ETB values)",
+      "why_existing_wont_do": "No op touches a stack object's chosen X; the `x` value only reads it, and `cost.x_value` fixes X at announcement for the card's own cost, not another spell's"
+    },
+    {
+      "capability": "cost_contains_x",
+      "kind": "selector",
+      "what": "a trigger filter for spell_cast meaning 'its mana cost contains {X}', and for ability_activated meaning 'the activated ability's activation cost contains {X}', so one trigger can fire on either and copy_spell / copy_ability the cause",
+      "why_existing_wont_do": "The `mana_cost` filter key is an equality test against whole printed costs (has_printed_cost/printed_cost_is), not a contains-{X} test, and ability_activated has no filter on the ability's activation cost at all"
+    }
+  ],
+  "closest_existing": [
+    "copy_spell",
+    "copy_ability",
+    "mana_cost"
+  ],
+  "confidence": "high"
+}

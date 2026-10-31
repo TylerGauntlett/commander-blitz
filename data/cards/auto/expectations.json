@@ -10382,6 +10382,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "perplexing_test": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "persistent_petitioners": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10688,6 +10696,20 @@
   "primoc_escapee": {
     "zone": "battlefield"
   },
+  "primordial_hydra": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "primordial_pachyderm": {
     "life": {
       "0": 42
@@ -10905,6 +10927,24 @@
   },
   "quaketusk_boar": {
     "zone": "battlefield"
+  },
+  "quandrix_apprentice": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "quandrix_campus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "quandrix_charm": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "quantum_misalignment": {
     "battlefield_count": 33,
@@ -13401,6 +13441,14 @@
   "steel_wall": {
     "zone": "battlefield"
   },
+  "steelbane_hydra": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "steely_resolve": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13556,6 +13604,15 @@
   },
   "striped_riverwinder": {
     "zone": "battlefield"
+  },
+  "stroke_of_genius": {
+    "hand_size": {
+      "0": 21
+    },
+    "library_size": {
+      "0": 20
+    },
+    "zone": "graveyard"
   },
   "stroke_of_midnight": {
     "battlefield_count": 32,
@@ -14873,6 +14930,13 @@
     },
     "zone": "battlefield"
   },
+  "troyan_gutsy_explorer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "trudge_garden": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -14917,6 +14981,10 @@
     "zone": "battlefield"
   },
   "turbulent_wetlands": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "turbulent_wilderness": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

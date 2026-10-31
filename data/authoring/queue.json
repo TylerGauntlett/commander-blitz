@@ -200062,12 +200062,12 @@
     },
     "Perplexing Test": {
       "edhrec_rank": 2087,
-      "gate": "template",
+      "gate": null,
       "name": "Perplexing Test",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "cf5fe687-91e0-4a2b-b973-3190c268a8e2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Perrie, the Pulverizer": {
@@ -207322,12 +207322,12 @@
     },
     "Primordial Hydra": {
       "edhrec_rank": 2478,
-      "gate": "template",
+      "gate": null,
       "name": "Primordial Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "29515c55-3b48-4c1d-a10b-b27fd1eb7a93",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primordial Mist": {
@@ -211332,32 +211332,32 @@
     },
     "Quandrix Apprentice": {
       "edhrec_rank": 9251,
-      "gate": "template",
+      "gate": null,
       "name": "Quandrix Apprentice",
-      "reason": "no template for: Magecraft — Whenever you cast or copy an instant or sorcery spell, look at the top three c",
+      "reason": "",
       "scryfall_id": "f9166814-8748-480a-b7a0-816f9f582420",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quandrix Campus": {
       "edhrec_rank": 4684,
-      "gate": "template",
+      "gate": null,
       "name": "Quandrix Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "ce75bbae-99ff-4822-9835-5372ebaedb07",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quandrix Charm": {
       "edhrec_rank": 8570,
-      "gate": "template",
+      "gate": null,
       "name": "Quandrix Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "318486e0-f255-40f5-8150-dc272eec9d7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Quandrix Command": {
@@ -263842,12 +263842,12 @@
     },
     "Steelbane Hydra": {
       "edhrec_rank": 2423,
-      "gate": "template",
+      "gate": null,
       "name": "Steelbane Hydra",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "c9889a59-519c-4adb-9002-dbed400a0d33",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Steelburr Champion": {
@@ -267342,12 +267342,12 @@
     },
     "Stroke of Genius": {
       "edhrec_rank": 3564,
-      "gate": "template",
+      "gate": null,
       "name": "Stroke of Genius",
-      "reason": "no template for: Target player draws X cards",
+      "reason": "",
       "scryfall_id": "beeb5419-828e-4a84-b4f3-87bc6f4cc594",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stroke of Midnight": {
@@ -281022,12 +281022,12 @@
     },
     "The Goose Mother": {
       "edhrec_rank": 2913,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "The Goose Mother",
-      "reason": "no template for: enters with X +1/+1 counters on it",
+      "reason": "+1/+1 counters is 20, expected 28; food_token tokens is 10, expected 14; your battlefield is 43, expected 47",
       "scryfall_id": "a094fa16-256f-4fb1-9738-3025085d1941",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "The Great Aurora": {
@@ -293462,12 +293462,12 @@
     },
     "Troyan, Gutsy Explorer": {
       "edhrec_rank": 5585,
-      "gate": "template",
+      "gate": null,
       "name": "Troyan, Gutsy Explorer",
-      "reason": "no template for: {T}: Add {G}{U}. Spend this mana only to cast spells with mana value 5 or greater or spell",
+      "reason": "",
       "scryfall_id": "72968bfe-0fa4-432f-9599-4c32cb143716",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Truce": {
@@ -294262,12 +294262,12 @@
     },
     "Turbulent Wilderness": {
       "edhrec_rank": 4818,
-      "gate": "template",
+      "gate": null,
       "name": "Turbulent Wilderness",
-      "reason": "proxy simplified it: enters tapped unconditionally; the printed condition is not modelled",
+      "reason": "",
       "scryfall_id": "aa9c37ec-7f03-44b7-b973-9ae5edff3149",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Turf War": {
@@ -295592,12 +295592,12 @@
     },
     "Tyvar's Stand": {
       "edhrec_rank": 740,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Tyvar's Stand",
-      "reason": "no template for: Target creature you control gets +X/+X and gains hexproof and indestructible until end of ",
+      "reason": "target power delta is 20, expected 29; target toughness delta is 20, expected 29",
       "scryfall_id": "b6ab0855-782a-498c-a885-b3ab3d1bb362",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Tyvar, Jubilant Brawler": {
