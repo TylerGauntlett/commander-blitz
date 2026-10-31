@@ -202,7 +202,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 '"It gains suspend" — suspending a card from an effect'),
     "ripple": ("Cards", "Ripple N: reveal the top N, cast any with the same name free.",
                H_CASCADE),
-    "reveal_until": ("Cards", "Reveal from the top until `amount` cards match (default one), move them together (under `controller: you` if named); bottom or shuffle the rest.",
+    "reveal_until": ("Cards", "Reveal from the top until `amount` cards match (default one), move them together (under `controller: you` if named), or offer one onto the battlefield with `destination` as the fallback (`may_destination`); bottom or shuffle the rest.",
                      H_CASCADE),
     "hideaway": ("Cards", "Hideaway: look at the top N, exile one face down, the rest to the bottom.",
                  'Hideaway — "that one, from there"'),

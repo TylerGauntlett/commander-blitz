@@ -12642,6 +12642,32 @@ Jhoira loads and hands the opponent their own historic card for free.
 oid or snapshot and gives 0 for a list. A scan that finds nothing binds the
 empty list, so the loss is zero.
 
+### "You may put that card onto the battlefield. If you don't …" — `may_destination`
+
+```jsonc
+// Songbirds' Blessing -- "Whenever enchanted creature attacks, reveal cards from
+// the top of your library until you reveal an Aura card. You may put that card
+// onto the battlefield. If you don't, put it into your hand. Put the rest on the
+// bottom of your library in a random order."
+{ "op": "reveal_until", "objects": { "subtypes": ["Aura"] },
+  "may_destination": "battlefield", "destination": "hand" }
+```
+
+`may_destination: "battlefield"` asks the controller one yes/no about the match
+while it is still in the library — after the reveal, before the rest is
+bottomed. Yes puts it onto the battlefield (`tapped` and `controller` describe
+that arrival); no sends it to `destination`, the fallback. A yes that cannot be
+honoured is a card not put onto the battlefield and takes the fallback too: an
+Aura chooses its host as it enters (303.4f), and one with nothing to enchant
+goes to the hand rather than staying among the rest. `as` binds the match
+either way.
+
+The loader admits only `"battlefield"`, refuses a `destination` equal to it,
+and refuses an `amount` — "that card" is one card. A `reveal_until` to the hand
+followed by a `may` `put_onto_battlefield` is the near miss: it bottoms the rest
+before the choice, and the card reaches the battlefield through the hand, a
+second zone change.
+
 ## Discover — cascade's walk, N or less, cast or hand
 
 ```jsonc

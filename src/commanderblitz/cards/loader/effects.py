@@ -16,6 +16,7 @@ from commanderblitz.engine.effects.ops_cards import (
     DESTINATIONS,
     EXILE_UNTIL_ELSE_DESTINATIONS,
     LOOK_STEP_KEYS,
+    REVEAL_UNTIL_MAY_DESTINATIONS,
     SEARCHABLE,
 )
 from commanderblitz.engine.effects.ops_counters import AMASS_TOKENS
@@ -1348,14 +1349,37 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: unknown reveal_until destination {destination!r} "
                 f"(implemented: {sorted(DESTINATIONS)})"
             )
+        # "You may put that card onto the battlefield. If you don't, put it
+        # into your hand." The may is the battlefield and the fallback is
+        # `destination`; a may to where the card would go anyway asks nothing,
+        # and "that card" is one card, so an `amount` would ask about a group
+        # the sentence never names.
+        may_destination = effect.get("may_destination")
+        if "may_destination" in effect:
+            if may_destination not in REVEAL_UNTIL_MAY_DESTINATIONS:
+                raise DslError(
+                    f"{where}: unknown reveal_until may_destination {may_destination!r} "
+                    f"(implemented: {sorted(REVEAL_UNTIL_MAY_DESTINATIONS)})"
+                )
+            if destination == may_destination:
+                raise DslError(
+                    f"{where}: reveal_until 'may_destination' needs a 'destination' "
+                    f"other than {may_destination!r} -- the fallback if you don't"
+                )
+            if "amount" in effect:
+                raise DslError(
+                    f"{where}: reveal_until 'may_destination' asks about one card "
+                    f"and takes no 'amount'"
+                )
+        arrival = may_destination or destination
         # "Put that card onto the battlefield tapped." Anywhere else a card is
         # never tapped, so the key would load and say nothing.
         if "tapped" in effect and (
-            not isinstance(effect["tapped"], bool) or destination != "battlefield"
+            not isinstance(effect["tapped"], bool) or arrival != "battlefield"
         ):
             raise DslError(
                 f"{where}: reveal_until 'tapped' is a boolean and needs "
-                f"destination 'battlefield'"
+                f"destination or may_destination 'battlefield'"
             )
         # "You put that card onto the battlefield **under your control**."
         # The only value is "you": every other seat a match could enter under is
@@ -1363,11 +1387,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # battlefield a card has no controller to set, so the key would say
         # nothing.
         if "controller" in effect and (
-            effect["controller"] != "you" or destination != "battlefield"
+            effect["controller"] != "you" or arrival != "battlefield"
         ):
             raise DslError(
                 f"{where}: reveal_until 'controller' is \"you\" and needs "
-                f"destination 'battlefield'"
+                f"destination or may_destination 'battlefield'"
             )
     # Same argument as look_at_top, and the printed keyword is *named* for the
     # number -- "hideaway 4". Defaulted it would look at one card, and the

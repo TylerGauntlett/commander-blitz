@@ -2253,6 +2253,11 @@ def op_discover(ctx: EffectContext, spec: Mapping[str, Any]):
 #: guessed at.
 EXILE_UNTIL_ELSE_DESTINATIONS = frozenset({"hand"})
 
+#: Where `reveal_until`'s ``may_destination`` may offer to send its match. Only
+#: the battlefield is printed ("you may put that card onto the battlefield");
+#: anything else is refused by the loader rather than guessed at.
+REVEAL_UNTIL_MAY_DESTINATIONS = frozenset({"battlefield"})
+
 
 @register("exile_until")
 def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
@@ -2446,9 +2451,23 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
     still goes to the bottom of *that* library, because it is that player's.
     The spelling `put_onto_battlefield` and `return_from_graveyard` use, and the
     loader admits it only beside the battlefield.
+
+    ``may_destination: "battlefield"`` is "you may put that card onto the
+    battlefield. **If you don't, put it into your hand**" -- Songbirds'
+    Blessing. The controller is asked about the match while it is still in the
+    library, after the reveal and before the rest is bottomed; yes sends it to
+    the battlefield (``tapped`` and ``controller`` are that arrival's), and no
+    sends it to ``destination``, the fallback. A yes that cannot be honoured --
+    an Aura with nothing it could enchant stays where it was (303.4g) -- is a
+    card not put onto the battlefield, so it takes the fallback too. One match
+    only: the loader refuses an ``amount`` beside it, because "that card" is one
+    card. A `reveal_until` to the hand followed by a `may` `put_onto_battlefield`
+    is the near miss: it bottoms the rest before the choice, and the card
+    reaches the battlefield from the hand, a second zone change.
     """
     selector = spec.get("objects") or spec.get("selector") or {}
     destination = DESTINATIONS[str(spec.get("destination", "hand"))]
+    may_destination = spec.get("may_destination")
     # Defaulted **on**, unlike `look_at_top`'s. "Look at" leaves what you did not
     # take on top in order, and that is what looking means; there is no printed
     # "reveal until" that leaves the revealed cards where they were, so an
@@ -2490,7 +2509,9 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
         # "Put that card onto the battlefield **tapped**" (Clifftop Lookout).
         # The loader admits `tapped` only beside the battlefield, so an untapped
         # land never arrives off a card that printed a tapped one.
-        if hits:
+        if hits and may_destination:
+            hits = yield from _move_found_may(ctx, hits, pid, destination, spec)
+        elif hits:
             with entering_together(ctx.state):
                 hits = yield from _move_found(
                     ctx,
@@ -2509,6 +2530,43 @@ def op_reveal_until(ctx: EffectContext, spec: Mapping[str, Any]):
             _bottom_in_random_order(ctx, pid, [oid for oid in revealed if oid not in moved])
         elif shuffle_rest:
             shuffle_library(ctx.state, pid)
+
+
+def _move_found_may(
+    ctx: EffectContext,
+    hits: list[int],
+    pid: int,
+    fallback: Zone,
+    spec: Mapping[str, Any],
+):
+    """ "You may put that card onto the battlefield. If you don't, put it into
+    your hand." `reveal_until`'s ``may_destination``, asked per match.
+
+    Returns what moved, which is every match: a declined card and one whose
+    arrival was refused (an Aura with no legal host, 303.4g) both go to the
+    fallback, because each is a card that was not put onto the battlefield.
+    """
+    controller = ctx.controller if spec.get("controller") == "you" else None
+    moved: list[int] = []
+    for oid in hits:
+        name = ctx.state.card_of(ctx.state.objects[oid]).name
+        where = str(spec["may_destination"])
+        arrived: list[int] = []
+        if (yield from ask_yes_no(ctx, f"Put {name} onto the {where}?", ctx.controller)):
+            arrived = yield from _move_found(
+                ctx,
+                [oid],
+                pid,
+                DESTINATIONS[where],
+                {**spec, "destination": where},
+                bool(spec.get("tapped")),
+                "reveal_until",
+                controller=controller,
+            )
+        if not arrived:
+            arrived = yield from _move_found(ctx, [oid], pid, fallback, spec, False, "reveal_until")
+        moved.extend(arrived)
+    return moved
 
 
 @register("two_piles")
