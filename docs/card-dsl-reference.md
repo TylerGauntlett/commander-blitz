@@ -446,7 +446,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `land_played` | `land_played` | A land is played. | [Triggers](card-dsl.md#triggers) |
 | `leaves_battlefield` | `leaves_battlefield` | A permanent leaves the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `leaves_graveyard` | `leaves_graveyard` | A card leaves a graveyard. | [Triggers](card-dsl.md#triggers) |
-| `life_lost` | `life_lost` | A player loses life. | ["Whenever an opponent loses life"](card-dsl-cookbook.md#whenever-an-opponent-loses-life) |
+| `life_lost` | `life_lost` | A player loses life; with `nth`, that player's Nth separate loss this turn. | ["Whenever an opponent loses life"](card-dsl-cookbook.md#whenever-an-opponent-loses-life) |
 | `mutates` | `mutated` | A creature mutates. | ["Whenever this creature mutates…"](card-dsl.md#whenever-this-creature-mutates) |
 | `permanent_enters` | `enters_battlefield` | A permanent enters the battlefield. | [Triggers](card-dsl.md#triggers) |
 | `postcombat_main` | `postcombat_main` | At the beginning of the postcombat main phase. | [Triggers](card-dsl.md#triggers) |

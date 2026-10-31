@@ -3,8 +3,7 @@
   "name": "Intermediate Chirography",
   "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, create a 2/1 white and black Inkling creature token with flying.\n{1}{B}: Level 2\nWhenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control.\n{2}{B}: Level 3\nAt the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying. (Equipment, Auras you control, and counters are modifications.)",
   "blocked_sentences": [
-    "At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying.",
-    "Whenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control."
+    "At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying."
   ],
   "needs": [
     {
@@ -12,14 +11,8 @@
       "kind": "value",
       "what": "a turn-ledger value or condition counting creatures that died this turn under a given player's control, filtered by their last-known state -- here 'modified' (had counters, an attached Equipment, or an Aura its controller controlled) at the moment it died -- usable as an end_step trigger's intervening-if condition",
       "why_existing_wont_do": "`creatures_died_this_turn` takes only a player spec and counts every creature death with no filter; the `modified` selector key reads live permanents on the battlefield, not dead ones; writing an unprinted `dies` trigger that sets a turn flag would be an approximation the brief forbids (and it would miss deaths before the Class reached level 3 -- which the printed ledger condition counts)"
-    },
-    {
-      "capability": "first_life_loss_each_turn",
-      "kind": "trigger_event",
-      "what": "an `nth` ordinal on the `life_lost` event (per player, per turn, like `you_gain_life`'s `life_gains` ordinal in the turn ledger) so 'Whenever you lose life for the first time each turn' fires only on that player's first life loss of the turn",
-      "why_existing_wont_do": "`state.py` stamps `nth` only on draws, casts and life gains; LIFE_LOST gets no ordinal, so `trigger.nth` never matches. `max_per_turn: 1` is a per-permanent cap and would wrongly fire on a later loss when the ability first appeared (the Class reached level 2) after you had already lost life that turn"
     }
   ],
-  "closest_existing": ["creatures_died_this_turn", "modified", "you_gain_life nth", "max_per_turn"],
+  "closest_existing": ["creatures_died_this_turn", "modified"],
   "confidence": "high"
 }

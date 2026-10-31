@@ -941,6 +941,15 @@ class GameState:
             if pid is not None:
                 amount = int(data.get("amount") or 0)
                 ledger.life_lost[pid] = ledger.life_lost.get(pid, 0) + amount
+                # "Whenever you lose life for the first time each turn." The
+                # ordinal goes on the event, as a life gain's does below, so a
+                # `life_lost` trigger with `nth` reads it at queue time. Every
+                # loss the engine makes passes through here -- `lose_life`
+                # (drains and life paid as a cost, 119.4) and `damage_player`
+                # (119.3) -- and neither fires for a loss of 0, so a loss that
+                # did not happen spends no ordinal.
+                ledger.life_losses[pid] = ledger.life_losses.get(pid, 0) + 1
+                data["nth"] = ledger.life_losses[pid]
         elif event.type == EventType.LIFE_GAINED:
             # Witch of the Moors. Off the event rather than in `gain_life`, for
             # the reason every other tally here is: lifelink and the op both

@@ -4390,7 +4390,7 @@ failed match never queues, so an opponent's placement does not spend a
 ```
 
 `nth` is "whenever you draw your **second** card each turn", and it is legal only
-on a `draw`, a `spell_cast`, a `you_gain_life`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
+on a `draw`, a `spell_cast`, a `you_gain_life`, a `life_lost`, an `attacks` or a `counter_placed` trigger. `draw_cards` puts the ordinal of each draw on the event —
 1 for the draw step's card, 2 for the next one — and this compares against it.
 
 ```jsonc
@@ -4445,6 +4445,22 @@ is four gains of 1 to it.
 ```jsonc
 // Vanguard Seraph
 { "event": "you_gain_life", "nth": 1 }
+```
+
+On `life_lost` it is "whenever you lose life **for the first time** each turn"
+(Intermediate Chirography, Vengeful Warchief): the same fold counts each
+player's loss events in `TurnLedger.life_losses` and writes the count onto
+LIFE_LOST. Every loss is one of those events — a drain, life paid as a cost
+(119.4) and damage to a player (119.3) — and a loss of 0, a locked life total or
+infect damage fires none, so it spends no ordinal. The count is per losing
+player, so with `controller: "opponent"` every opponent has a first loss of
+their own. `max_per_turn: 1` is the near miss: it counts from when the ability
+appeared, so a Class reaching level 2 after its controller had already lost
+life would fire on the second loss.
+
+```jsonc
+// Intermediate Chirography, level 2
+{ "event": "life_lost", "controller": "you", "nth": 1 }
 ```
 
 On `attacks` it is "whenever this creature attacks **for the first time each

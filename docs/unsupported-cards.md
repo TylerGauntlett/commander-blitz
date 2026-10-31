@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**115 cards** blocked by **103** capabilities.
+**115 cards** blocked by **102** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -61,7 +61,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
-| [first-life-loss-each-turn](#first-life-loss-each-turn) | 1 | 18700 | trigger_event |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -932,21 +931,6 @@ Blocks **1** card.
 
 </details>
 
-## first-life-loss-each-turn
-
-Blocks **1** card.
-
-- **(trigger_event)** an `nth` ordinal on the `life_lost` event (per player, per turn, like `you_gain_life`'s `life_gains` ordinal in the turn ledger) so 'Whenever you lose life for the first time each turn' fires only on that player's first life loss of the turn
-  <br>Why the existing vocabulary won't do: `state.py` stamps `nth` only on draws, casts and life gains; LIFE_LOST gets no ordinal, so `trigger.nth` never matches. `max_per_turn: 1` is a per-permanent cap and would wrongly fire on a later loss when the ability first appeared (the Class reached level 2) after you had already lost life that turn
-
-<details><summary>Cards waiting on this</summary>
-
-- **Intermediate Chirography** (rank 18700) — `intermediate_chirography`
-  - At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying.
-  - Whenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control.
-
-</details>
-
 ## fixed-piles-opponent-chooses
 
 Blocks **1** card.
@@ -1205,7 +1189,6 @@ Blocks **1** card.
 
 - **Intermediate Chirography** (rank 18700) — `intermediate_chirography`
   - At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying.
-  - Whenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control.
 
 </details>
 
