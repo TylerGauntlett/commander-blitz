@@ -2533,6 +2533,13 @@
   "cobbled_wings": {
     "zone": "battlefield"
   },
+  "coercive_impetus": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
+  },
   "coiled_tinviper": {
     "zone": "battlefield"
   },
@@ -5399,6 +5406,13 @@
   },
   "ghoulcaller_gisa": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "ghoulish_impetus": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
     "zone": "battlefield"
   },
   "giada_font_of_hope": {
@@ -8445,6 +8459,13 @@
     },
     "zone": "graveyard"
   },
+  "martial_impetus": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
+  },
   "mask_of_avacyn": {
     "zone": "battlefield"
   },
@@ -10015,6 +10036,13 @@
   "parapet_thrasher": {
     "zone": "battlefield"
   },
+  "parasitic_impetus": {
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
+    "zone": "battlefield"
+  },
   "pardic_wanderer": {
     "zone": "battlefield"
   },
@@ -10911,6 +10939,9 @@
   },
   "red_ghost_intangible_genius": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "redemption_arc": {
     "zone": "battlefield"
   },
   "redoubled_stormsinger": {

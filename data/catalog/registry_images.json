@@ -2399,6 +2399,10 @@
     "artist": "Matt Stewart",
     "scryfall_id": "e8bb16f6-71b2-4338-a546-27f37f50e811"
   },
+  "coercive_impetus": {
+    "artist": "Kieran Yanner",
+    "scryfall_id": "1e38b687-3873-454a-91a3-804c5b019d59"
+  },
   "coiled_tinviper": {
     "artist": "John Matson",
     "scryfall_id": "426a28bd-033d-41af-b577-ece73cbd7b3a"
@@ -5027,6 +5031,10 @@
   "ghoulcaller_gisa": {
     "artist": "Karla Ortiz",
     "scryfall_id": "be470fff-5feb-407d-a917-150f8d741e2d"
+  },
+  "ghoulish_impetus": {
+    "artist": "Steve Ellis",
+    "scryfall_id": "3146aeb8-b7f7-445e-9402-e12c23d6da2b"
   },
   "giada_font_of_hope": {
     "artist": "Johannes Voss",
@@ -8058,6 +8066,10 @@
     "artist": "Greg Staples",
     "scryfall_id": "5c4d0ad9-4d57-4e5c-b478-059220f5b1dd"
   },
+  "martial_impetus": {
+    "artist": "Aaron Miller",
+    "scryfall_id": "41ccc31c-9377-4e8a-aede-248d16cd5264"
+  },
   "martyr_of_dusk": {
     "artist": "Greg Staples",
     "scryfall_id": "d32e68b4-2584-4b1c-9268-642e3678bae7"
@@ -9498,6 +9510,10 @@
     "artist": "Cristi Balanescu",
     "scryfall_id": "93d8b962-2fe8-4323-a760-144979818f2c"
   },
+  "parasitic_impetus": {
+    "artist": "Mila Pesic",
+    "scryfall_id": "b73b6e64-fcfa-4a87-a860-c0b338082580"
+  },
   "pardic_wanderer": {
     "artist": "Igor Kieryluk",
     "scryfall_id": "2fffe967-3a99-4f00-af46-f4e5567598df"
@@ -10407,6 +10423,10 @@
   "red_ghost_intangible_genius": {
     "artist": "Nathaniel Himawan",
     "scryfall_id": "35bae013-51e9-4047-91e3-3b366ad0764e"
+  },
+  "redemption_arc": {
+    "artist": "Dominik Mayer",
+    "scryfall_id": "49326de1-d3b0-4f2b-95bc-5f2878e14a89"
   },
   "redoubled_stormsinger": {
     "artist": "Filipe Pagliuso",

@@ -29055,6 +29055,88 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1 and is goaded.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, you draw a card and lose 1 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "coercive_impetus",
+      "mana_cost": "{2}{B}",
+      "name": "Coercive Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhenever enchanted creature attacks, you draw a card and lose 1 life.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "coiled_tinviper",
@@ -60284,6 +60366,115 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1, has deathtouch, and is goaded.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1, has deathtouch, and is goaded."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1, has deathtouch, and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "battlefield",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                },
+                {
+                  "attachment": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "objects": {
+                    "controller": "any",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Return this card to the battlefield at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, return this card to the battlefield at the beginning of the next end step.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ghoulish_impetus",
+      "mana_cost": "{2}{B}",
+      "name": "Ghoulish Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1, has deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhen enchanted creature dies, return this card to the battlefield at the beginning of the next end step.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -97950,6 +98141,93 @@
           "power": {
             "const": 1
           },
+          "text": "Enchanted creature gets +1/+1 and is goaded.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacking_player": "opponent",
+                "controller": "any",
+                "count": "all",
+                "exclude_binding": "subject",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, each other creature that's attacking one of your opponents gets +1/+1 until end of turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "martial_impetus",
+      "mana_cost": "{2}{W}",
+      "name": "Martial Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhenever enchanted creature attacks, each other creature that's attacking one of your opponents gets +1/+1 until end of turn.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
           "text": "Equipped creature gets +1/+2 and has hexproof",
           "toughness": {
             "const": 2
@@ -116380,6 +116658,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and is goaded.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": {
+                "controller_of": "subject"
+              }
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, its controller loses 2 life and you gain 2 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "parasitic_impetus",
+      "mana_cost": "{2}{B}",
+      "name": "Parasitic Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhenever enchanted creature attacks, its controller loses 2 life and you gain 2 life.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "pardic_wanderer",
@@ -126715,6 +127077,75 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has indestructible and is goaded."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature has indestructible and is goaded."
+        },
+        {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "attached": true,
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}: Exile enchanted creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "redemption_arc",
+      "mana_cost": "{2}{W}",
+      "name": "Redemption Arc",
+      "oracle_text": "Enchant creature\nEnchanted creature has indestructible and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\n{1}{W}: Exile enchanted creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {

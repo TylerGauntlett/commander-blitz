@@ -10,13 +10,12 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**132 cards** blocked by **114** capabilities.
+**127 cards** blocked by **113** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
-| [static-goad](#static-goad) | 5 | 2665 | static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [enchanted-by](#enchanted-by) | 3 | 1622 | selector |
 | [attached-to-filter](#attached-to-filter) | 2 | 1812 | selector |
@@ -240,34 +239,6 @@ Blocks **8** cards.
   - Prevent all combat damage that would be dealt to this creature by Walls.
 - **Enchanted Being** (rank 31748) — `enchanted_being`
   - Prevent all combat damage that would be dealt to this creature by enchanted creatures.
-
-</details>
-
-## static-goad
-
-Blocks **5** cards.
-
-- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter
-- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter. The +1/+1 (`buff`) and deathtouch (`grant_keyword` static) halves of the sentence are expressible; only the goad clause blocks it
-- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able', and neither marks goaded_by for the `goaded` filter
-- **(static_effect)** a continuous static (affects: {attached: true}) that keeps the enchanted creature goaded by the Aura's controller for as long as the static applies: it attacks each combat if able and attacks a player other than the goader if able, it sets goaded_by so the `goaded` selector/trigger filter sees it, and the mark ends the moment the Aura leaves or moves
-  <br>Why the existing vocabulary won't do: Goad exists only as the one-shot `goad` op (until the goader's next turn, or duration 'permanent' for the rest of the game), so a self_enters trigger would outlive the Aura and is not a static. The statics `attacks_if_able` plus `cant_attack_you` are not goad: `cant_attack_you` forbids attacking the Aura's controller outright, whereas goad only prefers another player 'if able' (in a two-player game the goaded creature must still attack you), and neither marks goaded_by for the `goaded` filter. The indestructible half (`grant_keyword` static) is expressible but the sentence cannot be split
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ghoulish Impetus** (rank 2665) — `ghoulish_impetus`
-  - Enchanted creature gets +1/+1, has deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
-- **Parasitic Impetus** (rank 2825) — `parasitic_impetus`
-  - Enchanted creature gets +2/+2 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
-- **Redemption Arc** (rank 3607) — `redemption_arc`
-  - Enchanted creature has indestructible and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
-- **Martial Impetus** (rank 3766) — `martial_impetus`
-  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
-- **Coercive Impetus** (rank 7990) — `coercive_impetus`
-  - Enchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)
 
 </details>
 

@@ -49562,12 +49562,12 @@
     },
     "Coercive Impetus": {
       "edhrec_rank": 7990,
-      "gate": "template",
+      "gate": null,
       "name": "Coercive Impetus",
-      "reason": "no template for: Enchanted creature gets +1/+1 and is goaded",
+      "reason": "",
       "scryfall_id": "1e38b687-3873-454a-91a3-804c5b019d59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coercive Portal": {
@@ -108252,12 +108252,12 @@
     },
     "Ghoulish Impetus": {
       "edhrec_rank": 2665,
-      "gate": "template",
+      "gate": null,
       "name": "Ghoulish Impetus",
-      "reason": "no template for: Enchanted creature gets +1/+1, has deathtouch, and is goaded",
+      "reason": "",
       "scryfall_id": "f6fab24d-0174-4248-8481-52194e05d6f9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ghoulish Procession": {
@@ -168332,12 +168332,12 @@
     },
     "Martial Impetus": {
       "edhrec_rank": 3766,
-      "gate": "template",
+      "gate": null,
       "name": "Martial Impetus",
-      "reason": "no template for: Enchanted creature gets +1/+1 and is goaded",
+      "reason": "",
       "scryfall_id": "41ccc31c-9377-4e8a-aede-248d16cd5264",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Martial Law": {
@@ -197952,12 +197952,12 @@
     },
     "Parasitic Impetus": {
       "edhrec_rank": 2825,
-      "gate": "template",
+      "gate": null,
       "name": "Parasitic Impetus",
-      "reason": "no template for: Enchanted creature gets +2/+2 and is goaded",
+      "reason": "",
       "scryfall_id": "1d312b2e-c529-42ac-ad9e-73573e5f1c34",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Parasitic Implant": {
@@ -218632,12 +218632,12 @@
     },
     "Redemption Arc": {
       "edhrec_rank": 3607,
-      "gate": "template",
+      "gate": null,
       "name": "Redemption Arc",
-      "reason": "no template for: Enchanted creature has indestructible and is goaded",
+      "reason": "",
       "scryfall_id": "49326de1-d3b0-4f2b-95bc-5f2878e14a89",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redemption Choir": {

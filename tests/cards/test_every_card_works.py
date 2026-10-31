@@ -393,6 +393,7 @@ class TestActivatedAbilities:
             else:
                 game.state.players[0].zone_list(zone).append(oid)
             _reach_the_level(game, oid, ability)
+            _enchant_something(game, oid, zone)
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
             _provide_the_sacrifice(game, registry, ability)
@@ -438,6 +439,30 @@ def _home_zone(ability) -> Zone:
     """
     zones = ability.active_zones or (Zone.BATTLEFIELD,)
     return Zone.BATTLEFIELD if Zone.BATTLEFIELD in zones else zones[0]
+
+
+def _enchant_something(game: Game, oid: int, zone: Zone) -> None:
+    """Attach an Aura put onto the battlefield here to a host its enchant clause allows.
+
+    Same family as `_reach_the_level`: "not activatable" must only ever mean the
+    ability is broken. An Aura placed directly onto the battlefield enchants
+    nothing, so the state-based action that bins an unattached Aura (303.4c)
+    puts it in the graveyard before the ability is ever offered -- Redemption
+    Arc's "{1}{W}: Exile enchanted creature" reported as unusable when the Aura
+    was only unattached. The host is the first one the Aura's own enchant
+    clause (its first target, 303.4a) can point at, so this arranges the
+    position the card is cast into and decides nothing about legality.
+    """
+    from commanderblitz.engine.primitives import attach
+    from commanderblitz.engine.targeting import enumerate_target_tuples
+
+    card = game.state.card(oid)
+    if zone is not Zone.BATTLEFIELD or not card.is_aura or not card.targets:
+        return
+    for refs in enumerate_target_tuples(game.state, 0, card.targets[:1], oid):
+        host = refs[0] if refs else None
+        if host is not None and host.kind == "object" and attach(game.state, oid, host.id):
+            return
 
 
 def _reach_the_level(game: Game, oid: int, ability) -> None:
