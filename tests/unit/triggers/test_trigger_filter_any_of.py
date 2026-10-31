@@ -22,9 +22,9 @@ What is pinned below, and each is a way this could be silently wrong:
 
 1. A noncreature spell and a Dragon creature spell each fire it once.
 2. A non-Dragon creature spell does not.
-3. A spell that answers both branches fires it once, not twice. (The engine
-   has no Kindred card type, so the witness is a creature-or-Dragon watcher and
-   a Dragon creature spell rather than a Kindred Dragon instant.)
+3. A spell that answers both branches fires it once, not twice. (The witness
+   is a creature-or-Dragon watcher and a Dragon creature spell; a Kindred
+   Dragon instant is the same both-branches case for the printed Whelp.)
 4. Keys beside `any_of` still narrow every branch.
 5. The loader holds each branch to `TRIGGER_FILTER_KEYS`, and refuses an
    `any_of` of fewer than two branches.

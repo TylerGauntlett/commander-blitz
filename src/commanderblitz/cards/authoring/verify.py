@@ -1433,6 +1433,42 @@ def _declares_printed_escape(card: CardDef, match: re.Match[str]) -> bool:
     return replace(cost, mana=ManaCost(), exile_from_graveyard=None) == Cost()
 
 
+#: "You may cast this card from your graveyard by paying {2}{W} rather than
+#: paying its mana cost." (Raffine's Guidance), read off the self-reference-
+#: folded line. Anchored at both ends, so a line with a condition
+#: in front ("As long as you control a Giant, …") or a rider behind it ("If you
+#: do, it enters with …", "… exile it instead") is not this sentence, and the
+#: payment must be mana symbols alone, so "{B}{B} and sacrificing two
+#: creatures" is not read as {B}{B}.
+_GRAVEYARD_ALTERNATIVE_LINE = re.compile(
+    r"^you may cast ~ from your graveyard by paying (?P<mana>(?:\{[^}]+\})+) "
+    r"rather than paying (?:its|~'s) mana cost$",
+    re.IGNORECASE,
+)
+
+
+def _declares_printed_graveyard_alternative(card: CardDef, match: re.Match[str]) -> bool:
+    """Whether ``card``'s graveyard cost is the mana-only price ``match`` prints.
+
+    The unkeyworded sentence is escape's destination with no extra payment: the
+    card goes wherever it normally would (`graveyard_cast_exiles` False), it is
+    not mayhem's discarded-this-turn price nor disturb's back face, and the
+    cost is the printed mana and nothing else, so a cheaper price or any other
+    payment fails closed.
+    """
+    cost = card.flashback
+    if (
+        cost is None
+        or card.graveyard_cast_exiles
+        or card.mayhem
+        or card.graveyard_cast_transformed
+    ):
+        return False
+    if not _declares_printed_cost(match.group("mana"), cost.mana):
+        return False
+    return replace(cost, mana=ManaCost()) == Cost()
+
+
 #: The `alternative_cost` fields the claimant below reads off the printed line.
 #: Any *other* field set on the node is a payment the claimant cannot see, so
 #: it fails closed rather than wave it through.
@@ -1572,19 +1608,22 @@ _GRAVEYARD_ADDITIONAL_LINE = re.compile(
     r"(?:(\w+) )?card in addition to paying its other costs"
 )
 
-_TOXIC_PART = re.compile(r"toxic (\d+)")
+def _claims_numbered_line(card: CardDef, stripped: str, word: str, n: int) -> bool:
+    """Whether a printed keyword line holding "<word> N" is exactly this card's.
 
-
-def _claims_toxic_line(card: CardDef, stripped: str) -> bool:
-    """Whether a printed keyword line holding "toxic N" is exactly this card's."""
+    ``word`` is a numbered keyword (toxic, annihilator) and ``n`` the card's own
+    field for it: the printed number must be that one, exactly once, and every
+    other part a keyword the card really has, as `lift_keywords` would demand.
+    """
+    part_re = re.compile(rf"{word} (\d+)")
     bare = re.sub(r"\s*\([^)]*\)", "", stripped).strip().rstrip(".")
     parts = [p.strip().casefold() for p in re.split(r"[,;]", bare) if p.strip()]
-    numbered = [m for p in parts if (m := _TOXIC_PART.fullmatch(p))]
-    if len(numbered) != 1 or int(numbered[0].group(1)) != card.toxic:
+    numbered = [m for p in parts if (m := part_re.fullmatch(p))]
+    if len(numbered) != 1 or int(numbered[0].group(1)) != n:
         return False
     have = {str(k) for k in card.keywords}
     for part in parts:
-        if _TOXIC_PART.fullmatch(part):
+        if part_re.fullmatch(part):
             continue
         word = normalize_keyword(part.replace(" ", "_"))
         if word not in KNOWN_KEYWORDS or word not in have:
@@ -1641,7 +1680,18 @@ def _covered(card: CardDef, line: str) -> bool:
     # `lift_keywords` cannot consume it -- "toxic_2" is no keyword -- so it is
     # claimed here, strictly: the number must be the card's `toxic`, and every
     # other part a keyword the card really has, as the lift would demand.
-    if card.toxic and "toxic" in card.keywords and _claims_toxic_line(card, stripped):
+    if card.toxic and "toxic" in card.keywords and _claims_numbered_line(
+        card, stripped, "toxic", card.toxic
+    ):
+        return True
+    # "Annihilator 2", "Flying, annihilator 1": the same claim for the same
+    # reason. Only the printed instance's line -- a granted annihilator is a
+    # sentence on the granter, claimed by its grant_keyword static's text.
+    if (
+        card.annihilator
+        and "annihilator" in card.keywords
+        and _claims_numbered_line(card, stripped, "annihilator", card.annihilator)
+    ):
         return True
 
     # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an
@@ -1852,6 +1902,16 @@ def _covered(card: CardDef, line: str) -> bool:
     # other payment fails closed, so a cheaper escape cannot wear the printed one.
     if (match := _ESCAPE_LINE.match(stripped)) is not None:
         return _declares_printed_escape(card, match)
+
+    # "You may cast this card from your graveyard by paying {2}{W} rather than
+    # paying its mana cost." (Raffine's Guidance) -- escape's slot and
+    # destination with no keyword and no exile: an alternative price from the
+    # graveyard, after which the card goes where it normally would. A permanent
+    # card has no `spell_effects` to claim it wholesale, and no ability can
+    # honestly carry it (a `cast_from_graveyard` static permits the printed
+    # mana cost, not this one). Strict for escape's reason.
+    if (match := _GRAVEYARD_ALTERNATIVE_LINE.match(folded_line)) is not None:
+        return _declares_printed_graveyard_alternative(card, match)
 
     # "Impending 4—{2}{W}{W} (If you cast this spell for its impending cost…)"
     # -- warp's shape with a count beside the price, and claimed by the field

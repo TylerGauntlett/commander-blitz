@@ -1,0 +1,83 @@
+{
+  "_comment": "Shapes for tests/unit/protection/test_protection_from_chosen_color.py. t_pcc_ward is Flickering Ward's Aura half: it chooses a colour as it enters, gives its host protection from that colour, and that protection doesn't remove it. t_pcc_unspared is the same Aura without the last sentence, the contrast. t_pcc_ray is a white spell to aim at the host.",
+  "cards": [
+    {
+      "id": "t_pcc_ward",
+      "name": "Test Chosen Color Ward",
+      "oracle_text": "Enchant creature\nAs this Aura enters, choose a color.\nEnchanted creature has protection from the chosen color. This effect doesn't remove this Aura.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this Aura enters, choose a color.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "choose_color", "prompt": "Choose a color" }]
+        },
+        {
+          "kind": "static",
+          "text": "Enchanted creature has protection from the chosen color. This effect doesn't remove this Aura.",
+          "effect": "protection",
+          "affects": { "attached": true },
+          "from_colors": [{ "chosen_color_of": "self" }],
+          "spares": "self"
+        }
+      ]
+    },
+    {
+      "id": "t_pcc_unspared",
+      "name": "Test Unspared Ward",
+      "oracle_text": "Enchant creature\nAs this Aura enters, choose a color.\nEnchanted creature has protection from the chosen color.",
+      "mana_cost": "{W}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": { "zone": "battlefield", "types": ["Creature"] }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As this Aura enters, choose a color.",
+          "trigger": { "event": "self_enters", "source": "self" },
+          "effects": [{ "op": "choose_color", "prompt": "Choose a color" }]
+        },
+        {
+          "kind": "static",
+          "text": "Enchanted creature has protection from the chosen color.",
+          "effect": "protection",
+          "affects": { "attached": true },
+          "from_colors": [{ "chosen_color_of": "self" }]
+        }
+      ]
+    },
+    {
+      "id": "t_pcc_ray",
+      "name": "Test White Ray",
+      "oracle_text": "Test White Ray deals 2 damage to target creature.",
+      "mana_cost": "{W}",
+      "types": ["Instant"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "targets": [
+        { "id": "t1", "kind": "permanent", "selector": { "zone": "battlefield", "types": ["Creature"] } }
+      ],
+      "spell_effects": [{ "op": "damage", "target": "t1", "amount": { "const": 2 } }]
+    }
+  ]
+}

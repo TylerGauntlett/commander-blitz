@@ -19,6 +19,7 @@ from ..zones import (
     exile,
     link_exiled,
     move_object,
+    offer_aura_host,
     offer_enters_replacement,
     offer_read_ahead,
     offer_riot_choice,
@@ -468,6 +469,10 @@ def op_exile_and_return(ctx: EffectContext, spec: Mapping[str, Any]):
         # of a zone the card joins, and the battlefield is shared -- and the
         # enters-the-battlefield event carries the controller, so an arrival
         # under the wrong seat would fire its own triggers for the wrong player.
+        # 303.4f, for an Aura: the host is chosen as it returns, and with none
+        # it stays in exile. See `zones.offer_aura_host`.
+        if not (yield from offer_aura_host(ctx.state, oid, owner)):
+            continue
         moved.controller = owner
         move_object(
             ctx.state,
@@ -595,6 +600,14 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         if obj is None:
             continue
         controller = ctx.controller if spec.get("controller") == "you" else obj.owner
+        # 303.4f: an Aura this puts down chooses its host as it enters, and
+        # stays where it is when nothing could be enchanted -- before anything
+        # else is asked about an arrival that may not happen. ``host_named`` is
+        # the effect naming the host itself with a following `attach`.
+        if not spec.get("host_named") and not (
+            yield from offer_aura_host(ctx.state, oid, controller)
+        ):
+            continue
         obj.controller = controller
         # "If this artifact **would enter**, you may discard a land card
         # instead." Mox Diamond, reanimated or blinked rather than cast -- the

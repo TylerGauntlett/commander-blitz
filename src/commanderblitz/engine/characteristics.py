@@ -149,6 +149,17 @@ def chars(state: GameState, oid: int) -> Characteristics:
     return result
 
 
+def subtype_survives(sub: str, types: set[str] | frozenset[str]) -> bool:
+    """Whether an object of card ``types`` may keep subtype ``sub`` (205.1b, 205.3d).
+
+    A subtype goes with its card type, and a creature type belongs to Creature
+    **or** Kindred (205.3m, 308.3): a type change that leaves a Kindred
+    enchantment a Kindred enchantment leaves its Eldrazi too.
+    """
+    owner = SUBTYPE_CLASS.get(sub, "Creature")
+    return owner in types or (owner == "Creature" and "Kindred" in types)
+
+
 def creature_types_of(state: GameState, oid: int | None) -> frozenset[str]:
     """The **creature types** an object currently has -- 205.3m, not its subtypes.
 
@@ -489,7 +500,7 @@ def _compute(state: GameState, oid: int) -> Characteristics:
     # layer 4, so an ability-removing static (layer 6) does not undo it.
     if obj.cast_impending and obj.on_battlefield and obj.counter(TIME_COUNTER) > 0:
         types.discard("Creature")
-        subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
+        subtypes = {sub for sub in subtypes if subtype_survives(sub, types)}
 
     if obj.on_battlefield:
         statics = _battlefield_statics(state)
@@ -575,7 +586,7 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
                 types = set(static.get("types", ()))
-                subtypes = {sub for sub in subtypes if SUBTYPE_CLASS.get(sub, "Creature") in types}
+                subtypes = {sub for sub in subtypes if subtype_survives(sub, types)}
 
         # 0a. creature-type replacement -- "…is a Dragon with base power and
         #     toughness 4/4 … (It loses all other creature types.)" Goddric,
@@ -790,6 +801,14 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
                 keywords -= set(static.get("keywords", ()))
+        #    The same prohibition from a resolved ability, until end of turn:
+        #    Arcane Lighthouse's "…lose hexproof and shroud and can't have
+        #    hexproof or shroud". Written onto each permanent the `lose_keyword`
+        #    op found as it resolved (611.2c), and read here for the reason the
+        #    static is: "can't have" beats a grant with a later timestamp.
+        for temp in obj.until_eot:
+            if temp.kind == "lose_keyword" and temp.keyword:
+                keywords.discard(temp.keyword)
 
     return Characteristics(
         power=power,
@@ -2183,6 +2202,73 @@ def has_any_counter(obj: GameObject) -> bool:
     return any(n > 0 for n in obj.counters.values())
 
 
+def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool:
+    """The ``enchanted_by`` filter key: is ``oid`` enchanted, by whose Aura?
+
+    "Destroy all creatures that **aren't enchanted**" (Winds of Rath),
+    "each creature that's **enchanted by an Aura you control**" (Eriette of the
+    Charmed Apple). A permanent is enchanted when an Aura is attached to it
+    (303.4); ``spec`` is ``true`` (one or more Auras, anybody's), ``false``
+    (none at all) or ``{"controller": "you" | "opponent" | "any"}``, which asks
+    for one or more Auras whose controller stands that way to ``controller`` --
+    the player the filter is read for. A player's Curse is attached to a seat,
+    not to a permanent, and enchants no permanent.
+
+    Answered by walking the battlefield for attachments, because attachment is
+    stored one way -- on the Aura, as `attached_to` -- the walk `modified`
+    makes in `selectors._is_modified`. An Aura is told by its printed face or by
+    being cast bestowed (702.103b), the test `stack` attaches by and `sba` bins
+    by, rather than by `chars`: every part of the answer -- `attached_to`, the
+    Aura's controller, its printed type line, the bestow stamp -- is a pipeline
+    **input**, so a static's filter can read it without depending on another
+    static's output (ADR 0001).
+    """
+    return enchanted_by_answer(aura_controllers(state, oid), spec, controller)
+
+
+def aura_controllers(state: GameState, oid: int) -> list[int]:
+    """Who controls each Aura attached to ``oid`` right now, one seat per Aura.
+
+    The one place an Aura is told from any other attachment, for both readers of
+    "enchanted": `enchanted_by` asks it of a permanent on the battlefield, and
+    `zones.move_object` asks it of a permanent that is leaving, before
+    `_detach_all` unattaches everything, and puts the answer on the departure
+    event as ``had_auras`` -- the last-known information (603.10a) that "whenever
+    an enchanted creature dies" and "for each Aura you controlled that was
+    attached to it" (Hateful Eidolon) read once the Auras have fallen off.
+    """
+    seats: list[int] = []
+    for aura_oid in state.battlefield:
+        aura = state.objects.get(aura_oid)
+        if aura is None or aura.attached_to != oid:
+            continue
+        if not (state.card_of(aura).is_aura or aura.cast_bestowed):
+            continue
+        seats.append(aura.controller)
+    return seats
+
+
+def auras_matching(seats: Any, spec: Any, controller: int) -> int:
+    """How many of ``seats`` (one per Aura) a `enchanted_by`-shaped ``spec`` names.
+
+    ``spec`` is ``true`` or ``{"controller": "you" | "opponent" | "any"}``,
+    relative to ``controller``. Shared by the live answer and the departure
+    snapshot so the two readings of "an Aura you control" cannot drift.
+    """
+    want = spec.get("controller", "any") if isinstance(spec, Mapping) else "any"
+    if want == "you":
+        return sum(1 for seat in seats if seat == controller)
+    if want == "opponent":
+        return sum(1 for seat in seats if seat != controller)
+    return len(seats)
+
+
+def enchanted_by_answer(seats: Any, spec: Any, controller: int) -> bool:
+    """The ``enchanted_by`` verdict for a host whose Auras' controllers are ``seats``."""
+    found = auras_matching(seats, spec, controller) > 0
+    return found if spec is not False else not found
+
+
 def _matches(
     state: GameState,
     obj: GameObject,
@@ -2288,6 +2374,22 @@ def _matches_wherever(
         source.attached_to is None or obj.attached_to != source.attached_to
     ):
         return False
+    # "…for each Aura you control **that's attached to a creature**" (Sage's
+    # Reverie); "+2/+2 for each Aura **attached to it**" (Kor Spiritdancer).
+    # `enchanted_by` read from the attachment's end: the permanent this one is
+    # attached to is matched by a filter of its own, in this same language, so
+    # `self_only` there is the static's own source. Its controller defaults to
+    # anybody's -- the printed line names the host by what it is -- and so does
+    # the attachment's, for `attached_to_host`'s reason: Kor Spiritdancer counts
+    # the opponent's Pacifism on it. Both ends are pipeline inputs: `attached_to`
+    # is written by `attach` alone, and the host filter reads what this one does.
+    host_filter = selector.get("attached_to")
+    if host_filter is not None:
+        host = state.objects.get(obj.attached_to) if obj.attached_to is not None else None
+        if host is None or not _matches(
+            state, host, source, {"controller": "any", **host_filter}, derived=derived
+        ):
+            return False
     # Soulbond. Two keys because the printed line applies to two creatures and
     # the static is written once: `paired` is "this creature, while it has a
     # partner" and `paired_with_source` is "the partner". Both short-circuit
@@ -2318,7 +2420,9 @@ def _matches_wherever(
     # `_static_players` already decided the word means on a permanent: a stolen
     # anthem pumps for whoever is holding it.
     owner = selector.get("owner")
-    controller = selector.get("controller", None if owner or attached_to_host else "you")
+    controller = selector.get(
+        "controller", None if owner or attached_to_host or host_filter is not None else "you"
+    )
     if controller == "you" and obj.controller != source.controller:
         return False
     if controller == "opponent" and obj.controller == source.controller:
@@ -2353,6 +2457,17 @@ def _matches_wherever(
             return False
         size = (c.power, c.toughness)
     else:
+        if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
+            # Bestow (702.103b): while attached it is an Aura enchantment and no
+            # creature. `_compute` makes the same change under the identical
+            # condition, and every half of it is a pipeline input, so the face
+            # this filter reads may make it too: "each Aura attached to it"
+            # counts a bestowed Spirit, and "creatures you control" does not.
+            card = dataclasses.replace(
+                card,
+                types=(card.types - {"Creature"}) | {"Enchantment"},
+                subtypes=card.subtypes | {"Aura"},
+            )
         if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None
@@ -2380,6 +2495,14 @@ def _matches_wherever(
     # static never puts one on -- so this is a pipeline input for `tapped`'s
     # reason, and the answer moves the moment a counter arrives or leaves.
     if "has_counters" in selector and has_any_counter(obj) != bool(selector["has_counters"]):
+        return False
+    # "Each creature that's **enchanted by an Aura you control**" (Eriette of
+    # the Charmed Apple). Attachment is board state no layer writes, so it is a
+    # pipeline input for `has_counters`' reason; `enchanted_by` says why every
+    # half of it is. "You" is the static's controller.
+    if "enchanted_by" in selector and not enchanted_by(
+        state, obj.oid, selector["enchanted_by"], source.controller
+    ):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False
@@ -2645,7 +2768,8 @@ def _static_protection_qualities(
     # matches nothing before one is made.
     out.update(resolve_chosen_card_type_list(static.get("from_types"), source_obj))
     out.update(static.get("from_subtypes", ()))
-    out.update(static.get("from_colors", ()))
+    # "Protection from the chosen color" -- the colour twin, read the same way.
+    out.update(resolve_chosen_color_list(static.get("from_colors"), source_obj))
     if static.get("from_colorless"):
         out.add(PROTECTION_COLORLESS)
     if static.get("from_colors_outside_commander_identity"):
@@ -2656,7 +2780,9 @@ def _static_protection_qualities(
     return out
 
 
-def protection_from(state: GameState, oid: int) -> frozenset[str]:
+def protection_from(
+    state: GameState, oid: int, *, attaching: int | None = None
+) -> frozenset[str]:
     """The qualities this permanent has protection from.
 
     Protection is parameterised -- "from Wizards", "from black", "from
@@ -2667,6 +2793,14 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
 
     Four rules read it (damage, enchant/equip, block, target).  Returning a set
     rather than answering a question keeps all four asking it the same way.
+
+    ``attaching`` is the enchant/equip rule asking on behalf of one Aura or
+    Equipment, and it is the only one of the four that can be told "this
+    effect doesn't remove this Aura" (Flickering Ward): a static carrying
+    ``spares: "self"`` whose source *is* that attachment is left out, so the
+    Ward that chose white stays on -- and goes back on -- a creature it gives
+    protection from white. Another white Aura is still refused, and damage,
+    blocks and targets from the Ward itself still meet the protection.
     """
     if not state.objects.get(oid) or not state.objects[oid].on_battlefield:
         return frozenset()
@@ -2674,6 +2808,12 @@ def protection_from(state: GameState, oid: int) -> frozenset[str]:
     obj = state.objects[oid]
     for source_obj, static in _battlefield_statics(state):
         if static.get("effect") != "protection":
+            continue
+        if (
+            attaching is not None
+            and source_obj.oid == attaching
+            and static.get("spares") == "self"
+        ):
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
@@ -2762,6 +2902,43 @@ def ward_abilities(state: GameState, oid: int) -> tuple[Ability, ...]:
     return granted_wards(state).get(oid, ())
 
 
+def annihilator_instances(state: GameState, oid: int) -> tuple[int, ...]:
+    """The N of every annihilator instance this permanent has, one per instance.
+
+    One entry per instance because each triggers separately (702.86b): an
+    Ulamog's Crusher wearing an Eldrazi Conscription has ``(2, 2)`` and its
+    attack makes the defending player sacrifice four permanents, in two goes.
+
+    Gated on the **derived** keyword first, so whatever removes the word --
+    `lose_all_abilities`, a `lose_keyword` static, a face-down shell -- removes
+    every instance with it. Then the two places an N can come from, and the only
+    two the loader lets the word arrive by (`enums.NUMBERED_KEYWORDS`):
+
+    * the printed instance, `CardDef.annihilator`, unless the permanent has
+      lost its abilities (the layer-1b removal `_compute` makes); and
+    * each `grant_keyword` static on the battlefield naming annihilator whose
+      `affects` reaches this permanent, with the N it carries. Matched the way
+      `_compute`'s keyword-grant layer matches, so the instance list and the
+      keyword can never disagree about who was granted it.
+    """
+    word = Keyword.ANNIHILATOR.value
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield or obj.face_down:
+        return ()
+    if not has_keyword(state, oid, word):
+        return ()
+    out: list[int] = []
+    card = state.card_of(obj)
+    if card.annihilator and word in card.keywords and not _loses_abilities(state, obj):
+        out.append(card.annihilator)
+    for source_obj, static in _battlefield_statics(state):
+        if static.get("effect") != "grant_keyword" or word not in static.get("keywords", ()):
+            continue
+        if _matches(state, obj, source_obj, static.get("affects")):
+            out.append(int(static["annihilator"]))
+    return tuple(out)
+
+
 def matches_static(
     state: GameState,
     obj: GameObject,
@@ -2802,14 +2979,23 @@ def block_restrictions(state: GameState, oid: int) -> list[tuple[GameObject, Map
     return out
 
 
-def protected_from(state: GameState, oid: int, source_oid: int | None) -> bool:
+def protected_from(
+    state: GameState, oid: int, source_oid: int | None, *, attaching: bool = False
+) -> bool:
     """Does ``oid`` have protection from ``source_oid``?
 
     ``source_oid`` is the *source* of the damage, spell or block -- a permanent
     on the battlefield or a spell on the stack.  A quality it does not have
     cannot be protected against, so a missing source is never protection.
+
+    ``attaching`` says the question is whether ``source_oid`` can enchant or
+    equip ``oid``, the one rule a ``spares: "self"`` static exempts its own
+    source from (:func:`protection_from`).
     """
-    return _matches_protection(state, protection_from(state, oid), source_oid)
+    qualities = protection_from(
+        state, oid, attaching=source_oid if attaching else None
+    )
+    return _matches_protection(state, qualities, source_oid)
 
 
 def _matches_protection(

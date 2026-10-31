@@ -42,6 +42,7 @@ from commanderblitz.engine.effects.ops_player import shut_cast_zones
 from commanderblitz.engine.effects.selectors import (
     ZONE_NAMES,
     validate_colorless_key,
+    validate_enchanted_by_key,
     validate_selector,
 )
 from commanderblitz.engine.effects.values import (
@@ -136,6 +137,7 @@ from .vocabulary import (  # noqa: F401
     MANA_AMOUNT_FORBIDDEN,
     MANA_RIDER_OPS,
     NOT_A_CAST_TIME_COST,
+    NUMBER_CARRYING_GRANT_KEYWORDS,
     PLAYER_TARGET_KINDS,
     PLAYER_WIDE_STATIC_EFFECTS,
     PLURAL_PLAYER_SPEC_NAMES,
@@ -164,6 +166,7 @@ from .vocabulary import (  # noqa: F401
     refuse_numbered_grant,
 )
 from .walk import (
+    _check_attached_to_key,
     _check_counter_kind,
     _check_mana_cost_key,
     _check_owner_key,
@@ -850,8 +853,20 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     where = f"{source}:{model.id}" if source else model.id
 
     for t in model.types:
+        if t == "Tribal":
+            # Kindred's old name (308). One spelling in the DSL, so a filter
+            # reading `types: ["Kindred"]` cannot miss a card written the old way.
+            raise DslError(f"{where}: 'Tribal' is written 'Kindred' (rule 308)")
         if t not in KNOWN_TYPES:
             raise DslError(f"{where}: unknown card type {t!r}")
+    if CardType.KINDRED.value in model.types and len(set(model.types)) == 1:
+        # 308.1: every Kindred card has another card type, and is cast and
+        # resolves as that type. Alone it would be neither a permanent spell
+        # nor an instant or sorcery, and `is_permanent` would guess.
+        raise DslError(
+            f"{where}: a Kindred card has another card type as well (308.1), "
+            f"got only {list(model.types)!r}"
+        )
     for s in model.supertypes:
         if s not in KNOWN_SUPERTYPES:
             raise DslError(f"{where}: unknown supertype {s!r}")
@@ -1675,6 +1690,21 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
             f"{where}: toxic N is the keyword 'toxic' in 'keywords' *and* the "
             f"card-level 'toxic' field holding N -- write both or neither"
         )
+    # Annihilator N (702.86): toxic's pairing, refused apart for toxic's
+    # reason. The word alone attacks and annihilates nothing; the number alone
+    # is a field `annihilator_instances` never reaches, because it is gated on
+    # the word.
+    if model.annihilator < 0:
+        raise DslError(
+            f"{where}: 'annihilator' is how many permanents are sacrificed, so it "
+            f"cannot be negative"
+        )
+    if (model.annihilator > 0) != ("annihilator" in model.keywords):
+        raise DslError(
+            f"{where}: annihilator N is the keyword 'annihilator' in 'keywords' "
+            f"*and* the card-level 'annihilator' field holding N -- write both or "
+            f"neither; the trigger is the rules', so write no ability for it"
+        )
     if model.morph_counter and model.morph is None:
         raise DslError(f"{where}: 'morph_counter' is megamorph's rider and needs a 'morph' cost")
     if model.morph is not None and "Creature" not in model.types:
@@ -2122,6 +2152,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         graveyard_cast_transformed=model.graveyard_cast_transformed,
         dredge=model.dredge,
         toxic=model.toxic,
+        annihilator=model.annihilator,
         madness=ManaCost.parse(model.madness) if model.madness else None,
         miracle=ManaCost.parse(model.miracle) if model.miracle else None,
         foretell=ManaCost.parse(model.foretell) if model.foretell else None,
@@ -2385,6 +2416,17 @@ def _has_per_turn_modes(effects: Any) -> bool:
     return False
 
 
+def _has_optional_modes(effects: Any) -> bool:
+    """Does any ``choose_mode`` in this effect tree say ``optional: true``?"""
+    if isinstance(effects, Mapping):
+        if effects.get("op") == "choose_mode" and effects.get("optional") is True:
+            return True
+        return any(_has_optional_modes(v) for v in effects.values())
+    if isinstance(effects, (list, tuple)):
+        return any(_has_optional_modes(v) for v in effects)
+    return False
+
+
 def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
@@ -2405,6 +2447,17 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             f"abilities, whose modes are chosen as they go on the stack; an "
             f"activated ability chooses at activation, which does not strike "
             f"spent modes off"
+        )
+
+    if kind is AbilityKind.ACTIVATED and _has_optional_modes(model.effects):
+        # The same reason: 602.2b's `Game._ask_modes` asks an exact or ranged
+        # count and has no "none, or exactly N", so "you may choose two" would
+        # be asked as "choose two".
+        raise DslError(
+            f"{where}: choose_mode's 'optional' (\"you may choose N\") is supported "
+            f"on triggered abilities, whose modes are chosen as they go on the "
+            f"stack; an activated ability chooses at activation, which has no "
+            f"\"or none\""
         )
 
     threshold = _compile_threshold(model, kind, where)
@@ -2781,19 +2834,20 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             "draw",
             "spell_cast",
             "you_gain_life",
+            "life_lost",
             "attacks",
             "counter_placed",
         ):
             # Same reasoning as `counter` and `mana_ability` above: only `draw`,
-            # `spell_cast`, `you_gain_life` and `attacks` carry an ordinal, and
-            # `counter_placed` the count before the placement, so accepting it
-            # elsewhere would look like "your second card each turn" and be a
-            # restriction that never matches -- an ability that silently never
-            # fires.
+            # `spell_cast`, `you_gain_life`, `life_lost` and `attacks` carry an
+            # ordinal, and `counter_placed` the count before the placement, so
+            # accepting it elsewhere would look like "your second card each
+            # turn" and be a restriction that never matches -- an ability that
+            # silently never fires.
             raise DslError(
                 f"{where}: 'nth' only means anything on a draw, spell_cast or "
-                f"you_gain_life trigger, or an attacks trigger, or a counter_placed "
-                f"trigger, not on {model.trigger.event!r}"
+                f"you_gain_life trigger, or a life_lost trigger, or an attacks "
+                f"trigger, or a counter_placed trigger, not on {model.trigger.event!r}"
             )
         if (
             model.trigger.nth is not None
@@ -3341,6 +3395,8 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         _check_mana_cost_key(filt, path)
         _check_pt_keys(filt, path)
         validate_colorless_key(filt, path)
+        validate_enchanted_by_key(filt, path)
+        _check_attached_to_key(filt, path)
     branches = filt.get("any_of")
     if branches is None:
         return
@@ -3650,6 +3706,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # the check costs nothing and the loop stays one list.
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
         validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
+        validate_enchanted_by_key(getattr(model, key, None), f"{where}.{key}")
+        _check_attached_to_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")
     if model.effect == "block_restriction":
@@ -3735,6 +3793,14 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"{where}: cant_attack_you needs an 'affects' filter naming the "
             f"creatures it stops -- e.g. "
             f'{{"controller": "any", "subtypes": ["Inkling"]}}'
+        )
+    if model.effect == "goaded" and model.affects is None:
+        # A missing filter matches nothing, so a filterless goad goads nobody:
+        # the Aura loads, prints "is goaded" and compels no attack. Every
+        # printed one names the creature it is attached to.
+        raise DslError(
+            f"{where}: goaded needs an 'affects' filter naming the creatures it "
+            f'goads -- e.g. {{"attached": true}} for the enchanted creature'
         )
     if model.effect == "cant_sacrifice" and model.affects is None:
         # A missing filter matches nothing, so a filterless prohibition protects
@@ -4912,10 +4978,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     for k in model.keywords:
         if k not in KNOWN_KEYWORDS:
             raise DslError(f"{where}: unknown keyword {k!r}")
+    # Annihilator N granted with its number (Eldrazi Conscription's "has
+    # trample and annihilator 2"): the one numbered keyword a grant_keyword may
+    # hand out, because the static carries N in a key of its own. The word and
+    # the number together or not at all, as on a card -- the word alone
+    # annihilates nothing, and the number alone is a key nothing reads.
+    carried: frozenset[str] = frozenset()
+    if model.annihilator is not None or (
+        model.effect == "grant_keyword" and "annihilator" in model.keywords
+    ):
+        if model.effect != "grant_keyword" or "annihilator" not in model.keywords:
+            raise DslError(
+                f"{where}: 'annihilator' is the N of a granted annihilator and "
+                f"belongs on a grant_keyword static whose 'keywords' name it"
+            )
+        if (
+            isinstance(model.annihilator, bool)
+            or not isinstance(model.annihilator, int)
+            or model.annihilator < 1
+        ):
+            raise DslError(
+                f"{where}: granting annihilator needs its N as a positive whole "
+                f"number in 'annihilator' -- \"has annihilator 2\" is "
+                f"{{'keywords': ['annihilator'], 'annihilator': 2}}"
+            )
+        carried = NUMBER_CARRYING_GRANT_KEYWORDS
     # Losing toxic is sayable -- `chars` drops the word and `damage_player`
     # reads the derived keywords -- so only the granting statics are refused.
     if model.effect != "lose_keyword":
-        refuse_numbered_grant(model.keywords, where)
+        refuse_numbered_grant(model.keywords, where, carried)
 
     if model.effect == "activate_loyalty_as_though_instant":
         # Whose loyalty abilities, in the permanent-filter language every other
@@ -5310,6 +5401,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             if t not in KNOWN_TYPES:
                 raise DslError(f"{where}: unknown type {t!r} in from_types")
         for c in model.from_colors:
+            if isinstance(c, dict):
+                # "Protection from the chosen color." The colour twin of the
+                # chosen card type above, refused on a near miss for the same
+                # reason: it would resolve to nothing for ever.
+                if c != {"chosen_color_of": "self"}:
+                    raise DslError(
+                        f'{where}: the only dynamic from_colors entry is '
+                        f'{{"chosen_color_of": "self"}}, not {c!r}'
+                    )
+                continue
             if c in ("C", "colorless"):
                 raise DslError(
                     f"{where}: colorless is not a colour (105.2c) -- write "
@@ -5323,6 +5424,22 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"from_colors_outside_commander_identity need effect 'protection' "
             f"or 'player_protection'"
         )
+    if model.spares is not None:
+        # "This effect doesn't remove this Aura." Only the Aura or Equipment
+        # that grants the protection to its host can be the one spared; on any
+        # other static there is no attachment for the exemption to keep, and
+        # it would load and be read by nothing.
+        if model.effect != "protection" or model.spares != "self":
+            raise DslError(
+                f"{where}: 'spares' is \"self\" on a 'protection' static, "
+                f"the Aura or Equipment it does not remove from its host"
+            )
+        if not (model.affects or {}).get("attached"):
+            raise DslError(
+                f"{where}: 'spares': \"self\" needs affects "
+                f'{{"attached": true}} -- only the host of the static\'s '
+                f"own source can be protected from it and keep it"
+            )
 
     _validate_static_condition(model.condition, f"{where}.condition")
     if (
@@ -5464,12 +5581,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["from_colors_outside_commander_identity"] = True
     if model.from_colorless:
         static["from_colorless"] = True
+    if model.spares is not None:
+        static["spares"] = model.spares
     if model.blockers is not None:
         static["blockers"] = dict(model.blockers)
     if model.require_all:
         static["require_all"] = True
     if model.max_blockers is not None:
         static["max_blockers"] = model.max_blockers
+    # A granted annihilator's N, whitelisted for `warp_cost`'s reason: dropped,
+    # the grant would load and `annihilator_instances` would have no N to read.
+    if model.annihilator is not None:
+        static["annihilator"] = model.annihilator
     if model.effect == "ward":
         # Pruned of the fields the model dump carries unset, because this
         # mapping is also what `carddef.ward_ability` keys its intern table on:

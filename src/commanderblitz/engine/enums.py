@@ -98,6 +98,21 @@ COLORLESS = "C"
 
 
 class CardType(str, Enum):
+    """The card types of rule 205.2a, in the order a type line prints them.
+
+    `build_type_line` renders the left half in this order, which is why Kindred
+    leads: "Kindred Enchantment -- Eldrazi Aura".
+
+    **Kindred** (308) is never alone: every Kindred card has another card type
+    and is cast and resolves as that type (308.1), and the loader refuses one
+    that has none. Its subtypes are creature types (205.3m, 308.3), so Eldrazi
+    Conscription is an Eldrazi to every subtype filter and every creature-type
+    count while never being a creature. It is not a permanent type (110.4a): a
+    Kindred enchantment is a permanent because it is an enchantment. "Tribal" is
+    its old name; the importer reads it as Kindred and the loader refuses it.
+    """
+
+    KINDRED = "Kindred"
     LAND = "Land"
     CREATURE = "Creature"
     ARTIFACT = "Artifact"
@@ -351,6 +366,25 @@ class Keyword(str, Enum):
     #: keywords: a Mite that loses all abilities stops poisoning.  It is in
     #: `NUMBERED_KEYWORDS`, so nothing may *grant* it: a grant has no N to give.
     TOXIC = "toxic"
+    #: Annihilator N (702.86a).  "Whenever this creature attacks, defending
+    #: player sacrifices N permanents of their choice."  Toxic's shape -- the
+    #: word is the `Keyword`, N lives beside it on the card (`CardDef.annihilator`)
+    #: -- with one difference that decides the rest: annihilator **is granted**.
+    #: "Enchanted creature gets +10/+10 and has trample and annihilator 2"
+    #: (Eldrazi Conscription) hands the keyword out *with its number*, so a
+    #: `grant_keyword` static naming it carries its own N in an ``annihilator``
+    #: key, and the loader requires the two together there as it does on a card.
+    #: Every other grant spelling (an op, an animation, a counter) is a bare word
+    #: and stays refused (`NUMBERED_KEYWORDS`).
+    #:
+    #: The trigger is the rules' sentence, so it is supplied rather than
+    #: printed: `carddef.annihilator_ability(n)`, interned per N like ward's.
+    #: Each instance triggers separately (702.86b) -- a printed annihilator 2
+    #: wearing a Conscription attacks for two triggers -- which is
+    #: `characteristics.annihilator_instances`, read by `triggers` on every
+    #: event.  The keyword is read on **derived** keywords, so an Eldrazi that
+    #: loses its abilities stops annihilating.
+    ANNIHILATOR = "annihilator"
 
 
 LANDWALK_SUBTYPE = {
@@ -381,12 +415,21 @@ EVASION_KEYWORDS = frozenset(
 INERT_KEYWORDS = frozenset({Keyword.PARTNER, Keyword.CHOOSE_A_BACKGROUND})
 
 #: Keywords whose printed quality carries a number that lives on the card
-#: rather than on the keyword -- toxic's N is `CardDef.toxic`.  Such a keyword
-#: may be *printed* (with its number) but never granted, whether by a static, an
-#: op, an animation or a counter: every grant spelling is a bare word, and a
-#: toxic with no N would be a keyword that filters as toxic and poisons nobody.
-#: The loader refuses each grant spelling of one.
-NUMBERED_KEYWORDS = frozenset({Keyword.TOXIC})
+#: rather than on the keyword -- toxic's N is `CardDef.toxic`, annihilator's
+#: `CardDef.annihilator`.  Such a keyword may be *printed* (with its number) but
+#: not granted by an op, an animation or a counter: every one of those grant
+#: spellings is a bare word, and a toxic with no N would be a keyword that
+#: filters as toxic and poisons nobody.  The loader refuses each grant spelling
+#: of one -- except the one that can carry the number, a `grant_keyword` static
+#: with the keyword's own N beside it (`NUMBER_CARRYING_GRANTS`).
+NUMBERED_KEYWORDS = frozenset({Keyword.TOXIC, Keyword.ANNIHILATOR})
+
+#: The `NUMBERED_KEYWORDS` a `grant_keyword` static may grant, because its N
+#: has a key of its own there -- ``{"effect": "grant_keyword", "keywords":
+#: ["annihilator"], "annihilator": 2}``.  Annihilator only: it is the one whose
+#: printings grant it (Eldrazi Conscription, Nazgul Battle-Mace).  Toxic stays
+#: printed-only until a card needs otherwise.
+NUMBER_CARRYING_GRANTS = frozenset({Keyword.ANNIHILATOR})
 
 #: Counter kinds that are **keyword counters** (122.1c): "a keyword counter is a
 #: counter with a keyword ability's name, and a permanent with one has that
@@ -406,7 +449,8 @@ NUMBERED_KEYWORDS = frozenset({Keyword.TOXIC})
 #:
 #: Read by `characteristics._compute` (the keyword-grant layer) and by
 #: `cards.loader` (which refuses a near-miss spelling of one).
-#: `NUMBERED_KEYWORDS` are excluded too: a toxic counter would have no N.
+#: `NUMBERED_KEYWORDS` are excluded too: a toxic or annihilator counter would
+#: have no N.
 KEYWORD_COUNTERS = frozenset(k.value for k in Keyword) - {
     k.value for k in INERT_KEYWORDS | NUMBERED_KEYWORDS
 }

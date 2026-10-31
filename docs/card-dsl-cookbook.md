@@ -1224,18 +1224,46 @@ creature. Asking and then attaching nothing would show a player a decision that
 cannot change the game. `optional` on `objects` is the remaining "you **may**
 attach it".
 
-The **Aura** half of the same sentence is the same op with the `subtypes` filter
-dropped, and it is not optional flavour — an Aura put onto the battlefield
-without being cast targeted nothing, `stack._attach_aura` reads the *spell's*
-targets, and state-based actions bin it a moment later (704.5m). Which host is
-legal for a given Aura is the card's own selector to state: the engine models no
-"Enchant creature" restriction off the stack, because "Enchant creature" is a
-targeting clause on the spell (see `docs/rules-coverage.md`).
+The **Aura** half of the same sentence needs nothing: the effect names no host
+for an Aura, so its controller chooses one as it enters (303.4f) — see
+[the next section](#an-aura-put-onto-the-battlefield-without-being-cast).
 
 `attachment` is refused at load time on every op but `attach`. The near miss is
 writing it on `put_onto_battlefield` beside its `tapped` and `counters` — the op
 that actually puts the Equipment down — where it would be accepted, ignored, and
 silent.
+
+### An Aura put onto the battlefield without being cast
+
+    Ghoulish Impetus — "When enchanted creature dies, return this card to the
+    battlefield at the beginning of the next end step."
+
+```jsonc
+{ "op": "return_from_graveyard", "destination": "battlefield",
+  "objects": { "self_only": true, "zone": "graveyard" } }
+```
+
+Nothing else. An Aura that arrives by any route but resolving as an Aura spell,
+from an effect that names no host, enters enchanting what the player it enters
+under chooses (303.4f). The engine asks it on every arrival path —
+`put_onto_battlefield`, `return_from_graveyard`, `return_to_origin`,
+`exile_and_return`, `search_library`, `search_zones`, `look_at_top` and
+`reveal_until` — through `zones.offer_aura_host`. The legal hosts are the
+Aura's enchant clause, its first target spec, read for that player: "enchant
+creature you control" is a creature *they* control. It is not targeting, so
+hexproof, shroud and ward do not narrow it; protection does (702.16c). With no
+legal host the Aura stays in the zone it was in (303.4g) — a reanimated Aura
+stays in the graveyard, and one looked at off the library is one of "the rest".
+
+A following `attach` is the near miss. It asks a second question after the
+first, and when nothing is legal the Aura has already left its zone.
+
+`host_named: true`, on `return_from_graveyard` (beside `destination:
+"battlefield"`) and `put_onto_battlefield`, is the other case: the effect names
+the host itself — Forum Filibuster's "…to the battlefield **attached to that
+token**", Gift of Immortality's "…attached to that creature" — and a following
+`attach` says which. No 303.4f question is asked. The loader refuses the key on
+any other op or destination, and anything but a boolean.
 
 ## Player-wide statics
 
@@ -2303,6 +2331,36 @@ source's card — index 0 on a cloaked permanent runs whatever the hidden card
 prints first. The second is not a cloak special case: every rules-supplied
 ability carries a negative index and `ability_of` answers all of them the same
 way, without reading the board.
+
+## Kindred
+
+```jsonc
+{"types": ["Kindred", "Enchantment"], "subtypes": ["Eldrazi", "Aura"]}
+```
+
+Rule 308: Kindred is a card type whose subtypes are creature types (308.3,
+205.3m), and it never makes the card a creature. Eldrazi Conscription is a
+Kindred Enchantment -- Eldrazi Aura: an enchantment spell, an Aura on the
+battlefield, and an Eldrazi to every reader of creature types.
+
+**A Kindred card always has another card type** (308.1), and is cast and
+resolves as that type: Kindred Instant is an instant, Kindred Enchantment a
+permanent. The loader refuses `Kindred` alone. Kindred is not a permanent type
+(110.4a), so `shares_permanent_type_with` leaves it out of the comparison.
+
+**Nothing on the card reads the creature types into place.** A subtype filter
+intersects subtypes and does not ask for a creature, so `{"subtypes":
+["Eldrazi"], "controller": "you"}` counts the enchantment, and so does
+`creature_types_of`, `printed_creature_types` and `shares_a_creature_type_with`
+(`SUBTYPE_CLASS` files every unknown subtype under Creature). A selector that
+also says `types: ["Creature"]` -- "Eldrazi creatures you control" -- does not
+match it, which is the printed sentence. A type change keeps the creature types
+while the object stays Kindred (`characteristics.subtype_survives`), and drops
+them with Kindred.
+
+**"Tribal" is Kindred's old name.** The importer reads it as Kindred
+(`proxy._RENAMED_TYPES`); the loader refuses the old word, so `types:
+["Kindred"]` is the one spelling a filter has to match.
 
 ## Cost reduction
 
@@ -4494,6 +4552,38 @@ otherwise become impossible:
   party controls — is legally attackable, which is why a goad can never empty the
   defender list and never makes a creature unable to attack.
 
+### Goaded for as long as a static applies
+
+    Coercive Impetus — "Enchant creature / Enchanted creature gets +1/+1 and is
+                        goaded."
+
+```jsonc
+{ "kind": "static", "effect": "buff", "power": 1, "toughness": 1,
+  "affects": { "attached": true } },
+{ "kind": "static", "effect": "goaded", "affects": { "attached": true } }
+```
+
+The `goaded` static is goad (701.38a) as a continuous effect: every creature its
+`affects` matches is goaded by the **static's controller** for exactly as long
+as the static applies. It is never written onto the creature;
+`player_statics.goaders` reads it live off the battlefield beside the `goad`
+op's mark in `GameObject.goaded_by`, and every reader of goad asks `goaders` —
+the compulsion in `combat.attack_required`, the target restriction in
+`combat.attack_target_forbidden` and 508.1d's count, and the `goaded` selector
+and trigger-filter key. So the goad ends the moment the Aura leaves, moves with
+it when it moves, and is untouched by the goader's untap step. The loader
+refuses one without `affects`, which would goad nobody.
+
+A creature its own controller enchants is goaded too: it attacks each combat if
+able, and "a player other than you" is every player it could attack anyway. The
+timed op refuses that self-goad as vacuous; the static does not, because the
+compulsion is real and printed on a permanent.
+
+| Near miss | Why not |
+|---|---|
+| the `goad` op on an enters trigger | a mark with a clock: it ends at the goader's untap step (or never, with `"permanent"`), and in either case not when the Aura leaves or moves |
+| `attacks_if_able` + `cant_attack_you` | `cant_attack_you` forbids attacking the goader outright, where goad only steers away "if able" — in a two-player game a goaded creature must still attack you — and neither names a goader for the `goaded` filter |
+
 ### "Goaded creatures" — `goaded`
 
     Puppet Master, String Puller — "Whenever you attack, goad target creature an
@@ -4519,8 +4609,8 @@ otherwise become impossible:
                  "duration": "this_turn" } ] }
 ```
 
-`goaded` is a selector and trigger-filter key that reads `GameObject.goaded_by`:
-`true` matches a creature somebody has goaded right now, `false` one nobody
+`goaded` is a selector and trigger-filter key that reads `player_statics.goaders`
+(a resolved goad's mark or a `goaded` static): `true` matches a creature somebody has goaded right now, `false` one nobody
 has. **Anybody's** goad counts, because the printed word names no goader — a
 creature another player goaded is as much a goaded creature as one you goaded.
 It is a boolean only; the loader refuses a word such as `"you"`, which `bool()`
@@ -4669,6 +4759,48 @@ bare word with no N, and the loader refuses `toxic` in each
 printed keyword line such as "Trample, toxic 2" is claimed for the residual
 gate only when N equals the card's `toxic` and every other word is one of the
 card's keywords.
+
+### Annihilator N
+
+    It That Betrays — "Annihilator 2"
+    Eldrazi Conscription — "Enchanted creature gets +10/+10 and has trample and annihilator 2."
+
+```jsonc
+// printed
+"keywords": ["annihilator"],
+"annihilator": 2
+
+// granted
+{ "kind": "static", "effect": "grant_keyword", "affects": { "attached": true },
+  "keywords": ["trample", "annihilator"], "annihilator": 2 }
+```
+
+Toxic's pairing: the word goes in `keywords` and N beside it, and the loader
+refuses either without the other — on a card, the card-level `annihilator`
+field; on a `grant_keyword` static, the static's own `annihilator` key. The
+card writes **no ability**: "whenever this creature attacks, defending player
+sacrifices N permanents of their choice" is the rules' sentence, supplied by
+`carddef.annihilator_ability(n)` for each instance the permanent has
+(`characteristics.annihilator_instances`). Each instance triggers separately
+(702.86b), so a printed annihilator 2 wearing a Conscription makes two
+triggers.
+
+The defending player is the `defender` of the `attacks` event — the seat
+attacked, or the controller of the planeswalker attacked (506.2) — and they
+choose among their own permanents. A printed `attacks` trigger with a
+`sacrifice` over `controller: "opponent"` is the near miss twice over: it is not
+the keyword (so a grant cannot give it and nothing counts it), and at a pod it
+pools every opponent's permanents.
+
+Only the `grant_keyword` static can grant it, because only it has a place for
+N. The other grant spellings — the `grant_keyword` op ("gains annihilator 1
+until end of turn"), `animate`, a copy's `add_keywords` — are bare words, and
+the loader refuses `annihilator` in each (`enums.NUMBERED_KEYWORDS`,
+`enums.NUMBER_CARRYING_GRANTS`); there is no annihilator counter. The keyword
+is read on derived characteristics, so `lose_keyword` or "loses all abilities"
+switches the printed one off. A printed line such as "Flying, annihilator 1" is
+claimed for the residual gate only when N equals the card's `annihilator` and
+every other word is one of the card's keywords.
 
 ### Fear, intimidate, horsemanship, shadow and nonbasic landwalk
 
@@ -4943,6 +5075,32 @@ read (`characteristics.resolve_chosen_card_type_list`), so all four rules see it
 and a source that has chosen nothing protects from nothing. It may sit beside
 literal types. A near-miss leaf is refused at load time, and so is the entry on a
 granted static, whose source would be the recipient, which has chosen nothing.
+
+**Protection from the chosen color.** Flickering Ward — "As this Aura enters,
+choose a color. Enchanted creature has protection from the chosen color. This
+effect doesn't remove this Aura." — puts `{"chosen_color_of": "self"}` in
+`from_colors`, after a `choose_color` on its enters trigger:
+
+```jsonc
+{ "kind": "static", "effect": "protection", "affects": { "attached": true },
+  "from_colors": [ { "chosen_color_of": "self" } ], "spares": "self" }
+```
+
+The colour is substituted each time protection is read
+(`characteristics.resolve_chosen_color_list`), exactly as the chosen card type
+is: all four rules see it, nothing is protected before the choice, it may sit
+beside literal letters, and a near-miss leaf or a granted copy is refused.
+
+`"spares": "self"` is "this effect doesn't remove this Aura". Protection from a
+colour stops the host being enchanted or equipped by anything of that colour
+(702.16c), so a white Aura that chose white would be refused by its own host.
+With `spares` the enchant/equip check (`protected_from(..., attaching=True)`,
+read by `primitives.attach` and `zones.offer_aura_host`) leaves out that one
+static when the attachment asking is its own source. Only `"self"` loads, only
+on a `protection` static whose `affects` is `{"attached": true}`; every other
+Aura of the colour is still refused, and damage, blocks and targets from the
+Aura itself still meet the protection. A printed "doesn't remove Auras" (Spectra
+Ward) spares more than its source and is not this key.
 
 **A player with protection.** "**You** and creatures you control have protection
 from the chosen card type" is two statics: the `protection` above for the
@@ -5391,7 +5549,18 @@ and the destination:
 "graveyard_cost": { "mana": "{1}{R}",
                     "exile_from_graveyard": { "count": 2, "exclude_self": true } },
 "graveyard_cast": "graveyard"
+
+\ Raffine's Guidance -- "You may cast this card from your graveyard by paying
+\ {2}{W} rather than paying its mana cost." Escape with nothing but mana.
+"graveyard_cost": { "mana": "{2}{W}" },
+"graveyard_cast": "graveyard"
 ```
+
+The unkeyworded sentence has no exile rider, so it is `"graveyard_cast":
+"graveyard"`, never flashback's default. Gate 3 claims it from the field: the
+printed mana must be the declared mana and nothing else may be charged, so a
+line with a second payment (Scourge of Nel Toth's sacrifice), a condition in
+front or a rider behind it is not this sentence and stays residual.
 
 The mana half **replaces** the printed cost and everything else is charged on
 top, so a jump-start card repeats its own mana cost rather than leaving it out.
@@ -7046,6 +7215,44 @@ side and the half a hexproof-shaped implementation gets wrong.
 Selfless Squire is both lines and needs both: the shield prevents, the event
 carries how much it ate, the trigger reads it back as `{"binding": "amount"}`.
 
+```jsonc
+// Druid's Deliverance: "Prevent all combat damage that would be dealt to you
+//                       this turn."
+{"op": "prevent_damage", "player": "you", "duration": "this_turn", "combat_only": true}
+```
+
+**`combat_only`** (a boolean, default false) narrows the shield to combat
+damage (510.2), so burn, drain and a fight still reach the seat;
+`DamageShield.stops` asks it with the `is_combat` that `damage_player` already
+carries. `player: "any"` is "…dealt to players" (Defend the Hearth). The near
+miss is `prevent_combat_damage`, which is keyed to the dealer and so also fogs
+combat damage to creatures and to the other seats.
+
+```jsonc
+// Inkshield: "Prevent all combat damage that would be dealt to you this turn.
+//             For each 1 damage prevented this way, create a 2/1 white and
+//             black Inkling creature token with flying."
+{"op": "prevent_damage", "player": "you", "duration": "this_turn", "combat_only": true,
+ "effects": [{"op": "create_token", "token": "inkling_2_1_wb_flying",
+              "amount": {"binding": "amount"}}]}
+```
+
+**`effects`** is the 615.5 rider, "if damage is prevented **this way**". Each
+shield the op installs gets a fresh `DamageShield.link`, `damage_player` puts it
+on the `DAMAGE_PREVENTED` it fires as `shield`, and the op installs beside it a
+`damage_prevented` delayed ability scoped to that link (`DelayedTrigger.shield`)
+for the turn. So the effects run every time *that* shield prevents damage, with
+the prevented amount as `{"binding": "amount"}` and the protected seat as
+`event_player`, directly rather than on the stack (615.5's "immediately
+afterward"), and never when a Fog, a Squire's shield or protection prevents the
+same damage. When several shields over a seat apply, a linked one prevents first
+(616.1, the order the protected player would pick), so two Inkshields make one
+set of Inklings. The loader refuses an empty list, a `target` inside it (the
+rider resolves with no targets, as a `delay` does), and `effects` on
+`prevent_damage_permanent`, which has no link. The near miss is a
+`delayed_trigger` on `damage_prevented`: it answers every prevention of damage
+to you, whatever prevented it.
+
 **The op is not the static of the same name.** `prevent_damage` the *static* is
 absorb N, keyed to a permanent through `affects` or to a seat through
 `affects_player`. It is per source and per instance rather than "all damage
@@ -7188,7 +7395,11 @@ All three keys are **required**. `dealt` is `"to"` (damage dealt to it),
 `"by"` (damage it deals, to permanents and players, combat and noncombat) or
 `"to_and_by"`; `duration` is `"this_turn"` (cleanup) or
 `"until_your_next_turn"` (the controller's next untap step, and dropped if they
-leave the game). `amount` is refused — it prevents all of it.
+leave the game). `amount` is refused — it prevents all of it. `combat_only` (a
+boolean, default false) narrows it to combat damage in either direction:
+Fleeting Flight's "prevent all combat damage that would be dealt to it this
+turn" is `dealt: "to"` with it, and Azorius Ploy's "…target creature would deal"
+is `dealt: "by"`.
 
 The op writes a `structs.PermanentShield` **onto the object**
 (`GameObject.damage_shields`) rather than onto a state table, because the
@@ -8397,6 +8608,37 @@ position: it would take the opponents' flying, their triggered abilities and
 their activated abilities too, which is half a Humility rather than a
 first-strike hoser.
 
+### The `lose_keyword` op — the same prohibition, until end of turn
+
+Arcane Lighthouse: *"{1}, {T}: Until end of turn, creatures your opponents
+control **lose hexproof and shroud and can't have hexproof or shroud**."*
+
+```jsonc
+{ "op": "lose_keyword",
+  "cant_have": true,
+  "keywords": ["hexproof", "shroud"],
+  "objects": { "controller": "opponent", "types": ["Creature"],
+               "zone": "battlefield", "count": "all" } }
+```
+
+Each permanent `objects` finds as the ability resolves gets a `lose_keyword`
+`TempEffect` per keyword, read in the same last keyword step of `chars` as the
+static. So "can't have" beats every grant, an opponent's later
+`grant_keyword` and a hexproof counter included, and cleanup ends it.
+
+The set is fixed when the ability resolves, which is where the op and the static
+differ. 611.2c: an effect from a resolved ability that changes characteristics
+affects only the objects on the battlefield at that time. A creature an opponent
+casts afterwards, or takes control of afterwards, keeps its hexproof. One that
+blinks comes back as a new object (400.7) and has it again.
+
+The loader requires `cant_have: true`, a non-empty list of known `keywords` and
+`objects`, and refuses any `duration` but `until_end_of_turn`. The near miss is
+the plain "target creature loses flying until end of turn" (Radjan Spirit). That
+is a layer-6 removal a later grant survives (613.7). It is not built, and the
+`cant_have` key is what stops it loading as this stronger effect.
+`lose_all_abilities` and `lock_abilities` take far more than two keywords.
+
 ### `grant_ability` as a static, and where the line now runs
 
 The `grant_ability` *op* grants for a duration and its grants are pointers only
@@ -9558,6 +9800,36 @@ longer be declared.
 
 Call Damage Control needs one more thing than this: a target per mode. See
 [a target that belongs to one mode](#a-target-that-belongs-to-one-mode).
+
+## "You may choose two"
+
+```jsonc
+{"op": "choose_mode", "count": 2, "optional": true, "modes": [...]}  // Shadrix Silverquill
+```
+
+**None, or exactly `count`** — never a number in between. `optional` is the word
+a target spec already uses for "exactly N targets, or none". The question is
+asked as the printed "may" (a yes-or-no) and then an exact pick of `count`, by
+`modes.ask_none_or_exactly`; it is not a `modal_bounds` clause, because "zero or
+two" is not a range.
+
+The near misses each load and each is a different card: `count: 2` alone cannot
+decline; `up_to: true` also permits exactly one mode; a `may` wrapped round the
+op is no longer the single top-level `choose_mode`, so its mode-owned targets
+are refused.
+
+A triggered ability asks it as it goes on the stack (603.3c), so each mode can
+own a target. A pair of modes is offered only when its targets can all be
+declared together: one ref never fills two specs, which is all "each mode must
+target a different player" needs, and with only one targetable player no pair
+is legal and the answer is none without asking. When only some pairs are legal,
+those pairs are offered as whole buttons.
+
+Refused at load time beside `up_to`, `up_to_if`, `or_more`, `all_if`, `budget`,
+`random`, `chooser` or `once_each`; with a `count` that is not a fixed number of
+at least 2 ("you may choose one" is `up_to`) or exceeds the modes; and on a spell
+or an activated ability, whose modes are asked at 601.2b/602.2b by
+`Game._ask_modes`, which has no "or none".
 
 ## "Choose one that hasn't been chosen"
 
@@ -11945,6 +12217,9 @@ color". So `add_mana`'s `mana` accepts the reference itself rather than the
 ability offering five modes, and the loader refuses `{"chosen_color_of": …}`
 inside a `choose_mode` for that reason.
 
+The reference also stands in the `from_colors` of a `protection` static and of
+`grant_protection` — see [Protection](#protection).
+
 Five labels rather than the pool-derived list `choose_type` builds: there are
 five colours, and every one of them exists.
 [Recorded in rules-coverage.md](rules-coverage.md).
@@ -12564,6 +12839,32 @@ Jhoira loads and hands the opponent their own historic card for free.
 `mana_value_of`'s `objects` form; the bare `{"binding": …}` form reads a single
 oid or snapshot and gives 0 for a list. A scan that finds nothing binds the
 empty list, so the loss is zero.
+
+### "You may put that card onto the battlefield. If you don't …" — `may_destination`
+
+```jsonc
+// Songbirds' Blessing -- "Whenever enchanted creature attacks, reveal cards from
+// the top of your library until you reveal an Aura card. You may put that card
+// onto the battlefield. If you don't, put it into your hand. Put the rest on the
+// bottom of your library in a random order."
+{ "op": "reveal_until", "objects": { "subtypes": ["Aura"] },
+  "may_destination": "battlefield", "destination": "hand" }
+```
+
+`may_destination: "battlefield"` asks the controller one yes/no about the match
+while it is still in the library — after the reveal, before the rest is
+bottomed. Yes puts it onto the battlefield (`tapped` and `controller` describe
+that arrival); no sends it to `destination`, the fallback. A yes that cannot be
+honoured is a card not put onto the battlefield and takes the fallback too: an
+Aura chooses its host as it enters (303.4f), and one with nothing to enchant
+goes to the hand rather than staying among the rest. `as` binds the match
+either way.
+
+The loader admits only `"battlefield"`, refuses a `destination` equal to it,
+and refuses an `amount` — "that card" is one card. A `reveal_until` to the hand
+followed by a `may` `put_onto_battlefield` is the near miss: it bottoms the rest
+before the choice, and the card reaches the battlefield through the hand, a
+second zone change.
 
 ## Discover — cascade's walk, N or less, cast or hand
 

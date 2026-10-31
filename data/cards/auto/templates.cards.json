@@ -1725,6 +1725,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "cat",
+              "controller": "you",
+              "op": "create_token",
+              "token": "cat_2_2_w"
+            },
+            {
+              "attachment": {
+                "binding": "subject",
+                "subtypes": [
+                  "Aura"
+                ],
+                "zone": "battlefield"
+              },
+              "objects": {
+                "binding": "cat",
+                "count": 1,
+                "optional": true,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an enchantment you control enters, create a 2/2 white Cat creature token. If that enchantment is an Aura, you may attach it to the token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "ajani_s_chosen",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Ajani's Chosen",
+      "oracle_text": "Whenever an enchantment you control enters, create a 2/2 white Cat creature token. If that enchantment is an Aura, you may attach it to the token.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Soldier"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -3029,6 +3093,7 @@
         "Eldrazi"
       ],
       "types": [
+        "Kindred",
         "Sorcery"
       ]
     },
@@ -6800,6 +6865,59 @@
           },
           "effects": [
             {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "cant_have": true,
+              "keywords": [
+                "hexproof",
+                "shroud"
+              ],
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "lose_keyword"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "arcane_lighthouse",
+      "name": "Arcane Lighthouse",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
               "modes": [
                 {
                   "effects": [
@@ -7920,6 +8038,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Pegasus"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Pegasus creatures you control have lifelink."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "pegasus_2_2_w_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Constellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "archon_of_sun_s_grace",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Archon of Sun's Grace",
+      "oracle_text": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nPegasus creatures you control have lifelink.\nConstellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Archon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -8588,6 +8772,81 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 6
+              },
+              "as": "gear",
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  "Aura",
+                  "Equipment"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            },
+            {
+              "attachment": {
+                "binding": "gear",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              },
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, look at the top six cards of your library. You may put an Aura or Equipment card from among them onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control. Put the rest of those cards on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "armored_skyhunter",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Armored Skyhunter",
+      "oracle_text": "Flying\nWhenever this creature attacks, look at the top six cards of your library. You may put an Aura or Equipment card from among them onto the battlefield. If an Equipment is put onto the battlefield this way, you may attach it to a creature you control. Put the rest of those cards on the bottom of your library in a random order.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -8699,6 +8958,66 @@
         "Vampire"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When you cast this spell, you may return target creature card from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "annihilator": 2,
+      "color_identity": [],
+      "colors": [],
+      "id": "artisan_of_kozilek",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{9}",
+      "name": "Artisan of Kozilek",
+      "oracle_text": "When you cast this spell, you may return target creature card from your graveyard to the battlefield.\nAnnihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents of their choice.)",
+      "power": 10,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 9,
       "types": [
         "Creature"
       ]
@@ -11297,6 +11616,68 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "azorius_ploy",
+      "mana_cost": "{1}{W}{W}{U}",
+      "name": "Azorius Ploy",
+      "oracle_text": "Prevent all combat damage target creature would deal this turn.\nPrevent all combat damage that would be dealt to target creature this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "combat_only": true,
+          "dealt": "by",
+          "duration": "this_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "prevent_damage_permanent"
+        },
+        {
+          "combat_only": true,
+          "dealt": "to",
+          "duration": "this_turn",
+          "objects": {
+            "target": "t2"
+          },
+          "op": "prevent_damage_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -18713,6 +19094,57 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Enchanted creature can't attack or block."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Enchanted creature can't attack or block."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bound_in_silence",
+      "mana_cost": "{2}{W}",
+      "name": "Bound in Silence",
+      "oracle_text": "Enchant creature\nEnchanted creature can't attack or block.",
+      "source": "auto",
+      "subtypes": [
+        "Rebel",
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -19863,6 +20295,85 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player attacks one of your opponents, if that opponent has more life than another of your opponents, that attacking player draws a card and you put two +1/+1 counters on a creature you control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "life_of": {
+                  "binding": "defender"
+                }
+              },
+              "right": {
+                "min_life_of": "each_opponent"
+              }
+            },
+            "controller": "any",
+            "defending": "opponent",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "breena_the_demagogue",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}{B}",
+      "name": "Breena, the Demagogue",
+      "oracle_text": "Flying\nWhenever a player attacks one of your opponents, if that opponent has more life than another of your opponents, that attacking player draws a card and you put two +1/+1 counters on a creature you control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Bird",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -25176,6 +25687,101 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Aura enters, exile target nonland permanent an opponent controls until this Aura leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, exile target nonland permanent an opponent controls until this Aura leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Enchanted creature has ward {2}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "chains_of_custody",
+      "mana_cost": "{2}{W}",
+      "name": "Chains of Custody",
+      "oracle_text": "Enchant creature you control\nWhen this Aura enters, exile target nonland permanent an opponent controls until this Aura leaves the battlefield.\nEnchanted creature has ward {2}. (Whenever it becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "power": {
@@ -25732,6 +26338,99 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "amount": {
+                "additional_paid": true
+              },
+              "new_targets": true,
+              "op": "copy_spell"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Replicate {2} (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies. Copies become tokens.)",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "additional_paid": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, return it to the battlefield under your control.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "additional_cost": {
+        "mana": "{2}"
+      },
+      "additional_optional": true,
+      "additional_repeatable": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "changing_loyalty",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{1}{B}",
+      "name": "Changing Loyalty",
+      "oracle_text": "Flash\nReplicate {2} (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies. Copies become tokens.)\nEnchant creature\nWhen enchanted creature dies, return it to the battlefield under your control.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -28521,6 +29220,88 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1 and is goaded.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, you draw a card and lose 1 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "coercive_impetus",
+      "mana_cost": "{2}{B}",
+      "name": "Coercive Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhenever enchanted creature attacks, you draw a card and lose 1 life.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "coiled_tinviper",
@@ -29340,6 +30121,30 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "commencement_of_festivities",
+      "mana_cost": "{1}{G}",
+      "name": "Commencement of Festivities",
+      "oracle_text": "Prevent all combat damage that would be dealt to players this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "combat_only": true,
+          "duration": "this_turn",
+          "op": "prevent_damage",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -35328,6 +36133,95 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_all_abilities",
+          "kind": "static",
+          "text": "Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_types",
+          "kind": "static",
+          "text": "Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types.",
+          "types": [
+            "Artifact",
+            "Creature"
+          ]
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_creature_types",
+          "kind": "static",
+          "subtypes": [
+            "Insect"
+          ],
+          "text": "Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 0
+          },
+          "text": "Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "darksteel_mutation",
+      "mana_cost": "{1}{W}",
+      "name": "Darksteel Mutation",
+      "oracle_text": "Enchant creature\nEnchanted creature is an Insect artifact creature with base power and toughness 0/1 and has indestructible, and it loses all other abilities, card types, and creature types.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "darksteel_myr",
@@ -37034,6 +37928,77 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent draws their second card each turn, this creature becomes prepared.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "draw",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "defacing_duskmage_vandal_s_edit",
+      "keywords": [
+        "deathtouch"
+      ],
+      "mana_cost": "{W}{B}",
+      "name": "Defacing Duskmage // Vandal's Edit",
+      "oracle_text": "Deathtouch\nWhenever an opponent draws their second card each turn, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 2,
+      "prepared_face": "vandal_s_edit",
+      "source": "auto",
+      "subtypes": [
+        "Dog",
+        "Warlock"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "defend_the_hearth",
+      "mana_cost": "{1}{G}",
+      "name": "Defend the Hearth",
+      "oracle_text": "Prevent all combat damage that would be dealt to players this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "combat_only": true,
+          "duration": "this_turn",
+          "op": "prevent_damage",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -40168,6 +41133,90 @@
         {
           "effects": [
             {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": -1
+              },
+              "toughness": {
+                "const": -1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Constellation — Whenever this creature or another enchantment you control enters, creatures your opponents control get -1/-1 until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": -1
+              },
+              "toughness": {
+                "const": -1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Constellation — Whenever this creature or another enchantment you control enters, creatures your opponents control get -1/-1 until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "doomwake_giant",
+      "mana_cost": "{4}{B}",
+      "name": "Doomwake Giant",
+      "oracle_text": "Constellation — Whenever this creature or another enchantment you control enters, creatures your opponents control get -1/-1 until end of turn.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Giant"
+      ],
+      "toughness": 6,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "choose_type",
               "prompt": "Choose a creature type"
             }
@@ -42614,6 +43663,52 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "druid_s_deliverance",
+      "mana_cost": "{1}{G}",
+      "name": "Druid's Deliverance",
+      "oracle_text": "Prevent all combat damage that would be dealt to you this turn. Populate. (Create a token that's a copy of a creature token you control.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "combat_only": true,
+          "duration": "this_turn",
+          "op": "prevent_damage",
+          "player": "you"
+        },
+        {
+          "as": "populate_original",
+          "objects": {
+            "controller": "you",
+            "count": 1,
+            "is_token": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "choose_permanents",
+          "prompt": "Populate: choose a creature token you control to copy"
+        },
+        {
+          "as": "populated",
+          "controller": "you",
+          "objects": {
+            "binding": "populate_original"
+          },
+          "op": "copy_permanent"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -43845,6 +44940,141 @@
     {
       "abilities": [
         {
+          "affects": {
+            "any_of": [
+              {
+                "self_only": true
+              },
+              {
+                "attached": true
+              }
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ]
+                }
+              }
+            ]
+          },
+          "text": "This creature and enchanted creature each get +1/+1 for each creature you control and +1/+1 for each Aura you control.",
+          "toughness": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "bestow": "{2}{W}{W}",
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "eidolon_of_countless_battles",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Eidolon of Countless Battles",
+      "oracle_text": "Bestow {2}{W}{W} (If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached.)\nThis creature and enchanted creature each get +1/+1 for each creature you control and +1/+1 for each Aura you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 0,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with two or more creatures, this creature becomes prepared.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "eiganjo_dynastorian_replenish",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Eiganjo Dynastorian // Replenish",
+      "oracle_text": "Vigilance\nWhenever you attack with two or more creatures, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 2,
+      "prepared_face": "replenish",
+      "source": "auto",
+      "subtypes": [
+        "Fox",
+        "Advisor"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -44196,6 +45426,64 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 10
+          },
+          "text": "Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)",
+          "toughness": {
+            "const": 10
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "annihilator": 2,
+          "effect": "grant_keyword",
+          "keywords": [
+            "trample",
+            "annihilator"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "eldrazi_conscription",
+      "mana_cost": "{8}",
+      "name": "Eldrazi Conscription",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)",
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi",
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Enchantment"
       ]
     },
     {
@@ -47055,6 +48343,85 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "any",
+            "enchanted_by": {
+              "controller": "you"
+            },
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_attack_you",
+          "kind": "static",
+          "text": "Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each opponent loses X life and you gain X life, where X is the number of Auras you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "eriette_of_the_charmed_apple",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Eriette of the Charmed Apple",
+      "oracle_text": "Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.\nAt the beginning of your end step, each opponent loses X life and you gain X life, where X is the number of Auras you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -48763,6 +50130,50 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eyeblight_s_ending",
+      "mana_cost": "{2}{B}",
+      "name": "Eyeblight's Ending",
+      "oracle_text": "Destroy target non-Elf creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_subtypes": [
+              "Elf"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "G"
       ],
       "colors": [
@@ -49409,6 +50820,108 @@
       "mana_cost": "{2}{U}",
       "name": "Fall from Favor",
       "oracle_text": "Enchant creature\nWhen this Aura enters, tap enchanted creature and you become the monarch.\nEnchanted creature doesn't untap during its controller's untap step unless that player is the monarch.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has flying and \"Sacrifice a creature: This creature gets +2/+1 until end of turn.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has flying and \"Sacrifice a creature: This creature gets +2/+1 until end of turn.\""
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice a creature: This creature gets +2/+1 until end of turn."
+        }
+      ],
+      "id": "fallen_ideal",
+      "mana_cost": "{2}{B}",
+      "name": "Fallen Ideal",
+      "oracle_text": "Enchant creature\nEnchanted creature has flying and \"Sacrifice a creature: This creature gets +2/+1 until end of turn.\"\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
       "source": "auto",
       "subtypes": [
         "Aura"
@@ -52245,6 +53758,7 @@
         "Shapeshifter"
       ],
       "types": [
+        "Kindred",
         "Artifact"
       ]
     },
@@ -53685,6 +55199,66 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "fleeting_flight",
+      "mana_cost": "{W}",
+      "name": "Fleeting Flight",
+      "oracle_text": "Put a +1/+1 counter on target creature. It gains flying until end of turn. Prevent all combat damage that would be dealt to it this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "+1/+1",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "flying"
+          ],
+          "objects": {
+            "target": "t1"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "combat_only": true,
+          "dealt": "to",
+          "duration": "this_turn",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "prevent_damage_permanent"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "B"
       ],
       "colors": [
@@ -53761,6 +55335,82 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this Aura enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            {
+              "chosen_color_of": "self"
+            }
+          ],
+          "kind": "static",
+          "spares": "self",
+          "text": "Enchanted creature has protection from the chosen color. This effect doesn't remove this Aura."
+        },
+        {
+          "cost": {
+            "mana": "{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}: Return this Aura to its owner's hand."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "flickering_ward",
+      "mana_cost": "{W}",
+      "name": "Flickering Ward",
+      "oracle_text": "Enchant creature\nAs this Aura enters, choose a color.\nEnchanted creature has protection from the chosen color. This effect doesn't remove this Aura.\n{W}: Return this Aura to its owner's hand.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -55406,6 +57056,161 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "inkling",
+              "controller": "you",
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying"
+            },
+            {
+              "ability": "filibuster_return",
+              "op": "reflexive_trigger"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, create a 2/1 white and black Inkling creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "host_named": true,
+              "objects": {
+                "target": "t1",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "attachment": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "objects": {
+                "binding": "inkling",
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "id": "filibuster_return",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Aura",
+                  "Equipment"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When you do, return up to one target Aura or Equipment card from your graveyard to the battlefield attached to that token."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "forum_filibuster",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Forum Filibuster",
+      "oracle_text": "At the beginning of your upkeep, create a 2/1 white and black Inkling creature token with flying. When you do, return up to one target Aura or Equipment card from your graveyard to the battlefield attached to that token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{W}{B}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{W}{B}, {T}: Surveil 1"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "forum_of_amity",
+      "mana_cost": "",
+      "name": "Forum of Amity",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {B}.\n{2}{W}{B}, {T}: Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -58991,6 +60796,100 @@
       "abilities": [
         {
           "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1, has deathtouch, and is goaded.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1, has deathtouch, and is goaded."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1, has deathtouch, and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "battlefield",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Return this card to the battlefield at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, return this card to the battlefield at the beginning of the next end step.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "ghoulish_impetus",
+      "mana_cost": "{2}{B}",
+      "name": "Ghoulish Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1, has deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhen enchanted creature dies, return this card to the battlefield at the beginning of the next end step.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "controller": "you",
             "subtypes": [
               "Angel"
@@ -59116,6 +61015,68 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "giant_s_ire",
+      "mana_cost": "{3}{R}",
+      "name": "Giant's Ire",
+      "oracle_text": "Giant's Ire deals 4 damage to target player or planeswalker. If you control a Giant, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "damage",
+          "target": "t1"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Giant"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Giant"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "types": [
+              "Planeswalker"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Sorcery"
       ]
     },
     {
@@ -59792,6 +61753,7 @@
                     {
                       "controller": "you",
                       "destination": "battlefield",
+                      "host_named": true,
                       "objects": {
                         "self_only": true,
                         "zone": "graveyard"
@@ -63780,6 +65742,69 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "add_energy"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you lose life for the first time each turn, you get {E}. (You get an energy counter. Damage causes loss of life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "life_lost",
+            "nth": 1
+          }
+        },
+        {
+          "cost": {
+            "pay_energy": 2,
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "as": "lost",
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "binding": "lost"
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Pay {E}{E}, Sacrifice this enchantment: Each opponent loses 3 life. You gain life equal to the life lost this way."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gonti_s_machinations",
+      "mana_cost": "{B}",
+      "name": "Gonti's Machinations",
+      "oracle_text": "Whenever you lose life for the first time each turn, you get {E}. (You get an energy counter. Damage causes loss of life.)\nPay {E}{E}, Sacrifice this enchantment: Each opponent loses 3 life. You gain life equal to the life lost this way.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -67702,6 +69727,37 @@
       ]
     },
     {
+      "alternative_cost": {
+        "sacrifice": {
+          "controller": "you",
+          "count": 4,
+          "subtypes": [
+            "Spawn"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "annihilator": 1,
+      "color_identity": [],
+      "colors": [],
+      "id": "hand_of_emrakul",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{9}",
+      "name": "Hand of Emrakul",
+      "oracle_text": "You may sacrifice four Eldrazi Spawn rather than pay this spell's mana cost.\nAnnihilator 1 (Whenever this creature attacks, defending player sacrifices a permanent of their choice.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -68080,6 +70136,54 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "auras_had": {
+                  "controller": "you"
+                }
+              },
+              "op": "draw"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.",
+          "trigger": {
+            "controller": "any",
+            "event": "creature_dies",
+            "filter": {
+              "enchanted_by": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "hateful_eidolon",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{B}",
+      "name": "Hateful Eidolon",
+      "oracle_text": "Lifelink\nWhenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
+        "Creature"
       ]
     },
     {
@@ -70396,6 +72500,91 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 8
+              },
+              "cast_free": true,
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  "Aura"
+                ]
+              },
+              "op": "look_at_top",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, exile the top eight cards of your library. You may cast an Aura spell from among them without paying its mana cost. Then put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "pump",
+              "power": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "toughness": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, it gets +X/+X until end of turn, where X is the number of Auras you control.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "herald_of_amity",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Herald of Amity",
+      "oracle_text": "Flying\nWhen this creature enters, exile the top eight cards of your library. You may cast an Aura spell from among them without paying its mana cost. Then put the rest on the bottom of your library in a random order.\nWhenever this creature attacks, it gets +X/+X until end of turn, where X is the number of Auras you control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Griffin"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -76251,6 +78440,41 @@
     },
     {
       "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "inkshield",
+      "mana_cost": "{3}{W}{B}",
+      "name": "Inkshield",
+      "oracle_text": "Prevent all combat damage that would be dealt to you this turn. For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "combat_only": true,
+          "duration": "this_turn",
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying"
+            }
+          ],
+          "op": "prevent_damage",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -76900,6 +79124,122 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Class enters, create a 2/1 white and black Inkling creature token with flying.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}"
+          },
+          "kind": "level",
+          "level": 2,
+          "text": "{1}{B}: Level 2"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "level": 2,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "life_lost",
+            "nth": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{2}{B}"
+          },
+          "kind": "level",
+          "level": 3,
+          "text": "{2}{B}: Level 3"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying"
+            }
+          ],
+          "kind": "triggered",
+          "level": 3,
+          "text": "At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "modified_creatures_died_this_turn": "you"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "intermediate_chirography",
+      "mana_cost": "{1}{B}",
+      "name": "Intermediate Chirography",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, create a 2/1 white and black Inkling creature token with flying.\n{1}{B}: Level 2\nWhenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control.\n{2}{B}: Level 3\nAt the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying. (Equipment, Auras you control, and counters are modifications.)",
+      "source": "auto",
+      "subtypes": [
+        "Class"
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -78245,6 +80585,50 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "sacrificed",
+            "filter": {
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "annihilator": 2,
+      "color_identity": [],
+      "colors": [],
+      "id": "it_that_betrays",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{12}",
+      "name": "It That Betrays",
+      "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents of their choice.)\nWhenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control.",
+      "power": 11,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 11,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -82454,6 +84838,112 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "your_card",
+              "objects": {
+                "controller": "you",
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "as": "their_card",
+              "objects": {
+                "player": {
+                  "target": "t1"
+                },
+                "zone": "library"
+              },
+              "op": "snapshot"
+            },
+            {
+              "objects": {
+                "binding": "your_card"
+              },
+              "op": "reveal"
+            },
+            {
+              "objects": {
+                "binding": "their_card"
+              },
+              "op": "reveal"
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "their_card"
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "mana_value_of": {
+                  "binding": "your_card"
+                }
+              },
+              "op": "lose_life",
+              "player": {
+                "target": "t1"
+              }
+            },
+            {
+              "objects": {
+                "binding": "your_card"
+              },
+              "op": "return_to_hand"
+            },
+            {
+              "objects": {
+                "binding": "their_card"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "At the beginning of your upkeep, you and target opponent each reveal the top card of your library. You each lose life equal to the mana value of the card revealed by the other player. You each put the card you revealed into your hand.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "keen_duelist",
+      "mana_cost": "{1}{B}",
+      "name": "Keen Duelist",
+      "oracle_text": "At the beginning of your upkeep, you and target opponent each reveal the top card of your library. You each lose life equal to the mana value of the card revealed by the other player. You each put the card you revealed into your hand.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -83439,6 +85929,151 @@
       ],
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "goad"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever an enchantment you control enters, tap up to one target creature and goad it.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures that are enchanted by an Aura you control attack, draw a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "enchanted_by": {
+                  "controller": "you"
+                }
+              }
+            },
+            "controller": "any",
+            "event": "you_attack",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "killian_decisive_mentor",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Killian, Decisive Mentor",
+      "oracle_text": "Whenever an enchantment you control enters, tap up to one target creature and goad it. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)\nWhenever one or more creatures that are enchanted by an Aura you control attack, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you"
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "targeting": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "text": "Spells you cast that target a creature cost {2} less to cast."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "killian_ink_duelist",
+      "keywords": [
+        "lifelink",
+        "menace"
+      ],
+      "mana_cost": "{W}{B}",
+      "name": "Killian, Ink Duelist",
+      "oracle_text": "Lifelink\nMenace (This creature can't be blocked except by two or more creatures.)\nSpells you cast that target a creature cost {2} less to cast.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -86035,6 +88670,105 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "attached_to": {
+                    "self_only": true
+                  },
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          },
+          "text": "This creature gets +2/+2 for each Aura attached to it.",
+          "toughness": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "attached_to": {
+                    "self_only": true
+                  },
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "prompt": "Draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an Aura spell, you may draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Aura"
+              ],
+              "types": [
+                "Enchantment"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "kor_spiritdancer",
+      "mana_cost": "{1}{W}",
+      "name": "Kor Spiritdancer",
+      "oracle_text": "This creature gets +2/+2 for each Aura attached to it.\nWhenever you cast an Aura spell, you may draw a card.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Kor",
+        "Wizard"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -86789,6 +89523,74 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 3
+                  },
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": "you",
+                  "reveal": true,
+                  "selector": {
+                    "supertypes": [
+                      "Basic"
+                    ],
+                    "types": [
+                      "Land"
+                    ]
+                  }
+                }
+              ],
+              "op": "may",
+              "prompt": "Search your library for up to three basic land cards?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, if an opponent controls more lands than you, you may search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "max_count_of": {
+                  "objects": {
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "player": "each_opponent"
+                }
+              },
+              "right": {
+                "lands_you_control": true
+              }
+            },
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "land_tax",
+      "mana_cost": "{W}",
+      "name": "Land Tax",
+      "oracle_text": "At the beginning of your upkeep, if an opponent controls more lands than you, you may search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -96343,6 +99145,93 @@
           "power": {
             "const": 1
           },
+          "text": "Enchanted creature gets +1/+1 and is goaded.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "attacking_player": "opponent",
+                "controller": "any",
+                "count": "all",
+                "exclude_binding": "subject",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, each other creature that's attacking one of your opponents gets +1/+1 until end of turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "martial_impetus",
+      "mana_cost": "{2}{W}",
+      "name": "Martial Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhenever enchanted creature attacks, each other creature that's attacking one of your opponents gets +1/+1 until end of turn.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
           "text": "Equipped creature gets +1/+2 and has hexproof",
           "toughness": {
             "const": 2
@@ -105206,6 +108095,112 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "annihilator": 1,
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace",
+            "deathtouch",
+            "annihilator"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.\""
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {3}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "else": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": 3
+              },
+              "player": {
+                "binding": "event_player"
+              },
+              "prompt": "Pay 3 life to keep that card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "sacrificed",
+            "filter": {
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "id": "nazgul_battle_mace",
+      "mana_cost": "{5}",
+      "name": "Nazgûl Battle-Mace",
+      "oracle_text": "Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.\" (Whenever a creature with annihilator 1 attacks, defending player sacrifices a permanent of their choice.)\nEquip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -114773,6 +117768,90 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Enchanted creature gets +2/+2 and is goaded.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature gets +2/+2 and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": {
+                "controller_of": "subject"
+              }
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, its controller loses 2 life and you gain 2 life.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "parasitic_impetus",
+      "mana_cost": "{2}{B}",
+      "name": "Parasitic Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +2/+2 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhenever enchanted creature attacks, its controller loses 2 life and you gain 2 life.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "pardic_wanderer",
@@ -115382,6 +118461,92 @@
       "abilities": [
         {
           "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Enchantment"
+            ]
+          },
+          "amount": {
+            "count": {
+              "controller": "you",
+              "subtypes": [
+                "Aura"
+              ],
+              "types": [
+                "Enchantment"
+              ]
+            }
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Enchantment spells you cast have affinity for Auras."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an Aura spell that targets a modified permanent you control, draw a card.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "spell_targets",
+                "controller": "you",
+                "modified": true,
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "subtypes": [
+                "Aura"
+              ],
+              "types": [
+                "Enchantment"
+              ]
+            },
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "pearl_ear_imperial_advisor",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{1}{W}{W}",
+      "name": "Pearl-Ear, Imperial Advisor",
+      "oracle_text": "Lifelink\nEnchantment spells you cast have affinity for Auras. (They cost {1} less to cast for each Aura you control.)\nWhenever you cast an Aura spell that targets a modified permanent you control, draw a card. (Equipment, Auras you control, and counters are modifications.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Fox",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
             "colors": [
               "W"
             ],
@@ -115662,6 +118827,74 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "peppersmoke",
+      "mana_cost": "{B}",
+      "name": "Peppersmoke",
+      "oracle_text": "Target creature gets -1/-1 until end of turn. If you control a Faerie, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -1
+          },
+          "toughness": {
+            "const": -1
+          }
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Faerie"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Faerie"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
       ]
     },
     {
@@ -122718,6 +125951,57 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1",
+          "toughness": {
+            "const": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "mana": "{2}{W}"
+      },
+      "id": "raffine_s_guidance",
+      "mana_cost": "{W}",
+      "name": "Raffine's Guidance",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1.\nYou may cast this card from your graveyard by paying {2}{W} rather than paying its mana cost.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -125027,6 +128311,75 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has indestructible and is goaded."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature has indestructible and is goaded."
+        },
+        {
+          "cost": {
+            "mana": "{1}{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "attached": true,
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{W}: Exile enchanted creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "redemption_arc",
+      "mana_cost": "{2}{W}",
+      "name": "Redemption Arc",
+      "oracle_text": "Enchant creature\nEnchanted creature has indestructible and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\n{1}{W}: Exile enchanted creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "as": "stormsinger_copies",
@@ -126163,6 +129516,37 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "replenish",
+      "mana_cost": "{3}{W}",
+      "name": "Replenish",
+      "oracle_text": "Return all enchantment cards from your graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -129952,6 +133336,68 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "rootgrapple",
+      "mana_cost": "{4}{G}",
+      "name": "Rootgrapple",
+      "oracle_text": "Destroy target noncreature permanent. If you control a Treefolk, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Treefolk"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Treefolk"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -131468,6 +134914,171 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sage_s_dousing",
+      "mana_cost": "{2}{U}",
+      "name": "Sage's Dousing",
+      "oracle_text": "Counter target spell unless its controller pays {3}. If you control a Wizard, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "else": [
+            {
+              "op": "counter",
+              "target": "t1"
+            }
+          ],
+          "op": "may",
+          "pay": {
+            "mana": "{3}"
+          },
+          "player": {
+            "controller_of_target": "t1"
+          },
+          "prompt": "Pay {3} to stop Sage's Dousing countering your spell?"
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Wizard"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {}
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "attached_to": {
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, draw a card for each Aura you control that's attached to a creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "count": {
+              "attached_to": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "controller": "you",
+              "subtypes": [
+                "Aura"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "text": "Enchanted creature gets +1/+1 for each Aura you control that's attached to a creature.",
+          "toughness": {
+            "count": {
+              "attached_to": {
+                "types": [
+                  "Creature"
+                ]
+              },
+              "controller": "you",
+              "subtypes": [
+                "Aura"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sage_s_reverie",
+      "mana_cost": "{3}{W}",
+      "name": "Sage's Reverie",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, draw a card for each Aura you control that's attached to a creature.\nEnchanted creature gets +1/+1 for each Aura you control that's attached to a creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "aura_target",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -133998,6 +137609,75 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": -1
+          },
+          "text": "Enchanted creature gets -1/-1.",
+          "toughness": {
+            "const": -1
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When enchanted creature dies, return this card from your graveyard to the battlefield.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "screams_from_within",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Screams from Within",
+      "oracle_text": "Enchant creature\nEnchanted creature gets -1/-1.\nWhen enchanted creature dies, return this card from your graveyard to the battlefield.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -136107,6 +139787,72 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+1 and has vigilance",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has vigilance"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "exile_from_graveyard": {
+          "count": 2,
+          "exclude_self": true
+        },
+        "mana": "{W}"
+      },
+      "id": "sentinel_s_eyes",
+      "mana_cost": "{W}",
+      "name": "Sentinel's Eyes",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has vigilance.\nEscape—{W}, Exile two other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -137064,6 +140810,145 @@
         {
           "effects": [
             {
+              "count": 2,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": {
+                        "target": "maker"
+                      },
+                      "op": "create_token",
+                      "token": "inkling_2_1_wb_flying"
+                    }
+                  ],
+                  "label": "Target player creates a 2/1 white and black Inkling creature token with flying."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": {
+                        "target": "drawer"
+                      }
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "target": "drawer"
+                      }
+                    }
+                  ],
+                  "label": "Target player draws a card and loses 1 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "controller": {
+                          "target": "grower"
+                        },
+                        "count": "all",
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Target player puts a +1/+1 counter on each creature they control."
+                }
+              ],
+              "op": "choose_mode",
+              "optional": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "maker",
+              "kind": "player",
+              "mode": 0,
+              "selector": {
+                "controller": "any"
+              }
+            },
+            {
+              "count": 1,
+              "id": "drawer",
+              "kind": "player",
+              "mode": 1,
+              "selector": {
+                "controller": "any"
+              }
+            },
+            {
+              "count": 1,
+              "id": "grower",
+              "kind": "player",
+              "mode": 2,
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may choose two. Each mode must target a different player. • Target player creates a 2/1 white and black Inkling creature token with flying. • Target player draws a card and loses 1 life. • Target player puts a +1/+1 counter on each creature they control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "shadrix_silverquill",
+      "keywords": [
+        "flying",
+        "double_strike"
+      ],
+      "mana_cost": "{3}{W}{B}",
+      "name": "Shadrix Silverquill",
+      "oracle_text": "Flying, double strike\nAt the beginning of combat on your turn, you may choose two. Each mode must target a different player.\n• Target player creates a 2/1 white and black Inkling creature token with flying.\n• Target player draws a card and loses 1 life.\n• Target player puts a +1/+1 counter on each creature they control.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -137942,6 +141827,126 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this Aura enters, exile target nonland permanent an opponent controls until this Aura leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "owner",
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, exile target nonland permanent an opponent controls until this Aura leaves the battlefield.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Enchanted creature gets +1/+0 and has lifelink and ward {2}.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+0 and has lifelink and ward {2}."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+0 and has lifelink and ward {2}."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sheltered_by_ghosts",
+      "mana_cost": "{1}{W}",
+      "name": "Sheltered by Ghosts",
+      "oracle_text": "Enchant creature you control\nWhen this Aura enters, exile target nonland permanent an opponent controls until this Aura leaves the battlefield.\nEnchanted creature gets +1/+0 and has lifelink and ward {2}.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -138320,6 +142325,76 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "indestructible"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has indestructible."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature enters, you may attach this Aura to that creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "shielded_by_faith",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Shielded by Faith",
+      "oracle_text": "Enchant creature\nEnchanted creature has indestructible.\nWhenever a creature enters, you may attach this Aura to that creature.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -140950,6 +145025,75 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or {B}."
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "scry",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "silverquill_campus",
+      "name": "Silverquill Campus",
+      "oracle_text": "This land enters tapped.\n{T}: Add {W} or {B}.\n{4}, {T}: Scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -144590,6 +148734,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "destination": "hand",
+              "may_destination": "battlefield",
+              "objects": {
+                "subtypes": [
+                  "Aura"
+                ]
+              },
+              "op": "reveal_until",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, reveal cards from the top of your library until you reveal an Aura card. You may put that card onto the battlefield. If you don't, put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "songbirds_blessing",
+      "mana_cost": "{3}{W}",
+      "name": "Songbirds' Blessing",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, reveal cards from the top of your library until you reveal an Aura card. You may put that card onto the battlefield. If you don't, put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -146676,6 +150877,60 @@
     {
       "abilities": [
         {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "Enchanted creature gets +1/+1 and has protection from creatures.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "protection",
+          "from_types": [
+            "Creature"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 and has protection from creatures."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "spirit_mantle",
+      "mana_cost": "{1}{W}",
+      "name": "Spirit Mantle",
+      "oracle_text": "Enchant creature\nEnchanted creature gets +1/+1 and has protection from creatures.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {
@@ -147739,6 +151994,69 @@
               "amount": {
                 "const": 1
               },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an Aura, Equipment, or Vehicle spell, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "subtypes": [
+                    "Aura"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Equipment"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Vehicle"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sram_senior_edificer",
+      "mana_cost": "{1}{W}",
+      "name": "Sram, Senior Edificer",
+      "oracle_text": "Whenever you cast an Aura, Equipment, or Vehicle spell, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "create_token",
               "token": "spirit_1_1_w_flying"
             }
@@ -148010,6 +152328,72 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "types": [
+              "Enchantment"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Enchantment spells you cast cost {1} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an enchantment you control is put into a graveyard from the battlefield, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Enchantment"
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "starfield_mystic",
+      "mana_cost": "{1}{W}",
+      "name": "Starfield Mystic",
+      "oracle_text": "Enchantment spells you cast cost {1} less to cast.\nWhenever an enchantment you control is put into a graveyard from the battlefield, put a +1/+1 counter on this creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -149959,6 +154343,74 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "stream_of_unconsciousness",
+      "mana_cost": "{U}",
+      "name": "Stream of Unconsciousness",
+      "oracle_text": "Target creature gets -4/-0 until end of turn. If you control a Wizard, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "pump",
+          "power": {
+            "const": -4
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Wizard"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
       ]
     },
     {
@@ -152391,6 +156843,66 @@
         "Sorcery"
       ],
       "uncounterable": true
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "surge_of_thoughtweft",
+      "mana_cost": "{1}{W}",
+      "name": "Surge of Thoughtweft",
+      "oracle_text": "Creatures you control get +1/+1 until end of turn. If you control a Kithkin, draw a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "condition": {
+            "exists": {
+              "controller": "you",
+              "subtypes": [
+                "Kithkin"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "subtypes": [
+        "Kithkin"
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
+      ]
     },
     {
       "abilities": [
@@ -156461,6 +160973,49 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "tarfire",
+      "mana_cost": "{R}",
+      "name": "Tarfire",
+      "oracle_text": "Tarfire deals 2 damage to any target.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "damage",
+          "target": "t1"
+        }
+      ],
+      "subtypes": [
+        "Goblin"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "any",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Kindred",
+        "Instant"
       ]
     },
     {
@@ -164937,6 +169492,86 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "lose_life",
+              "player": {
+                "binding": "event_player"
+              }
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, that opponent loses 3 life and you draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "opponent",
+            "defending": "you",
+            "event": "creatures_attack_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "cost_reduction": {
+        "count": {
+          "controller": "you",
+          "types": [
+            "Planeswalker"
+          ],
+          "zone": "battlefield"
+        }
+      },
+      "id": "tomik_wielder_of_law",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{B}",
+      "name": "Tomik, Wielder of Law",
+      "oracle_text": "Affinity for planeswalkers (This spell costs {1} less to cast for each planeswalker you control.)\nFlying, vigilance\nWhenever an opponent attacks with creatures, if two or more of those creatures are attacking you and/or planeswalkers you control, that opponent loses 3 life and you draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -165969,6 +170604,47 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you",
+            "subtypes": [
+              "Aura"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Aura spells you cast cost {1} less to cast."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "transcendent_envoy",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Transcendent Envoy",
+      "oracle_text": "Flying\nAura spells you cast cost {1} less to cast.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Griffin"
+      ],
+      "toughness": 2,
+      "types": [
+        "Enchantment",
+        "Creature"
       ]
     },
     {
@@ -167190,6 +171866,79 @@
                 {
                   "effects": [
                     {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "({T}: Add {W} or {B}.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [],
+      "id": "turbulent_moor",
+      "name": "Turbulent Moor",
+      "oracle_text": "({T}: Add {W} or {B}.)\nThis land enters tapped unless your opponents control eight or more lands.",
+      "replacements": [
+        {
+          "condition": {
+            "not": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "controller": "opponent",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "right": {
+                "const": 8
+              }
+            }
+          },
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Plains",
+        "Swamp"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
                       "mana": "{U}",
                       "op": "add_mana"
                     }
@@ -168369,6 +173118,37 @@
         "Snake"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "attacks_if_able",
+          "kind": "static",
+          "text": "This creature attacks each combat if able."
+        }
+      ],
+      "annihilator": 2,
+      "color_identity": [],
+      "colors": [],
+      "id": "ulamog_s_crusher",
+      "keywords": [
+        "annihilator"
+      ],
+      "mana_cost": "{8}",
+      "name": "Ulamog's Crusher",
+      "oracle_text": "Annihilator 2 (Whenever this creature attacks, defending player sacrifices two permanents of their choice.)\nThis creature attacks each combat if able.",
+      "power": 8,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 8,
       "types": [
         "Creature"
       ]
@@ -171420,6 +176200,82 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "pay_life": 2
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward—Pay 2 life."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent loses life for the first time during each of their turns, put a +1/+1 counter on Valgavoth and draw a card.",
+          "trigger": {
+            "condition": {
+              "is_active_player": {
+                "binding": "event_player"
+              }
+            },
+            "controller": "opponent",
+            "event": "life_lost",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "valgavoth_harrower_of_souls",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{R}",
+      "name": "Valgavoth, Harrower of Souls",
+      "oracle_text": "Flying\nWard—Pay 2 life.\nWhenever an opponent loses life for the first time during each of their turns, put a +1/+1 counter on Valgavoth and draw a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Demon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -171900,6 +176756,40 @@
     },
     {
       "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "vandal_s_edit",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Vandal's Edit",
+      "oracle_text": "Draw two cards. Each player loses 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": "each_player"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -172002,6 +176892,98 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "vanishing_verse",
+      "mana_cost": "{W}{B}",
+      "name": "Vanishing Verse",
+      "oracle_text": "Exile target monocolored permanent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "exile"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_of": [
+              {
+                "colors": [
+                  "W"
+                ],
+                "not_colors": [
+                  "U",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "U"
+                ],
+                "not_colors": [
+                  "W",
+                  "B",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "B"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "R",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "R"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "G"
+                ]
+              },
+              {
+                "colors": [
+                  "G"
+                ],
+                "not_colors": [
+                  "W",
+                  "U",
+                  "B",
+                  "R"
+                ]
+              }
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -173045,6 +178027,51 @@
         "Zombie"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you lose life for the first time each turn, put a +1/+1 counter on this creature. (Damage causes loss of life.)",
+          "trigger": {
+            "controller": "you",
+            "event": "life_lost",
+            "nth": 1
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "vengeful_warchief",
+      "mana_cost": "{4}{B}",
+      "name": "Vengeful Warchief",
+      "oracle_text": "Whenever you lose life for the first time each turn, put a +1/+1 counter on this creature. (Damage causes loss of life.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Warrior"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -181251,6 +186278,36 @@
       "toughness": 7,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "winds_of_rath",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Winds of Rath",
+      "oracle_text": "Destroy all creatures that aren't enchanted. They can't be regenerated.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "no_regeneration": true,
+          "objects": {
+            "count": "all",
+            "enchanted_by": false,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

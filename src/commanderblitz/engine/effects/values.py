@@ -41,12 +41,19 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import _matches_printed, chars, min_count, min_life
+from ..characteristics import _matches_printed, auras_matching, chars, min_count, min_life
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
 from ..objects import FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
-from .selectors import PLAYER_SPEC_NAMES, resolve_pool, select_players, validate_selector
+from .selectors import (
+    ENCHANTED_BY_CONTROLLERS,
+    ENCHANTED_BY_KEYS,
+    PLAYER_SPEC_NAMES,
+    resolve_pool,
+    select_players,
+    validate_selector,
+)
 
 #: Every key that may appear at the top level of a value expression.
 VALUE_KEYS = frozenset(
@@ -125,6 +132,13 @@ VALUE_KEYS = frozenset(
         # "did it happen" and "how many times" are the same question asked with
         # a different threshold, and storm needs the number anyway.
         "creatures_died_this_turn",
+        # "…if a **modified** creature died under your control this turn"
+        # (Intermediate Chirography). The same tally narrowed to the deaths
+        # that were modified (700.9) as they happened, off
+        # `TurnLedger.modified_creatures_died`. The `modified` selector key is
+        # the near miss and cannot answer it: it reads the board, and a dead
+        # creature has neither its counters nor its attachments any more.
+        "modified_creatures_died_this_turn",
         "attacked_this_turn",
         # "…if you attacked with **three or more creatures** this turn" --
         # Windbrisk Heights. How many *creatures*, where `attacked_this_turn`
@@ -272,6 +286,12 @@ VALUE_KEYS = frozenset(
         # because an op runs at resolution and the creature has already left.
         "power_had",
         "toughness_had",
+        # "…draw a card for each Aura you controlled that was attached to it"
+        # (Hateful Eidolon), on a trigger about a creature that has just left.
+        # `count` over the Auras cannot answer it: `_detach_all` unattached them
+        # before the event fired, and by resolution they are graveyard cards.
+        # Answered from the departure event's `had_auras` snapshot (603.10a).
+        "auras_had",
         # "…for each basic land type among lands you control" (domain), and
         # "three or more creatures with different powers" (coven). A count of
         # *distinct values* over a pool, which no other leaf can be: `count`
@@ -593,6 +613,15 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         return int(ctx.bindings.get("had_power") or 0)
     if "toughness_had" in expr:
         return int(ctx.bindings.get("had_toughness") or 0)
+    if "auras_had" in expr:
+        # `true` is every Aura it wore, anybody's; `{"controller": ...}` is
+        # whose, relative to the ability's controller and as each Aura was
+        # controlled as it left -- the `enchanted_by` spelling, read off the
+        # snapshot. A trigger that never fired binds nothing and reads 0.
+        had = ctx.bindings.get("had_auras")
+        if not isinstance(had, (list, tuple)):
+            return 0
+        return auras_matching(had, expr["auras_had"], ctx.controller)
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
@@ -607,6 +636,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # creature died this turn" and `"you"` is "a creature you controlled".
         pids = _players(ctx, expr["creatures_died_this_turn"])
         return sum(ledger.creatures_died.get(p, 0) for p in pids)
+    if "modified_creatures_died_this_turn" in expr:
+        pids = _players(ctx, expr["modified_creatures_died_this_turn"])
+        return sum(ledger.modified_creatures_died.get(p, 0) for p in pids)
     if "attacked_this_turn" in expr:
         # How many of the named players attacked, which is 0 or 1 for raid's
         # `"you"` and a headcount for "if two opponents attacked this turn".
@@ -1399,6 +1431,36 @@ def validate_starting_life_of(who: Any, where: str) -> None:
         raise DslError(f"{where}: needs a player spec, e.g. 'you'")
 
 
+def validate_auras_had(spec: Any, where: str) -> None:
+    """``auras_had`` is ``true`` or ``{"controller": ...}``, as `enchanted_by` is.
+
+    Held to `enchanted_by`'s own words, so the two cannot accept different
+    spellings of "an Aura you control": a word (``"you"`` would read as
+    anybody's Aura), an empty filter and a key the snapshot does not record are
+    refused, and so is ``false`` -- "the Auras it did not wear" counts nothing.
+    """
+    if spec is True:
+        return
+    if spec is False:
+        raise DslError(f"{where}: false counts nothing; true or a filter on the Auras")
+    if not isinstance(spec, Mapping) or not spec:
+        raise DslError(
+            f"{where}: true, or a filter on the Auras such as "
+            f'{{"controller": "you"}}, got {spec!r}'
+        )
+    unknown = set(spec) - ENCHANTED_BY_KEYS
+    if unknown:
+        raise DslError(
+            f"{where}: {sorted(unknown)} are not recorded of the Auras; "
+            f"only {sorted(ENCHANTED_BY_KEYS)}"
+        )
+    if spec["controller"] not in ENCHANTED_BY_CONTROLLERS:
+        raise DslError(
+            f"{where}.controller: one of {list(ENCHANTED_BY_CONTROLLERS)}, "
+            f"got {spec['controller']!r}"
+        )
+
+
 def validate_value(expr: Any, where: str) -> None:
     """Load-time check that a value expression uses only known forms."""
     if expr is None or isinstance(expr, (int, bool)):
@@ -1430,6 +1492,8 @@ def validate_value(expr: Any, where: str) -> None:
         validate_mana_symbols(expr["mana_symbols"], f"{where}.mana_symbols")
     if "counters_on" in expr:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
+    if "auras_had" in expr:
+        validate_auras_had(expr["auras_had"], f"{where}.auras_had")
     if "times_tapped_this_turn" in expr:
         validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
     if "command_zone_casts_of" in expr:
@@ -1465,6 +1529,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
                 f"(whose commanders' casts from the command zone), got {who!r}"
+            )
+    if "modified_creatures_died_this_turn" in expr:
+        who = expr["modified_creatures_died_this_turn"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.modified_creatures_died_this_turn: needs a player spec, "
+                f"e.g. 'you' (under whose control they died), got {who!r}"
             )
     if "cards_discarded_this_turn" in expr:
         who = expr["cards_discarded_this_turn"]

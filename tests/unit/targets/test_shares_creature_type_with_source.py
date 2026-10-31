@@ -73,13 +73,13 @@ def _creature(card_id: str, subtypes: list[str], *, legendary: bool = False) -> 
     }
 
 
-def _instant(card_id: str, subtypes: list[str]) -> dict:
+def _instant(card_id: str, subtypes: list[str], *, kindred: bool = False) -> dict:
     return {
         "id": card_id,
         "name": card_id.replace("_", " ").title(),
         "oracle_text": "You gain 1 life.",
         "mana_cost": "{G}",
-        "types": ["Instant"],
+        "types": ["Kindred", "Instant"] if kindred else ["Instant"],
         "subtypes": subtypes,
         "spell_effects": [{"op": "gain_life", "player": "you", "amount": {"const": 1}}],
     }
@@ -144,9 +144,8 @@ SPECS = [
     _creature(GOBLIN_SPELL, ["Goblin"]),
     _creature(ELF_GOBLIN_SPELL, ["Elf", "Goblin"]),
     _creature(CHANGELING_SPELL, ["Shapeshifter", *CHANGELING]),
-    # A Kindred Instant -- Elf, as the importer writes one: "Kindred" is dropped
-    # from the types and the creature type stays in the subtypes.
-    _instant(KINDRED_ELF_INSTANT, ["Elf"]),
+    # A Kindred Instant -- Elf, as the importer writes one.
+    _instant(KINDRED_ELF_INSTANT, ["Elf"], kindred=True),
     _instant(PLAIN_INSTANT, []),
     {
         "id": BACKGROUND_SPELL,

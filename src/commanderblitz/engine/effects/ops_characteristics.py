@@ -13,6 +13,7 @@ from ..primitives import (
     add_counters,
     add_subtypes,
     animate,
+    forbid_keyword,
     grant_ability,
     grant_keyword,
     lock_abilities,
@@ -304,6 +305,33 @@ def op_grant_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
                 permanent=permanent,
                 until_player=until_player,
             )
+
+
+@register("lose_keyword")
+def op_lose_keyword(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until end of turn, creatures your opponents control **lose hexproof and
+    shroud and can't have hexproof or shroud**." Arcane Lighthouse.
+
+    The one-shot twin of the `lose_keyword` static, and it differs from that
+    static in the set it reaches as well as in its clock. The static reads its
+    ``affects`` filter on every recompute, so a creature that arrives later is
+    caught; this is 611.2c's "continuous effect from a resolved ... ability that
+    modifies the characteristics ... of any objects", which "affects only
+    objects ... on the battlefield at that time". So ``objects`` is chosen once,
+    as the ability resolves, and each permanent found gets its own entry -- a
+    creature an opponent casts, or takes control of, afterwards keeps its
+    hexproof.
+
+    Only the "and can't have" form: the loader requires ``cant_have: true``.
+    A bare "loses flying until end of turn" is a layer-6 removal a later grant
+    survives (613.7), and reading it as the prohibition would make every such
+    card a stronger one.
+    """
+    keywords = [str(k) for k in spec.get("keywords") or ()]
+    oids = yield from choose_objects(ctx, spec.get("objects"), "Loses")
+    for oid in oids:
+        for keyword in keywords:
+            forbid_keyword(ctx.state, oid, keyword, source=ctx.source_oid)
 
 
 @register("grant_protection")

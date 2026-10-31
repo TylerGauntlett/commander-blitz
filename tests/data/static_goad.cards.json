@@ -1,0 +1,87 @@
+{
+  "_comment": "Shapes for tests/unit/combat/test_static_goad.py. t_sg_impetus is the Impetus cycle's goad clause alone -- a goaded static with affects {attached: true} -- so the tests read the goad without the cycle's buffs and attack triggers in the way. t_sg_bear and t_sg_cub are vanilla creatures: the one the Aura goes on and the one beside it that must stay ungoaded.",
+  "cards": [
+    {
+      "id": "t_sg_impetus",
+      "name": "Test Goading Impetus",
+      "oracle_text": "Enchant creature\nEnchanted creature is goaded.",
+      "mana_cost": "{R}",
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Enchanted creature is goaded.",
+          "effect": "goaded",
+          "affects": {
+            "attached": true
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_sg_bear",
+      "name": "Test Goaded Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "abilities": []
+    },
+    {
+      "id": "t_sg_cub",
+      "name": "Test Ungoaded Cub",
+      "oracle_text": "",
+      "mana_cost": "{G}",
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Bear"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "abilities": []
+    }
+  ]
+}

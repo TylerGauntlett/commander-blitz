@@ -5,6 +5,7 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
+from ..carddef import TriggerSpec
 from ..characteristics import chars
 from ..enums import Keyword
 from ..errors import DslError
@@ -25,6 +26,7 @@ from ..structs import (
     OUTCOME_LOCK_DURATIONS,
     PERMANENT_SHIELD_DIRECTIONS,
     PERMANENT_SHIELD_DURATIONS,
+    DelayedTrigger,
 )
 from ..temp_effects import (
     fog_combat_damage,
@@ -166,6 +168,21 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     different and much better card, and there is no reading of an omitted
     duration that is safe to guess.
 
+    ``combat_only`` (default false) narrows the shield to combat damage:
+    "prevent all **combat** damage that would be dealt to you this turn"
+    (Druid's Deliverance, Defend the Hearth). Burn and drain then still land,
+    where the unnarrowed shield would make those cards strictly better.
+
+    ``effects`` is the 615.5 rider, "if damage is prevented **this way**":
+    "For each 1 damage prevented this way, create a 2/1 … Inkling" (Inkshield).
+    Each shield it installs gets a fresh `DamageShield.link`, and beside it a
+    ``damage_prevented`` `DelayedTrigger` scoped to that link for the shield's
+    duration, so the effects run every time *that* shield prevents damage and
+    never when a Fog, a Squire or protection does. They resolve with the
+    prevented damage as ``{"binding": "amount"}`` and the protected seat as
+    ``event_player``, directly rather than on the stack, which is 615.5's
+    "immediately afterward" and how every delayed ability here runs.
+
     There is deliberately no ``amount``. See `structs.DamageShield`: absorb-N
     over a player is a different effect with a pool that drains, and the loader
     refuses the key rather than reading it and preventing everything anyway.
@@ -174,8 +191,32 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     duration = str(spec.get("duration", "this_turn"))
     if duration not in DAMAGE_SHIELD_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown prevent_damage duration {duration!r}")
+    combat_only = bool(spec.get("combat_only", False))
+    rider = tuple(spec.get("effects") or ())
+    state = ctx.state
     for pid in select_players(ctx, spec.get("player", "you")):
-        shield_player(ctx.state, pid, duration, source=ctx.source_oid)
+        link = state.alloc_timestamp() if rider else None
+        installed = shield_player(
+            state, pid, duration, source=ctx.source_oid, combat_only=combat_only, link=link
+        )
+        if not installed or link is None:
+            continue
+        # The shield's duration is the rider's: both end at this cleanup, and a
+        # rider outliving its shield would wait on an id nothing fires again.
+        state.delayed_triggers.append(
+            DelayedTrigger(
+                step="",
+                controller=ctx.controller,
+                effects=rider,
+                bindings=dict(ctx.bindings),
+                source_oid=ctx.source_oid,
+                description=str(spec.get("text") or ctx.source_name),
+                turn=state.turn,
+                trigger=TriggerSpec(event="damage_prevented", controller="any"),
+                duration="this_turn",
+                shield=link,
+            )
+        )
 
 
 @register("prevent_damage_permanent")
@@ -205,6 +246,10 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     (the controller's next untap step). A prevention read as lasting longer than
     it does is a strictly better card, silently.
 
+    ``combat_only`` (default false) narrows it to combat damage: "prevent all
+    combat damage that would be dealt to it this turn" (Fleeting Flight), and
+    "…target creature would deal" (Azorius Ploy).
+
     Installs a `structs.PermanentShield` on each object and modifies nothing
     else; `primitives.damage_permanent` and `primitives.damage_player` read it.
     """
@@ -223,6 +268,7 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
             duration,
             player=ctx.controller,
             source=ctx.source_oid,
+            combat_only=bool(spec.get("combat_only", False)),
         )
 
 

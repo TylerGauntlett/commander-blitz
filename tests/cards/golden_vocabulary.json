@@ -59,6 +59,7 @@
   ],
   "COST_REDUCTION_REFUSED_FILTER_KEYS": [
    "attached",
+   "attached_to",
    "attached_to_host",
    "paired",
    "paired_with_source"
@@ -127,6 +128,7 @@
    "double_triggers",
    "enters_tapped",
    "enters_with_additional_counters",
+   "goaded",
    "grant_keyword",
    "imprint_characteristics",
    "legend_rule_exemption",
@@ -160,6 +162,7 @@
    "W"
   ],
   "KNOWN_KEYWORDS": [
+   "annihilator",
    "banding",
    "choose_a_background",
    "compleated",
@@ -215,6 +218,7 @@
    "Creature",
    "Enchantment",
    "Instant",
+   "Kindred",
    "Land",
    "Planeswalker",
    "Sorcery"
@@ -267,6 +271,9 @@
    "tap",
    "untap",
    "x_value"
+  ],
+  "NUMBER_CARRYING_GRANT_KEYWORDS": [
+   "annihilator"
   ],
   "PLAYER_TARGET_KINDS": [
    "any",
@@ -367,12 +374,14 @@
    "any_of",
    "any_types",
    "attached",
+   "attached_to",
    "attached_to_host",
    "attacking",
    "blocking",
    "colorless",
    "colors",
    "controller",
+   "enchanted_by",
    "entered_this_turn",
    "exclude_self",
    "has_counters",
@@ -422,12 +431,14 @@
   "STATIC_COUNT_FILTER_KEYS": [
    "any_types",
    "attached",
+   "attached_to",
    "attached_to_host",
    "attacking",
    "blocking",
    "colorless",
    "colors",
    "controller",
+   "enchanted_by",
    "entered_this_turn",
    "exclude_self",
    "has_counters",
@@ -507,6 +518,7 @@
    "extra_land_drops",
    "free_cast_permission",
    "freeze_opponent_lands",
+   "goaded",
    "grant_ability",
    "grant_keyword",
    "grant_miracle",
@@ -558,12 +570,14 @@
   "STATIC_FILTER_KEYS": [
    "any_types",
    "attached",
+   "attached_to",
    "attached_to_host",
    "attacking",
    "blocking",
    "colorless",
    "colors",
    "controller",
+   "enchanted_by",
    "entered_this_turn",
    "exclude_self",
    "has_counters",
@@ -926,6 +940,7 @@
   "lose_all_abilities",
   "lose_all_player_counters",
   "lose_game",
+  "lose_keyword",
   "lose_life",
   "manifest",
   "may",

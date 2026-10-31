@@ -354,6 +354,17 @@ class GameObject:
     #:
     #: Survives `reset_permanent_state` for `riot_choice`'s reason.
     read_ahead_chapter: int | None = None
+    #: The host an Aura put onto the battlefield without being cast will enchant
+    #: (303.4f): a permanent's oid, or a seat in `enters_attached_to_player`.
+    #: Recorded by `zones.offer_aura_host` just before the move and read -- and
+    #: cleared -- by `_enter_battlefield`, which attaches the Aura as it enters.
+    #: ``None`` in both is "nobody was asked", which is the cast path (the
+    #: spell's target is the host, `stack._attach_aura`) and every arrival
+    #: whose effect names the host itself with a following `attach`.
+    #:
+    #: Survives `reset_permanent_state` for `riot_choice`'s reason.
+    enters_attached_to: int | None = None
+    enters_attached_to_player: int | None = None
     #: The player owed a free cast at their next upkeep -- rebound (702.87a).
     #: Written on the *exiled card* rather than anywhere else, the way
     #: `suspended_by` is, because the thing waiting is the card itself.
@@ -1170,8 +1181,9 @@ class GameObject:
         self.last_attached_to = None
         # Cleared with `attached_to` and for its reason: a permanent that left
         # the battlefield and came back is a new object (400.7), and an Aura
-        # that arrives without being cast enchants nobody until something
-        # attaches it. This is why `stack._attach_aura` runs *after* the move.
+        # that arrives without being cast enchants only what
+        # `enters_attached_to` says (303.4f). This is why `stack._attach_aura`
+        # runs *after* the move.
         self.attached_to_player = None
         self.paired_with = None
         self.face_down = False

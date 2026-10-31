@@ -840,6 +840,8 @@ def shield_player(
     pid: int,
     duration: str = "this_turn",
     source: int | None = None,
+    combat_only: bool = False,
+    link: int | None = None,
 ) -> bool:
     """ "Prevent all damage that would be dealt to you this turn."
 
@@ -864,6 +866,10 @@ def shield_player(
     nothing can be dealt damage after that, so recording one would be a
     permanent no-op sitting in the table.
 
+    ``link`` ties the shield to a "prevented this way" rider (615.5); see
+    `structs.DamageShield.link`.  A linked shield never deduplicates, because
+    its id is fresh.
+
     Returns whether anything was recorded, so the op can distinguish a shield it
     installed from one it dropped.
     """
@@ -872,21 +878,52 @@ def shield_player(
         raise ValueError(f"unknown damage shield duration {duration!r}")
     if not state.is_alive(pid):
         return False
-    entry = DamageShield(player=pid, duration=duration, source=source)
+    entry = DamageShield(
+        player=pid, duration=duration, source=source, combat_only=combat_only, link=link
+    )
     if entry in state.damage_shields:
         return False
     state.damage_shields.append(entry)
     return True
 
 
-def shielded(state: GameState, pid: int) -> bool:
-    """Whether all damage to ``pid`` is currently being prevented.
+def shielded(state: GameState, pid: int, *, is_combat: bool = False) -> bool:
+    """Whether all damage of this kind to ``pid`` is currently being prevented."""
+    return preventing_shield(state, pid, is_combat=is_combat) is not None
+
+
+def preventing_shield(
+    state: GameState, pid: int, *, is_combat: bool = False
+) -> DamageShield | None:
+    """The shield that prevents this damage to ``pid``, or ``None``.
+
+    ``is_combat`` is whether the damage is combat damage: a ``combat_only``
+    shield ("prevent all combat damage that would be dealt to you this turn")
+    answers only that, and lets burn through.
 
     Short-circuits on the empty table, which is every game that plays none of
     these cards -- and this is asked on every point of damage dealt to a player,
     so the empty case is the one that has to cost nothing.
+
+    When several apply, one prevents it and the rest find nothing left (615.1,
+    616.1: the protected player orders them).  The engine cannot ask from inside
+    damage, so it picks the order that player would: a shield carrying a
+    "prevented this way" rider (``link``) before one without, since the rider is
+    the only difference between them; then installation order.  So Inkshield
+    beside a Selfless Squire's shield still makes its Inklings, and two
+    Inkshields make one set of tokens, not two.
     """
-    return any(s.player == pid for s in state.damage_shields)
+    if not state.damage_shields:
+        return None
+    fallback = None
+    for shield in state.damage_shields:
+        if shield.player != pid or not shield.stops(is_combat=is_combat):
+            continue
+        if shield.link is not None:
+            return shield
+        if fallback is None:
+            fallback = shield
+    return fallback
 
 
 def shield_permanent(
@@ -896,8 +933,12 @@ def shield_permanent(
     duration: str = "this_turn",
     player: int | None = None,
     source: int | None = None,
+    combat_only: bool = False,
 ) -> bool:
     """Prevent all damage dealt to and/or by the permanent ``oid`` for ``duration``.
+
+    ``combat_only`` narrows it to combat damage ("prevent all combat damage that
+    would be dealt to it this turn").
 
     One rules-relevant thing: it writes a `structs.PermanentShield` onto the
     object.  Reading it back is `permanent_shielded`'s job, and the two damage
@@ -920,15 +961,22 @@ def shield_permanent(
         return False
     if duration == "until_your_next_turn" and (player is None or not state.is_alive(player)):
         return False
-    entry = PermanentShield(dealt=dealt, duration=duration, player=player, source=source)
+    entry = PermanentShield(
+        dealt=dealt, duration=duration, player=player, source=source, combat_only=combat_only
+    )
     if entry in obj.damage_shields:
         return False
     obj.damage_shields.append(entry)
     return True
 
 
-def permanent_shielded(state: GameState, oid: int | None, *, by: bool) -> bool:
+def permanent_shielded(
+    state: GameState, oid: int | None, *, by: bool, is_combat: bool = False
+) -> bool:
     """Is damage dealt **to** (``by=False``) or **by** (``by=True``) ``oid`` prevented?
+
+    ``is_combat`` is whether the damage is combat damage, which a
+    ``combat_only`` shield is the only one to ask.
 
     Asked on every instance of damage, so the common case -- an object carrying
     no shield -- is one attribute read.  A spell or an object that is not on the
@@ -940,9 +988,7 @@ def permanent_shielded(state: GameState, oid: int | None, *, by: bool) -> bool:
     obj = state.objects.get(oid)
     if obj is None or not obj.damage_shields:
         return False
-    if by:
-        return any(shield.stops_damage_by for shield in obj.damage_shields)
-    return any(shield.stops_damage_to for shield in obj.damage_shields)
+    return any(shield.stops(by=by, is_combat=is_combat) for shield in obj.damage_shields)
 
 
 def clear_permanent_shields(state: GameState, duration: str, player: int | None = None) -> None:

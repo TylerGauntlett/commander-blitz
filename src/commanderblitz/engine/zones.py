@@ -14,10 +14,16 @@ from typing import TYPE_CHECKING, Any
 
 from . import sagas
 from .carddef import CardDef, Cost
-from .characteristics import chars, keyword_as_it_enters
+from .characteristics import (
+    aura_controllers,
+    chars,
+    keyword_as_it_enters,
+    player_protected_from,
+    protected_from,
+)
 from .effects.conditions import evaluate_condition
-from .effects.context import EffectContext, ask_mode, ask_objects, ask_yes_no
-from .effects.selectors import resolve_pool
+from .effects.context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
+from .effects.selectors import resolve_pool, select_players
 from .effects.values import evaluate_value
 from .enums import Keyword, Zone
 from .events import EventType
@@ -248,6 +254,26 @@ def move_object(
     # way out. Read afterwards it is always zero, so both keywords would return
     # every creature for ever.
     had_counters = dict(obj.counters) if was_on_battlefield else {}
+    # "Whenever an enchanted creature dies, draw a card for each Aura you
+    # controlled that was attached to it" (Hateful Eidolon). Asked about a
+    # creature that has left, which `_detach_all` below has stripped of every
+    # Aura before the event goes out: the Auras attached as it left, one seat
+    # per Aura, are the look-back (603.10a). See `_auras_had`.
+    had_auras = _auras_had(state, obj) if was_on_battlefield else []
+    # "If a **modified** creature died under your control this turn"
+    # (Intermediate Chirography): 700.9's three limbs -- a counter, an
+    # Equipment, an Aura its controller controlled -- asked as it left, because
+    # `_detach_all` strips the attachments and `reset_permanent_state` the
+    # counters before DIES goes out. The live reading is
+    # `selectors._is_modified`; this is the same answer from the snapshots,
+    # with "you" the creature's own controller. Folded into the turn ledger by
+    # `GameState._tally`.
+    had_equipment = _equipment_had(state, obj) if was_on_battlefield else 0
+    was_modified = was_on_battlefield and (
+        any(n > 0 for n in had_counters.values())
+        or had_equipment > 0
+        or any(seat == obj.controller for seat in had_auras)
+    )
     # "…create a number of Treasure tokens equal to **its power**" (Goldvein
     # Hydra), asked about a creature that has just died. `power_of {"self":
     # true}` reads `chars()`, and by the time the trigger resolves the object is
@@ -431,6 +457,7 @@ def move_object(
             had_counters=had_counters,
             had_power=had_power,
             had_toughness=had_toughness,
+            had_auras=had_auras,
             # Where it went, for a trigger's `to_zones`: "when this creature
             # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
             # must not fire on a bounce or a tuck.
@@ -450,6 +477,7 @@ def move_object(
                 oid=oid,
                 card=card.id,
                 was_creature=was_creature,
+                had_auras=had_auras,
             )
         if to_zone is Zone.GRAVEYARD:
             fire(
@@ -463,6 +491,9 @@ def move_object(
                 had_counters=had_counters,
                 had_power=had_power,
                 had_toughness=had_toughness,
+                had_auras=had_auras,
+                # 1/0 for `was_attacking`'s reason.
+                was_modified=1 if was_modified else 0,
             )
         # The departure has been heard, so a subscription waiting for it has
         # had its one chance: the object that comes back is a new one (400.7)
@@ -547,6 +578,65 @@ def _add_to_zone(
         lst.insert(0, obj.oid)
     else:
         lst.append(obj.oid)
+
+
+def _auras_had(state: GameState, obj: GameObject) -> list[int]:
+    """The controllers of the Auras attached to a leaving permanent, one per Aura.
+
+    Read before `_detach_all` unattaches them, so a departure trigger can look
+    back at what the creature wore (603.10a). The engine moves a simultaneous
+    event's permanents one at a time, so an Aura destroyed in the same event as
+    its host -- a "destroy all nonland permanents" that reaches the Aura first
+    -- has already left and is recovered from `GameState.leaving_auras`, the
+    batch-scoped record `_remember_leaving_dies_replacer` keeps for Kalitas.
+
+    A leaving Aura that is itself attached to a permanent still on the
+    battlefield is recorded there, under its controller as it left.
+    """
+    batch = state.event_batch
+    kept = [entry for entry in state.leaving_auras if entry[0] == batch]
+    seats = aura_controllers(state, obj.oid)
+    seats.extend(seat for _, host, seat in kept if host == obj.oid)
+    host = obj.attached_to
+    if (
+        host is not None
+        and host in state.battlefield
+        and (state.card_of(obj).is_aura or obj.cast_bestowed)
+    ):
+        kept.append((batch, host, obj.controller))
+    state.leaving_auras[:] = kept
+    return seats
+
+
+def _equipment_had(state: GameState, obj: GameObject) -> int:
+    """How many Equipment were attached to a leaving permanent (700.9's "equipped").
+
+    `_auras_had`'s walk for the other kind of attachment, and for its reason:
+    read before `_detach_all`, with an Equipment that left earlier in the same
+    simultaneous event -- "destroy all nonland permanents" reaching it before
+    its host -- recovered from `GameState.leaving_equipment`. An Equipment is
+    told by its derived subtypes, the test `selectors._is_modified` makes of
+    the board, and anybody's counts: "equipped" asks what is attached, not
+    whose it is.
+    """
+    batch = state.event_batch
+    kept = [entry for entry in state.leaving_equipment if entry[0] == batch]
+    count = sum(1 for _, host in kept if host == obj.oid)
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is None or other.attached_to != obj.oid:
+            continue
+        if "Equipment" in chars(state, other_oid).subtypes:
+            count += 1
+    host = obj.attached_to
+    if (
+        host is not None
+        and host in state.battlefield
+        and "Equipment" in chars(state, obj.oid).subtypes
+    ):
+        kept.append((batch, host))
+    state.leaving_equipment[:] = kept
+    return count
 
 
 def _detach_all(state: GameState, oid: int) -> None:
@@ -951,6 +1041,85 @@ def offer_read_ahead(state: GameState, oid: int, controller: int):
         purpose="read_ahead",
     )
     obj.read_ahead_chapter = chosen[0] + 1 if chosen else 1
+
+
+def offer_aura_host(state: GameState, oid: int, controller: int):
+    """303.4f: an Aura put onto the battlefield without being cast **chooses
+    what it will enchant as it enters**. Returns whether it may enter at all.
+
+    "Return this card to the battlefield", "you may put an Aura or Equipment
+    card from among them onto the battlefield" -- the effect names no host, so
+    ``controller``, the player it enters under, chooses one its enchant clause
+    allows. The clause is the Aura's first target spec, the same one
+    `stack._attach_aura` reads off a cast Aura: "enchant creature you control"
+    is ``{"controller": "you"}`` read for that player, and "enchant opponent" a
+    seat other than theirs.
+
+    **Not targeting.** Nothing is targeted (115.1), so hexproof, shroud and
+    ward do not narrow the pool; protection does, because a permanent or player
+    with protection can't be *enchanted* by an Aura with that quality (702.16c)
+    -- the half `primitives.attach` and `attach_to_player` already enforce.
+
+    **No legal host, no arrival** (303.4f, 303.4g): the answer is ``False`` and
+    the caller leaves the card in the zone it was in. Without this the Aura
+    entered enchanting nothing, every enters trigger saw it, and `sba` put it
+    into a graveyard -- a different zone change from the one the rules allow,
+    and a card leaving the library or exile that should have stayed there.
+
+    Asked from every arrival path that can stop to ask, for
+    `offer_enters_costs`' reason: `move_object` is not a generator. The answer
+    is left on `obj.enters_attached_to` (or `enters_attached_to_player`) for
+    `_enter_battlefield`, which attaches the Aura as it enters. The cast path
+    never calls this -- the spell's target is the host -- and neither does an
+    effect that names the host itself (``host_named`` on the arrival op, with a
+    following `attach`).
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return True
+    card = state.card_of(obj)
+    obj.enters_attached_to = None
+    obj.enters_attached_to_player = None
+    # A bestow card arriving uncast is a creature (702.103e), and the printed
+    # face is what is arriving: `is_aura` is the test. An Aura with no enchant
+    # clause written -- a Role token, attached by the op that creates it --
+    # has nothing to choose against and arrives as before.
+    if not card.is_aura or not card.targets:
+        return True
+    spec = card.targets[0]
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    if spec.kind == "player":
+        clause = spec.selector.get("controller", "any")
+        allowed = None if clause == "any" else set(select_players(ctx, clause))
+        seats = [
+            pid
+            for pid in state.alive()
+            if (allowed is None or pid in allowed) and not player_protected_from(state, pid, oid)
+        ]
+        if not seats:
+            return False
+        chosen = yield from ask_player(
+            ctx, f"Which player will {card.name} enchant?", seats, controller
+        )
+        if chosen is None:
+            return False
+        obj.enters_attached_to_player = chosen
+        return True
+    selector = {**dict(spec.selector), "zone": "battlefield"}
+    pool = [
+        host
+        for host in resolve_pool(ctx, selector)
+        if host != oid and not protected_from(state, host, oid, attaching=True)
+    ]
+    if not pool:
+        return False
+    chosen = yield from ask_objects(ctx, f"What will {card.name} enchant?", pool, 1, 1, controller)
+    if not chosen:
+        return False
+    obj.enters_attached_to = chosen[0]
+    return True
 
 
 def _apply_board_enters_tapped(state: GameState, obj: GameObject) -> None:
@@ -1696,6 +1865,22 @@ def _enter_battlefield(
 
         for keyword in sorted(granted):
             grant_keyword(state, obj.oid, keyword)
+
+    # 303.4f: an Aura put onto the battlefield without being cast enters
+    # attached to the host `offer_aura_host` had its controller choose a moment
+    # ago, before ENTERS_BATTLEFIELD goes out, so no enters trigger and no
+    # state-based action sees it enchanting nothing. Read and cleared here for
+    # `riot_choice`'s reason: the answer belongs to this arrival.
+    host, seat = obj.enters_attached_to, obj.enters_attached_to_player
+    obj.enters_attached_to = obj.enters_attached_to_player = None
+    if host is not None or seat is not None:
+        # Local: `primitives` imports `zones` for `move_object`.
+        from .primitives import attach, attach_to_player
+
+        if host is not None:
+            attach(state, obj.oid, host)
+        else:
+            attach_to_player(state, obj.oid, seat)
 
     state.bump_chars()
     fire(

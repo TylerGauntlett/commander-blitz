@@ -10,6 +10,11 @@ from __future__ import annotations
 from collections.abc import Mapping, Sequence
 from typing import Any
 
+from commanderblitz.engine.effects.selectors import (
+    validate_attached_to_key,
+    validate_colorless_key,
+    validate_enchanted_by_key,
+)
 from commanderblitz.engine.effects.values import (
     validate_counter_kind,
 )
@@ -22,6 +27,7 @@ from .vocabulary import (
     _FILTER_PLAYERS,
     SOURCE_MOVING_OPS,
     STATIC_CONDITION_OPS,
+    STATIC_FILTER_KEYS,
 )
 
 
@@ -98,6 +104,32 @@ def _check_pt_keys(filt: Any, where: str) -> None:
             )
 
 
+def _check_attached_to_key(filt: Any, where: str) -> None:
+    """``attached_to`` in a static filter: a static filter on the host.
+
+    `validate_attached_to_key` checks the shape every language shares; this
+    holds the host filter to the static language's own keys and value checks,
+    since `characteristics._matches_wherever` reads it as one. A host filter
+    nested inside it is refused: no printed card asks it.
+    """
+    validate_attached_to_key(filt, where)
+    if not isinstance(filt, Mapping) or "attached_to" not in filt:
+        return
+    host_filter = filt["attached_to"]
+    here = f"{where}.attached_to"
+    unknown = set(host_filter) - (STATIC_FILTER_KEYS - {"attached_to"})
+    if unknown:
+        raise DslError(
+            f"{here}: static filters may only read printed characteristics; "
+            f"unsupported keys {sorted(unknown)}"
+        )
+    _check_owner_key(host_filter, here)
+    _check_mana_cost_key(host_filter, here)
+    _check_pt_keys(host_filter, here)
+    validate_colorless_key(host_filter, here)
+    validate_enchanted_by_key(host_filter, here)
+
+
 def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
     """ "…of the chosen type" cannot survive being handed to another permanent.
 
@@ -117,15 +149,16 @@ def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:
     """
     if not isinstance(filt, Mapping):
         return
-    # "Protection from the chosen card type" on the static itself: the same
-    # source-is-the-recipient trap, one key over.
-    for entry in filt.get("from_types") or ():
-        if isinstance(entry, Mapping) and "chosen_card_type_of" in entry:
-            raise DslError(
-                f"{where}.from_types: 'chosen_card_type_of' names the choice made "
-                f"by the source, and a granted static's source is the permanent "
-                f"it was granted to -- which has chosen nothing"
-            )
+    # "Protection from the chosen card type" (or colour) on the static itself:
+    # the same source-is-the-recipient trap, one key over.
+    for key, chosen in (("from_types", "chosen_card_type_of"), ("from_colors", "chosen_color_of")):
+        for entry in filt.get(key) or ():
+            if isinstance(entry, Mapping) and chosen in entry:
+                raise DslError(
+                    f"{where}.{key}: {chosen!r} names the choice made by the "
+                    f"source, and a granted static's source is the permanent "
+                    f"it was granted to -- which has chosen nothing"
+                )
     for key in ("subtypes", "not_subtypes", "colors"):
         for entry in filt.get(key) or ():
             if not isinstance(entry, Mapping):

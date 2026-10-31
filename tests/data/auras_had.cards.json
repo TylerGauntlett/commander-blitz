@@ -1,0 +1,90 @@
+{
+  "_comment": "Shapes for tests/unit/attachments/test_auras_had.py. t_ah_eidolon is Hateful Eidolon's trigger alone, on a 1/3 enchantment creature with nothing else printed. t_ah_mourner is the other half of enchanted_by on a departure, false: it gains 1 life whenever a creature that wasn't enchanted leaves. The Auras and creatures are tests/data/enchanted_by.cards.json's.",
+  "cards": [
+    {
+      "id": "t_ah_eidolon",
+      "name": "Test Hateful Watcher",
+      "oracle_text": "Whenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.",
+      "mana_cost": "{B}",
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "types": [
+        "Enchantment",
+        "Creature"
+      ],
+      "subtypes": [
+        "Spirit"
+      ],
+      "power": 1,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever an enchanted creature dies, draw a card for each Aura you controlled that was attached to it.",
+          "trigger": {
+            "event": "creature_dies",
+            "controller": "any",
+            "filter": {
+              "enchanted_by": true
+            }
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "auras_had": {
+                  "controller": "you"
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ah_mourner",
+      "name": "Test Bare Mourner",
+      "oracle_text": "Whenever a creature that wasn't enchanted leaves the battlefield, you gain 1 life.",
+      "mana_cost": "{W}",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever a creature that wasn't enchanted leaves the battlefield, you gain 1 life.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "controller": "any",
+            "filter": {
+              "types": [
+                "Creature"
+              ],
+              "enchanted_by": false
+            }
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "amount": {
+                "const": 1
+              },
+              "player": "you"
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

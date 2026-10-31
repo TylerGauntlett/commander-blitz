@@ -49,7 +49,7 @@ from .temp_effects import (
     damage_redirect,
     life_floor,
     permanent_shielded,
-    shielded,
+    preventing_shield,
 )
 from .triggers import fire
 from .zones import move_object
@@ -444,7 +444,7 @@ def damage_player(
     # the player-damage path for a prevention to be consulted at all. The
     # permanent path has had one since absorb (`damage_permanent`, twenty lines
     # down); this is its player-side counterpart.
-    if shielded(state, pid):
+    if (shield := preventing_shield(state, pid, is_combat=is_combat)) is not None:
         # `fire`, not `emit`: emit only writes the log, which is what both
         # existing DAMAGE_PREVENTED sites did and is why `damage_prevented`
         # could not be a trigger. Selfless Squire's second line reads `amount`
@@ -463,6 +463,10 @@ def damage_player(
             amount=amount,
             to="player",
             reason="damage_shield",
+            # "If damage is prevented **this way**" (615.5): which shield, so
+            # the rider its spell installed (`DelayedTrigger.shield`) answers
+            # this prevention and no other. Only a linked shield says.
+            **({"shield": shield.link} if shield.link is not None else {}),
         )
         return 0
     # Protection over a seat (702.16d): "any damage that would be dealt to it is
@@ -492,7 +496,7 @@ def damage_player(
     # (Gideon of the Trials, Kiora, the Crashing Wave). A shield on the
     # *dealer*, so it is asked here as well as in `damage_permanent`: the
     # creature it was aimed at is exactly the one about to hit this player.
-    if permanent_shielded(state, source_oid, by=True):
+    if permanent_shielded(state, source_oid, by=True, is_combat=is_combat):
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -813,8 +817,8 @@ def damage_permanent(
     # "…target permanent would deal" (Gideon of the Trials) on the dealer. Both
     # answer the whole event however big it is, so they sit beside it.
     if (
-        permanent_shielded(state, oid, by=False)
-        or permanent_shielded(state, source_oid, by=True)
+        permanent_shielded(state, oid, by=False, is_combat=is_combat)
+        or permanent_shielded(state, source_oid, by=True, is_combat=is_combat)
         or (is_combat and combat_fogged(state, source_oid))
     ):
         fire(
@@ -1587,7 +1591,9 @@ def attach(state: GameState, aura_oid: int, target_oid: int) -> bool:
         return False
     # "Protection from Wizards" cannot be enchanted or equipped by one. The Aura
     # is left where it is; state-based actions bin an Aura attached to nothing.
-    if protected_from(state, target_oid, aura_oid):
+    # Asked as an attachment, so "this effect doesn't remove this Aura" spares
+    # the one Aura whose own static it is.
+    if protected_from(state, target_oid, aura_oid, attaching=True):
         return False
     aura.attached_to = target_oid
     aura.attached_timestamp = state.alloc_timestamp()
@@ -2033,6 +2039,44 @@ def grant_keyword(
         )
     state.bump_chars()
     _stats_changed(state, obj, keyword=keyword)
+
+
+def forbid_keyword(
+    state: GameState,
+    oid: int,
+    keyword: str,
+    source: int | None = None,
+) -> None:
+    """ "…**lose** hexproof and shroud **and can't have** hexproof or shroud",
+    until end of turn. Arcane Lighthouse.
+
+    A ``lose_keyword`` `TempEffect` on the permanent itself, which is 611.2c:
+    an effect from a resolved ability that changes characteristics reaches only
+    the objects it found as it resolved, so a creature that arrives, or comes
+    under an opponent's control, later in the turn keeps its hexproof. The
+    entry rides `until_eot`, so cleanup ends it and a zone change (400.7) drops
+    it with the old object.
+
+    It is not an ability, so a "loses all abilities" does not take it away, and
+    `chars` reads it in the last keyword step: "can't have" outranks every
+    grant whatever its timestamp, the same prohibition the `lose_keyword`
+    static is.
+    """
+
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.until_eot.append(
+        TempEffect(
+            kind="lose_keyword",
+            keyword=keyword,
+            source=source,
+            timestamp=state.alloc_timestamp(),
+        )
+    )
+    # No `_stats_changed`: its ``keyword`` is narrated as "gains", the
+    # opposite of what happened.
+    state.bump_chars()
 
 
 def grant_ability(
