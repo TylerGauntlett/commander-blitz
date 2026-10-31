@@ -126142,12 +126142,12 @@
     },
     "Herald of Amity": {
       "edhrec_rank": 11274,
-      "gate": "template",
+      "gate": null,
       "name": "Herald of Amity",
-      "reason": "no template for: When this creature enters, exile the top eight cards of your library. You may cast an Aura",
+      "reason": "",
       "scryfall_id": "0a36fe06-225f-44c6-b608-452344e3585a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Herald of Anafenza": {
@@ -147252,12 +147252,12 @@
     },
     "Keen Duelist": {
       "edhrec_rank": 3175,
-      "gate": "template",
+      "gate": null,
       "name": "Keen Duelist",
-      "reason": "no template for: At the beginning of your upkeep, you and target opponent each reveal the top card of your ",
+      "reason": "",
       "scryfall_id": "0446a3df-6f77-4b86-b694-ce99feb3d9ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Keen Glidemaster": {
@@ -148782,12 +148782,12 @@
     },
     "Killian, Ink Duelist": {
       "edhrec_rank": 3393,
-      "gate": "template",
+      "gate": null,
       "name": "Killian, Ink Duelist",
-      "reason": "no template for: Spells you cast that target a creature cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "9f51c115-dc9b-40a4-849d-3fc0c26e5a39",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Killing Glare": {

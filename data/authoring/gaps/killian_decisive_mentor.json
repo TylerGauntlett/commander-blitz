@@ -1,0 +1,18 @@
+{
+  "card_id": "killian_decisive_mentor",
+  "name": "Killian, Decisive Mentor",
+  "oracle_text": "Whenever an enchantment you control enters, tap up to one target creature and goad it. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)\nWhenever one or more creatures that are enchanted by an Aura you control attack, draw a card.",
+  "blocked_sentences": [
+    "Whenever one or more creatures that are enchanted by an Aura you control attack, draw a card."
+  ],
+  "needs": [
+    {
+      "capability": "enchanted_by_aura_you_control",
+      "kind": "selector",
+      "what": "a trigger-filter key matching a creature that has at least one Aura attached to it whose controller is the trigger source's controller (e.g. `enchanted_by: {\"controller\": \"you\"}`), usable on a batched `attacks` trigger with no controller restriction, so the ability fires once when any creatures -- an opponent's goaded creatures included -- enchanted by your Auras attack",
+      "why_existing_wont_do": "trigger_filter_keys has `attached`, which in triggers.py matches only the one object the ability source itself is attached to (Skullclamp's 'equipped creature'); nothing reads the Auras attached to an arbitrary attacker or their controller. `controller: you` on the attacks trigger would be both wrong (misses opponents' creatures carrying your Auras) and too wide (fires for your unenchanted creatures)"
+    }
+  ],
+  "closest_existing": ["attacks", "batched", "attached"],
+  "confidence": "high"
+}

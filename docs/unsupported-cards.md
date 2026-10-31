@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**124 cards** blocked by **105** capabilities.
+**127 cards** blocked by **108** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -22,6 +22,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [enchanted-by-aura-you-control](#enchanted-by-aura-you-control) | 2 | 3924 | selector |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -35,6 +36,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [annihilator](#annihilator) | 1 | 1597 | keyword |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attached-to-self](#attached-to-self) | 1 | 1945 | selector |
 | [auras-attached-last-known](#auras-attached-last-known) | 1 | 4856 | value |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -57,12 +59,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [enchant-graveyard-card](#enchant-graveyard-card) | 1 | 224 | engine |
-| [enchanted-by-aura-you-control](#enchanted-by-aura-you-control) | 1 | 3924 | selector |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [first-life-loss-each-turn](#first-life-loss-each-turn) | 1 | 18700 | trigger_event |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -82,6 +84,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
+| [modified-creature-died-this-turn](#modified-creature-died-this-turn) | 1 | 18700 | value |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
@@ -379,6 +382,24 @@ Blocks **2** cards.
 
 </details>
 
+## enchanted-by-aura-you-control
+
+Blocks **2** cards.
+
+- **(selector)** a static affects-filter key matching a creature that has at least one Aura attached to it whose controller is the static's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on the `cant_attack_you` static so any creature, the opponents' included, enchanted by your Aura can't attack you or your planeswalkers
+  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attached` (only the one permanent the source itself is attached to, i.e. 'enchanted/equipped creature') and `attached_to_host` (other attachments sharing the source's host); neither reads the Auras attached to an arbitrary creature or their controller, so `cant_attack_you` cannot be scoped to creatures enchanted by any Aura you control from a non-Aura source
+- **(selector)** a trigger-filter key matching a creature that has at least one Aura attached to it whose controller is the trigger source's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on a batched `attacks` trigger with no controller restriction, so the ability fires once when any creatures -- an opponent's goaded creatures included -- enchanted by your Auras attack
+  <br>Why the existing vocabulary won't do: trigger_filter_keys has `attached`, which in triggers.py matches only the one object the ability source itself is attached to (Skullclamp's 'equipped creature'); nothing reads the Auras attached to an arbitrary attacker or their controller. `controller: you` on the attacks trigger would be both wrong (misses opponents' creatures carrying your Auras) and too wide (fires for your unenchanted creatures)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eriette of the Charmed Apple** (rank 3924) — `eriette_of_the_charmed_apple`
+  - Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.
+- **Killian, Decisive Mentor** (rank 7931) — `killian_decisive_mentor`
+  - Whenever one or more creatures that are enchanted by an Aura you control attack, draw a card.
+
+</details>
+
 ## escape
 
 Blocks **2** cards.
@@ -591,6 +612,20 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
+
+</details>
+
+## attached-to-self
+
+Blocks **1** card.
+
+- **(selector)** a static filter key (usable inside a static value's `count`) matching the permanents attached to the static's SOURCE itself -- obj.attached_to == source.oid, any controller -- so a creature can say "+2/+2 for each Aura attached to it" as a self_only `buff` whose power and toughness are `times [2, count {attached_to_self: true, subtypes: [Aura]}]`
+  <br>Why the existing vocabulary won't do: `attached` matches the one permanent the source is attached TO (the enchanted/equipped creature), and `attached_to_host` matches other attachments that share the source's host and requires the source itself to be attached; both read the relationship from the attachment's end. Kor Spiritdancer is the host, and no static_filter_key or selector_key matches objects attached to the source (characteristics._static_filter_matches and selectors both lack it), so Strong Back's `count {attached_to_host}` pattern cannot be reused
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kor Spiritdancer** (rank 1945) — `kor_spiritdancer`
+  - This creature gets +2/+2 for each Aura attached to it.
 
 </details>
 
@@ -910,20 +945,6 @@ Blocks **1** card.
 
 </details>
 
-## enchanted-by-aura-you-control
-
-Blocks **1** card.
-
-- **(selector)** a static affects-filter key matching a creature that has at least one Aura attached to it whose controller is the static's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on the `cant_attack_you` static so any creature, the opponents' included, enchanted by your Aura can't attack you or your planeswalkers
-  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attached` (only the one permanent the source itself is attached to, i.e. 'enchanted/equipped creature') and `attached_to_host` (other attachments sharing the source's host); neither reads the Auras attached to an arbitrary creature or their controller, so `cant_attack_you` cannot be scoped to creatures enchanted by any Aura you control from a non-Aura source
-
-<details><summary>Cards waiting on this</summary>
-
-- **Eriette of the Charmed Apple** (rank 3924) — `eriette_of_the_charmed_apple`
-  - Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.
-
-</details>
-
 ## escalate-non-mana
 
 Blocks **1** card.
@@ -994,6 +1015,21 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
+
+</details>
+
+## first-life-loss-each-turn
+
+Blocks **1** card.
+
+- **(trigger_event)** an `nth` ordinal on the `life_lost` event (per player, per turn, like `you_gain_life`'s `life_gains` ordinal in the turn ledger) so 'Whenever you lose life for the first time each turn' fires only on that player's first life loss of the turn
+  <br>Why the existing vocabulary won't do: `state.py` stamps `nth` only on draws, casts and life gains; LIFE_LOST gets no ordinal, so `trigger.nth` never matches. `max_per_turn: 1` is a per-permanent cap and would wrongly fire on a later loss when the ability first appeared (the Class reached level 2) after you had already lost life that turn
+
+<details><summary>Cards waiting on this</summary>
+
+- **Intermediate Chirography** (rank 18700) — `intermediate_chirography`
+  - At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying.
+  - Whenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control.
 
 </details>
 
@@ -1269,6 +1305,21 @@ Blocks **1** card.
 
 - **Silvergill Mentor** (rank 16445) — `silvergill_mentor`
   - When this creature enters, create a 1/1 white and blue Merfolk creature token.
+
+</details>
+
+## modified-creature-died-this-turn
+
+Blocks **1** card.
+
+- **(value)** a turn-ledger value or condition counting creatures that died this turn under a given player's control, filtered by their last-known state -- here 'modified' (had counters, an attached Equipment, or an Aura its controller controlled) at the moment it died -- usable as an end_step trigger's intervening-if condition
+  <br>Why the existing vocabulary won't do: `creatures_died_this_turn` takes only a player spec and counts every creature death with no filter; the `modified` selector key reads live permanents on the battlefield, not dead ones; writing an unprinted `dies` trigger that sets a turn flag would be an approximation the brief forbids (and it would miss deaths before the Class reached level 3 -- which the printed ledger condition counts)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Intermediate Chirography** (rank 18700) — `intermediate_chirography`
+  - At the beginning of each end step, if a modified creature died under your control this turn, create a 2/1 white and black Inkling creature token with flying.
+  - Whenever you lose life for the first time each turn, put a +1/+1 counter on target creature you control.
 
 </details>
 

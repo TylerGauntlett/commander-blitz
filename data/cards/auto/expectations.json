@@ -6293,6 +6293,13 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "herald_of_amity": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "herald_of_eternal_dawn": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7228,6 +7235,10 @@
   "kederekt_creeper": {
     "zone": "battlefield"
   },
+  "keen_duelist": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "keen_eyed_archers": {
     "zone": "battlefield"
   },
@@ -7300,6 +7311,17 @@
   },
   "kher_keep": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "killian_ink_duelist": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "lifelink",
+        "menace"
+      ]
+    },
     "zone": "battlefield"
   },
   "killmonger_ruthless_usurper": {
