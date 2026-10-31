@@ -46,6 +46,7 @@ from commanderblitz.engine.effects.selectors import (
     validate_selector,
 )
 from commanderblitz.engine.effects.values import (
+    validate_counter_kind,
     validate_value,
 )
 from commanderblitz.engine.enums import (
@@ -3607,6 +3608,44 @@ def _validate_static_subtypes(model: AbilityModel, where: str) -> None:
             )
 
 
+def _validate_tax_x(model: AbilityModel, mana: str, where: str) -> None:
+    """An ``{X}`` combat tax and its ``x_per_attacker``, together or not at all.
+
+    Nils, Discipline Enforcer: "can't attack you ... unless its controller pays
+    {X}, where X is the number of counters on that creature." X is read off each
+    attacking creature as it is declared (508.1g-h), so the price is ``{X}``
+    alone and ``x_per_attacker`` says what X is. Without it an ``{X}`` would be
+    charged as 0 -- a tax that prices nothing, refused for ward {0}'s reason --
+    and beside a fixed price it would load and size nothing.
+    """
+    tax = model.effect
+    has_x = ManaCost.parse(mana).x_count > 0
+    if model.x_per_attacker is None:
+        if has_x:
+            raise DslError(
+                f"{where}: {tax}'s {{X}} needs an 'x_per_attacker' saying what X "
+                f"is on each attacking creature"
+                if tax == "attack_tax"
+                else f"{where}: {tax}'s price is a fixed mana cost; {{X}} sizes nothing here"
+            )
+        return
+    if tax != "attack_tax":
+        return  # refused below, by the check every non-attack_tax static meets
+    if mana.strip().upper() != "{X}":
+        raise DslError(
+            f"{where}: an attack_tax with 'x_per_attacker' costs {{X}} and nothing "
+            f"else, got {mana!r}"
+        )
+    spec = model.x_per_attacker
+    if set(spec) != {"counters"}:
+        raise DslError(
+            f"{where}.x_per_attacker: one leaf, 'counters' (a counter kind, or "
+            f"'any' for every kind summed), got {sorted(spec)}"
+        )
+    if spec["counters"] != "any":
+        validate_counter_kind(spec["counters"], f"{where}.x_per_attacker.counters")
+
+
 def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     if model.effect is None:
         raise DslError(f"{where}: static abilities need an 'effect' name")
@@ -4865,6 +4904,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{sorted(set(priced) - {'mana'})} -- anything else would have "
                 f"to ask a question inside the combat declaration"
             )
+        _validate_tax_x(model, str(priced["mana"]), where)
         _compile_cost(model.cost, where)
     elif model.effect == "spell_cost_increase":
         # Ward's refusal, for ward's reason: a tax of nothing prints a line and
@@ -4943,6 +4983,13 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             f"something only on 'ward', 'attack_tax', 'block_tax', "
             f"'spell_cost_increase' and 'granted_alternative_cost' (and on "
             f"activated abilities)"
+        )
+    if model.x_per_attacker is not None and model.effect != "attack_tax":
+        # The X of a per-attacker price; on any other static it would load,
+        # print and size nothing.
+        raise DslError(
+            f"{where}: 'x_per_attacker' only means anything on an attack_tax, "
+            f"not on {model.effect!r}"
         )
     if model.or_planeswalkers and model.effect != "attack_tax":
         # "...attack you **or planeswalkers you control**" is a clause of an
@@ -5601,6 +5648,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         static["cost"] = prune_cost(model.cost.model_dump())
     if model.effect in ("attack_tax", "block_tax"):
         static["cost"] = prune_cost(model.cost.model_dump())
+    if model.x_per_attacker is not None:
+        static["x_per_attacker"] = dict(model.x_per_attacker)
     if model.or_planeswalkers:
         static["or_planeswalkers"] = True
     if model.player_only:

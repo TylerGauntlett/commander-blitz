@@ -1629,6 +1629,29 @@ planeswalker is not attacking its controller (506.2). Priced, withheld and
 labelled on the walker's ADD_ATTACKER exactly as on the player's. Refused on any
 static but `attack_tax`.
 
+**A price read off each attacker.** Nils, Discipline Enforcer's "each creature
+with one or more counters on it can't attack you ... unless its controller pays
+{X}, where X is the number of counters on that creature" is a `cost` of
+`{"mana": "{X}"}` with `x_per_attacker` saying what X is:
+
+```jsonc
+{ "effect": "attack_tax",
+  "cost": { "mana": "{X}" },
+  "x_per_attacker": { "counters": "any" },
+  "or_planeswalkers": true,
+  "affects": { "controller": "any", "types": ["Creature"], "has_counters": true } }
+```
+
+X is evaluated against the creature being declared (508.1g-h), live, by
+`player_statics.attacker_x`, so the label, the payability check and the charge
+all read the same per-creature number, and it sums with any fixed tax beside it.
+One leaf, `counters`: a counter kind, or `"any"` for every kind summed (the
+spelling `counters_had` uses). An X of 0 charges nothing. The loader refuses an
+`{X}` price without `x_per_attacker`, `x_per_attacker` beside any price other
+than `{X}` alone, and the key on any static but `attack_tax`. A source-side X
+(Sphere of Safety's "the number of enchantments you control") is not this key:
+it reads the taxing permanent's board, not the attacker.
+
 ### Pricing a block rather than forbidding it
 
 ```jsonc

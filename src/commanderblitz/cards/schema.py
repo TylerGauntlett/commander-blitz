@@ -886,6 +886,13 @@ class AbilityModel(BaseModel):
     #: player and attacking a planeswalker is not attacking its controller
     #: (506.2).
     or_planeswalkers: bool = False
+    #: ``attack_tax``: the X of a ``cost`` of ``{"mana": "{X}"}``, read off
+    #: **each attacking creature** as it is declared (508.1g-h) -- Nils,
+    #: Discipline Enforcer's "unless its controller pays {X}, where X is the
+    #: number of counters on that creature" is ``{"counters": "any"}``. One
+    #: leaf: ``counters``, a counter kind or ``"any"`` for every kind summed.
+    #: Required with an ``{X}`` price and refused beside a fixed one.
+    x_per_attacker: dict[str, Any] | None = None
     #: ``cant_attack_you``: the wall stands in front of the static's controller
     #: **only**, not their planeswalkers or battles -- Queen Mother Ramonda's
     #: "creatures with power 2 or less can't attack you". Off by default,

@@ -915,6 +915,10 @@ def attack_tax(
     Safety say "you **or planeswalkers you control**" out loud, Propaganda does
     not, and attacking a planeswalker is not attacking its controller (506.2),
     so the printed sentence decides it and nothing is inferred.
+
+    A static carrying ``x_per_attacker`` prices ``{X}`` per creature instead:
+    X is read off ``oid`` itself (`attacker_x`), so Nils, Discipline
+    Enforcer's three-counter creature pays {3} where a one-counter one pays {1}.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -933,8 +937,35 @@ def attack_tax(
             continue
         if not _matches(state, obj, source_obj, static.get("affects")):
             continue
+        x_spec = static.get("x_per_attacker")
+        if x_spec is not None:
+            # Nils, Discipline Enforcer's {X}, "where X is the number of
+            # counters on **that creature**": read off this attacker now, as it
+            # is declared (508.1g-h), so the same price goes in the label, the
+            # payability check and the charge. X of 0 is a tax of nothing --
+            # the creature attacks free, as "unless its controller pays {0}"
+            # asks nothing of anybody.
+            x = attacker_x(obj, x_spec)
+            if x > 0:
+                specs.append({"mana": "{" + str(x) + "}"})
+            continue
         specs.append(static.get("cost"))
     return _summed_mana(specs)
+
+
+def attacker_x(obj: GameObject, spec: Mapping[str, Any]) -> int:
+    """The X of an ``x_per_attacker`` tax, read off the attacking creature.
+
+    One leaf, ``counters``: a counter kind, or ``"any"`` for every kind summed
+    -- the spelling `counters_had` already uses for "counters on it", where the
+    kinds are open-ended and no list of them would be the printed card. Live
+    counters, not a snapshot: the tax is determined as the creature is declared
+    (508.1g), and a counter placed or removed before then is part of the price.
+    """
+    kind = str(spec.get("counters", "any"))
+    if kind == "any":
+        return sum(n for n in obj.counters.values() if n > 0)
+    return obj.counter(kind)
 
 
 def _summed_mana(specs: list[Any]) -> str:

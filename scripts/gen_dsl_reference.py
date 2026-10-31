@@ -784,7 +784,8 @@ STATICS: dict[str, Entry] = {
     "add_mana_on_tap": ("Whenever a matching permanent is tapped for mana, add extra mana.", None),
     "add_subtype": ("Matching permanents have an extra subtype.",
                     '"…is the chosen type in addition to its other types"'),
-    "attack_tax": ("Matching creatures can't attack unless their controller pays.",
+    "attack_tax": ("Matching creatures can't attack unless their controller pays "
+                   "(`x_per_attacker`: {X} read off each attacker).",
                    "Pricing an attack rather than forbidding it"),
     "attacks_if_able": ("Matching creatures attack each combat if able "
                         "(`defending`: only a named player obeys it).", "The continuous form"),
