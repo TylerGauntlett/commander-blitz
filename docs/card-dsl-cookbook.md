@@ -9801,6 +9801,36 @@ longer be declared.
 Call Damage Control needs one more thing than this: a target per mode. See
 [a target that belongs to one mode](#a-target-that-belongs-to-one-mode).
 
+## "You may choose two"
+
+```jsonc
+{"op": "choose_mode", "count": 2, "optional": true, "modes": [...]}  // Shadrix Silverquill
+```
+
+**None, or exactly `count`** — never a number in between. `optional` is the word
+a target spec already uses for "exactly N targets, or none". The question is
+asked as the printed "may" (a yes-or-no) and then an exact pick of `count`, by
+`modes.ask_none_or_exactly`; it is not a `modal_bounds` clause, because "zero or
+two" is not a range.
+
+The near misses each load and each is a different card: `count: 2` alone cannot
+decline; `up_to: true` also permits exactly one mode; a `may` wrapped round the
+op is no longer the single top-level `choose_mode`, so its mode-owned targets
+are refused.
+
+A triggered ability asks it as it goes on the stack (603.3c), so each mode can
+own a target. A pair of modes is offered only when its targets can all be
+declared together: one ref never fills two specs, which is all "each mode must
+target a different player" needs, and with only one targetable player no pair
+is legal and the answer is none without asking. When only some pairs are legal,
+those pairs are offered as whole buttons.
+
+Refused at load time beside `up_to`, `up_to_if`, `or_more`, `all_if`, `budget`,
+`random`, `chooser` or `once_each`; with a `count` that is not a fixed number of
+at least 2 ("you may choose one" is `up_to`) or exceeds the modes; and on a spell
+or an activated ability, whose modes are asked at 601.2b/602.2b by
+`Game._ask_modes`, which has no "or none".
+
 ## "Choose one that hasn't been chosen"
 
 ```jsonc

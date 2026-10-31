@@ -7,11 +7,11 @@ importing the op layer, which imports `stack` back.
 
 from __future__ import annotations
 
-from collections.abc import Mapping
+from collections.abc import Generator, Mapping, Sequence
 from typing import Any
 
 from .conditions import evaluate
-from .context import EffectContext
+from .context import EffectContext, ask_mode, ask_yes_no
 from .values import evaluate_value
 
 
@@ -58,6 +58,60 @@ def modal_bounds(ctx: EffectContext, spec: Mapping[str, Any]) -> tuple[int, int 
         up_to = count if up_to is None else max(up_to, count)
         return 0, up_to
     return max(1, count), up_to
+
+
+def none_or_exactly(spec: Mapping[str, Any] | None) -> bool:
+    """Is this ``choose_mode`` "**you may** choose two" -- none, or exactly `count`?
+
+    ``optional: true``, the word `TargetSpec` already uses for "exactly N
+    targets, or none". Not `up_to`, which drops the floor to nothing and so
+    also permits one mode of Shadrix Silverquill's three, which the card
+    forbids; and not a `may` around the op, which stops it being the single
+    top-level `choose_mode` its mode-owned targets need (603.3c chooses them
+    as the trigger goes on the stack). Not a `modal_bounds` clause either:
+    "zero or two" is not a range, so the question is asked as the yes-or-no
+    the printed "may" is, then an exact pick.
+    """
+    return bool(spec) and spec.get("optional") is True
+
+
+_COUNT_WORDS = {2: "two", 3: "three", 4: "four"}
+
+
+def ask_none_or_exactly(
+    ctx: EffectContext,
+    labels: Sequence[str],
+    chooser: int,
+    count: int,
+    groups: Sequence[Sequence[int]] | None = None,
+) -> Generator[Any, list[int], list[int]]:
+    """Ask "you may choose `count`": declined, or exactly `count` of ``labels``.
+
+    Returns indices into ``labels``. With fewer than `count` on offer the
+    answer is none without asking -- 601.2b strikes a mode that cannot be
+    chosen, and "choose two" of one is not a choice the card offers.
+
+    ``groups`` is the joint answer when not every `count`-subset may be taken:
+    a pair of modes whose targets cannot all be declared together is not a
+    legal choice (601.2c, which 603.3d applies), so then the legal sets are
+    offered as whole buttons rather than letting the player pick an illegal
+    one. ``None`` means every subset is legal; an empty list, none is.
+    """
+    if len(labels) < count or (groups is not None and not groups):
+        return []
+    word = _COUNT_WORDS.get(count, str(count))
+    if not (yield from ask_yes_no(ctx, f"Choose {word} modes?", chooser)):
+        return []
+    if groups is None:
+        return sorted((yield from ask_mode(ctx, f"Choose {word}", list(labels), chooser, count)))
+    picked = yield from ask_mode(
+        ctx,
+        f"Choose {word}",
+        [" + ".join(labels[i] for i in group) for group in groups],
+        chooser,
+        1,
+    )
+    return sorted(groups[picked[0]]) if picked else []
 
 
 def chosen_at_random(ctx: EffectContext, spec: Mapping[str, Any] | None) -> bool:

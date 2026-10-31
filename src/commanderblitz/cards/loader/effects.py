@@ -2751,6 +2751,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         validate_condition(more["condition"], f"{where}.up_to_if.condition")
         if "count" in more:
             validate_value(more["count"], f"{where}.up_to_if.count")
+    if op == "choose_mode" and "optional" in effect:
+        # "You may choose two" (Shadrix Silverquill): none, or exactly `count`.
+        # Every other clause that reshapes the count would either contradict it
+        # or be silently ignored by `modes.ask_none_or_exactly`, which asks the
+        # exact number and nothing else.
+        if not isinstance(effect["optional"], bool):
+            raise DslError(f"{where}: 'optional' is a boolean, got {effect['optional']!r}")
+        if effect["optional"]:
+            clash = [
+                key
+                for key in (
+                    "up_to", "up_to_if", "or_more", "all_if", "budget", "random",
+                    "chooser", "once_each",
+                )
+                if effect.get(key) not in (None, False)
+            ]
+            if clash:
+                raise DslError(
+                    f"{where}: an 'optional' choose_mode is none or exactly 'count' "
+                    f"modes, so {clash} cannot apply to it"
+                )
+            count = effect.get("count", 1)
+            if isinstance(count, dict) and "const" in count:
+                count = count["const"]
+            modes = effect.get("modes") or []
+            if not isinstance(count, int) or isinstance(count, bool) or count < 2:
+                # "You may choose one" is `up_to` with a count of one, and a
+                # computed count has no load-time answer to check.
+                raise DslError(
+                    f"{where}: 'optional' needs a fixed 'count' of at least 2 "
+                    f"(\"you may choose one\" is 'up_to'); got {count!r}"
+                )
+            if count > len(modes):
+                raise DslError(
+                    f"{where}: 'optional' asks for {count} modes of {len(modes)}, "
+                    f"which can never be chosen"
+                )
+            if ".spell_effects[" in where:
+                # A spell's modes are answered at 601.2b by `Game._ask_modes`,
+                # which has no "or none"; and a modal spell that chooses no
+                # mode at all is not a spell the rules let you cast.
+                raise DslError(
+                    f"{where}: 'optional' is for a triggered ability's \"you may "
+                    f"choose N\", chosen as it goes on the stack (603.3c); a "
+                    f"spell chooses its modes as it is cast"
+                )
     if op == "choose_mode" and "random" in effect:
         # "Choose one at random" -- the game picks exactly `count` modes off its
         # seeded rng. Every clause that shapes a *player's* answer is
@@ -2761,7 +2807,9 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         if effect["random"]:
             clash = [
                 key
-                for key in ("chooser", "budget", "up_to", "up_to_if", "or_more", "all_if")
+                for key in (
+                    "chooser", "budget", "up_to", "up_to_if", "or_more", "all_if", "optional",
+                )
                 if effect.get(key) not in (None, False)
             ]
             if clash:

@@ -19,9 +19,11 @@ from .conditions import evaluate
 from .context import EffectContext, ask_mode, ask_player, ask_x, ask_yes_no
 from .modes import (
     _mode_flag,
+    ask_none_or_exactly,
     chosen_at_random,
     modal_bounds,
     mode_labels,
+    none_or_exactly,
     per_turn,
     pick_at_random,
     record_per_turn,
@@ -784,6 +786,11 @@ def op_choose_mode(ctx: EffectContext, spec: Mapping[str, Any]):
         # earlier. Off the seeded `state.rng`, so a replay picks the same.
         chosen = pick_at_random(ctx.state, offered, min(floor, len(offered)))
         record_per_turn(ctx.state, ctx.source_oid, spec, labels, chosen)
+    elif none_or_exactly(spec):
+        # "You may choose two" -- a nested one, or one nobody answered as it
+        # went on the stack. No mode owns a target here (the loader keeps
+        # those to the top-level question), so every pair is a legal pair.
+        chosen = yield from ask_none_or_exactly(ctx, labels, chooser, floor)
     elif once_each:
         picked = yield from ask_mode(
             ctx,

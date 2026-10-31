@@ -2416,6 +2416,17 @@ def _has_per_turn_modes(effects: Any) -> bool:
     return False
 
 
+def _has_optional_modes(effects: Any) -> bool:
+    """Does any ``choose_mode`` in this effect tree say ``optional: true``?"""
+    if isinstance(effects, Mapping):
+        if effects.get("op") == "choose_mode" and effects.get("optional") is True:
+            return True
+        return any(_has_optional_modes(v) for v in effects.values())
+    if isinstance(effects, (list, tuple)):
+        return any(_has_optional_modes(v) for v in effects)
+    return False
+
+
 def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     where = f"{card_where}.abilities[{index}]"
     kind = AbilityKind(model.kind)
@@ -2436,6 +2447,17 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             f"abilities, whose modes are chosen as they go on the stack; an "
             f"activated ability chooses at activation, which does not strike "
             f"spent modes off"
+        )
+
+    if kind is AbilityKind.ACTIVATED and _has_optional_modes(model.effects):
+        # The same reason: 602.2b's `Game._ask_modes` asks an exact or ranged
+        # count and has no "none, or exactly N", so "you may choose two" would
+        # be asked as "choose two".
+        raise DslError(
+            f"{where}: choose_mode's 'optional' (\"you may choose N\") is supported "
+            f"on triggered abilities, whose modes are chosen as they go on the "
+            f"stack; an activated ability chooses at activation, which has no "
+            f"\"or none\""
         )
 
     threshold = _compile_threshold(model, kind, where)
