@@ -619,6 +619,16 @@ class DamageShield:
     #: land.  Part of the record rather than a second table, because it is the
     #: same prevention over the same seat with one narrower question asked.
     combat_only: bool = False
+    #: "For each 1 damage prevented **this way**, create a 2/1 … Inkling"
+    #: (Inkshield, 615.5): the id tying this shield to the delayed rider its
+    #: spell installed beside it (`DelayedTrigger.shield`), and carried as
+    #: ``shield`` on every `DAMAGE_PREVENTED` this shield fires.  ``None`` is a
+    #: shield with no rider.  An id rather than the rider itself, because the
+    #: rider is DSL effects that may ask questions and `damage_player` is four
+    #: frames below anything that can; drawn from `GameState.alloc_timestamp`,
+    #: so it is unique game-wide and two Inkshields are two shields rather than
+    #: one deduplicated entry.
+    link: int | None = None
 
     def stops(self, *, is_combat: bool) -> bool:
         """Whether this shield prevents damage of that kind."""
@@ -630,6 +640,7 @@ class DamageShield:
             "duration": self.duration,
             "source": self.source,
             "combat_only": self.combat_only,
+            "link": self.link,
         }
 
 
@@ -1498,6 +1509,13 @@ class DelayedTrigger:
     recipient_oids: tuple[int, ...] | None = None
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
+    #: "If damage is prevented **this way**" (615.5): the `DamageShield.link`
+    #: of the one shield this rider answers.  Set only by the `prevent_damage`
+    #: op's ``effects``, on a ``damage_prevented`` subscription, and compared
+    #: against the event's ``shield`` key -- so a Fog, a Selfless Squire or
+    #: protection preventing the same damage pays nothing, and a second
+    #: Inkshield's tokens come from its own shield only.
+    shield: int | None = None
 
 
 #: How long an event-watching delayed ability stays subscribed, and what firing

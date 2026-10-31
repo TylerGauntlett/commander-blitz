@@ -49,7 +49,7 @@ from .temp_effects import (
     damage_redirect,
     life_floor,
     permanent_shielded,
-    shielded,
+    preventing_shield,
 )
 from .triggers import fire
 from .zones import move_object
@@ -444,7 +444,7 @@ def damage_player(
     # the player-damage path for a prevention to be consulted at all. The
     # permanent path has had one since absorb (`damage_permanent`, twenty lines
     # down); this is its player-side counterpart.
-    if shielded(state, pid, is_combat=is_combat):
+    if (shield := preventing_shield(state, pid, is_combat=is_combat)) is not None:
         # `fire`, not `emit`: emit only writes the log, which is what both
         # existing DAMAGE_PREVENTED sites did and is why `damage_prevented`
         # could not be a trigger. Selfless Squire's second line reads `amount`
@@ -463,6 +463,10 @@ def damage_player(
             amount=amount,
             to="player",
             reason="damage_shield",
+            # "If damage is prevented **this way**" (615.5): which shield, so
+            # the rider its spell installed (`DelayedTrigger.shield`) answers
+            # this prevention and no other. Only a linked shield says.
+            **({"shield": shield.link} if shield.link is not None else {}),
         )
         return 0
     # Protection over a seat (702.16d): "any damage that would be dealt to it is

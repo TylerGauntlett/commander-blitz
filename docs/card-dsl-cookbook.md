@@ -7145,6 +7145,31 @@ carries. `player: "any"` is "…dealt to players" (Defend the Hearth). The near
 miss is `prevent_combat_damage`, which is keyed to the dealer and so also fogs
 combat damage to creatures and to the other seats.
 
+```jsonc
+// Inkshield: "Prevent all combat damage that would be dealt to you this turn.
+//             For each 1 damage prevented this way, create a 2/1 white and
+//             black Inkling creature token with flying."
+{"op": "prevent_damage", "player": "you", "duration": "this_turn", "combat_only": true,
+ "effects": [{"op": "create_token", "token": "inkling_2_1_wb_flying",
+              "amount": {"binding": "amount"}}]}
+```
+
+**`effects`** is the 615.5 rider, "if damage is prevented **this way**". Each
+shield the op installs gets a fresh `DamageShield.link`, `damage_player` puts it
+on the `DAMAGE_PREVENTED` it fires as `shield`, and the op installs beside it a
+`damage_prevented` delayed ability scoped to that link (`DelayedTrigger.shield`)
+for the turn. So the effects run every time *that* shield prevents damage, with
+the prevented amount as `{"binding": "amount"}` and the protected seat as
+`event_player`, directly rather than on the stack (615.5's "immediately
+afterward"), and never when a Fog, a Squire's shield or protection prevents the
+same damage. When several shields over a seat apply, a linked one prevents first
+(616.1, the order the protected player would pick), so two Inkshields make one
+set of Inklings. The loader refuses an empty list, a `target` inside it (the
+rider resolves with no targets, as a `delay` does), and `effects` on
+`prevent_damage_permanent`, which has no link. The near miss is a
+`delayed_trigger` on `damage_prevented`: it answers every prevention of damage
+to you, whatever prevented it.
+
 **The op is not the static of the same name.** `prevent_damage` the *static* is
 absorb N, keyed to a permanent through `affects` or to a seat through
 `affects_player`. It is per source and per instance rather than "all damage

@@ -1793,6 +1793,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"'prevent_damage_permanent' op, and a continuous one the "
                 f"'prevent_damage' static effect or 'protection'"
             )
+    if op == "prevent_damage" and "effects" in effect:
+        # "If damage is prevented this way…" (615.5): the rider the op installs
+        # as a delayed ability beside its shield. An empty list is a rider that
+        # does nothing, and a `target` inside one names nothing when it fires --
+        # the delayed half resolves with no targets of its own, as `delay`'s does.
+        if not isinstance(effect["effects"], list) or not effect["effects"]:
+            raise DslError(
+                f"{where}: prevent_damage's 'effects' is the non-empty list of "
+                f"effects run each time this shield prevents damage"
+            )
+        _refuse_targets_inside_a_delay(effect["effects"], f"{where}.effects")
+    if op == "prevent_damage_permanent" and "effects" in effect:
+        # Accepted, it would be validated and never run: the rider is linked to
+        # the player shield only.
+        raise DslError(
+            f"{where}: a 'prevented this way' rider ('effects') is implemented on "
+            f"the 'prevent_damage' player shield only, not on {op!r}"
+        )
     if op in ("prevent_damage", "prevent_damage_permanent") and not isinstance(
         effect.get("combat_only", False), bool
     ):

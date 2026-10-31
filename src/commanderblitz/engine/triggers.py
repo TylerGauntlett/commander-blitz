@@ -837,6 +837,11 @@ def _delayed_matches(
     # the one a delayed ability can still be asked. See `_half_matches`.
     if not _half_matches(spec.event, event):
         return False
+    if delayed.shield is not None and event.data.get("shield") != delayed.shield:
+        # "If damage is prevented **this way**" (615.5): the one shield this
+        # rider was installed beside, and no other prevention of the same
+        # damage. See `DamageShield.link`.
+        return False
 
     subject = _subject_oid(spec.event, event)
     if delayed.subject_oids is not None and subject not in delayed.subject_oids:
