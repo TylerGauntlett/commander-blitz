@@ -4907,6 +4907,9 @@
       "graveyard"
     ]
   },
+  "flickering_ward": {
+    "zone": "battlefield"
+  },
   "flight": {
     "zone": [
       "battlefield",

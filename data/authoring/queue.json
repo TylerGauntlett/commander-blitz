@@ -98142,12 +98142,12 @@
     },
     "Flickering Ward": {
       "edhrec_rank": 4629,
-      "gate": "template",
+      "gate": null,
       "name": "Flickering Ward",
-      "reason": "no template for: As this Aura enters, choose a color",
+      "reason": "",
       "scryfall_id": "23fcd6a8-be83-4304-ae32-d3dfc855f596",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flickerwisp": {

@@ -55072,6 +55072,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As this Aura enters, choose a color.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "protection",
+          "from_colors": [
+            {
+              "chosen_color_of": "self"
+            }
+          ],
+          "kind": "static",
+          "spares": "self",
+          "text": "Enchanted creature has protection from the chosen color. This effect doesn't remove this Aura."
+        },
+        {
+          "cost": {
+            "mana": "{W}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{W}: Return this Aura to its owner's hand."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "flickering_ward",
+      "mana_cost": "{W}",
+      "name": "Flickering Ward",
+      "oracle_text": "Enchant creature\nAs this Aura enters, choose a color.\nEnchanted creature has protection from the chosen color. This effect doesn't remove this Aura.\n{W}: Return this Aura to its owner's hand.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },

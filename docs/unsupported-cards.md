@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**120 cards** blocked by **109** capabilities.
+**119 cards** blocked by **108** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -96,7 +96,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
-| [protection-from-chosen-color](#protection-from-chosen-color) | 1 | 4629 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -1445,20 +1444,6 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
-
-</details>
-
-## protection-from-chosen-color
-
-Blocks **1** card.
-
-- **(static_effect)** the `protection` static accepting {"chosen_color_of": "self"} in `from_colors`, so an Aura that chose a color as it entered gives its enchanted creature continuous protection from that color, read off the Aura's chosen_color at the moment a rule asks; plus a flag exempting the granting Aura itself from the protection when 704.5m checks enchant legality ("This effect doesn't remove this Aura")
-  <br>Why the existing vocabulary won't do: The `protection` static's from_colors takes literal colour letters only (the loader rejects anything else, and `_static_protection_qualities` adds the list as-is), while `chosen_color_of` resolves only in add_mana, the buff/anthem filters and the one-shot `grant_protection` op. `grant_protection` is a temporary effect with a duration, not a static that lasts while the Aura stays attached, and has no way to exempt its source from the protection's enchant restriction
-
-<details><summary>Cards waiting on this</summary>
-
-- **Flickering Ward** (rank 4629) — `flickering_ward`
-  - Enchanted creature has protection from the chosen color. This effect doesn't remove this Aura.
 
 </details>
 
