@@ -569,6 +569,73 @@
       ]
     },
     {
+      "id": "contract",
+      "name": "Contract",
+      "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life.",
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever enchanted creature attacks, it gets +2/+0 until end of turn if it's attacking one of your opponents. Otherwise, its controller loses 2 life.",
+          "trigger": {
+            "event": "attacks",
+            "controller": "any",
+            "filter": {
+              "attached": true
+            }
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "attacking_player": "opponent"
+                }
+              },
+              "then": [
+                {
+                  "op": "pump",
+                  "objects": {
+                    "binding": "subject"
+                  },
+                  "power": {
+                    "const": 2
+                  },
+                  "toughness": {
+                    "const": 0
+                  }
+                }
+              ],
+              "else": [
+                {
+                  "op": "lose_life",
+                  "player": {
+                    "controller_of": "subject"
+                  },
+                  "amount": {
+                    "const": 2
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "detective_2_2_wu",
       "name": "Detective Token",
       "oracle_text": "2/2 white and blue Detective creature token.",

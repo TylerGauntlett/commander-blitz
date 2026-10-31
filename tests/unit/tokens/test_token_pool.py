@@ -1435,3 +1435,27 @@ class TestArchonOfSunsGracesPegasusFlies:
         assert list(token.subtypes) == ["Pegasus"]
         assert "flying" in token.keywords and len(token.keywords) == 1
         assert not token.abilities
+
+
+class TestScrivsContractIsAWhiteAura:
+    """Scriv, the Obligator: *"create a **white Aura** enchantment token named
+    **Contract** attached to target creature an opponent controls."*
+
+    The near miss is `wicked_role`, the pool's other Aura token: colorless, a
+    Role (so 704.5y would bin one Contract for the next Role its controller
+    put on the same creature), and a +1/+1 static where the Contract has only
+    its attack trigger. Its behaviour is `test_contract_token.py`.
+    """
+
+    def test_it_is_a_white_aura_with_one_triggered_ability(self, pool):
+        token = pool.get("contract")
+        assert token is not None and token.is_token and token.is_aura
+        assert token.name == "Contract"
+        assert sorted(token.colors) == ["W"]
+        assert list(token.types) == ["Enchantment"]
+        assert list(token.subtypes) == ["Aura"]
+        assert [a.kind for a in token.abilities] == ["triggered"]
+
+    def test_the_wicked_role_is_still_a_separate_token(self, pool):
+        role = pool.get("wicked_role")
+        assert "Role" in role.subtypes and not role.colors
