@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 156 |
+| [Effect ops](#effect-ops) | 157 |
 | [Selectors](#selectors) | 71 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 64 |
@@ -141,6 +141,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `grant_keyword` | Modify |  | Permanents gain keywords for a duration. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
 | `grant_protection` | Modify |  | Permanents or players gain protection for a duration. | [Granting protection](card-dsl-cookbook.md#granting-protection) |
 | `lose_all_abilities` | Modify |  | Permanents lose all abilities for a duration. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
+| `lose_keyword` | Modify |  | Permanents found as it resolves lose keywords and can't have them until end of turn. | [The lose_keyword op — the same prohibition, until end of turn](card-dsl-cookbook.md#the-lose_keyword-op--the-same-prohibition-until-end-of-turn) |
 | `pump` | Modify |  | +N/+M until end of turn (or a duration). | [Effect ops](card-dsl.md#effect-ops) |
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
 | `set_pt` | Modify |  | Set base power and toughness for a duration. | [Effect ops](card-dsl.md#effect-ops) |

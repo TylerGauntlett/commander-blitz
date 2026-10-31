@@ -8608,6 +8608,37 @@ position: it would take the opponents' flying, their triggered abilities and
 their activated abilities too, which is half a Humility rather than a
 first-strike hoser.
 
+### The `lose_keyword` op — the same prohibition, until end of turn
+
+Arcane Lighthouse: *"{1}, {T}: Until end of turn, creatures your opponents
+control **lose hexproof and shroud and can't have hexproof or shroud**."*
+
+```jsonc
+{ "op": "lose_keyword",
+  "cant_have": true,
+  "keywords": ["hexproof", "shroud"],
+  "objects": { "controller": "opponent", "types": ["Creature"],
+               "zone": "battlefield", "count": "all" } }
+```
+
+Each permanent `objects` finds as the ability resolves gets a `lose_keyword`
+`TempEffect` per keyword, read in the same last keyword step of `chars` as the
+static. So "can't have" beats every grant, an opponent's later
+`grant_keyword` and a hexproof counter included, and cleanup ends it.
+
+The set is fixed when the ability resolves, which is where the op and the static
+differ. 611.2c: an effect from a resolved ability that changes characteristics
+affects only the objects on the battlefield at that time. A creature an opponent
+casts afterwards, or takes control of afterwards, keeps its hexproof. One that
+blinks comes back as a new object (400.7) and has it again.
+
+The loader requires `cant_have: true`, a non-empty list of known `keywords` and
+`objects`, and refuses any `duration` but `until_end_of_turn`. The near miss is
+the plain "target creature loses flying until end of turn" (Radjan Spirit). That
+is a layer-6 removal a later grant survives (613.7). It is not built, and the
+`cant_have` key is what stops it loading as this stronger effect.
+`lose_all_abilities` and `lock_abilities` take far more than two keywords.
+
 ### `grant_ability` as a static, and where the line now runs
 
 The `grant_ability` *op* grants for a duration and its grants are pointers only

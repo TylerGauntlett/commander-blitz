@@ -2460,6 +2460,41 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: unknown {op} duration {effect['duration']!r} "
             f"(use 'until_end_of_turn' or 'until_your_next_turn')"
         )
+    if op == "lose_keyword":
+        # "…lose hexproof and shroud **and can't have** hexproof or shroud."
+        # The op is that prohibition and nothing weaker, so the clause is
+        # written out: a bare "loses flying until end of turn" is a removal a
+        # later grant survives (613.7), and loading it here would be a
+        # stronger card that reads the same.
+        if effect.get("cant_have") is not True:
+            raise DslError(
+                f"{where}: lose_keyword is \"lose X and can't have X\" and needs "
+                f"'cant_have': true; a plain \"loses X until end of turn\" is not "
+                f"implemented"
+            )
+        if not effect.get("objects"):
+            # An absent selector would choose nothing, and a printed hoser
+            # would resolve doing nothing.
+            raise DslError(
+                f"{where}: lose_keyword needs 'objects' (the permanents that lose "
+                f"the keywords, chosen as it resolves)"
+            )
+        words = effect.get("keywords")
+        if not isinstance(words, list) or not words:
+            raise DslError(
+                f"{where}: lose_keyword needs 'keywords', a non-empty list of the "
+                f"keywords it removes"
+            )
+        for k in words:
+            if k not in KNOWN_KEYWORDS:
+                raise DslError(f"{where}: unknown keyword {k!r}")
+        # Until end of turn, the one clock printed. Any other word would load
+        # and quietly wear off at this turn's cleanup.
+        if str(effect.get("duration", "until_end_of_turn")) != "until_end_of_turn":
+            raise DslError(
+                f"{where}: unknown lose_keyword duration {effect['duration']!r} "
+                f"(implemented: 'until_end_of_turn')"
+            )
     if op == "grant_flash_permission":
         # Without a duration the permission would have no clock to end on, and a
         # misspelt type would narrow it to nothing -- the +1 doing nothing.

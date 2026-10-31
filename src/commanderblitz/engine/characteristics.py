@@ -801,6 +801,14 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
                 keywords -= set(static.get("keywords", ()))
+        #    The same prohibition from a resolved ability, until end of turn:
+        #    Arcane Lighthouse's "…lose hexproof and shroud and can't have
+        #    hexproof or shroud". Written onto each permanent the `lose_keyword`
+        #    op found as it resolved (611.2c), and read here for the reason the
+        #    static is: "can't have" beats a grant with a later timestamp.
+        for temp in obj.until_eot:
+            if temp.kind == "lose_keyword" and temp.keyword:
+                keywords.discard(temp.keyword)
 
     return Characteristics(
         power=power,

@@ -60,7 +60,9 @@ class TempEffect:
     addition to its other types": ``subtypes`` added, base P/T untouched), or
     ``"control"`` ("gain control of target permanent until end of turn"), or
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
-    read by `temp_effects.sacrifice_forbidden`).  The lock is not a keyword because it is not a characteristic: it is
+    read by `temp_effects.sacrifice_forbidden`), or ``"lose_keyword"`` ("…lose
+    hexproof **and can't have** hexproof": ``keyword`` is taken away by the last
+    keyword step of ``chars``, after every grant).  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 

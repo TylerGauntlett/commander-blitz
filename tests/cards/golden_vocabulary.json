@@ -940,6 +940,7 @@
   "lose_all_abilities",
   "lose_all_player_counters",
   "lose_game",
+  "lose_keyword",
   "lose_life",
   "manifest",
   "may",

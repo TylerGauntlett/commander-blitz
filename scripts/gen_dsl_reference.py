@@ -335,6 +335,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "become_level": ("Modify", "A Class becomes level N.", H_CLASSES),
     "lose_all_abilities": ("Modify", "Permanents lose all abilities for a duration.",
                            "Losing all abilities because an effect said so"),
+    "lose_keyword": ("Modify", "Permanents found as it resolves lose keywords and can't have "
+                     "them until end of turn.",
+                     "The `lose_keyword` op — the same prohibition, until end of turn"),
     "rename": ("Modify", "A permanent's name becomes the chosen or given name.",
                "Changing a permanent's name"),
     # ---- Life & damage ---------------------------------------------------

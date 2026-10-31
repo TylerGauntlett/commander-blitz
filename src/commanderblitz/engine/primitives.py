@@ -2041,6 +2041,44 @@ def grant_keyword(
     _stats_changed(state, obj, keyword=keyword)
 
 
+def forbid_keyword(
+    state: GameState,
+    oid: int,
+    keyword: str,
+    source: int | None = None,
+) -> None:
+    """ "…**lose** hexproof and shroud **and can't have** hexproof or shroud",
+    until end of turn. Arcane Lighthouse.
+
+    A ``lose_keyword`` `TempEffect` on the permanent itself, which is 611.2c:
+    an effect from a resolved ability that changes characteristics reaches only
+    the objects it found as it resolved, so a creature that arrives, or comes
+    under an opponent's control, later in the turn keeps its hexproof. The
+    entry rides `until_eot`, so cleanup ends it and a zone change (400.7) drops
+    it with the old object.
+
+    It is not an ability, so a "loses all abilities" does not take it away, and
+    `chars` reads it in the last keyword step: "can't have" outranks every
+    grant whatever its timestamp, the same prohibition the `lose_keyword`
+    static is.
+    """
+
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.until_eot.append(
+        TempEffect(
+            kind="lose_keyword",
+            keyword=keyword,
+            source=source,
+            timestamp=state.alloc_timestamp(),
+        )
+    )
+    # No `_stats_changed`: its ``keyword`` is narrated as "gains", the
+    # opposite of what happened.
+    state.bump_chars()
+
+
 def grant_ability(
     state: GameState,
     oid: int,
