@@ -1,0 +1,165 @@
+{
+  "_comment": "Shapes for tests/unit/attachments/test_attached_to.py. t_at_reverie is Sage's Reverie, its draw and its anthem both counting the Auras you control that are attached to a creature; t_at_dancer is Kor Spiritdancer's first line, +2/+2 for each Aura attached to it, whoever controls the Aura. The Auras they count are t_eb_aura (Enchant creature, nothing else), t_plain_gear is the Equipment that does not count, t_robe_mover the Aura on a player that enchants no creature, and t_bestower the bestowed Spirit.",
+  "cards": [
+    {
+      "id": "t_at_reverie",
+      "name": "Test Reverie",
+      "oracle_text": "Enchant creature\nWhen this Aura enters, draw a card for each Aura you control that's attached to a creature.\nEnchanted creature gets +1/+1 for each Aura you control that's attached to a creature.",
+      "mana_cost": "{3}{U}",
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "types": [
+        "Enchantment"
+      ],
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this Aura enters, draw a card for each Aura you control that's attached to a creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "amount": {
+                "count": {
+                  "zone": "battlefield",
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "attached_to": {
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                }
+              }
+            }
+          ]
+        },
+        {
+          "kind": "static",
+          "text": "Enchanted creature gets +1/+1 for each Aura you control that's attached to a creature.",
+          "effect": "buff",
+          "affects": {
+            "attached": true
+          },
+          "power": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Aura"
+              ],
+              "attached_to": {
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          },
+          "toughness": {
+            "count": {
+              "zone": "battlefield",
+              "controller": "you",
+              "subtypes": [
+                "Aura"
+              ],
+              "attached_to": {
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_at_dancer",
+      "name": "Test Spiritdancer",
+      "oracle_text": "This creature gets +2/+2 for each Aura attached to it.",
+      "mana_cost": "{1}{W}",
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Kor",
+        "Wizard"
+      ],
+      "power": 0,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "This creature gets +2/+2 for each Aura attached to it.",
+          "effect": "buff",
+          "affects": {
+            "self_only": true
+          },
+          "power": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "attached_to": {
+                    "self_only": true
+                  }
+                }
+              }
+            ]
+          },
+          "toughness": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "count": {
+                  "subtypes": [
+                    "Aura"
+                  ],
+                  "attached_to": {
+                    "self_only": true
+                  }
+                }
+              }
+            ]
+          }
+        }
+      ]
+    }
+  ]
+}

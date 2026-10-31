@@ -47,6 +47,7 @@ from .vocabulary import (
     STATIC_ZONE_FILTER_KEYS,
 )
 from .walk import (
+    _check_attached_to_key,
     _check_counter_kind,
     _check_mana_cost_key,
     _check_owner_key,
@@ -232,6 +233,7 @@ def _validate_static_count_filter(spec: Any, where: str) -> None:
     _check_pt_keys(spec, where)
     validate_colorless_key(spec, where)
     validate_enchanted_by_key(spec, where)
+    _check_attached_to_key(spec, where)
     zone = str(spec.get("zone", "battlefield"))
     if zone not in STATIC_COUNT_ZONES:
         raise DslError(

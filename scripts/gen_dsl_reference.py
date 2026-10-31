@@ -442,6 +442,8 @@ SELECTORS: dict[str, Entry] = {
     "ability_kind": ("On an `ability_on_stack` target only: `triggered` or `activated`.",
                      "Copying an ability on the stack"),
     "attached": ("Attached to the named object (\"self\", a binding, a target).", None),
+    "attached_to": ("Attached to a permanent matching this filter (`{\"self_only\": true}`: to the source).",
+                    '"Attached to a creature" — `attached_to`'),
     "attacked_this_turn": ("Attacked this turn (read after combat).", H_ATTACKED),
     "attacking": ("Is attacking.", None),
     "attacking_player": ("Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers.",

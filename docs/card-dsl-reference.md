@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 156 |
-| [Selectors](#selectors) | 70 |
+| [Selectors](#selectors) | 71 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 63 |
 | [Conditions](#conditions) | 33 |
@@ -27,7 +27,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Card types and supertypes](#card-types-and-supertypes) | 11 |
 | [Durations](#durations) | 6 |
 | [Decision kinds](#decision-kinds) | 11 |
-| [Static filter keys](#static-filter-keys) | 30 |
+| [Static filter keys](#static-filter-keys) | 31 |
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 18 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
@@ -211,6 +211,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `any_of` | A union of whole selectors: any one may match. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `any_types` | Any one of these card types is enough. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `attached_to` | Attached to a permanent matching this filter (`{"self_only": true}`: to the source). | ["Attached to a creature" — attached_to](card-dsl.md#attached-to-a-creature--attached_to) |
 | `attacked_this_turn` | Attacked this turn (read after combat). | [Which creatures attacked this turn, and how many](card-dsl.md#which-creatures-attacked-this-turn-and-how-many) |
 | `attacking` | Is attacking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `attacking_player` | Attacking this player (`you`/`opponent`/`any`/`most_life`, or a `binding`'s seat), not their planeswalkers. | ["Attacks you" is not "attacks you and/or your planeswalkers"](card-dsl-cookbook.md#attacks-you-is-not-attacks-you-andor-your-planeswalkers) |
@@ -891,6 +892,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `any_of` | A union of whole static filters, each with its own `exclude_self`; `affects` only. | [any_of — a union of static filters](card-dsl.md#any_of--a-union-of-static-filters) |
 | `any_types` | Any one of these card types is enough. | [Static abilities](card-dsl.md#static-abilities) |
 | `attached` | Attached to the named object ("self", a binding, a target). | [Static abilities](card-dsl.md#static-abilities) |
+| `attached_to` | Attached to a permanent matching this filter (`{"self_only": true}`: to the source). | ["Attached to a creature" — attached_to](card-dsl.md#attached-to-a-creature--attached_to) |
 | `attached_to_host` | Attached to the static's own source ("equipped creature"). | [Static abilities](card-dsl.md#static-abilities) |
 | `attacking` | Is attacking. | [Static abilities](card-dsl.md#static-abilities) |
 | `blocking` | Is blocking. | [Static abilities](card-dsl.md#static-abilities) |
@@ -986,7 +988,7 @@ The keys an `affects_spells` filter may use. Defined under [What the filter may 
 
 ## Cost-reduction filter keys
 
-Keys a cost-reduction filter accepts beyond the static filter. Refused there: `attached`, `attached_to_host`, `paired`, `paired_with_source` -- a count cannot mean anything by them. Defined under [Cost reduction](card-dsl-cookbook.md#cost-reduction).
+Keys a cost-reduction filter accepts beyond the static filter. Refused there: `attached`, `attached_to`, `attached_to_host`, `paired`, `paired_with_source` -- a count cannot mean anything by them. Defined under [Cost reduction](card-dsl-cookbook.md#cost-reduction).
 
 | Name | Description | Defined in |
 |---|---|---|

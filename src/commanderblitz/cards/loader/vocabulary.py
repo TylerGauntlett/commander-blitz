@@ -1070,6 +1070,13 @@ STATIC_FILTER_KEYS = frozenset(
         # is board state or a printed face, so it is safe here for `attached`'s
         # reason. `characteristics.enchanted_by` is the one reader.
         "enchanted_by",
+        # "…for each Aura you control **that's attached to a creature**"
+        # (Sage's Reverie), "+2/+2 for each Aura **attached to it**" (Kor
+        # Spiritdancer): `enchanted_by` from the attachment's end, a filter in
+        # this same language on the permanent it is attached to. `attached_to`
+        # is board state no layer writes, and the host filter is held to this
+        # list, so it is safe here for `attached`'s reason.
+        "attached_to",
         # Soulbond: "as long as this creature is paired, **both** creatures
         # have…". `paired: true` matches the source while it has a partner, and
         # `paired_with_source: true` matches the partner. Board state like
@@ -1247,14 +1254,14 @@ COST_REDUCTION_FILTER_KEYS = frozenset({"zone", "any_of"})
 #: a key that means nothing here should say so at load time rather than price
 #: an ability off a filter nobody honoured.
 #:
-#: `attached_to_host` joins them for the near reason rather than the same one:
-#: counting a permanent's attachments *is* a number a reduction could price off,
-#: but `costs._reduction_matches` does not read the key, so one written there
-#: would load and be ignored -- the quiet failure this list exists to convert
-#: into a load-time refusal. It belongs here until a printed card asks for it
-#: and `_reduction_matches` is taught the word.
+#: `attached_to_host` and `attached_to` join them for the near reason rather
+#: than the same one: counting a permanent's attachments *is* a number a
+#: reduction could price off, but `costs._reduction_matches` does not read the
+#: keys, so one written there would load and be ignored -- the quiet failure
+#: this list exists to convert into a load-time refusal. They belong here until
+#: a printed card asks for one and `_reduction_matches` is taught the word.
 COST_REDUCTION_REFUSED_FILTER_KEYS = frozenset(
-    {"attached", "attached_to_host", "paired", "paired_with_source"}
+    {"attached", "attached_to_host", "attached_to", "paired", "paired_with_source"}
 )
 
 #: Condition heads a *cost* reduction may use.

@@ -2326,6 +2326,22 @@ def _matches_wherever(
         source.attached_to is None or obj.attached_to != source.attached_to
     ):
         return False
+    # "…for each Aura you control **that's attached to a creature**" (Sage's
+    # Reverie); "+2/+2 for each Aura **attached to it**" (Kor Spiritdancer).
+    # `enchanted_by` read from the attachment's end: the permanent this one is
+    # attached to is matched by a filter of its own, in this same language, so
+    # `self_only` there is the static's own source. Its controller defaults to
+    # anybody's -- the printed line names the host by what it is -- and so does
+    # the attachment's, for `attached_to_host`'s reason: Kor Spiritdancer counts
+    # the opponent's Pacifism on it. Both ends are pipeline inputs: `attached_to`
+    # is written by `attach` alone, and the host filter reads what this one does.
+    host_filter = selector.get("attached_to")
+    if host_filter is not None:
+        host = state.objects.get(obj.attached_to) if obj.attached_to is not None else None
+        if host is None or not _matches(
+            state, host, source, {"controller": "any", **host_filter}, derived=derived
+        ):
+            return False
     # Soulbond. Two keys because the printed line applies to two creatures and
     # the static is written once: `paired` is "this creature, while it has a
     # partner" and `paired_with_source` is "the partner". Both short-circuit
@@ -2356,7 +2372,9 @@ def _matches_wherever(
     # `_static_players` already decided the word means on a permanent: a stolen
     # anthem pumps for whoever is holding it.
     owner = selector.get("owner")
-    controller = selector.get("controller", None if owner or attached_to_host else "you")
+    controller = selector.get(
+        "controller", None if owner or attached_to_host or host_filter is not None else "you"
+    )
     if controller == "you" and obj.controller != source.controller:
         return False
     if controller == "opponent" and obj.controller == source.controller:
@@ -2391,6 +2409,17 @@ def _matches_wherever(
             return False
         size = (c.power, c.toughness)
     else:
+        if obj.cast_bestowed and obj.attached_to is not None and obj.on_battlefield:
+            # Bestow (702.103b): while attached it is an Aura enchantment and no
+            # creature. `_compute` makes the same change under the identical
+            # condition, and every half of it is a pipeline input, so the face
+            # this filter reads may make it too: "each Aura attached to it"
+            # counts a bestowed Spirit, and "creatures you control" does not.
+            card = dataclasses.replace(
+                card,
+                types=(card.types - {"Creature"}) | {"Enchantment"},
+                subtypes=card.subtypes | {"Aura"},
+            )
         if not _matches_printed(card, selector, recorded_subtypes(obj), obj.text_changes):
             return False
         size = None

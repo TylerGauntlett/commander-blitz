@@ -1354,6 +1354,43 @@ the question asked of the declaration, checked as it triggers only:
 | `attached` | names the one permanent the ability's own source is attached to |
 | `attached_to_host` | names the *other* attachments sharing the source's host, not a host |
 
+### "Attached to a creature" — `attached_to`
+
+```jsonc
+// Sage's Reverie: "…draw a card for each Aura you control that's attached to a creature."
+{ "op": "draw", "amount": { "count": {
+    "subtypes": ["Aura"], "controller": "you", "attached_to": { "types": ["Creature"] } } } }
+// Kor Spiritdancer: "This creature gets +2/+2 for each Aura attached to it."
+{ "kind": "static", "effect": "buff", "affects": { "self_only": true },
+  "power": { "times": [ { "const": 2 },
+    { "count": { "subtypes": ["Aura"], "attached_to": { "self_only": true } } } ] }, … }
+```
+
+`enchanted_by` from the other end: an attachment — an Aura, an Equipment, a
+Fortification, whatever the outer filter names — matched by a filter on the
+permanent it is attached to. The value is a non-empty filter in the language it
+sits in, so `self_only` there is the ability's own source ("attached to it").
+Neither end has a controller by default: a static filter's `controller: "you"`
+is switched off for the attachment, as `attached_to_host` switches it off,
+because Kor Spiritdancer counts the opponent's Pacifism on it too; "Auras you
+control" writes `controller: "you"`. An Aura on a player is attached to no
+permanent and matches no host filter, and a bestowed creature is an Aura while
+attached (702.103b) in the static filter's printed face as everywhere else.
+
+Read by `selectors.matches` and `characteristics._matches_wherever`, so it
+works in a selector, a static's `affects` and its counting filters. The loader
+refuses an empty or non-filter value, a host `zone` off the battlefield, a host
+filter nested inside the host filter, `attached` beside it (which names one
+host already), the pool-shaping keys (`target`, `binding`, `count`, …) inside
+it, and the key in a trigger filter and a cost reduction, whose matchers do not
+read it.
+
+| Near miss | Why not |
+|---|---|
+| `attached` | names the one permanent the ability's own source is attached to |
+| `attached_to_host` | the attachments sharing the source's host; a host has none |
+| `subtypes: ["Aura"]` alone | counts an Aura on a land, an artifact or a player too |
+
 ### "Two cards that share a color" — `two_share_a_color`
 
 ```jsonc

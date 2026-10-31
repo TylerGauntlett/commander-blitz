@@ -117,6 +117,18 @@ SELECTOR_KEYS = frozenset(
         #: and only Auras you control. `attached` is the other, and names the
         #: one permanent the ability's own source is attached to.
         "enchanted_by",
+        #: "…for each Aura you control **that's attached to a creature**"
+        #: (Sage's Reverie); "+2/+2 for each Aura **attached to it**" (Kor
+        #: Spiritdancer). The other end of `enchanted_by`: an attachment matched
+        #: by a filter on the permanent it is attached to, read off its
+        #: `attached_to`. The value is a selector on that host, so
+        #: `{"self_only": true}` is "attached to this permanent". An Aura on a
+        #: player is attached to no permanent and matches no host filter.
+        #:
+        #: `attached` is the near miss -- it names the one host the ability's
+        #: own source is attached to, the opposite direction -- and
+        #: `attached_to_host` names the other attachments sharing that host.
+        "attached_to",
         "types",
         #: "target artifact **or** enchantment".  ``types`` is a conjunction --
         #: ``["Artifact", "Enchantment"]`` means a permanent that is both -- and
@@ -730,6 +742,19 @@ def _is_modified(ctx: EffectContext, oid: int) -> bool:
     return False
 
 
+def _host_matches(ctx: EffectContext, host: int | None, host_filter: Mapping[str, Any]) -> bool:
+    """The ``attached_to`` key: is the permanent this one is attached to a match?
+
+    ``host`` is the attachment's `attached_to` -- ``None`` for an unattached
+    permanent and for an Aura on a player (303.4), which `attach_to_player`
+    links by `attached_to_player` instead, so neither has a host to match. The
+    host filter is an ordinary selector, read with the same controller, so
+    ``self_only`` is the ability's own source and a host's controller is a
+    clause of its own: none, by the effect side's default, is anybody's.
+    """
+    return host is not None and matches(ctx, host, host_filter)
+
+
 def matches(
     ctx: EffectContext,
     oid: int,
@@ -802,6 +827,10 @@ def matches(
         return False
     if "enchanted_by" in selector and not enchanted_by(
         state, oid, selector["enchanted_by"], ctx.controller
+    ):
+        return False
+    if (host_filter := selector.get("attached_to")) is not None and not _host_matches(
+        ctx, obj.attached_to, host_filter
     ):
         return False
     if selector.get("convoked") and oid not in _bound_oids(ctx, CONVOKED_BINDING):
@@ -1647,6 +1676,62 @@ def validate_enchanted_by_key(filt: Any, where: str) -> None:
         )
 
 
+#: Selector keys an ``attached_to`` host filter refuses. Each shapes a *pool*
+#: -- names it, counts it, chooses from it or gathers it from a zone -- and
+#: `matches`, which is what asks the host filter, reads none of them, so one
+#: written there would load and be ignored. A host filter nested in a host
+#: filter is refused as well: no printed card asks it.
+ATTACHED_TO_REFUSED_KEYS = frozenset(
+    {
+        "target",
+        "binding",
+        "union",
+        "count",
+        "chooser",
+        "optional",
+        "random",
+        "extreme",
+        "player",
+        "ability_kind",
+        "object_kind",
+        "encoded_by",
+        "haunted_by",
+        "paid_by",
+        "attached_to",
+    }
+)
+
+
+def validate_attached_to_key(filt: Any, where: str) -> None:
+    """``attached_to`` is a non-empty selector on the host, on the battlefield.
+
+    The shape every filter language shares; each validates the host filter's
+    keys against its own vocabulary besides. An empty filter is "attached to
+    anything", which is ``attached_to_host``'s question or none at all, and
+    ``attached`` beside it would short-circuit the static reading of the
+    filter, so both are refused rather than left to mean less than written.
+    """
+    if not isinstance(filt, Mapping) or "attached_to" not in filt:
+        return
+    spec = filt["attached_to"]
+    if not isinstance(spec, Mapping) or not spec:
+        raise DslError(
+            f"{where}.attached_to: a non-empty filter on the permanent it is "
+            f'attached to, such as {{"types": ["Creature"]}} or '
+            f'{{"self_only": true}}, got {spec!r}'
+        )
+    if filt.get("attached"):
+        raise DslError(
+            f"{where}: 'attached' names the one permanent the source is attached "
+            f"to and cannot be narrowed by 'attached_to'"
+        )
+    if spec.get("zone", "battlefield") != "battlefield":
+        raise DslError(
+            f"{where}.attached_to.zone: a permanent is attached to a permanent, "
+            f"on the battlefield"
+        )
+
+
 def validate_selector(selector: Any, where: str) -> None:
     """Load-time check that a selector uses only known keys."""
     if selector is None:
@@ -1742,6 +1827,16 @@ def validate_selector(selector: Any, where: str) -> None:
     # this into; there is only a spelling to refuse.
     validate_colorless_key(selector, where)
     validate_enchanted_by_key(selector, where)
+    validate_attached_to_key(selector, where)
+    if "attached_to" in selector:
+        host_filter = selector["attached_to"]
+        refused = set(host_filter) & ATTACHED_TO_REFUSED_KEYS
+        if refused:
+            raise DslError(
+                f"{where}.attached_to: {sorted(refused)} shape a pool, and a host "
+                f"filter is asked of one permanent"
+            )
+        validate_selector(host_filter, f"{where}.attached_to")
     if "x_in_mana_cost" in selector and not isinstance(selector["x_in_mana_cost"], bool):
         raise DslError(
             f"{where}: 'x_in_mana_cost' is true or false -- whether the printed "
