@@ -1,0 +1,18 @@
+{
+  "card_id": "songbirds_blessing",
+  "name": "Songbirds' Blessing",
+  "oracle_text": "Enchant creature\nWhenever enchanted creature attacks, reveal cards from the top of your library until you reveal an Aura card. You may put that card onto the battlefield. If you don't, put it into your hand. Put the rest on the bottom of your library in a random order.",
+  "blocked_sentences": [
+    "Whenever enchanted creature attacks, reveal cards from the top of your library until you reveal an Aura card. You may put that card onto the battlefield. If you don't, put it into your hand. Put the rest on the bottom of your library in a random order."
+  ],
+  "needs": [
+    {
+      "capability": "aura_onto_battlefield",
+      "kind": "engine",
+      "what": "when an Aura card is put onto the battlefield without being cast (here from reveal_until, destination battlefield), its controller chooses an object or player it could legally enchant and it enters attached to that (303.4f); together with a per-card yes/no on reveal_until's match -- 'you may put that card onto the battlefield; if you don't, put it into your hand' -- e.g. a `may_destination: \"battlefield\"` with `destination: \"hand\"` as the fallback, asked of the controller before the rest is bottomed",
+      "why_existing_wont_do": "Auras attach only through stack._attach_aura, which reads the spell's targets, so an Aura moved by _move_found to the battlefield arrives attached to nothing and is put into the graveyard by state-based actions; the `attach` op after the move cannot help because a non-cast Aura is never legally on the battlefield unattached. reveal_until makes no decision at all (destination and destination_if are fixed, selector-driven), and reveal_until to hand followed by `may put_onto_battlefield` moves the card from the hand rather than the library and bottoms the rest before the choice"
+    }
+  ],
+  "closest_existing": ["reveal_until", "put_onto_battlefield", "attach", "search_aura_attached"],
+  "confidence": "high"
+}

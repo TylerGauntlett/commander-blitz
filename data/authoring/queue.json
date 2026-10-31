@@ -243612,12 +243612,12 @@
     },
     "Sheltered by Ghosts": {
       "edhrec_rank": 1318,
-      "gate": "template",
+      "gate": null,
       "name": "Sheltered by Ghosts",
-      "reason": "no template for: When this Aura enters, exile target nonland permanent an opponent controls until this Aura",
+      "reason": "",
       "scryfall_id": "da7c29a0-5512-4188-acbc-af5f9194f264",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sheltering Ancient": {
@@ -244022,12 +244022,12 @@
     },
     "Shielded by Faith": {
       "edhrec_rank": 3323,
-      "gate": "template",
+      "gate": null,
       "name": "Shielded by Faith",
-      "reason": "no template for: Whenever a creature enters, you may attach this Aura to that creature",
+      "reason": "",
       "scryfall_id": "681149f2-0802-4ab7-9521-3b3c7281f55d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shieldhide Dragon": {
@@ -247852,12 +247852,12 @@
     },
     "Silverquill Campus": {
       "edhrec_rank": 6135,
-      "gate": "template",
+      "gate": null,
       "name": "Silverquill Campus",
-      "reason": "no template for: {4}, {T}: Scry 1",
+      "reason": "",
       "scryfall_id": "354efff0-aea5-4274-94d6-9fce02430255",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silverquill Charm": {
@@ -259902,12 +259902,12 @@
     },
     "Spirit Mantle": {
       "edhrec_rank": 1703,
-      "gate": "template",
+      "gate": null,
       "name": "Spirit Mantle",
-      "reason": "no template for: Enchanted creature gets +1/+1 and has protection from creatures",
+      "reason": "",
       "scryfall_id": "8ac5a048-e8aa-48e8-b51b-b4e9a5b63ea6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Spirit Mascot": {
@@ -261932,12 +261932,12 @@
     },
     "Sram, Senior Edificer": {
       "edhrec_rank": 453,
-      "gate": "template",
+      "gate": null,
       "name": "Sram, Senior Edificer",
-      "reason": "no template for: Whenever you cast an Aura, Equipment, or Vehicle spell, draw a card",
+      "reason": "",
       "scryfall_id": "8fbd18ce-0ac3-4b52-9cd0-0af7e0244207",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Stab": {

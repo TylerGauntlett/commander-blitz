@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**135 cards** blocked by **113** capabilities.
+**136 cards** blocked by **114** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [attached-to-self](#attached-to-self) | 1 | 1945 | selector |
 | [attack-tax-per-attacker-value](#attack-tax-per-attacker-value) | 1 | 3987 | static_effect |
+| [aura-onto-battlefield](#aura-onto-battlefield) | 1 | 3341 | engine |
 | [auras-attached-last-known](#auras-attached-last-known) | 1 | 4856 | value |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -670,6 +671,20 @@ Blocks **1** card.
 
 - **Nils, Discipline Enforcer** (rank 3987) — `nils_discipline_enforcer`
   - Each creature with one or more counters on it can't attack you or planeswalkers you control unless its controller pays {X}, where X is the number of counters on that creature.
+
+</details>
+
+## aura-onto-battlefield
+
+Blocks **1** card.
+
+- **(engine)** when an Aura card is put onto the battlefield without being cast (here from reveal_until, destination battlefield), its controller chooses an object or player it could legally enchant and it enters attached to that (303.4f); together with a per-card yes/no on reveal_until's match -- 'you may put that card onto the battlefield; if you don't, put it into your hand' -- e.g. a `may_destination: "battlefield"` with `destination: "hand"` as the fallback, asked of the controller before the rest is bottomed
+  <br>Why the existing vocabulary won't do: Auras attach only through stack._attach_aura, which reads the spell's targets, so an Aura moved by _move_found to the battlefield arrives attached to nothing and is put into the graveyard by state-based actions; the `attach` op after the move cannot help because a non-cast Aura is never legally on the battlefield unattached. reveal_until makes no decision at all (destination and destination_if are fixed, selector-driven), and reveal_until to hand followed by `may put_onto_battlefield` moves the card from the hand rather than the library and bottoms the rest before the choice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Songbirds' Blessing** (rank 3341) — `songbirds_blessing`
+  - Whenever enchanted creature attacks, reveal cards from the top of your library until you reveal an Aura card. You may put that card onto the battlefield. If you don't, put it into your hand. Put the rest on the bottom of your library in a random order.
 
 </details>
 

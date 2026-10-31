@@ -12096,6 +12096,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sheltered_by_ghosts": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "sheltered_thicket": {
     "zone": "battlefield"
   },
@@ -12121,6 +12126,15 @@
     "zone": "battlefield"
   },
   "shield_bearer": {
+    "zone": "battlefield"
+  },
+  "shielded_by_faith": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "indestructible"
+      ]
+    },
     "zone": "battlefield"
   },
   "shifting_woodland": {
@@ -12366,6 +12380,13 @@
     "zone": "battlefield"
   },
   "silvercoat_lion": {
+    "zone": "battlefield"
+  },
+  "silverquill_campus": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "silverquill_lecturer": {
@@ -12876,6 +12897,13 @@
   "spirebluff_canal": {
     "zone": "battlefield"
   },
+  "spirit_mantle": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
+  },
   "spirit_mascot": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12969,6 +12997,13 @@
     "zone": "battlefield"
   },
   "squirrelanoids": {
+    "zone": "battlefield"
+  },
+  "sram_senior_edificer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "staff_of_the_storyteller": {
