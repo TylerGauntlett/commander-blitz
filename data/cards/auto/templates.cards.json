@@ -78016,6 +78016,41 @@
     },
     {
       "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "inkshield",
+      "mana_cost": "{3}{W}{B}",
+      "name": "Inkshield",
+      "oracle_text": "Prevent all combat damage that would be dealt to you this turn. For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "combat_only": true,
+          "duration": "this_turn",
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "op": "create_token",
+              "token": "inkling_2_1_wb_flying"
+            }
+          ],
+          "op": "prevent_damage",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [

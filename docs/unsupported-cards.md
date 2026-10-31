@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**119 cards** blocked by **108** capabilities.
+**118 cards** blocked by **107** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,7 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [damage-prevented-this-way](#damage-prevented-this-way) | 1 | 806 | value |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -762,20 +761,6 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-
-</details>
-
-## damage-prevented-this-way
-
-Blocks **1** card.
-
-- **(value)** a link from a resolved prevention shield to the amount it later prevents: each time the shield installed by this spell prevents N damage, its controller creates N inkling_2_1_wb_flying tokens (a delayed trigger keyed to that specific shield, carrying the prevented amount as a value)
-  <br>Why the existing vocabulary won't do: The damage_prevented trigger event exists, but a delayed_trigger on it has no filter tying the event to the shield this spell made ("prevented this way") and no value_keys entry reads the event's prevented amount, so create_token's amount cannot be the number of damage prevented
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inkshield** (rank 806) — `inkshield`
-  - For each 1 damage prevented this way, create a 2/1 white and black Inkling creature token with flying.
 
 </details>
 

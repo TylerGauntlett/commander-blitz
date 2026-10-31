@@ -6804,6 +6804,10 @@
   "inkmoth_nexus": {
     "zone": "battlefield"
   },
+  "inkshield": {
+    "battlefield_count": 32,
+    "zone": "graveyard"
+  },
   "inkwell_leviathan": {
     "zone": "battlefield"
   },

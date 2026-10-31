@@ -136992,12 +136992,12 @@
     },
     "Inkshield": {
       "edhrec_rank": 806,
-      "gate": "template",
+      "gate": null,
       "name": "Inkshield",
-      "reason": "no template for: Prevent all combat damage that would be dealt to you this turn. For each 1 damage prevente",
+      "reason": "",
       "scryfall_id": "3362ade8-d585-40be-8486-382cad6efaf8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inkwell Leviathan": {
