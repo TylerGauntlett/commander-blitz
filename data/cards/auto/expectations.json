@@ -10764,6 +10764,13 @@
   "radiant_summit": {
     "zone": "battlefield"
   },
+  "raffine_s_guidance": {
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
+  },
   "raffine_s_tower": {
     "zone": "battlefield"
   },

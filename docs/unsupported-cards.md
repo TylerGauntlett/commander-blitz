@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**118 cards** blocked by **107** capabilities.
+**117 cards** blocked by **106** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -65,7 +65,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
-| [graveyard-alternative-cost](#graveyard-alternative-cost) | 1 | 13616 | engine |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
@@ -996,20 +995,6 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
-
-</details>
-
-## graveyard-alternative-cost
-
-Blocks **1** card.
-
-- **(engine)** a residual-gate claimant in authoring/verify.py `_covered` for the unkeyworded printed line "You may cast this card from your graveyard by paying <mana> rather than paying its mana cost" on a permanent card, matched strictly against the card-level `graveyard_cost` mana (with `graveyard_cast: "graveyard"`, since the card is not exiled afterwards). The engine side already works: the card written with `graveyard_cost: {"mana": "{2}{W}"}` and `graveyard_cast: "graveyard"` passes all six gates once this line is removed from the oracle text
-  <br>Why the existing vocabulary won't do: `graveyard_cost`/`flashback` lines are claimed only by `spell_effects` (instants/sorceries), the `Mayhem` and `Escape—` keyword claimants, and `_ALTERNATIVE_COST_LINE`, which reads `alternative_cost` (not the graveyard slot) and requires "rather than pay" not "rather than paying". No ability can honestly carry the line: a `cast_from_graveyard` static would permit the cast at the printed {W}, not {2}{W}, so the sentence stays residual and gate 3 rejects the card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Raffine's Guidance** (rank 13616) — `raffine_s_guidance`
-  - You may cast this card from your graveyard by paying {2}{W} rather than paying its mana cost.
 
 </details>
 

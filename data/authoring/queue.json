@@ -212982,12 +212982,12 @@
     },
     "Raffine's Guidance": {
       "edhrec_rank": 13616,
-      "gate": "template",
+      "gate": null,
       "name": "Raffine's Guidance",
-      "reason": "no template for: You may cast this card from your graveyard by paying {2}{W} rather than paying its mana co",
+      "reason": "",
       "scryfall_id": "8eb97e21-442b-4f23-a846-f0a0135a5c31",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Raffine's Informant": {
