@@ -404,6 +404,26 @@
       "is_token": true
     },
     {
+      "id": "cat_2_2_w",
+      "name": "Cat Token",
+      "oracle_text": "2/2 white Cat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Cat"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
       "id": "cat_beast_2_2_w",
       "name": "Cat Beast Token",
       "oracle_text": "",
@@ -1182,6 +1202,29 @@
       ],
       "color_identity": [
         "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "pegasus_2_2_w_flying",
+      "name": "Pegasus Token",
+      "oracle_text": "2/2 white Pegasus creature token with flying.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Pegasus"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
       ],
       "is_token": true
     },
