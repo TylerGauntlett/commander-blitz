@@ -55,6 +55,7 @@ def check(state: GameState) -> bool:
     # earlier pass, or in the op before this, no longer replaces anything.
     state.leaving_dies_replacers.clear()
     state.leaving_auras.clear()
+    state.leaving_equipment.clear()
     changed = False
     changed |= _player_losses(state)
     changed |= _tokens_and_attachments(state)

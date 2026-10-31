@@ -205,6 +205,11 @@ class GameState:
     #: `zones._auras_had` only while the batch is unchanged, and emptied by every
     #: state-based-action pass for the same reason.
     leaving_auras: list[tuple[int, int, int]] = field(default_factory=list)
+    #: Equipment that has just left the battlefield while attached to a
+    #: permanent still on it, as ``(event_batch, host oid)`` -- `leaving_auras`
+    #: for 700.9's "equipped", read by `zones._equipment_had` on the same terms
+    #: and emptied by every state-based-action pass with it.
+    leaving_equipment: list[tuple[int, int]] = field(default_factory=list)
     #: "Whenever a creature dealt damage by this creature this turn dies…"
     #:
     #: victim oid -> the oids of everything that has damaged it this turn.
@@ -805,6 +810,12 @@ class GameState:
                 who = obj.controller if obj is not None else pid
                 if who is not None:
                     ledger.creatures_died[who] = ledger.creatures_died.get(who, 0) + 1
+                    # "If a modified creature died under your control this
+                    # turn": the departure's own 700.9 snapshot, under the
+                    # same controller. See `zones.move_object`.
+                    if data.get("was_modified"):
+                        modified = ledger.modified_creatures_died
+                        modified[who] = modified.get(who, 0) + 1
                     # The count is a static's input (`creatures_died_this_turn`),
                     # and `chars` caches per `char_version`. The zone change
                     # bumped it before this event fired, and an answer read in

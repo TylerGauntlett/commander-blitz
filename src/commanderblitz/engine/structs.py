@@ -1697,6 +1697,13 @@ class TurnLedger:
     #: controlled them.  "A creature died this turn" is the sum over every
     #: player; "a creature you controlled died" is one entry.
     creatures_died: dict[int, int] = field(default_factory=dict)
+    #: Those of them that were **modified** as they died (700.9: a counter on
+    #: it, an Equipment attached, or an Aura its controller controlled), keyed
+    #: the same way -- Intermediate Chirography's "if a modified creature died
+    #: under your control this turn". Folded off the DIES event's
+    #: `was_modified` snapshot, because every limb is gone by the time the
+    #: event goes out.
+    modified_creatures_died: dict[int, int] = field(default_factory=dict)
     #: How many combat phases have **begun** this turn, counting the one in
     #: progress. "If it's the first combat phase of the turn" (Genji Glove,
     #: Aggravated Assault's cousins) is this being 1.
@@ -2126,6 +2133,7 @@ class TurnLedger:
 
     def clear(self) -> None:
         self.creatures_died.clear()
+        self.modified_creatures_died.clear()
         self.creatures_attacked.clear()
         self.attack_power_this_combat.clear()
         self.opponents_attacked_this_combat.clear()

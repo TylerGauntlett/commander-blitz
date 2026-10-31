@@ -260,6 +260,20 @@ def move_object(
     # Aura before the event goes out: the Auras attached as it left, one seat
     # per Aura, are the look-back (603.10a). See `_auras_had`.
     had_auras = _auras_had(state, obj) if was_on_battlefield else []
+    # "If a **modified** creature died under your control this turn"
+    # (Intermediate Chirography): 700.9's three limbs -- a counter, an
+    # Equipment, an Aura its controller controlled -- asked as it left, because
+    # `_detach_all` strips the attachments and `reset_permanent_state` the
+    # counters before DIES goes out. The live reading is
+    # `selectors._is_modified`; this is the same answer from the snapshots,
+    # with "you" the creature's own controller. Folded into the turn ledger by
+    # `GameState._tally`.
+    had_equipment = _equipment_had(state, obj) if was_on_battlefield else 0
+    was_modified = was_on_battlefield and (
+        any(n > 0 for n in had_counters.values())
+        or had_equipment > 0
+        or any(seat == obj.controller for seat in had_auras)
+    )
     # "…create a number of Treasure tokens equal to **its power**" (Goldvein
     # Hydra), asked about a creature that has just died. `power_of {"self":
     # true}` reads `chars()`, and by the time the trigger resolves the object is
@@ -478,6 +492,8 @@ def move_object(
                 had_power=had_power,
                 had_toughness=had_toughness,
                 had_auras=had_auras,
+                # 1/0 for `was_attacking`'s reason.
+                was_modified=1 if was_modified else 0,
             )
         # The departure has been heard, so a subscription waiting for it has
         # had its one chance: the object that comes back is a new one (400.7)
@@ -590,6 +606,37 @@ def _auras_had(state: GameState, obj: GameObject) -> list[int]:
         kept.append((batch, host, obj.controller))
     state.leaving_auras[:] = kept
     return seats
+
+
+def _equipment_had(state: GameState, obj: GameObject) -> int:
+    """How many Equipment were attached to a leaving permanent (700.9's "equipped").
+
+    `_auras_had`'s walk for the other kind of attachment, and for its reason:
+    read before `_detach_all`, with an Equipment that left earlier in the same
+    simultaneous event -- "destroy all nonland permanents" reaching it before
+    its host -- recovered from `GameState.leaving_equipment`. An Equipment is
+    told by its derived subtypes, the test `selectors._is_modified` makes of
+    the board, and anybody's counts: "equipped" asks what is attached, not
+    whose it is.
+    """
+    batch = state.event_batch
+    kept = [entry for entry in state.leaving_equipment if entry[0] == batch]
+    count = sum(1 for _, host in kept if host == obj.oid)
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is None or other.attached_to != obj.oid:
+            continue
+        if "Equipment" in chars(state, other_oid).subtypes:
+            count += 1
+    host = obj.attached_to
+    if (
+        host is not None
+        and host in state.battlefield
+        and "Equipment" in chars(state, obj.oid).subtypes
+    ):
+        kept.append((batch, host))
+    state.leaving_equipment[:] = kept
+    return count
 
 
 def _detach_all(state: GameState, oid: int) -> None:

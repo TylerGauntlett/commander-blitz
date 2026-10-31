@@ -1513,6 +1513,7 @@ Anywhere a number is expected -- the leaf list is
 { "cards_drawn_this_turn": "you" }              // a tally of an event, not of objects
 { "cards_discarded_this_turn": "you" }          // "if you discarded a card this turn"; per seat
 { "creatures_died_this_turn": "all" }           // morbid; "you" for "a creature you controlled"
+{ "modified_creatures_died_this_turn": "you" }  // …of them, the ones modified (700.9) as they died
 { "attacked_this_turn": "you" }                 // raid; 1 if they attacked, else 0
 { "attackers_this_turn": "you" }                // …with HOW MANY creatures; see below
 { "permanents_entered_this_turn":               // WHICH permanents entered; see below
@@ -3466,6 +3467,16 @@ Two things about that ledger are load-bearing:
   with mayhem, or replaced into exile by madness or Rest in Peace still counts.
   Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
   and forgets it at its next zone change (400.7).
+- **A death can be filtered by what the creature was as it died, and only by
+  that.** `modified_creatures_died_this_turn` ("if a modified creature died
+  under your control this turn", Intermediate Chirography) counts the deaths
+  that were modified (700.9): a counter of any kind, any player's Equipment
+  attached, or an Aura the creature's own controller controlled. Every limb is
+  gone before DIES goes out, so `zones.move_object` answers it from the
+  departure's snapshots and the event carries it as `was_modified`; the
+  `modified` selector key is the near miss and reads only the board, where a
+  dead creature is modified by nothing. Takes a player spec, keyed by the
+  controller the creature died under.
 
 It clears at **cleanup**, with `damage_ledger` and unlike `cards_drawn_this_turn`
 — nothing it counts can happen before turn 1, so it has no opening hand to

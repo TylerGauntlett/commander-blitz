@@ -132,6 +132,13 @@ VALUE_KEYS = frozenset(
         # "did it happen" and "how many times" are the same question asked with
         # a different threshold, and storm needs the number anyway.
         "creatures_died_this_turn",
+        # "…if a **modified** creature died under your control this turn"
+        # (Intermediate Chirography). The same tally narrowed to the deaths
+        # that were modified (700.9) as they happened, off
+        # `TurnLedger.modified_creatures_died`. The `modified` selector key is
+        # the near miss and cannot answer it: it reads the board, and a dead
+        # creature has neither its counters nor its attachments any more.
+        "modified_creatures_died_this_turn",
         "attacked_this_turn",
         # "…if you attacked with **three or more creatures** this turn" --
         # Windbrisk Heights. How many *creatures*, where `attacked_this_turn`
@@ -629,6 +636,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         # creature died this turn" and `"you"` is "a creature you controlled".
         pids = _players(ctx, expr["creatures_died_this_turn"])
         return sum(ledger.creatures_died.get(p, 0) for p in pids)
+    if "modified_creatures_died_this_turn" in expr:
+        pids = _players(ctx, expr["modified_creatures_died_this_turn"])
+        return sum(ledger.modified_creatures_died.get(p, 0) for p in pids)
     if "attacked_this_turn" in expr:
         # How many of the named players attacked, which is 0 or 1 for raid's
         # `"you"` and a headcount for "if two opponents attacked this turn".
@@ -1519,6 +1529,15 @@ def validate_value(expr: Any, where: str) -> None:
             raise DslError(
                 f"{where}.commander_casts_this_game: needs a player spec, e.g. 'you' "
                 f"(whose commanders' casts from the command zone), got {who!r}"
+            )
+    if "modified_creatures_died_this_turn" in expr:
+        who = expr["modified_creatures_died_this_turn"]
+        if not isinstance(who, Mapping) and (
+            not isinstance(who, str) or who not in PLAYER_SPEC_NAMES
+        ):
+            raise DslError(
+                f"{where}.modified_creatures_died_this_turn: needs a player spec, "
+                f"e.g. 'you' (under whose control they died), got {who!r}"
             )
     if "cards_discarded_this_turn" in expr:
         who = expr["cards_discarded_this_turn"]

@@ -591,6 +591,7 @@ VALUES: dict[str, Entry] = {
     "counters_had": ("Counters of a kind (or \"any\", every kind) the permanent that just left had.", None),
     "counters_on": ("Counters of a kind on the objects a selector finds.", None),
     "creatures_died_this_turn": ("Creatures that died this turn (morbid).", H_LEDGER),
+    "modified_creatures_died_this_turn": ("Creatures that died this turn while modified (700.9).", H_LEDGER),
     "creatures_you_control": ("Creatures the player controls.", None),
     "damage_taken_this_turn": ("Damage the player was dealt this turn, summed over a plural spec (bloodthirst).", H_LEDGER),
     "most_sharing_a_name": ("The largest group in a pool sharing one name.", "Value expressions"),
