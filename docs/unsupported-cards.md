@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**121 cards** blocked by **102** capabilities.
+**122 cards** blocked by **104** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -32,6 +32,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
+| [annihilator](#annihilator) | 1 | 1597 | keyword |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
@@ -39,7 +40,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [cat-2-2-w](#cat-2-2-w) | 1 | 3948 | token |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
@@ -55,6 +55,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [enchant-graveyard-card](#enchant-graveyard-card) | 1 | 224 | engine |
+| [enchanted-by-aura-you-control](#enchanted-by-aura-you-control) | 1 | 3924 | selector |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
@@ -68,6 +69,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
+| [kindred](#kindred) | 1 | 1597 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -85,11 +87,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [pegasus-2-2-w-flying](#pegasus-2-2-w-flying) | 1 | 1172 | token |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
+| [protection-from-chosen-color](#protection-from-chosen-color) | 1 | 4629 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -545,6 +547,20 @@ Blocks **1** card.
 
 </details>
 
+## annihilator
+
+Blocks **1** card.
+
+- **(keyword)** the parameterised keyword Annihilator N (702.86): a triggered ability 'Whenever this creature attacks, defending player sacrifices N permanents of their choice', grantable by a static grant_keyword with its N (here an Aura's affects: {attached: true} granting annihilator 2)
+  <br>Why the existing vocabulary won't do: annihilator is not in the packet's keywords list, so grant_keyword cannot hand it out. The nearest workaround -- a grant_ability static carrying a grantable 'attacks' triggered ability with a sacrifice op (the Bear Umbra shape) -- would give the creature an unnamed trigger rather than the keyword, would not stack or count as annihilator, and has no shown way to bind 'defending player' as the sacrificing chooser; the brief forbids that substitution
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eldrazi Conscription** (rank 1597) — `eldrazi_conscription`
+  - Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)
+
+</details>
+
 ## attached-to-player-selector
 
 Blocks **1** card.
@@ -643,20 +659,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## cat-2-2-w
-
-Blocks **1** card.
-
-- **(token)** a 2/2 white Cat creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has cat_1_1_w (wrong size) and cat_beast_2_2_w (wrong creature type, Cat Beast); neither is a plain 2/2 white Cat. The rest of the line looks expressible: a permanent_enters trigger filtered to controller you and types Enchantment, create_token with `as`, then an `if` on the entering enchantment's Aura subtype wrapping a `may` attach to the bound token
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ajani's Chosen** (rank 3948) — `ajani_s_chosen`
-  - Whenever an enchantment you control enters, create a 2/2 white Cat creature token. If that enchantment is an Aura, you may attach it to the token.
 
 </details>
 
@@ -875,6 +877,20 @@ Blocks **1** card.
 
 </details>
 
+## enchanted-by-aura-you-control
+
+Blocks **1** card.
+
+- **(selector)** a static affects-filter key matching a creature that has at least one Aura attached to it whose controller is the static's controller (e.g. `enchanted_by: {"controller": "you"}`), usable on the `cant_attack_you` static so any creature, the opponents' included, enchanted by your Aura can't attack you or your planeswalkers
+  <br>Why the existing vocabulary won't do: static_affects_filter_keys has `attached` (only the one permanent the source itself is attached to, i.e. 'enchanted/equipped creature') and `attached_to_host` (other attachments sharing the source's host); neither reads the Auras attached to an arbitrary creature or their controller, so `cant_attack_you` cannot be scoped to creatures enchanted by any Aura you control from a non-Aura source
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eriette of the Charmed Apple** (rank 3924) — `eriette_of_the_charmed_apple`
+  - Each creature that's enchanted by an Aura you control can't attack you or planeswalkers you control.
+
+</details>
+
 ## escalate-non-mana
 
 Blocks **1** card.
@@ -1063,6 +1079,20 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
+
+</details>
+
+## kindred
+
+Blocks **1** card.
+
+- **(engine)** the card type Kindred (formerly Tribal, 308): the type line 'Kindred Enchantment — Eldrazi Aura' lets a noncreature card carry the creature subtype Eldrazi
+  <br>Why the existing vocabulary won't do: the packet's types list (Artifact, Battle, Creature, Enchantment, Instant, Land, Planeswalker, Sorcery) has no Kindred, so the card could only be typed as a plain Enchantment and the Eldrazi subtype would be unexplained to anything reading creature types
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eldrazi Conscription** (rank 1597) — `eldrazi_conscription`
+  - Enchanted creature gets +10/+10 and has trample and annihilator 2. (Whenever it attacks, defending player sacrifices two permanents of their choice.)
 
 </details>
 
@@ -1316,20 +1346,6 @@ Blocks **1** card.
 
 </details>
 
-## pegasus-2-2-w-flying
-
-Blocks **1** card.
-
-- **(token)** a 2/2 white Pegasus creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has no Pegasus token; the nearest 2/2 white or flying tokens (knight_2_2_w, spirit_2_2_w, bird_2_2_u_flying, drake_2_2_u_flying) differ in creature type or colour, and the Pegasus subtype matters because the card's own static grants lifelink to Pegasus creatures. The trigger itself (permanent_enters filtered to controller you, types Enchantment) and the static (grant_keyword lifelink to subtypes Pegasus, controller you) are expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Archon of Sun's Grace** (rank 1172) — `archon_of_sun_s_grace`
-  - Constellation — Whenever an enchantment you control enters, create a 2/2 white Pegasus creature token with flying.
-
-</details>
-
 ## played-or-cast-from-non-hand-this-turn
 
 Blocks **1** card.
@@ -1383,6 +1399,20 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
+
+</details>
+
+## protection-from-chosen-color
+
+Blocks **1** card.
+
+- **(static_effect)** the `protection` static accepting {"chosen_color_of": "self"} in `from_colors`, so an Aura that chose a color as it entered gives its enchanted creature continuous protection from that color, read off the Aura's chosen_color at the moment a rule asks; plus a flag exempting the granting Aura itself from the protection when 704.5m checks enchant legality ("This effect doesn't remove this Aura")
+  <br>Why the existing vocabulary won't do: The `protection` static's from_colors takes literal colour letters only (the loader rejects anything else, and `_static_protection_qualities` adds the list as-is), while `chosen_color_of` resolves only in add_mana, the buff/anthem filters and the one-shot `grant_protection` op. `grant_protection` is a temporary effect with a duration, not a static that lasts while the Aura stays attached, and has no way to exempt its source from the protection's enchant restriction
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flickering Ward** (rank 4629) — `flickering_ward`
+  - Enchanted creature has protection from the chosen color. This effect doesn't remove this Aura.
 
 </details>
 

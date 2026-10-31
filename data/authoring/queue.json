@@ -79722,12 +79722,12 @@
     },
     "Eidolon of Countless Battles": {
       "edhrec_rank": 3373,
-      "gate": "template",
+      "gate": null,
       "name": "Eidolon of Countless Battles",
-      "reason": "no template for: Bestow {2}{W}{W}",
+      "reason": "",
       "scryfall_id": "4ad6fcb1-7c35-4111-8f1e-d18a2fae5638",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eidolon of Inspiration": {
@@ -79792,12 +79792,12 @@
     },
     "Eiganjo Dynastorian // Replenish": {
       "edhrec_rank": 7455,
-      "gate": "template",
+      "gate": null,
       "name": "Eiganjo Dynastorian // Replenish",
-      "reason": "no template for: Whenever you attack with two or more creatures, this creature becomes prepared",
+      "reason": "",
       "scryfall_id": "09d1f048-f411-4677-a0dc-dbddd06fe694",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eiganjo Exemplar": {
@@ -90742,12 +90742,12 @@
     },
     "Fallen Ideal": {
       "edhrec_rank": 8374,
-      "gate": "template",
+      "gate": null,
       "name": "Fallen Ideal",
-      "reason": "no template for: Enchanted creature has flying and \"Sacrifice a creature: This creature gets +2/+1 until en",
+      "reason": "",
       "scryfall_id": "f54acc9f-d128-49d4-b1a9-47a7ece13833",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fallen Shinobi": {
@@ -220692,12 +220692,12 @@
     },
     "Replenish": {
       "edhrec_rank": 3785,
-      "gate": "template",
+      "gate": null,
       "name": "Replenish",
-      "reason": "no template for: Return all enchantment cards from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "7fd2fe13-bbc0-42b7-bc42-3b51910ce118",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Replicating Ring": {

@@ -3884,6 +3884,17 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "eidolon_of_countless_battles": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "eiganjo_dynastorian_replenish": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "eiganjo_seat_of_the_empire": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4441,6 +4452,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "fallen_ideal": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {

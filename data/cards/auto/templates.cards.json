@@ -44407,6 +44407,141 @@
     {
       "abilities": [
         {
+          "affects": {
+            "any_of": [
+              {
+                "self_only": true
+              },
+              {
+                "attached": true
+              }
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ]
+                }
+              }
+            ]
+          },
+          "text": "This creature and enchanted creature each get +1/+1 for each creature you control and +1/+1 for each Aura you control.",
+          "toughness": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Aura"
+                  ]
+                }
+              }
+            ]
+          }
+        }
+      ],
+      "bestow": "{2}{W}{W}",
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "eidolon_of_countless_battles",
+      "mana_cost": "{1}{W}{W}",
+      "name": "Eidolon of Countless Battles",
+      "oracle_text": "Bestow {2}{W}{W} (If you cast this card for its bestow cost, it's an Aura spell with enchant creature. It becomes a creature again if it's not attached.)\nThis creature and enchanted creature each get +1/+1 for each creature you control and +1/+1 for each Aura you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 0,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "become_prepared"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with two or more creatures, this creature becomes prepared.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 2
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "eiganjo_dynastorian_replenish",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Eiganjo Dynastorian // Replenish",
+      "oracle_text": "Vigilance\nWhenever you attack with two or more creatures, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
+      "power": 2,
+      "prepared_face": "replenish",
+      "source": "auto",
+      "subtypes": [
+        "Fox",
+        "Advisor"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -49971,6 +50106,108 @@
       "mana_cost": "{2}{U}",
       "name": "Fall from Favor",
       "oracle_text": "Enchant creature\nWhen this Aura enters, tap enchanted creature and you become the monarch.\nEnchanted creature doesn't untap during its controller's untap step unless that player is the monarch.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature has flying and \"Sacrifice a creature: This creature gets +2/+1 until end of turn.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted creature has flying and \"Sacrifice a creature: This creature gets +2/+1 until end of turn.\""
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "activated",
+          "text": "Sacrifice a creature: This creature gets +2/+1 until end of turn."
+        }
+      ],
+      "id": "fallen_ideal",
+      "mana_cost": "{2}{B}",
+      "name": "Fallen Ideal",
+      "oracle_text": "Enchant creature\nEnchanted creature has flying and \"Sacrifice a creature: This creature gets +2/+1 until end of turn.\"\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand.",
       "source": "auto",
       "subtypes": [
         "Aura"
@@ -126725,6 +126962,37 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "replenish",
+      "mana_cost": "{3}{W}",
+      "name": "Replenish",
+      "oracle_text": "Return all enchantment cards from your graveyard to the battlefield.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
