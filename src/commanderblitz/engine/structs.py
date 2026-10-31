@@ -613,12 +613,23 @@ class DamageShield:
     #: lifetime: the Squire may be killed in response to its own ETB trigger and
     #: the shield still covers the turn.
     source: int | None = None
+    #: "Prevent all **combat** damage that would be dealt to you this turn"
+    #: (Druid's Deliverance, Defend the Hearth): the shield stops only damage
+    #: dealt as combat damage (510.2), and burn, drain and fight damage still
+    #: land.  Part of the record rather than a second table, because it is the
+    #: same prevention over the same seat with one narrower question asked.
+    combat_only: bool = False
+
+    def stops(self, *, is_combat: bool) -> bool:
+        """Whether this shield prevents damage of that kind."""
+        return is_combat or not self.combat_only
 
     def to_dict(self) -> dict[str, Any]:
         return {
             "player": self.player,
             "duration": self.duration,
             "source": self.source,
+            "combat_only": self.combat_only,
         }
 
 
@@ -756,6 +767,11 @@ class PermanentShield:
     player: int | None = None
     #: The permanent or spell that installed it, for the log.
     source: int | None = None
+    #: "Prevent all **combat** damage that would be dealt to it this turn"
+    #: (Fleeting Flight, Azorius Ploy): only damage dealt as combat damage
+    #: (510.2) is stopped, so a burn spell or a fight still lands.
+    #: `DamageShield.combat_only`'s permanent twin.
+    combat_only: bool = False
 
     @property
     def stops_damage_to(self) -> bool:
@@ -765,12 +781,19 @@ class PermanentShield:
     def stops_damage_by(self) -> bool:
         return self.dealt in ("by", "to_and_by")
 
+    def stops(self, *, by: bool, is_combat: bool) -> bool:
+        """Whether this shield prevents damage dealt to (or, with ``by``, by) its object."""
+        if self.combat_only and not is_combat:
+            return False
+        return self.stops_damage_by if by else self.stops_damage_to
+
     def to_dict(self) -> dict[str, Any]:
         return {
             "dealt": self.dealt,
             "duration": self.duration,
             "player": self.player,
             "source": self.source,
+            "combat_only": self.combat_only,
         }
 
 

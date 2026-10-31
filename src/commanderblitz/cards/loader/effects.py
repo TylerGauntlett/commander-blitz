@@ -1752,6 +1752,15 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"'prevent_damage_permanent' op, and a continuous one the "
                 f"'prevent_damage' static effect or 'protection'"
             )
+    if op in ("prevent_damage", "prevent_damage_permanent") and not isinstance(
+        effect.get("combat_only", False), bool
+    ):
+        # "Prevent all combat damage..." is a yes or no. A string "false" would
+        # be truthy at resolution and narrow a shield the card meant to be total.
+        raise DslError(
+            f"{where}: {op}'s 'combat_only' is true or false "
+            f"(got {effect.get('combat_only')!r})"
+        )
     if op == "prevent_damage_permanent":
         # All three keys required, and every omission loads clean and plays a
         # different card: no `objects` shields nothing, a guessed `dealt` swaps a

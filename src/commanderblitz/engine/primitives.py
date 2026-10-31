@@ -444,7 +444,7 @@ def damage_player(
     # the player-damage path for a prevention to be consulted at all. The
     # permanent path has had one since absorb (`damage_permanent`, twenty lines
     # down); this is its player-side counterpart.
-    if shielded(state, pid):
+    if shielded(state, pid, is_combat=is_combat):
         # `fire`, not `emit`: emit only writes the log, which is what both
         # existing DAMAGE_PREVENTED sites did and is why `damage_prevented`
         # could not be a trigger. Selfless Squire's second line reads `amount`
@@ -492,7 +492,7 @@ def damage_player(
     # (Gideon of the Trials, Kiora, the Crashing Wave). A shield on the
     # *dealer*, so it is asked here as well as in `damage_permanent`: the
     # creature it was aimed at is exactly the one about to hit this player.
-    if permanent_shielded(state, source_oid, by=True):
+    if permanent_shielded(state, source_oid, by=True, is_combat=is_combat):
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -813,8 +813,8 @@ def damage_permanent(
     # "…target permanent would deal" (Gideon of the Trials) on the dealer. Both
     # answer the whole event however big it is, so they sit beside it.
     if (
-        permanent_shielded(state, oid, by=False)
-        or permanent_shielded(state, source_oid, by=True)
+        permanent_shielded(state, oid, by=False, is_combat=is_combat)
+        or permanent_shielded(state, source_oid, by=True, is_combat=is_combat)
         or (is_combat and combat_fogged(state, source_oid))
     ):
         fire(

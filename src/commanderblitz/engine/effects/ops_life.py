@@ -166,6 +166,11 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     different and much better card, and there is no reading of an omitted
     duration that is safe to guess.
 
+    ``combat_only`` (default false) narrows the shield to combat damage:
+    "prevent all **combat** damage that would be dealt to you this turn"
+    (Druid's Deliverance, Defend the Hearth). Burn and drain then still land,
+    where the unnarrowed shield would make those cards strictly better.
+
     There is deliberately no ``amount``. See `structs.DamageShield`: absorb-N
     over a player is a different effect with a pool that drains, and the loader
     refuses the key rather than reading it and preventing everything anyway.
@@ -174,8 +179,11 @@ def op_prevent_damage(ctx: EffectContext, spec: Mapping[str, Any]):
     duration = str(spec.get("duration", "this_turn"))
     if duration not in DAMAGE_SHIELD_DURATIONS:  # pragma: no cover - loader guards
         raise DslError(f"unknown prevent_damage duration {duration!r}")
+    combat_only = bool(spec.get("combat_only", False))
     for pid in select_players(ctx, spec.get("player", "you")):
-        shield_player(ctx.state, pid, duration, source=ctx.source_oid)
+        shield_player(
+            ctx.state, pid, duration, source=ctx.source_oid, combat_only=combat_only
+        )
 
 
 @register("prevent_damage_permanent")
@@ -205,6 +213,10 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
     (the controller's next untap step). A prevention read as lasting longer than
     it does is a strictly better card, silently.
 
+    ``combat_only`` (default false) narrows it to combat damage: "prevent all
+    combat damage that would be dealt to it this turn" (Fleeting Flight), and
+    "…target creature would deal" (Azorius Ploy).
+
     Installs a `structs.PermanentShield` on each object and modifies nothing
     else; `primitives.damage_permanent` and `primitives.damage_player` read it.
     """
@@ -223,6 +235,7 @@ def op_prevent_damage_permanent(ctx: EffectContext, spec: Mapping[str, Any]):
             duration,
             player=ctx.controller,
             source=ctx.source_oid,
+            combat_only=bool(spec.get("combat_only", False)),
         )
 
 

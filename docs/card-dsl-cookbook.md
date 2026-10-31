@@ -7046,6 +7046,19 @@ side and the half a hexproof-shaped implementation gets wrong.
 Selfless Squire is both lines and needs both: the shield prevents, the event
 carries how much it ate, the trigger reads it back as `{"binding": "amount"}`.
 
+```jsonc
+// Druid's Deliverance: "Prevent all combat damage that would be dealt to you
+//                       this turn."
+{"op": "prevent_damage", "player": "you", "duration": "this_turn", "combat_only": true}
+```
+
+**`combat_only`** (a boolean, default false) narrows the shield to combat
+damage (510.2), so burn, drain and a fight still reach the seat;
+`DamageShield.stops` asks it with the `is_combat` that `damage_player` already
+carries. `player: "any"` is "…dealt to players" (Defend the Hearth). The near
+miss is `prevent_combat_damage`, which is keyed to the dealer and so also fogs
+combat damage to creatures and to the other seats.
+
 **The op is not the static of the same name.** `prevent_damage` the *static* is
 absorb N, keyed to a permanent through `affects` or to a seat through
 `affects_player`. It is per source and per instance rather than "all damage
@@ -7188,7 +7201,11 @@ All three keys are **required**. `dealt` is `"to"` (damage dealt to it),
 `"by"` (damage it deals, to permanents and players, combat and noncombat) or
 `"to_and_by"`; `duration` is `"this_turn"` (cleanup) or
 `"until_your_next_turn"` (the controller's next untap step, and dropped if they
-leave the game). `amount` is refused — it prevents all of it.
+leave the game). `amount` is refused — it prevents all of it. `combat_only` (a
+boolean, default false) narrows it to combat damage in either direction:
+Fleeting Flight's "prevent all combat damage that would be dealt to it this
+turn" is `dealt: "to"` with it, and Azorius Ploy's "…target creature would deal"
+is `dealt: "by"`.
 
 The op writes a `structs.PermanentShield` **onto the object**
 (`GameObject.damage_shields`) rather than onto a state table, because the
