@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**117 cards** blocked by **105** capabilities.
+**116 cards** blocked by **104** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -73,7 +73,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [lose-keyword-until-end-of-turn](#lose-keyword-until-end-of-turn) | 1 | 1064 | op |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
@@ -1107,20 +1106,6 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
-
-</details>
-
-## lose-keyword-until-end-of-turn
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect op that, for a duration (until end of turn), makes every permanent matching a selector (creatures your opponents control, including ones that come under their control later in the turn) lose the named keywords (hexproof, shroud) and prevents them from gaining those keywords from any source for that duration
-  <br>Why the existing vocabulary won't do: `lose_keyword` exists only as a static effect, which lasts while its source is on the battlefield and cannot be switched on for one turn by an activated ability; `grant_ability` could hand over a static but only to objects, not as a player/board-wide timed effect, and there is no op counterpart to `lose_keyword` (`lose_all_abilities` and `lock_abilities` strip far more than the two keywords)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Arcane Lighthouse** (rank 1064) — `arcane_lighthouse`
-  - {1}, {T}: Until end of turn, creatures your opponents control lose hexproof and shroud and can't have hexproof or shroud.
 
 </details>
 

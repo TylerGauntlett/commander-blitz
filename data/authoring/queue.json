@@ -11382,12 +11382,12 @@
     },
     "Arcane Lighthouse": {
       "edhrec_rank": 1064,
-      "gate": "template",
+      "gate": null,
       "name": "Arcane Lighthouse",
-      "reason": "no template for: {1}, {T}: Until end of turn, creatures your opponents control lose hexproof and shroud and",
+      "reason": "",
       "scryfall_id": "e2384e42-2442-4b40-9bae-8db470d2fb8c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arcane Melee": {

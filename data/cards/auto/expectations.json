@@ -649,6 +649,9 @@
       "graveyard"
     ]
   },
+  "arcane_lighthouse": {
+    "zone": "battlefield"
+  },
   "arcane_sanctum": {
     "zone": "battlefield"
   },
