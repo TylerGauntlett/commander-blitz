@@ -24199,6 +24199,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{B}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "-1/-1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}, Remove a -1/-1 counter from this creature: Put a -1/-1 counter on each other creature."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "carnifex_demon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{B}",
+      "name": "Carnifex Demon",
+      "oracle_text": "Flying\nThis creature enters with two -1/-1 counters on it.\n{B}, Remove a -1/-1 counter from this creature: Put a -1/-1 counter on each other creature.",
+      "power": 6,
+      "replacements": [
+        {
+          "amount": 2,
+          "counter": "-1/-1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Demon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -25109,6 +25172,108 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cathartic_pyre",
+      "mana_cost": "{1}{R}",
+      "name": "Cathartic Pyre",
+      "oracle_text": "Choose one —\n• Cathartic Pyre deals 3 damage to target creature or planeswalker.\n• Discard up to two cards, then draw that many cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Cathartic Pyre deals 3 damage to target creature or planeswalker."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "as": "pitched",
+                  "op": "discard",
+                  "player": "you",
+                  "up_to": true
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "label": "Discard up to two cards, then draw that many cards."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "additional_cost": {
+        "discard": 2
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cathartic_reunion",
+      "mana_cost": "{1}{R}",
+      "name": "Cathartic Reunion",
+      "oracle_text": "As an additional cost to cast this spell, discard two cards.\nDraw three cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -27048,6 +27213,123 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put three -1/-1 counters on target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "-1/-1"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Remove a -1/-1 counter from this creature: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "channeler_initiate",
+      "mana_cost": "{1}{G}",
+      "name": "Channeler Initiate",
+      "oracle_text": "When this creature enters, put three -1/-1 counters on target creature you control.\n{T}, Remove a -1/-1 counter from this creature: Add one mana of any color.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -27620,6 +27902,47 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you"
+          },
+          "effect": "spells_cant_be_countered",
+          "kind": "static",
+          "text": "Spells you control can't be countered."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "discover"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, discover 5.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "chimil_the_inner_sun",
+      "mana_cost": "{6}",
+      "name": "Chimil, the Inner Sun",
+      "oracle_text": "Spells you control can't be countered.\nAt the beginning of your end step, discover 5. (Exile cards from the top of your library until you exile a nonland card with mana value 5 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {

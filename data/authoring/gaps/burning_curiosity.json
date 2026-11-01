@@ -1,0 +1,18 @@
+{
+  "card_id": "burning_curiosity",
+  "name": "Burning Curiosity",
+  "oracle_text": "As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)\nExile the top two cards of your library. If this spell's additional cost was paid, exile the top three cards instead. Until the end of your next turn, you may play those cards.",
+  "blocked_sentences": [
+    "As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)"
+  ],
+  "needs": [
+    {
+      "capability": "blight",
+      "kind": "cost",
+      "what": "a `blight` cost key (\"Blight N: put N -1/-1 counters on a creature you control\") usable as a card-level `additional_cost` (here with `additional_optional`, so the spell's effects can branch on whether it was paid), where the caster chooses one creature they control at payment time and the counters go on it through `add_counters` (so `counter_placed` fires); payable only if the caster controls a creature",
+      "why_existing_wont_do": "`put_counters` in `cost_keys` places counters on the cost's own source permanent only, and the loader (`_validate_put_counters`) refuses it anywhere but an activated ability's cost, so it cannot be an additional cost to cast a sorcery nor put the counter on a chosen creature; `sacrifice`, `tap_permanents` and `remove_counters_from_among` choose a creature but none puts a counter on it. The remaining sentences (exile top 2 or 3 keyed on the additional cost, playable `end_of_your_next_turn`) look expressible once the cost exists"
+    }
+  ],
+  "closest_existing": ["put_counters", "additional_optional", "sacrifice"],
+  "confidence": "high"
+}

@@ -2159,6 +2159,14 @@
   "carnelian_orb_of_dragonkind": {
     "zone": "battlefield"
   },
+  "carnifex_demon": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "-1/-1"
+    },
+    "zone": "battlefield"
+  },
   "carnivorous_plant": {
     "zone": "battlefield"
   },
@@ -2226,6 +2234,18 @@
   "cathars_crusade": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "cathartic_pyre": {
+    "zone": "graveyard"
+  },
+  "cathartic_reunion": {
+    "graveyard_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 37
+    },
+    "zone": "graveyard"
   },
   "cathedral_of_war": {
     "zone": "battlefield"
@@ -2378,6 +2398,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "channeler_initiate": {
+    "zone": "battlefield"
+  },
   "chant_of_the_skifsang": {
     "zone": [
       "battlefield",
@@ -2427,6 +2450,13 @@
   },
   "chief_of_the_foundry": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "chimil_the_inner_sun": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "chitinous_cloak": {

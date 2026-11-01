@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**135 cards** blocked by **122** capabilities.
+**136 cards** blocked by **122** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,6 +19,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
+| [blight](#blight) | 2 | 6570 | cost |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
@@ -38,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [blight](#blight) | 1 | 6570 | cost |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -320,6 +320,24 @@ Blocks **2** cards.
   - Whenever you discard one or more nonland cards, you may exile one of them from your graveyard. If you do, you may cast it this turn
 - **Spirit of Resilience** (rank 13273) — `spirit_of_resilience`
   - Whenever one or more cards leave your graveyard, put a +1/+1 counter on this creature, then you may have this creature become a copy of an artifact or creature card from among those cards until end of turn
+
+</details>
+
+## blight
+
+Blocks **2** cards.
+
+- **(cost)** a `blight` cost key ("Blight N: the paying player puts N -1/-1 counters on a creature they control"), where the PAYER chooses one creature they control at payment time and the counters go on it through `add_counters` (so `counter_placed` fires); payable only if the payer controls a creature. It must work inside a ward cost (the `pay` spec of `ward_ability`'s `may`, paid by the targeting opponent) as well as on activated abilities and additional costs
+  <br>Why the existing vocabulary won't do: `put_counters` in `cost_keys` places counters on the cost's source permanent only (costs.py pays it to `source_oid`), so `{"put_counters": {"counter": "-1/-1", "amount": 2}}` as the ward cost would put the counters on Auntie Ool rather than on a creature the opponent chooses among their own; no other cost key (sacrifice, tap_permanents, remove_counters_from_among) puts counters on a chosen creature, and nothing in the engine or cards package knows the word blight
+- **(cost)** a `blight` cost key ("Blight N: put N -1/-1 counters on a creature you control") usable as a card-level `additional_cost` (here with `additional_optional`, so the spell's effects can branch on whether it was paid), where the caster chooses one creature they control at payment time and the counters go on it through `add_counters` (so `counter_placed` fires); payable only if the caster controls a creature
+  <br>Why the existing vocabulary won't do: `put_counters` in `cost_keys` places counters on the cost's own source permanent only, and the loader (`_validate_put_counters`) refuses it anywhere but an activated ability's cost, so it cannot be an additional cost to cast a sorcery nor put the counter on a chosen creature; `sacrifice`, `tap_permanents` and `remove_counters_from_among` choose a creature but none puts a counter on it. The remaining sentences (exile top 2 or 3 keyed on the additional cost, playable `end_of_your_next_turn`) look expressible once the cost exists
+
+<details><summary>Cards waiting on this</summary>
+
+- **Auntie Ool, Cursewretch** (rank 6570) — `auntie_ool_cursewretch`
+  - Ward—Blight 2
+- **Burning Curiosity** (rank 9313) — `burning_curiosity`
+  - As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)
 
 </details>
 
@@ -644,20 +662,6 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
-
-</details>
-
-## blight
-
-Blocks **1** card.
-
-- **(cost)** a `blight` cost key ("Blight N: the paying player puts N -1/-1 counters on a creature they control"), where the PAYER chooses one creature they control at payment time and the counters go on it through `add_counters` (so `counter_placed` fires); payable only if the payer controls a creature. It must work inside a ward cost (the `pay` spec of `ward_ability`'s `may`, paid by the targeting opponent) as well as on activated abilities and additional costs
-  <br>Why the existing vocabulary won't do: `put_counters` in `cost_keys` places counters on the cost's source permanent only (costs.py pays it to `source_oid`), so `{"put_counters": {"counter": "-1/-1", "amount": 2}}` as the ward cost would put the counters on Auntie Ool rather than on a creature the opponent chooses among their own; no other cost key (sacrifice, tap_permanents, remove_counters_from_among) puts counters on a chosen creature, and nothing in the engine or cards package knows the word blight
-
-<details><summary>Cards waiting on this</summary>
-
-- **Auntie Ool, Cursewretch** (rank 6570) — `auntie_ool_cursewretch`
-  - Ward—Blight 2
 
 </details>
 

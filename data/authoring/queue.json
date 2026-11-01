@@ -40052,12 +40052,12 @@
     },
     "Carnifex Demon": {
       "edhrec_rank": 5084,
-      "gate": "template",
+      "gate": null,
       "name": "Carnifex Demon",
-      "reason": "no template for: This creature enters with two -1/-1 counters on it",
+      "reason": "",
       "scryfall_id": "7eec26a5-1d2b-43ff-b340-bc72f4a71ae8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carnival // Carnage": {
@@ -41312,22 +41312,22 @@
     },
     "Cathartic Pyre": {
       "edhrec_rank": 4084,
-      "gate": "template",
+      "gate": null,
       "name": "Cathartic Pyre",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "0d762a71-ee49-49fd-a54a-0c066277c88c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cathartic Reunion": {
       "edhrec_rank": 1080,
-      "gate": "template",
+      "gate": null,
       "name": "Cathartic Reunion",
-      "reason": "no template for: As an additional cost to cast this spell, discard two cards",
+      "reason": "",
       "scryfall_id": "e3bca51a-b9be-4be2-a256-b15853fde433",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cathedral Acolyte": {
@@ -44272,12 +44272,12 @@
     },
     "Channeler Initiate": {
       "edhrec_rank": 6008,
-      "gate": "template",
+      "gate": null,
       "name": "Channeler Initiate",
-      "reason": "no template for: When this creature enters, put three -1/-1 counters on target creature you control",
+      "reason": "",
       "scryfall_id": "9011936a-ec69-4c1b-ae8e-c2d212047ca4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chant of Vitu-Ghazi": {
@@ -45602,12 +45602,12 @@
     },
     "Chimil, the Inner Sun": {
       "edhrec_rank": 771,
-      "gate": "template",
+      "gate": null,
       "name": "Chimil, the Inner Sun",
-      "reason": "no template for: Spells you control can't be countered",
+      "reason": "",
       "scryfall_id": "7b696878-bf6c-4323-baa5-93c44dde075e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chimney Imp": {
