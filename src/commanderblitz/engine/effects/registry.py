@@ -97,7 +97,7 @@ RECORDING_OPS = frozenset(
         #: `mill`, so a `player: "each_player"` look binds every seat's cards
         #: rather than the last one's. See `ops_cards.op_look_at_top`.
         "look_at_top",
-        #: The one recorder whose binding is a plain **int**: the life actually
+        #: A recorder whose binding is a plain **int**: the life actually
         #: lost, after replacements, summed over every player the op hit --
         #: "you gain life equal to the life lost this way" (Gray Merchant of
         #: Asphodel) and extort's "that much life". See `ops_life.op_lose_life`.
@@ -126,6 +126,11 @@ RECORDING_OPS = frozenset(
         #: arrived, not what was chosen: a commander redirected to the command
         #: zone was not put there. See `ops_cards.op_put_on_top`.
         "put_on_top",
+        #: A plain **int**, like `lose_life`'s: the counters actually removed --
+        #: Eventide's Shadow's "equal to the number of counters removed this
+        #: way", which nothing on the board still shows once they are gone.
+        #: See `ops_counters.op_remove_counters_from_among`.
+        "remove_counters_from_among",
         #: "…for each creature returned to your hand **this way**" -- The Eagles
         #: Are Coming!. Beside `exile` and `sacrifice`, whose bindings it copies
         #: in both shape and accumulating semantics, and it matters here for a

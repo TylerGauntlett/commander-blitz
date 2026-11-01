@@ -559,7 +559,15 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
         # A card in hand has no controller in the battlefield sense of the word;
         # its owner is the one who may activate it.
         whose = obj.controller if zone is Zone.BATTLEFIELD else obj.owner
-        if whose != pid:
+        # "Only your opponents may activate this ability" / "Any player may
+        # activate this ability" (602.1): somebody else's permanent offers the
+        # abilities that say so, and only those. The loader keeps the key to
+        # the battlefield, so another player's hand and graveyard stay shut.
+        if whose != pid and (
+            zone is not Zone.BATTLEFIELD
+            or obj.face_down
+            or not any(a.activated_by != "you" for a in abilities_of(state, oid))
+        ):
             continue
         if obj.face_down and zone is Zone.BATTLEFIELD:
             # A face-down permanent has **no abilities** (707.2), so the hidden
@@ -577,6 +585,8 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
         # Derived, not printed: a permanent that has lost its abilities must
         # not be offered them, and one granted "{T}: Add {C}" must be.
         for ability in abilities_of(state, oid):
+            if not _may_activate(ability, whose == pid):
+                continue
             if ability.is_mana_ability and not offerable_mana_ability(ability):
                 if show_tap_only is None:
                     show_tap_only = manual_mana or (
@@ -647,6 +657,21 @@ def _activate_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[A
                         )
                     )
     return out
+
+
+def _may_activate(ability, controls: bool) -> bool:
+    """May a player who does (``controls``) or does not control the source activate it?
+
+    `Ability.activated_by`: an ordinary ability is its controller's alone, an
+    "only your opponents may" one is everyone's but the controller's, and an
+    "any player may" one is everyone's (602.1).
+    """
+    who = ability.activated_by
+    if who == "any":
+        return True
+    if who == "opponent":
+        return not controls
+    return controls
 
 
 def _turn_face_up_actions(state: GameState, pid: int, obj) -> list[Action]:

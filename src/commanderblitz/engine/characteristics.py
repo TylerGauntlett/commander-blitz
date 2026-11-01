@@ -89,7 +89,7 @@ from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin, printed_cost_is
-from .objects import MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
+from .objects import ANY_COUNTER_KIND, MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
@@ -548,11 +548,20 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #     types exactly these ("becomes a green Elk creature"). Subtypes of
         #     a card type it no longer has go with that type (205.1b, the rule
         #     `set_types` below applies too); supertypes are untouched.
+        #     `keeps_colors` leaves the colours as they are ("becomes a Treasure
+        #     artifact" names none), and `keeps_pt` the base size of an
+        #     animation into a non-creature that names no size.
         animations = sorted(
             (*obj.animations, *(t for t in obj.until_eot if t.kind == "animate")),
             key=lambda t: t.timestamp,
         )
         for temp in animations:
+            if temp.kind == "set_toughness":
+                # "…this creature's toughness becomes N" (Tree of Perdition's
+                # exchange): the toughness half of a 7b set, in the same
+                # timestamp order, touching nothing else.
+                toughness = temp.toughness
+                continue
             if temp.exact:
                 types = set(temp.types)
                 subtypes = {
@@ -561,13 +570,15 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                     if SUBTYPE_CLASS.get(sub, "Creature") in types
                     and SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
                 }
-                colors = set(temp.colors)
+                if not temp.keeps_colors:
+                    colors = set(temp.colors)
             else:
                 types.update(temp.types)
                 colors.update(temp.colors)
             subtypes.update(temp.subtypes)
-            power = temp.power
-            toughness = temp.toughness
+            if not temp.keeps_pt:
+                power = temp.power
+                toughness = temp.toughness
 
         # 0. type replacement -- "as long as it has a slumber counter, it's a
         #    land (it's not a creature)". Before the grants, so a card that both
@@ -1772,7 +1783,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         spec = expr["counters_on"] or {}
         kind = str(spec.get("counter", PLUS_ONE))
         return sum(
-            obj.counter(kind)
+            counters_of_kind(obj, kind)
             for obj in _matching_objects(state, spec.get("objects") or {"self_only": True}, source)
         )
     raise DslError(f"unknown static value {sorted(expr)}")
@@ -2202,6 +2213,30 @@ def has_any_counter(obj: GameObject) -> bool:
     return any(n > 0 for n in obj.counters.values())
 
 
+def has_counters_matches(obj: GameObject, spec: Any) -> bool:
+    """The ``has_counters`` filter key, the same in every filter language.
+
+    ``true`` is one or more counters of any kind (122.1) and ``false`` none at
+    all -- "with counters on them". A kind is one or more of **that** kind --
+    "target creature with a -1/-1 counter on it" (Liliana, Death Wielder),
+    which a creature carrying only +1/+1 or stun counters does not satisfy.
+    """
+    if isinstance(spec, str):
+        return obj.counter(spec) > 0
+    return has_any_counter(obj) == bool(spec)
+
+
+def counters_of_kind(obj: GameObject, kind: str) -> int:
+    """How many counters of ``kind`` sit on ``obj`` -- every kind for ``"any"``.
+
+    The one reader behind both value languages' ``counters_on``, so an effect's
+    amount and a static's magnitude cannot disagree about what "counters" means.
+    """
+    if kind == ANY_COUNTER_KIND:
+        return sum(n for n in obj.counters.values() if n > 0)
+    return obj.counter(kind)
+
+
 def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool:
     """The ``enchanted_by`` filter key: is ``oid`` enchanted, by whose Aura?
 
@@ -2494,7 +2529,7 @@ def _matches_wherever(
     # (Innkeeper's Talent). Counters are board state no layer writes -- a
     # static never puts one on -- so this is a pipeline input for `tapped`'s
     # reason, and the answer moves the moment a counter arrives or leaves.
-    if "has_counters" in selector and has_any_counter(obj) != bool(selector["has_counters"]):
+    if "has_counters" in selector and not has_counters_matches(obj, selector["has_counters"]):
         return False
     # "Each creature that's **enchanted by an Aura you control**" (Eriette of
     # the Charmed Apple). Attachment is board state no layer writes, so it is a

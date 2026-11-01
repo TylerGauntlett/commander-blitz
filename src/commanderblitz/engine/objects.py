@@ -21,6 +21,10 @@ from .structs import AttackMark, PermanentShield, TempEffect
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
 MINUS_ONE = "-1/-1"
+#: Not a counter kind but the word a *reader* uses for every kind summed --
+#: `counters_on`'s and `counters_had`'s "counters", where the kinds are
+#: open-ended (122.1) and no list of them would be the printed card.
+ANY_COUNTER_KIND = "any"
 #: A **time counter**: what a suspended card in exile carries, and what an
 #: impending permanent enters with (702.176a). Named like the printed one so a
 #: UI that shows counters shows the right word.

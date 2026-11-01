@@ -62,7 +62,10 @@ class TempEffect:
     ``"cant_sacrifice"`` ("it gains \"This permanent can't be sacrificed\"",
     read by `temp_effects.sacrifice_forbidden`), or ``"lose_keyword"`` ("…lose
     hexproof **and can't have** hexproof": ``keyword`` is taken away by the last
-    keyword step of ``chars``, after every grant).  The lock is not a keyword because it is not a characteristic: it is
+    keyword step of ``chars``, after every grant), or ``"set_toughness"`` (an
+    indefinite layer-7b "its toughness becomes N", kept on
+    `GameObject.animations` and ordered against the indefinite animations there
+    by ``timestamp``).  The lock is not a keyword because it is not a characteristic: it is
     a permission, read by legality and by the mana solver rather than by
     ``chars``, and showing it in a card's keyword list would be a lie.
 
@@ -120,6 +123,16 @@ class TempEffect:
     #: Goblin stops being a Goblin, per the card's rulings. Supertypes are never
     #: touched: an Oko'd legend is a legendary Elk.
     exact: bool = False
+    #: For an ``exact`` ``kind == "animate"``: the colours are left as they
+    #: are rather than replaced by ``colors``. Vraska, Betrayal's Sting's
+    #: "target creature becomes a Treasure artifact ... and loses all other card
+    #: types" names no colour, and a Treasure that went colourless would stop
+    #: answering "destroy target green permanent".
+    keeps_colors: bool = False
+    #: For ``kind == "animate"``: the animation names no size, so the base
+    #: power and toughness are left alone. Only a non-creature animation may
+    #: say nothing about its size (the loader's rule) -- the same Treasure.
+    keeps_pt: bool = False
     #: For ``kind == "animate"``: when it began (613.7), from
     #: `GameState.alloc_timestamp`. Two animations each set a base P/T and the
     #: later one wins, which has to be decidable across the two lists an
@@ -164,6 +177,8 @@ class TempEffect:
             "previous_controller": self.previous_controller,
             "new_controller": self.new_controller,
             "exact": self.exact,
+            "keeps_colors": self.keeps_colors,
+            "keeps_pt": self.keeps_pt,
             "until_player": self.until_player,
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,
@@ -1582,6 +1597,23 @@ DELAYED_DURATIONS = (
 
 
 @dataclass(frozen=True)
+class CountersPut:
+    """One COUNTER_PLACED, as the turn ledger remembers it.
+
+    ``put_by`` is who put them (122.6a), not the recipient's controller: a
+    counter you put on an opponent's creature is one **you** put. ``types``
+    are the recipient's derived card types at the moment of placement, which
+    is what "on a creature" asks -- the permanent may have left, or stopped
+    being a creature, by the time the question is read.
+    """
+
+    put_by: int
+    counter: str
+    amount: int
+    types: frozenset[str]
+
+
+@dataclass(frozen=True)
 class EnteredPermanent:
     """One permanent as it was **at the moment it entered the battlefield**.
 
@@ -2050,6 +2082,12 @@ class TurnLedger:
     #: attacked, and that is the case the board-shaped near miss (`exists`)
     #: gets wrong.  Cleared at cleanup with everything else here.
     permanents_entered: list[EnteredPermanent] = field(default_factory=list)
+    #: Every placement of counters on a permanent this turn, as
+    #: :class:`CountersPut` records, in order. "If you put a counter on a
+    #: creature this turn" (Lasting Tarfire). Folded off COUNTER_PLACED, so the
+    #: counters a permanent enters with count too (122.6), and kept when the
+    #: counter or the permanent has gone since: it was still put there.
+    counters_put: list[CountersPut] = field(default_factory=list)
 
     @property
     def attacked(self) -> set[int]:
@@ -2162,6 +2200,7 @@ class TurnLedger:
         self.discarded.clear()
         self.cards_discarded.clear()
         self.permanents_entered.clear()
+        self.counters_put.clear()
         self.combats = 0
 
 

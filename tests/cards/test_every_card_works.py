@@ -18,6 +18,7 @@ import pytest
 
 from commanderblitz.cards.authoring.verify import (
     check_expectation,
+    spare_cards_in_hand,
     swap_in_artifact_body,
     swap_in_legendary_body,
     swap_in_tribal_body,
@@ -137,7 +138,11 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         # A land rather than a spell: a castable card in hand keeps the player
         # on priority while the card under test is on the stack, and every card
         # then fails with "never left the stack".
-        builder.hand(0, [card_id, "forest"])
+        #
+        # One spare per card the additional cost discards, from the helper
+        # `verify.build_sandbox` uses, so Cathartic Reunion's "discard two
+        # cards" has its fodder in both harnesses.
+        builder.hand(0, [card_id, *["forest"] * spare_cards_in_hand(under_test)])
     return builder.build(advance=False)
 
 
@@ -390,6 +395,12 @@ class TestActivatedAbilities:
             oid = new_object(game.state, card_id, owner=0, zone=zone).oid
             if zone is Zone.BATTLEFIELD:
                 game.state.battlefield.append(oid)
+                # Oft-Nabbed Goat: "Only your opponents may activate this
+                # ability." The sandbox's player is seat 0, so the permanent
+                # sits under the opponent's control and seat 0 is the one
+                # offered it -- the only way this ability can be used at all.
+                if ability.activated_by == "opponent":
+                    game.state.objects[oid].controller = 1
             else:
                 game.state.players[0].zone_list(zone).append(oid)
             _reach_the_level(game, oid, ability)
@@ -1163,6 +1174,13 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         # was only unaimed. Tapped only when the spec asks, like the flag above.
         if spec.selector.get("tapped"):
             obj.tapped = True
+        # Liliana, Death Wielder's "-3: Destroy target creature **with a -1/-1
+        # counter on it**." No sandbox creature carries one, so the ability read
+        # as unusable when it was only unaimed. One counter of the kind
+        # `has_counters` names, and only when the spec names one.
+        kind = spec.selector.get("has_counters")
+        if isinstance(kind, str):
+            obj.add_counter(kind, 1)
         if match.is_token:
             obj.is_token = True
         game.state.battlefield.append(obj.oid)

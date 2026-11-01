@@ -424,7 +424,9 @@ class HeuristicAgent:
                 keep = [a for a in choices if (a.choice or 0) < ceiling]
                 return max(keep or choices, key=lambda a: a.choice or 0)
             return max(choices, key=lambda a: a.choice or 0)
-        if purpose == "sacrifice":
+        if purpose in ("sacrifice", "blight_cost"):
+            # Blight's -1/-1 counters go where they cost least, which is the
+            # sacrifice question: the creature this seat would miss least.
             return min(
                 choices,
                 key=lambda a: self._creature_value(state, a) - self._junk(strategy, state, seat, a),

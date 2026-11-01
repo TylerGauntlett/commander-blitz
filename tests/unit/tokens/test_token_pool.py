@@ -1481,3 +1481,45 @@ class TestCurseOfTheSwinesBoar:
         other = pool.get("elemental_2_2_g")
         assert other is not None
         assert "Boar" not in other.subtypes
+
+
+class TestBlightCursesTokens:
+    """Three tokens the Blight Curse precon prints, each beside its near miss.
+
+    Flourishing Defenses makes a *1/1 green Elf Warrior*, where the pool's
+    other 1/1 Warrior is white and no Elf; Hapatra, Vizier of Poisons makes a
+    *1/1 green Snake with deathtouch*, where the pool's Snake is black; and
+    Wickersmith's Tools makes a *2/2 colorless Scarecrow artifact creature*.
+    Rule 111.4: a token is exactly what its creating effect says.
+    """
+
+    def test_the_elf_warrior_is_green_and_both_types(self, pool):
+        token = pool.get("elf_warrior_1_1_g")
+        assert token is not None and token.is_creature and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Elf", "Warrior"]
+        assert not token.keywords
+
+    def test_the_white_warrior_is_still_a_separate_token(self, pool):
+        white = pool.get("warrior_1_1_w")
+        assert white is not None and "Elf" not in white.subtypes
+
+    def test_the_green_snake_has_deathtouch(self, pool):
+        token = pool.get("snake_1_1_g_deathtouch")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["G"]
+        assert "deathtouch" in token.keywords
+
+    def test_the_black_snake_is_still_a_separate_token(self, pool):
+        black = pool.get("snake_1_1_b_deathtouch")
+        assert black is not None and sorted(black.colors) == ["B"]
+
+    def test_the_scarecrow_is_a_colorless_artifact_creature(self, pool):
+        token = pool.get("scarecrow_2_2_c")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (2, 2)
+        assert not token.colors
+        assert "Artifact" in token.types and "Creature" in token.types
+        assert list(token.subtypes) == ["Scarecrow"]

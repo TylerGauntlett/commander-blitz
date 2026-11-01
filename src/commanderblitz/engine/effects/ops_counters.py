@@ -29,6 +29,7 @@ from .board_helpers import (
     _players,
 )
 from .context import EffectContext, ask_yes_no
+from .counter_removal import remove_counters_one_at_a_time
 from .registry import register
 from .selectors import (
     choose_objects,
@@ -277,11 +278,73 @@ def op_double_counters(ctx: EffectContext, spec: Mapping[str, Any]):
 
 @register("remove_counters")
 def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Remove counters from each of ``objects``.
+
+    Without ``any_kind``: ``amount`` (default 1) of the one named ``counter``
+    kind (default +1/+1), clamped to what is there.
+
+    With ``any_kind`` -- Glissa Sunslayer's "remove up to three counters from
+    target permanent" -- the card names no kind, so the controller chooses, one
+    counter at a time, which kind comes off next: two -1/-1 and a loyalty is as
+    legal as three of one kind (122.1). ``amount`` is then how many in total; on
+    its own it is exactly that many, or as many as there are (609.3); with
+    ``up_to`` it is a ceiling the controller may stop short of, down to none;
+    and left out it is "any number". See `counter_removal`.
+    """
+    if spec.get("any_kind"):
+        most = (
+            max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
+        )
+        least = 0 if most is None or spec.get("up_to") else most
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
+        for oid in oids:
+            yield from remove_counters_one_at_a_time(
+                ctx,
+                lambda oid=oid: [oid],
+                most=most,
+                least=least,
+                chooser=ctx.controller,
+                purpose="remove_counter",
+            )
+        return
     amount = evaluate_value(ctx, spec.get("amount", 1))
     kind = str(spec.get("counter", "+1/+1"))
     oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
     for oid in oids:
         remove_counters(ctx.state, oid, kind, amount)
+
+
+@register("remove_counters_from_among")
+def op_remove_counters_from_among(ctx: EffectContext, spec: Mapping[str, Any]):
+    """Remove counters of any kinds from among the permanents ``objects`` names.
+
+    Eventide's Shadow -- "Remove any number of counters from among permanents
+    on the battlefield. You draw cards and lose life equal to the number of
+    counters removed this way." The effect twin of the cost of the same name
+    (Tekuthal), asking the same question one counter at a time
+    (`counter_removal`): which permanent, then which kind. The split among
+    permanents and kinds is the controller's.
+
+    ``amount`` reads as `remove_counters`' ``any_kind`` does: alone it is
+    exactly that many or as many as there are (609.3), with ``up_to`` a
+    ceiling, and left out "any number", down to none. ``as`` binds the number
+    actually removed, an int read back with ``{"binding": ...}`` -- the only
+    place "the number of counters removed this way" survives, since the
+    permanents no longer carry them.
+    """
+    most = max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
+    least = 0 if most is None or spec.get("up_to") else most
+    selector = spec.get("objects")
+    removed = yield from remove_counters_one_at_a_time(
+        ctx,
+        lambda: resolve_pool(ctx, selector),
+        most=most,
+        least=least,
+        chooser=ctx.controller,
+        purpose="remove_counter",
+    )
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = removed
 
 
 @register("tap")

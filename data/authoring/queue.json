@@ -472,12 +472,12 @@
     },
     "Aberrant Return": {
       "edhrec_rank": 6551,
-      "gate": "template",
+      "gate": null,
       "name": "Aberrant Return",
-      "reason": "no template for: Put one, two, or three target creature cards from graveyards onto the battlefield under yo",
+      "reason": "",
       "scryfall_id": "2b7cf8e9-d9aa-40bf-a724-1e8943792090",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abeyance": {
@@ -12012,12 +12012,12 @@
     },
     "Archfiend of Ifnir": {
       "edhrec_rank": 1296,
-      "gate": "template",
+      "gate": null,
       "name": "Archfiend of Ifnir",
-      "reason": "no template for: Whenever you cycle or discard another card, put a -1/-1 counter on each creature your oppo",
+      "reason": "",
       "scryfall_id": "83057af6-cb88-4401-92ef-5b5d10463140",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archfiend of Sorrows": {
@@ -16222,12 +16222,12 @@
     },
     "Auntie Ool, Cursewretch": {
       "edhrec_rank": 6570,
-      "gate": "template",
+      "gate": null,
       "name": "Auntie Ool, Cursewretch",
-      "reason": "no template for: Ward—Blight 2",
+      "reason": "",
       "scryfall_id": "9a2e4252-9fbc-4d43-8935-db2cafaa7b5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Auntie's Hovel": {
@@ -24882,12 +24882,12 @@
     },
     "Binding the Old Gods": {
       "edhrec_rank": 1310,
-      "gate": "template",
+      "gate": null,
       "name": "Binding the Old Gods",
-      "reason": "no template for: I — Destroy target nonland permanent an opponent controls",
+      "reason": "",
       "scryfall_id": "41802f18-7d46-431a-acb3-dbcc82eb415a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bio-Asset Allocator": {
@@ -25722,12 +25722,12 @@
     },
     "Black Sun's Zenith": {
       "edhrec_rank": 1947,
-      "gate": "template",
+      "gate": null,
       "name": "Black Sun's Zenith",
-      "reason": "no template for: Put X -1/-1 counters on each creature. Shuffle into its owner's library",
+      "reason": "",
       "scryfall_id": "eda98f51-a918-4ef7-a123-7d4200c79620",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Tom Cassidy": {
@@ -29482,12 +29482,12 @@
     },
     "Blowfly Infestation": {
       "edhrec_rank": 3119,
-      "gate": "template",
+      "gate": null,
       "name": "Blowfly Infestation",
-      "reason": "no template for: Whenever a creature dies, if it had a -1/-1 counter on it, put a -1/-1 counter on target c",
+      "reason": "",
       "scryfall_id": "77e5dc0c-f4db-4540-b8d1-a07d7c96a374",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bludgeon Brawl": {
@@ -36502,12 +36502,12 @@
     },
     "Burning Curiosity": {
       "edhrec_rank": 9313,
-      "gate": "template",
+      "gate": null,
       "name": "Burning Curiosity",
-      "reason": "no template for: As an additional cost to cast this spell, you may blight 1",
+      "reason": "",
       "scryfall_id": "689ed288-6228-4d7e-b198-56a12b8be299",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Burning Earth": {
@@ -40052,12 +40052,12 @@
     },
     "Carnifex Demon": {
       "edhrec_rank": 5084,
-      "gate": "template",
+      "gate": null,
       "name": "Carnifex Demon",
-      "reason": "no template for: This creature enters with two -1/-1 counters on it",
+      "reason": "",
       "scryfall_id": "7eec26a5-1d2b-43ff-b340-bc72f4a71ae8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Carnival // Carnage": {
@@ -41312,22 +41312,22 @@
     },
     "Cathartic Pyre": {
       "edhrec_rank": 4084,
-      "gate": "template",
+      "gate": null,
       "name": "Cathartic Pyre",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "0d762a71-ee49-49fd-a54a-0c066277c88c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cathartic Reunion": {
       "edhrec_rank": 1080,
-      "gate": "template",
+      "gate": null,
       "name": "Cathartic Reunion",
-      "reason": "no template for: As an additional cost to cast this spell, discard two cards",
+      "reason": "",
       "scryfall_id": "e3bca51a-b9be-4be2-a256-b15853fde433",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cathedral Acolyte": {
@@ -44272,12 +44272,12 @@
     },
     "Channeler Initiate": {
       "edhrec_rank": 6008,
-      "gate": "template",
+      "gate": null,
       "name": "Channeler Initiate",
-      "reason": "no template for: When this creature enters, put three -1/-1 counters on target creature you control",
+      "reason": "",
       "scryfall_id": "9011936a-ec69-4c1b-ae8e-c2d212047ca4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chant of Vitu-Ghazi": {
@@ -45602,12 +45602,12 @@
     },
     "Chimil, the Inner Sun": {
       "edhrec_rank": 771,
-      "gate": "template",
+      "gate": null,
       "name": "Chimil, the Inner Sun",
-      "reason": "no template for: Spells you control can't be countered",
+      "reason": "",
       "scryfall_id": "7b696878-bf6c-4323-baa5-93c44dde075e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chimney Imp": {
@@ -52452,12 +52452,12 @@
     },
     "Contagion Clasp": {
       "edhrec_rank": 1405,
-      "gate": "template",
+      "gate": null,
       "name": "Contagion Clasp",
-      "reason": "no template for: When this artifact enters, put a -1/-1 counter on target creature",
+      "reason": "",
       "scryfall_id": "edd7f08a-3baf-4fb0-921e-b0e7b4a1a545",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Contagion Engine": {
@@ -67982,12 +67982,12 @@
     },
     "Devoted Druid": {
       "edhrec_rank": 1028,
-      "gate": "template",
+      "gate": null,
       "name": "Devoted Druid",
-      "reason": "no template for: Put a -1/-1 counter on this creature: Untap this creature",
+      "reason": "",
       "scryfall_id": "22589a81-3ea8-4e78-98c9-c015e7539cf9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Devoted Duelist": {
@@ -74472,12 +74472,12 @@
     },
     "Dread Tiller": {
       "edhrec_rank": 6260,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Tiller",
-      "reason": "no template for: When this creature enters, put a -1/-1 counter on target creature",
+      "reason": "",
       "scryfall_id": "5e2692eb-5a01-4b62-9d4d-263a553975ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread Wanderer": {
@@ -77112,12 +77112,12 @@
     },
     "Dusk Urchins": {
       "edhrec_rank": 6618,
-      "gate": "template",
+      "gate": null,
       "name": "Dusk Urchins",
-      "reason": "no template for: Whenever this creature attacks or blocks, put a -1/-1 counter on it",
+      "reason": "",
       "scryfall_id": "fce69f5c-c4c4-4c8b-aa29-8cc8a84587d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duskana, the Rage Mother": {
@@ -87192,12 +87192,12 @@
     },
     "Eventide's Shadow": {
       "edhrec_rank": 7871,
-      "gate": "template",
+      "gate": null,
       "name": "Eventide's Shadow",
-      "reason": "no template for: Remove any number of counters from among permanents on the battlefield. You draw cards and",
+      "reason": "",
       "scryfall_id": "9c5d71a6-8e68-4aee-b781-486276d17fce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ever After": {
@@ -87322,12 +87322,12 @@
     },
     "Everlasting Torment": {
       "edhrec_rank": 5549,
-      "gate": "template",
+      "gate": null,
       "name": "Everlasting Torment",
-      "reason": "no template for: Players can't gain life",
+      "reason": "",
       "scryfall_id": "a1e79115-bb2d-4455-b6dc-aaf2d0e26c60",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evermind": {
@@ -87552,12 +87552,12 @@
     },
     "Evolution Sage": {
       "edhrec_rank": 404,
-      "gate": "template",
+      "gate": null,
       "name": "Evolution Sage",
-      "reason": "no template for: Landfall — Whenever a land you control enters, proliferate",
+      "reason": "",
       "scryfall_id": "1d58d08d-cd62-416d-8d8e-7d9c56d5c4da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evolution Vat": {
@@ -93742,12 +93742,12 @@
     },
     "Ferrafor, Young Yew": {
       "edhrec_rank": 8989,
-      "gate": "template",
+      "gate": null,
       "name": "Ferrafor, Young Yew",
-      "reason": "no template for: When Ferrafor enters, create a number of 1/1 green Saproling creature tokens equal to the ",
+      "reason": "",
       "scryfall_id": "0a664cd2-3778-4344-addc-72341889e871",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ferropede": {
@@ -95322,12 +95322,12 @@
     },
     "Fire Covenant": {
       "edhrec_rank": 2757,
-      "gate": "template",
+      "gate": null,
       "name": "Fire Covenant",
-      "reason": "no template for: As an additional cost to cast this spell, pay X life",
+      "reason": "",
       "scryfall_id": "1a13437b-e0c7-4ca9-a0e2-b8cb1b5813ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fire Diamond": {
@@ -98592,12 +98592,12 @@
     },
     "Flourishing Defenses": {
       "edhrec_rank": 4024,
-      "gate": "template",
+      "gate": null,
       "name": "Flourishing Defenses",
-      "reason": "no template for: Whenever a -1/-1 counter is put on a creature, you may create a 1/1 green Elf Warrior crea",
+      "reason": "",
       "scryfall_id": "37a678b3-53ba-48c7-9846-6454f8b34127",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flourishing Fox": {
@@ -111042,12 +111042,12 @@
     },
     "Glissa Sunslayer": {
       "edhrec_rank": 1410,
-      "gate": "template",
+      "gate": null,
       "name": "Glissa Sunslayer",
-      "reason": "no template for: Whenever deals combat damage to a player, choose one —",
+      "reason": "",
       "scryfall_id": "682b1b62-338a-49d1-9d4e-2d8ee2e6fc76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glissa's Courier": {
@@ -114832,12 +114832,12 @@
     },
     "Golgari Rot Farm": {
       "edhrec_rank": 327,
-      "gate": "template",
+      "gate": null,
       "name": "Golgari Rot Farm",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "42486edd-24b7-4299-84fa-50559917b2a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Golgari Rotwurm": {
@@ -116482,12 +116482,12 @@
     },
     "Grave Venerations": {
       "edhrec_rank": 4504,
-      "gate": "template",
+      "gate": null,
       "name": "Grave Venerations",
-      "reason": "no template for: When this enchantment enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "bd6c6906-7328-4b03-b8d3-11b80d3291ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grave-Shell Scarab": {
@@ -118262,12 +118262,12 @@
     },
     "Grim Poppet": {
       "edhrec_rank": 8718,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Poppet",
-      "reason": "no template for: This creature enters with three -1/-1 counters on it",
+      "reason": "",
       "scryfall_id": "7b23f412-c5eb-48f1-ad84-ae42171944c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Reaper's Scythe": {
@@ -119532,12 +119532,12 @@
     },
     "Gruul Turf": {
       "edhrec_rank": 432,
-      "gate": "template",
+      "gate": null,
       "name": "Gruul Turf",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "f19d2b68-1415-4a0c-bb68-cfacb611c4d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gruul War Chant": {
@@ -122332,12 +122332,12 @@
     },
     "Hapatra, Vizier of Poisons": {
       "edhrec_rank": 3982,
-      "gate": "template",
+      "gate": null,
       "name": "Hapatra, Vizier of Poisons",
-      "reason": "no template for: Whenever Hapatra deals combat damage to a player, you may put a -1/-1 counter on target cr",
+      "reason": "",
       "scryfall_id": "d19e17fc-ae3e-4533-ab94-70d5f2e1b8cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hapatra, the Desert Fang": {
@@ -128552,12 +128552,12 @@
     },
     "Hoarder's Greed": {
       "edhrec_rank": 9983,
-      "gate": "template",
+      "gate": null,
       "name": "Hoarder's Greed",
-      "reason": "no template for: You lose 2 life and draw two cards, then clash with an opponent. If you win, repeat this p",
+      "reason": "",
       "scryfall_id": "1293ed24-781c-465f-8561-39b01e7ba388",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hoarder's Overflow": {
@@ -133452,12 +133452,12 @@
     },
     "Ifnir Deadlands": {
       "edhrec_rank": 4557,
-      "gate": "template",
+      "gate": null,
       "name": "Ifnir Deadlands",
-      "reason": "no template for: {T}, Pay 1 life: Add {B}",
+      "reason": "",
       "scryfall_id": "902e260d-71ba-4342-9794-fefe2b531c00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Igneous Cur": {
@@ -135542,12 +135542,12 @@
     },
     "Incremental Blight": {
       "edhrec_rank": 6270,
-      "gate": "template",
+      "gate": null,
       "name": "Incremental Blight",
-      "reason": "no template for: Put a -1/-1 counter on target creature, two -1/-1 counters on another target creature, and",
+      "reason": "",
       "scryfall_id": "67028351-3023-4433-96fe-f5c32710bdf0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Incremental Growth": {
@@ -153102,12 +153102,12 @@
     },
     "Kulrath Knight": {
       "edhrec_rank": 5671,
-      "gate": "template",
+      "gate": null,
       "name": "Kulrath Knight",
-      "reason": "no template for: Creatures your opponents control with counters on them can't attack or block",
+      "reason": "",
       "scryfall_id": "c28c15bd-6fb3-4250-81c4-d42f3efdb6f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kulrath Mystic": {
@@ -154822,12 +154822,12 @@
     },
     "Lasting Tarfire": {
       "edhrec_rank": 6895,
-      "gate": "template",
+      "gate": null,
       "name": "Lasting Tarfire",
-      "reason": "no template for: At the beginning of each end step, if you put a counter on a creature this turn, this ench",
+      "reason": "",
       "scryfall_id": "9c4a95ac-072f-4219-80a0-1ce71f1b8411",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lasyd Prowler": {
@@ -158942,12 +158942,12 @@
     },
     "Liliana, Death Wielder": {
       "edhrec_rank": 7978,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana, Death Wielder",
-      "reason": "no template for: +2: Put a -1/-1 counter on up to one target creature",
+      "reason": "",
       "scryfall_id": "6f874b0e-32e3-421f-8109-522638b3f38d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana, Death's Majesty": {
@@ -168912,12 +168912,12 @@
     },
     "Massacre Girl, Known Killer": {
       "edhrec_rank": 1673,
-      "gate": "template",
+      "gate": null,
       "name": "Massacre Girl, Known Killer",
-      "reason": "no template for: Creatures you control have wither",
+      "reason": "",
       "scryfall_id": "8ef53e5e-709c-4613-a5ab-6bf12961b2e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Massacre Girl, Most Wanted": {
@@ -172702,12 +172702,12 @@
     },
     "Midnight Banshee": {
       "edhrec_rank": 4687,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Banshee",
-      "reason": "no template for: At the beginning of your upkeep, put a -1/-1 counter on each nonblack creature",
+      "reason": "",
       "scryfall_id": "f0a38737-22e6-469f-94d8-12b9a62f4495",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Midnight Charm": {
@@ -184632,12 +184632,12 @@
     },
     "Necroskitter": {
       "edhrec_rank": 2951,
-      "gate": "template",
+      "gate": null,
       "name": "Necroskitter",
-      "reason": "no template for: Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may return t",
+      "reason": "",
       "scryfall_id": "1743ff46-7bfe-46f7-a2cf-170dd92bf28f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necrosquito": {
@@ -185402,12 +185402,12 @@
     },
     "Nesting Grounds": {
       "edhrec_rank": 561,
-      "gate": "template",
+      "gate": null,
       "name": "Nesting Grounds",
-      "reason": "no template for: {1}, {T}: Move a counter from target permanent you control onto a second target permanent.",
+      "reason": "",
       "scryfall_id": "c25ad164-4076-496d-833c-d607391b1ac8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nesting Wurm": {
@@ -191262,12 +191262,12 @@
     },
     "Oft-Nabbed Goat": {
       "edhrec_rank": 6193,
-      "gate": "template",
+      "gate": null,
       "name": "Oft-Nabbed Goat",
-      "reason": "no template for: {1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your o",
+      "reason": "",
       "scryfall_id": "4030bfab-867c-4724-904e-3e8b631f075e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oggyar Battle-Seer": {
@@ -200092,12 +200092,12 @@
     },
     "Persist": {
       "edhrec_rank": 1362,
-      "gate": "template",
+      "gate": null,
       "name": "Persist",
-      "reason": "no template for: Return target nonlegendary creature card from your graveyard to the battlefield with a -1/",
+      "reason": "",
       "scryfall_id": "b7a56356-91bf-42f5-ab21-af2c48e78fc3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Persistent Constrictor": {
@@ -209632,12 +209632,12 @@
     },
     "Puca's Covenant": {
       "edhrec_rank": 8589,
-      "gate": "template",
+      "gate": null,
       "name": "Puca's Covenant",
-      "reason": "no template for: Whenever a creature you control with a counter on it dies, you may return another target p",
+      "reason": "",
       "scryfall_id": "0ed38a8d-9c77-4f21-90f5-f6a4c947d6d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Puca's Eye": {
@@ -210072,12 +210072,12 @@
     },
     "Puppeteer Clique": {
       "edhrec_rank": 2549,
-      "gate": "template",
+      "gate": null,
       "name": "Puppeteer Clique",
-      "reason": "no template for: When this creature enters, put target creature card from an opponent's graveyard onto the ",
+      "reason": "",
       "scryfall_id": "ffb08d08-9936-4525-bd72-3c2b77783d7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pure // Simple": {
@@ -213882,12 +213882,12 @@
     },
     "Rakdos Carnarium": {
       "edhrec_rank": 492,
-      "gate": "template",
+      "gate": null,
       "name": "Rakdos Carnarium",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "20c799a9-ab94-46e6-9111-00505e071c41",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rakdos Charm": {
@@ -248402,12 +248402,12 @@
     },
     "Sinister Gnarlbark": {
       "edhrec_rank": 5402,
-      "gate": "template",
+      "gate": null,
       "name": "Sinister Gnarlbark",
-      "reason": "no template for: At the beginning of your end step, draw a card and blight 1",
+      "reason": "",
       "scryfall_id": "5a37b353-7ad7-465c-b118-34894b06bf25",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sinister Hideout": {
@@ -249372,12 +249372,12 @@
     },
     "Skinrender": {
       "edhrec_rank": 5758,
-      "gate": "template",
+      "gate": null,
       "name": "Skinrender",
-      "reason": "no template for: When this creature enters, put three -1/-1 counters on target creature",
+      "reason": "",
       "scryfall_id": "178bca8c-8686-414f-8c71-a582eecd273d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Skinshifter": {
@@ -255882,12 +255882,12 @@
     },
     "Soul Snuffers": {
       "edhrec_rank": 5075,
-      "gate": "template",
+      "gate": null,
       "name": "Soul Snuffers",
-      "reason": "no template for: When this creature enters, put a -1/-1 counter on each creature",
+      "reason": "",
       "scryfall_id": "c3313376-cda8-4458-baa8-be3eac236192",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul Spike": {
@@ -282062,12 +282062,12 @@
     },
     "The Reaper, King No More": {
       "edhrec_rank": 6149,
-      "gate": "template",
+      "gate": null,
       "name": "The Reaper, King No More",
-      "reason": "no template for: When The Reaper enters, put a -1/-1 counter on each of up to two target creatures",
+      "reason": "",
       "scryfall_id": "d2119f3f-27d2-4d43-a5ef-35c1b73d182a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Reaver Cleaver": {
@@ -282212,12 +282212,12 @@
     },
     "The Scorpion God": {
       "edhrec_rank": 5302,
-      "gate": "template",
+      "gate": null,
       "name": "The Scorpion God",
-      "reason": "no template for: Whenever a creature with a -1/-1 counter on it dies, draw a card",
+      "reason": "",
       "scryfall_id": "792eabed-6c49-41f0-a9ce-0184e5c577e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Sea Devils": {
@@ -292012,12 +292012,12 @@
     },
     "Tree of Perdition": {
       "edhrec_rank": 1952,
-      "gate": "template",
+      "gate": null,
       "name": "Tree of Perdition",
-      "reason": "no template for: {T}: Exchange target opponent's life total with this creature's toughness",
+      "reason": "",
       "scryfall_id": "750b4c88-26c7-43ec-b6b9-ece3263dfd59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tree of Redemption": {
@@ -304832,12 +304832,12 @@
     },
     "Village Pillagers": {
       "edhrec_rank": 5904,
-      "gate": "template",
+      "gate": null,
       "name": "Village Pillagers",
-      "reason": "no template for: When this creature enters, it deals 1 damage to each creature your opponents control",
+      "reason": "",
       "scryfall_id": "616b606a-e7c2-461c-989c-b5e74b424849",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Village Rites": {
@@ -308292,12 +308292,12 @@
     },
     "Vraska, Betrayal's Sting": {
       "edhrec_rank": 1345,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska, Betrayal's Sting",
-      "reason": "no template for: Compleated",
+      "reason": "",
       "scryfall_id": "9f1fa1c5-ff87-4bbc-89aa-dbebc91eada0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vraska, Golgari Queen": {
@@ -314812,12 +314812,12 @@
     },
     "Wickersmith's Tools": {
       "edhrec_rank": 8890,
-      "gate": "template",
+      "gate": null,
       "name": "Wickersmith's Tools",
-      "reason": "no template for: Whenever one or more -1/-1 counters are put on a creature, put a charge counter on this ar",
+      "reason": "",
       "scryfall_id": "3758af07-68ed-42da-8a13-ec321e7cd06e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Widespread Brutality": {

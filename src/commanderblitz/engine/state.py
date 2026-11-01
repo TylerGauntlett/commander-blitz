@@ -20,6 +20,7 @@ from .structs import (
     CastLock,
     CombatFog,
     CombatState,
+    CountersPut,
     DamageRedirect,
     DamageShield,
     DelayedTrigger,
@@ -876,6 +877,23 @@ class GameState:
             if oid is not None:
                 taps = ledger.taps_by_permanent
                 taps[int(oid)] = taps.get(int(oid), 0) + 1
+        elif event.type == EventType.COUNTER_PLACED:
+            # "…if you put a counter on a creature this turn" (Lasting
+            # Tarfire). Both emitters -- `add_counters` and the enters-with
+            # report (122.6) -- fire while the permanent is on the battlefield
+            # with its counters already written, so its derived types here are
+            # the ones it had as the counter arrived.
+            oid = data.get("oid")
+            put_by = data.get("put_by")
+            if oid is not None and put_by is not None and int(oid) in self.objects:
+                ledger.counters_put.append(
+                    CountersPut(
+                        put_by=int(put_by),
+                        counter=str(data.get("counter", "")),
+                        amount=int(data.get("amount", 0)),
+                        types=frozenset(chars(self, int(oid)).types),
+                    )
+                )
         elif event.type == EventType.ENTERS_BATTLEFIELD:
             # "…if another Human entered the battlefield under your control this
             # turn." Snapshotted here rather than counted, because the question

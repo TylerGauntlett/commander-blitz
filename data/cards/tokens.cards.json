@@ -3465,6 +3465,67 @@
         "U"
       ],
       "is_token": true
+    },
+    {
+      "id": "elf_warrior_1_1_g",
+      "name": "Elf Warrior Token",
+      "oracle_text": "1/1 green Elf Warrior creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Warrior"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "snake_1_1_g_deathtouch",
+      "name": "Snake Token",
+      "oracle_text": "1/1 green Snake creature token with deathtouch.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Snake"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "is_token": true,
+      "keywords": [
+        "deathtouch"
+      ]
+    },
+    {
+      "id": "scarecrow_2_2_c",
+      "name": "Scarecrow Token",
+      "oracle_text": "2/2 colorless Scarecrow artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Scarecrow"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
     }
   ]
 }

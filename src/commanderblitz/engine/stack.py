@@ -37,7 +37,7 @@ from .effects.modes import (
 )
 from .enums import DecisionKind, Zone
 from .events import EventType
-from .primitives import attach, attach_to_player, merge_permanents
+from .primitives import attach, attach_to_player, merge_permanents, shuffle_library
 from .structs import DelayedTrigger, StackItem, TargetRef, TriggerInstance
 from .targeting import (
     describe_ref,
@@ -603,7 +603,7 @@ def _choose_each_target(
     count = target_count(state, trig.controller, spec, trig.source_oid)
     if count != "any" and (not isinstance(count, int) or count < 2 or spec.optional):
         return None
-    single = replace(spec, count=1, optional=False, up_to=False)
+    single = replace(spec, count=1, optional=False, up_to=False, min_count=0)
     candidates = [
         combo[0]
         for combo in enumerate_target_tuples(
@@ -615,7 +615,11 @@ def _choose_each_target(
     if count == "any":
         floor, ceiling = 0, len(candidates)
     elif spec.up_to:
-        floor, ceiling = 0, count
+        # "One, two, or three": below the floor the ability has no legal tuple,
+        # the same call the exactly-N branch makes.
+        if len(candidates) < spec.min_count:
+            return None
+        floor, ceiling = spec.min_count, count
     else:
         # Exactly N: with fewer than N legal targets the ability cannot be put
         # on the stack with all of them, and that is the enumeration's call.
@@ -652,7 +656,7 @@ def _random_trigger_targets(
     spec, so there is no other spec to combine with and no size to ask.
     """
     count = spec.count if isinstance(spec.count, int) else 1
-    single = replace(spec, count=1, optional=False, up_to=False)
+    single = replace(spec, count=1, optional=False, up_to=False, min_count=0)
     candidates = [
         combo[0]
         for combo in enumerate_target_tuples(
@@ -1133,10 +1137,19 @@ def _place_after_resolution(
     # (Ultimate Nullification). No ordinal names the bottom of a library whose
     # size varies, and none is needed: a library move with no index appends,
     # which is the bottom.
+    #
+    # `"shuffle"` is "shuffle <this card> into its owner's library" (the Sun's
+    # Zenith cycle): the same move with no depth, then that library shuffled
+    # (701.24a). It cannot be a `shuffle` op in the card's own effects -- those
+    # run while the card is still on the stack, so the card would land on the
+    # bottom of a library already shuffled without it.
     tuck_to = None
+    shuffles_in = False
     if card.tucks_itself is not None and destination is Zone.GRAVEYARD:
         destination = Zone.LIBRARY
-        if card.tucks_itself != "bottom":
+        if card.tucks_itself == "shuffle":
+            shuffles_in = True
+        elif card.tucks_itself != "bottom":
             tuck_to = max(0, int(card.tucks_itself) - 1)
     # `granted_rebound` beside the printed flag, and the disjunction is the
     # whole of Ojer Pakpatiq's "it gains rebound": a spell that prints rebound
@@ -1213,6 +1226,8 @@ def _place_after_resolution(
             to_index=tuck_to,
             cause="resolved",
         )
+    if shuffles_in:
+        shuffle_library(state, obj.owner)
     if obj.pending_face_down and destination is Zone.BATTLEFIELD:
         # Morph. Marked after the move for `cast_transformed`'s reason:
         # `reset_permanent_state` clears it on the way onto the battlefield,

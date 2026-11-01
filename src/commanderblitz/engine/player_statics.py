@@ -236,6 +236,39 @@ def player_cant_gain_life(state: GameState, pid: int) -> bool:
     )
 
 
+def damage_cant_be_prevented(state: GameState) -> bool:
+    """Is every prevention effect switched off right now?  Usually false.
+
+    Everlasting Torment: "Damage can't be prevented." A "can't" over every
+    prevention effect at once (615.12), so it beats each of them however it was
+    made (101.2) -- shields from the `prevent_damage` ops, the `prevent_damage`
+    and `prevent_all_but` statics, fogs, Panther Habit's "prevent that damage
+    and put counters", and protection's damage half (702.16e). Read by
+    `primitives.damage_player` and `primitives.damage_permanent`, which own
+    every one of those hooks. Not a player-wide static in the `affects_player`
+    sense: it reaches all damage, to anything, from anything.
+
+    A shield counter is **not** a prevention: 122.1c makes it a replacement
+    ("instead remove a shield counter"), so it still answers damage under this.
+    Nor is a redirect (614.9) or a life floor (614.1a).
+    """
+    return next(_active_player_statics(state, "damage_cant_be_prevented"), None) is not None
+
+
+def all_damage_withers(state: GameState) -> bool:
+    """Is all damage dealt as though its source had wither right now?  Usually false.
+
+    Everlasting Torment: "All damage is dealt as though its source had
+    wither." Every source -- a creature, a spell on the stack, an ability whose
+    source has left, either player's -- so it cannot be a `grant_keyword`
+    static, which reaches only the permanents its `affects` matches. Read at
+    the one place damage to a creature becomes -1/-1 counters
+    (`primitives.damage_permanent`, 702.80a); damage to a player is unchanged,
+    as wither's is.
+    """
+    return next(_active_player_statics(state, "all_damage_wither"), None) is not None
+
+
 def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     """Does an active ``cant_lose_the_game`` / ``cant_win_the_game`` static name ``pid``?
 

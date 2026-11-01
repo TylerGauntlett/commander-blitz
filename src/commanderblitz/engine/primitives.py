@@ -26,8 +26,10 @@ from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, STUN, GameObject
 from .player_statics import (
+    all_damage_withers,
     counter_placement_replacements,
     counters_prohibited,
+    damage_cant_be_prevented,
     damage_cap,
     life_gain_addend,
     life_gain_multiplier,
@@ -431,6 +433,11 @@ def damage_player(
             state, redirect.to, amount, source_oid,
             is_combat=is_combat, redirected=(*redirected, redirect),
         )
+    # "Damage can't be prevented" (Everlasting Torment): every prevention below
+    # is skipped -- the shield, protection, the dealer's shield, the fog, absorb
+    # and the all-but cap. After the redirect, which is a replacement and not a
+    # prevention (614.9), so it still moves the damage.
+    preventable = not damage_cant_be_prevented(state)
     # "Prevent all damage that would be dealt to you this turn" (615.1). Checked
     # *first*, above everything, because prevented damage was never dealt: no
     # life lost, no poison counters, no lifelink for the attacker, no
@@ -444,7 +451,7 @@ def damage_player(
     # the player-damage path for a prevention to be consulted at all. The
     # permanent path has had one since absorb (`damage_permanent`, twenty lines
     # down); this is its player-side counterpart.
-    if (shield := preventing_shield(state, pid, is_combat=is_combat)) is not None:
+    if preventable and (shield := preventing_shield(state, pid, is_combat=is_combat)) is not None:
         # `fire`, not `emit`: emit only writes the log, which is what both
         # existing DAMAGE_PREVENTED sites did and is why `damage_prevented`
         # could not be a trigger. Selfless Squire's second line reads `amount`
@@ -480,7 +487,7 @@ def damage_player(
     # different questions: a shield stops *all* damage this turn whatever dealt
     # it, and protection is parameterised by the source. Only the second needs
     # `source_oid`.
-    if player_protected_from(state, pid, source_oid):
+    if preventable and player_protected_from(state, pid, source_oid):
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -496,7 +503,7 @@ def damage_player(
     # (Gideon of the Trials, Kiora, the Crashing Wave). A shield on the
     # *dealer*, so it is asked here as well as in `damage_permanent`: the
     # creature it was aimed at is exactly the one about to hit this player.
-    if permanent_shielded(state, source_oid, by=True, is_combat=is_combat):
+    if preventable and permanent_shielded(state, source_oid, by=True, is_combat=is_combat):
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -510,7 +517,7 @@ def damage_player(
         return 0
     # "Prevent all combat damage that would be dealt this turn by non-Spider
     # creatures" (Arachnogenesis): keyed to the dealer, beside its shield.
-    if is_combat and combat_fogged(state, source_oid):
+    if preventable and is_combat and combat_fogged(state, source_oid):
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -529,7 +536,9 @@ def damage_player(
     # the whole event, and before the doubling, the order the protected player
     # would choose (616.1): prevent 1 of 3 then double is 4, double then
     # prevent is 5. What is prevented was never dealt, so nothing below sees it.
-    if (absorbed := prevented_player_damage(state, pid, source_oid, is_combat=is_combat)) > 0:
+    if preventable and (
+        absorbed := prevented_player_damage(state, pid, source_oid, is_combat=is_combat)
+    ) > 0:
         blocked = min(absorbed, amount)
         amount -= blocked
         fire(
@@ -560,7 +569,8 @@ def damage_player(
     # the doubling, which is the order the protected player would pick (616.1):
     # a doubled hit capped at 1 is still 1, where capping first and doubling
     # after would let 2 through. The surplus was never dealt.
-    amount = _apply_damage_cap(state, amount, source_oid, None, pid)
+    if preventable:
+        amount = _apply_damage_cap(state, amount, source_oid, None, pid)
     if amount <= 0:
         return 0
     # Infect (702.90c): damage to a *player* is poison counters instead of life
@@ -738,6 +748,10 @@ def damage_permanent(
             state, redirect.to, amount, source_oid,
             is_combat=is_combat, batch=batch, redirected=(*redirected, redirect),
         )
+    # "Damage can't be prevented" (Everlasting Torment), as in `damage_player`:
+    # every prevention below is skipped. The shield counter is not one of them
+    # -- 122.1c makes it a replacement -- and still answers the damage.
+    preventable = not damage_cant_be_prevented(state)
     # "If equipped creature would be dealt damage, prevent that damage and put
     # that many +1/+1 counters on it" (Panther Habit). One replacement (615):
     # the damage is never dealt -- no mark, no deathtouch, no lifelink, no
@@ -753,7 +767,7 @@ def damage_permanent(
     # counter or a cap (each of which would leave fewer or none), and a
     # `replace_damage` doubling applied before it rather than after, with any
     # addend ahead of the doubling for the same reason.
-    if (into := damage_into_counters(state, oid, is_combat=is_combat)) is not None:
+    if preventable and (into := damage_into_counters(state, oid, is_combat=is_combat)) is not None:
         shield_source, kind = into
         amount = replaced_damage(
             state, amount, source_oid, oid, is_combat=is_combat, addends_first=True
@@ -774,7 +788,7 @@ def damage_permanent(
     # Protection prevents the damage entirely -- so nothing is marked, no
     # deathtouch is recorded, and the source's lifelink gains nothing, which is
     # why this returns before all three rather than zeroing `amount` later.
-    if protected_from(state, oid, source_oid):
+    if preventable and protected_from(state, oid, source_oid):
         # `fire`, not `emit`, and `to="permanent"`: see the player-side site in
         # `damage_player`. This one has always been a log line with nothing
         # subscribed; putting it on the bus costs nothing and makes the two
@@ -800,7 +814,7 @@ def damage_permanent(
     # with both on one creature the total shield has already taken everything,
     # and absorb would otherwise fire a second DAMAGE_PREVENTED for damage that
     # no longer exists.
-    if prevents_all_damage(state, oid, is_combat=is_combat):
+    if preventable and prevents_all_damage(state, oid, is_combat=is_combat):
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -816,7 +830,7 @@ def damage_permanent(
     # that would be dealt to him this turn" (Gideon Jura) on the recipient, and
     # "…target permanent would deal" (Gideon of the Trials) on the dealer. Both
     # answer the whole event however big it is, so they sit beside it.
-    if (
+    if preventable and (
         permanent_shielded(state, oid, by=False, is_combat=is_combat)
         or permanent_shielded(state, source_oid, by=True, is_combat=is_combat)
         or (is_combat and combat_fogged(state, source_oid))
@@ -837,7 +851,7 @@ def damage_permanent(
     # what is prevented was never dealt, so nothing below should see it: no
     # deathtouch mark, no lifelink, no ledger entry, and a `DAMAGE_DEALT` event
     # carrying the reduced number rather than the printed one.
-    if (shield := prevented_damage(state, oid, is_combat=is_combat)) > 0:
+    if preventable and (shield := prevented_damage(state, oid, is_combat=is_combat)) > 0:
         blocked = min(shield, amount)
         amount -= blocked
         fire(
@@ -904,7 +918,8 @@ def damage_permanent(
     amount = replaced_damage(state, amount, source_oid, oid, is_combat=is_combat)
     # "…or a planeswalker you control, prevent all but 1 of that damage." After
     # the doubling for the reason given in `damage_player`.
-    amount = _apply_damage_cap(state, amount, source_oid, oid, obj.controller)
+    if preventable:
+        amount = _apply_damage_cap(state, amount, source_oid, oid, obj.controller)
     if amount <= 0:
         return 0
     # Wither and infect (702.90b/c): the damage is dealt "in the form of -1/-1
@@ -918,8 +933,13 @@ def damage_permanent(
     # still fires with the same amount -- so enrage, Sengir and "damaged this
     # turn" all read a withering creature the way they read any other. Only
     # where the number lands changes.
-    withers = source_oid is not None and (
-        _has(state, source_oid, Keyword.WITHER) or _has(state, source_oid, Keyword.INFECT)
+    #
+    # "All damage is dealt as though its source had wither" (Everlasting
+    # Torment) reaches every source, a spell's and a departed one's included,
+    # so it is asked here rather than granted as a keyword.
+    withers = all_damage_withers(state) or (
+        source_oid is not None
+        and (_has(state, source_oid, Keyword.WITHER) or _has(state, source_oid, Keyword.INFECT))
     )
     # 306.8: damage dealt to a planeswalker removes that many loyalty counters.
     # Read here, beside wither, for the same reason wither is read here: this is
@@ -1922,6 +1942,35 @@ def pump(
     _stats_changed(state, obj, power=power, toughness=toughness)
 
 
+def set_base_toughness(
+    state: GameState, oid: int, toughness: int, *, source: int | None = None
+) -> None:
+    """ "This creature's toughness becomes N", indefinitely (layer 7b, 613.4b).
+
+    The toughness half of an exchange of a life total with a creature's
+    toughness (Tree of Perdition, 701.12). A *setting* effect, not a pump: it
+    goes on `GameObject.animations` with a timestamp, so it is read in the same
+    timestamp-ordered 7b pass as an indefinite animation (the later one sets
+    the base), and counters, anthems and pumps still layer on top of it. Power,
+    types and colours are untouched -- what separates it from `animate`, which
+    sets the whole body. It lasts as long as the permanent does; leaving the
+    battlefield empties `animations`.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.animations.append(
+        TempEffect(
+            kind="set_toughness",
+            toughness=toughness,
+            source=source,
+            timestamp=state.alloc_timestamp(),
+        )
+    )
+    state.bump_chars()
+    _stats_changed(state, obj, toughness=toughness)
+
+
 def animate(
     state: GameState,
     oid: int,
@@ -1937,6 +1986,8 @@ def animate(
     permanent: bool = False,
     exact: bool = False,
     until_player: int | None = None,
+    keep_colors: bool = False,
+    keep_pt: bool = False,
 ) -> None:
     """ "It becomes a 4/4 Elemental creature until end of turn. It's still a land."
 
@@ -1957,6 +2008,11 @@ def animate(
     replace the permanent's own (`TempEffect.exact`). Its keywords, if any, are
     granted for as long as the permanent lasts. A your-turn-only keyword has no
     permanent form and is refused rather than silently timed.
+
+    ``keep_colors`` and ``keep_pt`` are Vraska, Betrayal's Sting's "target
+    creature becomes a Treasure artifact ... and loses all other card types":
+    an exact type replacement that names no colour and no size, so both stay
+    what they were (`TempEffect.keeps_colors`, `TempEffect.keeps_pt`).
     """
 
     obj = state.objects.get(oid)
@@ -1975,7 +2031,11 @@ def animate(
         exact=exact,
         timestamp=state.alloc_timestamp(),
         until_player=until_player,
+        keeps_colors=keep_colors,
+        keeps_pt=keep_pt,
     )
+    if keep_pt:
+        power = toughness = None  # nothing to announce: the size did not change
     if permanent:
         obj.animations.append(effect)
         for word in keywords:

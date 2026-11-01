@@ -358,6 +358,51 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "aberrant_return",
+      "mana_cost": "{4}{B}{B}",
+      "name": "Aberrant Return",
+      "oracle_text": "Put one, two, or three target creature cards from graveyards onto the battlefield under your control. Each of them enters with an additional -1/-1 counter on it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "counters": {
+            "-1/-1": 1
+          },
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 3,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "min_count": 1,
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -7724,6 +7769,81 @@
               "amount": {
                 "const": 1
               },
+              "counter": "-1/-1",
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cycle or discard another card, put a -1/-1 counter on each creature your opponents control.",
+          "trigger": {
+            "controller": "you",
+            "event": "discard",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {2} ({2}, Discard this card: Draw a card.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "archfiend_of_ifnir",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Archfiend of Ifnir",
+      "oracle_text": "Flying\nWhenever you cycle or discard another card, put a -1/-1 counter on each creature your opponents control.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "gain_life",
               "player": "you"
             },
@@ -10355,6 +10475,93 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "blight": 2
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward—Blight 2."
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "controller": "you"
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "controller_of": "subject"
+                  }
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more -1/-1 counters are put on a creature, draw a card if you control that creature. If you don't control it, its controller loses 1 life.",
+          "trigger": {
+            "controller": "any",
+            "counter": "-1/-1",
+            "event": "counter_placed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "auntie_ool_cursewretch",
+      "mana_cost": "{1}{B}{R}{G}",
+      "name": "Auntie Ool, Cursewretch",
+      "oracle_text": "Ward—Blight 2. (To blight 2, a player puts two -1/-1 counters on a creature they control.)\nWhenever one or more -1/-1 counters are put on a creature, draw a card if you control that creature. If you don't control it, its controller loses 1 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -15147,6 +15354,95 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — Destroy target nonland permanent an opponent controls."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Search your library for a Forest card, put it onto the battlefield tapped, then shuffle."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "keywords": [
+                "deathtouch"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Creatures you control gain deathtouch until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "binding_the_old_gods",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Binding the Old Gods",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy target nonland permanent an opponent controls.\nII — Search your library for a Forest card, put it onto the battlefield tapped, then shuffle.\nIII — Creatures you control gain deathtouch until end of turn.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U"
@@ -15970,6 +16266,40 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "black_sun_s_zenith",
+      "mana_cost": "{X}{B}{B}",
+      "name": "Black Sun's Zenith",
+      "oracle_text": "Put X -1/-1 counters on each creature. Shuffle Black Sun's Zenith into its owner's library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "counter": "-1/-1",
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "tucks_itself": "shuffle",
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -17893,6 +18223,66 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a creature dies, if it had a -1/-1 counter on it, put a -1/-1 counter on target creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blowfly_infestation",
+      "mana_cost": "{2}{B}",
+      "name": "Blowfly Infestation",
+      "oracle_text": "Whenever a creature dies, if it had a -1/-1 counter on it, put a -1/-1 counter on target creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -21975,6 +22365,68 @@
       ]
     },
     {
+      "additional_cost": {
+        "blight": 1
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "burning_curiosity",
+      "mana_cost": "{2}{R}",
+      "name": "Burning Curiosity",
+      "oracle_text": "As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)\nExile the top two cards of your library. If this spell's additional cost was paid, exile the top three cards instead. Until the end of your next turn, you may play those cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "additional_paid": true
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "else": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "end_of_your_next_turn",
+              "player": "you"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "end_of_your_next_turn",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -23975,6 +24427,69 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{B}",
+            "remove_counters": {
+              "amount": 1,
+              "counter": "-1/-1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}, Remove a -1/-1 counter from this creature: Put a -1/-1 counter on each other creature."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "carnifex_demon",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{B}{B}",
+      "name": "Carnifex Demon",
+      "oracle_text": "Flying\nThis creature enters with two -1/-1 counters on it.\n{B}, Remove a -1/-1 counter from this creature: Put a -1/-1 counter on each other creature.",
+      "power": 6,
+      "replacements": [
+        {
+          "amount": 2,
+          "counter": "-1/-1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Demon"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -24885,6 +25400,108 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cathartic_pyre",
+      "mana_cost": "{1}{R}",
+      "name": "Cathartic Pyre",
+      "oracle_text": "Choose one —\n• Cathartic Pyre deals 3 damage to target creature or planeswalker.\n• Discard up to two cards, then draw that many cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "damage",
+                  "target": "burned"
+                }
+              ],
+              "label": "Cathartic Pyre deals 3 damage to target creature or planeswalker."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 2
+                  },
+                  "as": "pitched",
+                  "op": "discard",
+                  "player": "you",
+                  "up_to": true
+                },
+                {
+                  "amount": {
+                    "count": {
+                      "binding": "pitched"
+                    }
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "label": "Discard up to two cards, then draw that many cards."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "burned",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "additional_cost": {
+        "discard": 2
+      },
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "cathartic_reunion",
+      "mana_cost": "{1}{R}",
+      "name": "Cathartic Reunion",
+      "oracle_text": "As an additional cost to cast this spell, discard two cards.\nDraw three cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 3
+          },
+          "op": "draw",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -26824,6 +27441,123 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put three -1/-1 counters on target creature you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "-1/-1"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Remove a -1/-1 counter from this creature: Add one mana of any color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "channeler_initiate",
+      "mana_cost": "{1}{G}",
+      "name": "Channeler Initiate",
+      "oracle_text": "When this creature enters, put three -1/-1 counters on target creature you control.\n{T}, Remove a -1/-1 counter from this creature: Add one mana of any color.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -27396,6 +28130,47 @@
       "types": [
         "Artifact",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_spells": {
+            "controller": "you"
+          },
+          "effect": "spells_cant_be_countered",
+          "kind": "static",
+          "text": "Spells you control can't be countered."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "op": "discover"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, discover 5.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "chimil_the_inner_sun",
+      "mana_cost": "{6}",
+      "name": "Chimil, the Inner Sun",
+      "oracle_text": "Spells you control can't be countered.\nAt the beginning of your end step, discover 5. (Exile cards from the top of your library until you exile a nonland card with mana value 5 or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -31421,6 +32196,65 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this artifact enters, put a -1/-1 counter on target creature.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "contagion_clasp",
+      "mana_cost": "{2}",
+      "name": "Contagion Clasp",
+      "oracle_text": "When this artifact enters, put a -1/-1 counter on target creature.\n{4}, {T}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -40277,6 +41111,62 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        },
+        {
+          "cost": {
+            "put_counters": {
+              "amount": 1,
+              "counter": "-1/-1"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "activated",
+          "text": "Put a -1/-1 counter on this creature: Untap this creature."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "devoted_druid",
+      "mana_cost": "{1}{G}",
+      "name": "Devoted Druid",
+      "oracle_text": "{T}: Add {G}.\nPut a -1/-1 counter on this creature: Untap this creature.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -43980,6 +44870,108 @@
               "amount": {
                 "const": 1
               },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put a -1/-1 counter on target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": {
+                    "const": 1
+                  },
+                  "destination": "battlefield",
+                  "op": "search_zones",
+                  "player": "you",
+                  "selector": {
+                    "types": [
+                      "Land"
+                    ]
+                  },
+                  "tapped": true,
+                  "zones": [
+                    "hand",
+                    "graveyard"
+                  ]
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a land card from your hand or graveyard onto the battlefield tapped?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with a -1/-1 counter on it dies, you may put a land card from your hand or graveyard onto the battlefield tapped.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "dread_tiller",
+      "mana_cost": "{1}{B}{G}",
+      "name": "Dread Tiller",
+      "oracle_text": "When this creature enters, put a -1/-1 counter on target creature.\nWhenever a creature with a -1/-1 counter on it dies, you may put a land card from your hand or graveyard onto the battlefield tapped.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Scarecrow"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "lose_life",
               "player": "you"
             },
@@ -44985,6 +45977,86 @@
         "Imp"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks or blocks, put a -1/-1 counter on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks or blocks, put a -1/-1 counter on it.",
+          "trigger": {
+            "event": "blocks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "-1/-1"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card for each -1/-1 counter on it.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "dusk_urchins",
+      "mana_cost": "{2}{B}",
+      "name": "Dusk Urchins",
+      "oracle_text": "Whenever this creature attacks or blocks, put a -1/-1 counter on it.\nWhen this creature dies, draw a card for each -1/-1 counter on it.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Ouphe"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -49951,6 +51023,46 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eventide_s_shadow",
+      "mana_cost": "{4}{B}",
+      "name": "Eventide's Shadow",
+      "oracle_text": "Remove any number of counters from among permanents on the battlefield. You draw cards and lose life equal to the number of counters removed this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "removed",
+          "objects": {
+            "controller": "any",
+            "zone": "battlefield"
+          },
+          "op": "remove_counters_from_among"
+        },
+        {
+          "amount": {
+            "binding": "removed"
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "binding": "removed"
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -50070,6 +51182,84 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "any",
+          "effect": "cant_gain_life",
+          "kind": "static",
+          "text": "Players can't gain life."
+        },
+        {
+          "effect": "damage_cant_be_prevented",
+          "kind": "static",
+          "text": "Damage can't be prevented."
+        },
+        {
+          "effect": "all_damage_wither",
+          "kind": "static",
+          "text": "All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "everlasting_torment",
+      "mana_cost": "{2}{B/R}",
+      "name": "Everlasting Torment",
+      "oracle_text": "Players can't gain life.\nDamage can't be prevented.\nAll damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, proliferate.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "evolution_sage",
+      "mana_cost": "{2}{G}",
+      "name": "Evolution Sage",
+      "oracle_text": "Landfall — Whenever a land you control enters, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -53627,6 +54817,99 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "any",
+                  "objects": {
+                    "controller": {
+                      "target": "t1"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "op": "create_token",
+              "token": "saproling_1_1_g"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "When Ferrafor enters, create a number of 1/1 green Saproling creature tokens equal to the number of counters among creatures target player controls.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "double_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}: Double the number of each kind of counter on target creature."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "ferrafor_young_yew",
+      "mana_cost": "{6}{G}",
+      "name": "Ferrafor, Young Yew",
+      "oracle_text": "When Ferrafor enters, create a number of 1/1 green Saproling creature tokens equal to the number of counters among creatures target player controls.\n{T}: Double the number of each kind of counter on target creature.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Treefolk",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "tap": true
@@ -54719,6 +56002,49 @@
       "types": [
         "Kindred",
         "Artifact"
+      ]
+    },
+    {
+      "additional_cost": {
+        "pay_life_x": true
+      },
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "fire_covenant",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Fire Covenant",
+      "oracle_text": "As an additional cost to cast this spell, pay X life.\nFire Covenant deals X damage divided as you choose among any number of target creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "divided": "t1",
+          "op": "damage"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -56681,6 +58007,62 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "amount"
+              },
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "elf_warrior_1_1_g"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Create a 1/1 green Elf Warrior token?"
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a -1/-1 counter is put on a creature, you may create a 1/1 green Elf Warrior creature token.",
+          "trigger": {
+            "controller": "any",
+            "counter": "-1/-1",
+            "event": "counter_placed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "flourishing_defenses",
+      "mana_cost": "{4}{G}",
+      "name": "Flourishing Defenses",
+      "oracle_text": "Whenever a -1/-1 counter is put on a creature, you may create a 1/1 green Elf Warrior creature token.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -64707,6 +66089,125 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "lose_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "You draw a card and lose 1 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "enchantment"
+                      },
+                      "op": "destroy"
+                    }
+                  ],
+                  "label": "Destroy target enchantment."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "any_kind": true,
+                      "objects": {
+                        "target": "permanent"
+                      },
+                      "op": "remove_counters",
+                      "up_to": true
+                    }
+                  ],
+                  "label": "Remove up to three counters from target permanent."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "enchantment",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Enchantment"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "permanent",
+              "kind": "permanent",
+              "mode": 2,
+              "selector": {
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Glissa Sunslayer deals combat damage to a player, choose one —\n• You draw a card and lose 1 life.\n• Destroy target enchantment.\n• Remove up to three counters from target permanent.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "glissa_sunslayer",
+      "keywords": [
+        "first_strike",
+        "deathtouch"
+      ],
+      "mana_cost": "{1}{B}{G}",
+      "name": "Glissa Sunslayer",
+      "oracle_text": "First strike, deathtouch\nWhenever Glissa Sunslayer deals combat damage to a player, choose one —\n• You draw a card and lose 1 life.\n• Destroy target enchantment.\n• Remove up to three counters from target permanent.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Zombie",
+        "Elf"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -66657,6 +68158,63 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, return a land you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B}{G}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [],
+      "id": "golgari_rot_farm",
+      "name": "Golgari Rot Farm",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand.\n{T}: Add {B}{G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "tap": true
@@ -67795,6 +69353,97 @@
       "toughness": 6,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this enchantment enters, you become the monarch.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "At the beginning of your end step, if you're the monarch, return up to one target creature card from your graveyard to your hand.",
+          "trigger": {
+            "condition": {
+              "is_monarch": "you"
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control dies, each opponent loses 1 life and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "grave_venerations",
+      "mana_cost": "{3}{B}",
+      "name": "Grave Venerations",
+      "oracle_text": "When this enchantment enters, you become the monarch.\nAt the beginning of your end step, if you're the monarch, return up to one target creature card from your graveyard to your hand.\nWhenever a creature you control dies, each opponent loses 1 life and you gain 1 life.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -69100,6 +70749,70 @@
       "abilities": [
         {
           "cost": {
+            "remove_counters": {
+              "amount": 1,
+              "counter": "-1/-1"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Remove a -1/-1 counter from this creature: Put a -1/-1 counter on another target creature."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "grim_poppet",
+      "mana_cost": "{7}",
+      "name": "Grim Poppet",
+      "oracle_text": "This creature enters with three -1/-1 counters on it.\nRemove a -1/-1 counter from this creature: Put a -1/-1 counter on another target creature.",
+      "power": 4,
+      "replacements": [
+        {
+          "amount": 3,
+          "counter": "-1/-1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Scarecrow"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -69348,6 +71061,63 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, return a land you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{R}{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R}{G}."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "id": "gruul_turf",
+      "name": "Gruul Turf",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand.\n{T}: Add {R}{G}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -70976,6 +72746,99 @@
       "toughness": 0,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "-1/-1",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Put a -1/-1 counter on the target creature?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever Hapatra deals combat damage to a player, you may put a -1/-1 counter on target creature.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "snake_1_1_g_deathtouch"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you put one or more -1/-1 counters on a creature, create a 1/1 green Snake creature token with deathtouch.",
+          "trigger": {
+            "controller": "any",
+            "counter": "-1/-1",
+            "event": "counter_placed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "put_by": "you"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "hapatra_vizier_of_poisons",
+      "mana_cost": "{B}{G}",
+      "name": "Hapatra, Vizier of Poisons",
+      "oracle_text": "Whenever Hapatra deals combat damage to a player, you may put a -1/-1 counter on target creature.\nWhenever you put one or more -1/-1 counters on a creature, create a 1/1 green Snake creature token with deathtouch.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
         "Creature"
       ]
     },
@@ -75981,6 +77844,58 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "hoarder_s_greed",
+      "mana_cost": "{3}{B}",
+      "name": "Hoarder's Greed",
+      "oracle_text": "You lose 2 life and draw two cards, then clash with an opponent. If you win, repeat this process. (Each clashing player reveals the top card of their library, then puts that card on their choice of the top or bottom. A player wins if their card had a greater mana value.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "binding": "clash_won"
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "op": "clash"
+            }
+          ],
+          "op": "repeat_while",
+          "reset": [
+            "clash_won"
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -78278,6 +80193,95 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {B}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{B}{B}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "subtypes": [
+                "Desert"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{2}{B}{B}, {T}, Sacrifice a Desert: Put two -1/-1 counters on target creature an opponent controls. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "ifnir_deadlands",
+      "name": "Ifnir Deadlands",
+      "oracle_text": "{T}: Add {C}.\n{T}, Pay 1 life: Add {B}.\n{2}{B}{B}, {T}, Sacrifice a Desert: Put two -1/-1 counters on target creature an opponent controls. Activate only as a sorcery.",
+      "source": "auto",
+      "subtypes": [
+        "Desert"
+      ],
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "objects": {
@@ -79074,6 +81078,92 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "incremental_blight",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Incremental Blight",
+      "oracle_text": "Put a -1/-1 counter on target creature, two -1/-1 counters on another target creature, and three -1/-1 counters on a third target creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "-1/-1",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "counter": "-1/-1",
+          "objects": {
+            "target": "t2"
+          },
+          "op": "add_counters"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "counter": "-1/-1",
+          "objects": {
+            "target": "t3"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t3",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -90713,6 +92803,60 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "opponent",
+            "has_counters": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Creatures your opponents control with counters on them can't attack or block."
+        },
+        {
+          "affects": {
+            "controller": "opponent",
+            "has_counters": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Creatures your opponents control with counters on them can't attack or block."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kulrath_knight",
+      "keywords": [
+        "flying",
+        "wither"
+      ],
+      "mana_cost": "{3}{B/R}{B/R}",
+      "name": "Kulrath Knight",
+      "oracle_text": "Flying\nWither (This deals damage to creatures in the form of -1/-1 counters.)\nCreatures your opponents control with counters on them can't attack or block.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -91229,6 +93373,55 @@
         "Sorcery"
       ],
       "uncounterable": true
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_put_this_turn": {
+                  "player": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "lasting_tarfire",
+      "mana_cost": "{1}{R}",
+      "name": "Lasting Tarfire",
+      "oracle_text": "At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
     },
     {
       "abilities": [
@@ -93244,6 +95437,115 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 2
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "+2: Put a -1/-1 counter on up to one target creature."
+        },
+        {
+          "cost": {
+            "loyalty": -3
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "has_counters": "-1/-1",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−3: Destroy target creature with a -1/-1 counter on it."
+        },
+        {
+          "cost": {
+            "loyalty": -10
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "text": "−10: Return all creature cards from your graveyard to the battlefield."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "liliana_death_wielder",
+      "loyalty": 5,
+      "mana_cost": "{5}{B}{B}",
+      "name": "Liliana, Death Wielder",
+      "oracle_text": "+2: Put a -1/-1 counter on up to one target creature.\n−3: Destroy target creature with a -1/-1 counter on it.\n−10: Return all creature cards from your graveyard to the battlefield.",
+      "source": "auto",
+      "subtypes": [
+        "Liliana"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -101150,6 +103452,76 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "wither"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have wither."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, if its toughness was less than 1, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "toughness_had": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "massacre_girl_known_killer",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Massacre Girl, Known Killer",
+      "oracle_text": "Menace\nCreatures you control have wither. (They deal damage to creatures in the form of -1/-1 counters.)\nWhenever a creature an opponent controls dies, if its toughness was less than 1, draw a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Assassin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -103259,6 +105631,60 @@
         "Assassin"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "not_colors": [
+                  "B"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, put a -1/-1 counter on each nonblack creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "midnight_banshee",
+      "keywords": [
+        "wither"
+      ],
+      "mana_cost": "{3}{B}{B}{B}",
+      "name": "Midnight Banshee",
+      "oracle_text": "Wither (This deals damage to creatures in the form of -1/-1 counters.)\nAt the beginning of your upkeep, put a -1/-1 counter on each nonblack creature.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -110007,6 +112433,66 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "may",
+              "prompt": "Return that card to the battlefield under your control?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may return that card to the battlefield under your control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "necroskitter",
+      "keywords": [
+        "wither"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Necroskitter",
+      "oracle_text": "Wither (This deals damage to creatures in the form of -1/-1 counters.)\nWhenever a creature an opponent controls with a -1/-1 counter on it dies, you may return that card to the battlefield under your control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -110534,6 +113020,77 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_kind": true,
+              "from": {
+                "target": "from"
+              },
+              "objects": {
+                "target": "onto"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "from",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "onto",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "nesting_grounds",
+      "name": "Nesting Grounds",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery.",
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -115195,6 +117752,106 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "activated_by": "opponent",
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "gain_control",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "-1/-1"
+              },
+              "op": "draw",
+              "player": {
+                "owner_of": "self"
+              }
+            },
+            {
+              "amount": {
+                "counters_had": "-1/-1"
+              },
+              "op": "lose_life",
+              "player": {
+                "not": {
+                  "owner_of": "self"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, if it had one or more -1/-1 counters on it, its owner draws that many cards and each other player loses that much life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "oft_nabbed_goat",
+      "mana_cost": "{1}{B}",
+      "name": "Oft-Nabbed Goat",
+      "oracle_text": "{1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery.\nWhen this creature dies, if it had one or more -1/-1 counters on it, its owner draws that many cards and each other player loses that much life.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Goat"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -121327,6 +123984,52 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "persist",
+      "mana_cost": "{1}{B}",
+      "name": "Persist",
+      "oracle_text": "Return target nonlegendary creature card from your graveyard to the battlefield with a -1/-1 counter on it.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "counters": {
+            "-1/-1": 1
+          },
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "not_supertypes": [
+              "Legendary"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -126582,6 +129285,101 @@
         {
           "effects": [
             {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "puca_s_covenant_returned"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "destination": "hand",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "return_from_graveyard"
+                    },
+                    {
+                      "flag": "puca_s_covenant_returned",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Return the target card to your hand?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment",
+                  "Land",
+                  "Planeswalker",
+                  "Battle"
+                ],
+                "controller": "you",
+                "exclude_binding": "subject",
+                "mana_value": {
+                  "op": "<=",
+                  "value": {
+                    "counters_had": "any"
+                  }
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever a creature you control with a counter on it dies, you may return another target permanent card with mana value less than or equal to the number of counters on that creature from your graveyard to your hand. Do this only once each turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "puca_s_covenant",
+      "mana_cost": "{2}{G}",
+      "name": "Puca's Covenant",
+      "oracle_text": "Whenever a creature you control with a counter on it dies, you may return another target permanent card with mana value less than or equal to the number of counters on that creature from your graveyard to your hand. Do this only once each turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -126791,6 +129589,131 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            },
+            {
+              "duration": "permanent",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "as": "clique_puppet",
+              "objects": {
+                "count": "all",
+                "target": "t1",
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "clique_puppet",
+                    "count": "all",
+                    "zone": "battlefield"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "At the beginning of your next end step, exile it.",
+              "your_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, put target creature card from an opponent's graveyard onto the battlefield under your control. It gains haste. At the beginning of your next end step, exile it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "counters": {
+                "-1/-1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Persist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "puppeteer_clique",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Puppeteer Clique",
+      "oracle_text": "Flying\nWhen this creature enters, put target creature card from an opponent's graveyard onto the battlefield under your control. It gains haste. At the beginning of your next end step, exile it.\nPersist (When this creature dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Faerie",
+        "Wizard"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -128968,6 +131891,63 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "chooser": "controller",
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land enters, return a land you control to its owner's hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}{R}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B}{R}."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [],
+      "id": "rakdos_carnarium",
+      "name": "Rakdos Carnarium",
+      "oracle_text": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand.\n{T}: Add {B}{R}.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {
@@ -148044,6 +151024,70 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "as": "blighted",
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a creature you control to blight"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "binding": "blighted"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, draw a card and blight 1",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sinister_gnarlbark",
+      "mana_cost": "{2}{B}",
+      "name": "Sinister Gnarlbark",
+      "oracle_text": "At the beginning of your end step, draw a card and blight 1. (Put a -1/-1 counter on a creature you control.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Treefolk",
+        "Warlock"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -148301,6 +151345,63 @@
         "Skeleton"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, put three -1/-1 counters on target creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "skinrender",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Skinrender",
+      "oracle_text": "When this creature enters, put three -1/-1 counters on target creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Zombie"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -152069,6 +155170,55 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, put a -1/-1 counter on each creature.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "soul_snuffers",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Soul Snuffers",
+      "oracle_text": "When this creature enters, put a -1/-1 counter on each creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Shaman"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -168544,6 +171694,234 @@
         {
           "effects": [
             {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When The Reaper enters, put a -1/-1 counter on each of up to two target creatures.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "reaper_reanimated"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "destination": "battlefield",
+                      "objects": {
+                        "binding": "subject",
+                        "zone": "graveyard"
+                      },
+                      "op": "return_from_graveyard"
+                    },
+                    {
+                      "flag": "reaper_reanimated",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Put that card onto the battlefield under your control?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may put that card onto the battlefield under your control. Do this only once each turn.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "the_reaper_king_no_more",
+      "mana_cost": "{2/B}{2/R}{2/G}",
+      "name": "The Reaper, King No More",
+      "oracle_text": "When The Reaper enters, put a -1/-1 counter on each of up to two target creatures.\nWhenever a creature an opponent controls with a -1/-1 counter on it dies, you may put that card onto the battlefield under your control. Do this only once each turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Scarecrow"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature with a -1/-1 counter on it dies, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "creature_dies"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{B}{R}: Put a -1/-1 counter on another target creature."
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When The Scorpion God dies, return it to its owner's hand at the beginning of the next end step.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "the_scorpion_god",
+      "mana_cost": "{3}{B}{R}",
+      "name": "The Scorpion God",
+      "oracle_text": "Whenever a creature with a -1/-1 counter on it dies, draw a card.\n{1}{B}{R}: Put a -1/-1 counter on another target creature.\nWhen The Scorpion God dies, return it to its owner's hand at the beginning of the next end step.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "God"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "become_monarch",
               "player": "you"
             }
@@ -173767,6 +177145,57 @@
         "Monkey"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "exchange_life_total",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{T}: Exchange target opponent's life total with this creature's toughness."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "tree_of_perdition",
+      "keywords": [
+        "defender"
+      ],
+      "mana_cost": "{3}{B}",
+      "name": "Tree of Perdition",
+      "oracle_text": "Defender\n{T}: Exchange target opponent's life total with this creature's toughness.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Plant"
+      ],
+      "toughness": 13,
       "types": [
         "Creature"
       ]
@@ -182635,6 +186064,85 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "damage"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, it deals 1 damage to each creature your opponents control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls with a counter on it dies, you create a tapped Treasure token.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "village_pillagers",
+      "keywords": [
+        "wither"
+      ],
+      "mana_cost": "{3}{R}{R}",
+      "name": "Village Pillagers",
+      "oracle_text": "Wither (This deals damage to creatures in the form of -1/-1 counters.)\nWhen this creature enters, it deals 1 damage to each creature your opponents control.\nWhenever a creature an opponent controls with a counter on it dies, you create a tapped Treasure token.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warrior"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",
@@ -184417,6 +187925,232 @@
       "toughness": 7,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "loyalty": 0
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "lose_life",
+              "player": "you"
+            },
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "0: You draw a card and lose 1 life. Proliferate."
+        },
+        {
+          "cost": {
+            "loyalty": -2
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "lose_all_abilities"
+            },
+            {
+              "duration": "permanent",
+              "exact": true,
+              "keep_colors": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "animate",
+              "subtypes": [
+                "Treasure"
+              ],
+              "types": [
+                "Artifact"
+              ]
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "−2: Target creature becomes a Treasure artifact with \"{T}, Sacrifice this artifact: Add one mana of any color\" and loses all other card types and abilities."
+        },
+        {
+          "cost": {
+            "loyalty": -9
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": "<",
+                "left": {
+                  "max_poison_of": {
+                    "target": "t1"
+                  }
+                },
+                "right": {
+                  "const": 9
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "minus": [
+                      {
+                        "const": 9
+                      },
+                      {
+                        "max_poison_of": {
+                          "target": "t1"
+                        }
+                      }
+                    ]
+                  },
+                  "op": "add_poison",
+                  "player": {
+                    "target": "t1"
+                  }
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "any"
+              }
+            }
+          ],
+          "text": "−9: If target player has fewer than nine poison counters, they get a number of poison counters equal to the difference."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Sacrifice this artifact: Add one mana of any color."
+        }
+      ],
+      "id": "vraska_betrayal_s_sting",
+      "keywords": [
+        "compleated"
+      ],
+      "loyalty": 6,
+      "mana_cost": "{4}{B}{B/P}",
+      "name": "Vraska, Betrayal's Sting",
+      "oracle_text": "Compleated ({B/P} can be paid with {B} or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n0: You draw a card and lose 1 life. Proliferate.\n−2: Target creature becomes a Treasure artifact with \"{T}, Sacrifice this artifact: Add one mana of any color\" and loses all other card types and abilities.\n−9: If target player has fewer than nine poison counters, they get a number of poison counters equal to the difference.",
+      "source": "auto",
+      "subtypes": [
+        "Vraska"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Planeswalker"
       ]
     },
     {
@@ -188219,6 +191953,129 @@
       "toughness": 4,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "charge",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more -1/-1 counters are put on a creature, put a charge counter on this artifact.",
+          "trigger": {
+            "controller": "any",
+            "counter": "-1/-1",
+            "event": "counter_placed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        },
+        {
+          "cost": {
+            "mana": "{5}",
+            "sacrifice": {
+              "as": "sacrificed",
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "charge",
+                  "objects": {
+                    "binding": "sacrificed"
+                  }
+                }
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "scarecrow_2_2_c"
+            }
+          ],
+          "kind": "activated",
+          "text": "{5}, {T}, Sacrifice this artifact: Create X tapped 2/2 colorless Scarecrow artifact creature tokens, where X is the number of charge counters on this artifact."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "wickersmith_s_tools",
+      "mana_cost": "{3}",
+      "name": "Wickersmith's Tools",
+      "oracle_text": "Whenever one or more -1/-1 counters are put on a creature, put a charge counter on this artifact.\n{T}: Add one mana of any color.\n{5}, {T}, Sacrifice this artifact: Create X tapped 2/2 colorless Scarecrow artifact creature tokens, where X is the number of charge counters on this artifact.",
+      "source": "auto",
+      "types": [
+        "Artifact"
       ]
     },
     {

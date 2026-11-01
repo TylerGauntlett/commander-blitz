@@ -34,6 +34,7 @@ from .casting import (
     convoke_payments,
     convoke_pips,
     deferred_target_spec,
+    life_x_ceiling,
     pay_generic_tappers,
     strive_surcharge,
 )
@@ -52,7 +53,7 @@ from .costs import (
     pay,
     spell_purpose,
 )
-from .division import divided_damage, division_amount, division_caps
+from .division import divided_damage, division_amount, division_caps, fits_division
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_targets, ask_x, ask_yes_no
 from .effects.modes import chosen_at_random, modal_bounds, mode_labels, pick_at_random
 from .enums import ActionKind, DecisionKind, Step, Zone
@@ -456,6 +457,37 @@ class Game:
         specs = card.targets_for(gift_promised=action.gift_to is not None)
         if action.kicked and (swapped := kicked_targets(specs)) is not None:
             specs = swapped
+        # 601.2b before 601.2c: "as an additional cost to cast this spell, pay
+        # X life" announces X *now*, ahead of the targets, because Fire
+        # Covenant's "X damage divided as you choose among any number of target
+        # creatures" caps the targets at X (601.2d gives each at least one).
+        # Only the announcement moves; the life is paid with the other
+        # additional costs below (601.2h). A mana {X} stays where it is: its
+        # ceiling reads cost reductions that read the targets.
+        #
+        # Floored at the targets the line already carries, for the line legality
+        # offered with its targets on it (a targeting tax stops the deferral):
+        # each of those must be dealt at least one.
+        life_x: int | None = None
+        life_ceiling = life_x_ceiling(state, pid, card, action.additional_choice, action.targets)
+        if life_ceiling is not None:
+            floor = 0
+            if divided_damage(card):
+                floor = next(
+                    (
+                        v
+                        for v in range(life_ceiling + 1)
+                        if fits_division(state, pid, oid, card, specs, action.targets, x=v)
+                    ),
+                    life_ceiling,
+                )
+            life_x = yield from ask_x(
+                EffectContext(state=state, controller=pid, source_oid=oid, source_name=card.name),
+                f"Choose X for {card.name}",
+                life_ceiling,
+                pid,
+                min_x=floor,
+            )
         deferred = (
             None
             if action.overloaded or action.bestowed or action.mutated
@@ -464,7 +496,7 @@ class Game:
         late_refs: tuple[TargetRef, ...] = ()
         if deferred is not None:
             late_refs = yield from self._ask_deferred_targets(
-                pid, card, oid, deferred, action.targets
+                pid, card, oid, deferred, action.targets, x=life_x or 0
             )
         targets = tuple(action.targets) + late_refs
 
@@ -684,6 +716,11 @@ class Game:
         x = yield from self._ask_x(
             pid, card.name, cost, extra, spell_purpose(card), min_x=min_x or 0
         )
+        # The one X a spell has is the one the player announced, whichever half
+        # of the cost it belongs to: `_ask_x` returned 0 for a card whose X is
+        # its life payment, and the loader refuses a card with both.
+        if life_x is not None:
+            x = life_x
 
         # Which mode, also before paying (rule 601.2b). Recorded on the stack
         # item so `op_choose_mode` finds it already answered on resolution.
@@ -710,7 +747,7 @@ class Game:
         # 601.2d: "deals 4 damage divided as you choose" is divided now, over
         # the targets just declared and before the cost is paid.
         division = yield from self._ask_damage_division(
-            pid, card, oid, modes, targets + x_refs + mode_refs
+            pid, card, oid, modes, targets + x_refs + mode_refs, x=x
         )
 
         ok = yield from pay(
@@ -802,22 +839,14 @@ class Game:
         # player was offered. Legality prices the line through the same helper,
         # so the price shown and the price taken cannot disagree.
         additional = chosen_additional(card, action.additional_choice)
-        if additional is not None and additional.pay_life_x:
+        if additional is not None and additional.pay_life_x and life_x is not None:
             # "As an additional cost to cast this spell, pay X life" -- Toxic
-            # Deluge. 601.2b puts the announcement here, with the rest of the
-            # costs, and 118.4 lets a player pay life down to exactly 0, so the
-            # ceiling is the whole life total. `x` is then carried on the stack
-            # item, which is how the sweep reads `{"x": true}` on resolution.
-            ctx = EffectContext(state=state, controller=pid, source_oid=oid)
-            # Reassigns `x`, which is 0 for these cards: `_ask_x` above returns
-            # early unless the *mana* cost has an {X}, and Toxic Deluge's is
-            # {2}{B}. The one X a spell has is the one the player announced,
-            # whichever half of the cost it belongs to, and `push_spell` carries
-            # it below.
-            x = yield from ask_x(
-                ctx, f"Choose X for {card.name}", state.players[pid].life, pid
-            )
-            yield from pay(state, pid, Cost(pay_life=x), oid)
+            # Deluge. X was announced at the top of the cast (601.2b, before the
+            # targets), up to the whole life total (118.4); this is the payment
+            # (601.2h), with the rest of the additional costs. `x` rides on the
+            # stack item, which is how the sweep reads `{"x": true}` on
+            # resolution.
+            yield from pay(state, pid, Cost(pay_life=life_x), oid)
         if action.additional_times and additional is not None:
             for _ in range(action.additional_times):
                 ok = yield from pay(state, pid, additional.without_mana(), oid)
@@ -1248,7 +1277,7 @@ class Game:
         return out
 
     def _ask_damage_division(
-        self, pid: int, card, oid: int, modes, targets
+        self, pid: int, card, oid: int, modes, targets, *, x: int = 0
     ) -> Generator[Any, list[int], dict[str, list[list[int]]]]:
         """Divide each divided damage effect's amount among its declared targets.
 
@@ -1274,7 +1303,7 @@ class Game:
             oids = [r.id for r in declared.get(target_id, ()) if r.kind == "object"]
             if not oids:
                 continue
-            total = division_amount(state, pid, oid, effect)
+            total = division_amount(state, pid, oid, effect, x=x)
             out[target_id] = yield from _divide(
                 ctx,
                 pid,
@@ -1662,7 +1691,7 @@ class Game:
         return tuple(out)
 
     def _ask_deferred_targets(
-        self, pid: int, card, oid: int, spec, chosen
+        self, pid: int, card, oid: int, spec, chosen, *, x: int = 0
     ) -> Generator[Any, list[int], tuple[TargetRef, ...]]:
         """Declare a variable-size spec's refs as one set -- "any number of targets".
 
@@ -1671,8 +1700,9 @@ class Game:
         of a board are too many to offer as lines. `casting.deferred_target_spec`
         has the argument and says which spec.
 
-        Any size from zero to the ceiling, the two readings that reach here both
-        including zero. ``chosen`` is the refs the line already carries for the
+        Any size from the spec's floor to the ceiling: zero for "any number" and
+        "up to N", ``min_count`` for "one, two, or three" -- legality offered the
+        line only while that floor could be met. ``chosen`` is the refs the line already carries for the
         specs before this one, struck off for the reason
         `enumerate_target_tuples` drops a tuple that reuses an object: one
         object cannot fill two targets of one spell.
@@ -1689,11 +1719,12 @@ class Game:
         ceiling = len(options) if count == "any" else min(int(count), len(options))
         # Divided damage gives every target at least one (601.2d), so there are
         # never more targets than damage -- see `engine.division`.
-        cap = division_caps(state, pid, oid, card).get(spec.id)
+        # ``x`` is a `pay_life_x` X, announced before this pick (Fire Covenant).
+        cap = division_caps(state, pid, oid, card, x=x).get(spec.id)
         if cap is not None:
             ceiling = min(ceiling, cap)
         picked = yield from ask_targets(
-            ctx, f"Targets for {card.name}", options, 0, ceiling, pid
+            ctx, f"Targets for {card.name}", options, min(spec.min_count, ceiling), ceiling, pid
         )
         return tuple(picked)
 
@@ -1832,6 +1863,7 @@ class Game:
             pid,
             action.mana_option or 0,
             source_traits=traits,
+            ability=ability,
         )
 
     def _pass_priority(self) -> None:

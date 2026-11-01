@@ -954,6 +954,13 @@ def reference() -> dict:
             " an ability with `active_zones: [\"hand\"]`. `exile_self` is a"
             " different cost: it is \"Exile this artifact\" and requires the"
             " source to be on the battlefield.",
+            "\"Blight N\" as a cost is `{\"blight\": N}` on any cost node: the"
+            " payer puts N -1/-1 counters on a creature they control, chosen"
+            " as they pay. \"Ward—Blight 2\" is a ward static with"
+            " `\"cost\": {\"blight\": 2}`, and \"you may blight 1\" as an"
+            " additional cost is `additional_cost` plus `additional_optional`,"
+            " read back with `additional_paid`. Not `put_counters`, which puts"
+            " them on the source.",
             "A quoted ability a permanent GAINS (\"This Saga gains \\\"{T}: Add"
             " {C}.\\\"\", \"It gains \\\"When this creature dies, ...\\\"\") is"
             " written once under the card's `grantable_abilities` and handed"
@@ -1021,7 +1028,8 @@ def reference() -> dict:
             " puts the counters, any permanent, and players (poison).",
             "\"…with counters on them\" / \"…with a counter on it\" is the"
             " filter key `has_counters: true` (any kind of counter), valid in a"
-            " static's `affects` and in an effect selector.",
+            " static's `affects` and in an effect selector. \"…with a -1/-1"
+            " counter on it\" names the kind: `has_counters: \"-1/-1\"`.",
             "\"Distribute N +1/+1 counters among up to N target creatures\" on an"
             " ACTIVATED ability (a planeswalker's loyalty line) is"
             " `distribute_counters` with `counter`, a printed `amount` and"

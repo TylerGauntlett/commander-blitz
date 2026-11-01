@@ -1,0 +1,35 @@
+{
+  "cards": [
+    {
+      "id": "t_nesting_grounds",
+      "name": "Test Nesting Grounds",
+      "oracle_text": "{T}: Add {C}.\n{1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery.",
+      "types": ["Land"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add {C}.",
+          "cost": {"tap": true},
+          "is_mana_ability": true,
+          "effects": [{"op": "add_mana", "mana": "{C}"}]
+        },
+        {
+          "kind": "activated",
+          "text": "{1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery.",
+          "cost": {"mana": "{1}", "tap": true},
+          "sorcery_speed_only": true,
+          "targets": [
+            {"id": "from", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "controller": "you"}},
+            {"id": "onto", "kind": "permanent", "count": 1,
+             "selector": {"zone": "battlefield", "controller": "any"}}
+          ],
+          "effects": [
+            {"op": "move_counters", "from": {"target": "from"}, "objects": {"target": "onto"},
+             "any_kind": true, "amount": {"const": 1}}
+          ]
+        }
+      ]
+    }
+  ]
+}

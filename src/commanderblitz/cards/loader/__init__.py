@@ -43,6 +43,7 @@ from commanderblitz.engine.effects.selectors import (
     ZONE_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
+    validate_has_counters_key,
     validate_selector,
 )
 from commanderblitz.engine.effects.values import (
@@ -77,6 +78,7 @@ from commanderblitz.engine.triggers import (
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (
+    _reads_announced_x,
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
     _validate_attach_to_player,
@@ -840,6 +842,19 @@ def _check_division_homes(model: CardModel, where: str) -> None:
                 f"{target_id!r} is {target.kind!r}"
             )
         amount = effect.get("amount")
+        life_x = model.additional_cost is not None and model.additional_cost.pay_life_x
+        if _reads_announced_x(amount) and not life_x:
+            # A mana {X} is announced after the "any number" targets on this
+            # engine's cast line -- its ceiling reads cost reductions that read
+            # the targets -- so a division of it could be asked over more
+            # targets than X: refused rather than half-honoured. The X of a
+            # `pay_life_x` additional cost is announced before the targets
+            # (601.2b, then 601.2c) and caps them, so Fire Covenant loads.
+            raise DslError(
+                f"{at}: a divided amount may read the announced X only when an "
+                f"additional 'pay_life_x' cost announces it -- a mana {{X}} is "
+                f"announced after the targets are declared"
+            )
         if isinstance(amount, Mapping) and set(amount) == {"const"}:
             amount = amount["const"]
         if isinstance(amount, int) and isinstance(target.count, int) and target.count > amount:
@@ -1394,10 +1409,10 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if model.tucks_itself is not None:
         # The ordinal counts from 1, as `put_on_top`'s `from_top` does: a 0
         # would clamp silently to the top, a card drawn a turn early.
-        if model.tucks_itself != "bottom" and model.tucks_itself < 1:
+        if isinstance(model.tucks_itself, int) and model.tucks_itself < 1:
             raise DslError(
                 f"{where}: 'tucks_itself' is a depth counted from 1 (first from "
-                f"the top), or 'bottom'"
+                f"the top), 'bottom' or 'shuffle'"
             )
         # Rebound's guard, for its reason: the rider replaces the graveyard,
         # and a permanent spell enters the battlefield instead.
@@ -3287,6 +3302,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         is_cycling=model.is_cycling,
         activate_steps=tuple(model.activate_steps),
         once_each_turn=model.once_each_turn,
+        activated_by=_activated_by(model, kind, active_zones, cost, where),
         threshold=threshold,
         trigger=trigger,
         active_zones=active_zones,
@@ -3315,6 +3331,44 @@ _MANA_SPENT_SOURCE_KEYS = frozenset(
         "shares_a_creature_type_with",
     }
 )
+
+
+def _activated_by(model: AbilityModel, kind: AbilityKind, active_zones, cost, where: str) -> str:
+    """Who may activate this ability: `Ability.activated_by`, validated.
+
+    "Only your opponents may activate this ability" (Oft-Nabbed Goat) is
+    ``"opponent"``, "Any player may activate this ability" is ``"any"``, and
+    the default is the controller alone. Refused wherever it could not mean
+    what it says: on anything but an activated ability, on one that works from
+    a hand or graveyard (hidden or owner-only zones another player is never
+    offered), on a loyalty ability (606.3 is the controller's), and on a mana
+    ability, which the payment solver activates for its controller only.
+    """
+    who = model.activated_by
+    if who is None:
+        return "you"
+    if who not in ("you", "opponent", "any"):
+        raise DslError(
+            f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
+        )
+    if kind is not AbilityKind.ACTIVATED:
+        raise DslError(
+            f"{where}: 'activated_by' says who may activate an ability, so it only "
+            f"means anything on an activated ability or an ability_cost_reduction static"
+        )
+    if tuple(active_zones) != (Zone.BATTLEFIELD,):
+        raise DslError(
+            f"{where}: 'activated_by' is for an ability of a permanent; another "
+            f"player is never offered an ability from a hand or graveyard"
+        )
+    if cost is not None and cost.loyalty is not None:
+        raise DslError(f"{where}: a loyalty ability is activated by its controller (606.3)")
+    if model.is_mana_ability:
+        raise DslError(
+            f"{where}: 'activated_by' on a mana ability is not supported -- the "
+            f"payment solver taps only its controller's sources"
+        )
+    return who
 
 
 def _mana_spent_trigger(model: AbilityModel, index: int, where: str) -> Ability | None:
@@ -3397,6 +3451,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         _check_pt_keys(filt, path)
         validate_colorless_key(filt, path)
         validate_enchanted_by_key(filt, path)
+        validate_has_counters_key(filt, path)
         _check_attached_to_key(filt, path)
     branches = filt.get("any_of")
     if branches is None:
@@ -3746,6 +3801,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
         validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
         validate_enchanted_by_key(getattr(model, key, None), f"{where}.{key}")
+        validate_has_counters_key(getattr(model, key, None), f"{where}.{key}")
         _check_attached_to_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")
@@ -4701,6 +4757,31 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: damage_life_floor takes 'affects_player', 'amount' and "
                 f"an optional 'condition', and no 'affects'"
             )
+    if model.effect == "all_damage_wither" and (
+        model.affects is not None
+        or model.affects_player is not None
+        or model.amount is not None
+    ):
+        # "All damage is dealt as though its source had wither" names no
+        # source and no recipient. A filter here is read by nothing, so "damage
+        # dealt by creatures you control" would load clean and wither everything.
+        raise DslError(
+            f"{where}: all_damage_wither reaches all damage; it takes an optional "
+            f"'condition' and no 'affects', 'affects_player' or 'amount'"
+        )
+    if model.effect == "damage_cant_be_prevented" and (
+        model.affects is not None
+        or model.affects_player is not None
+        or model.amount is not None
+    ):
+        # "Damage can't be prevented" reaches all damage, to anything, from
+        # anything. Nothing reads a filter here, so one written ("combat damage
+        # dealt by creatures you control can't be prevented") would load clean
+        # and switch off every prevention on the table -- a different card.
+        raise DslError(
+            f"{where}: damage_cant_be_prevented reaches all damage; it takes an "
+            f"optional 'condition' and no 'affects', 'affects_player' or 'amount'"
+        )
     if model.effect == "draw_limit":
         # "Can't draw more than one card each turn" names players and a number.
         # Without the number `_static_value` reads 0 and the card becomes
@@ -4855,6 +4936,12 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # family: Leyline of the Void narrows by player and Planar Void by card
         # type, and both write `affects_player` or `affects` to say so.
         "replace_graveyard",
+        # Everlasting Torment's "Damage can't be prevented" reaches all damage,
+        # to anything, from anything; its own guard above refuses a filter.
+        "damage_cant_be_prevented",
+        # Its sibling line, "All damage is dealt as though its source had
+        # wither": every source, every creature.
+        "all_damage_wither",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no

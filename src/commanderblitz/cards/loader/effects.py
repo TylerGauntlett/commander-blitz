@@ -109,6 +109,92 @@ COPY_EXCEPT_KEYS = frozenset(
 #: actually drew). Both write a bare list of player ids.
 SEAT_RECORDING_OPS = frozenset({"draw", "may"})
 
+#: The counter removals that read `up_to` -- "remove **up to** three counters".
+COUNTER_REMOVAL_UP_TO_OPS = ("remove_counters", "remove_counters_from_among")
+
+#: The ops that read `any_kind`: the card names no kind, so the controller
+#: picks one counter at a time (`effects.counter_removal`).
+ANY_KIND_COUNTER_OPS = ("remove_counters", "move_counters")
+
+
+def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
+    """``any_kind`` and ``up_to`` on a counter removal: every refusal is a card
+    that would load and quietly remove a different number or kind of counters."""
+    if "any_kind" in effect:
+        if op not in ANY_KIND_COUNTER_OPS:
+            raise DslError(
+                f"{where}: 'any_kind' only means anything on "
+                f"{' or '.join(ANY_KIND_COUNTER_OPS)}, not {op!r}"
+            )
+        if not isinstance(effect["any_kind"], bool):
+            raise DslError(f"{where}: 'any_kind' is a boolean, got {effect['any_kind']!r}")
+    any_kind = bool(effect.get("any_kind"))
+    if op not in COUNTER_REMOVAL_UP_TO_OPS and op not in ANY_KIND_COUNTER_OPS:
+        return
+    if op == "remove_counters_from_among":
+        # Always any kinds, so it takes neither spelling of a kind; and the
+        # number is `amount`, where the cost of the same name says `count`.
+        if "counter" in effect:
+            raise DslError(
+                f"{where}: remove_counters_from_among removes counters of any kind; "
+                f"a named 'counter' kind is not read"
+            )
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping) or not objects:
+            raise DslError(
+                f"{where}: remove_counters_from_among needs 'objects' naming the "
+                f"permanents the counters may come off"
+            )
+        if "count" in objects or "chooser" in objects:
+            raise DslError(
+                f"{where}.objects: the permanents are a pool the controller picks "
+                f"from one counter at a time; the number is the op's 'amount', not "
+                f"a selector 'count' or 'chooser'"
+            )
+        any_kind = True
+    if any_kind and "counter" in effect:
+        # One says "this kind", the other "whichever kinds the chooser likes";
+        # the op would read `any_kind` and the printed kind would be ignored.
+        raise DslError(
+            f"{where}: 'any_kind' and a named 'counter' contradict each other -- "
+            f"drop 'counter' for counters of any kind"
+        )
+    if any_kind and op == "move_counters":
+        # "Move **a counter**": one at a time, of a kind picked each time.
+        # `all_kinds` is the whole multiset, and a defaulted amount would be
+        # either spelling's guess at a number the card prints.
+        if effect.get("all_kinds"):
+            raise DslError(
+                f"{where}: 'any_kind' moves counters one at a time and 'all_kinds' "
+                f"moves every counter; a card means one of them"
+            )
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: move_counters with 'any_kind' needs the printed 'amount' "
+                f"(\"move a counter\" is {{\"const\": 1}})"
+            )
+    if any_kind and not effect.get("objects"):
+        raise DslError(f"{where}: {op} needs 'objects' naming the permanents counters come off")
+    if effect.get("up_to"):
+        if op == "remove_counters" and not any_kind:
+            # The named-kind removal takes exactly `amount`; an `up_to` there
+            # would load and be ignored.
+            raise DslError(
+                f"{where}: 'up_to' on remove_counters needs 'any_kind' -- the "
+                f"named-kind removal takes exactly 'amount'"
+            )
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: 'up_to' needs an 'amount' to be a ceiling of; with no "
+                f"'amount' the removal is already \"any number\""
+            )
+    if any_kind or effect.get("up_to"):
+        amount = effect.get("amount")
+        if isinstance(amount, Mapping) and set(amount) == {"const"}:
+            amount = amount["const"]
+        if isinstance(amount, int) and not isinstance(amount, bool) and amount < 1:
+            raise DslError(f"{where}: removing {amount} counters removes none")
+
 #: Every key whose value `resolve_pool` reads as a pool of **objects**. A bare
 #: `{"binding": …}` under any other key is a player spec.
 _OBJECT_POOL_KEYS = ("count", "exists", "objects", "per", "from", "attacker", "source_object")
@@ -2631,6 +2717,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: set_turn_flag takes no 'duration' -- it lasts the turn "
                 f"(use set_flag for a word that never wears off)"
             )
+    _validate_any_kind_counters(effect, op, where)
     if op == "move_counters":
         # Without a destination the counters come off the source and go
         # nowhere, which is a card that reads "move a +1/+1 counter onto it"
@@ -2705,24 +2792,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # `up_to_if` (conditional, floor of one) between them could not say. The
         # name is `TargetSpec`'s, where it has meant the same thing since "up to
         # X target creatures".
-        if op not in ("choose_mode", "discard"):
+        if op not in ("choose_mode", "discard", *COUNTER_REMOVAL_UP_TO_OPS):
             raise DslError(
-                f"{where}: 'up_to' only means anything on choose_mode or discard, not {op!r}"
+                f"{where}: 'up_to' only means anything on choose_mode, discard or "
+                f"{' or '.join(COUNTER_REMOVAL_UP_TO_OPS)}, not {op!r}"
             )
         if not isinstance(effect["up_to"], bool):
             raise DslError(f"{where}: 'up_to' is a boolean, got {effect['up_to']!r}")
-        if op == "discard":
+        if op in COUNTER_REMOVAL_UP_TO_OPS:
+            # "Remove up to three counters" -- `amount` becomes a ceiling and the
+            # floor drops to zero. Which removals may carry it is the op's own
+            # guard (`_validate_any_kind_counters`).
+            pass
+        elif op == "discard":
             # "Discard up to two cards" -- the same word doing the same job one
             # op over: `amount` becomes a ceiling and the floor drops to zero.
             # The mode-count checks below are `choose_mode`'s own and read
             # `count`, which a discard does not have.
             return
-        count = effect.get("count", 1)
-        if isinstance(count, dict) and "const" in count:
-            count = count["const"]
-        if isinstance(count, int) and not isinstance(count, bool) and count < 1:
-            # "Up to zero modes" is a card that does nothing.
-            raise DslError(f"{where}: 'up_to' needs a 'count' of at least 1; got {count}")
+        else:
+            count = effect.get("count", 1)
+            if isinstance(count, dict) and "const" in count:
+                count = count["const"]
+            if isinstance(count, int) and not isinstance(count, bool) and count < 1:
+                # "Up to zero modes" is a card that does nothing.
+                raise DslError(f"{where}: 'up_to' needs a 'count' of at least 1; got {count}")
     if "or_more" in effect:
         # "Choose one or more --" (Black Market Connections). A floor and a
         # ceiling at once: `count` stays the minimum and every mode is on offer.
@@ -3359,6 +3453,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: cast_card takes no {key!r} -- it casts the 'objects' "
                     f"pool at its mana cost (a free cast is cast_from_hand)"
                 )
+    if op == "exchange_life_total":
+        # 701.12: the player half is named on every printing ("target
+        # opponent's", "your"), and the creature half is always the ability's
+        # own source ("this creature's toughness"). A default player would be a
+        # guess about whose life total moves, and an `objects` key would be read
+        # by nothing -- an exchange with some other creature, silently with this one.
+        if effect.get("player") is None:
+            raise DslError(
+                f"{where}: exchange_life_total needs 'player' -- whose life total "
+                f"is exchanged with this creature's toughness"
+            )
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        for key in ("objects", "amount", "duration"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: exchange_life_total takes no {key!r} -- the creature "
+                    f"is the ability's source and the exchange is indefinite (701.12)"
+                )
     if op == "lock_life_total":
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
@@ -3432,13 +3544,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: divided damage goes only to the targets 'divided' names; "
                 f"drop {others}"
             )
-        if _reads_announced_x(effect.get("amount")):
-            # "Any number of targets" is declared before X is announced on this
-            # engine's cast line, so a division of X could be asked over more
-            # targets than X -- refused rather than half-honoured.
-            raise DslError(
-                f"{where}: a divided amount may not read the announced X"
-            )
+        # Whether the amount may read the announced X depends on which cost
+        # announces it, which is the card's: `loader._check_division_homes`.
 
     if op == "cast_from_hand":
         # The selector is what may be picked, and it is the whole of the printed
@@ -3491,8 +3598,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the
         # moment it arrives.
-        if "power" not in effect or "toughness" not in effect:
-            raise DslError(f"{where}: animate needs 'power' and 'toughness'")
+        #
+        # The one exception is an animation into a *non-creature*, which has
+        # no size to name: "target creature becomes a Treasure artifact ... and
+        # loses all other card types" (Vraska, Betrayal's Sting). Its base
+        # power and toughness are left alone. Both keys or neither, always.
+        sized = ("power" in effect, "toughness" in effect)
+        becomes_creature = "Creature" in (effect.get("types") or ("Creature",))
+        if sized != (True, True) and (becomes_creature or any(sized)):
+            raise DslError(
+                f"{where}: animate needs 'power' and 'toughness' (only an "
+                f"animation into a non-creature may leave out both)"
+            )
+        keep_colors = effect.get("keep_colors", False)
+        if not isinstance(keep_colors, bool):
+            raise DslError(f"{where}: animate's 'keep_colors' is true or false")
+        if keep_colors and not effect.get("exact", False):
+            # A non-exact animation already keeps the colours and adds its own.
+            raise DslError(
+                f"{where}: 'keep_colors' means anything only on an exact animation "
+                f"-- a non-exact one adds its colours to the permanent's own"
+            )
+        if keep_colors and effect.get("colors"):
+            raise DslError(
+                f"{where}: 'keep_colors' and 'colors' contradict each other -- "
+                f"the colours are either left as they are or replaced"
+            )
         for word in effect.get("your_turn_keywords", ()) or ():
             if word not in KNOWN_KEYWORDS:
                 raise DslError(

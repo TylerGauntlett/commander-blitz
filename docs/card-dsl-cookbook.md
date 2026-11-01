@@ -7205,6 +7205,37 @@ total holds still, and protection is the sentence that stops damage, which is wh
 Teferi's Protection prints both. And it does not make paying life *free*: the
 cost is refused, not zeroed.
 
+## Exchanging a life total with a toughness
+
+```jsonc
+{"op": "exchange_life_total", "player": {"target": "t1"}}  // "target opponent's"
+```
+
+Tree of Perdition ("{T}: Exchange target opponent's life total with this
+creature's toughness"); Tree of Redemption is the same op with `player: "you"`.
+701.12: both halves happen or neither does.
+
+- **The life half is a gain or a loss.** The player's life total becomes the
+  creature's toughness the way 119.5 sets any life total, by `gain_life` or
+  `lose_life` of the difference, so a life-gain trigger hears it and a loss
+  replacement applies to it.
+- **The toughness half is a 7b set, indefinitely.** The creature's toughness
+  becomes the player's *former* life total through
+  `primitives.set_base_toughness`, ordered by timestamp against indefinite
+  animations; counters, anthems and pumps still apply on top, and power is
+  untouched.
+- **All or nothing.** Nothing happens if the source has left the battlefield or
+  is not a creature, if `player` does not come to exactly one player, if that
+  player's life total is locked (`lock_life_total`), or if the change would be a
+  gain for a player who can't gain life (`cant_gain_life`).
+
+`player` is required. `objects`, `amount` and `duration` are refused: the
+creature is always the ability's own source, and an exchange has no clock.
+
+Near miss: `snapshot` + `set_pt` + `lose_life`/`gain_life` of the difference.
+`set_pt` is an until-end-of-turn pump, and the chain still changes the toughness
+when the life total cannot change.
+
 ## Protection for a **player**, from everything, until your next turn
 
 ```jsonc
@@ -7536,6 +7567,54 @@ Applied in `primitives.damage_permanent` and `primitives.damage_player`
 the two and they would cap last, so a doubled hit still lands as 1. Read through
 `player_statics.damage_cap`, which walks `_battlefield_statics` — the command
 zone included, which is where an emblem lives.
+
+## "Damage can't be prevented"
+
+```jsonc
+{ "kind": "static", "effect": "damage_cant_be_prevented" }
+```
+
+Everlasting Torment. A "can't" over every prevention effect at once (615.12),
+so it beats each of them however it was made (101.2). Prevention is a set of
+named hooks, not one system, and this static is read by all of them in
+`primitives.damage_player` and `primitives.damage_permanent`: the
+`prevent_damage` op's shield and its "prevented this way" rider, the
+`prevent_damage` static (absorb and `prevent_all`), `prevent_all_but`,
+`prevent_damage_permanent` either way, `prevent_combat_damage`, damage
+prevented into counters, and protection's damage half (702.16e). Protection's
+other halves (blocking, targeting, enchanting) are not prevention and still
+apply.
+
+Two things that look like prevention are not, and still work under it:
+
+- A **shield counter** is a replacement (122.1c, "instead remove a shield
+  counter"), so it still answers the damage.
+- A **redirect** (`redirect_damage`, 614.9) moves the damage rather than
+  preventing it.
+
+It reaches all damage, to anything, from anything. `affects`, `affects_player`
+and `amount` are refused, because nothing would read them. An optional
+`condition` is honoured. It cannot be granted by `grant_ability`, since it is
+read off printed faces as the player-wide statics are.
+
+## "All damage is dealt as though its source had wither"
+
+```jsonc
+{ "kind": "static", "effect": "all_damage_wither" }
+```
+
+Everlasting Torment's third line. Damage to a creature from **every** source
+becomes -1/-1 counters (702.80a): a creature's, a spell's, an ability's whose
+source has already left the battlefield, either player's. It is read where
+wither itself is read, in `primitives.damage_permanent`. A `grant_keyword`
+static giving wither is the near miss: it reaches only the permanents its
+`affects` matches, so a Lightning Bolt would still mark damage.
+
+It is still damage: `DAMAGE_DEALT` fires with the amount, and deathtouch,
+lifelink and the damage ledger read it as usual. Damage to a player is life loss
+(wither changes nothing there), and a planeswalker or battle still loses its
+counters. `affects`, `affects_player` and `amount` are refused, and the static
+cannot be granted.
 
 ## Damage can't take you below 1
 
@@ -8327,6 +8406,34 @@ too. A flying granted until end of turn before Oko's +1 is gone; one granted
 after it flies. Grants made earlier **in the same resolution** survive, which is
 what The Irencrag's "it gains … and loses all other abilities" needs. The
 cutoff is `EffectContext.began_at`, and every grant carries a timestamp.
+
+### "…becomes a Treasure artifact … and loses all other card types and abilities"
+
+Vraska, Betrayal's Sting's −2 is the exact animation into a non-creature that
+names no colour and no size:
+
+```jsonc
+{ "op": "lose_all_abilities", "objects": { "target": "t1" } },
+{ "op": "animate",
+  "types": ["Artifact"], "subtypes": ["Treasure"],
+  "exact": true, "keep_colors": true,
+  "duration": "permanent",
+  "objects": { "target": "t1" } },
+{ "op": "grant_ability", "objects": { "target": "t1" }, "ability": 0,
+  "duration": "permanent" }  // grantable_abilities[0]: the Treasure's mana ability
+```
+
+- **`keep_colors`** leaves the colours as they are instead of replacing them
+  with `colors`. It is accepted only with `exact` (an additive animation already
+  keeps them) and refused beside `colors`. Without it, an exact animation that
+  names no colour makes the permanent colourless, which is Oko's reading and
+  stays his.
+- **No `power` and `toughness`** is allowed only when `types` has no
+  `Creature`. The base size is then left alone, so a later effect that makes it
+  a creature without naming a size reads the printed one. Both keys or neither.
+- The granted mana ability sacrifices its own permanent, and `Game._activate_mana`
+  passes the ability it read before paying to `costs.activate_mana_ability`,
+  because once the permanent is gone it no longer lists a granted ability.
 
 # Recipes — Tokens, counters and attachments
 
@@ -10885,19 +10992,26 @@ true}` reaches nothing and the printed line would load cleanly and do nothing.
 ```jsonc
 "tucks_itself": 7          // Approach of the Second Sun: "seventh from the top"
 "tucks_itself": "bottom"   // Ultimate Nullification: "on the bottom of its owner's library"
+"tucks_itself": "shuffle"  // Black Sun's Zenith: "shuffle <this card> into its owner's library"
 ```
 
 `exiles_itself`'s shape with a library for the destination: a card-level rider
 on the slot `stack._place_after_resolution` picks, replacing only the
 **graveyard**. A number is the printed ordinal counted from 1, converted to an
 index the way `put_on_top`'s `from_top` is; `"bottom"` is the bottom, which no
-ordinal can name in a library whose size varies. The loader refuses a depth
+ordinal can name in a library whose size varies; `"shuffle"` puts it in and
+then shuffles that library (701.24a), the owner's whoever cast it. The loader
+refuses a depth
 below 1 and refuses the rider on a permanent card, which enters the
 battlefield and never reaches it.
 
 **Not `put_on_top` in the card's own effects**, with or without `bottom: true`:
 the spell is already off `state.stack` while its effects run and is then moved
 to the graveyard regardless, so the printed line would load and do nothing.
+**Not a `shuffle` op beside `"bottom"`** for the Zenith sentence: the op runs
+while the card is still on the stack, so the library is shuffled without it and
+the card then sits on the bottom, where its owner knows exactly when it comes
+back.
 
 ## Airbend — "exile them, and their owners may cast them for {2}"
 
@@ -11436,6 +11550,38 @@ deliberately *not* a keyword: a keyword is a characteristic and would show in th
 card's keyword list, and this is a permission. It is read by `legality` and by
 the mana solver — mana abilities are activated abilities too, and a locked land
 that still tapped for mana would make the effect worth nothing.
+
+## "Only your opponents may activate this ability"
+
+```jsonc
+{ "kind": "activated",
+  "cost": { "mana": "{1}" },
+  "activated_by": "opponent",      // "any" for "Any player may activate this ability"
+  "sorcery_speed_only": true,
+  "effects": [
+    { "op": "draw", "amount": { "const": 1 }, "player": "you" },
+    { "op": "gain_control", "objects": { "zone": "battlefield", "self_only": true },
+      "player": "you", "duration": "permanent" },
+    { "op": "add_counters", "objects": { "zone": "battlefield", "self_only": true },
+      "counter": "-1/-1", "amount": { "const": 1 } } ] }
+```
+
+Oft-Nabbed Goat. `activated_by` says who is offered the ability: `"you"` (the
+default) is the permanent's controller, `"opponent"` is every other player and
+`"any"` is everyone (602.1). It is read against the controller *now*, so once the
+Goat has changed hands its old owner is one of the opponents who may take it
+back.
+
+The activator pays the cost and controls the ability on the stack (602.2), so in
+its effects `"you"` is the activator: they draw and they gain control.
+`sorcery_speed_only` is their own main phase with an empty stack.
+
+The loader refuses `activated_by` on anything but an activated ability of a
+permanent: not on a trigger, not on an ability that works from a hand or
+graveyard, not on a loyalty ability (606.3), and not on a mana ability, which the
+payment solver activates for its controller alone. On an
+`ability_cost_reduction` static the same key means something else: whose
+activations are discounted.
 
 ## Embalm — an ability activated from the graveyard
 

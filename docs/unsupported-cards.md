@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**132 cards** blocked by **119** capabilities.
+**133 cards** blocked by **120** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -116,6 +116,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
+| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 1 | 714 | engine |
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
@@ -1767,6 +1768,20 @@ Blocks **1** card.
 - **Intuition** (rank 1971) — `intuition`
   - Target opponent chooses one.
   - Put that card into your hand and the rest into your graveyard.
+
+</details>
+
+## self-sacrificing-permanent-gate
+
+Blocks **1** card.
+
+- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
+  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
+
+<details><summary>Cards waiting on this</summary>
+
+- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 
 </details>
 

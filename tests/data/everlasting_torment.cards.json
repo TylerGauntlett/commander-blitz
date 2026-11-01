@@ -1,0 +1,53 @@
+{
+  "_comment": "Cards that exist only for tests/unit/damage/test_damage_cant_be_prevented.py and tests/unit/damage/test_all_damage_wither.py. Never part of a deck list. Each is one line of Everlasting Torment on its own, so each static is tested alone.",
+  "cards": [
+    {
+      "id": "t_no_prevention",
+      "name": "Test No Prevention",
+      "oracle_text": "Damage can't be prevented.",
+      "mana_cost": "{2}{B/R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Damage can't be prevented.",
+          "effect": "damage_cant_be_prevented"
+        }
+      ]
+    },
+    {
+      "id": "t_all_wither",
+      "name": "Test All Wither",
+      "oracle_text": "All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)",
+      "mana_cost": "{2}{B/R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)",
+          "effect": "all_damage_wither"
+        }
+      ]
+    }
+  ]
+}

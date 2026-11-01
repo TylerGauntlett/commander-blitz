@@ -500,6 +500,21 @@ def _compile_target(
                     f"{label}: 'up to one target' is 'optional': true -- "
                     f"'up_to' is for a ceiling above one"
                 )
+    if model.min_count:
+        # "One, two, or three": a floor is only meaningful under a ceiling the
+        # caster picks below. Without `up_to` the count is already exact, and a
+        # floor at or above the ceiling is just that exact count spelled twice.
+        if not model.up_to or not isinstance(model.count, int):
+            raise DslError(
+                f"{label}: 'min_count' is the floor of an 'up_to' with a literal "
+                f"'count' -- 'one, two, or three' is count 3, up_to, min_count 1"
+            )
+        if not 1 <= model.min_count < model.count:
+            raise DslError(
+                f"{label}: 'min_count' {model.min_count} must be at least 1 and "
+                f"below the ceiling {model.count} -- at the ceiling it is a plain "
+                f"'count' with no 'up_to'"
+            )
     return TargetSpec(
         id=model.id,
         kind=model.kind,
@@ -514,6 +529,7 @@ def _compile_target(
             else model.count_if_kicked
         ),
         up_to=model.up_to,
+        min_count=model.min_count,
         one_per_player=model.one_per_player,
         optional=model.optional,
         total_mana_value=model.total_mana_value,

@@ -1168,6 +1168,28 @@ ability's targets are chosen in legality, where nothing would read the clause.
 The near miss is an untargeted `exile` with `random` in its `objects`, which
 never fizzles and goes on the stack with nothing to exile.
 
+### "One, two, or three targets" -- `min_count`
+
+```jsonc
+// Aberrant Return: "Put one, two, or three target creature cards from
+// graveyards onto the battlefield under your control."
+{ "id": "t1", "kind": "card_in_graveyard", "count": 3, "up_to": true, "min_count": 1,
+  "selector": { "types": ["Creature"], "zone": "graveyard", "controller": "any" } }
+```
+
+`min_count` is the floor under an `up_to` ceiling: every size from it through
+`count` is legal and none below. With fewer legal targets than the floor the
+spell has no legal declaration and is not offered (601.2c), and a triggered
+ability is not put on the stack. Every declaration path reads it: the
+enumerator's subsets (`targeting._spec_options`, largest first, no empty
+subset), a spell's mid-cast pick (`Game._ask_deferred_targets`, offered only
+while the floor can be met) and a trigger's pick (`stack._choose_each_target`).
+
+The loader refuses `min_count` without `up_to`, over a computed `count`, below 1,
+or at or above the ceiling (that is a plain `count`). The near misses: `up_to`
+alone is zero to N, so the spell could be cast at nothing; `optional` is
+"exactly N, or none"; a fixed `count` forces exactly N.
+
 ### "Each of X targets"
 
 ```jsonc
@@ -1522,6 +1544,8 @@ Anywhere a number is expected -- the leaf list is
 { "max_damage_taken_this_turn": "each_opponent" } // "an opponent was dealt N or more"; ONE player's total
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
+{ "counters_put_this_turn": { "player": "you",  // "if you put a counter on a creature this turn";
+    "types": ["Creature"] } }                   //   who PUT them (122.6a), enters-with counts (122.6)
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
@@ -1532,6 +1556,10 @@ Anywhere a number is expected -- the leaf list is
 { "resolutions_this_turn": "self" }             // …times THIS ability has resolved
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
+{ "counters_on": { "counter": "charge",         // Wickersmith's Tools; a sacrifice cost's `as`
+                   "objects": { "binding": "sacrificed" } } }  //   snapshot keeps its counters
+{ "counters_on": { "counter": "any",            // every kind summed, live (Ferrafor)
+                  "objects": { "types": ["Creature"], "controller": { "target": "t1" } } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
@@ -1946,8 +1974,21 @@ to ask.
   "affects": { "controller": "you", "has_counters": true } }
 ```
 
-One or more counters of **any** kind (122.1); `false` is "with no counters on
-it". A static filter key for `tapped`'s licence — counters are board state no
+```jsonc
+// Liliana, Death Wielder: "−3: Destroy target creature with a -1/-1 counter on it."
+{ "id": "t1", "kind": "permanent", "count": 1,
+  "selector": { "zone": "battlefield", "types": ["Creature"], "controller": "any",
+                "has_counters": "-1/-1" } }
+```
+
+`true` is one or more counters of **any** kind (122.1); `false` is "with no
+counters on it"; a counter kind is one or more of **that** kind, so a creature
+with only +1/+1 or stun counters is not "a creature with a -1/-1 counter on it".
+The kind goes through the same near-miss check `add_counters` uses, and `"any"`
+is refused because `true` already says it. In a target spec the restriction is
+asked as the target is chosen and again on resolution (608.2b). `counters_on` in
+an `if` is the near miss: it changes what the ability does, not what it may
+target. A static filter key for `tapped`'s licence — counters are board state no
 layer writes, since no static puts a counter on anything — and honoured by every
 reader of the filter language (the layer pipeline, trigger filters, cost
 reductions) and by the effect-side selector. The answer moves the moment a
@@ -2885,11 +2926,32 @@ power). Nothing changes when the board does before resolution. `engine.division`
 caps "any number" of targets at the amount where they are chosen, and legality
 offers no line with more targets than damage.
 
+**X damage divided, X paid in life** -- Fire Covenant, "As an additional cost to
+cast this spell, pay X life. Fire Covenant deals X damage divided as you choose
+among any number of target creatures":
+
+```jsonc
+"additional_cost": { "pay_life_x": true },
+"targets": [ { "id": "t1", "kind": "permanent", "count": "any",
+               "selector": { "types": ["Creature"], "controller": "any" } } ],
+"spell_effects": [ { "op": "damage", "amount": { "x": true }, "divided": "t1" } ]
+```
+
+`Game._cast` announces a `pay_life_x` X **first**, before any target is declared
+(601.2b, then 601.2c), so the "any number" pick is capped at X; the life is still
+paid with the other additional costs (601.2h). Legality has no X yet, so a line
+whose targets are on it (a targeting tax keeps them there) is capped at the most
+X the caster could announce -- `casting.life_x_ceiling`, the life total less the
+targets' life tax -- and the announcement is then floored at that line's target
+count.
+
 The loader accepts it only as a **top-level spell effect**, over a `permanent`
 spec the spell declares, with no other recipient (`objects`, `player`, `target`)
-beside it; a fixed target count larger than a printed amount, and an amount that
-reads the announced X, are refused. Dividing among players or "any target", and
-dividing on an ability, are not modelled.
+beside it. Refused: a fixed target count larger than a printed amount, and an
+amount reading the announced X unless an additional `pay_life_x` cost announces
+it -- a mana {X} is announced after the targets, because its ceiling reads cost
+reductions that read them. Dividing among players or "any target", and dividing
+on an ability, are not modelled.
 
 ### Doubling the counters on a permanent
 
@@ -2908,6 +2970,71 @@ more — through `add_counters`, so it is a placement: Doubling Season doubles w
 it puts (2 become 6) and "whenever a counter is put on" triggers. Not
 `proliferate` (one of each kind) and not `move_counters` (from somewhere else).
 `objects` is required.
+
+### Removing counters of any kind — `any_kind`
+
+```jsonc
+// Glissa Sunslayer — "• Remove up to three counters from target permanent."
+{ "op": "remove_counters", "objects": { "target": "permanent" },
+  "any_kind": true, "amount": { "const": 3 }, "up_to": true }
+```
+
+Without `any_kind`, `remove_counters` takes `amount` of the one named `counter`
+kind (default +1/+1). With it the card names no kind, and the controller takes
+the counters off each of `objects` one at a time — which permanent, declinable
+once the floor is met (`ask_objects`, purpose `"remove_counter"`), then which
+kind when it carries more than one (`ask_mode`, harmful kinds such as -1/-1 and
+stun first) — so any mix of kinds is expressible. This is the question the
+`remove_counters_from_among` cost asks, from `effects.counter_removal`.
+
+`amount` alone is exactly that many, or as many as there are (609.3); with
+`up_to` it is a ceiling the controller may stop short of, down to none; left out
+it is "any number". The loader refuses `any_kind` beside a named `counter`, on
+any op that does not read it, or without `objects`; `up_to` on a named-kind
+removal or without an `amount`; and an amount below one.
+
+### Moving a counter of any kind — `move_counters` with `any_kind`
+
+```jsonc
+// Nesting Grounds — "Move a counter from target permanent you control onto a
+// second target permanent."
+{ "op": "move_counters", "from": { "target": "from" }, "objects": { "target": "onto" },
+  "any_kind": true, "amount": { "const": 1 } }
+```
+
+`move_counters` takes counters off `from` (default this permanent) and puts
+them on `objects`: of one named `counter` kind (default +1/+1, `amount`
+defaulting to all of it), or with `all_kinds` the whole multiset. `any_kind` is
+the third reading: `amount` counters, one at a time, each of the kind the
+controller picks on resolution from those on the source (`ask_mode`, asked only
+when it carries more than one, harmful kinds first). Each is taken off before
+it is put on — a placement, so counter replacements and `counter_placed` see it
+— and with either target gone nothing moves. Two target specs never share an
+object, which is "a second target". The loader refuses `any_kind` beside a
+`counter` or `all_kinds`, and without a printed `amount`.
+
+### Removing counters from among permanents — the `remove_counters_from_among` op
+
+```jsonc
+// Eventide's Shadow
+"spell_effects": [
+  { "op": "remove_counters_from_among",
+    "objects": { "zone": "battlefield", "controller": "any" }, "as": "removed" },
+  { "op": "draw", "player": "you", "amount": { "binding": "removed" } },
+  { "op": "lose_life", "player": "you", "amount": { "binding": "removed" } }
+]
+```
+
+The effect twin of the [cost of the same name](#remove_counters_from_among--counters-of-any-kind-off-other-permanents):
+counters of any kinds off whichever of the `objects` pool the controller picks,
+one counter at a time, as `any_kind` asks. `objects` is a required selector
+(`controller` defaults to you, so "permanents on the battlefield" says `"any"`);
+only permanents carrying a counter are offered. `amount` and `up_to` read as on
+`any_kind` — absent is "any number", down to none. `as` binds the number
+actually removed, an int for `{"binding": …}`, which is the only place "the
+number of counters removed this way" survives. The loader refuses a `counter`
+kind, `any_kind` (it is implied), a missing `objects`, and a `count` or
+`chooser` inside `objects` — the number is the op's `amount`.
 
 ### The same number and kind of counters
 
@@ -3490,6 +3617,16 @@ Two things about that ledger are load-bearing:
   with mayhem, or replaced into exile by madness or Rest in Peace still counts.
   Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
   and forgets it at its next zone change (400.7).
+- **A counter is counted by who put it.** `counters_put_this_turn` ("if you
+  put a counter on a creature this turn", Lasting Tarfire) takes a required
+  `player` (the putter, 122.6a — not the recipient's controller), optional
+  `types` (card types the recipient had as the counter arrived, all of them)
+  and optional `counter` (one kind; `"any"`, the default, is every kind). It
+  sums the amounts of every COUNTER_PLACED this turn, the counters a permanent
+  entered with included (122.6), and keeps them when the counter or the
+  permanent has gone since. A `counter_placed` trigger setting a turn flag is
+  the near miss: an unprinted ability that misses counters put before the
+  permanent arrived.
 - **A death can be filtered by what the creature was as it died, and only by
   that.** `modified_creatures_died_this_turn` ("if a modified creature died
   under your control this turn", Intermediate Chirography) counts the deaths
@@ -3657,6 +3794,44 @@ counter to resolution where a response can stop it arriving, and `loyalty`,
 which is a planeswalker's and carries 606.3's once per turn. Like every non-tap
 cost it disqualifies a mana ability from `Cost.is_tap_only()`, so the payment
 solver never pays it silently.
+
+### `blight` — -1/-1 counters on a creature the payer chooses
+
+"To blight N, a player puts N -1/-1 counters on a creature they control."
+
+```jsonc
+// Burning Curiosity -- "As an additional cost to cast this spell, you may blight 1."
+"additional_cost": { "blight": 1 }, "additional_optional": true
+// …"If this spell's additional cost was paid" is
+// {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+
+// Auntie Ool, Cursewretch -- "Ward—Blight 2."
+{ "kind": "static", "effect": "ward", "affects": { "self_only": true },
+  "cost": { "blight": 2 } }
+
+// An activated ability -- "Blight 1: Draw a card."
+"cost": { "blight": 1 }
+```
+
+A positive integer, on any cost node: an activated ability, an `additional_cost`,
+a ward cost or a `may`'s `pay`. The **payer** chooses one creature they control
+as the cost is paid (601.2h), and all N counters go on it through
+`add_counters` with `as_cost`, so the placement raises `counter_placed` put by
+the payer and the counter replacements that are not "if an effect would" apply.
+That is why ward works unchanged: the targeting opponent pays, so the pool is
+their creatures, never the warded permanent's controller's. An activated ability
+on a creature may blight that creature.
+
+It is payable only while the payer controls a creature that can take -1/-1
+counters (`costs._blight_pool`): with none, the cast line, the activation and the
+ward "yes" are withheld, and a creature under "can't have -1/-1 counters put on
+it" is not a candidate, for `put_counters`' reason. The loader refuses a
+negative N.
+
+The near miss is `put_counters`, which puts counters on the cost's own source
+and asks nothing — as Auntie Ool's ward cost it would shrink Auntie Ool. "Blight
+N" as an **effect** (Sinister Gnarlbark) is not a cost and is written with
+`choose_permanents` and `add_counters`.
 
 ### `exile_from_hand` — the pitch cost, and why it is not a discard
 
@@ -5405,7 +5580,7 @@ smaller than the effect-side `value_keys`:
 |---|---|
 | `{"const": n}` | a literal |
 | `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key) |
-| `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks |
+| `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks; `"any"` sums every kind (122.1) |
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |

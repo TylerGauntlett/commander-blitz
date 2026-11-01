@@ -165,6 +165,16 @@ class CostModel(BaseModel):
     #: never gets the counter; and not ``loyalty``, which is a planeswalker's
     #: and carries 606.3's once-per-turn. Activated abilities only.
     put_counters: dict[str, Any] | None = None
+    #: "**Blight N**" -- "To blight N, a player puts N -1/-1 counters on a
+    #: creature they control" (Lorwyn Eclipsed). A positive integer. The
+    #: *payer* chooses the creature as the cost is paid, so it is the right key
+    #: wherever someone other than the source's controller pays: Auntie Ool's
+    #: "Ward--Blight 2" is paid by the targeting opponent onto one of their own
+    #: creatures. Any cost node takes it -- an activated ability, an
+    #: ``additional_cost`` ("you may blight 1" with ``additional_optional``,
+    #: Burning Curiosity), a ward or a ``may`` ``pay``. Not ``put_counters``,
+    #: which goes on the source and asks nothing.
+    blight: int = 0
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
     #: is a cost rather than an effect, so it is paid whether or not the ability
@@ -322,6 +332,12 @@ class TargetModel(BaseModel):
     #: `optional` makes it "exactly N or none", and ``"any"`` has no ceiling.
     #: Pairs with either a literal or a value expression.
     up_to: bool = False
+    #: The floor beside an ``up_to`` ceiling: "**one, two, or three** target
+    #: creature cards" (Aberrant Return) is ``count: 3, up_to: true,
+    #: min_count: 1``. Sizes below it are not legal, so the spell cannot be
+    #: cast with fewer legal targets than the floor (601.2c). Requires
+    #: ``up_to`` and a literal ``count`` above it.
+    min_count: int = 0
     #: "**For each player**, exile up to one target nonland permanent that
     #: player controls." The same set of legal choices as "any number of target
     #: nonland permanents, no two controlled by the same player" -- which is
@@ -661,6 +677,10 @@ class AbilityModel(BaseModel):
     #: `ability_cost_reduction`: whose activation is discounted -- "abilities
     #: **you** activate". The *activating player*, not the permanent's
     #: controller: an opponent equipping your Equipment is their activation.
+    #:
+    #: On an **activated ability**: who may activate it -- ``"opponent"`` is
+    #: "Only your opponents may activate this ability" (Oft-Nabbed Goat),
+    #: ``"any"`` is "Any player may activate this ability" (`Ability.activated_by`).
     activated_by: str | None = None
     #: `ability_cost_reduction`: what the activation must be **aimed at** --
     #: "equip abilities you activate **that target enchanted creature**".
@@ -1338,7 +1358,12 @@ class CardModel(BaseModel):
     #: ``"bottom"`` is "put <this card> on the bottom of its owner's library"
     #: (Ultimate Nullification): no ordinal names the bottom of a library
     #: whose size varies.
-    tucks_itself: int | Literal["bottom"] | None = None
+    #:
+    #: ``"shuffle"`` is "shuffle <this card> into its owner's library" (the
+    #: Sun's Zenith cycle): the card goes in, then that library is shuffled. A
+    #: `shuffle` op in the card's own effects runs while the card is still on
+    #: the stack, so it would shuffle the library *without* it.
+    tucks_itself: int | Literal["bottom", "shuffle"] | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text
