@@ -98592,12 +98592,12 @@
     },
     "Flourishing Defenses": {
       "edhrec_rank": 4024,
-      "gate": "template",
+      "gate": null,
       "name": "Flourishing Defenses",
-      "reason": "no template for: Whenever a -1/-1 counter is put on a creature, you may create a 1/1 green Elf Warrior crea",
+      "reason": "",
       "scryfall_id": "37a678b3-53ba-48c7-9846-6454f8b34127",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flourishing Fox": {
@@ -122332,12 +122332,12 @@
     },
     "Hapatra, Vizier of Poisons": {
       "edhrec_rank": 3982,
-      "gate": "template",
+      "gate": null,
       "name": "Hapatra, Vizier of Poisons",
-      "reason": "no template for: Whenever Hapatra deals combat damage to a player, you may put a -1/-1 counter on target cr",
+      "reason": "",
       "scryfall_id": "d19e17fc-ae3e-4533-ab94-70d5f2e1b8cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hapatra, the Desert Fang": {

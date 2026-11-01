@@ -5110,6 +5110,10 @@
     },
     "zone": "battlefield"
   },
+  "flourishing_defenses": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "flusterstorm": {
     "hand_size": {
       "0": 1
@@ -6340,6 +6344,10 @@
       "amount": 15,
       "kind": "+1/+1"
     },
+    "zone": "battlefield"
+  },
+  "hapatra_vizier_of_poisons": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "happy_hogan_dauntless_driver": {

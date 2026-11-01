@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**151 cards** blocked by **138** capabilities.
+**148 cards** blocked by **135** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -67,7 +67,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
-| [elf-warrior-token](#elf-warrior-token) | 1 | 4024 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exchange-life-total](#exchange-life-total) | 1 | 1952 | op |
@@ -125,7 +124,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
-| [scarecrow-2-2-c](#scarecrow-2-2-c) | 1 | 8890 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -133,7 +131,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [shuffle-self-into-library](#shuffle-self-into-library) | 1 | 1947 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [snake-1-1-g-deathtouch](#snake-1-1-g-deathtouch) | 1 | 3982 | token |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -1083,20 +1080,6 @@ Blocks **1** card.
 
 </details>
 
-## elf-warrior-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 green Elf Warrior creature token (id elf_warrior_1_1_g)
-  <br>Why the existing vocabulary won't do: The trigger is expressible as counter_placed with counter "-1/-1" and a creature filter, wrapped in may/create_token, but token_ids has no Elf Warrior; the only 1/1 green tokens are insect_1_1_g and saproling_1_1_g, which carry the wrong creature types
-
-<details><summary>Cards waiting on this</summary>
-
-- **Flourishing Defenses** (rank 4024) — `flourishing_defenses`
-  - Whenever a -1/-1 counter is put on a creature, you may create a 1/1 green Elf Warrior creature token.
-
-</details>
-
 ## enters-as-copy-x-counters
 
 Blocks **1** card.
@@ -1919,20 +1902,6 @@ Blocks **1** card.
 
 </details>
 
-## scarecrow-2-2-c
-
-Blocks **1** card.
-
-- **(token)** a 2/2 colorless Scarecrow artifact creature token
-  <br>Why the existing vocabulary won't do: token_ids has no Scarecrow token; the only 2/2 colorless artifact creature token is robot_villain_2_2_c, a Robot Villain, which has the wrong creature types. The rest of the line (mana+tap+sacrifice cost, create_token with tapped and an amount of counters_on charge on self) and the counter_placed trigger are expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wickersmith's Tools** (rank 8890) — `wickersmith_s_tools`
-  - {5}, {T}, Sacrifice this artifact: Create X tapped 2/2 colorless Scarecrow artifact creature tokens, where X is the number of charge counters on this artifact.
-
-</details>
-
 ## search-aura-attached
 
 Blocks **1** card.
@@ -2030,20 +1999,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## snake-1-1-g-deathtouch
-
-Blocks **1** card.
-
-- **(token)** a 1/1 green Snake creature token with deathtouch
-  <br>Why the existing vocabulary won't do: token_ids has only snake_1_1_b_deathtouch, which is black, not green; the trigger itself is expressible as counter_placed with counter -1/-1, put_by you, batched, filtered to creatures
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hapatra, Vizier of Poisons** (rank 3982) — `hapatra_vizier_of_poisons`
-  - Whenever you put one or more -1/-1 counters on a creature, create a 1/1 green Snake creature token with deathtouch.
 
 </details>
 
