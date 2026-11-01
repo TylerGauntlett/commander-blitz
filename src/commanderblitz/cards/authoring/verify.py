@@ -1190,12 +1190,6 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
     # that resolved.
     played = game.state.card_of(obj)
     allowed = {Zone.BATTLEFIELD, Zone.GRAVEYARD} if played.is_aura else {Zone.BATTLEFIELD}
-    if sacrifices_itself_on_entering(played):
-        # "When this land enters, sacrifice it. When you do, ..." -- Riveteers
-        # Overlook. The graveyard is where the printed text puts it, read off
-        # the card's own unconditional enters trigger, so a permanent that
-        # merely finds itself in the graveyard still fails, as with the Aura.
-        allowed = allowed | {Zone.GRAVEYARD}
     if played.is_permanent and obj.zone not in allowed:
         return [f"{card.id} is a permanent but ended in {obj.zone.value}"]
     if not played.is_permanent:
@@ -1217,27 +1211,6 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
         if obj.zone not in spell_zones:
             return [f"{card.id} is a spell but ended in {obj.zone.value}"]
     return []
-
-
-def sacrifices_itself_on_entering(card: CardDef) -> bool:
-    """Whether ``card`` prints an unconditional "when this enters, sacrifice it".
-
-    An enters trigger with no intervening "if", sourced on the card itself,
-    whose effects open with a ``sacrifice`` of ``self_only``. A "sacrifice it
-    unless you pay" trigger opens with something else, so a karoo or a
-    tax land still has to stay on the battlefield to pass.
-    """
-    for ability in card.abilities:
-        trigger = ability.trigger
-        if not ability.is_triggered or trigger is None or trigger.event != "self_enters":
-            continue
-        if trigger.condition is not None or not ability.effects:
-            continue
-        first = ability.effects[0]
-        objects = first.get("objects") or {}
-        if first.get("op") == "sacrifice" and objects.get("self_only"):
-            return True
-    return False
 
 
 def _play_and_check(registry: CardRegistry, card: CardDef, expectation: dict) -> list[str]:

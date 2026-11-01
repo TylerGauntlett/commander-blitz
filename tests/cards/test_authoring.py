@@ -233,40 +233,6 @@ class TestTheSandboxHandFeedsADiscardCost:
         assert self._hand(hand_written, DIVINATION) == ["auto_test_divination", "forest"]
 
 
-class TestAPermanentThatSacrificesItselfOnEntering:
-    """Gate 4 lets a permanent end in the graveyard only when its text says so.
-
-    Riveteers Overlook: "When this land enters, sacrifice it. When you do, ..."
-    The graveyard is where the printed card ends, read off an unconditional
-    enters trigger; "sacrifice it unless you pay {1}" is not that trigger.
-    """
-
-    def _card(self, effects: list[dict]):
-        return V.compile_card(V.CardModel.model_validate({
-            "id": "auto_test_overlook",
-            "name": "Auto Test Overlook",
-            "oracle_text": "When this land enters, sacrifice it.",
-            "types": ["Land"],
-            "abilities": [{
-                "kind": "triggered",
-                "text": "When this land enters, sacrifice it.",
-                "trigger": {"event": "self_enters", "source": "self"},
-                "effects": effects,
-            }],
-        }))
-
-    def test_an_unconditional_self_sacrifice_counts(self):
-        card = self._card([{"op": "sacrifice", "objects": {"self_only": True, "zone": "battlefield"}}])
-        assert V.sacrifices_itself_on_entering(card)
-
-    def test_sacrifice_unless_you_pay_does_not(self):
-        card = self._card([{
-            "op": "may", "player": "you", "pay": {"mana": "{1}"},
-            "else": [{"op": "sacrifice", "objects": {"self_only": True}}],
-        }])
-        assert not V.sacrifices_itself_on_entering(card)
-
-
 class TestTheSandboxIsUsable:
     def test_it_builds_from_whatever_pool_it_is_given(self, pool):
         """No dependency on test-only fixture cards.
