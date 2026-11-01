@@ -41,6 +41,7 @@ from .mana import (
     format_symbols,
     solve_payment,
 )
+from .objects import MINUS_ONE
 from .player_statics import (
     ability_cost_reduction,
     counters_prohibited,
@@ -1316,6 +1317,8 @@ def can_pay(
         state, source_oid, str(cost.put_counters["counter"])
     ):
         return False
+    if cost.blight and not _blight_pool(state, pid, source_oid):
+        return False
     if cost.loyalty is not None and cost.loyalty > 0 and source_oid is not None and (
         counters_prohibited(state, source_oid, "loyalty")
     ):
@@ -1470,6 +1473,27 @@ def _sacrifice_pool(state: GameState, pid: int, cost: Cost, source_oid: int | No
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     pool = [oid for oid in resolve_pool(ctx, spec) if not sacrifice_forbidden(state, oid)]
     return pool if len(pool) >= count else []
+
+
+def _blight_pool(state: GameState, pid: int, source_oid: int | None) -> list[int]:
+    """Which creatures the payer may blight -- "a creature **they** control".
+
+    Built around ``pid``, the *paying* player, and never the source's
+    controller: ward's "Blight 2" is paid by the opponent who targeted, onto a
+    creature of their own. The source itself qualifies when it is a creature
+    its payer controls -- nothing in the rule excludes it, and an activated
+    "Blight 1:" on a creature may blight that creature.
+
+    A creature that can't have -1/-1 counters is not in the pool, for
+    `put_counters`' reason: the placement would not happen, and a cost is paid
+    only by doing all of it (601.2h). So a board of nothing but such creatures
+    makes the cost unpayable rather than free.
+    """
+    ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
+    spec = {"types": ["Creature"], "controller": "you", "zone": "battlefield"}
+    return [
+        oid for oid in resolve_pool(ctx, spec) if not counters_prohibited(state, oid, MINUS_ONE)
+    ]
 
 
 def _return_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
@@ -1955,6 +1979,21 @@ def pay(
             as_cost=True,
             by=pid,
         )
+
+    if cost.blight:
+        # "To blight N, a player puts N -1/-1 counters on a creature they
+        # control." One creature takes all N -- the rule says "a creature" --
+        # chosen now, while paying (601.2h), by the payer. Through
+        # `add_counters` with `as_cost`, `put_counters`' reason: the placement
+        # raises `counter_placed` (Auntie Ool's own trigger reads it) and the
+        # counter replacements that are not "if an effect would" apply.
+        pool = _blight_pool(state, pid, source_oid)
+        picked = yield from ask_objects(
+            ctx, f"Blight {cost.blight}", pool, 1, 1, pid, "blight_cost"
+        )
+        if not picked:
+            return False
+        add_counters(state, picked[0], MINUS_ONE, cost.blight, as_cost=True, by=pid)
 
     if cost.loyalty is not None and source_oid is not None:
         # A **cost**, so it is paid as the ability goes on the stack and is not

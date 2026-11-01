@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 44 |
 | [Grantable statics](#grantable-statics) | 41 |
 | [Cost reduction](#cost-reduction) | 6 |
-| [Ability costs](#ability-costs) | 28 |
+| [Ability costs](#ability-costs) | 29 |
 | [Card-level costs](#card-level-costs) | 32 |
 | [Keywords](#keywords) | 44 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -721,6 +721,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | Name | Description | Defined in |
 |---|---|---|
 | `behold` | Behold: choose matching permanents you control or reveal matching cards from hand. | [behold — choose a permanent or reveal a card](card-dsl-cookbook.md#behold--choose-a-permanent-or-reveal-a-card) |
+| `blight` | Blight N: the payer puts N -1/-1 counters on a creature they control. | [blight — -1/-1 counters on a creature the payer chooses](card-dsl.md#blight---1-1-counters-on-a-creature-the-payer-chooses) |
 | `discard` | Discard N cards. | [Costs](card-dsl.md#costs) |
 | `discard_selector` | …matching this selector. | [Costs](card-dsl.md#costs) |
 | `discard_self` | Discard this card (cycling). | [Cycling](card-dsl-cookbook.md#cycling) |

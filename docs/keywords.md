@@ -192,6 +192,7 @@ Not abilities: instructions naming something a player or the game does.
 | Keyword | Status | Mechanism | Engine name |
 |---|---|---|---|
 | Attach | shipped | op | `attach` |
+| Blight | shipped | the `blight` cost key: the payer's creature, chosen while paying, on any cost node (an activated ability, `additional_cost`, ward). As an effect it is `choose_permanents` plus `add_counters` | — |
 | Clash | shipped | op, plus a `clash_won` binding an ordinary `if` reads back | `clash` |
 | Counter | shipped | op, and it honours `uncounterable` | `counter` |
 | Mill † | shipped | op | `mill` |

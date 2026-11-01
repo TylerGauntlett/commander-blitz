@@ -308,6 +308,14 @@ export const DECISION_AUDIT: readonly DecisionRow[] = [
   },
   {
     kind: "choose_objects",
+    purpose: "blight_cost",
+    asks: "Which creature takes the -1/-1 counters to pay",
+    of: "table",
+    today: ["board", "panel"],
+    journeys: ["PickOneOnTheBoard"],
+  },
+  {
+    kind: "choose_objects",
     purpose: "choose_permanents",
     asks: "Which permanents",
     of: "table",

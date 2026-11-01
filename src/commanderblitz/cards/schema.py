@@ -165,6 +165,16 @@ class CostModel(BaseModel):
     #: never gets the counter; and not ``loyalty``, which is a planeswalker's
     #: and carries 606.3's once-per-turn. Activated abilities only.
     put_counters: dict[str, Any] | None = None
+    #: "**Blight N**" -- "To blight N, a player puts N -1/-1 counters on a
+    #: creature they control" (Lorwyn Eclipsed). A positive integer. The
+    #: *payer* chooses the creature as the cost is paid, so it is the right key
+    #: wherever someone other than the source's controller pays: Auntie Ool's
+    #: "Ward--Blight 2" is paid by the targeting opponent onto one of their own
+    #: creatures. Any cost node takes it -- an activated ability, an
+    #: ``additional_cost`` ("you may blight 1" with ``additional_optional``,
+    #: Burning Curiosity), a ward or a ``may`` ``pay``. Not ``put_counters``,
+    #: which goes on the source and asks nothing.
+    blight: int = 0
     #: A loyalty cost (606.2), signed: `+1`, `0`, `-3`. Not `remove_counters`,
     #: which only ever takes them off -- a plus ability *adds* loyalty, and it
     #: is a cost rather than an effect, so it is paid whether or not the ability

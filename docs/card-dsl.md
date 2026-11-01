@@ -3660,6 +3660,44 @@ which is a planeswalker's and carries 606.3's once per turn. Like every non-tap
 cost it disqualifies a mana ability from `Cost.is_tap_only()`, so the payment
 solver never pays it silently.
 
+### `blight` — -1/-1 counters on a creature the payer chooses
+
+"To blight N, a player puts N -1/-1 counters on a creature they control."
+
+```jsonc
+// Burning Curiosity -- "As an additional cost to cast this spell, you may blight 1."
+"additional_cost": { "blight": 1 }, "additional_optional": true
+// …"If this spell's additional cost was paid" is
+// {"cmp": ">=", "left": {"additional_paid": true}, "right": {"const": 1}}
+
+// Auntie Ool, Cursewretch -- "Ward—Blight 2."
+{ "kind": "static", "effect": "ward", "affects": { "self_only": true },
+  "cost": { "blight": 2 } }
+
+// An activated ability -- "Blight 1: Draw a card."
+"cost": { "blight": 1 }
+```
+
+A positive integer, on any cost node: an activated ability, an `additional_cost`,
+a ward cost or a `may`'s `pay`. The **payer** chooses one creature they control
+as the cost is paid (601.2h), and all N counters go on it through
+`add_counters` with `as_cost`, so the placement raises `counter_placed` put by
+the payer and the counter replacements that are not "if an effect would" apply.
+That is why ward works unchanged: the targeting opponent pays, so the pool is
+their creatures, never the warded permanent's controller's. An activated ability
+on a creature may blight that creature.
+
+It is payable only while the payer controls a creature that can take -1/-1
+counters (`costs._blight_pool`): with none, the cast line, the activation and the
+ward "yes" are withheld, and a creature under "can't have -1/-1 counters put on
+it" is not a candidate, for `put_counters`' reason. The loader refuses a
+negative N.
+
+The near miss is `put_counters`, which puts counters on the cost's own source
+and asks nothing — as Auntie Ool's ward cost it would shrink Auntie Ool. "Blight
+N" as an **effect** (Sinister Gnarlbark) is not a cost and is written with
+`choose_permanents` and `add_counters`.
+
 ### `exile_from_hand` — the pitch cost, and why it is not a discard
 
 "You may pay 1 life and **exile a blue card from your hand** rather than pay this

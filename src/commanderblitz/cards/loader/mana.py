@@ -151,6 +151,14 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             )
     if model.put_counters is not None:
         _validate_put_counters(model.put_counters, where, defines_x=defines_x)
+    if model.blight < 0:
+        # "Blight N" always prints a positive N; a negative one would be a cost
+        # that removes -1/-1 counters, which is `remove_counters_from_among`'s
+        # sentence and not this one.
+        raise DslError(
+            f"{where}.cost: 'blight' is how many -1/-1 counters go on a creature "
+            f"you control, so it cannot be negative (got {model.blight})"
+        )
     if model.mill < 0:
         raise DslError(
             f"{where}.cost: 'mill' is how many cards go from the top of your "

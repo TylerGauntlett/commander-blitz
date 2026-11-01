@@ -942,6 +942,8 @@ COST_REDUCTION_FILTER: dict[str, Entry] = {
 }
 
 ABILITY_COSTS: dict[str, Entry] = {
+    "blight": ("Blight N: the payer puts N -1/-1 counters on a creature they control.",
+               "`blight` — -1/-1 counters on a creature the payer chooses"),
     "discard": ("Discard N cards.", None),
     "discard_selector": ("…matching this selector.", None),
     "discard_self": ("Discard this card (cycling).", "Cycling"),

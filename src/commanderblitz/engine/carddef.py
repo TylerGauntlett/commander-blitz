@@ -345,6 +345,13 @@ class Cost:
     #: ``remove_counters``, and not the `add_counters` op, which would move the
     #: payment to resolution.
     put_counters: Mapping[str, Any] | None = None
+    #: "**Blight N**" (Lorwyn Eclipsed): the *payer* puts N -1/-1 counters on
+    #: a creature they control, chosen as the cost is paid -- Burning
+    #: Curiosity's optional additional cost, Auntie Ool's "Ward--Blight 2". Not
+    #: ``put_counters``, which has no choice to make and goes on the source.
+    #: Payable only while the payer controls a creature that can take the
+    #: counters; see `costs._blight_pool`.
+    blight: int = 0
     #: A loyalty cost (606.2), signed. `None` rather than `0` for "no loyalty
     #: cost", because `0:` is a real and different thing -- a printed zero
     #: ability still counts as the one loyalty ability that turn.
@@ -431,6 +438,7 @@ class Cost:
             put_counters=(
                 dict(spec["put_counters"]) if spec.get("put_counters") else None
             ),
+            blight=int(spec.get("blight", 0) or 0),
             # `is not None`, not truthiness: `0:` is a printed loyalty cost and
             # a falsy one, and reading it as "no loyalty cost" would make a zero
             # ability free to use twice in a turn.
@@ -517,6 +525,7 @@ class Cost:
             and not self.pay_energy
             and self.remove_counters is None
             and self.put_counters is None
+            and not self.blight
             and self.loyalty is None
             and self.exile_from_graveyard is None
         )
@@ -568,6 +577,8 @@ class Cost:
             amount = self.put_counters.get("amount", 1)
             kind = self.put_counters.get("counter", "")
             parts.append(f"Put {amount} {kind} counter{'s' if amount != 1 else ''} on this")
+        if self.blight:
+            parts.append(f"Blight {self.blight}")
         if self.remove_counters_from_among:
             count = self.remove_counters_from_among.get("count", 1)
             parts.append(f"Remove {count} counters from among permanents")
