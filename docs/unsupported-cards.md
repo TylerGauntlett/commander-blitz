@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**137 cards** blocked by **125** capabilities.
+**136 cards** blocked by **124** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,7 +59,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [distribute-moved-counters](#distribute-moved-counters) | 1 | 387 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
-| [divided-damage-x](#divided-damage-x) | 1 | 2757 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -950,20 +949,6 @@ Blocks **1** card.
 
 - **Magma Opus** (rank 5125) — `magma_opus`
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
-
-</details>
-
-## divided-damage-x
-
-Blocks **1** card.
-
-- **(engine)** divided damage whose amount is the announced X (here X from an additional pay_life_x cost): the cast line must announce X before (or cap) the 'any number' target declaration so the 601.2d division is asked over at most X targets, each dealt at least 1
-  <br>Why the existing vocabulary won't do: additional_cost {pay_life_x: true} (Toxic Deluge) covers the first sentence and damage with 'divided' covers fixed or board-derived amounts (Pyrokinesis, Monstrous Onslaught), but the loader explicitly refuses a divided amount that reads the announced X ('a divided amount may not read the announced X') because targets are declared before X on this engine's cast line, and game._cast asks pay_life_x's X only after mana is paid
-
-<details><summary>Cards waiting on this</summary>
-
-- **Fire Covenant** (rank 2757) — `fire_covenant`
-  - Fire Covenant deals X damage divided as you choose among any number of target creatures.
 
 </details>
 

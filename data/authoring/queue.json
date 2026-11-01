@@ -95322,12 +95322,12 @@
     },
     "Fire Covenant": {
       "edhrec_rank": 2757,
-      "gate": "template",
+      "gate": null,
       "name": "Fire Covenant",
-      "reason": "no template for: As an additional cost to cast this spell, pay X life",
+      "reason": "",
       "scryfall_id": "1a13437b-e0c7-4ca9-a0e2-b8cb1b5813ec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fire Diamond": {
