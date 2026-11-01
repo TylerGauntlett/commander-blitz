@@ -267,7 +267,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Counters on an arrival** | `counters` on `put_onto_battlefield` and `return_from_graveyard` (placed after the move), `counters` / `counters_if` on `look_at_top` (one placement with the arrival, 122.6); `replace_counters` applies before `counter_placed` fires or a Saga reads its lore (714.2c) |
 | **Counters that can't be put on** | The `cant_have_counters` static (101.2): a placement of the named kind onto a matching permanent does not happen, asked before every counter replacement in `add_counters`, `zones._entering_counters` and `costs.can_pay` (a cost that would put one on can't be paid) |
 | **Removing counters as a cost** | `remove_counters_from_among` over several permanents, any kinds, asked one counter at a time (602.2b) |
-| **Removing counters of any kind** | `remove_counters` with `any_kind`: the controller picks each counter's kind (122.1), exactly `amount` or as many as there are (609.3), `up_to` a declinable ceiling |
+| **Removing counters of any kind** | `remove_counters` with `any_kind`: the controller picks each counter's kind (122.1), exactly `amount` or as many as there are (609.3), `up_to` a declinable ceiling; the `remove_counters_from_among` op the same over a pool of permanents, binding the number removed |
 
 ### Ledgers and history
 

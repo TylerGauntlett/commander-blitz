@@ -1,0 +1,33 @@
+{
+  "cards": [
+    {
+      "id": "t_eventide_shadow",
+      "name": "Test Eventide Shadow",
+      "oracle_text": "Remove any number of counters from among permanents on the battlefield. You draw cards and lose life equal to the number of counters removed this way.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "remove_counters_from_among", "objects": {"zone": "battlefield", "controller": "any"},
+         "as": "removed"},
+        {"op": "draw", "player": "you", "amount": {"binding": "removed"}},
+        {"op": "lose_life", "player": "you", "amount": {"binding": "removed"}}
+      ]
+    },
+    {
+      "id": "t_counter_harvest",
+      "name": "Test Counter Harvest",
+      "oracle_text": "Remove two counters from among creatures you control. You gain life equal to the number of counters removed this way.",
+      "mana_cost": "{B}",
+      "types": ["Sorcery"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "spell_effects": [
+        {"op": "remove_counters_from_among", "objects": {"types": ["Creature"]},
+         "amount": {"const": 2}, "as": "removed"},
+        {"op": "gain_life", "player": "you", "amount": {"binding": "removed"}}
+      ]
+    }
+  ]
+}

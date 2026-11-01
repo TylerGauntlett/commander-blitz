@@ -2933,6 +2933,29 @@ it is "any number". The loader refuses `any_kind` beside a named `counter`, on
 any op that does not read it, or without `objects`; `up_to` on a named-kind
 removal or without an `amount`; and an amount below one.
 
+### Removing counters from among permanents — the `remove_counters_from_among` op
+
+```jsonc
+// Eventide's Shadow
+"spell_effects": [
+  { "op": "remove_counters_from_among",
+    "objects": { "zone": "battlefield", "controller": "any" }, "as": "removed" },
+  { "op": "draw", "player": "you", "amount": { "binding": "removed" } },
+  { "op": "lose_life", "player": "you", "amount": { "binding": "removed" } }
+]
+```
+
+The effect twin of the [cost of the same name](#remove_counters_from_among--counters-of-any-kind-off-other-permanents):
+counters of any kinds off whichever of the `objects` pool the controller picks,
+one counter at a time, as `any_kind` asks. `objects` is a required selector
+(`controller` defaults to you, so "permanents on the battlefield" says `"any"`);
+only permanents carrying a counter are offered. `amount` and `up_to` read as on
+`any_kind` — absent is "any number", down to none. `as` binds the number
+actually removed, an int for `{"binding": …}`, which is the only place "the
+number of counters removed this way" survives. The loader refuses a `counter`
+kind, `any_kind` (it is implied), a missing `objects`, and a `count` or
+`chooser` inside `objects` — the number is the op's `amount`.
+
 ### The same number and kind of counters
 
 ```jsonc

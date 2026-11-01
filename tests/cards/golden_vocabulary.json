@@ -970,6 +970,7 @@
   "reflexive_trigger",
   "regenerate",
   "remove_counters",
+  "remove_counters_from_among",
   "rename",
   "repeat",
   "repeat_while",

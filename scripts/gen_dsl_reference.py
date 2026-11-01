@@ -240,6 +240,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  '`incubate` — "Incubate N"'),
     "remove_counters": ("Board", "Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling.",
                         "Removing counters of any kind — `any_kind`"),
+    "remove_counters_from_among": ("Board", "Remove counters of any kinds from among a pool of permanents, one at a time; `as` records how many.",
+                                   "Removing counters from among permanents — the `remove_counters_from_among` op"),
     "tap": ("Board", "Tap permanents.", None),
     "untap": ("Board", "Untap permanents.", "Untapping on somebody else's turn"),
     "attach": ("Board", "Attach an Aura, Equipment or Fortification to a permanent; with `player`, move this Aura onto one player (701.3).",

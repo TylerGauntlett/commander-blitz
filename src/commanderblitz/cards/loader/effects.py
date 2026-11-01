@@ -110,7 +110,7 @@ COPY_EXCEPT_KEYS = frozenset(
 SEAT_RECORDING_OPS = frozenset({"draw", "may"})
 
 #: The counter removals that read `up_to` -- "remove **up to** three counters".
-COUNTER_REMOVAL_UP_TO_OPS = ("remove_counters",)
+COUNTER_REMOVAL_UP_TO_OPS = ("remove_counters", "remove_counters_from_among")
 
 #: The ops that read `any_kind`: the card names no kind, so the controller
 #: picks one counter at a time (`effects.counter_removal`).
@@ -131,6 +131,27 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
     any_kind = bool(effect.get("any_kind"))
     if op not in COUNTER_REMOVAL_UP_TO_OPS and op not in ANY_KIND_COUNTER_OPS:
         return
+    if op == "remove_counters_from_among":
+        # Always any kinds, so it takes neither spelling of a kind; and the
+        # number is `amount`, where the cost of the same name says `count`.
+        if "counter" in effect:
+            raise DslError(
+                f"{where}: remove_counters_from_among removes counters of any kind; "
+                f"a named 'counter' kind is not read"
+            )
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping) or not objects:
+            raise DslError(
+                f"{where}: remove_counters_from_among needs 'objects' naming the "
+                f"permanents the counters may come off"
+            )
+        if "count" in objects or "chooser" in objects:
+            raise DslError(
+                f"{where}.objects: the permanents are a pool the controller picks "
+                f"from one counter at a time; the number is the op's 'amount', not "
+                f"a selector 'count' or 'chooser'"
+            )
+        any_kind = True
     if any_kind and "counter" in effect:
         # One says "this kind", the other "whichever kinds the chooser likes";
         # the op would read `any_kind` and the printed kind would be ignored.
