@@ -3439,6 +3439,24 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: cast_card takes no {key!r} -- it casts the 'objects' "
                     f"pool at its mana cost (a free cast is cast_from_hand)"
                 )
+    if op == "exchange_life_total":
+        # 701.12: the player half is named on every printing ("target
+        # opponent's", "your"), and the creature half is always the ability's
+        # own source ("this creature's toughness"). A default player would be a
+        # guess about whose life total moves, and an `objects` key would be read
+        # by nothing -- an exchange with some other creature, silently with this one.
+        if effect.get("player") is None:
+            raise DslError(
+                f"{where}: exchange_life_total needs 'player' -- whose life total "
+                f"is exchanged with this creature's toughness"
+            )
+        _validate_player_spec(effect["player"], f"{where}.player", target_kinds)
+        for key in ("objects", "amount", "duration"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: exchange_life_total takes no {key!r} -- the creature "
+                    f"is the ability's source and the exchange is indefinite (701.12)"
+                )
     if op == "lock_life_total":
         if effect.get("player") is not None:
             _validate_player_spec(effect["player"], f"{where}.player", target_kinds)

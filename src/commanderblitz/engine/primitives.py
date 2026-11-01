@@ -1922,6 +1922,35 @@ def pump(
     _stats_changed(state, obj, power=power, toughness=toughness)
 
 
+def set_base_toughness(
+    state: GameState, oid: int, toughness: int, *, source: int | None = None
+) -> None:
+    """ "This creature's toughness becomes N", indefinitely (layer 7b, 613.4b).
+
+    The toughness half of an exchange of a life total with a creature's
+    toughness (Tree of Perdition, 701.12). A *setting* effect, not a pump: it
+    goes on `GameObject.animations` with a timestamp, so it is read in the same
+    timestamp-ordered 7b pass as an indefinite animation (the later one sets
+    the base), and counters, anthems and pumps still layer on top of it. Power,
+    types and colours are untouched -- what separates it from `animate`, which
+    sets the whole body. It lasts as long as the permanent does; leaving the
+    battlefield empties `animations`.
+    """
+    obj = state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return
+    obj.animations.append(
+        TempEffect(
+            kind="set_toughness",
+            toughness=toughness,
+            source=source,
+            timestamp=state.alloc_timestamp(),
+        )
+    )
+    state.bump_chars()
+    _stats_changed(state, obj, toughness=toughness)
+
+
 def animate(
     state: GameState,
     oid: int,

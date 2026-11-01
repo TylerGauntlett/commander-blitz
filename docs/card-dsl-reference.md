@@ -152,6 +152,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cant_lose_the_game` | Life & damage |  | A player can't lose and opponents can't win, for a duration. | [Effect ops](card-dsl.md#effect-ops) |
 | `damage` | Life & damage |  | A source deals N damage to objects or players; `excess_to` spills over; `defender_of` hits what a creature is attacking; `divided` splits it among a target spec as the spell is cast. | [damage's excess_to](card-dsl.md#damages-excess_to) |
 | `damage_life_floor` | Life & damage |  | Damage can't reduce a player's life below N this turn. | [Damage can't take you below 1](card-dsl-cookbook.md#damage-cant-take-you-below-1) |
+| `exchange_life_total` | Life & damage |  | Exchange a player's life total with the source creature's toughness (701.12), in full or not at all. | [Exchanging a life total with a toughness](card-dsl-cookbook.md#exchanging-a-life-total-with-a-toughness) |
 | `fight` | Life & damage |  | Two creatures fight. | [fight](card-dsl-cookbook.md#fight) |
 | `gain_life` | Life & damage |  | A player gains N life. | [Effect ops](card-dsl.md#effect-ops) |
 | `lock_life_total` | Life & damage |  | A player's life total can't change for a duration. | ["Your life total can't change"](card-dsl-cookbook.md#your-life-total-cant-change) |

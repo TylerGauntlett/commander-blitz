@@ -363,6 +363,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                         "Damage dealt to the chosen creature instead"),
     "prevent_damage_permanent": ("Life & damage", "Prevent damage dealt to or by a permanent for a duration; `combat_only` narrows it to combat damage.",
                                  "Preventing all damage to or by a **permanent**, for a while"),
+    "exchange_life_total": ("Life & damage", "Exchange a player's life total with the source creature's toughness (701.12), in full or not at all.",
+                            "Exchanging a life total with a toughness"),
     "lock_life_total": ("Life & damage", "A player's life total can't change for a duration.",
                         '"Your life total can\'t change"'),
     "damage_life_floor": ("Life & damage", "Damage can't reduce a player's life below N this turn.",

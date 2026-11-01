@@ -254,6 +254,7 @@ under [Simplified](#simplified); what is missing outright is under
 | **Prevention over a permanent, static** | The `prevent_damage` static: absorb N per source (702.63a) or `prevent_all`, either narrowed to combat damage by `combat_only`, read in `damage_permanent` beside protection (615.1) |
 | **Prevention over a player, static** | The `prevent_damage` static with `affects_player`: absorb N per damage event to the seat (615.1), narrowed by `damage_source` on the dealer's current characteristics (a controller-only filter reaches a spell) and by `combat_only`, read in `damage_player` after the all-or-nothing preventions and before the damage multiplier (Orbs of Warding, Heart-Shaped Herb) |
 | **Life totals that cannot move** | `lock_life_total` (118.5) checked before any gain or loss replacement; `cant_gain_life` player-wide static read by `gain_life`, beating `replace_life_gain` (101.2) and firing no `LIFE_GAINED` |
+| **Exchanging a life total with a toughness** | `exchange_life_total` (701.12): the life total becomes the source creature's toughness as a gain or loss (119.5) and the toughness becomes the former life total as an indefinite 7b set (`primitives.set_base_toughness`); nothing happens if the source is gone or no creature, or the life total is locked, or a needed gain is forbidden |
 
 ### Counters
 

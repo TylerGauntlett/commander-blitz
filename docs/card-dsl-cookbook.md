@@ -7205,6 +7205,37 @@ total holds still, and protection is the sentence that stops damage, which is wh
 Teferi's Protection prints both. And it does not make paying life *free*: the
 cost is refused, not zeroed.
 
+## Exchanging a life total with a toughness
+
+```jsonc
+{"op": "exchange_life_total", "player": {"target": "t1"}}  // "target opponent's"
+```
+
+Tree of Perdition ("{T}: Exchange target opponent's life total with this
+creature's toughness"); Tree of Redemption is the same op with `player: "you"`.
+701.12: both halves happen or neither does.
+
+- **The life half is a gain or a loss.** The player's life total becomes the
+  creature's toughness the way 119.5 sets any life total, by `gain_life` or
+  `lose_life` of the difference, so a life-gain trigger hears it and a loss
+  replacement applies to it.
+- **The toughness half is a 7b set, indefinitely.** The creature's toughness
+  becomes the player's *former* life total through
+  `primitives.set_base_toughness`, ordered by timestamp against indefinite
+  animations; counters, anthems and pumps still apply on top, and power is
+  untouched.
+- **All or nothing.** Nothing happens if the source has left the battlefield or
+  is not a creature, if `player` does not come to exactly one player, if that
+  player's life total is locked (`lock_life_total`), or if the change would be a
+  gain for a player who can't gain life (`cant_gain_life`).
+
+`player` is required. `objects`, `amount` and `duration` are refused: the
+creature is always the ability's own source, and an exchange has no clock.
+
+Near miss: `snapshot` + `set_pt` + `lose_life`/`gain_life` of the difference.
+`set_pt` is an until-end-of-turn pump, and the chain still changes the toughness
+when the life total cannot change.
+
 ## Protection for a **player**, from everything, until your next turn
 
 ```jsonc

@@ -553,6 +553,12 @@ def _compute(state: GameState, oid: int) -> Characteristics:
             key=lambda t: t.timestamp,
         )
         for temp in animations:
+            if temp.kind == "set_toughness":
+                # "…this creature's toughness becomes N" (Tree of Perdition's
+                # exchange): the toughness half of a 7b set, in the same
+                # timestamp order, touching nothing else.
+                toughness = temp.toughness
+                continue
             if temp.exact:
                 types = set(temp.types)
                 subtypes = {
