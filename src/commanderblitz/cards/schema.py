@@ -1507,7 +1507,13 @@ class CardModel(BaseModel):
     #: while casting from hand.  Subtractive where kicker is additive, and the
     #: printed mana value is unchanged: a Mulldrifter evoked is still a
     #: five-drop for anything that counts mana value.
-    evoke: str | None = None
+    #:
+    #: A mana string, or a full cost for a printed non-mana evoke (rule 702.74a
+    #: allows any cost): "Evoke--Exile a green card from your hand" is
+    #: ``{"exile_from_hand": {"colors": ["G"]}}``. The mana on the node
+    #: replaces the printed cost and the rest is paid after it (601.2g), and
+    #: either way the cast is evoked.
+    evoke: str | CostModel | None = None
     #: What to call that cost on screen. ``evoke`` is the engine's name for a
     #: general thing — an alternative mana cost offered from hand, plus a flag
     #: the card can read back — and **dash** and **blitz** are the same

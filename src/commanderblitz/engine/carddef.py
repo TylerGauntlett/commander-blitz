@@ -1406,7 +1406,16 @@ class CardDef:
     #: Subtractive where ``kicker`` is additive, and like it kept out of
     #: ``mana_cost`` so mana value stays what is printed: an evoked
     #: Mulldrifter is still a five-drop to anything that counts.
+    #:
+    #: The *mana* of the evoke cost, and empty rather than ``None`` on a pitch
+    #: elemental whose evoke has no mana at all: ``None`` is "no evoke".
     evoke: ManaCost | None = None
+    #: The rest of the evoke cost -- Endurance's "Exile a green card from your
+    #: hand" -- paid after the mana (601.2g) the way ``alternative_cost``'s
+    #: non-mana half is, and priced by `casting` through `can_pay` with the
+    #: spell as the source so it never pitches itself (601.2a). ``None`` when
+    #: the evoke cost is mana only.
+    evoke_payment: Cost | None = None
     #: **Bestow** (702.103a). An alternative cost like ``evoke``, and the only
     #: one that changes what the spell *targets*: "enchant creature" is fixed by
     #: the rule, so `legality.BESTOW_TARGET` supplies it and no card writes one.

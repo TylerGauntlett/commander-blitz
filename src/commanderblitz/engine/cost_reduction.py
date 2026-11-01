@@ -190,13 +190,13 @@ def variant_reduction(state: GameState, pid: int, cost: Cost | None, source_oid:
     in the wrong slot and silently ignored.
 
     Only `flashback`/`graveyard_cost` can carry one today, and that is a fact
-    about the schema rather than about this function: `evoke`, `emerge`,
-    `overload`, `bestow`, `foretell` and `mutate` are bare mana strings with no
-    node to hang a rider on, and the loader says so rather than accepting one.
+    about the schema rather than about this function: `emerge`, `overload`,
+    `bestow`, `foretell` and `mutate` are bare mana strings with no node to
+    hang a rider on, and the loader says so rather than accepting one.
 
-    `alternative_cost` is the second full `Cost` -- Force of Will's pitch needs
-    somewhere to put a payment that is not mana -- but it is deliberately *not*
-    read here. A discount belongs to the branch that priced the line, and no
+    `alternative_cost` and `evoke` may be full `Cost` nodes -- Force of Will's
+    and Endurance's pitches need somewhere to put a payment that is not mana --
+    but they are deliberately *not* read here. A discount belongs to the branch that priced the line, and no
     printed prowl or pitch cost says "costs {X} less to cast this way"; the
     loader refuses `mana_reduction` on it rather than leaving a key that loads
     and is ignored.

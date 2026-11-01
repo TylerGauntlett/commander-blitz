@@ -774,7 +774,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `dredge` | Dredge N. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `emerge` | Emerge cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `escalate` | Escalate cost (mana or a full cost), paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |
-| `evoke` | Evoke cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `evoke` | Evoke cost (mana or a full cost, as a pitch evoke); the cast is evoked. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `flashback` | Flashback cost. | [Flashback](card-dsl-cookbook.md#flashback) |
 | `foretell` | Foretell cost. | [Foretell](card-dsl-cookbook.md#foretell) |
 | `gift` | The gift promised (a noun phrase). | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |

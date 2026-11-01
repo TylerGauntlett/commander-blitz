@@ -252282,12 +252282,12 @@
     },
     "Slithermuse": {
       "edhrec_rank": 9290,
-      "gate": "compile",
+      "gate": null,
       "name": "Slithermuse",
-      "reason": "slithermuse: evoke '{3}{U}' costs the same as the printed cost -- the same cast offered twice, and nobody would take the second",
+      "reason": "",
       "scryfall_id": "58b1e5df-de53-4452-90a9-9ff13c4a0bd6",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slitherwisp": {

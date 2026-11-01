@@ -3,8 +3,7 @@
   "name": "Fury",
   "oracle_text": "Double strike\nWhen this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.\nEvoke—Exile a red card from your hand.",
   "blocked_sentences": [
-    "When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.",
-    "Evoke—Exile a red card from your hand."
+    "When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers."
   ],
   "needs": [
     {
@@ -12,14 +11,13 @@
       "kind": "engine",
       "what": "`damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage",
       "why_existing_wont_do": "`damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation"
-    },
-    {
-      "capability": "evoke",
-      "kind": "cost",
-      "what": "an evoke cost that is a non-mana Cost -- 'Evoke--Exile a red card from your hand' (`exile_from_hand: {colors: [R]}`) -- offered from hand instead of the printed cost, marking the spell cast evoked so the 702.74a sacrifice-on-enter happens and the `evoked` condition reads true",
-      "why_existing_wont_do": "card-level `evoke` is parsed as a ManaCost only (`ManaCost.parse(model.evoke)`); `alternative_cost` accepts `exile_from_hand` but does not set the evoked flag, so the creature would not be sacrificed on entering, and the loader refuses an `evoked` condition on a card without an `evoke` cost"
     }
   ],
-  "closest_existing": ["damage.divided", "distribute_counters", "evoke", "alternative_cost"],
+  "closest_existing": [
+    "damage.divided",
+    "distribute_counters",
+    "evoke",
+    "alternative_cost"
+  ],
   "confidence": "high"
 }

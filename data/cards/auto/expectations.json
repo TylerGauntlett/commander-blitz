@@ -13420,6 +13420,13 @@
   "slippery_karst": {
     "zone": "battlefield"
   },
+  "slithermuse": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sliver_construct": {
     "zone": "battlefield"
   },

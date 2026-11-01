@@ -155548,6 +155548,96 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "chosen_opponent",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "cards_in_hand": {
+                    "binding": "chosen_opponent"
+                  }
+                },
+                "right": {
+                  "cards_in_hand": "you"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "minus": [
+                      {
+                        "cards_in_hand": {
+                          "binding": "chosen_opponent"
+                        }
+                      },
+                      {
+                        "cards_in_hand": "you"
+                      }
+                    ]
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature leaves the battlefield, choose an opponent. If that player has more cards in hand than you, draw cards equal to the difference.",
+          "trigger": {
+            "event": "leaves_battlefield",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Evoke {3}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "evoke": "{3}{U}",
+      "id": "slithermuse",
+      "mana_cost": "{2}{U}{U}",
+      "name": "Slithermuse",
+      "oracle_text": "When this creature leaves the battlefield, choose an opponent. If that player has more cards in hand than you, draw cards equal to the difference.\nEvoke {3}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "sliver_construct",

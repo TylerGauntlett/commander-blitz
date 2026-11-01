@@ -1,0 +1,48 @@
+{
+  "_comment": "Cards that exist only for tests/unit/keywords/test_evoke_cost.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_pitch_evoker` is Endurance's shape: an evoke cost with no mana, 'Evoke—Exile a green card from your hand.' `t_slithermuse_probe` is Slithermuse's: printed {2}{U}{U}, evoke {3}{U}, the same mana value with different symbols.",
+  "cards": [
+    {
+      "id": "t_pitch_evoker",
+      "name": "Test Pitch Evoker",
+      "oracle_text": "Flash\nReach\nEvoke—Exile a green card from your hand.",
+      "mana_cost": "{1}{G}{G}",
+      "evoke": {"exile_from_hand": {"colors": ["G"]}},
+      "types": ["Creature"],
+      "subtypes": ["Elemental", "Incarnation"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 3,
+      "toughness": 4,
+      "keywords": ["flash", "reach"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Evoke—Exile a green card from your hand.",
+          "trigger": {"event": "self_enters", "condition": {"evoked": true}},
+          "effects": [{"op": "sacrifice", "objects": {"self_only": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_slithermuse_probe",
+      "name": "Test Slithermuse Probe",
+      "oracle_text": "Evoke {3}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+      "mana_cost": "{2}{U}{U}",
+      "evoke": "{3}{U}",
+      "types": ["Creature"],
+      "subtypes": ["Elemental"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Evoke {3}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)",
+          "trigger": {"event": "self_enters", "condition": {"evoked": true}},
+          "effects": [{"op": "sacrifice", "objects": {"self_only": true}}]
+        }
+      ]
+    }
+  ]
+}

@@ -10,14 +10,13 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**144 cards** blocked by **131** capabilities.
+**143 cards** blocked by **131** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [evoke](#evoke) | 4 | 1343 | cost, static_effect |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -68,6 +67,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [evoke](#evoke) | 1 | 5749 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -289,34 +289,6 @@ Blocks **5** cards.
   - Whenever you cast your first spell with {X} in its mana cost each turn, put X +1/+1 counters on Nev.
 - **Lattice Library** (rank 10607) — `lattice_library`
   - When this enchantment enters and whenever you cast your first spell with {X} in its mana cost each turn, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the number of study counters on this enchantment.
-
-</details>
-
-## evoke
-
-Blocks **4** cards.
-
-- **(static_effect)** a static that grants evoke with a printed mana price to a class of spells (affects_spells: permanent spells with subtype Elemental, controller you) cast from a given zone (hand only): the cast line offers the granted mana cost as an alternative cost, marks the spell evoked, and the permanent it becomes is sacrificed when it enters (the evoke sacrifice trigger), with the evoked condition readable by the spell's own enters triggers
-  <br>Why the existing vocabulary won't do: card-level `evoke` only prices the card's own printed evoke; `granted_alternative_cost` accepts only pay_energy/pay_life and attaches no sacrifice-on-enter or evoked flag, and has no zone gate for 'from your hand'; `grant_warp` grants a mana alternative cost but with warp's exile-at-end-step rider, not evoke's sacrifice on entering
-- **(cost)** an evoke cost that is a non-mana Cost -- 'Evoke--Exile a green card from your hand' (the MH3/MH2 pitch Incarnations: Endurance, Solitude, Grief, Fury, Subtlety) -- offered from hand as an alternative to the printed cost and setting the same cast-evoked flag that the card's 'when it enters, if evoked, sacrifice it' rule reads (702.74a supplies that sacrifice).
-  <br>Why the existing vocabulary won't do: `evoke` is parsed as a ManaCost only (loader `ManaCost.parse(model.evoke)`, carddef `evoke: ManaCost | None`). `alternative_cost` takes a full Cost with `exile_from_hand: {colors: [G]}` (as Force of Will / Pyrokinesis do), but per its schema note it deliberately does not report `cast_evoked`, so the evoke sacrifice cannot be keyed off it, and the loader refuses an 'evoked' condition on a card without an `evoke` cost.
-- **(cost)** an evoke cost that is a non-mana Cost -- 'Evoke--Exile a red card from your hand' (`exile_from_hand: {colors: [R]}`) -- offered from hand instead of the printed cost, marking the spell cast evoked so the 702.74a sacrifice-on-enter happens and the `evoked` condition reads true
-  <br>Why the existing vocabulary won't do: card-level `evoke` is parsed as a ManaCost only (`ManaCost.parse(model.evoke)`); `alternative_cost` accepts `exile_from_hand` but does not set the evoked flag, so the creature would not be sacrificed on entering, and the loader refuses an `evoked` condition on a card without an `evoke` cost
-- **(cost)** an evoke cost whose mana value equals the printed cost but whose colored requirement differs: printed {2}{U}{U}, evoke {3}{U} (one fewer blue pip), sacrificed on entering when evoked
-  <br>Why the existing vocabulary won't do: The card-level 'evoke' key is the right mechanism, but the loader (cards/loader/__init__.py, the evoke guard) rejects any evoke whose mana_value() equals the printed cost's as 'the same cast offered twice'; it compares mana value only, not the symbols, so {3}{U} vs {2}{U}{U} is refused. 'alternative_cost' with mana only requires a condition and is not read by 'evoked'. The guard should compare the parsed costs (symbols), not their mana value. The leaves-the-battlefield line itself is expressible (leaves_battlefield trigger, choose_player each_opponent, if cmp cards_in_hand, draw minus).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Endurance** (rank 1343) — `endurance`
-  - Evoke—Exile a green card from your hand.
-  - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
-- **Fury** (rank 2389) — `fury`
-  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
-  - Evoke—Exile a red card from your hand.
-- **Ashling, the Limitless** (rank 5749) — `ashling_the_limitless`
-  - Elemental permanent spells you cast from your hand gain evoke {4} as you cast them
-- **Slithermuse** (rank 9290) — `slithermuse`
-  - Evoke {3}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)
 
 </details>
 
@@ -1012,7 +984,6 @@ Blocks **1** card.
 
 - **Fury** (rank 2389) — `fury`
   - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
-  - Evoke—Exile a red card from your hand.
 
 </details>
 
@@ -1099,6 +1070,20 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
+## evoke
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants evoke with a printed mana price to a class of spells (affects_spells: permanent spells with subtype Elemental, controller you) cast from a given zone (hand only): the cast line offers the granted mana cost as an alternative cost, marks the spell evoked, and the permanent it becomes is sacrificed when it enters (the evoke sacrifice trigger), with the evoked condition readable by the spell's own enters triggers
+  <br>Why the existing vocabulary won't do: card-level `evoke` only prices the card's own printed evoke; `granted_alternative_cost` accepts only pay_energy/pay_life and attaches no sacrifice-on-enter or evoked flag, and has no zone gate for 'from your hand'; `grant_warp` grants a mana alternative cost but with warp's exile-at-end-step rider, not evoke's sacrifice on entering
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashling, the Limitless** (rank 5749) — `ashling_the_limitless`
+  - Elemental permanent spells you cast from your hand gain evoke {4} as you cast them
 
 </details>
 
@@ -1792,7 +1777,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Endurance** (rank 1343) — `endurance`
-  - Evoke—Exile a green card from your hand.
   - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
 
 </details>

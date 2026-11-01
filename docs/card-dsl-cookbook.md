@@ -6507,9 +6507,12 @@ silent way: an evoke cost nothing reads is a cheaper cast that never dies, and a
 are load errors.
 
 The price is checked too, and what it is checked against depends on
-`evoke_label`. An alternative costing **exactly** the printed cost is refused
-under every label: that is one cast offered twice, and the second line is dead
-weight that reads as a mechanic. An alternative costing **more** than the printed
+`evoke_label`. An alternative asking for **exactly** the printed symbols is
+refused under every label: that is one cast offered twice, and the second line is
+dead weight that reads as a mechanic. The test is the symbols, not the mana value:
+Slithermuse is printed `{2}{U}{U}` and evokes for `{3}{U}`, the same mana value
+and a cast one Island can pay where the printed cost needs two, so it loads. An
+alternative costing **more** than the printed
 cost is refused only when the card calls it evoke, because evoke buys nothing
 with the price but the discount — a Mulldrifter evoked is a Mulldrifter that
 dies, and paying extra for that is a line no player takes. **Dash** buys
@@ -6521,6 +6524,32 @@ saying, in the action list and on screen, that it is not evoke.
 "It's sacrificed when it enters" is an ordinary `self_enters` trigger gated on
 `{"evoked": true}`, which works because the flag is written onto the object at
 resolution and outlives the spell — see the note under Kicker.
+
+**A non-mana evoke** is the same key holding a cost node from the activated-ability
+cost vocabulary instead of a mana string — rule 702.74a lets evoke be any cost.
+The pitch elementals print one:
+
+```jsonc
+// Endurance: "Evoke—Exile a green card from your hand."
+"mana_cost": "{1}{G}{G}",
+"evoke": { "exile_from_hand": { "colors": ["G"] } },
+"abilities": [
+  { "kind": "triggered", "text": "Evoke—Exile a green card from your hand.",
+    "trigger": { "event": "self_enters", "condition": { "evoked": true } },
+    "effects": [ { "op": "sacrifice", "objects": { "self_only": true } } ] } ]
+```
+
+The node splits the way `alternative_cost` and flashback do: its `mana` (none,
+here) replaces the printed cost, and the rest is paid after the mana (601.2g).
+The line is the evoke line in every other respect — it is offered from hand only,
+labelled by `evoke_label`, and stamps `cast_evoked`, so the `{"evoked": true}`
+sacrifice fires. The non-mana half is priced before the line is offered, with the
+spell as the cost's source, so Endurance held with no *other* green card is not
+offered the line at all and never exiles itself (601.2a). The loader refuses on
+the node what `alternative_cost` refuses: a key that charges the source permanent
+(`tap`, `exile_self`, …), a `mana_reduction`, and a node that charges nothing.
+`alternative_cost` is the near miss — it takes the same node, but its cast is not
+evoked and nothing sacrifices the creature.
 
 **An unnamed alternative cost on an instant or sorcery** is the same slot.
 Baleful Mastery prints no keyword — "You may pay {1}{B} rather than pay this
@@ -7887,9 +7916,10 @@ be written in the wrong slot is a key that will be, and it would be ignored in
 silence.
 
 `flashback`/`graveyard_cost` is the only alternative cost that can carry one.
-`evoke`, `emerge`, `overload`, `bestow`, `foretell` and `mutate` are bare mana
-strings with no node to hang a rider on. `alternative_cost` is a full `Cost` and
-so has the node, but the rider is refused there too: nothing prices that branch
+`emerge`, `overload`, `bestow`, `foretell` and `mutate` are bare mana strings
+with no node to hang a rider on. `alternative_cost` is a full `Cost`, and so is
+an `evoke` written as a node, so both have the node, but the rider is refused
+there too: nothing prices those branches
 through `variant_reduction`, and no printed prowl or pitch cost says "costs {X}
 less to cast this way", so a key written there would load clean and be ignored.
 It is likewise refused on `additional_cost`, whose mana is folded into the
