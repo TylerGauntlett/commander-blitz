@@ -16422,6 +16422,10 @@
     },
     "zone": "battlefield"
   },
+  "wickersmith_s_tools": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "wight_of_precinct_six": {
     "battlefield_count": 33,
     "zone": "battlefield"

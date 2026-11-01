@@ -314812,12 +314812,12 @@
     },
     "Wickersmith's Tools": {
       "edhrec_rank": 8890,
-      "gate": "template",
+      "gate": null,
       "name": "Wickersmith's Tools",
-      "reason": "no template for: Whenever one or more -1/-1 counters are put on a creature, put a charge counter on this ar",
+      "reason": "",
       "scryfall_id": "3758af07-68ed-42da-8a13-ec321e7cd06e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Widespread Brutality": {
