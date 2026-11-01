@@ -548,6 +548,40 @@
       ]
     },
     {
+      "id": "golem_3_3_c_artifact",
+      "name": "Golem Token",
+      "oracle_text": "3/3 colorless Golem artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
+      "id": "golem_9_9_c_artifact",
+      "name": "Golem Token",
+      "oracle_text": "9/9 colorless Golem artifact creature token.",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "subtypes": [
+        "Golem"
+      ],
+      "power": 9,
+      "toughness": 9,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
+    },
+    {
       "id": "construct_4_4_c_artifact_flying_haste",
       "name": "Construct Token",
       "oracle_text": "4/4 colorless Construct artifact creature token with flying and haste.",
