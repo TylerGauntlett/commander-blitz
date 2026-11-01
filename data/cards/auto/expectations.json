@@ -14632,6 +14632,13 @@
     },
     "zone": "battlefield"
   },
+  "the_scorpion_god": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_spear_of_bashenga": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15868,6 +15875,9 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "village_pillagers": {
     "zone": "battlefield"
   },
   "village_rites": {

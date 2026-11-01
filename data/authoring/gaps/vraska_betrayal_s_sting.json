@@ -1,0 +1,18 @@
+{
+  "card_id": "vraska_betrayal_s_sting",
+  "name": "Vraska, Betrayal's Sting",
+  "oracle_text": "Compleated ({B/P} can be paid with {B} or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n0: You draw a card and lose 1 life. Proliferate.\n−2: Target creature becomes a Treasure artifact with \"{T}, Sacrifice this artifact: Add one mana of any color\" and loses all other card types and abilities.\n−9: If target player has fewer than nine poison counters, they get a number of poison counters equal to the difference.",
+  "blocked_sentences": [
+    "−2: Target creature becomes a Treasure artifact with \"{T}, Sacrifice this artifact: Add one mana of any color\" and loses all other card types and abilities."
+  ],
+  "needs": [
+    {
+      "capability": "become_type_keep_colors",
+      "kind": "op",
+      "what": "a one-shot, indefinite (no duration) type-replacement effect on a target permanent: its card types become exactly the named ones (Artifact) with the named subtype (Treasure), other card types and their subtypes are lost, and its colours and supertypes are left untouched -- e.g. an `animate` with `exact: true` and a `keep_colors: true` flag (or `colors` omitted meaning unchanged), combined with `lose_all_abilities` and a permanent `grant_ability` of the Treasure mana ability",
+      "why_existing_wont_do": "`animate` with `duration: permanent` and `exact: true` is the only one-shot op that removes card types, but in characteristics.py an exact animation sets `colors = set(temp.colors)`, so omitting colors makes the creature colorless -- Vraska's Treasure keeps its colours. Non-exact `animate` only adds types, so the permanent would stay a creature. The `set_types` static removes types but only exists as a static on an Aura-like source, not as a resolving effect"
+    }
+  ],
+  "closest_existing": ["animate", "lose_all_abilities", "grant_ability", "set_types"],
+  "confidence": "high"
+}

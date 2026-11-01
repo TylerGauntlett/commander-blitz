@@ -282212,12 +282212,12 @@
     },
     "The Scorpion God": {
       "edhrec_rank": 5302,
-      "gate": "template",
+      "gate": null,
       "name": "The Scorpion God",
-      "reason": "no template for: Whenever a creature with a -1/-1 counter on it dies, draw a card",
+      "reason": "",
       "scryfall_id": "792eabed-6c49-41f0-a9ce-0184e5c577e9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Sea Devils": {
@@ -304832,12 +304832,12 @@
     },
     "Village Pillagers": {
       "edhrec_rank": 5904,
-      "gate": "template",
+      "gate": null,
       "name": "Village Pillagers",
-      "reason": "no template for: When this creature enters, it deals 1 damage to each creature your opponents control",
+      "reason": "",
       "scryfall_id": "616b606a-e7c2-461c-989c-b5e74b424849",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Village Rites": {

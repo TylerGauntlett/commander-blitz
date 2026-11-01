@@ -1,0 +1,18 @@
+{
+  "card_id": "tree_of_perdition",
+  "name": "Tree of Perdition",
+  "oracle_text": "Defender\n{T}: Exchange target opponent's life total with this creature's toughness.",
+  "blocked_sentences": [
+    "{T}: Exchange target opponent's life total with this creature's toughness."
+  ],
+  "needs": [
+    {
+      "capability": "exchange_life_total",
+      "kind": "op",
+      "what": "an op that exchanges a player's life total with a creature's toughness (701.12 / 701.12c): the player's life becomes the creature's toughness as a life gain or loss, and the creature's toughness becomes the player's former life total as an indefinite layer-7b characteristic-defining set; the exchange does nothing at all if either half cannot happen (the player can't gain/lose life, a locked life total, or the creature has left)",
+      "why_existing_wont_do": "No op sets or exchanges a life total. A hand-built chain of snapshot (life_of, toughness_of) + set_pt + a gain_life/lose_life of the difference would approximate it, but set_pt carries no indefinite-duration guarantee in op_options, and the chain cannot express the all-or-nothing rule: under cant_gain_life or lock_life_total the toughness would still change while the life does not. exchange_control exchanges controllers only."
+    }
+  ],
+  "closest_existing": ["exchange_control", "set_pt", "snapshot", "lose_life", "gain_life"],
+  "confidence": "high"
+}

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**147 cards** blocked by **134** capabilities.
+**150 cards** blocked by **137** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [become-type-keep-colors](#become-type-keep-colors) | 1 | 1345 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -69,6 +70,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elf-warrior-token](#elf-warrior-token) | 1 | 4024 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [exchange-life-total](#exchange-life-total) | 1 | 1952 | op |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -123,6 +125,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
+| [scarecrow-2-2-c](#scarecrow-2-2-c) | 1 | 8890 | token |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
@@ -677,6 +680,20 @@ Blocks **1** card.
 
 </details>
 
+## become-type-keep-colors
+
+Blocks **1** card.
+
+- **(op)** a one-shot, indefinite (no duration) type-replacement effect on a target permanent: its card types become exactly the named ones (Artifact) with the named subtype (Treasure), other card types and their subtypes are lost, and its colours and supertypes are left untouched -- e.g. an `animate` with `exact: true` and a `keep_colors: true` flag (or `colors` omitted meaning unchanged), combined with `lose_all_abilities` and a permanent `grant_ability` of the Treasure mana ability
+  <br>Why the existing vocabulary won't do: `animate` with `duration: permanent` and `exact: true` is the only one-shot op that removes card types, but in characteristics.py an exact animation sets `colors = set(temp.colors)`, so omitting colors makes the creature colorless -- Vraska's Treasure keeps its colours. Non-exact `animate` only adds types, so the permanent would stay a creature. The `set_types` static removes types but only exists as a static on an Aura-like source, not as a resolving effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **Vraska, Betrayal's Sting** (rank 1345) — `vraska_betrayal_s_sting`
+  - −2: Target creature becomes a Treasure artifact with "{T}, Sacrifice this artifact: Add one mana of any color" and loses all other card types and abilities.
+
+</details>
+
 ## block-restriction-relative-power
 
 Blocks **1** card.
@@ -1105,6 +1122,20 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
+## exchange-life-total
+
+Blocks **1** card.
+
+- **(op)** an op that exchanges a player's life total with a creature's toughness (701.12 / 701.12c): the player's life becomes the creature's toughness as a life gain or loss, and the creature's toughness becomes the player's former life total as an indefinite layer-7b characteristic-defining set; the exchange does nothing at all if either half cannot happen (the player can't gain/lose life, a locked life total, or the creature has left)
+  <br>Why the existing vocabulary won't do: No op sets or exchanges a life total. A hand-built chain of snapshot (life_of, toughness_of) + set_pt + a gain_life/lose_life of the difference would approximate it, but set_pt carries no indefinite-duration guarantee in op_options, and the chain cannot express the all-or-nothing rule: under cant_gain_life or lock_life_total the toughness would still change while the life does not. exchange_control exchanges controllers only.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tree of Perdition** (rank 1952) — `tree_of_perdition`
+  - {T}: Exchange target opponent's life total with this creature's toughness.
 
 </details>
 
@@ -1884,6 +1915,20 @@ Blocks **1** card.
 
 - **Surge to Victory** (rank 5082) — `surge_to_victory`
   - Exile target instant or sorcery card from your graveyard.
+
+</details>
+
+## scarecrow-2-2-c
+
+Blocks **1** card.
+
+- **(token)** a 2/2 colorless Scarecrow artifact creature token
+  <br>Why the existing vocabulary won't do: token_ids has no Scarecrow token; the only 2/2 colorless artifact creature token is robot_villain_2_2_c, a Robot Villain, which has the wrong creature types. The rest of the line (mana+tap+sacrifice cost, create_token with tapped and an amount of counters_on charge on self) and the counter_placed trigger are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wickersmith's Tools** (rank 8890) — `wickersmith_s_tools`
+  - {5}, {T}, Sacrifice this artifact: Create X tapped 2/2 colorless Scarecrow artifact creature tokens, where X is the number of charge counters on this artifact.
 
 </details>
 
