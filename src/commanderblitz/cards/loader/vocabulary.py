@@ -650,6 +650,11 @@ STATIC_EFFECTS = frozenset(
         # forbidden gain.  Not `lock_life_total`, which is a one-shot op with a
         # duration and forbids a loss as well.
         "cant_gain_life",
+        # Everlasting Torment.  "Damage can't be prevented."  Every prevention
+        # hook in `primitives.damage_player` and `damage_permanent` is skipped
+        # while it is on the battlefield (615.12, 101.2).  Global: no
+        # `affects`, no `affects_player`.
+        "damage_cant_be_prevented",
         # Narset, Parter of Veils; Spirit of the Labyrinth.  "Each opponent
         # can't draw more than one card each turn."  A cap on a *player's*
         # draws, counted against `cards_drawn_this_turn` -- every card drawn
@@ -876,7 +881,9 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
 #: nothing -- which is the exact failure the whole validation pass exists to
 #: stop.
 UNGRANTABLE_STATIC_EFFECTS = (
-    PLAYER_WIDE_STATIC_EFFECTS | {"replace_token_creation"} | frozenset(ABILITY_STATICS)
+    PLAYER_WIDE_STATIC_EFFECTS
+    | {"replace_token_creation", "damage_cant_be_prevented"}
+    | frozenset(ABILITY_STATICS)
 )
 
 #: Statics a `grant_ability` static may hand to another permanent.

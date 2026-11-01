@@ -7568,6 +7568,35 @@ the two and they would cap last, so a doubled hit still lands as 1. Read through
 `player_statics.damage_cap`, which walks `_battlefield_statics` — the command
 zone included, which is where an emblem lives.
 
+## "Damage can't be prevented"
+
+```jsonc
+{ "kind": "static", "effect": "damage_cant_be_prevented" }
+```
+
+Everlasting Torment. A "can't" over every prevention effect at once (615.12),
+so it beats each of them however it was made (101.2). Prevention is a set of
+named hooks, not one system, and this static is read by all of them in
+`primitives.damage_player` and `primitives.damage_permanent`: the
+`prevent_damage` op's shield and its "prevented this way" rider, the
+`prevent_damage` static (absorb and `prevent_all`), `prevent_all_but`,
+`prevent_damage_permanent` either way, `prevent_combat_damage`, damage
+prevented into counters, and protection's damage half (702.16e). Protection's
+other halves (blocking, targeting, enchanting) are not prevention and still
+apply.
+
+Two things that look like prevention are not, and still work under it:
+
+- A **shield counter** is a replacement (122.1c, "instead remove a shield
+  counter"), so it still answers the damage.
+- A **redirect** (`redirect_damage`, 614.9) moves the damage rather than
+  preventing it.
+
+It reaches all damage, to anything, from anything. `affects`, `affects_player`
+and `amount` are refused, because nothing would read them. An optional
+`condition` is honoured. It cannot be granted by `grant_ability`, since it is
+read off printed faces as the player-wide statics are.
+
 ## Damage can't take you below 1
 
 ```jsonc

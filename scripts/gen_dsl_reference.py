@@ -823,6 +823,8 @@ STATICS: dict[str, Entry] = {
     "cant_sacrifice": ("Matching permanents can't be sacrificed.", "Forbidding a sacrifice, continuously"),
     "cant_search_library": ("The player can't search libraries.",
                             '"Can\'t cause their controller to search their library"'),
+    "damage_cant_be_prevented": ("No damage can be prevented: every prevention effect is skipped.",
+                                 '"Damage can\'t be prevented"'),
     "cant_win_the_game": ("The player can't win the game.", None),
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
     "cast_from_graveyard": ("The player may cast matching spells from their graveyard; with "

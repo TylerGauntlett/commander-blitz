@@ -236,6 +236,25 @@ def player_cant_gain_life(state: GameState, pid: int) -> bool:
     )
 
 
+def damage_cant_be_prevented(state: GameState) -> bool:
+    """Is every prevention effect switched off right now?  Usually false.
+
+    Everlasting Torment: "Damage can't be prevented." A "can't" over every
+    prevention effect at once (615.12), so it beats each of them however it was
+    made (101.2) -- shields from the `prevent_damage` ops, the `prevent_damage`
+    and `prevent_all_but` statics, fogs, Panther Habit's "prevent that damage
+    and put counters", and protection's damage half (702.16e). Read by
+    `primitives.damage_player` and `primitives.damage_permanent`, which own
+    every one of those hooks. Not a player-wide static in the `affects_player`
+    sense: it reaches all damage, to anything, from anything.
+
+    A shield counter is **not** a prevention: 122.1c makes it a replacement
+    ("instead remove a shield counter"), so it still answers damage under this.
+    Nor is a redirect (614.9) or a life floor (614.1a).
+    """
+    return next(_active_player_statics(state, "damage_cant_be_prevented"), None) is not None
+
+
 def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     """Does an active ``cant_lose_the_game`` / ``cant_win_the_game`` static name ``pid``?
 

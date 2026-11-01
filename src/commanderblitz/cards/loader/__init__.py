@@ -4757,6 +4757,19 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: damage_life_floor takes 'affects_player', 'amount' and "
                 f"an optional 'condition', and no 'affects'"
             )
+    if model.effect == "damage_cant_be_prevented" and (
+        model.affects is not None
+        or model.affects_player is not None
+        or model.amount is not None
+    ):
+        # "Damage can't be prevented" reaches all damage, to anything, from
+        # anything. Nothing reads a filter here, so one written ("combat damage
+        # dealt by creatures you control can't be prevented") would load clean
+        # and switch off every prevention on the table -- a different card.
+        raise DslError(
+            f"{where}: damage_cant_be_prevented reaches all damage; it takes an "
+            f"optional 'condition' and no 'affects', 'affects_player' or 'amount'"
+        )
     if model.effect == "draw_limit":
         # "Can't draw more than one card each turn" names players and a number.
         # Without the number `_static_value` reads 0 and the card becomes
@@ -4911,6 +4924,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # family: Leyline of the Void narrows by player and Planar Void by card
         # type, and both write `affects_player` or `affects` to say so.
         "replace_graveyard",
+        # Everlasting Torment's "Damage can't be prevented" reaches all damage,
+        # to anything, from anything; its own guard above refuses a filter.
+        "damage_cant_be_prevented",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no
