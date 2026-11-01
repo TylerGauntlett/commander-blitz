@@ -18,6 +18,7 @@ import pytest
 
 from commanderblitz.cards.authoring.verify import (
     check_expectation,
+    spare_cards_in_hand,
     swap_in_artifact_body,
     swap_in_legendary_body,
     swap_in_tribal_body,
@@ -137,7 +138,11 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         # A land rather than a spell: a castable card in hand keeps the player
         # on priority while the card under test is on the stack, and every card
         # then fails with "never left the stack".
-        builder.hand(0, [card_id, "forest"])
+        #
+        # One spare per card the additional cost discards, from the helper
+        # `verify.build_sandbox` uses, so Cathartic Reunion's "discard two
+        # cards" has its fodder in both harnesses.
+        builder.hand(0, [card_id, *["forest"] * spare_cards_in_hand(under_test)])
     return builder.build(advance=False)
 
 

@@ -213882,12 +213882,12 @@
     },
     "Rakdos Carnarium": {
       "edhrec_rank": 492,
-      "gate": null,
+      "gate": "template",
       "name": "Rakdos Carnarium",
-      "reason": "",
+      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
       "scryfall_id": "20c799a9-ab94-46e6-9111-00505e071c41",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Rakdos Charm": {
@@ -225802,12 +225802,12 @@
     },
     "Riveteers Overlook": {
       "edhrec_rank": 714,
-      "gate": null,
+      "gate": "template",
       "name": "Riveteers Overlook",
-      "reason": "",
+      "reason": "no template for: When this land enters, sacrifice it. When you do, search your library for a basic Swamp, M",
       "scryfall_id": "65ce9590-87c0-4057-bddb-fadc0de552f6",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Riveteers Requisitioner": {
@@ -248402,12 +248402,12 @@
     },
     "Sinister Gnarlbark": {
       "edhrec_rank": 5402,
-      "gate": null,
+      "gate": "template",
       "name": "Sinister Gnarlbark",
-      "reason": "",
+      "reason": "no template for: At the beginning of your end step, draw a card and blight 1",
       "scryfall_id": "5a37b353-7ad7-465c-b118-34894b06bf25",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Sinister Hideout": {
@@ -249372,12 +249372,12 @@
     },
     "Skinrender": {
       "edhrec_rank": 5758,
-      "gate": null,
+      "gate": "template",
       "name": "Skinrender",
-      "reason": "",
+      "reason": "no template for: When this creature enters, put three -1/-1 counters on target creature",
       "scryfall_id": "178bca8c-8686-414f-8c71-a582eecd273d",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Skinshifter": {
@@ -255882,12 +255882,12 @@
     },
     "Soul Snuffers": {
       "edhrec_rank": 5075,
-      "gate": null,
+      "gate": "template",
       "name": "Soul Snuffers",
-      "reason": "",
+      "reason": "no template for: When this creature enters, put a -1/-1 counter on each creature",
       "scryfall_id": "c3313376-cda8-4458-baa8-be3eac236192",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Soul Spike": {
@@ -282062,12 +282062,12 @@
     },
     "The Reaper, King No More": {
       "edhrec_rank": 6149,
-      "gate": null,
+      "gate": "template",
       "name": "The Reaper, King No More",
-      "reason": "",
+      "reason": "no template for: When The Reaper enters, put a -1/-1 counter on each of up to two target creatures",
       "scryfall_id": "d2119f3f-27d2-4d43-a5ef-35c1b73d182a",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "The Reaver Cleaver": {
@@ -282212,12 +282212,12 @@
     },
     "The Scorpion God": {
       "edhrec_rank": 5302,
-      "gate": null,
+      "gate": "template",
       "name": "The Scorpion God",
-      "reason": "",
+      "reason": "no template for: Whenever a creature with a -1/-1 counter on it dies, draw a card",
       "scryfall_id": "792eabed-6c49-41f0-a9ce-0184e5c577e9",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "The Sea Devils": {
@@ -304832,12 +304832,12 @@
     },
     "Village Pillagers": {
       "edhrec_rank": 5904,
-      "gate": null,
+      "gate": "template",
       "name": "Village Pillagers",
-      "reason": "",
+      "reason": "no template for: When this creature enters, it deals 1 damage to each creature your opponents control",
       "scryfall_id": "616b606a-e7c2-461c-989c-b5e74b424849",
-      "source": "agent",
-      "status": "done",
+      "source": "",
+      "status": "pending",
       "wanted": false
     },
     "Village Rites": {
