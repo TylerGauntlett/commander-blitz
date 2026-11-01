@@ -114,7 +114,7 @@ COUNTER_REMOVAL_UP_TO_OPS = ("remove_counters", "remove_counters_from_among")
 
 #: The ops that read `any_kind`: the card names no kind, so the controller
 #: picks one counter at a time (`effects.counter_removal`).
-ANY_KIND_COUNTER_OPS = ("remove_counters",)
+ANY_KIND_COUNTER_OPS = ("remove_counters", "move_counters")
 
 
 def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
@@ -159,6 +159,20 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
             f"{where}: 'any_kind' and a named 'counter' contradict each other -- "
             f"drop 'counter' for counters of any kind"
         )
+    if any_kind and op == "move_counters":
+        # "Move **a counter**": one at a time, of a kind picked each time.
+        # `all_kinds` is the whole multiset, and a defaulted amount would be
+        # either spelling's guess at a number the card prints.
+        if effect.get("all_kinds"):
+            raise DslError(
+                f"{where}: 'any_kind' moves counters one at a time and 'all_kinds' "
+                f"moves every counter; a card means one of them"
+            )
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: move_counters with 'any_kind' needs the printed 'amount' "
+                f"(\"move a counter\" is {{\"const\": 1}})"
+            )
     if any_kind and not effect.get("objects"):
         raise DslError(f"{where}: {op} needs 'objects' naming the permanents counters come off")
     if effect.get("up_to"):

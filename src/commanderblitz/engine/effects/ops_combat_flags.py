@@ -38,6 +38,7 @@ from .board_helpers import (
     _players,
 )
 from .context import EffectContext, ask_targets
+from .counter_removal import ask_counter_kind, counters_on
 from .registry import register
 from .selectors import (
     choose_objects,
@@ -273,6 +274,41 @@ def _move_every_kind(ctx: EffectContext, spec: Mapping[str, Any]):
             add_counters(ctx.state, dest_oid, counter_kind, amount, source=ctx.source_oid)
 
 
+def _move_chosen_kinds(ctx: EffectContext, spec: Mapping[str, Any]):
+    """``any_kind``: move ``amount`` counters, each of a kind the controller picks.
+
+    Nesting Grounds -- "Move **a counter** from target permanent you control
+    onto a second target permanent." One counter, of whichever kind is on the
+    source (122.1): a charge, oil or loyalty counter as readily as a +1/+1.
+    Naming a kind would make the land useless against the others, and
+    `all_kinds` moves the whole multiset. The kind is chosen on resolution,
+    asked only when the source carries more than one
+    (`counter_removal.ask_counter_kind`), and taken off before it is put on,
+    so a counter that was not there is never created.
+
+    With either target gone (608.2b) nothing moves: there is no destination,
+    or nothing to take a counter from.
+    """
+    if "from" in spec:
+        sources = resolve_pool(ctx, spec["from"])
+    else:
+        sources = [ctx.source_oid] if ctx.source_oid is not None else []
+    sources = [oid for oid in sources if counters_on(ctx, oid) > 0]
+    if not sources:
+        return
+    destinations = yield from choose_objects(ctx, spec.get("objects"), "Move counters to")
+    if not destinations:
+        return
+    amount = max(0, evaluate_value(ctx, spec.get("amount", 1)))
+    for source_oid in sources:
+        for _ in range(amount):
+            kind = yield from ask_counter_kind(ctx, source_oid, ctx.controller, verb="Move")
+            if kind is None or not remove_counters(ctx.state, source_oid, kind, 1):
+                break
+            for dest_oid in destinations:
+                add_counters(ctx.state, dest_oid, kind, 1, source=ctx.source_oid)
+
+
 @register("move_counters")
 def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """Take counters off one permanent and put them on another.
@@ -305,6 +341,9 @@ def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     # quietly smaller than printed.
     if spec.get("all_kinds"):
         yield from _move_every_kind(ctx, spec)
+        return
+    if spec.get("any_kind"):
+        yield from _move_chosen_kinds(ctx, spec)
         return
     kind = str(spec.get("counter", PLUS_ONE))
     if "from" in spec:
