@@ -9773,6 +9773,10 @@
   "nest_robber": {
     "zone": "battlefield"
   },
+  "nesting_grounds": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "nether_horror": {
     "zone": "battlefield"
   },

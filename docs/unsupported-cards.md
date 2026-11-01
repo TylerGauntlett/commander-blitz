@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**136 cards** blocked by **124** capabilities.
+**135 cards** blocked by **123** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -92,7 +92,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
-| [move-counter-any-kind](#move-counter-any-kind) | 1 | 561 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -1426,20 +1425,6 @@ Blocks **1** card.
 
 - **Resourceful Defense** (rank 1628) — `resourceful_defense`
   - {4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control.
-
-</details>
-
-## move-counter-any-kind
-
-Blocks **1** card.
-
-- **(op)** a move_counters mode that moves ONE counter of a kind the controller chooses on resolution from among the kinds on the source ("move a counter"), e.g. `choose_kind: true` with `amount: {const: 1}`, removing it from the `from` target and adding the same kind to the `objects` target
-  <br>Why the existing vocabulary won't do: move_counters takes either a single printed `counter` kind (default +1/+1) or `all_kinds`, which moves the whole multiset; neither lets the player pick which one counter of any kind moves, so naming +1/+1 would make the land useless with charge/loyalty/oil counters and all_kinds moves every counter instead of one
-
-<details><summary>Cards waiting on this</summary>
-
-- **Nesting Grounds** (rank 561) — `nesting_grounds`
-  - {1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery.
 
 </details>
 

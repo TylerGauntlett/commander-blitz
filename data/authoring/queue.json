@@ -185402,12 +185402,12 @@
     },
     "Nesting Grounds": {
       "edhrec_rank": 561,
-      "gate": "template",
+      "gate": null,
       "name": "Nesting Grounds",
-      "reason": "no template for: {1}, {T}: Move a counter from target permanent you control onto a second target permanent.",
+      "reason": "",
       "scryfall_id": "c25ad164-4076-496d-833c-d607391b1ac8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Nesting Wurm": {
