@@ -1,0 +1,18 @@
+{
+  "card_id": "fire_covenant",
+  "name": "Fire Covenant",
+  "oracle_text": "As an additional cost to cast this spell, pay X life.\nFire Covenant deals X damage divided as you choose among any number of target creatures.",
+  "blocked_sentences": [
+    "Fire Covenant deals X damage divided as you choose among any number of target creatures."
+  ],
+  "needs": [
+    {
+      "capability": "divided_damage_x",
+      "kind": "engine",
+      "what": "divided damage whose amount is the announced X (here X from an additional pay_life_x cost): the cast line must announce X before (or cap) the 'any number' target declaration so the 601.2d division is asked over at most X targets, each dealt at least 1",
+      "why_existing_wont_do": "additional_cost {pay_life_x: true} (Toxic Deluge) covers the first sentence and damage with 'divided' covers fixed or board-derived amounts (Pyrokinesis, Monstrous Onslaught), but the loader explicitly refuses a divided amount that reads the announced X ('a divided amount may not read the announced X') because targets are declared before X on this engine's cast line, and game._cast asks pay_life_x's X only after mana is paid"
+    }
+  ],
+  "closest_existing": ["pay_life_x", "divided"],
+  "confidence": "high"
+}

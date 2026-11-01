@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**138 cards** blocked by **125** capabilities.
+**142 cards** blocked by **129** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -60,10 +60,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [distribute-moved-counters](#distribute-moved-counters) | 1 | 387 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [divided-damage-x](#divided-damage-x) | 1 | 2757 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
+| [elf-warrior-token](#elf-warrior-token) | 1 | 4024 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -109,6 +111,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
+| [remove-counters-any-kind](#remove-counters-any-kind) | 1 | 1410 | op |
 | [remove-counters-from-among](#remove-counters-from-among) | 1 | 7871 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -132,6 +135,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
+| [total-counters-among](#total-counters-among) | 1 | 8989 | value |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -971,6 +975,20 @@ Blocks **1** card.
 
 </details>
 
+## divided-damage-x
+
+Blocks **1** card.
+
+- **(engine)** divided damage whose amount is the announced X (here X from an additional pay_life_x cost): the cast line must announce X before (or cap) the 'any number' target declaration so the 601.2d division is asked over at most X targets, each dealt at least 1
+  <br>Why the existing vocabulary won't do: additional_cost {pay_life_x: true} (Toxic Deluge) covers the first sentence and damage with 'divided' covers fixed or board-derived amounts (Pyrokinesis, Monstrous Onslaught), but the loader explicitly refuses a divided amount that reads the announced X ('a divided amount may not read the announced X') because targets are declared before X on this engine's cast line, and game._cast asks pay_life_x's X only after mana is paid
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fire Covenant** (rank 2757) — `fire_covenant`
+  - Fire Covenant deals X damage divided as you choose among any number of target creatures.
+
+</details>
+
 ## double-x
 
 Blocks **1** card.
@@ -1025,6 +1043,20 @@ Blocks **1** card.
 
 - **Elvish Promenade** (rank 3100) — `elvish_promenade`
   - Create a 1/1 green Elf Warrior creature token for each Elf you control.
+
+</details>
+
+## elf-warrior-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 green Elf Warrior creature token (id elf_warrior_1_1_g)
+  <br>Why the existing vocabulary won't do: The trigger is expressible as counter_placed with counter "-1/-1" and a creature filter, wrapped in may/create_token, but token_ids has no Elf Warrior; the only 1/1 green tokens are insect_1_1_g and saproling_1_1_g, which carry the wrong creature types
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flourishing Defenses** (rank 4024) — `flourishing_defenses`
+  - Whenever a -1/-1 counter is put on a creature, you may create a 1/1 green Elf Warrior creature token.
 
 </details>
 
@@ -1680,6 +1712,20 @@ Blocks **1** card.
 
 </details>
 
+## remove-counters-any-kind
+
+Blocks **1** card.
+
+- **(op)** a remove_counters mode that removes up to N counters in total from a target permanent, of any kinds and in any mix the controller chooses (e.g. two -1/-1 and one loyalty), with zero allowed
+  <br>Why the existing vocabulary won't do: op_remove_counters reads a single `counter` kind (defaulting to +1/+1) and removes a fixed `amount` of that kind only; it has no 'any kind' option, no per-kind split chosen by the player, and no 'up to'. move_counters has all_kinds but moves rather than removes, and the remove_counters cost key is a cost, not an effect
+
+<details><summary>Cards waiting on this</summary>
+
+- **Glissa Sunslayer** (rank 1410) — `glissa_sunslayer`
+  - • Remove up to three counters from target permanent.
+
+</details>
+
 ## remove-counters-from-among
 
 Blocks **1** card.
@@ -2004,6 +2050,20 @@ Blocks **1** card.
 
 - **Teval's Judgment** (rank 1802) — `teval_s_judgment`
   - • Create a 2/2 black Zombie Druid creature token.
+
+</details>
+
+## total-counters-among
+
+Blocks **1** card.
+
+- **(value)** a value that sums counters of every kind on the objects a selector matches, e.g. {"counters_on": {"counter": "any", "objects": {"types": ["Creature"], "controller": {"target": "t1"}}}} -- "the number of counters among creatures target player controls", read live at resolution
+  <br>Why the existing vocabulary won't do: `counters_on` requires one named counter kind (validate_counters_on refuses a missing kind and the evaluator reads obj.counter(kind)), and counter kinds are open-ended, so summing a fixed list of kinds would not be the printed card. `counters_had` does accept "any" but only reads the had_counters snapshot bound by a leaves-the-battlefield event, not live permanents. The token (saproling_1_1_g), the target player, and the {T} line (double_counters) are all expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ferrafor, Young Yew** (rank 8989) — `ferrafor_young_yew`
+  - When Ferrafor enters, create a number of 1/1 green Saproling creature tokens equal to the number of counters among creatures target player controls.
 
 </details>
 

@@ -4443,6 +4443,10 @@
     },
     "zone": "battlefield"
   },
+  "evolution_sage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "exalted_flamer_of_tzeentch": {
     "battlefield_count": 33,
     "life": {
@@ -5963,6 +5967,12 @@
   },
   "golgari_longlegs": {
     "zone": "battlefield"
+  },
+  "golgari_rot_farm": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    }
   },
   "golgari_signet": {
     "zone": "battlefield"

@@ -87552,12 +87552,12 @@
     },
     "Evolution Sage": {
       "edhrec_rank": 404,
-      "gate": "template",
+      "gate": null,
       "name": "Evolution Sage",
-      "reason": "no template for: Landfall — Whenever a land you control enters, proliferate",
+      "reason": "",
       "scryfall_id": "1d58d08d-cd62-416d-8d8e-7d9c56d5c4da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evolution Vat": {
@@ -114832,12 +114832,12 @@
     },
     "Golgari Rot Farm": {
       "edhrec_rank": 327,
-      "gate": "template",
+      "gate": null,
       "name": "Golgari Rot Farm",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "42486edd-24b7-4299-84fa-50559917b2a8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Golgari Rotwurm": {
