@@ -7724,6 +7724,81 @@
               "amount": {
                 "const": 1
               },
+              "counter": "-1/-1",
+              "objects": {
+                "controller": "opponent",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cycle or discard another card, put a -1/-1 counter on each creature your opponents control.",
+          "trigger": {
+            "controller": "you",
+            "event": "discard",
+            "filter": {
+              "exclude_self": true
+            }
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Cycling {2} ({2}, Discard this card: Draw a card.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "archfiend_of_ifnir",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Archfiend of Ifnir",
+      "oracle_text": "Flying\nWhenever you cycle or discard another card, put a -1/-1 counter on each creature your opponents control.\nCycling {2} ({2}, Discard this card: Draw a card.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "op": "gain_life",
               "player": "you"
             },
@@ -15147,6 +15222,95 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — Destroy target nonland permanent an opponent controls."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "subtypes": [
+                  "Forest"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "chapter",
+          "text": "II — Search your library for a Forest card, put it onto the battlefield tapped, then shuffle."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "keywords": [
+                "deathtouch"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Creatures you control gain deathtouch until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "binding_the_old_gods",
+      "mana_cost": "{2}{B}{G}",
+      "name": "Binding the Old Gods",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy target nonland permanent an opponent controls.\nII — Search your library for a Forest card, put it onto the battlefield tapped, then shuffle.\nIII — Creatures you control gain deathtouch until end of turn.",
+      "source": "auto",
+      "subtypes": [
+        "Saga"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "U"
@@ -17893,6 +18057,66 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a creature dies, if it had a -1/-1 counter on it, put a -1/-1 counter on target creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "any",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "blowfly_infestation",
+      "mana_cost": "{2}{B}",
+      "name": "Blowfly Infestation",
+      "oracle_text": "Whenever a creature dies, if it had a -1/-1 counter on it, put a -1/-1 counter on target creature.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

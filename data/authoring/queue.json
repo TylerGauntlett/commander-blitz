@@ -12012,12 +12012,12 @@
     },
     "Archfiend of Ifnir": {
       "edhrec_rank": 1296,
-      "gate": "template",
+      "gate": null,
       "name": "Archfiend of Ifnir",
-      "reason": "no template for: Whenever you cycle or discard another card, put a -1/-1 counter on each creature your oppo",
+      "reason": "",
       "scryfall_id": "83057af6-cb88-4401-92ef-5b5d10463140",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archfiend of Sorrows": {
@@ -24882,12 +24882,12 @@
     },
     "Binding the Old Gods": {
       "edhrec_rank": 1310,
-      "gate": "template",
+      "gate": null,
       "name": "Binding the Old Gods",
-      "reason": "no template for: I — Destroy target nonland permanent an opponent controls",
+      "reason": "",
       "scryfall_id": "41802f18-7d46-431a-acb3-dbcc82eb415a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bio-Asset Allocator": {
@@ -29482,12 +29482,12 @@
     },
     "Blowfly Infestation": {
       "edhrec_rank": 3119,
-      "gate": "template",
+      "gate": null,
       "name": "Blowfly Infestation",
-      "reason": "no template for: Whenever a creature dies, if it had a -1/-1 counter on it, put a -1/-1 counter on target c",
+      "reason": "",
       "scryfall_id": "77e5dc0c-f4db-4540-b8d1-a07d7c96a374",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bludgeon Brawl": {
@@ -308294,7 +308294,7 @@
       "edhrec_rank": 1345,
       "gate": "template",
       "name": "Vraska, Betrayal's Sting",
-      "reason": "no template for: Compleated",
+      "reason": "no template for: 0: You draw a card and lose 1 life. Proliferate",
       "scryfall_id": "9f1fa1c5-ff87-4bbc-89aa-dbebc91eada0",
       "source": "",
       "status": "pending",

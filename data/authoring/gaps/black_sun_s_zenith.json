@@ -1,0 +1,18 @@
+{
+  "card_id": "black_sun_s_zenith",
+  "name": "Black Sun's Zenith",
+  "oracle_text": "Put X -1/-1 counters on each creature. Shuffle Black Sun's Zenith into its owner's library.",
+  "blocked_sentences": [
+    "Shuffle Black Sun's Zenith into its owner's library."
+  ],
+  "needs": [
+    {
+      "capability": "shuffle_self_into_library",
+      "kind": "engine",
+      "what": "a card-level rider on an instant or sorcery that, as the spell finishes resolving, puts the card into its owner's library instead of the graveyard and then shuffles that library (the Sun's Zenith cycle, Beacon of Destruction/Unrest/Tomorrows)",
+      "why_existing_wont_do": "tucks_itself replaces the graveyard with a library position, but only a fixed depth from the top or 'bottom', never a shuffle; the shuffle op runs inside spell_effects, before the spell card leaves the stack, so tucks_itself 'bottom' plus shuffle would leave the card on the bottom unshuffled. The first sentence is expressible (add_counters -1/-1 with amount {x: true} over all creatures)"
+    }
+  ],
+  "closest_existing": ["tucks_itself", "shuffle"],
+  "confidence": "high"
+}

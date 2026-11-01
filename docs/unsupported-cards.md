@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**132 cards** blocked by **119** capabilities.
+**135 cards** blocked by **122** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,6 +38,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [blight](#blight) | 1 | 6570 | cost |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -117,6 +118,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
+| [shuffle-self-into-library](#shuffle-self-into-library) | 1 | 1947 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
@@ -131,6 +133,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [variable-target-count-with-minimum](#variable-target-count-with-minimum) | 1 | 6551 | engine |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -641,6 +644,20 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
+
+</details>
+
+## blight
+
+Blocks **1** card.
+
+- **(cost)** a `blight` cost key ("Blight N: the paying player puts N -1/-1 counters on a creature they control"), where the PAYER chooses one creature they control at payment time and the counters go on it through `add_counters` (so `counter_placed` fires); payable only if the payer controls a creature. It must work inside a ward cost (the `pay` spec of `ward_ability`'s `may`, paid by the targeting opponent) as well as on activated abilities and additional costs
+  <br>Why the existing vocabulary won't do: `put_counters` in `cost_keys` places counters on the cost's source permanent only (costs.py pays it to `source_oid`), so `{"put_counters": {"counter": "-1/-1", "amount": 2}}` as the ward cost would put the counters on Auntie Ool rather than on a creature the opponent chooses among their own; no other cost key (sacrifice, tap_permanents, remove_counters_from_among) puts counters on a chosen creature, and nothing in the engine or cards package knows the word blight
+
+<details><summary>Cards waiting on this</summary>
+
+- **Auntie Ool, Cursewretch** (rank 6570) — `auntie_ool_cursewretch`
+  - Ward—Blight 2
 
 </details>
 
@@ -1784,6 +1801,20 @@ Blocks **1** card.
 
 </details>
 
+## shuffle-self-into-library
+
+Blocks **1** card.
+
+- **(engine)** a card-level rider on an instant or sorcery that, as the spell finishes resolving, puts the card into its owner's library instead of the graveyard and then shuffles that library (the Sun's Zenith cycle, Beacon of Destruction/Unrest/Tomorrows)
+  <br>Why the existing vocabulary won't do: tucks_itself replaces the graveyard with a library position, but only a fixed depth from the top or 'bottom', never a shuffle; the shuffle op runs inside spell_effects, before the spell card leaves the stack, so tucks_itself 'bottom' plus shuffle would leave the card on the bottom unshuffled. The first sentence is expressible (add_counters -1/-1 with amount {x: true} over all creatures)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Black Sun's Zenith** (rank 1947) — `black_sun_s_zenith`
+  - Shuffle Black Sun's Zenith into its owner's library.
+
+</details>
+
 ## single-target-spell-restriction
 
 Blocks **1** card.
@@ -1978,6 +2009,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## variable-target-count-with-minimum
+
+Blocks **1** card.
+
+- **(engine)** a target spec whose size the caster picks between a printed floor and ceiling -- "one, two, or three target creature cards" is 1..3, never 0 -- e.g. a `min_count: 1` beside `count: 3, up_to: true`, so the spell cannot be cast with no targets (601.2c) and enumerate_target_tuples offers subsets of size 3, 2 and 1 but not the empty one
+  <br>Why the existing vocabulary won't do: target `up_to` is "zero to N" (targeting.py always appends the empty subset and loader/targets.py documents it as such), so it lets the sorcery be cast with no targets and with no creature card in any graveyard; a fixed `count: 3` without up_to forces exactly min(3, candidates) and never lets the caster choose one or two when three are available. The rest of the card is expressible: a `card_in_graveyard` target with selector {types: [Creature], zone: graveyard, controller: any} and `return_from_graveyard` with destination battlefield, controller you, counters {"-1/-1": 1}
+
+<details><summary>Cards waiting on this</summary>
+
+- **Aberrant Return** (rank 6551) — `aberrant_return`
+  - Put one, two, or three target creature cards from graveyards onto the battlefield under your control.
 
 </details>
 

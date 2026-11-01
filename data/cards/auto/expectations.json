@@ -731,6 +731,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "archfiend_of_ifnir": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "archivist_of_oghma": {
     "battlefield_count": 33,
     "hand_size": {
@@ -1383,6 +1390,14 @@
     },
     "zone": "graveyard"
   },
+  "binding_the_old_gods": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "biomass_mutation": {
     "battlefield_count": 32,
     "graveyard_size": {
@@ -1613,6 +1628,10 @@
     "life": {
       "0": 41
     }
+  },
+  "blowfly_infestation": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "bog_imp": {
     "zone": "battlefield"
