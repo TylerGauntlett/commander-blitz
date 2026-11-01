@@ -51189,6 +51189,42 @@
     {
       "abilities": [
         {
+          "affects_player": "any",
+          "effect": "cant_gain_life",
+          "kind": "static",
+          "text": "Players can't gain life."
+        },
+        {
+          "effect": "damage_cant_be_prevented",
+          "kind": "static",
+          "text": "Damage can't be prevented."
+        },
+        {
+          "effect": "all_damage_wither",
+          "kind": "static",
+          "text": "All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)"
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "everlasting_torment",
+      "mana_cost": "{2}{B/R}",
+      "name": "Everlasting Torment",
+      "oracle_text": "Players can't gain life.\nDamage can't be prevented.\nAll damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "proliferate"
@@ -117716,6 +117752,106 @@
         "Legendary"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "activated_by": "opponent",
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "duration": "permanent",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "gain_control",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "{1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "-1/-1"
+              },
+              "op": "draw",
+              "player": {
+                "owner_of": "self"
+              }
+            },
+            {
+              "amount": {
+                "counters_had": "-1/-1"
+              },
+              "op": "lose_life",
+              "player": {
+                "not": {
+                  "owner_of": "self"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, if it had one or more -1/-1 counters on it, its owner draws that many cards and each other player loses that much life.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "counters_had": "-1/-1"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "oft_nabbed_goat",
+      "mana_cost": "{1}{B}",
+      "name": "Oft-Nabbed Goat",
+      "oracle_text": "{1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery.\nWhen this creature dies, if it had one or more -1/-1 counters on it, its owner draws that many cards and each other player loses that much life.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Goat"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]

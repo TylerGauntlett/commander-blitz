@@ -4479,6 +4479,14 @@
     },
     "zone": "battlefield"
   },
+  "everlasting_torment": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "evolution_sage": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10109,6 +10117,13 @@
     "zone": "battlefield"
   },
   "odric_master_tactician": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "oft_nabbed_goat": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1

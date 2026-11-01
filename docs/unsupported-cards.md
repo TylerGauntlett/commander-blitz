@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**135 cards** blocked by **123** capabilities.
+**133 cards** blocked by **120** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -52,7 +52,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [damage-cant-be-prevented](#damage-cant-be-prevented) | 1 | 5549 | static_effect |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -97,7 +96,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
-| [opponent-activated-ability](#opponent-activated-ability) | 1 | 6193 | engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -134,7 +132,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [wither](#wither) | 1 | 5549 | static_effect |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -851,21 +848,6 @@ Blocks **1** card.
 
 </details>
 
-## damage-cant-be-prevented
-
-Blocks **1** card.
-
-- **(static_effect)** a global static (affects_player any) under which every prevention effect -- prevent_damage statics, prevent_damage / prevent_damage_permanent / prevent_combat_damage shields, protection's damage prevention -- is not applied to any damage dealt while the permanent is on the battlefield
-  <br>Why the existing vocabulary won't do: static_effects has prevent_damage, prevent_all_but and protection, all of which ADD prevention; nothing switches prevention off. The packet notes say outright that "Damage can't be prevented" is a different effect from cant_gain_life, and no static or op in reference names it
-
-<details><summary>Cards waiting on this</summary>
-
-- **Everlasting Torment** (rank 5549) — `everlasting_torment`
-  - Damage can't be prevented.
-  - All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)
-
-</details>
-
 ## dealt-damage-to-player-this-turn
 
 Blocks **1** card.
@@ -1504,20 +1486,6 @@ Blocks **1** card.
 
 </details>
 
-## opponent-activated-ability
-
-Blocks **1** card.
-
-- **(engine)** an activated ability on a permanent that players other than its controller may activate ("Only your opponents may activate this ability", and the sibling "Any player may activate this ability"), paid for by the activator, with the activator bound as the ability's controller so that 'draw a card' and 'gain control of this creature' (gain_control player: the activator) resolve for them, and sorcery timing checked on the activator's turn
-  <br>Why the existing vocabulary won't do: Activated abilities are only offered to the permanent's controller. The only 'activated_by' key in the DSL belongs to the ability_cost_reduction static and the loader refuses it on any other ability ('activated_by only mean anything on an ability_cost_reduction static'); nothing in ability_keys lets an opponent activate an ability of a permanent they do not control.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Oft-Nabbed Goat** (rank 6193) — `oft_nabbed_goat`
-  - {1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery.
-
-</details>
-
 ## opponent-choice-of-payment
 
 Blocks **1** card.
@@ -2025,21 +1993,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## wither
-
-Blocks **1** card.
-
-- **(static_effect)** a global static making all damage to creatures, from every source (spells, abilities, permanents in any zone, both players'), be dealt as -1/-1 counters, as though each source had wither
-  <br>Why the existing vocabulary won't do: the wither keyword exists, but a grant_keyword static can only grant it to permanents matched by affects, so damage from instants, sorceries and other non-permanent sources would still be marked normally; replace_damage only scales the amount (damage_multiplier/damage_addend) and cannot change how damage is dealt
-
-<details><summary>Cards waiting on this</summary>
-
-- **Everlasting Torment** (rank 5549) — `everlasting_torment`
-  - Damage can't be prevented.
-  - All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)
 
 </details>
 

@@ -87322,12 +87322,12 @@
     },
     "Everlasting Torment": {
       "edhrec_rank": 5549,
-      "gate": "template",
+      "gate": null,
       "name": "Everlasting Torment",
-      "reason": "no template for: Players can't gain life",
+      "reason": "",
       "scryfall_id": "a1e79115-bb2d-4455-b6dc-aaf2d0e26c60",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Evermind": {
@@ -191262,12 +191262,12 @@
     },
     "Oft-Nabbed Goat": {
       "edhrec_rank": 6193,
-      "gate": "template",
+      "gate": null,
       "name": "Oft-Nabbed Goat",
-      "reason": "no template for: {1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your o",
+      "reason": "",
       "scryfall_id": "4030bfab-867c-4724-904e-3e8b631f075e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Oggyar Battle-Seer": {
