@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**146 cards** blocked by **132** capabilities.
+**149 cards** blocked by **134** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,6 +25,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [elemental-5-5-rg](#elemental-5-5-rg) | 2 | 945 | token |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -66,7 +67,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-4-4-w-flying](#elemental-4-4-w-flying) | 1 | 9533 | token |
-| [elemental-5-5-rg](#elemental-5-5-rg) | 1 | 12518 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
@@ -82,6 +82,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
@@ -102,6 +103,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
+| [myriad](#myriad) | 1 | 6808 | keyword |
 | [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
@@ -450,6 +452,24 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## elemental-5-5-rg
+
+Blocks **2** cards.
+
+- **(token)** a 5/5 red and green Elemental creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has Elementals only as elemental_1_1_ur, elemental_2_2_g, elemental_3_3_ur_flying and elemental_4_4_ur; none is a 5/5 red-green. The rest of the card is expressible: the count is the value distinct of color over permanents you control, and the life gain is gain_life with creatures_you_control
+- **(token)** a 5/5 red and green Elemental creature token (e.g. id elemental_5_5_rg)
+  <br>Why the existing vocabulary won't do: token_ids holds only elemental_1_1_ur, elemental_2_2_g, elemental_3_3_ur_flying and elemental_4_4_ur among Elementals, and the only 5/5 is dragon_5_5_r_flying; none matches the printed size, colors and creature type. The landfall trigger itself (permanent_enters filtered to Land you control) and the Elemental dies trigger are otherwise expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Omnath, Locus of Rage** (rank 945) — `omnath_locus_of_rage`
+  - Landfall — Whenever a land you control enters, create a 5/5 red and green Elemental creature token.
+- **Elemental Spectacle** (rank 12518) — `elemental_spectacle`
+  - Vivid — Create a number of 5/5 red and green Elemental creature tokens equal to the number of colors among permanents you control.
 
 </details>
 
@@ -1078,20 +1098,6 @@ Blocks **1** card.
 
 </details>
 
-## elemental-5-5-rg
-
-Blocks **1** card.
-
-- **(token)** a 5/5 red and green Elemental creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has Elementals only as elemental_1_1_ur, elemental_2_2_g, elemental_3_3_ur_flying and elemental_4_4_ur; none is a 5/5 red-green. The rest of the card is expressible: the count is the value distinct of color over permanents you control, and the life gain is gain_life with creatures_you_control
-
-<details><summary>Cards waiting on this</summary>
-
-- **Elemental Spectacle** (rank 12518) — `elemental_spectacle`
-  - Vivid — Create a number of 5/5 red and green Elemental creature tokens equal to the number of colors among permanents you control.
-
-</details>
-
 ## elemental-x-x-ur-flying-haste
 
 Blocks **1** card.
@@ -1309,6 +1315,20 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## graveyard-cast-per-permanent-type
+
+Blocks **1** card.
+
+- **(static_effect)** a cast_from_graveyard permission (plus a land-play-from-graveyard permission) metered once per turn PER PERMANENT TYPE (artifact, creature, enchantment, land, planeswalker, battle) from the same granting permanent, where a card with several permanent types has its controller choose which type's use it spends as it is played
+  <br>Why the existing vocabulary won't do: cast_from_graveyard with affects_spells + static_max_per_turn is Edgar-shaped: casting._graveyard_cast_permission bills every use to one ledger slot per granting permanent (GRAVEYARD_CAST_SLOT keyed on source oid), so five per-type statics on Muldrotha share one counter -- cap 1 allows only one cast total, cap 5 allows five creatures. There is no per-type slot and no choice of which type an artifact creature spends. play_lands_from_graveyard is unmetered and not tied to that per-turn allowance either
+
+<details><summary>Cards waiting on this</summary>
+
+- **Muldrotha, the Gravetide** (rank 1104) — `muldrotha_the_gravetide`
+  - During each of your turns, you may play a land and cast a permanent spell of each permanent type from your graveyard
 
 </details>
 
@@ -1595,6 +1615,20 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
+
+</details>
+
+## myriad
+
+Blocks **1** card.
+
+- **(keyword)** the myriad keyword (702.116), grantable with grant_keyword until end of turn: whenever the creature attacks, for each opponent other than the defending player, its controller may create a token copy of it tapped and attacking that player or a planeswalker they control, and those tokens are exiled at end of combat
+  <br>Why the existing vocabulary won't do: myriad is not in the keyword list, so grant_keyword cannot give it. Composing it from grant_ability with a granted attacks trigger (for_each_player + may + copy_permanent with attacking/or_planeswalker, then a this_combat delayed exile) would need a player set of 'each opponent other than the defending player' that no players spec names, and a granted ability is not the keyword (it is not seen by keyword checks or copied as myriad)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mass of Mysteries** (rank 6808) — `mass_of_mysteries`
+  - At the beginning of combat on your turn, another target Elemental you control gains myriad until end of turn
 
 </details>
 

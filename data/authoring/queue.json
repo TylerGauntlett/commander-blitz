@@ -129772,12 +129772,12 @@
     },
     "Horde of Notions": {
       "edhrec_rank": 6303,
-      "gate": "template",
+      "gate": null,
       "name": "Horde of Notions",
-      "reason": "no template for: {W}{U}{B}{R}{G}: You may play target Elemental card from your graveyard without paying its",
+      "reason": "",
       "scryfall_id": "e7d3e472-5589-4655-b246-6f2d7ccf029e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hordewing Skaab": {
@@ -135322,12 +135322,12 @@
     },
     "Incandescent Soulstoke": {
       "edhrec_rank": 6163,
-      "gate": "template",
+      "gate": null,
       "name": "Incandescent Soulstoke",
-      "reason": "no template for: Other Elemental creatures you control get +1/+1",
+      "reason": "",
       "scryfall_id": "c1597a95-3175-42f7-abce-2f6f969c5faa",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Incarnation Technique": {
@@ -144062,12 +144062,12 @@
     },
     "Jubilation": {
       "edhrec_rank": 6024,
-      "gate": "template",
+      "gate": null,
       "name": "Jubilation",
-      "reason": "no template for: When this creature enters, creatures you control get +2/+2 and gain trample until end of t",
+      "reason": "",
       "scryfall_id": "6add2d0f-7633-47f8-940b-e878f271c40e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Judge Magister Gabranth": {
@@ -149092,12 +149092,12 @@
     },
     "Kindred Summons": {
       "edhrec_rank": 2379,
-      "gate": "template",
+      "gate": null,
       "name": "Kindred Summons",
-      "reason": "no template for: Choose a creature type. Reveal cards from the top of your library until you reveal X creat",
+      "reason": "",
       "scryfall_id": "3485e240-4957-421b-86f4-2aa494563747",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kinetic Augur": {
@@ -154142,12 +154142,12 @@
     },
     "Lamentation": {
       "edhrec_rank": 6159,
-      "gate": "template",
+      "gate": null,
       "name": "Lamentation",
-      "reason": "no template for: When this creature enters, destroy target creature an opponent controls. You gain 3 life",
+      "reason": "",
       "scryfall_id": "2dbc775a-ec2b-442f-a817-4108c05d7fab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lammastide Weave": {
@@ -164182,12 +164182,12 @@
     },
     "Maelstrom Wanderer": {
       "edhrec_rank": 1615,
-      "gate": "template",
+      "gate": null,
       "name": "Maelstrom Wanderer",
-      "reason": "no template for: Creatures you control have haste",
+      "reason": "",
       "scryfall_id": "5685b28a-b943-4143-b9ed-4796c1ffbf9c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maelstrom of the Spirit Dragon": {
@@ -192542,12 +192542,12 @@
     },
     "Omnath, Locus of the Roil": {
       "edhrec_rank": 3588,
-      "gate": "template",
+      "gate": null,
       "name": "Omnath, Locus of the Roil",
-      "reason": "no template for: When Omnath enters, it deals damage to any target equal to the number of Elementals you co",
+      "reason": "",
       "scryfall_id": "6da6957b-8f52-4fc9-affe-e1e0db03fbe2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Omnath, Locus of the Void": {
@@ -206912,12 +206912,12 @@
     },
     "Primal Beyond": {
       "edhrec_rank": 6307,
-      "gate": "template",
+      "gate": null,
       "name": "Primal Beyond",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast an Elemental spell or activat",
+      "reason": "",
       "scryfall_id": "cf01949c-1aa3-4ce6-aabf-00c6d0498f5c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Primal Boost": {
@@ -213402,12 +213402,12 @@
     },
     "Raging Ravine": {
       "edhrec_rank": 2692,
-      "gate": "template",
+      "gate": null,
       "name": "Raging Ravine",
-      "reason": "no template for: {2}{R}{G}: Until end of turn, this land becomes a 3/3 red and green Elemental creature wit",
+      "reason": "",
       "scryfall_id": "3964c3a5-3ce7-4b73-89ec-ed1b9799aef8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Raging Redcap": {

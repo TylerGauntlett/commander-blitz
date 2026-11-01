@@ -6898,6 +6898,10 @@
       "0": 44
     }
   },
+  "horde_of_notions": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "horizon_of_progress": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7131,6 +7135,13 @@
       "battlefield",
       "graveyard"
     ]
+  },
+  "incandescent_soulstoke": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "incremental_blight": {
     "zone": "graveyard"
@@ -7550,6 +7561,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jubilation": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "jukai_messenger": {
     "zone": "battlefield"
   },
@@ -7838,6 +7859,16 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "kindred_summons": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "kinetic_ooze": {
     "counters": {
       "amount": 20,
@@ -8097,6 +8128,14 @@
     "zone": "battlefield"
   },
   "lagac_lizard": {
+    "zone": "battlefield"
+  },
+  "lamentation": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 43
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "lance": {
@@ -8657,6 +8696,15 @@
   },
   "maelstrom_of_the_spirit_dragon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "maelstrom_wanderer": {
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "haste"
+      ]
+    },
     "zone": "battlefield"
   },
   "magefire_wings": {
@@ -10292,6 +10340,10 @@
     },
     "zone": "graveyard"
   },
+  "omnath_locus_of_the_roil": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "omnath_locus_of_the_void": {
     "zone": "battlefield"
   },
@@ -10994,6 +11046,13 @@
   "priests_of_norn": {
     "zone": "battlefield"
   },
+  "primal_beyond": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "primal_frenzy": {
     "zone": [
       "battlefield",
@@ -11381,6 +11440,10 @@
     "zone": "battlefield"
   },
   "raging_poltergeist": {
+    "zone": "battlefield"
+  },
+  "raging_ravine": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "raging_redcap": {

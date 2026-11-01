@@ -78990,6 +78990,74 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{W}{U}{B}{R}{G}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cast_from_hand"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Elemental"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{W}{U}{B}{R}{G}: You may play target Elemental card from your graveyard without paying its mana cost."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "horde_of_notions",
+      "keywords": [
+        "vigilance",
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{W}{U}{B}{R}{G}",
+      "name": "Horde of Notions",
+      "oracle_text": "Vigilance, trample, haste\n{W}{U}{B}{R}{G}: You may play target Elemental card from your graveyard without paying its mana cost.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "pay_life": 1,
             "tap": true
           },
@@ -81919,6 +81987,127 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "subtypes": [
+              "Elemental"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Other Elemental creatures you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Elemental"
+                  ],
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "hand"
+                }
+              },
+              "effects": [
+                {
+                  "as": "stoked",
+                  "objects": {
+                    "chooser": "controller",
+                    "controller": "you",
+                    "count": 1,
+                    "subtypes": [
+                      "Elemental"
+                    ],
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "hand"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose an Elemental creature card in your hand"
+                },
+                {
+                  "objects": {
+                    "binding": "stoked"
+                  },
+                  "op": "put_onto_battlefield"
+                },
+                {
+                  "duration": "until_end_of_turn",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "stoked",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "stoked",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice it at the beginning of the next end step."
+                }
+              ],
+              "op": "may",
+              "prompt": "Put an Elemental creature card from your hand onto the battlefield?"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, {T}: You may put an Elemental creature card from your hand onto the battlefield. That creature gains haste until end of turn. Sacrifice it at the beginning of the next end step."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "incandescent_soulstoke",
+      "mana_cost": "{2}{R}",
+      "name": "Incandescent Soulstoke",
+      "oracle_text": "Other Elemental creatures you control get +1/+1.\n{1}{R}, {T}: You may put an Elemental creature card from your hand onto the battlefield. That creature gains haste until end of turn. Sacrifice it at the beginning of the next end step.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Shaman"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -87062,6 +87251,141 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 2
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "trample"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, creatures you control get +2/+2 and gain trample until end of turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{7}{G}{G}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {7}{G}{G} ({7}{G}{G}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "jubilation",
+      "mana_cost": "{5}{G}",
+      "name": "Jubilation",
+      "oracle_text": "When this creature enters, creatures you control get +2/+2 and gain trample until end of turn.\nEncore {7}{G}{G} ({7}{G}{G}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Incarnation"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -90891,6 +91215,59 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "kindred_summons",
+      "mana_cost": "{5}{G}{G}",
+      "name": "Kindred Summons",
+      "oracle_text": "Choose a creature type. Reveal cards from the top of your library until you reveal X creature cards of the chosen type, where X is the number of creatures you control of that type. Put those cards onto the battlefield, then shuffle the rest of the revealed cards into your library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "choose_type",
+          "prompt": "Choose a creature type"
+        },
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "count": "all",
+              "subtypes": [
+                {
+                  "chosen_type_of": "self"
+                }
+              ],
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "destination": "battlefield",
+          "objects": {
+            "subtypes": [
+              {
+                "chosen_type_of": "self"
+              }
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "reveal_until",
+          "player": "you",
+          "shuffle_rest": true
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -94008,6 +94385,134 @@
         "Lizard"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this creature enters, destroy target creature an opponent controls. You gain 3 life.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{6}{B}{B}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {6}{B}{B} ({6}{B}{B}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "lamentation",
+      "mana_cost": "{5}{B}",
+      "name": "Lamentation",
+      "oracle_text": "When this creature enters, destroy target creature an opponent controls. You gain 3 life.\nEncore {6}{B}{B} ({6}{B}{B}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Incarnation"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -101250,6 +101755,84 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have haste."
+        },
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Then do it again.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "op": "cascade"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Then do it again.)",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "maelstrom_wanderer",
+      "mana_cost": "{5}{G}{U}{R}",
+      "name": "Maelstrom Wanderer",
+      "oracle_text": "Creatures you control have haste.\nCascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom in a random order. Then do it again.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -119758,6 +120341,133 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "subtypes": [
+                    "Elemental"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "When Omnath enters, it deals damage to any target equal to the number of Elementals you control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            },
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "lands_you_control": true
+                },
+                "right": {
+                  "const": 8
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Elemental"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Landfall — Whenever a land you control enters, put a +1/+1 counter on target Elemental you control. If you control eight or more lands, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "U"
+      ],
+      "id": "omnath_locus_of_the_roil",
+      "mana_cost": "{1}{G}{U}{R}",
+      "name": "Omnath, Locus of the Roil",
+      "oracle_text": "When Omnath enters, it deals damage to any target equal to the number of Elementals you control.\nLandfall — Whenever a land you control enters, put a +1/+1 counter on target Elemental you control. If you control eight or more lands, draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -128304,6 +129014,110 @@
     {
       "abilities": [
         {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{C}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {C}."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "W"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "U"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "B"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "R"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "G"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "mana_restriction": {
+            "activate": [
+              [
+                "Elemental"
+              ]
+            ],
+            "cast": [
+              [
+                "Elemental"
+              ]
+            ]
+          },
+          "text": "{T}: Add one mana of any color. Spend this mana only to cast an Elemental spell or activate an ability of an Elemental."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "primal_beyond",
+      "name": "Primal Beyond",
+      "oracle_text": "As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast an Elemental spell or activate an ability of an Elemental.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -132572,6 +133386,116 @@
       "toughness": 1,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or {G}."
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}{G}"
+          },
+          "effects": [
+            {
+              "colors": [
+                "R",
+                "G"
+              ],
+              "objects": {
+                "self_only": true
+              },
+              "op": "animate",
+              "power": {
+                "const": 3
+              },
+              "subtypes": [
+                "Elemental"
+              ],
+              "toughness": {
+                "const": 3
+              }
+            },
+            {
+              "ability": 0,
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}{G}: Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, put a +1/+1 counter on it.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "raging_ravine",
+      "mana_cost": "",
+      "name": "Raging Ravine",
+      "oracle_text": "This land enters tapped.\n{T}: Add {R} or {G}.\n{2}{R}{G}: Until end of turn, this land becomes a 3/3 red and green Elemental creature with \"Whenever this creature attacks, put a +1/+1 counter on it.\" It's still a land.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
       ]
     },
     {

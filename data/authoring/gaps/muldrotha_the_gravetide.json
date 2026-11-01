@@ -1,0 +1,18 @@
+{
+  "card_id": "muldrotha_the_gravetide",
+  "name": "Muldrotha, the Gravetide",
+  "oracle_text": "During each of your turns, you may play a land and cast a permanent spell of each permanent type from your graveyard. (If a card has multiple permanent types, choose one as you play it.)",
+  "blocked_sentences": [
+    "During each of your turns, you may play a land and cast a permanent spell of each permanent type from your graveyard"
+  ],
+  "needs": [
+    {
+      "capability": "graveyard_cast_per_permanent_type",
+      "kind": "static_effect",
+      "what": "a cast_from_graveyard permission (plus a land-play-from-graveyard permission) metered once per turn PER PERMANENT TYPE (artifact, creature, enchantment, land, planeswalker, battle) from the same granting permanent, where a card with several permanent types has its controller choose which type's use it spends as it is played",
+      "why_existing_wont_do": "cast_from_graveyard with affects_spells + static_max_per_turn is Edgar-shaped: casting._graveyard_cast_permission bills every use to one ledger slot per granting permanent (GRAVEYARD_CAST_SLOT keyed on source oid), so five per-type statics on Muldrotha share one counter -- cap 1 allows only one cast total, cap 5 allows five creatures. There is no per-type slot and no choice of which type an artifact creature spends. play_lands_from_graveyard is unmetered and not tied to that per-turn allowance either"
+    }
+  ],
+  "closest_existing": ["cast_from_graveyard", "play_lands_from_graveyard"],
+  "confidence": "high"
+}

@@ -9434,6 +9434,12 @@
     "file": "honey_mammoth.jpg",
     "scryfall_id": "84b9bee2-b973-4de7-b72d-7f36f8e8153c"
   },
+  "horde_of_notions": {
+    "artist": "Adam Rex",
+    "bytes": 48184,
+    "file": "horde_of_notions.jpg",
+    "scryfall_id": "e7d3e472-5589-4655-b246-6f2d7ccf029e"
+  },
   "hordeling_outburst": {
     "artist": "Zoltan Boros",
     "bytes": 71383,
@@ -9810,6 +9816,12 @@
     "bytes": 64319,
     "file": "improvised_armor.jpg",
     "scryfall_id": "d3c205ba-cafb-4afc-83fe-09fff38130d7"
+  },
+  "incandescent_soulstoke": {
+    "artist": "Todd Lockwood",
+    "bytes": 47230,
+    "file": "incandescent_soulstoke.jpg",
+    "scryfall_id": "c1597a95-3175-42f7-abce-2f6f969c5faa"
   },
   "increasing_devotion": {
     "artist": "Daniel Ljunggren",
@@ -10401,6 +10413,12 @@
     "file": "joven_s_tools.jpg",
     "scryfall_id": "91c7aa8e-5873-4e18-8adb-1523c01d4e86"
   },
+  "jubilation": {
+    "artist": "Vincent Christiaens",
+    "bytes": 64728,
+    "file": "jubilation.jpg",
+    "scryfall_id": "6add2d0f-7633-47f8-940b-e878f271c40e"
+  },
   "jukai_messenger": {
     "artist": "Terese Nielsen",
     "bytes": 81624,
@@ -10778,6 +10796,12 @@
     "bytes": 80686,
     "file": "kindred_judgment.jpg",
     "scryfall_id": "6f9f814b-8249-4e48-a05e-4c84060fe6fb"
+  },
+  "kindred_summons": {
+    "artist": "Ryan Pancoast",
+    "bytes": 45621,
+    "file": "kindred_summons.jpg",
+    "scryfall_id": "3485e240-4957-421b-86f4-2aa494563747"
   },
   "kinetic_ooze": {
     "artist": "Raph Lomotan",
@@ -11215,6 +11239,12 @@
     "bytes": 78907,
     "file": "lagac_lizard.jpg",
     "scryfall_id": "b47e9cfa-5547-4ef3-9e36-8d0f36dfa59a"
+  },
+  "lamentation": {
+    "artist": "Lars Grant-West",
+    "bytes": 42487,
+    "file": "lamentation.jpg",
+    "scryfall_id": "2dbc775a-ec2b-442f-a817-4108c05d7fab"
   },
   "lance": {
     "artist": "Rob Alexander",
@@ -11984,6 +12014,12 @@
     "bytes": 55146,
     "file": "maelstrom_of_the_spirit_dragon.jpg",
     "scryfall_id": "836504f0-08ce-4db2-aa1c-261a51110fe5"
+  },
+  "maelstrom_wanderer": {
+    "artist": "Victor Adame Minguez",
+    "bytes": 46215,
+    "file": "maelstrom_wanderer.jpg",
+    "scryfall_id": "5685b28a-b943-4143-b9ed-4796c1ffbf9c"
   },
   "maestro_s_gift": {
     "artist": "April Prime",
@@ -14161,6 +14197,12 @@
     "file": "ominous_harvest.jpg",
     "scryfall_id": "2271184b-08eb-4d2a-8ebf-a1807d51dd2a"
   },
+  "omnath_locus_of_the_roil": {
+    "artist": "Lius Lasahido",
+    "bytes": 46566,
+    "file": "omnath_locus_of_the_roil.jpg",
+    "scryfall_id": "6da6957b-8f52-4fc9-affe-e1e0db03fbe2"
+  },
   "omnath_locus_of_the_void": {
     "artist": "Arif Wijaya",
     "bytes": 50488,
@@ -15180,6 +15222,12 @@
     "file": "priests_of_norn.jpg",
     "scryfall_id": "07e7edbc-0d20-4d5f-8ab1-fdf642607bf2"
   },
+  "primal_beyond": {
+    "artist": "Mark Tedin",
+    "bytes": 77451,
+    "file": "primal_beyond.jpg",
+    "scryfall_id": "cf01949c-1aa3-4ce6-aabf-00c6d0498f5c"
+  },
   "primal_frenzy": {
     "artist": "Alex Horley-Orlandelli",
     "bytes": 81617,
@@ -15661,6 +15709,12 @@
     "bytes": 63788,
     "file": "raging_poltergeist.jpg",
     "scryfall_id": "78833788-ffb2-43fc-9345-975f1cd46f38"
+  },
+  "raging_ravine": {
+    "artist": "Todd Lockwood",
+    "bytes": 50670,
+    "file": "raging_ravine.jpg",
+    "scryfall_id": "3964c3a5-3ce7-4b73-89ec-ed1b9799aef8"
   },
   "raging_redcap": {
     "artist": "Dan Murayama Scott",
