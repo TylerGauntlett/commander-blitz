@@ -11232,6 +11232,12 @@
     },
     "zone": "graveyard"
   },
+  "rakdos_carnarium": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    }
+  },
   "rakdos_guildgate": {
     "zone": "battlefield"
   },
@@ -12951,6 +12957,10 @@
   "sin_spira_s_punishment": {
     "zone": "battlefield"
   },
+  "sinister_gnarlbark": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sink_into_stupor_soporific_springs": {
     "graveyard_size": {
       "0": 3
@@ -12981,6 +12991,9 @@
     "zone": "battlefield"
   },
   "skeletal_snake": {
+    "zone": "battlefield"
+  },
+  "skinrender": {
     "zone": "battlefield"
   },
   "skrelv_s_hive": {
@@ -13309,6 +13322,13 @@
     "battlefield_count": 32,
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "soul_snuffers": {
+    "counters": {
+      "amount": 1,
+      "kind": "-1/-1"
+    },
+    "zone": "battlefield"
   },
   "soul_warden": {
     "battlefield_count": 33,
@@ -14593,6 +14613,22 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "the_reaper_king_no_more": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "the_scorpion_god": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "the_spear_of_bashenga": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15829,6 +15865,9 @@
     "life": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "village_pillagers": {
     "zone": "battlefield"
   },
   "village_rites": {
