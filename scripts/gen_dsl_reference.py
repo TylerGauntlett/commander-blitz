@@ -610,6 +610,7 @@ VALUES: dict[str, Entry] = {
     "half": ("Half of a value, rounded `up` or `down`.", None),
     "lands_you_control": ("Lands the player controls.", None),
     "life_gained_this_turn": ("Life the player gained this turn.", H_LEDGER),
+    "counters_put_this_turn": ("Counters the player put on permanents this turn, by recipient types and kind.", H_LEDGER),
     "life_lost_this_turn": ("Life the player lost this turn (spectacle).", H_LEDGER),
     "life_of": ("A player's life total (summed over a plural spec).", None),
     "loop_value": ("The current item of an enclosing `for_each`.", None),

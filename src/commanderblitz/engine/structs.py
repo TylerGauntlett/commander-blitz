@@ -1597,6 +1597,23 @@ DELAYED_DURATIONS = (
 
 
 @dataclass(frozen=True)
+class CountersPut:
+    """One COUNTER_PLACED, as the turn ledger remembers it.
+
+    ``put_by`` is who put them (122.6a), not the recipient's controller: a
+    counter you put on an opponent's creature is one **you** put. ``types``
+    are the recipient's derived card types at the moment of placement, which
+    is what "on a creature" asks -- the permanent may have left, or stopped
+    being a creature, by the time the question is read.
+    """
+
+    put_by: int
+    counter: str
+    amount: int
+    types: frozenset[str]
+
+
+@dataclass(frozen=True)
 class EnteredPermanent:
     """One permanent as it was **at the moment it entered the battlefield**.
 
@@ -2065,6 +2082,12 @@ class TurnLedger:
     #: attacked, and that is the case the board-shaped near miss (`exists`)
     #: gets wrong.  Cleared at cleanup with everything else here.
     permanents_entered: list[EnteredPermanent] = field(default_factory=list)
+    #: Every placement of counters on a permanent this turn, as
+    #: :class:`CountersPut` records, in order. "If you put a counter on a
+    #: creature this turn" (Lasting Tarfire). Folded off COUNTER_PLACED, so the
+    #: counters a permanent enters with count too (122.6), and kept when the
+    #: counter or the permanent has gone since: it was still put there.
+    counters_put: list[CountersPut] = field(default_factory=list)
 
     @property
     def attacked(self) -> set[int]:
@@ -2177,6 +2200,7 @@ class TurnLedger:
         self.discarded.clear()
         self.cards_discarded.clear()
         self.permanents_entered.clear()
+        self.counters_put.clear()
         self.combats = 0
 
 

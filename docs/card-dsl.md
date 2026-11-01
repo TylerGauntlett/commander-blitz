@@ -1544,6 +1544,8 @@ Anywhere a number is expected -- the leaf list is
 { "max_damage_taken_this_turn": "each_opponent" } // "an opponent was dealt N or more"; ONE player's total
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
+{ "counters_put_this_turn": { "player": "you",  // "if you put a counter on a creature this turn";
+    "types": ["Creature"] } }                   //   who PUT them (122.6a), enters-with counts (122.6)
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
@@ -3574,6 +3576,16 @@ Two things about that ledger are load-bearing:
   with mayhem, or replaced into exile by madness or Rest in Peace still counts.
   Mayhem's `TurnLedger.discarded` is the near miss: it asks about one object
   and forgets it at its next zone change (400.7).
+- **A counter is counted by who put it.** `counters_put_this_turn` ("if you
+  put a counter on a creature this turn", Lasting Tarfire) takes a required
+  `player` (the putter, 122.6a — not the recipient's controller), optional
+  `types` (card types the recipient had as the counter arrived, all of them)
+  and optional `counter` (one kind; `"any"`, the default, is every kind). It
+  sums the amounts of every COUNTER_PLACED this turn, the counters a permanent
+  entered with included (122.6), and keeps them when the counter or the
+  permanent has gone since. A `counter_placed` trigger setting a turn flag is
+  the near miss: an unprinted ability that misses counters put before the
+  permanent arrived.
 - **A death can be filtered by what the creature was as it died, and only by
   that.** `modified_creatures_died_this_turn` ("if a modified creature died
   under your control this turn", Intermediate Chirography) counts the deaths
