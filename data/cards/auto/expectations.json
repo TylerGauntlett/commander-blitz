@@ -15133,6 +15133,29 @@
       "0": 2
     }
   },
+  "thriving_bluff": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thriving_grove": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thriving_heath": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thriving_isle": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "thriving_moor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "throne_of_the_high_city": {
     "battlefield_count": 33,
     "zone": "battlefield"

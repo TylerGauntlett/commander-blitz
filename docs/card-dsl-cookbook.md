@@ -12405,11 +12405,44 @@ nothing until the choice is made, and the same "**as** this enters" divergence.
 ```
 
 The mana half is why this could not be faked. A mana ability may hold only
-`add_mana`, or one `choose_mode` of `add_mana`s — and that second shape is
-exactly the *any* colour idiom, which is a strictly better card than "the chosen
-color". So `add_mana`'s `mana` accepts the reference itself rather than the
-ability offering five modes, and the loader refuses `{"chosen_color_of": …}`
-inside a `choose_mode` for that reason.
+`add_mana`, or one `choose_mode` of `add_mana`s — and a `choose_mode` of five
+literal colours is exactly the *any* colour idiom, which is a strictly better
+card than "the chosen color". So `add_mana`'s `mana` accepts the reference
+itself, and `costs.mana_options_of` narrows it to the colour the permanent
+named, or to nothing before it names one.
+
+### "Choose a color other than red" — the Thriving lands
+
+`except_colors` takes colour letters out of the offer before it is asked; what
+remains keeps WUBRG order, so an index means the same colour on every replay.
+The mana line is a `choose_mode` of fixed `add_mana`s and one
+`{"chosen_color_of": "self"}` mode:
+
+```jsonc
+// This land enters tapped.
+"replacements": [ { "event": "self_enters_tapped" } ],
+
+// As it enters, choose a color other than red.
+{ "kind": "triggered", "trigger": { "event": "self_enters", "source": "self" },
+  "effects": [ { "op": "choose_color", "prompt": "Choose a color other than red",
+                 "except_colors": ["R"] } ] },
+
+// {T}: Add {R} or one mana of the chosen color.
+{ "kind": "activated", "is_mana_ability": true, "cost": { "tap": true },
+  "effects": [ { "op": "choose_mode", "count": 1, "modes": [
+    { "label": "Red", "effects": [ { "op": "add_mana", "mana": "{R}" } ] },
+    { "label": "The chosen color",
+      "effects": [ { "op": "add_mana", "mana": { "chosen_color_of": "self" } } ] } ] } ] }
+```
+
+The ability offers the fixed options first, in printed order, then the chosen
+colour once one is named — `{R}` alone while the enters trigger is on the stack.
+The fixed symbols count towards colour identity; the chosen colour does not.
+The loader refuses an `except_colors` that is empty, names a non-colour, repeats
+a letter or excludes all five; and a mana `choose_mode` with more than one
+chosen-colour mode, with only that mode, with the chosen colour summed beside a
+symbol in one mode, or with an `amount`. The near miss is the five-literal
+`choose_mode`, which taps for every colour without a choice at all.
 
 The reference also stands in the `from_colors` of a `protection` static and of
 `grant_protection` — see [Protection](#protection).

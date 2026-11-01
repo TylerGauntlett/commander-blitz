@@ -433,14 +433,22 @@ def op_choose_color(ctx: EffectContext, spec: Mapping[str, Any]):
     to. `zones` applies enter-replacements synchronously and cannot stop to ask,
     so this is a `self_enters` trigger instead and the colour is chosen a moment
     after the permanent arrives rather than as it does.
+
+    ``except_colors`` is "choose a color **other than red**" -- the Thriving
+    lands. The excluded letters are dropped from the offer before it is asked,
+    so the chooser never sees them and `chosen_color` can never hold one. What
+    remains keeps WUBRG order, so an index means the same colour on every replay
+    of the same card; the loader refuses an exclusion that leaves nothing.
     """
     prompt = str(spec.get("prompt") or "Choose a color")
-    picked = yield from ask_mode(ctx, prompt, [label for _, label in COLOR_CHOICES], ctx.controller)
+    excluded = set(spec.get("except_colors") or ())
+    offered = [choice for choice in COLOR_CHOICES if choice[0] not in excluded]
+    picked = yield from ask_mode(ctx, prompt, [label for _, label in offered], ctx.controller)
     if not picked:
         return
     obj = ctx.state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
     if obj is not None:
-        obj.chosen_color = COLOR_CHOICES[picked[0]][0]
+        obj.chosen_color = offered[picked[0]][0]
         ctx.state.bump_chars()
 
 

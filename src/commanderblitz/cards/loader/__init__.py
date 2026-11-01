@@ -91,6 +91,7 @@ from .linking import _derive_color_identity
 from .mana import (
     _ANY_COLOR_OPTIONS,
     _ANY_TYPE_OPTIONS,
+    _chosen_color_or_fixed,
     _compile_cost,
     _mana_amount,
     _mana_grant,
@@ -3032,6 +3033,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     mana_each_color_among: Mapping[str, Any] | None = None
     mana_identity = False
     mana_chosen_color = False
+    mana_chosen_color_fixed: tuple[tuple[int, ...], ...] = ()
     mana_any_one_color = False
     mana_split: tuple[str, ...] = ()
     if model.is_mana_ability:
@@ -3251,6 +3253,21 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # ability would never be offered whatever colour was chosen.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
+        elif (fixed := _chosen_color_or_fixed(mana_effects, where)) is not None:
+            # "{T}: Add {R} or one mana of the chosen color." The Thriving
+            # lands: the chosen-colour question above as one mode beside fixed
+            # symbols. The fixed modes are read now; the chosen one is asked of
+            # the permanent by `costs.mana_options_of`, which offers the fixed
+            # options and then the chosen colour -- and only the fixed ones
+            # before a colour is named.
+            mana_chosen_color = True
+            mana_chosen_color_fixed = fixed
+            # The superset, widened by any fixed symbol outside it ({C}), so
+            # `solver_taps` and `offerable_mana_ability` see a mana source.
+            mana_options = _ANY_COLOR_OPTIONS + tuple(
+                option for option in fixed if option not in _ANY_COLOR_OPTIONS
+            )
+            mana_amount = None
         else:
             mana_options = _mana_options(mana_effects, where)
             mana_amount = _mana_amount(mana_effects, where)
@@ -3286,6 +3303,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_split=mana_split,
         mana_any_one_color=mana_any_one_color,
         mana_chosen_color=mana_chosen_color,
+        mana_chosen_color_fixed=mana_chosen_color_fixed,
         mana_restriction=mana_restriction,
         mana_uncounterable=model.mana_uncounterable,
         mana_grant=mana_grant,

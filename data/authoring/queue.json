@@ -285462,22 +285462,22 @@
     },
     "Thriving Bluff": {
       "edhrec_rank": 1198,
-      "gate": "template",
+      "gate": null,
       "name": "Thriving Bluff",
-      "reason": "proxy simplified it: mana clause read loosely: '{R} or one mana of the chosen color'",
+      "reason": "",
       "scryfall_id": "82c96473-d7b9-48dc-9569-cdb649c78463",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thriving Grove": {
       "edhrec_rank": 1180,
-      "gate": "template",
+      "gate": null,
       "name": "Thriving Grove",
-      "reason": "proxy simplified it: mana clause read loosely: '{G} or one mana of the chosen color'",
+      "reason": "",
       "scryfall_id": "eef65ebc-12d6-4438-a908-2a0c28329124",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thriving Grubs": {
@@ -285492,12 +285492,12 @@
     },
     "Thriving Heath": {
       "edhrec_rank": 1081,
-      "gate": "template",
+      "gate": null,
       "name": "Thriving Heath",
-      "reason": "proxy simplified it: mana clause read loosely: '{W} or one mana of the chosen color'",
+      "reason": "",
       "scryfall_id": "bb089097-1eed-4e72-a715-579ddd8307a0",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thriving Ibex": {
@@ -285512,22 +285512,22 @@
     },
     "Thriving Isle": {
       "edhrec_rank": 1009,
-      "gate": "template",
+      "gate": null,
       "name": "Thriving Isle",
-      "reason": "proxy simplified it: mana clause read loosely: '{U} or one mana of the chosen color'",
+      "reason": "",
       "scryfall_id": "58a3b5a5-eba0-4b4e-869a-5387ec7dd2b8",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thriving Moor": {
       "edhrec_rank": 1221,
-      "gate": "template",
+      "gate": null,
       "name": "Thriving Moor",
-      "reason": "proxy simplified it: mana clause read loosely: '{B} or one mana of the chosen color'",
+      "reason": "",
       "scryfall_id": "5d5eea5f-b9e8-4a10-8e7f-c42493a728cd",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thriving Rats": {

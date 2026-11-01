@@ -177190,6 +177190,370 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "except_colors": [
+                "R"
+              ],
+              "op": "choose_color",
+              "prompt": "Choose a color other than red"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As it enters, choose a color other than red.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Red"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": {
+                        "chosen_color_of": "self"
+                      },
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "The chosen color"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {R} or one mana of the chosen color."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [],
+      "id": "thriving_bluff",
+      "name": "Thriving Bluff",
+      "oracle_text": "This land enters tapped. As it enters, choose a color other than red.\n{T}: Add {R} or one mana of the chosen color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "except_colors": [
+                "G"
+              ],
+              "op": "choose_color",
+              "prompt": "Choose a color other than green"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As it enters, choose a color other than green.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Green"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": {
+                        "chosen_color_of": "self"
+                      },
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "The chosen color"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G} or one mana of the chosen color."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "thriving_grove",
+      "name": "Thriving Grove",
+      "oracle_text": "This land enters tapped. As it enters, choose a color other than green.\n{T}: Add {G} or one mana of the chosen color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "except_colors": [
+                "W"
+              ],
+              "op": "choose_color",
+              "prompt": "Choose a color other than white"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As it enters, choose a color other than white.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "White"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": {
+                        "chosen_color_of": "self"
+                      },
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "The chosen color"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W} or one mana of the chosen color."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [],
+      "id": "thriving_heath",
+      "name": "Thriving Heath",
+      "oracle_text": "This land enters tapped. As it enters, choose a color other than white.\n{T}: Add {W} or one mana of the chosen color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "except_colors": [
+                "U"
+              ],
+              "op": "choose_color",
+              "prompt": "Choose a color other than blue"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As it enters, choose a color other than blue.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Blue"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": {
+                        "chosen_color_of": "self"
+                      },
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "The chosen color"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {U} or one mana of the chosen color."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [],
+      "id": "thriving_isle",
+      "name": "Thriving Isle",
+      "oracle_text": "This land enters tapped. As it enters, choose a color other than blue.\n{T}: Add {U} or one mana of the chosen color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "except_colors": [
+                "B"
+              ],
+              "op": "choose_color",
+              "prompt": "Choose a color other than black"
+            }
+          ],
+          "kind": "triggered",
+          "text": "As it enters, choose a color other than black.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "Black"
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": {
+                        "chosen_color_of": "self"
+                      },
+                      "op": "add_mana"
+                    }
+                  ],
+                  "label": "The chosen color"
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B} or one mana of the chosen color."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "thriving_moor",
+      "name": "Thriving Moor",
+      "oracle_text": "This land enters tapped. As it enters, choose a color other than black.\n{T}: Add {B} or one mana of the chosen color.",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

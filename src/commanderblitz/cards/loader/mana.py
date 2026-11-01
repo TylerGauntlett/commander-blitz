@@ -358,6 +358,58 @@ def _mana_options(effects: list[dict[str, Any]], where: str) -> tuple[tuple[int,
     return (_sum_mana(effects, where),)
 
 
+def _chosen_color_or_fixed(
+    effects: list[dict[str, Any]], where: str
+) -> tuple[tuple[int, ...], ...] | None:
+    """The fixed options of "Add {R} or one mana of the chosen color", or ``None``.
+
+    The Thriving lands. ``None`` means the ability is not this shape -- a
+    ``choose_mode`` with a ``{"chosen_color_of": "self"}`` mode -- and the caller
+    reads it some other way. Otherwise the shape is held exactly: every mode is
+    one ``add_mana``, exactly one of them names the chosen colour, at least one
+    names a fixed symbol, and none carries an ``amount``. The chosen-colour mode
+    is answered live by `costs.mana_options_of`, so it is not among the options
+    returned here; the fixed ones are, in the order the modes print them.
+    """
+    if len(effects) != 1 or effects[0].get("op") != "choose_mode":
+        return None
+    modes = list(effects[0].get("modes") or ())
+    if not any(
+        isinstance(e, Mapping) and isinstance(e.get("mana"), Mapping)
+        for mode in modes
+        for e in mode.get("effects") or ()
+    ):
+        return None
+    fixed: list[tuple[int, ...]] = []
+    chosen = 0
+    for i, mode in enumerate(modes):
+        at = f"{where}.modes[{i}]"
+        mode_effects = list(mode.get("effects") or ())
+        for e in mode_effects:
+            if isinstance(e, Mapping) and "amount" in e:
+                raise DslError(
+                    f"{at}: an 'amount' is not read on a fixed-or-chosen-colour mana "
+                    f"ability -- each mode adds one mana"
+                )
+        if len(mode_effects) == 1 and isinstance(mode_effects[0].get("mana"), Mapping):
+            chosen += 1
+            continue
+        # A mode summing the chosen colour with another symbol reaches
+        # `_sum_mana`, which refuses it.
+        fixed.append(_sum_mana(mode_effects, at))
+    if chosen != 1:
+        raise DslError(
+            f"{where}: a fixed-or-chosen-colour mana ability has exactly one "
+            f'{{"chosen_color_of": "self"}} mode, not {chosen}'
+        )
+    if not fixed:
+        raise DslError(
+            f"{where}: a choose_mode whose only mode is the chosen colour is the "
+            f"plain chosen-colour ability -- write the 'add_mana' on its own"
+        )
+    return tuple(fixed)
+
+
 def _validate_mana_amount(amount: Any, where: str) -> None:
     validate_value(amount, where)
     if isinstance(amount, str) and amount == "x":
@@ -396,15 +448,14 @@ def _sum_mana(effects: list[dict[str, Any]], where: str) -> tuple[int, ...]:
             )
         if isinstance(effect.get("mana"), Mapping):
             # `{"chosen_color_of": "self"}` is one symbol whose colour is not
-            # known at load time, so it cannot be summed with anything and it
-            # cannot be one mode among five -- a mode is a choice made at
-            # activation, which is the *any colour* card this spelling exists to
-            # refuse. It has to be the whole ability, which the branch in
-            # `_build_ability` handles before anything reaches here.
+            # known at load time, so it cannot be summed with anything. It is
+            # the whole ability, or a mode of its own beside fixed symbols, and
+            # both shapes are read by branches in `_build_ability` before
+            # anything reaches here.
             raise DslError(
                 f"{where}: a chosen-colour 'add_mana' must be the mana ability's "
-                f"only effect -- it cannot be summed with another symbol or "
-                f"offered as one mode among several"
+                f"only effect, or the only effect of one mode beside fixed-symbol "
+                f"modes -- it cannot be summed with another symbol"
             )
         for i, v in enumerate(parse_mana_production(str(effect.get("mana", "")))):
             total[i] += v

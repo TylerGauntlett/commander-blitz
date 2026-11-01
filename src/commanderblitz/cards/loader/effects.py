@@ -2484,6 +2484,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: choose_type's 'of' is 'creature_type', 'permanent_type' "
             f"or 'card_type', not {effect['of']!r}"
         )
+    if op == "choose_color" and "except_colors" in effect:
+        # "Choose a color other than red." A near-miss letter here would exclude
+        # nothing, and the land could name the colour it already makes -- a
+        # Thriving land that taps for {R} or {R}.
+        excluded = effect["except_colors"]
+        if not isinstance(excluded, list) or not excluded:
+            raise DslError(
+                f"{where}: choose_color's 'except_colors' is a non-empty list of "
+                f"colour letters, not {excluded!r}"
+            )
+        for i, color in enumerate(excluded):
+            if color not in ("W", "U", "B", "R", "G"):
+                raise DslError(
+                    f"{where}.except_colors[{i}]: {color!r} is not one of W, U, B, R, G"
+                )
+        if len(set(excluded)) != len(excluded):
+            raise DslError(f"{where}.except_colors: a colour is listed twice")
+        if len(excluded) == 5:
+            raise DslError(
+                f"{where}.except_colors: every colour is excluded, so there is "
+                f"nothing left to choose"
+            )
     if op == "fight":
         # Both halves, or it is not a fight. With one missing the op resolves to
         # nothing and the card silently does half of what it prints -- and the

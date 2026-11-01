@@ -12970,6 +12970,74 @@
       ]
     },
     {
+      "id": "t_thriving_bluff",
+      "name": "Test Thriving Bluff",
+      "oracle_text": "This land enters tapped. As it enters, choose a color other than red.\n{T}: Add {R} or one mana of the chosen color.",
+      "types": [
+        "Land"
+      ],
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "As it enters, choose a color other than red.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          },
+          "effects": [
+            {
+              "op": "choose_color",
+              "prompt": "Choose a color other than red",
+              "except_colors": [
+                "R"
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "activated",
+          "text": "{T}: Add {R} or one mana of the chosen color.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "label": "The chosen color",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": {
+                        "chosen_color_of": "self"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_brave",
       "name": "Test Brave the Elements",
       "oracle_text": "Creatures you control gain protection from the color of your choice until end of turn.",
