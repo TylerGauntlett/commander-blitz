@@ -1,0 +1,26 @@
+{
+  "_comment": "Cards that exist only for tests/unit/damage/test_divided_x_life.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_fire_covenant` is Fire Covenant's shape: pay X life as an additional cost, X damage divided among any number of target creatures.",
+  "cards": [
+    {
+      "id": "t_fire_covenant",
+      "name": "Test Fire Covenant",
+      "oracle_text": "As an additional cost to cast this spell, pay X life.\nTest Fire Covenant deals X damage divided as you choose among any number of target creatures.",
+      "mana_cost": "{1}{B}{R}",
+      "types": ["Instant"],
+      "colors": ["B", "R"],
+      "color_identity": ["B", "R"],
+      "additional_cost": { "pay_life_x": true },
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": "any",
+          "selector": { "types": ["Creature"], "controller": "any" }
+        }
+      ],
+      "spell_effects": [
+        { "op": "damage", "amount": { "x": true }, "divided": "t1" }
+      ]
+    }
+  ]
+}

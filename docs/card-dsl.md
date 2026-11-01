@@ -2926,11 +2926,32 @@ power). Nothing changes when the board does before resolution. `engine.division`
 caps "any number" of targets at the amount where they are chosen, and legality
 offers no line with more targets than damage.
 
+**X damage divided, X paid in life** -- Fire Covenant, "As an additional cost to
+cast this spell, pay X life. Fire Covenant deals X damage divided as you choose
+among any number of target creatures":
+
+```jsonc
+"additional_cost": { "pay_life_x": true },
+"targets": [ { "id": "t1", "kind": "permanent", "count": "any",
+               "selector": { "types": ["Creature"], "controller": "any" } } ],
+"spell_effects": [ { "op": "damage", "amount": { "x": true }, "divided": "t1" } ]
+```
+
+`Game._cast` announces a `pay_life_x` X **first**, before any target is declared
+(601.2b, then 601.2c), so the "any number" pick is capped at X; the life is still
+paid with the other additional costs (601.2h). Legality has no X yet, so a line
+whose targets are on it (a targeting tax keeps them there) is capped at the most
+X the caster could announce -- `casting.life_x_ceiling`, the life total less the
+targets' life tax -- and the announcement is then floored at that line's target
+count.
+
 The loader accepts it only as a **top-level spell effect**, over a `permanent`
 spec the spell declares, with no other recipient (`objects`, `player`, `target`)
-beside it; a fixed target count larger than a printed amount, and an amount that
-reads the announced X, are refused. Dividing among players or "any target", and
-dividing on an ability, are not modelled.
+beside it. Refused: a fixed target count larger than a printed amount, and an
+amount reading the announced X unless an additional `pay_life_x` cost announces
+it -- a mana {X} is announced after the targets, because its ceiling reads cost
+reductions that read them. Dividing among players or "any target", and dividing
+on an ability, are not modelled.
 
 ### Doubling the counters on a permanent
 

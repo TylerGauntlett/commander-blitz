@@ -1032,6 +1032,22 @@ def chosen_additional(card: CardDef, choice: int | None) -> Cost | None:
     return card.additional_cost
 
 
+def life_x_ceiling(
+    state: GameState, pid: int, card: CardDef, choice: int | None, targets
+) -> int | None:
+    """The most X a ``pay_life_x`` additional cost may announce, or ``None``.
+
+    118.4 lets a player pay life down to exactly 0, so the ceiling is the life
+    total less any life the targets themselves cost (Terror of the Peaks), which
+    is paid on the same cast. ``None`` for a line whose additional cost does not
+    announce an X at all.
+    """
+    additional = chosen_additional(card, choice)
+    if additional is None or not additional.pay_life_x:
+        return None
+    return max(0, state.players[pid].life - spell_life_tax(state, pid, card, targets))
+
+
 def _charge_additional_cost(
     state: GameState,
     pid: int,
@@ -1719,9 +1735,21 @@ def _cast_variant(
     # 601.2d: divided damage gives each of its targets at least one, so a line
     # naming more targets than there is damage cannot be divided and is not a
     # cast. Here for `modal_cast_ok`'s reason: every offered cast passes through.
+    #
+    # A divided X from `pay_life_x` (Fire Covenant) is not announced yet, so a
+    # line is capped at the most X the caster could announce for it -- the life
+    # left once that line's targeting tax is counted. `Game._cast` then floors
+    # the announcement at the number of targets the line declared.
     if divided_damage(card):
         specs = card.targets_for(gift_promised=gift_to is not None)
-        tuples = [t for t in tuples if fits_division(state, pid, oid, card, specs, t)]
+        tuples = [
+            t
+            for t in tuples
+            if fits_division(
+                state, pid, oid, card, specs, t,
+                x=life_x_ceiling(state, pid, card, additional_choice, t) or 0,
+            )
+        ]
     # "Your opponents can't cast **noncreature** spells" -- Narset
     # Transcendent's emblem. The filtered half of `player_cant_cast_spells`,
     # asked here because this is the one function every offered cast passes

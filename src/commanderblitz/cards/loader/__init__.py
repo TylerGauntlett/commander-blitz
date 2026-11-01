@@ -78,6 +78,7 @@ from commanderblitz.engine.triggers import (
 
 from ..schema import AbilityModel, CardModel, CostModel, DeckModel
 from .effects import (
+    _reads_announced_x,
     _refuse_protection_sentinels,
     _refuse_seats_read_as_objects,
     _validate_attach_to_player,
@@ -841,6 +842,19 @@ def _check_division_homes(model: CardModel, where: str) -> None:
                 f"{target_id!r} is {target.kind!r}"
             )
         amount = effect.get("amount")
+        life_x = model.additional_cost is not None and model.additional_cost.pay_life_x
+        if _reads_announced_x(amount) and not life_x:
+            # A mana {X} is announced after the "any number" targets on this
+            # engine's cast line -- its ceiling reads cost reductions that read
+            # the targets -- so a division of it could be asked over more
+            # targets than X: refused rather than half-honoured. The X of a
+            # `pay_life_x` additional cost is announced before the targets
+            # (601.2b, then 601.2c) and caps them, so Fire Covenant loads.
+            raise DslError(
+                f"{at}: a divided amount may read the announced X only when an "
+                f"additional 'pay_life_x' cost announces it -- a mana {{X}} is "
+                f"announced after the targets are declared"
+            )
         if isinstance(amount, Mapping) and set(amount) == {"const"}:
             amount = amount["const"]
         if isinstance(amount, int) and isinstance(target.count, int) and target.count > amount:

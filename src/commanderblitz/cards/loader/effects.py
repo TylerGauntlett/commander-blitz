@@ -3530,13 +3530,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: divided damage goes only to the targets 'divided' names; "
                 f"drop {others}"
             )
-        if _reads_announced_x(effect.get("amount")):
-            # "Any number of targets" is declared before X is announced on this
-            # engine's cast line, so a division of X could be asked over more
-            # targets than X -- refused rather than half-honoured.
-            raise DslError(
-                f"{where}: a divided amount may not read the announced X"
-            )
+        # Whether the amount may read the announced X depends on which cost
+        # announces it, which is the card's: `loader._check_division_homes`.
 
     if op == "cast_from_hand":
         # The selector is what may be picked, and it is the whole of the printed
