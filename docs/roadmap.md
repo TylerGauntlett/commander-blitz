@@ -54,7 +54,7 @@ each heading; this table is generated from them.
 | [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) | L | high | Voting: will of the council and council's dilemma | 0 |
 | [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) | L | high | Distributing counters from a spell | 0 |
 | [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
-| [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
+| [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) | L | high | Divided damage from a triggered or activated ability | 0 |
 | [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) | L | high | nothing | 0 |
 | [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) | L | high | nothing | 0 |
 | [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) | S | high | nothing | 0 |
@@ -145,6 +145,7 @@ each heading; this table is generated from them.
 | [Brackets, derived from the list](#brackets-derived-from-the-list) | M | medium | nothing | 1 |
 | [CPU takeover and reconnection](#cpu-takeover-and-reconnection) | M | medium | nothing | 1 |
 | [Distributing counters from a spell](#distributing-counters-from-a-spell) | M | medium | nothing | 1 |
+| [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 1 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 1 |
@@ -162,8 +163,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander).
 
 **Ready now, best first:**
 
@@ -257,21 +256,23 @@ same list, and `/extend-roadmap` starts at the top of it.
 88. [Brackets, derived from the list](#brackets-derived-from-the-list) — M, medium
 89. [CPU takeover and reconnection](#cpu-takeover-and-reconnection) — M, medium
 90. [Distributing counters from a spell](#distributing-counters-from-a-spell) — M, medium
-91. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
-92. [Replays and sharing](#replays-and-sharing) — M, medium
-93. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-94. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-95. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-96. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-97. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-98. [Archidekt import](#archidekt-import) — S, low
-99. [Sound](#sound) — S, low
+91. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
+92. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
+93. [Replays and sharing](#replays-and-sharing) — M, medium
+94. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+95. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+96. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+97. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+98. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+99. [Archidekt import](#archidekt-import) — S, low
+100. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
 - [Prismari Artistry (Secrets of Strixhaven Commander)](#prismari-artistry-secrets-of-strixhaven-commander) — [Divided damage that may hit players](#divided-damage-that-may-hit-players)
 - [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
+- [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -501,6 +502,82 @@ pass.
 - **Is it an ADR.** Recommended: no; it moves an existing announcement to the
   cast line, where divided damage already sits, and the line in
   rules-coverage.md narrows to triggered abilities.
+
+### Divided damage from a triggered or activated ability
+
+Effort **M** · Impact **medium**, every creature whose enters or attack trigger divides its damage waits on it, Fury and Inferno Titan among them · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Divided damage (601.2d) is announced on one line only: as a spell is cast.
+`Game._ask_damage_division` reads `engine.division.divided_damage(card)`,
+which walks `card.spell_effects`, and is called from `Game._cast`; the split
+rides on the stack item's `bindings["distribution"]` and
+`effects.ops_life._damage_divided` deals it on resolution.
+`cards.loader._check_division_homes` refuses `damage` with `divided` anywhere
+else ("only supported as a top-level effect of a spell"), and
+[rules-coverage.md](rules-coverage.md#not-implemented) lists dividing
+damage "on an ability" as not implemented.
+
+The ability-level twin already exists for counters: `distribute_counters` on
+an activated ability is divided by `Game._ask_distribution` at activation
+(602.2b applying 601.2d), composed from `ask_objects` with no decision kind of
+its own. A triggered ability chooses its modes and targets in
+`stack._choose_trigger_targets` as it is put on the stack (603.3d), and
+nothing there asks for a division.
+
+So "When this creature enters, it deals 4 damage divided as you choose among
+any number of target creatures and/or planeswalkers" is unwritable. Fury, in
+the Dance of the Elements precon, is the card that found it; its gap record is
+`data/authoring/gaps/fury.json`.
+
+#### The change
+
+1. The trigger line divides. Where `stack` puts a triggered ability on the
+   stack and has chosen its targets, a `damage` effect with `divided` among
+   the ability's top-level effects is divided over the targets just declared,
+   through the same walk `_ask_damage_division` uses, and stored on the stack
+   item's `bindings["distribution"]` so `_damage_divided` resolves it
+   unchanged. The amount is read then (601.2d via 603.3d).
+2. The activation line divides damage the way it already divides counters:
+   `Game._ask_distribution` takes divided `damage` beside
+   `distribute_counters`.
+3. `_check_division_homes` accepts divided damage as a top-level effect of a
+   triggered or activated ability whose spec targets objects, and still
+   refuses it nested in a branch, where no announcement exists.
+4. The verifier's auto-answer table answers the division on the trigger line,
+   or `/author-cards` hangs on Fury.
+5. Harvest: Fury (which also waits on evoke with a non-mana cost) and the
+   catalog's other divided-damage triggers through the template tier with
+   `--retry` and one `/author-cards` wave.
+
+It does not let the division include players: that is
+[divided-damage-any-target](divided-damage-any-target.md), which this item
+neither needs nor blocks. Inferno Titan needs both.
+
+#### Gate
+
+A unit test under `tests/unit/` for divided damage on a trigger and on an
+activation: the division asked as the trigger goes on the stack and before a
+response is possible, each share dealt on resolution, an illegal target's share
+lost (608.2b), the forced split asking nothing, and the loader accepting the
+top-level ability home while still refusing a nested one. The verifier's
+auto-answer test covers the trigger-line question, and the harvested cards pass
+their six gates.
+
+#### Open questions
+
+- **Where the trigger's division is asked.** In `stack` beside
+  `_choose_trigger_targets`, or by handing the trigger to the same
+  `Game` helper the cast and activation lines use? Recommended: one shared
+  helper called from all three lines, because the walk and its purpose tag are
+  already shared and a third copy would drift.
+- **Is it an ADR.** Recommended: no; it applies the existing announcement
+  (601.2d) on the two lines 602.2b and 603.3d already send it to, and the
+  rules-coverage.md line moves to the implemented table.
+- **Scope of the harvest.** Fury only, or every divided-damage trigger the
+  template tier can then read? Recommended: one template-tier `--retry` and
+  one `/author-cards` wave, the precon items' convention.
 
 ### Divided damage that may hit players
 
@@ -907,7 +984,7 @@ whole-game test able to draw the deck.
 
 ### Dance of the Elements (Lorwyn Eclipsed Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability).
 
 #### Today
 
@@ -918,6 +995,21 @@ coming-soon shell on the shelf: its row `ecc_dance_of_the_elements` is in
 `python scripts/sync_precons.py --missing ecc_dance_of_the_elements` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+
+Every card on the list has been through `/author-cards` once. What is left
+is eleven cards, each with a gap record naming what it waits on: Fury on
+divided damage from a triggered ability (its own item, which this one
+depends on); Ashling, the Limitless on granting evoke to Elemental spells by a
+static; Endurance on putting cards on the bottom of a library in a random
+order; Fertile Ground on an any-colour `add_mana_on_tap`; Flamekin Village on a
+cost that reveals a card from hand, the same sentence Primal Beyond reads
+loosely today as an unconditional enters-tapped, as the shipped reveal-lands
+do; Haunting Voyage on a `foretold` condition; Impulsivity on a free cast from a
+graveyard that exiles instead; Jegantha, the Wellspring on its companion line
+(inert inside a game, 702.139a) and mana that cannot pay generic costs; Mass of
+Mysteries on myriad; Muldrotha, the Gravetide on a graveyard cast metered per
+permanent type; and Opal Palace on mana that makes a commander enter with
+counters.
 
 #### The change
 

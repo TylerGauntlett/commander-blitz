@@ -67,7 +67,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
-| [evoke](#evoke) | 1 | 5749 | static_effect |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -78,6 +77,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
+| [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
@@ -1073,20 +1073,6 @@ Blocks **1** card.
 
 </details>
 
-## evoke
-
-Blocks **1** card.
-
-- **(static_effect)** a static that grants evoke with a printed mana price to a class of spells (affects_spells: permanent spells with subtype Elemental, controller you) cast from a given zone (hand only): the cast line offers the granted mana cost as an alternative cost, marks the spell evoked, and the permanent it becomes is sacrificed when it enters (the evoke sacrifice trigger), with the evoked condition readable by the spell's own enters triggers
-  <br>Why the existing vocabulary won't do: card-level `evoke` only prices the card's own printed evoke; `granted_alternative_cost` accepts only pay_energy/pay_life and attaches no sacrifice-on-enter or evoked flag, and has no zone gate for 'from your hand'; `grant_warp` grants a mana alternative cost but with warp's exile-at-end-step rider, not evoke's sacrifice on entering
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ashling, the Limitless** (rank 5749) — `ashling_the_limitless`
-  - Elemental permanent spells you cast from your hand gain evoke {4} as you cast them
-
-</details>
-
 ## exile-target-spell
 
 Blocks **1** card.
@@ -1233,6 +1219,20 @@ Blocks **1** card.
 - **Quintorius, Loremaster** (rank 8925) — `quintorius_loremaster`
   - At the beginning of your end step, exile target noncreature, nonland card from your graveyard. Create a 3/2 red and white Spirit creature token.
   - {1}{R}{W}, {T}, Sacrifice a Spirit: Choose target card exiled with Quintorius. You may cast that card this turn without paying its mana cost. If that spell would be put into a graveyard, put it on the bottom of its owner's library instead.
+
+</details>
+
+## grant-evoke
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants evoke with a printed mana price to a class of spells (affects_spells: permanent spells with subtype Elemental, controller you) cast from a given zone (hand only): the cast line offers the granted mana cost as an alternative cost, marks the spell evoked, and the permanent it becomes is sacrificed when it enters (the evoke sacrifice trigger), with the evoked condition readable by the spell's own enters triggers
+  <br>Why the existing vocabulary won't do: card-level `evoke` only prices the card's own printed evoke; `granted_alternative_cost` accepts only pay_energy/pay_life and attaches no sacrifice-on-enter or evoked flag, and has no zone gate for 'from your hand'; `grant_warp` grants a mana alternative cost but with warp's exile-at-end-step rider, not evoke's sacrifice on entering
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashling, the Limitless** (rank 5749) — `ashling_the_limitless`
+  - Elemental permanent spells you cast from your hand gain evoke {4} as you cast them
 
 </details>
 
