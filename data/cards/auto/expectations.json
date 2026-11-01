@@ -26,6 +26,13 @@
   "abbey_griffin": {
     "zone": "battlefield"
   },
+  "aberrant_return": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "abomination_world_ravager": {
     "zone": "battlefield"
   },
@@ -1468,6 +1475,13 @@
   "black_market_connections": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "black_sun_s_zenith": {
+    "battlefield_count": 30,
+    "library_size": {
+      "0": 41
+    },
+    "zone": "library"
   },
   "black_widow_agile_avenger": {
     "battlefield_count": 33,
@@ -4445,6 +4459,15 @@
     },
     "zone": "graveyard"
   },
+  "eventide_s_shadow": {
+    "library_size": {
+      "0": 40
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "everdawn_champion": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4842,6 +4865,10 @@
     "zone": "battlefield"
   },
   "ferocious_zheng": {
+    "zone": "battlefield"
+  },
+  "ferrafor_young_yew": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ferrous_lake": {
@@ -5834,6 +5861,10 @@
     "zone": "battlefield"
   },
   "glissa_sunseeker": {
+    "zone": "battlefield"
+  },
+  "glissa_sunslayer": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "glistener_elf": {
@@ -8011,6 +8042,14 @@
     },
     "zone": "graveyard"
   },
+  "lasting_tarfire": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "lathliss_dragon_queen": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -8179,6 +8218,14 @@
   },
   "lilah_undefeated_slickshot": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "liliana_death_wielder": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 5,
+      "kind": "loyalty"
+    },
     "zone": "battlefield"
   },
   "liliana_dreadhorde_general": {
@@ -15131,6 +15178,14 @@
   "tree_monkey": {
     "zone": "battlefield"
   },
+  "tree_of_perdition": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "tree_of_tales": {
     "zone": "battlefield"
   },
@@ -16055,6 +16110,13 @@
     "zone": "battlefield"
   },
   "vorstclaw": {
+    "zone": "battlefield"
+  },
+  "vraska_betrayal_s_sting": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "vraska_relic_seeker": {

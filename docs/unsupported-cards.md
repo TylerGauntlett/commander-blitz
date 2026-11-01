@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**146 cards** blocked by **134** capabilities.
+**137 cards** blocked by **125** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -38,7 +38,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [become-type-keep-colors](#become-type-keep-colors) | 1 | 1345 | op |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -53,7 +52,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
-| [counters-put-this-turn](#counters-put-this-turn) | 1 | 6895 | value |
 | [damage-cant-be-prevented](#damage-cant-be-prevented) | 1 | 5549 | static_effect |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -68,7 +66,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
-| [exchange-life-total](#exchange-life-total) | 1 | 1952 | op |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -81,7 +78,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
-| [has-counter-of-kind](#has-counter-of-kind) | 1 | 7978 | selector |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -115,8 +111,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
-| [remove-counters-any-kind](#remove-counters-any-kind) | 1 | 1410 | op |
-| [remove-counters-from-among](#remove-counters-from-among) | 1 | 7871 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
@@ -128,7 +122,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 1 | 714 | engine |
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
-| [shuffle-self-into-library](#shuffle-self-into-library) | 1 | 1947 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
@@ -140,11 +133,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
-| [total-counters-among](#total-counters-among) | 1 | 8989 | value |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [variable-target-count-with-minimum](#variable-target-count-with-minimum) | 1 | 6551 | engine |
 | [wither](#wither) | 1 | 5549 | static_effect |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
@@ -659,20 +650,6 @@ Blocks **1** card.
 
 </details>
 
-## become-type-keep-colors
-
-Blocks **1** card.
-
-- **(op)** a one-shot, indefinite (no duration) type-replacement effect on a target permanent: its card types become exactly the named ones (Artifact) with the named subtype (Treasure), other card types and their subtypes are lost, and its colours and supertypes are left untouched -- e.g. an `animate` with `exact: true` and a `keep_colors: true` flag (or `colors` omitted meaning unchanged), combined with `lose_all_abilities` and a permanent `grant_ability` of the Treasure mana ability
-  <br>Why the existing vocabulary won't do: `animate` with `duration: permanent` and `exact: true` is the only one-shot op that removes card types, but in characteristics.py an exact animation sets `colors = set(temp.colors)`, so omitting colors makes the creature colorless -- Vraska's Treasure keeps its colours. Non-exact `animate` only adds types, so the permanent would stay a creature. The `set_types` static removes types but only exists as a static on an Aura-like source, not as a resolving effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vraska, Betrayal's Sting** (rank 1345) — `vraska_betrayal_s_sting`
-  - −2: Target creature becomes a Treasure artifact with "{T}, Sacrifice this artifact: Add one mana of any color" and loses all other card types and abilities.
-
-</details>
-
 ## block-restriction-relative-power
 
 Blocks **1** card.
@@ -876,20 +853,6 @@ Blocks **1** card.
 
 </details>
 
-## counters-put-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-player turn ledger value, e.g. {"counters_put_this_turn": "you", "filter": {"types": ["Creature"]}}, counting counters (any kind) the player put on creatures this turn, recorded at placement by the engine whether or not the reading permanent was on the battlefield, usable as an end_step trigger's intervening-if condition compared > 0
-  <br>Why the existing vocabulary won't do: value_keys has turn ledgers for life gained, cards drawn, creatures died etc. but nothing for counters placed; a counter_placed trigger plus set_turn_flag/has_turn_flag would add an unprinted trigger and miss counters put on creatures earlier in the turn before this enchantment entered, so it would not be the printed card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lasting Tarfire** (rank 6895) — `lasting_tarfire`
-  - At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent.
-
-</details>
-
 ## damage-cant-be-prevented
 
 Blocks **1** card.
@@ -1090,20 +1053,6 @@ Blocks **1** card.
 
 </details>
 
-## exchange-life-total
-
-Blocks **1** card.
-
-- **(op)** an op that exchanges a player's life total with a creature's toughness (701.12 / 701.12c): the player's life becomes the creature's toughness as a life gain or loss, and the creature's toughness becomes the player's former life total as an indefinite layer-7b characteristic-defining set; the exchange does nothing at all if either half cannot happen (the player can't gain/lose life, a locked life total, or the creature has left)
-  <br>Why the existing vocabulary won't do: No op sets or exchanges a life total. A hand-built chain of snapshot (life_of, toughness_of) + set_pt + a gain_life/lose_life of the difference would approximate it, but set_pt carries no indefinite-duration guarantee in op_options, and the chain cannot express the all-or-nothing rule: under cant_gain_life or lock_life_total the toughness would still change while the life does not. exchange_control exchanges controllers only.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tree of Perdition** (rank 1952) — `tree_of_perdition`
-  - {T}: Exchange target opponent's life total with this creature's toughness.
-
-</details>
-
 ## exile-target-spell
 
 Blocks **1** card.
@@ -1278,20 +1227,6 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
-
-</details>
-
-## has-counter-of-kind
-
-Blocks **1** card.
-
-- **(selector)** a selector/target filter key matching a permanent with at least one counter of a NAMED kind (e.g. {"has_counter": "-1/-1"}), so a target spec can say "target creature with a -1/-1 counter on it" and the targeting legality is checked on selection and on resolution
-  <br>Why the existing vocabulary won't do: `has_counters` is a boolean over any kind of counter (selectors.py reads any(n > 0 for n in obj.counters.values())), so it would allow targeting a creature with only +1/+1 or stun counters; `modified` is broader still; `counters_on`/`counters_had` are values usable only in an `if` at resolution, which would change what may be targeted rather than what the printed target restriction allows
-
-<details><summary>Cards waiting on this</summary>
-
-- **Liliana, Death Wielder** (rank 7978) — `liliana_death_wielder`
-  - −3: Destroy target creature with a -1/-1 counter on it.
 
 </details>
 
@@ -1769,35 +1704,6 @@ Blocks **1** card.
 
 </details>
 
-## remove-counters-any-kind
-
-Blocks **1** card.
-
-- **(op)** a remove_counters mode that removes up to N counters in total from a target permanent, of any kinds and in any mix the controller chooses (e.g. two -1/-1 and one loyalty), with zero allowed
-  <br>Why the existing vocabulary won't do: op_remove_counters reads a single `counter` kind (defaulting to +1/+1) and removes a fixed `amount` of that kind only; it has no 'any kind' option, no per-kind split chosen by the player, and no 'up to'. move_counters has all_kinds but moves rather than removes, and the remove_counters cost key is a cost, not an effect
-
-<details><summary>Cards waiting on this</summary>
-
-- **Glissa Sunslayer** (rank 1410) — `glissa_sunslayer`
-  - • Remove up to three counters from target permanent.
-
-</details>
-
-## remove-counters-from-among
-
-Blocks **1** card.
-
-- **(op)** a resolution-time effect letting the controller remove any number of counters, of any kinds, distributed as they choose among any permanents on the battlefield (zero allowed), binding the total removed under `as` so later effects (draw, lose_life) can read it via {"binding": ...}
-  <br>Why the existing vocabulary won't do: The remove_counters op takes a fixed amount of one named counter kind from each chosen object and binds nothing, so it cannot express a player-chosen total across mixed kinds and permanents nor report how many were removed; remove_counters_from_among exists only as an activated-ability cost key, not as an op usable in spell_effects
-
-<details><summary>Cards waiting on this</summary>
-
-- **Eventide's Shadow** (rank 7871) — `eventide_s_shadow`
-  - Remove any number of counters from among permanents on the battlefield.
-  - You draw cards and lose life equal to the number of counters removed this way.
-
-</details>
-
 ## remove-subtype
 
 Blocks **1** card.
@@ -1952,20 +1858,6 @@ Blocks **1** card.
 
 - **Rousing Refrain** (rank 2750) — `rousing_refrain`
   - Exile Rousing Refrain with three time counters on it.
-
-</details>
-
-## shuffle-self-into-library
-
-Blocks **1** card.
-
-- **(engine)** a card-level rider on an instant or sorcery that, as the spell finishes resolving, puts the card into its owner's library instead of the graveyard and then shuffles that library (the Sun's Zenith cycle, Beacon of Destruction/Unrest/Tomorrows)
-  <br>Why the existing vocabulary won't do: tucks_itself replaces the graveyard with a library position, but only a fixed depth from the top or 'bottom', never a shuffle; the shuffle op runs inside spell_effects, before the spell card leaves the stack, so tucks_itself 'bottom' plus shuffle would leave the card on the bottom unshuffled. The first sentence is expressible (add_counters -1/-1 with amount {x: true} over all creatures)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Black Sun's Zenith** (rank 1947) — `black_sun_s_zenith`
-  - Shuffle Black Sun's Zenith into its owner's library.
 
 </details>
 
@@ -2124,20 +2016,6 @@ Blocks **1** card.
 
 </details>
 
-## total-counters-among
-
-Blocks **1** card.
-
-- **(value)** a value that sums counters of every kind on the objects a selector matches, e.g. {"counters_on": {"counter": "any", "objects": {"types": ["Creature"], "controller": {"target": "t1"}}}} -- "the number of counters among creatures target player controls", read live at resolution
-  <br>Why the existing vocabulary won't do: `counters_on` requires one named counter kind (validate_counters_on refuses a missing kind and the evaluator reads obj.counter(kind)), and counter kinds are open-ended, so summing a fixed list of kinds would not be the printed card. `counters_had` does accept "any" but only reads the had_counters snapshot bound by a leaves-the-battlefield event, not live permanents. The token (saproling_1_1_g), the target player, and the {T} line (double_counters) are all expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ferrafor, Young Yew** (rank 8989) — `ferrafor_young_yew`
-  - When Ferrafor enters, create a number of 1/1 green Saproling creature tokens equal to the number of counters among creatures target player controls.
-
-</details>
-
 ## total-mana-value-selection
 
 Blocks **1** card.
@@ -2177,20 +2055,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## variable-target-count-with-minimum
-
-Blocks **1** card.
-
-- **(engine)** a target spec whose size the caster picks between a printed floor and ceiling -- "one, two, or three target creature cards" is 1..3, never 0 -- e.g. a `min_count: 1` beside `count: 3, up_to: true`, so the spell cannot be cast with no targets (601.2c) and enumerate_target_tuples offers subsets of size 3, 2 and 1 but not the empty one
-  <br>Why the existing vocabulary won't do: target `up_to` is "zero to N" (targeting.py always appends the empty subset and loader/targets.py documents it as such), so it lets the sorcery be cast with no targets and with no creature card in any graveyard; a fixed `count: 3` without up_to forces exactly min(3, candidates) and never lets the caster choose one or two when three are available. The rest of the card is expressible: a `card_in_graveyard` target with selector {types: [Creature], zone: graveyard, controller: any} and `return_from_graveyard` with destination battlefield, controller you, counters {"-1/-1": 1}
-
-<details><summary>Cards waiting on this</summary>
-
-- **Aberrant Return** (rank 6551) — `aberrant_return`
-  - Put one, two, or three target creature cards from graveyards onto the battlefield under your control.
 
 </details>
 

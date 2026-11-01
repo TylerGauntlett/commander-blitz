@@ -472,12 +472,12 @@
     },
     "Aberrant Return": {
       "edhrec_rank": 6551,
-      "gate": "template",
+      "gate": null,
       "name": "Aberrant Return",
-      "reason": "no template for: Put one, two, or three target creature cards from graveyards onto the battlefield under yo",
+      "reason": "",
       "scryfall_id": "2b7cf8e9-d9aa-40bf-a724-1e8943792090",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abeyance": {
@@ -25722,12 +25722,12 @@
     },
     "Black Sun's Zenith": {
       "edhrec_rank": 1947,
-      "gate": "template",
+      "gate": null,
       "name": "Black Sun's Zenith",
-      "reason": "no template for: Put X -1/-1 counters on each creature. Shuffle into its owner's library",
+      "reason": "",
       "scryfall_id": "eda98f51-a918-4ef7-a123-7d4200c79620",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Black Tom Cassidy": {
@@ -87192,12 +87192,12 @@
     },
     "Eventide's Shadow": {
       "edhrec_rank": 7871,
-      "gate": "template",
+      "gate": null,
       "name": "Eventide's Shadow",
-      "reason": "no template for: Remove any number of counters from among permanents on the battlefield. You draw cards and",
+      "reason": "",
       "scryfall_id": "9c5d71a6-8e68-4aee-b781-486276d17fce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ever After": {
@@ -93742,12 +93742,12 @@
     },
     "Ferrafor, Young Yew": {
       "edhrec_rank": 8989,
-      "gate": "template",
+      "gate": null,
       "name": "Ferrafor, Young Yew",
-      "reason": "no template for: When Ferrafor enters, create a number of 1/1 green Saproling creature tokens equal to the ",
+      "reason": "",
       "scryfall_id": "0a664cd2-3778-4344-addc-72341889e871",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ferropede": {
@@ -111042,12 +111042,12 @@
     },
     "Glissa Sunslayer": {
       "edhrec_rank": 1410,
-      "gate": "template",
+      "gate": null,
       "name": "Glissa Sunslayer",
-      "reason": "no template for: Whenever deals combat damage to a player, choose one —",
+      "reason": "",
       "scryfall_id": "682b1b62-338a-49d1-9d4e-2d8ee2e6fc76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Glissa's Courier": {
@@ -154822,12 +154822,12 @@
     },
     "Lasting Tarfire": {
       "edhrec_rank": 6895,
-      "gate": "template",
+      "gate": null,
       "name": "Lasting Tarfire",
-      "reason": "no template for: At the beginning of each end step, if you put a counter on a creature this turn, this ench",
+      "reason": "",
       "scryfall_id": "9c4a95ac-072f-4219-80a0-1ce71f1b8411",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lasyd Prowler": {
@@ -158942,12 +158942,12 @@
     },
     "Liliana, Death Wielder": {
       "edhrec_rank": 7978,
-      "gate": "template",
+      "gate": null,
       "name": "Liliana, Death Wielder",
-      "reason": "no template for: +2: Put a -1/-1 counter on up to one target creature",
+      "reason": "",
       "scryfall_id": "6f874b0e-32e3-421f-8109-522638b3f38d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Liliana, Death's Majesty": {
@@ -292012,12 +292012,12 @@
     },
     "Tree of Perdition": {
       "edhrec_rank": 1952,
-      "gate": "template",
+      "gate": null,
       "name": "Tree of Perdition",
-      "reason": "no template for: {T}: Exchange target opponent's life total with this creature's toughness",
+      "reason": "",
       "scryfall_id": "750b4c88-26c7-43ec-b6b9-ece3263dfd59",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tree of Redemption": {
@@ -308292,12 +308292,12 @@
     },
     "Vraska, Betrayal's Sting": {
       "edhrec_rank": 1345,
-      "gate": "template",
+      "gate": null,
       "name": "Vraska, Betrayal's Sting",
-      "reason": "no template for: 0: You draw a card and lose 1 life. Proliferate",
+      "reason": "",
       "scryfall_id": "9f1fa1c5-ff87-4bbc-89aa-dbebc91eada0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vraska, Golgari Queen": {
