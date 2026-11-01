@@ -2911,6 +2911,28 @@ it puts (2 become 6) and "whenever a counter is put on" triggers. Not
 `proliferate` (one of each kind) and not `move_counters` (from somewhere else).
 `objects` is required.
 
+### Removing counters of any kind — `any_kind`
+
+```jsonc
+// Glissa Sunslayer — "• Remove up to three counters from target permanent."
+{ "op": "remove_counters", "objects": { "target": "permanent" },
+  "any_kind": true, "amount": { "const": 3 }, "up_to": true }
+```
+
+Without `any_kind`, `remove_counters` takes `amount` of the one named `counter`
+kind (default +1/+1). With it the card names no kind, and the controller takes
+the counters off each of `objects` one at a time — which permanent, declinable
+once the floor is met (`ask_objects`, purpose `"remove_counter"`), then which
+kind when it carries more than one (`ask_mode`, harmful kinds such as -1/-1 and
+stun first) — so any mix of kinds is expressible. This is the question the
+`remove_counters_from_among` cost asks, from `effects.counter_removal`.
+
+`amount` alone is exactly that many, or as many as there are (609.3); with
+`up_to` it is a ceiling the controller may stop short of, down to none; left out
+it is "any number". The loader refuses `any_kind` beside a named `counter`, on
+any op that does not read it, or without `objects`; `up_to` on a named-kind
+removal or without an `amount`; and an amount below one.
+
 ### The same number and kind of counters
 
 ```jsonc

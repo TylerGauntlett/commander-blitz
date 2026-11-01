@@ -19,6 +19,7 @@ from .effects import execute
 from .effects.behold import announce_beheld, behold_count, behold_pool
 from .effects.conditions import evaluate
 from .effects.context import EffectContext, ask_mode, ask_objects
+from .effects.counter_removal import remove_counters_one_at_a_time
 from .effects.selectors import matches, resolve_pool
 from .effects.values import evaluate_value
 from .enums import COLORLESS, Keyword, Zone
@@ -1644,12 +1645,6 @@ def _counters_on(state: GameState, oid: int) -> int:
     return sum(n for n in obj.counters.values() if n > 0) if obj is not None else 0
 
 
-#: Counter kinds that hurt the permanent they are on, offered first when a
-#: cost asks which kind to remove -- so the default answer is the kind the
-#: payer would most like gone.
-_HARMFUL_COUNTERS = ("-1/-1", "stun")
-
-
 def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     spec = dict(cost.exile_from_graveyard or {})
     spec.setdefault("controller", "you")
@@ -1925,38 +1920,17 @@ def pay(
         # One counter at a time: which permanent, then -- if it carries more
         # than one kind -- which kind. "From among" lets the payer split the
         # removal however they like (all three off one permanent, or one off
-        # each), and asking per counter is the one question that can say every
-        # split without a distribution decision the engine does not have.
+        # each); see `effects.counter_removal`. A cost is paid in full, so the
+        # payer may not stop short: `least` is the whole count.
         needed = int(cost.remove_counters_from_among.get("count", 1) or 1)
-        while needed > 0:
-            pool = _counter_removal_pool(state, pid, cost, source_oid)
-            if not pool:
-                break
-            picked = yield from ask_objects(
-                ctx,
-                f"Remove a counter ({needed} more)",
-                pool,
-                1,
-                1,
-                pid,
-                "remove_counter_cost",
-            )
-            if not picked:
-                break
-            chosen = picked[0]
-            held = {k: n for k, n in state.objects[chosen].counters.items() if n > 0}
-            kinds = sorted(held, key=lambda k: (k not in _HARMFUL_COUNTERS, -held[k], k))
-            kind = kinds[0]
-            if len(kinds) > 1:
-                [index] = yield from ask_mode(
-                    ctx,
-                    f"Remove which counter from {ctx.name_of(chosen)}?",
-                    [f"{k} counter ({held[k]})" for k in kinds],
-                    pid,
-                )
-                kind = kinds[index]
-            remove_counters(state, chosen, kind, 1)
-            needed -= 1
+        yield from remove_counters_one_at_a_time(
+            ctx,
+            lambda: _counter_removal_pool(state, pid, cost, source_oid),
+            most=needed,
+            least=needed,
+            chooser=pid,
+            purpose="remove_counter_cost",
+        )
 
     if cost.remove_counters is not None and source_oid is not None:
         remove_counters(

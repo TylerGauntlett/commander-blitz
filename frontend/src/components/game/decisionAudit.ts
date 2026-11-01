@@ -412,6 +412,14 @@ export const DECISION_AUDIT: readonly DecisionRow[] = [
   },
   {
     kind: "choose_objects",
+    purpose: "remove_counter",
+    asks: "Which permanent loses a counter next, or stop",
+    of: "table",
+    today: ["board", "panel"],
+    journeys: ["PickOneOnTheBoard"],
+  },
+  {
+    kind: "choose_objects",
     purpose: "remove_counter_cost",
     asks: "Which permanent loses a counter to pay",
     of: "table",

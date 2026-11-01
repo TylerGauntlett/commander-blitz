@@ -109,6 +109,57 @@ COPY_EXCEPT_KEYS = frozenset(
 #: actually drew). Both write a bare list of player ids.
 SEAT_RECORDING_OPS = frozenset({"draw", "may"})
 
+#: The counter removals that read `up_to` -- "remove **up to** three counters".
+COUNTER_REMOVAL_UP_TO_OPS = ("remove_counters",)
+
+#: The ops that read `any_kind`: the card names no kind, so the controller
+#: picks one counter at a time (`effects.counter_removal`).
+ANY_KIND_COUNTER_OPS = ("remove_counters",)
+
+
+def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
+    """``any_kind`` and ``up_to`` on a counter removal: every refusal is a card
+    that would load and quietly remove a different number or kind of counters."""
+    if "any_kind" in effect:
+        if op not in ANY_KIND_COUNTER_OPS:
+            raise DslError(
+                f"{where}: 'any_kind' only means anything on "
+                f"{' or '.join(ANY_KIND_COUNTER_OPS)}, not {op!r}"
+            )
+        if not isinstance(effect["any_kind"], bool):
+            raise DslError(f"{where}: 'any_kind' is a boolean, got {effect['any_kind']!r}")
+    any_kind = bool(effect.get("any_kind"))
+    if op not in COUNTER_REMOVAL_UP_TO_OPS and op not in ANY_KIND_COUNTER_OPS:
+        return
+    if any_kind and "counter" in effect:
+        # One says "this kind", the other "whichever kinds the chooser likes";
+        # the op would read `any_kind` and the printed kind would be ignored.
+        raise DslError(
+            f"{where}: 'any_kind' and a named 'counter' contradict each other -- "
+            f"drop 'counter' for counters of any kind"
+        )
+    if any_kind and not effect.get("objects"):
+        raise DslError(f"{where}: {op} needs 'objects' naming the permanents counters come off")
+    if effect.get("up_to"):
+        if op == "remove_counters" and not any_kind:
+            # The named-kind removal takes exactly `amount`; an `up_to` there
+            # would load and be ignored.
+            raise DslError(
+                f"{where}: 'up_to' on remove_counters needs 'any_kind' -- the "
+                f"named-kind removal takes exactly 'amount'"
+            )
+        if "amount" not in effect:
+            raise DslError(
+                f"{where}: 'up_to' needs an 'amount' to be a ceiling of; with no "
+                f"'amount' the removal is already \"any number\""
+            )
+    if any_kind or effect.get("up_to"):
+        amount = effect.get("amount")
+        if isinstance(amount, Mapping) and set(amount) == {"const"}:
+            amount = amount["const"]
+        if isinstance(amount, int) and not isinstance(amount, bool) and amount < 1:
+            raise DslError(f"{where}: removing {amount} counters removes none")
+
 #: Every key whose value `resolve_pool` reads as a pool of **objects**. A bare
 #: `{"binding": …}` under any other key is a player spec.
 _OBJECT_POOL_KEYS = ("count", "exists", "objects", "per", "from", "attacker", "source_object")
@@ -2631,6 +2682,7 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: set_turn_flag takes no 'duration' -- it lasts the turn "
                 f"(use set_flag for a word that never wears off)"
             )
+    _validate_any_kind_counters(effect, op, where)
     if op == "move_counters":
         # Without a destination the counters come off the source and go
         # nowhere, which is a card that reads "move a +1/+1 counter onto it"
@@ -2705,24 +2757,31 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # `up_to_if` (conditional, floor of one) between them could not say. The
         # name is `TargetSpec`'s, where it has meant the same thing since "up to
         # X target creatures".
-        if op not in ("choose_mode", "discard"):
+        if op not in ("choose_mode", "discard", *COUNTER_REMOVAL_UP_TO_OPS):
             raise DslError(
-                f"{where}: 'up_to' only means anything on choose_mode or discard, not {op!r}"
+                f"{where}: 'up_to' only means anything on choose_mode, discard or "
+                f"{' or '.join(COUNTER_REMOVAL_UP_TO_OPS)}, not {op!r}"
             )
         if not isinstance(effect["up_to"], bool):
             raise DslError(f"{where}: 'up_to' is a boolean, got {effect['up_to']!r}")
-        if op == "discard":
+        if op in COUNTER_REMOVAL_UP_TO_OPS:
+            # "Remove up to three counters" -- `amount` becomes a ceiling and the
+            # floor drops to zero. Which removals may carry it is the op's own
+            # guard (`_validate_any_kind_counters`).
+            pass
+        elif op == "discard":
             # "Discard up to two cards" -- the same word doing the same job one
             # op over: `amount` becomes a ceiling and the floor drops to zero.
             # The mode-count checks below are `choose_mode`'s own and read
             # `count`, which a discard does not have.
             return
-        count = effect.get("count", 1)
-        if isinstance(count, dict) and "const" in count:
-            count = count["const"]
-        if isinstance(count, int) and not isinstance(count, bool) and count < 1:
-            # "Up to zero modes" is a card that does nothing.
-            raise DslError(f"{where}: 'up_to' needs a 'count' of at least 1; got {count}")
+        else:
+            count = effect.get("count", 1)
+            if isinstance(count, dict) and "const" in count:
+                count = count["const"]
+            if isinstance(count, int) and not isinstance(count, bool) and count < 1:
+                # "Up to zero modes" is a card that does nothing.
+                raise DslError(f"{where}: 'up_to' needs a 'count' of at least 1; got {count}")
     if "or_more" in effect:
         # "Choose one or more --" (Black Market Connections). A floor and a
         # ceiling at once: `count` stays the minimum and every mode is on offer.
