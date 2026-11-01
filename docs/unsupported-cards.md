@@ -10,24 +10,22 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**155 cards** blocked by **138** capabilities.
+**149 cards** blocked by **133** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
+| [choose-color-excluding](#choose-color-excluding) | 5 | 1009 | op |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [chosen-color-mana-or-fixed](#chosen-color-mana-or-fixed) | 4 | 1009 | engine, op |
 | [evoke](#evoke) | 4 | 1343 | cost, static_effect |
-| [shapeshifter-1-1-c-changeling](#shapeshifter-1-1-c-changeling) | 4 | 2242 | token |
-| [choose-color-excluding](#choose-color-excluding) | 3 | 1009 | op |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [chosen-color-mana-or-fixed](#chosen-color-mana-or-fixed) | 2 | 1009 | op |
-| [elemental-5-5-rg](#elemental-5-5-rg) | 2 | 945 | token |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -50,8 +48,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
-| [choose-color-except](#choose-color-except) | 1 | 1081 | op |
-| [chosen-color-or-fixed-mana](#chosen-color-or-fixed-mana) | 1 | 1081 | engine |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -70,7 +66,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
-| [elemental-4-4-w-flying](#elemental-4-4-w-flying) | 1 | 9533 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
@@ -267,6 +262,40 @@ Blocks **8** cards.
 
 </details>
 
+## choose-color-excluding
+
+Blocks **5** cards.
+
+- **(op)** a `choose_color` that excludes printed colours from the offer -- e.g. `{"op": "choose_color", "except_colors": ["R"]}` for "choose a color other than red" -- so the chooser is offered only the four remaining colours and `chosen_color` can never be the excluded one
+  <br>Why the existing vocabulary won't do: `choose_color` (op_options: only `prompt`; `op_choose_color` in engine/effects/ops_control.py) always offers all five COLOR_CHOICES, so the land could choose red and then tap for only {R}, which is a different card from the printed one
+- **(op)** choose_color taking an exclusion list (e.g. "except": ["G"]) so the offered labels are the colours other than the printed one -- the Thriving land cycle's "choose a color other than green"; the mana line is then a choose_mode of {G} and {"chosen_color_of": "self"}
+  <br>Why the existing vocabulary won't do: choose_color's only option is `prompt`; op_choose_color always offers all five COLOR_CHOICES, so green could be chosen, which the printed card forbids. The starting_point's five-colour choose_mode is strictly better than the card, since it taps for any colour without a choice at all
+- **(op)** an exclusion option on choose_color -- e.g. {"op": "choose_color", "except": ["W"]} -- so the self_enters choice offers only the four colours other than the printed one (the whole Thriving land cycle: "choose a color other than white")
+  <br>Why the existing vocabulary won't do: op_choose_color takes only 'prompt' and always asks over all five COLOR_CHOICES; choosing white would make the land tap for {W} only, a different card, and nothing in op_options lets the chooser's list be narrowed
+- **(op)** a `choose_color` that excludes printed colours from the offer -- e.g. `{"op": "choose_color", "except_colors": ["U"]}` for "choose a color other than blue" -- so the chooser is offered only the four remaining colours and `chosen_color` can never be the excluded one
+  <br>Why the existing vocabulary won't do: `choose_color` (op_options: only `prompt`; `op_choose_color` in engine/effects/ops_control.py) always offers all five COLOR_CHOICES, so the land could choose blue and then tap for only {U}, which is a different card from the printed one
+- **(op)** a `choose_color` that excludes printed colours from the offer -- e.g. `{"op": "choose_color", "except_colors": ["B"]}` for "choose a color other than black" -- so the chooser is offered only the four remaining colours and `chosen_color` can never be the excluded one
+  <br>Why the existing vocabulary won't do: `choose_color` (op_options: only `prompt`) always offers all five colours, so the land could choose black and then tap for only {B}, which is a different card from the printed one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Thriving Isle** (rank 1009) — `thriving_isle`
+  - As it enters, choose a color other than blue.
+  - {T}: Add {U} or one mana of the chosen color.
+- **Thriving Heath** (rank 1081) — `thriving_heath`
+  - As it enters, choose a color other than white.
+  - {T}: Add {W} or one mana of the chosen color.
+- **Thriving Grove** (rank 1180) — `thriving_grove`
+  - As it enters, choose a color other than green.
+- **Thriving Bluff** (rank 1198) — `thriving_bluff`
+  - As it enters, choose a color other than red.
+  - {T}: Add {R} or one mana of the chosen color.
+- **Thriving Moor** (rank 1221) — `thriving_moor`
+  - As it enters, choose a color other than black.
+  - {T}: Add {B} or one mana of the chosen color.
+
+</details>
+
 ## x-in-mana-cost-trigger-filter
 
 Blocks **5** cards.
@@ -299,6 +328,36 @@ Blocks **5** cards.
 
 </details>
 
+## chosen-color-mana-or-fixed
+
+Blocks **4** cards.
+
+- **(op)** a mana ability offering a fixed symbol OR the permanent's chosen colour -- "{T}: Add {R} or one mana of the chosen color" -- i.e. a `choose_mode` whose modes are `add_mana {R}` and `add_mana {"chosen_color_of": "self"}`, with the solver's options being {R} plus the source's live `chosen_color`
+  <br>Why the existing vocabulary won't do: The loader's chosen-colour mana branch (`mana_chosen_color` in cards/loader/__init__.py) requires the ability be a single `add_mana` with `{"chosen_color_of": "self"}` and refuses a second effect; a `choose_mode` over five literal colours (the starting_point) taps for any colour, strictly better than the printed card
+- **(engine)** a mana ability that offers a fixed symbol OR the permanent's chosen colour -- a choose_mode whose modes are add_mana {W} and add_mana {"chosen_color_of": "self"} (or add_mana with mana {W} plus an or_chosen_color flag), with mana_options / the payment solver reading the chosen colour live
+  <br>Why the existing vocabulary won't do: The loader's chosen-colour path (mana_chosen_color in cards/loader/__init__.py) requires the {"chosen_color_of": "self"} add_mana to be the ability's single effect, and a choose_mode branch carrying a dynamic mana dict falls through to _mana_options, which freezes literal symbols at load time; the starting point's five-mode choose_mode taps for any colour, which is strictly better than the printed card. Splitting into two abilities ('{T}: Add {W}.' and '{T}: Add one mana of the chosen color.') leaves one printed line claimed by two abilities
+- **(op)** a mana ability offering a fixed symbol OR the permanent's chosen colour -- "{T}: Add {U} or one mana of the chosen color" -- i.e. a `choose_mode` whose modes are `add_mana {U}` and `add_mana {"chosen_color_of": "self"}`, with the solver's options being {U} plus the source's live `chosen_color`
+  <br>Why the existing vocabulary won't do: The loader's chosen-colour mana branch (`mana_chosen_color` in cards/loader/__init__.py) requires the ability be a single `add_mana` with `{"chosen_color_of": "self"}` and refuses a second effect; a `choose_mode` over five literal colours (the starting_point) taps for any colour, strictly better than the printed card
+- **(op)** a mana ability offering a fixed symbol OR the permanent's chosen colour -- "{T}: Add {B} or one mana of the chosen color" -- i.e. a `choose_mode` whose modes are `add_mana {B}` and `add_mana {"chosen_color_of": "self"}`, with the solver's options being {B} plus the source's live `chosen_color`
+  <br>Why the existing vocabulary won't do: The loader's chosen-colour mana branch requires the ability be a single `add_mana` with `{"chosen_color_of": "self"}` and refuses a second effect; a `choose_mode` over five literal colours (the starting_point) taps for any colour, strictly better than the printed card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Thriving Isle** (rank 1009) — `thriving_isle`
+  - As it enters, choose a color other than blue.
+  - {T}: Add {U} or one mana of the chosen color.
+- **Thriving Heath** (rank 1081) — `thriving_heath`
+  - As it enters, choose a color other than white.
+  - {T}: Add {W} or one mana of the chosen color.
+- **Thriving Bluff** (rank 1198) — `thriving_bluff`
+  - As it enters, choose a color other than red.
+  - {T}: Add {R} or one mana of the chosen color.
+- **Thriving Moor** (rank 1221) — `thriving_moor`
+  - As it enters, choose a color other than black.
+  - {T}: Add {B} or one mana of the chosen color.
+
+</details>
+
 ## evoke
 
 Blocks **4** cards.
@@ -324,56 +383,6 @@ Blocks **4** cards.
   - Elemental permanent spells you cast from your hand gain evoke {4} as you cast them
 - **Slithermuse** (rank 9290) — `slithermuse`
   - Evoke {3}{U} (You may cast this spell for its evoke cost. If you do, it's sacrificed when it enters.)
-
-</details>
-
-## shapeshifter-1-1-c-changeling
-
-Blocks **4** cards.
-
-- **(token)** a 1/1 colorless Shapeshifter creature token with changeling (it's every creature type)
-  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_3_2_c_changeling, a 3/2; the other 1/1 colorless tokens (spirit_1_1_c, hero_1_1_c, etc.) have the wrong subtype and lack changeling. The mana line is expressible via add_mana with mana_restriction; only the token is missing
-- **(token)** a 1/1 colorless Shapeshifter creature token with changeling (it's every creature type)
-  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_3_2_c_changeling, a 3/2; overriding its power/toughness on create_token would be a substitute token, and the other 1/1 colorless tokens have the wrong subtype and lack changeling. The Encore line is expressible exactly as Angel of Indemnity writes it (graveyard activated ability, exile_from_graveyard self cost, for_each_player copy_permanent + must_attack_player + haste + delayed sacrifice); only the token is missing
-- **(token)** a 1/1 colorless Shapeshifter creature token with changeling (It is every creature type.)
-  <br>Why the existing vocabulary won't do: token_ids holds only shapeshifter_3_2_c_changeling (a 3/2); no 1/1 colorless changeling Shapeshifter token exists, and a nearly-right token must not be substituted. The rest (exile on target t1, create_token with controller of the exiled target via snapshot, and Changeling via add_subtype) is expressible
-- **(token)** a 1/1 colorless Shapeshifter creature token with changeling (every creature type)
-  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_3_2_c_changeling, a 3/2; create_token's power/toughness override is accepted only on X/X (variable_pt) tokens, so it cannot shrink the 3/2 to 1/1. The second line is expressible (a grant_ability static over creature tokens you control granting a {T}: add one mana of any color mana ability).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Springleaf Parade** (rank 2242) — `springleaf_parade`
-  - When this enchantment enters, create X 1/1 colorless Shapeshifter creature tokens with changeling. (They're every creature type.)
-- **Crib Swap** (rank 2425) — `crib_swap`
-  - Exile target creature. Its controller creates a 1/1 colorless Shapeshifter creature token with changeling.
-- **Abundant Countryside** (rank 3283) — `abundant_countryside`
-  - {6}, {T}: Create a 1/1 colorless Shapeshifter creature token with changeling. (It's every creature type.)
-- **Belonging** (rank 7727) — `belonging`
-  - When this creature enters, create three 1/1 colorless Shapeshifter creature tokens with changeling. (They're every creature type.)
-
-</details>
-
-## choose-color-excluding
-
-Blocks **3** cards.
-
-- **(op)** a `choose_color` that excludes printed colours from the offer -- e.g. `{"op": "choose_color", "except_colors": ["R"]}` for "choose a color other than red" -- so the chooser is offered only the four remaining colours and `chosen_color` can never be the excluded one
-  <br>Why the existing vocabulary won't do: `choose_color` (op_options: only `prompt`; `op_choose_color` in engine/effects/ops_control.py) always offers all five COLOR_CHOICES, so the land could choose red and then tap for only {R}, which is a different card from the printed one
-- **(op)** choose_color taking an exclusion list (e.g. "except": ["G"]) so the offered labels are the colours other than the printed one -- the Thriving land cycle's "choose a color other than green"; the mana line is then a choose_mode of {G} and {"chosen_color_of": "self"}
-  <br>Why the existing vocabulary won't do: choose_color's only option is `prompt`; op_choose_color always offers all five COLOR_CHOICES, so green could be chosen, which the printed card forbids. The starting_point's five-colour choose_mode is strictly better than the card, since it taps for any colour without a choice at all
-- **(op)** a `choose_color` that excludes printed colours from the offer -- e.g. `{"op": "choose_color", "except_colors": ["U"]}` for "choose a color other than blue" -- so the chooser is offered only the four remaining colours and `chosen_color` can never be the excluded one
-  <br>Why the existing vocabulary won't do: `choose_color` (op_options: only `prompt`; `op_choose_color` in engine/effects/ops_control.py) always offers all five COLOR_CHOICES, so the land could choose blue and then tap for only {U}, which is a different card from the printed one
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thriving Isle** (rank 1009) — `thriving_isle`
-  - As it enters, choose a color other than blue.
-  - {T}: Add {U} or one mana of the chosen color.
-- **Thriving Grove** (rank 1180) — `thriving_grove`
-  - As it enters, choose a color other than green.
-- **Thriving Bluff** (rank 1198) — `thriving_bluff`
-  - As it enters, choose a color other than red.
-  - {T}: Add {R} or one mana of the chosen color.
 
 </details>
 
@@ -488,44 +497,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## chosen-color-mana-or-fixed
-
-Blocks **2** cards.
-
-- **(op)** a mana ability offering a fixed symbol OR the permanent's chosen colour -- "{T}: Add {R} or one mana of the chosen color" -- i.e. a `choose_mode` whose modes are `add_mana {R}` and `add_mana {"chosen_color_of": "self"}`, with the solver's options being {R} plus the source's live `chosen_color`
-  <br>Why the existing vocabulary won't do: The loader's chosen-colour mana branch (`mana_chosen_color` in cards/loader/__init__.py) requires the ability be a single `add_mana` with `{"chosen_color_of": "self"}` and refuses a second effect; a `choose_mode` over five literal colours (the starting_point) taps for any colour, strictly better than the printed card
-- **(op)** a mana ability offering a fixed symbol OR the permanent's chosen colour -- "{T}: Add {U} or one mana of the chosen color" -- i.e. a `choose_mode` whose modes are `add_mana {U}` and `add_mana {"chosen_color_of": "self"}`, with the solver's options being {U} plus the source's live `chosen_color`
-  <br>Why the existing vocabulary won't do: The loader's chosen-colour mana branch (`mana_chosen_color` in cards/loader/__init__.py) requires the ability be a single `add_mana` with `{"chosen_color_of": "self"}` and refuses a second effect; a `choose_mode` over five literal colours (the starting_point) taps for any colour, strictly better than the printed card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thriving Isle** (rank 1009) — `thriving_isle`
-  - As it enters, choose a color other than blue.
-  - {T}: Add {U} or one mana of the chosen color.
-- **Thriving Bluff** (rank 1198) — `thriving_bluff`
-  - As it enters, choose a color other than red.
-  - {T}: Add {R} or one mana of the chosen color.
-
-</details>
-
-## elemental-5-5-rg
-
-Blocks **2** cards.
-
-- **(token)** a 5/5 red and green Elemental creature token (no abilities)
-  <br>Why the existing vocabulary won't do: token_ids has Elementals only as elemental_1_1_ur, elemental_2_2_g, elemental_3_3_ur_flying and elemental_4_4_ur; none is a 5/5 red-green. The rest of the card is expressible: the count is the value distinct of color over permanents you control, and the life gain is gain_life with creatures_you_control
-- **(token)** a 5/5 red and green Elemental creature token (e.g. id elemental_5_5_rg)
-  <br>Why the existing vocabulary won't do: token_ids holds only elemental_1_1_ur, elemental_2_2_g, elemental_3_3_ur_flying and elemental_4_4_ur among Elementals, and the only 5/5 is dragon_5_5_r_flying; none matches the printed size, colors and creature type. The landfall trigger itself (permanent_enters filtered to Land you control) and the Elemental dies trigger are otherwise expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Omnath, Locus of Rage** (rank 945) — `omnath_locus_of_rage`
-  - Landfall — Whenever a land you control enters, create a 5/5 red and green Elemental creature token.
-- **Elemental Spectacle** (rank 12518) — `elemental_spectacle`
-  - Vivid — Create a number of 5/5 red and green Elemental creature tokens equal to the number of colors among permanents you control.
 
 </details>
 
@@ -881,36 +852,6 @@ Blocks **1** card.
 
 </details>
 
-## choose-color-except
-
-Blocks **1** card.
-
-- **(op)** an exclusion option on choose_color -- e.g. {"op": "choose_color", "except": ["W"]} -- so the self_enters choice offers only the four colours other than the printed one (the whole Thriving land cycle: "choose a color other than white")
-  <br>Why the existing vocabulary won't do: op_choose_color takes only 'prompt' and always asks over all five COLOR_CHOICES; choosing white would make the land tap for {W} only, a different card, and nothing in op_options lets the chooser's list be narrowed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thriving Heath** (rank 1081) — `thriving_heath`
-  - As it enters, choose a color other than white.
-  - {T}: Add {W} or one mana of the chosen color.
-
-</details>
-
-## chosen-color-or-fixed-mana
-
-Blocks **1** card.
-
-- **(engine)** a mana ability that offers a fixed symbol OR the permanent's chosen colour -- a choose_mode whose modes are add_mana {W} and add_mana {"chosen_color_of": "self"} (or add_mana with mana {W} plus an or_chosen_color flag), with mana_options / the payment solver reading the chosen colour live
-  <br>Why the existing vocabulary won't do: The loader's chosen-colour path (mana_chosen_color in cards/loader/__init__.py) requires the {"chosen_color_of": "self"} add_mana to be the ability's single effect, and a choose_mode branch carrying a dynamic mana dict falls through to _mana_options, which freezes literal symbols at load time; the starting point's five-mode choose_mode taps for any colour, which is strictly better than the printed card. Splitting into two abilities ('{T}: Add {W}.' and '{T}: Add one mana of the chosen color.') leaves one printed line claimed by two abilities
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thriving Heath** (rank 1081) — `thriving_heath`
-  - As it enters, choose a color other than white.
-  - {T}: Add {W} or one mana of the chosen color.
-
-</details>
-
 ## combat-damage-amount-binding
 
 Blocks **1** card.
@@ -1167,20 +1108,6 @@ Blocks **1** card.
 
 - **Karmic Guide** (rank 961) — `karmic_guide`
   - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
-
-</details>
-
-## elemental-4-4-w-flying
-
-Blocks **1** card.
-
-- **(token)** a 4/4 white Elemental creature token with flying
-  <br>Why the existing vocabulary won't do: token_ids has elemental_4_4_ur (blue-red, no flying) and elemental_3_3_ur_flying (3/3 blue-red); the white 4/4 fliers are Angel, Angel Warrior and Bird Soldier, wrong creature type. The rest of the card is expressible: a draw trigger with a may add_counters, a remove_counters cost, and a your-turn activation condition.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hoofprints of the Stag** (rank 9533) — `hoofprints_of_the_stag`
-  - {2}{W}, Remove four hoofprint counters from this enchantment: Create a 4/4 white Elemental creature token with flying. Activate only during your turn.
 
 </details>
 

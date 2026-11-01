@@ -8,13 +8,13 @@
   ],
   "needs": [
     {
-      "capability": "choose_color_except",
+      "capability": "choose_color_excluding",
       "kind": "op",
       "what": "an exclusion option on choose_color -- e.g. {\"op\": \"choose_color\", \"except\": [\"W\"]} -- so the self_enters choice offers only the four colours other than the printed one (the whole Thriving land cycle: \"choose a color other than white\")",
       "why_existing_wont_do": "op_choose_color takes only 'prompt' and always asks over all five COLOR_CHOICES; choosing white would make the land tap for {W} only, a different card, and nothing in op_options lets the chooser's list be narrowed"
     },
     {
-      "capability": "chosen_color_or_fixed_mana",
+      "capability": "chosen_color_mana_or_fixed",
       "kind": "engine",
       "what": "a mana ability that offers a fixed symbol OR the permanent's chosen colour -- a choose_mode whose modes are add_mana {W} and add_mana {\"chosen_color_of\": \"self\"} (or add_mana with mana {W} plus an or_chosen_color flag), with mana_options / the payment solver reading the chosen colour live",
       "why_existing_wont_do": "The loader's chosen-colour path (mana_chosen_color in cards/loader/__init__.py) requires the {\"chosen_color_of\": \"self\"} add_mana to be the ability's single effect, and a choose_mode branch carrying a dynamic mana dict falls through to _mana_options, which freezes literal symbols at load time; the starting point's five-mode choose_mode taps for any colour, which is strictly better than the printed card. Splitting into two abilities ('{T}: Add {W}.' and '{T}: Add one mana of the chosen color.') leaves one printed line claimed by two abilities"

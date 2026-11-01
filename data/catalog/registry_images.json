@@ -47,6 +47,10 @@
     "artist": "Andrew Goldhawk",
     "scryfall_id": "21892cbc-1af2-4ea1-8907-cec514b53004"
   },
+  "abundant_countryside": {
+    "artist": "Iris Compiet",
+    "scryfall_id": "37478625-dd07-476d-bd9b-b2e0d71ac0d1"
+  },
   "abundant_growth": {
     "artist": "Vincent Proce",
     "scryfall_id": "88b8b051-3f05-4cc1-9506-732faa25553a"
@@ -1266,6 +1270,10 @@
   "beledros_witherbloom": {
     "artist": "Raymond Swanland",
     "scryfall_id": "144c2886-3d37-4a8a-8e37-99ccff66599e"
+  },
+  "belonging": {
+    "artist": "Danny Schwartz",
+    "scryfall_id": "a930c3f1-9c59-4627-829a-3cefb87ae2f4"
   },
   "benalish_hero": {
     "artist": "Douglas Shuler",
@@ -2823,6 +2831,10 @@
     "artist": "Tomasz Jedruszek",
     "scryfall_id": "71569961-d56c-43f9-ae51-d86561419743"
   },
+  "crib_swap": {
+    "artist": "Pete Venters",
+    "scryfall_id": "8f2fb3c6-af75-47a3-9f97-521872c32890"
+  },
   "crimson_kobolds": {
     "artist": "Anson Maddocks",
     "scryfall_id": "13696657-aeef-4add-9a3b-8137fce01fe3"
@@ -3972,9 +3984,25 @@
     "artist": "Bram Sels",
     "scryfall_id": "222b8394-20e7-4808-8eec-cb048f548055"
   },
+  "elemental_4_4_w_flying": {
+    "artist": "Bram Sels",
+    "scryfall_id": "222b8394-20e7-4808-8eec-cb048f548055"
+  },
+  "elemental_5_5_rg": {
+    "artist": "Bram Sels",
+    "scryfall_id": "222b8394-20e7-4808-8eec-cb048f548055"
+  },
   "elemental_bond": {
     "artist": "David Gaillet",
     "scryfall_id": "4d14aac7-3551-4837-a00e-74cb71667bbe"
+  },
+  "elemental_spectacle": {
+    "artist": "Aldo Dom\u00ednguez",
+    "scryfall_id": "6251ca05-7eae-493c-ade3-8a5ebabfe43d"
+  },
+  "elemental_x_x_gw_creature_count": {
+    "artist": "Bram Sels",
+    "scryfall_id": "222b8394-20e7-4808-8eec-cb048f548055"
   },
   "elementalist_adept": {
     "artist": "L.A. Draws",
@@ -6436,6 +6464,10 @@
   "honey_mammoth": {
     "artist": "Lars Grant-West",
     "scryfall_id": "84b9bee2-b973-4de7-b72d-7f36f8e8153c"
+  },
+  "hoofprints_of_the_stag": {
+    "artist": "Anthony S. Waters",
+    "scryfall_id": "af609bbd-2ed0-4a2b-b3e3-7120e86da9ce"
   },
   "horde_of_notions": {
     "artist": "Adam Rex",
@@ -9658,6 +9690,10 @@
     "artist": "Fajareka Setiawan",
     "scryfall_id": "2271184b-08eb-4d2a-8ebf-a1807d51dd2a"
   },
+  "omnath_locus_of_rage": {
+    "artist": "Brad Rigney",
+    "scryfall_id": "637c5910-f835-496e-b1b9-445bfb71da97"
+  },
   "omnath_locus_of_the_roil": {
     "artist": "Lius Lasahido",
     "scryfall_id": "6da6957b-8f52-4fc9-affe-e1e0db03fbe2"
@@ -11092,6 +11128,10 @@
     "artist": "Thomas Chamberlain-Keen",
     "scryfall_id": "62ba25b3-fbf5-40b8-9dbd-66215a31a258"
   },
+  "rhino_warrior_4_4_g": {
+    "artist": "Zoltan Boros",
+    "scryfall_id": "8f4188d4-a371-49be-ad33-ad87801ba99d"
+  },
   "rhonas_s_monument": {
     "artist": "Cliff Childs",
     "scryfall_id": "cb36db01-af50-4a31-90f5-f46475d1f7e8"
@@ -12039,6 +12079,10 @@
   "shanodin_dryads": {
     "artist": "Eric Peterson",
     "scryfall_id": "90e8ff87-22e8-4c04-84bc-f0ea2c12a86c"
+  },
+  "shapeshifter_1_1_c_changeling": {
+    "artist": "Lixin Yin",
+    "scryfall_id": "049048af-9945-4b73-9aa3-7f09bf4c22b3"
   },
   "shapeshifter_3_2_c_changeling": {
     "artist": "Lixin Yin",
@@ -12991,6 +13035,10 @@
   "springleaf_drum": {
     "artist": "Cyril Van Der Haegen",
     "scryfall_id": "4b2ec79e-a545-4b26-9c81-e81626fd7073"
+  },
+  "springleaf_parade": {
+    "artist": "Cory Godbey",
+    "scryfall_id": "44265489-645a-43b0-bc1f-726905b06876"
   },
   "springmane_cervin": {
     "artist": "Ilse Gort",
@@ -14287,6 +14335,10 @@
     "artist": "Lucie Louxor",
     "scryfall_id": "6d2e2e8d-8382-4d98-9e25-2dff1b1d0ff8"
   },
+  "titan_of_industry": {
+    "artist": "Lucas Staniec",
+    "scryfall_id": "432f2b57-4e7e-4717-8707-8cdbc1aae154"
+  },
   "titan_of_littjara": {
     "artist": "N\u00e9stor Ossand\u00f3n Leal",
     "scryfall_id": "4bfeac6d-f253-47c4-a1d4-c649a14b9cd1"
@@ -15122,6 +15174,10 @@
   "vernal_fen": {
     "artist": "Titus Lunter",
     "scryfall_id": "0466cf57-bb3e-4359-8fe8-d6cc1288fdc6"
+  },
+  "vernal_sovereign": {
+    "artist": "Aaron Miller",
+    "scryfall_id": "7c54fe0b-56f6-4cff-adde-56aa5326194d"
   },
   "vestige_of_emrakul": {
     "artist": "Tyler Jacobson",
@@ -16106,6 +16162,10 @@
   "yargle_glutton_of_urborg": {
     "artist": "Jehan Choo",
     "scryfall_id": "04c816fb-5951-4db1-8834-ed3f0b36bfe1"
+  },
+  "yarok_the_desecrated": {
+    "artist": "Daarken",
+    "scryfall_id": "c08a2da8-3ce7-4e0d-bdb0-81b6cdf3126a"
   },
   "yavimaya_coast": {
     "artist": "Jesper Ejsing",

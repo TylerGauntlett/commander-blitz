@@ -932,12 +932,12 @@
     },
     "Abundant Countryside": {
       "edhrec_rank": 3283,
-      "gate": "template",
+      "gate": null,
       "name": "Abundant Countryside",
-      "reason": "no template for: {T}: Add one mana of any color. Spend this mana only to cast a creature spell",
+      "reason": "",
       "scryfall_id": "37478625-dd07-476d-bd9b-b2e0d71ac0d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abundant Growth": {
@@ -23532,12 +23532,12 @@
     },
     "Belonging": {
       "edhrec_rank": 7727,
-      "gate": "template",
+      "gate": null,
       "name": "Belonging",
-      "reason": "no template for: When this creature enters, create three 1/1 colorless Shapeshifter creature tokens with ch",
+      "reason": "",
       "scryfall_id": "a930c3f1-9c59-4627-829a-3cefb87ae2f4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beloved Beggar // Generous Soul": {
@@ -55992,12 +55992,12 @@
     },
     "Crib Swap": {
       "edhrec_rank": 2425,
-      "gate": "template",
+      "gate": null,
       "name": "Crib Swap",
-      "reason": "no template for: Exile target creature. Its controller creates a 1/1 colorless Shapeshifter creature token ",
+      "reason": "",
       "scryfall_id": "8f2fb3c6-af75-47a3-9f97-521872c32890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Crime // Punishment": {
@@ -80732,12 +80732,12 @@
     },
     "Elemental Spectacle": {
       "edhrec_rank": 12518,
-      "gate": "template",
+      "gate": null,
       "name": "Elemental Spectacle",
-      "reason": "no template for: Vivid — Create a number of 5/5 red and green Elemental creature tokens equal to the number",
+      "reason": "",
       "scryfall_id": "6251ca05-7eae-493c-ade3-8a5ebabfe43d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elemental Summoning": {
@@ -129562,12 +129562,12 @@
     },
     "Hoofprints of the Stag": {
       "edhrec_rank": 9533,
-      "gate": "template",
+      "gate": null,
       "name": "Hoofprints of the Stag",
-      "reason": "no template for: Whenever you draw a card, you may put a hoofprint counter on this enchantment",
+      "reason": "",
       "scryfall_id": "af609bbd-2ed0-4a2b-b3e3-7120e86da9ce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hook Swords": {
@@ -192532,12 +192532,12 @@
     },
     "Omnath, Locus of Rage": {
       "edhrec_rank": 945,
-      "gate": "template",
+      "gate": null,
       "name": "Omnath, Locus of Rage",
-      "reason": "no template for: Landfall — Whenever a land you control enters, create a 5/5 red and green Elemental creatu",
+      "reason": "",
       "scryfall_id": "637c5910-f835-496e-b1b9-445bfb71da97",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Omnath, Locus of the Roil": {
@@ -261312,12 +261312,12 @@
     },
     "Springleaf Parade": {
       "edhrec_rank": 2242,
-      "gate": "template",
+      "gate": null,
       "name": "Springleaf Parade",
-      "reason": "no template for: When this enchantment enters, create X 1/1 colorless Shapeshifter creature tokens with cha",
+      "reason": "",
       "scryfall_id": "44265489-645a-43b0-bc1f-726905b06876",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Springmane Cervin": {
@@ -288012,12 +288012,12 @@
     },
     "Titan of Industry": {
       "edhrec_rank": 2641,
-      "gate": "template",
+      "gate": null,
       "name": "Titan of Industry",
-      "reason": "no template for: When this creature enters, choose two —",
+      "reason": "",
       "scryfall_id": "432f2b57-4e7e-4717-8707-8cdbc1aae154",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titan of Littjara": {
@@ -303312,12 +303312,12 @@
     },
     "Vernal Sovereign": {
       "edhrec_rank": 8536,
-      "gate": "template",
+      "gate": null,
       "name": "Vernal Sovereign",
-      "reason": "no template for: Whenever this creature enters or attacks, create a green and white Elemental creature toke",
+      "reason": "",
       "scryfall_id": "7c54fe0b-56f6-4cff-adde-56aa5326194d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Veronica, Dissident Scribe": {
@@ -320522,12 +320522,12 @@
     },
     "Yarok, the Desecrated": {
       "edhrec_rank": 2511,
-      "gate": "template",
+      "gate": null,
       "name": "Yarok, the Desecrated",
-      "reason": "no template for: If a permanent entering causes a triggered ability of a permanent you control to trigger, ",
+      "reason": "",
       "scryfall_id": "c08a2da8-3ce7-4e0d-bdb0-81b6cdf3126a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yarus, Roar of the Old Gods": {

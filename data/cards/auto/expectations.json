@@ -42,6 +42,10 @@
     },
     "zone": "graveyard"
   },
+  "abundant_countryside": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "abundant_growth": {
     "hand_size": {
       "0": 2
@@ -1364,6 +1368,14 @@
     "battlefield_count": 33,
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "belonging": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 3,
+      "id": "shapeshifter_1_1_c_changeling"
     },
     "zone": "battlefield"
   },
@@ -3011,6 +3023,11 @@
     },
     "zone": "graveyard"
   },
+  "crib_swap": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "crimson_kobolds": {
     "zone": "battlefield"
   },
@@ -4213,6 +4230,17 @@
       "0": 40
     },
     "zone": "battlefield"
+  },
+  "elemental_spectacle": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 43
+    },
+    "tokens": {
+      "count": 1,
+      "id": "elemental_5_5_rg"
+    },
+    "zone": "graveyard"
   },
   "elementalist_adept": {
     "zone": "battlefield"
@@ -6897,6 +6925,10 @@
     "life": {
       "0": 44
     }
+  },
+  "hoofprints_of_the_stag": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "horde_of_notions": {
     "battlefield_count": 33,
@@ -10339,6 +10371,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "omnath_locus_of_rage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "omnath_locus_of_the_roil": {
     "battlefield_count": 33,
@@ -13789,6 +13825,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "springleaf_parade": {
+    "battlefield_count": 53,
+    "tokens": {
+      "count": 20,
+      "id": "shapeshifter_1_1_c_changeling"
+    },
+    "zone": "battlefield"
+  },
   "springmane_cervin": {
     "life": {
       "0": 42
@@ -15182,6 +15226,13 @@
       "0": 43
     }
   },
+  "titan_of_industry": {
+    "life": {
+      "0": 45
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "titan_of_littjara": {
     "zone": "battlefield"
   },
@@ -16075,6 +16126,14 @@
     "zone": "battlefield"
   },
   "vernal_fen": {
+    "zone": "battlefield"
+  },
+  "vernal_sovereign": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "elemental_x_x_gw_creature_count"
+    },
     "zone": "battlefield"
   },
   "vestige_of_emrakul": {
@@ -17048,6 +17107,10 @@
     "zone": "battlefield"
   },
   "yargle_glutton_of_urborg": {
+    "zone": "battlefield"
+  },
+  "yarok_the_desecrated": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "yavimaya_coast": {
