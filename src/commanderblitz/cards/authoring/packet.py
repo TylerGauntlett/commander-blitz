@@ -1028,7 +1028,8 @@ def reference() -> dict:
             " puts the counters, any permanent, and players (poison).",
             "\"…with counters on them\" / \"…with a counter on it\" is the"
             " filter key `has_counters: true` (any kind of counter), valid in a"
-            " static's `affects` and in an effect selector.",
+            " static's `affects` and in an effect selector. \"…with a -1/-1"
+            " counter on it\" names the kind: `has_counters: \"-1/-1\"`.",
             "\"Distribute N +1/+1 counters among up to N target creatures\" on an"
             " ACTIVATED ability (a planeswalker's loyalty line) is"
             " `distribute_counters` with `counter`, a printed `amount` and"

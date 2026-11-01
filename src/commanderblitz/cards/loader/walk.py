@@ -14,6 +14,7 @@ from commanderblitz.engine.effects.selectors import (
     validate_attached_to_key,
     validate_colorless_key,
     validate_enchanted_by_key,
+    validate_has_counters_key,
 )
 from commanderblitz.engine.effects.values import (
     validate_counter_kind,
@@ -128,6 +129,7 @@ def _check_attached_to_key(filt: Any, where: str) -> None:
     _check_pt_keys(host_filter, here)
     validate_colorless_key(host_filter, here)
     validate_enchanted_by_key(host_filter, here)
+    validate_has_counters_key(host_filter, here)
 
 
 def _refuse_granted_chosen_qualities(filt: Any, where: str) -> None:

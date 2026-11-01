@@ -240,7 +240,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `exiled_with` | Exiled with the named source. | [Targeting a card in exile](card-dsl-cookbook.md#targeting-a-card-in-exile) |
 | `extreme` | The greatest/least of power, toughness or mana value in the pool. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
-| `has_counters` | Has counters (of a kind) on it. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
+| `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `is_token` | Is (or is not) a token. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
@@ -485,7 +485,7 @@ The subset of the selector language a trigger's `filter` may use. The loader ref
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Triggers](card-dsl.md#triggers) |
 | `goaded` | Is (or is not) goaded, by anyone (701.38). | ["Goaded creatures" — goaded](card-dsl-cookbook.md#goaded-creatures--goaded) |
-| `has_counters` | Has counters (of a kind) on it. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
+| `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `haunted_by` | Haunted by the named card. | [Haunt — the exile link pointing the other way](card-dsl-cookbook.md#haunt--the-exile-link-pointing-the-other-way) |
 | `is_commander` | Is (or is not) a commander. | [Triggers](card-dsl.md#triggers) |
 | `is_token` | Is (or is not) a token. | [Triggers](card-dsl.md#triggers) |
@@ -910,7 +910,7 @@ The subset of the selector language a static's `affects` may use -- printed char
 | `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
 | `exclude_self` | Not this permanent ("other"). | [Static abilities](card-dsl.md#static-abilities) |
-| `has_counters` | Has counters (of a kind) on it. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
+| `has_counters` | Has counters on it: `true` any kind, or one named kind. | [has_counters — "with counters on them"](card-dsl.md#has_counters--with-counters-on-them) |
 | `is_commander` | Is (or is not) a commander. | [Static abilities](card-dsl.md#static-abilities) |
 | `is_token` | Is (or is not) a token. | [Static abilities](card-dsl.md#static-abilities) |
 | `keywords` | Has all of these keywords. | [Static abilities](card-dsl.md#static-abilities) |

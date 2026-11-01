@@ -21,6 +21,7 @@ from ..characteristics import (
     chars,
     creature_types_of,
     enchanted_by,
+    has_counters_matches,
     resolve_chosen_subtypes,
 )
 from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
@@ -190,8 +191,10 @@ SELECTOR_KEYS = frozenset(
         "keywords",
         "not_keywords",
         "tapped",
-        #: "…with counters on them" / "…with a counter on it": one or more
-        #: counters of any kind. Also a static filter key (Innkeeper's Talent).
+        #: "…with counters on them" / "…with a counter on it": `true` is one or
+        #: more counters of any kind, a kind ("-1/-1") one or more of that
+        #: kind (Liliana, Death Wielder). Also a static filter key (Innkeeper's
+        #: Talent). See `characteristics.has_counters_matches`.
         "has_counters",
         "attacking",
         #: "Whenever an opponent attacks **you** with two or more creatures" --
@@ -1054,9 +1057,7 @@ def matches(
 
     if "tapped" in selector and bool(obj.tapped) != bool(selector["tapped"]):
         return False
-    if "has_counters" in selector and any(n > 0 for n in obj.counters.values()) != bool(
-        selector["has_counters"]
-    ):
+    if "has_counters" in selector and not has_counters_matches(obj, selector["has_counters"]):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False
@@ -1662,6 +1663,33 @@ ENCHANTED_BY_KEYS = frozenset({"controller"})
 ENCHANTED_BY_CONTROLLERS = ("you", "opponent", "any")
 
 
+def validate_has_counters_key(filt: Any, where: str) -> None:
+    """``has_counters`` is ``true``, ``false`` or one counter kind.
+
+    The same check in every filter language, as `validate_enchanted_by_key`
+    is. A kind goes through `values.validate_counter_kind`, so ``"Shield"`` or
+    ``"flying counter"`` is refused rather than matching nothing for ever; and
+    ``"any"`` is refused because ``true`` already says it -- read as a kind it
+    would match no permanent.
+    """
+    if not isinstance(filt, Mapping) or "has_counters" not in filt:
+        return
+    spec = filt["has_counters"]
+    if isinstance(spec, bool):
+        return
+    if spec == "any":
+        raise DslError(f"{where}.has_counters: write true for counters of any kind, not 'any'")
+    # Local: `values` imports `selectors`, and each evaluates the other.
+    from .values import validate_counter_kind
+
+    if not isinstance(spec, str):
+        raise DslError(
+            f"{where}.has_counters: true, false, or one counter kind such as '-1/-1', "
+            f"got {spec!r}"
+        )
+    validate_counter_kind(spec, f"{where}.has_counters")
+
+
 def validate_enchanted_by_key(filt: Any, where: str) -> None:
     """``enchanted_by`` is ``true``, ``false`` or a filter on the Auras.
 
@@ -1850,6 +1878,7 @@ def validate_selector(selector: Any, where: str) -> None:
     # this into; there is only a spelling to refuse.
     validate_colorless_key(selector, where)
     validate_enchanted_by_key(selector, where)
+    validate_has_counters_key(selector, where)
     validate_attached_to_key(selector, where)
     if "attached_to" in selector:
         host_filter = selector["attached_to"]

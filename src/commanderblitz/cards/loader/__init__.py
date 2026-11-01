@@ -43,6 +43,7 @@ from commanderblitz.engine.effects.selectors import (
     ZONE_NAMES,
     validate_colorless_key,
     validate_enchanted_by_key,
+    validate_has_counters_key,
     validate_selector,
 )
 from commanderblitz.engine.effects.values import (
@@ -3397,6 +3398,7 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
         _check_pt_keys(filt, path)
         validate_colorless_key(filt, path)
         validate_enchanted_by_key(filt, path)
+        validate_has_counters_key(filt, path)
         _check_attached_to_key(filt, path)
     branches = filt.get("any_of")
     if branches is None:
@@ -3746,6 +3748,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         _check_pt_keys(getattr(model, key, None), f"{where}.{key}")
         validate_colorless_key(getattr(model, key, None), f"{where}.{key}")
         validate_enchanted_by_key(getattr(model, key, None), f"{where}.{key}")
+        validate_has_counters_key(getattr(model, key, None), f"{where}.{key}")
         _check_attached_to_key(getattr(model, key, None), f"{where}.{key}")
     if model.affects is not None:
         _check_static_affects(model.affects, where, f"{where}.affects")

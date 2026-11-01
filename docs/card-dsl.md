@@ -1950,8 +1950,21 @@ to ask.
   "affects": { "controller": "you", "has_counters": true } }
 ```
 
-One or more counters of **any** kind (122.1); `false` is "with no counters on
-it". A static filter key for `tapped`'s licence — counters are board state no
+```jsonc
+// Liliana, Death Wielder: "−3: Destroy target creature with a -1/-1 counter on it."
+{ "id": "t1", "kind": "permanent", "count": 1,
+  "selector": { "zone": "battlefield", "types": ["Creature"], "controller": "any",
+                "has_counters": "-1/-1" } }
+```
+
+`true` is one or more counters of **any** kind (122.1); `false` is "with no
+counters on it"; a counter kind is one or more of **that** kind, so a creature
+with only +1/+1 or stun counters is not "a creature with a -1/-1 counter on it".
+The kind goes through the same near-miss check `add_counters` uses, and `"any"`
+is refused because `true` already says it. In a target spec the restriction is
+asked as the target is chosen and again on resolution (608.2b). `counters_on` in
+an `if` is the near miss: it changes what the ability does, not what it may
+target. A static filter key for `tapped`'s licence — counters are board state no
 layer writes, since no static puts a counter on anything — and honoured by every
 reader of the filter language (the layer pipeline, trigger filters, cost
 reductions) and by the effect-side selector. The answer moves the moment a

@@ -2202,6 +2202,19 @@ def has_any_counter(obj: GameObject) -> bool:
     return any(n > 0 for n in obj.counters.values())
 
 
+def has_counters_matches(obj: GameObject, spec: Any) -> bool:
+    """The ``has_counters`` filter key, the same in every filter language.
+
+    ``true`` is one or more counters of any kind (122.1) and ``false`` none at
+    all -- "with counters on them". A kind is one or more of **that** kind --
+    "target creature with a -1/-1 counter on it" (Liliana, Death Wielder),
+    which a creature carrying only +1/+1 or stun counters does not satisfy.
+    """
+    if isinstance(spec, str):
+        return obj.counter(spec) > 0
+    return has_any_counter(obj) == bool(spec)
+
+
 def counters_of_kind(obj: GameObject, kind: str) -> int:
     """How many counters of ``kind`` sit on ``obj`` -- every kind for ``"any"``.
 
@@ -2505,7 +2518,7 @@ def _matches_wherever(
     # (Innkeeper's Talent). Counters are board state no layer writes -- a
     # static never puts one on -- so this is a pipeline input for `tapped`'s
     # reason, and the answer moves the moment a counter arrives or leaves.
-    if "has_counters" in selector and has_any_counter(obj) != bool(selector["has_counters"]):
+    if "has_counters" in selector and not has_counters_matches(obj, selector["has_counters"]):
         return False
     # "Each creature that's **enchanted by an Aura you control**" (Eriette of
     # the Charmed Apple). Attachment is board state no layer writes, so it is a

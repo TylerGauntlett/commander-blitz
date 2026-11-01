@@ -13,6 +13,7 @@ from commanderblitz.engine.effects.conditions import validate_condition
 from commanderblitz.engine.effects.selectors import (
     validate_colorless_key,
     validate_enchanted_by_key,
+    validate_has_counters_key,
 )
 from commanderblitz.engine.effects.values import (
     PER_PLAYER_COUNT_KEYS,
@@ -219,6 +220,7 @@ def _validate_cost_reduction(spec: Any, where: str) -> None:
         _check_pt_keys(filt, f"{where}.{key}")
         validate_colorless_key(filt, f"{where}.{key}")
         validate_enchanted_by_key(filt, f"{where}.{key}")
+        validate_has_counters_key(filt, f"{where}.{key}")
         _check_reduction_type_names(filt, f"{where}.{key}")
         _validate_reduction_zones(filt, key, f"{where}.{key}")
     if "condition" in spec:
@@ -233,6 +235,7 @@ def _validate_static_count_filter(spec: Any, where: str) -> None:
     _check_pt_keys(spec, where)
     validate_colorless_key(spec, where)
     validate_enchanted_by_key(spec, where)
+    validate_has_counters_key(spec, where)
     _check_attached_to_key(spec, where)
     zone = str(spec.get("zone", "battlefield"))
     if zone not in STATIC_COUNT_ZONES:

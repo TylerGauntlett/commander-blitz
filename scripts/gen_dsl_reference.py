@@ -486,7 +486,7 @@ SELECTORS: dict[str, Entry] = {
     "extreme": ("The greatest/least of power, toughness or mana value in the pool.", None),
     "goaded": ("Is (or is not) goaded, by anyone (701.38).",
                '"Goaded creatures" — `goaded`'),
-    "has_counters": ("Has counters (of a kind) on it.", "`has_counters` — \"with counters on them\""),
+    "has_counters": ("Has counters on it: `true` any kind, or one named kind.", "`has_counters` — \"with counters on them\""),
     "haunted_by": ("Haunted by the named card.", "Haunt — the exile link pointing the other way"),
     "is_commander": ("Is (or is not) a commander.", None),
     "is_token": ("Is (or is not) a token.", None),

@@ -8,7 +8,7 @@ from collections.abc import Mapping
 from typing import TYPE_CHECKING, Any
 
 from .carddef import CardDef, Cost
-from .characteristics import chars, compare_pt, enchanted_by
+from .characteristics import chars, compare_pt, enchanted_by, has_counters_matches
 from .effects.conditions import evaluate_condition
 from .effects.selectors import has_printed_cost
 from .player_statics import spell_cost_reduction, spell_mana_tax
@@ -343,9 +343,7 @@ def _object_matches(
     # while pricing cannot depend on a static that has not run.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
-    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
-        filt["has_counters"]
-    ):
+    if "has_counters" in filt and not has_counters_matches(obj, filt["has_counters"]):
         return False
     if "is_token" in filt and bool(obj.is_token) != bool(filt["is_token"]):
         return False

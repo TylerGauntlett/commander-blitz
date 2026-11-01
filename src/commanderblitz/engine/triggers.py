@@ -36,6 +36,7 @@ from .characteristics import (
     granted_abilities,
     granted_ability_origin,
     granted_wards,
+    has_counters_matches,
     has_keyword,
     resolve_chosen_subtypes,
 )
@@ -2218,9 +2219,7 @@ def matches_card_filter(
     # permanent whose state `reset_permanent_state` has already cleared.
     if "tapped" in filt and bool(obj.tapped) != bool(filt["tapped"]):
         return False
-    if "has_counters" in filt and any(n > 0 for n in obj.counters.values()) != bool(
-        filt["has_counters"]
-    ):
+    if "has_counters" in filt and not has_counters_matches(obj, filt["has_counters"]):
         return False
     # "Whenever one or more **goaded** creatures deal combat damage to one of
     # your opponents" -- Puppet Master, String Puller. Live object state, sound
