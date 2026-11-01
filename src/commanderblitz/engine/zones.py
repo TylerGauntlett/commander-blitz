@@ -2236,6 +2236,11 @@ def snapshot(state: GameState, oid: int) -> dict[str, Any]:
         "types": sorted(c.types),
         "subtypes": sorted(c.subtypes),
         "colors": sorted(c.colors),
+        # Wickersmith's Tools: "X is the number of charge counters on this
+        # artifact", read after the artifact was sacrificed to pay for the
+        # ability. Its counters are gone once it moves (400.7), so the number
+        # is fixed here, as it last existed on the battlefield (608.2h).
+        "counters": {kind: n for kind, n in obj.counters.items() if n > 0},
     }
 
 

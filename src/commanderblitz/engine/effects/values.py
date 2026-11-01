@@ -444,7 +444,14 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         spec = expr["counters_on"]
         kind = str(spec.get("counter", PLUS_ONE))
 
-        pool = resolve_pool(ctx, spec.get("objects") or {"self_only": True})
+        objects = spec.get("objects") or {"self_only": True}
+        snap = ctx.bindings.get(str(objects["binding"])) if "binding" in objects else None
+        if isinstance(snap, Mapping) and "counters" in snap:
+            # A snapshot -- a sacrifice cost's `as` -- answers with the counters
+            # the object had as it last existed on the battlefield (608.2h),
+            # since the object itself lost them as it moved (400.7).
+            return int(snap["counters"].get(kind, 0))
+        pool = resolve_pool(ctx, objects)
         return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
     if "additional_paid" in expr:
         # Casualty and replicate. Read off the object being cast, which is what

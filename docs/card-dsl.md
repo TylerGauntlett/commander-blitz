@@ -1532,6 +1532,8 @@ Anywhere a number is expected -- the leaf list is
 { "resolutions_this_turn": "self" }             // …times THIS ability has resolved
 { "binding": "amount" }                         // a value the trigger carried
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
+{ "counters_on": { "counter": "charge",         // Wickersmith's Tools; a sacrifice cost's `as`
+                   "objects": { "binding": "sacrificed" } } }  //   snapshot keeps its counters
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
