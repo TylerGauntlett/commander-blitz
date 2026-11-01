@@ -52452,12 +52452,12 @@
     },
     "Contagion Clasp": {
       "edhrec_rank": 1405,
-      "gate": "template",
+      "gate": null,
       "name": "Contagion Clasp",
-      "reason": "no template for: When this artifact enters, put a -1/-1 counter on target creature",
+      "reason": "",
       "scryfall_id": "edd7f08a-3baf-4fb0-921e-b0e7b4a1a545",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Contagion Engine": {
@@ -67982,12 +67982,12 @@
     },
     "Devoted Druid": {
       "edhrec_rank": 1028,
-      "gate": "template",
+      "gate": null,
       "name": "Devoted Druid",
-      "reason": "no template for: Put a -1/-1 counter on this creature: Untap this creature",
+      "reason": "",
       "scryfall_id": "22589a81-3ea8-4e78-98c9-c015e7539cf9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Devoted Duelist": {
@@ -74472,12 +74472,12 @@
     },
     "Dread Tiller": {
       "edhrec_rank": 6260,
-      "gate": "template",
+      "gate": null,
       "name": "Dread Tiller",
-      "reason": "no template for: When this creature enters, put a -1/-1 counter on target creature",
+      "reason": "",
       "scryfall_id": "5e2692eb-5a01-4b62-9d4d-263a553975ab",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dread Wanderer": {
@@ -77112,12 +77112,12 @@
     },
     "Dusk Urchins": {
       "edhrec_rank": 6618,
-      "gate": "template",
+      "gate": null,
       "name": "Dusk Urchins",
-      "reason": "no template for: Whenever this creature attacks or blocks, put a -1/-1 counter on it",
+      "reason": "",
       "scryfall_id": "fce69f5c-c4c4-4c8b-aa29-8cc8a84587d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duskana, the Rage Mother": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**136 cards** blocked by **122** capabilities.
+**138 cards** blocked by **125** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,6 +53,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [damage-cant-be-prevented](#damage-cant-be-prevented) | 1 | 5549 | static_effect |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -108,6 +109,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
+| [remove-counters-from-among](#remove-counters-from-among) | 1 | 7871 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
@@ -134,6 +136,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
 | [variable-target-count-with-minimum](#variable-target-count-with-minimum) | 1 | 6551 | engine |
+| [wither](#wither) | 1 | 5549 | static_effect |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -865,6 +868,21 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+
+</details>
+
+## damage-cant-be-prevented
+
+Blocks **1** card.
+
+- **(static_effect)** a global static (affects_player any) under which every prevention effect -- prevent_damage statics, prevent_damage / prevent_damage_permanent / prevent_combat_damage shields, protection's damage prevention -- is not applied to any damage dealt while the permanent is on the battlefield
+  <br>Why the existing vocabulary won't do: static_effects has prevent_damage, prevent_all_but and protection, all of which ADD prevention; nothing switches prevention off. The packet notes say outright that "Damage can't be prevented" is a different effect from cant_gain_life, and no static or op in reference names it
+
+<details><summary>Cards waiting on this</summary>
+
+- **Everlasting Torment** (rank 5549) — `everlasting_torment`
+  - Damage can't be prevented.
+  - All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)
 
 </details>
 
@@ -1662,6 +1680,21 @@ Blocks **1** card.
 
 </details>
 
+## remove-counters-from-among
+
+Blocks **1** card.
+
+- **(op)** a resolution-time effect letting the controller remove any number of counters, of any kinds, distributed as they choose among any permanents on the battlefield (zero allowed), binding the total removed under `as` so later effects (draw, lose_life) can read it via {"binding": ...}
+  <br>Why the existing vocabulary won't do: The remove_counters op takes a fixed amount of one named counter kind from each chosen object and binds nothing, so it cannot express a player-chosen total across mixed kinds and permanents nor report how many were removed; remove_counters_from_among exists only as an activated-ability cost key, not as an op usable in spell_effects
+
+<details><summary>Cards waiting on this</summary>
+
+- **Eventide's Shadow** (rank 7871) — `eventide_s_shadow`
+  - Remove any number of counters from among permanents on the battlefield.
+  - You draw cards and lose life equal to the number of counters removed this way.
+
+</details>
+
 ## remove-subtype
 
 Blocks **1** card.
@@ -2027,6 +2060,21 @@ Blocks **1** card.
 
 - **Aberrant Return** (rank 6551) — `aberrant_return`
   - Put one, two, or three target creature cards from graveyards onto the battlefield under your control.
+
+</details>
+
+## wither
+
+Blocks **1** card.
+
+- **(static_effect)** a global static making all damage to creatures, from every source (spells, abilities, permanents in any zone, both players'), be dealt as -1/-1 counters, as though each source had wither
+  <br>Why the existing vocabulary won't do: the wither keyword exists, but a grant_keyword static can only grant it to permanents matched by affects, so damage from instants, sorceries and other non-permanent sources would still be marked normally; replace_damage only scales the amount (damage_multiplier/damage_addend) and cannot change how damage is dealt
+
+<details><summary>Cards waiting on this</summary>
+
+- **Everlasting Torment** (rank 5549) — `everlasting_torment`
+  - Damage can't be prevented.
+  - All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)
 
 </details>
 

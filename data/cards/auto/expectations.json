@@ -2777,6 +2777,10 @@
     },
     "zone": "graveyard"
   },
+  "contagion_clasp": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "contagious_nim": {
     "zone": "battlefield"
   },
@@ -3581,6 +3585,10 @@
   "devilthorn_fox": {
     "zone": "battlefield"
   },
+  "devoted_druid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "devoted_hero": {
     "zone": "battlefield"
   },
@@ -3877,6 +3885,9 @@
   "dread_statuary": {
     "zone": "battlefield"
   },
+  "dread_tiller": {
+    "zone": "battlefield"
+  },
   "dreadhorde_invasion": {
     "zone": "battlefield"
   },
@@ -3959,6 +3970,13 @@
     "zone": "battlefield"
   },
   "dusk_imp": {
+    "zone": "battlefield"
+  },
+  "dusk_urchins": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "duskborne_skymarcher": {
