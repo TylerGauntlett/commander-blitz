@@ -755,7 +755,16 @@ def _cast_options(
     # Only from hand: an alternative cost is permission to cast the card *this
     # way*, and nothing extends it to the graveyard or the command zone the way
     # `retrace` and commander casting do.
-    if card.evoke is not None and state.objects[oid].zone is Zone.HAND:
+    #
+    # A non-mana evoke payment is priced here, before the line is offered, for
+    # the pitch spells' reason below: Endurance held with no other green card
+    # cannot be evoked at all. `oid` as the source keeps it from pitching
+    # itself (601.2a).
+    if (
+        card.evoke is not None
+        and state.objects[oid].zone is Zone.HAND
+        and (card.evoke_payment is None or can_pay(state, pid, card.evoke_payment, oid))
+    ):
         out += _cast_variant(
             state, pid, oid, card, tuples, extra_generic=extra_generic, evoked=True
         )

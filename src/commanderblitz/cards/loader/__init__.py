@@ -16,6 +16,7 @@ from __future__ import annotations
 
 import dataclasses
 import json
+from collections import Counter
 from collections.abc import Iterable, Mapping
 from pathlib import Path
 from typing import Any
@@ -91,6 +92,7 @@ from .linking import _derive_color_identity
 from .mana import (
     _ANY_COLOR_OPTIONS,
     _ANY_TYPE_OPTIONS,
+    _chosen_color_or_fixed,
     _compile_cost,
     _mana_amount,
     _mana_grant,
@@ -555,6 +557,60 @@ def _implied_replacements(model: CardModel) -> tuple[dict[str, Any], ...]:
             }
         )
     return tuple(out)
+
+
+def _same_symbols(a: ManaCost, b: ManaCost) -> bool:
+    """Whether two mana costs ask for the same symbols, in whatever order printed.
+
+    The loader's "one cast offered twice" test for an alternative cost. Mana
+    value is the wrong question: {3}{U} and {2}{U}{U} share it, and a player
+    with one Island can pay the first and not the second.
+    """
+    return (
+        a.generic == b.generic
+        and a.colored == b.colored
+        and a.x_count == b.x_count
+        and Counter(a.hybrid) == Counter(b.hybrid)
+    )
+
+
+def _compile_evoke(model: CardModel, where: str) -> tuple[ManaCost | None, Cost | None]:
+    """A card's ``evoke`` as ``(mana, the rest of the node)``.
+
+    A mana string is the mana alone. A full cost node -- the pitch elementals'
+    "Evoke--Exile a green card from your hand" -- splits the way
+    ``alternative_cost`` and flashback do: the mana replaces the printed cost,
+    an empty `ManaCost` when the node has none, and everything else is a
+    payment made after it (601.2g), ``None`` when there is nothing else.
+
+    The refusals are ``alternative_cost``'s, for its reasons: a key that
+    charges the source permanent names something a spell in hand does not
+    have, a discount is read off no evoke branch, and a node charging nothing
+    is a free cast.
+    """
+    if model.evoke is None or model.evoke == "":
+        return None, None
+    if isinstance(model.evoke, str):
+        return ManaCost.parse(model.evoke), None
+    misplaced = {key for key in NOT_A_CAST_TIME_COST if getattr(model.evoke, key, None)}
+    if misplaced:
+        raise DslError(
+            f"{where}.evoke: {sorted(misplaced)} charge the source permanent, and "
+            f"the source of a cast-time cost is the spell itself -- the line would "
+            f"load and never be castable"
+        )
+    if model.evoke.mana_reduction is not None:
+        raise DslError(
+            f"{where}.evoke: 'mana_reduction' is the graveyard cost's rider; nothing "
+            f"prices the evoke line through `variant_reduction`, so it would load "
+            f"and be ignored"
+        )
+    cost = _compile_cost(model.evoke, f"{where}.evoke")
+    if cost.charges_nothing():
+        if not cost.mana.text:
+            raise DslError(f"{where}.evoke: needs 'mana' or a non-mana payment")
+        return cost.mana, None
+    return cost.mana, cost.without_mana()
 
 
 def _compile_impending(
@@ -1272,7 +1328,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     # Evoke is two halves the same way, and half of it is the same silent
     # failure: a cheaper cast that never dies, or a sacrifice clause that can
     # never fire.  Both would load cleanly.
-    evoke = ManaCost.parse(model.evoke) if model.evoke else None
+    evoke, evoke_payment = _compile_evoke(model, where)
     emerge = ManaCost.parse(model.emerge) if model.emerge else None
     if emerge is not None and evoke is not None:
         # Checked before either half-a-cost guard below, because a card
@@ -1330,10 +1386,15 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if evoke is not None:
         # What no alternative may ever be is *the same price as the printed
         # one*: that is one cast offered twice, and the second line is dead
-        # weight nobody would notice however the card labels it.
-        if evoke.mana_value() == mana_cost.mana_value():
+        # weight nobody would notice however the card labels it. The same
+        # *symbols*, not the same mana value: Slithermuse is printed
+        # {2}{U}{U} and evokes for {3}{U}, which one Island and three other
+        # lands can pay and the printed cost cannot -- a different cast with
+        # the same mana value. A non-mana payment on the node makes it a
+        # different price whatever its mana says.
+        if evoke_payment is None and _same_symbols(evoke, mana_cost):
             raise DslError(
-                f"{where}: evoke {model.evoke!r} costs the same as the printed cost -- "
+                f"{where}: evoke {evoke.text!r} costs the same as the printed cost -- "
                 f"the same cast offered twice, and nobody would take the second"
             )
         # Costlier than printed is dead weight too, but only for evoke *proper*,
@@ -1348,7 +1409,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         # label keeps evoke's discount-only invariant, and a card that has
         # renamed the cost has already said out loud that it is not evoke.
         if evoke.mana_value() > mana_cost.mana_value() and model.evoke_label == "evoked":
-            raise DslError(f"{where}: evoke {model.evoke!r} is not cheaper than the printed cost")
+            raise DslError(f"{where}: evoke {evoke.text!r} is not cheaper than the printed cost")
 
     # Warp: evoke's guards, one fewer and one more.
     #
@@ -2189,6 +2250,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         escalate=escalate,
         strive=strive,
         evoke=evoke,
+        evoke_payment=evoke_payment,
         bestow=bestow,
         mutate=mutate,
         melds_with=model.melds_with,
@@ -3032,6 +3094,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
     mana_each_color_among: Mapping[str, Any] | None = None
     mana_identity = False
     mana_chosen_color = False
+    mana_chosen_color_fixed: tuple[tuple[int, ...], ...] = ()
     mana_any_one_color = False
     mana_split: tuple[str, ...] = ()
     if model.is_mana_ability:
@@ -3251,6 +3314,21 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # ability would never be offered whatever colour was chosen.
             mana_options = _ANY_COLOR_OPTIONS
             mana_amount = None
+        elif (fixed := _chosen_color_or_fixed(mana_effects, where)) is not None:
+            # "{T}: Add {R} or one mana of the chosen color." The Thriving
+            # lands: the chosen-colour question above as one mode beside fixed
+            # symbols. The fixed modes are read now; the chosen one is asked of
+            # the permanent by `costs.mana_options_of`, which offers the fixed
+            # options and then the chosen colour -- and only the fixed ones
+            # before a colour is named.
+            mana_chosen_color = True
+            mana_chosen_color_fixed = fixed
+            # The superset, widened by any fixed symbol outside it ({C}), so
+            # `solver_taps` and `offerable_mana_ability` see a mana source.
+            mana_options = _ANY_COLOR_OPTIONS + tuple(
+                option for option in fixed if option not in _ANY_COLOR_OPTIONS
+            )
+            mana_amount = None
         else:
             mana_options = _mana_options(mana_effects, where)
             mana_amount = _mana_amount(mana_effects, where)
@@ -3286,6 +3364,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         mana_split=mana_split,
         mana_any_one_color=mana_any_one_color,
         mana_chosen_color=mana_chosen_color,
+        mana_chosen_color_fixed=mana_chosen_color_fixed,
         mana_restriction=mana_restriction,
         mana_uncounterable=model.mana_uncounterable,
         mana_grant=mana_grant,

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**133 cards** blocked by **120** capabilities.
+**143 cards** blocked by **131** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -33,6 +33,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
+| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
@@ -45,6 +46,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
+| [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
@@ -58,6 +60,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [distribute-moved-counters](#distribute-moved-counters) | 1 | 387 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
@@ -71,8 +74,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
+| [foretold](#foretold) | 1 | 3713 | value |
+| [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
+| [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
+| [graveyard-cast-per-permanent-type](#graveyard-cast-per-permanent-type) | 1 | 1104 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
@@ -84,6 +91,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
+| [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
@@ -92,6 +100,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [multikicker](#multikicker) | 1 | 251 | cost |
+| [myriad](#myriad) | 1 | 6808 | keyword |
 | [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
@@ -106,11 +115,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
+| [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
+| [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -575,6 +586,20 @@ Blocks **1** card.
 
 </details>
 
+## add-mana-on-tap-any-color
+
+Blocks **1** card.
+
+- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver treating it as a wildcard pip
+  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked, so a per-tap color choice cannot be expressed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fertile Ground** (rank 1052) — `fertile_ground`
+  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
+
+</details>
+
 ## additional-cost-target
 
 Blocks **1** card.
@@ -744,6 +769,21 @@ Blocks **1** card.
 
 - **Primo, the Unbounded** (rank 8933) — `primo_the_unbounded`
   - Whenever one or more creatures you control with base power 0 deal combat damage to a player, create a 0/0 green and blue Fractal creature token. Put a number of +1/+1 counters on it equal to the damage dealt.
+
+</details>
+
+## companion
+
+Blocks **1** card.
+
+- **(engine)** the Companion keyword ability (702.139): a deckbuilding condition checked against the starting deck (here: no card's mana cost contains the same mana symbol more than once), a chosen-companion slot outside the game, and a special action, once per game, paying {3} at sorcery speed to put the companion into its owner's hand
+  <br>Why the existing vocabulary won't do: No card_level_cost_keys, card_level_rider_keys or keyword covers it: the deck validator has no companion condition, there is no outside-the-game zone, and no special action moves a card from outside the game to hand; moxfield import explicitly ignores companions
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jegantha, the Wellspring** (rank 3861) — `jegantha_the_wellspring`
+  - Companion — No card in your starting deck has more than one of the same mana symbol in its mana cost. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)
+  - {T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs.
 
 </details>
 
@@ -930,6 +970,20 @@ Blocks **1** card.
 
 - **Magma Opus** (rank 5125) — `magma_opus`
   - Magma Opus deals 4 damage divided as you choose among any number of targets.
+
+</details>
+
+## divided-damage-on-trigger
+
+Blocks **1** card.
+
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fury** (rank 2389) — `fury`
+  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
 
 </details>
 
@@ -1125,6 +1179,34 @@ Blocks **1** card.
 
 </details>
 
+## foretold
+
+Blocks **1** card.
+
+- **(value)** a condition key `foretold: true` that an `if` inside spell_effects can read, true when the resolving spell was cast from exile for its foretell cost (the CastAction's `foretold` flag carried onto the stack object)
+  <br>Why the existing vocabulary won't do: The card-level `foretell` cost key lets the card be foretold and cast, and the engine tracks `foretold` on the cast action, but condition_keys has no way to ask it: `evoked`, `kicked`, `overloaded`, `impending` and `cost_option` each read a different alternative/additional cost, and `cast_from_hand`/`zone_is` cannot tell a foretold cast from any other cast out of exile
+
+<details><summary>Cards waiting on this</summary>
+
+- **Haunting Voyage** (rank 3713) — `haunting_voyage`
+  - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
+
+</details>
+
+## free-cast-exile-instead
+
+Blocks **1** card.
+
+- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
+  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Impulsivity** (rank 6248) — `impulsivity`
+  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
+
+</details>
+
 ## free-cast-tuck-to-library-bottom
 
 Blocks **1** card.
@@ -1140,6 +1222,20 @@ Blocks **1** card.
 
 </details>
 
+## grant-evoke
+
+Blocks **1** card.
+
+- **(static_effect)** a static that grants evoke with a printed mana price to a class of spells (affects_spells: permanent spells with subtype Elemental, controller you) cast from a given zone (hand only): the cast line offers the granted mana cost as an alternative cost, marks the spell evoked, and the permanent it becomes is sacrificed when it enters (the evoke sacrifice trigger), with the evoked condition readable by the spell's own enters triggers
+  <br>Why the existing vocabulary won't do: card-level `evoke` only prices the card's own printed evoke; `granted_alternative_cost` accepts only pay_energy/pay_life and attaches no sacrifice-on-enter or evoked flag, and has no zone gate for 'from your hand'; `grant_warp` grants a mana alternative cost but with warp's exile-at-end-step rider, not evoke's sacrifice on entering
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ashling, the Limitless** (rank 5749) — `ashling_the_limitless`
+  - Elemental permanent spells you cast from your hand gain evoke {4} as you cast them
+
+</details>
+
 ## grantable-player-statics
 
 Blocks **1** card.
@@ -1151,6 +1247,20 @@ Blocks **1** card.
 
 - **The Book of Exalted Deeds** (rank 3589) — `the_book_of_exalted_deeds`
   - {W}{W}{W}, {T}, Exile The Book of Exalted Deeds: Put an enlightened counter on target Angel. It gains "You can't lose the game and your opponents can't win the game." Activate only as a sorcery.
+
+</details>
+
+## graveyard-cast-per-permanent-type
+
+Blocks **1** card.
+
+- **(static_effect)** a cast_from_graveyard permission (plus a land-play-from-graveyard permission) metered once per turn PER PERMANENT TYPE (artifact, creature, enchantment, land, planeswalker, battle) from the same granting permanent, where a card with several permanent types has its controller choose which type's use it spends as it is played
+  <br>Why the existing vocabulary won't do: cast_from_graveyard with affects_spells + static_max_per_turn is Edgar-shaped: casting._graveyard_cast_permission bills every use to one ledger slot per granting permanent (GRAVEYARD_CAST_SLOT keyed on source oid), so five per-type statics on Muldrotha share one counter -- cap 1 allows only one cast total, cap 5 allows five creatures. There is no per-type slot and no choice of which type an artifact creature spends. play_lands_from_graveyard is unmetered and not tied to that per-turn allowance either
+
+<details><summary>Cards waiting on this</summary>
+
+- **Muldrotha, the Gravetide** (rank 1104) — `muldrotha_the_gravetide`
+  - During each of your turns, you may play a land and cast a permanent spell of each permanent type from your graveyard
 
 </details>
 
@@ -1311,6 +1421,21 @@ Blocks **1** card.
 
 </details>
 
+## mana-cant-pay-generic
+
+Blocks **1** card.
+
+- **(value)** a mana_restriction (or add_mana rider) that forbids the produced mana from paying the generic portion of any cost while still letting it pay coloured, hybrid and other non-generic pips of spells, abilities and other payments
+  <br>Why the existing vocabulary won't do: mana_restriction (engine/mana.py compile_restriction) restricts by what is being paid for -- cast / activate / other, filtered by spell types, mana value or X -- never by which pip of the cost the mana pays, so the generic-versus-coloured split this sentence needs has no spelling; dropping it makes a strictly better card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jegantha, the Wellspring** (rank 3861) — `jegantha_the_wellspring`
+  - Companion — No card in your starting deck has more than one of the same mana symbol in its mana cost. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)
+  - {T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs.
+
+</details>
+
 ## mana-spent-enters-with-counters
 
 Blocks **1** card.
@@ -1422,6 +1547,20 @@ Blocks **1** card.
 - **Everflowing Chalice** (rank 251) — `everflowing_chalice`
   - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
   - This artifact enters with a charge counter on it for each time it was kicked.
+
+</details>
+
+## myriad
+
+Blocks **1** card.
+
+- **(keyword)** the myriad keyword (702.116), grantable with grant_keyword until end of turn: whenever the creature attacks, for each opponent other than the defending player, its controller may create a token copy of it tapped and attacking that player or a planeswalker they control, and those tokens are exiled at end of combat
+  <br>Why the existing vocabulary won't do: myriad is not in the keyword list, so grant_keyword cannot give it. Composing it from grant_ability with a granted attacks trigger (for_each_player + may + copy_permanent with attacking/or_planeswalker, then a this_combat delayed exile) would need a player set of 'each opponent other than the defending player' that no players spec names, and a granted ability is not the keyword (it is not seen by keyword checks or copied as myriad)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mass of Mysteries** (rank 6808) — `mass_of_mysteries`
+  - At the beginning of combat on your turn, another target Elemental you control gains myriad until end of turn
 
 </details>
 
@@ -1628,6 +1767,20 @@ Blocks **1** card.
 
 </details>
 
+## random-order-bottom
+
+Blocks **1** card.
+
+- **(op)** a `random_order` option on `put_on_top` (with `bottom: true`) that places the moved cards on the bottom of the library in a random order, for 'puts all the cards from their graveyard on the bottom of their library in a random order' (Endurance, also Tormod's Crypt-style tucks, cascade/discover leftovers).
+  <br>Why the existing vocabulary won't do: `put_on_top` (ops_cards.py) offers `bottom` and `any_order` (owner chooses order) or pool order; neither is random, and a `shuffle` op afterwards would randomise the whole library, not just the bottom segment.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Endurance** (rank 1343) — `endurance`
+  - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
+
+</details>
+
 ## remove-all-counters
 
 Blocks **1** card.
@@ -1696,6 +1849,20 @@ Blocks **1** card.
 
 - **Throes of Chaos** (rank 5451) — `throes_of_chaos`
   - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
+
+</details>
+
+## reveal-from-hand
+
+Blocks **1** card.
+
+- **(cost)** a cost that reveals a card matching a selector (here an Elemental card) from the payer's hand, the card staying in hand, usable as a self_enters_tapped replacement's `unless_cost` so the land enters untapped only if the player chooses to reveal one
+  <br>Why the existing vocabulary won't do: `unless_cost` on self_enters_tapped is offered through costs.can_pay/pay, but no cost key reveals from hand only: `behold` also accepts a permanent you control (so an Elemental on the battlefield would wrongly untap the land), and `exile_from_hand`/`discard_selector` move the card. The starting point's bare self_enters_tapped makes the land always enter tapped, which proxy.py itself flags as 'the printed condition is not modelled'. The haste line is expressible with grant_keyword on a target creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flamekin Village** (rank 3623) — `flamekin_village`
+  - As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.
 
 </details>
 

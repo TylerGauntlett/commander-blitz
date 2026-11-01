@@ -1838,7 +1838,9 @@ def _covered(card: CardDef, line: str) -> bool:
     # the "it's sacrificed when it enters" trigger it really does have.
     if card.emerge is not None and stripped.lower().startswith("emerge "):
         return True
-    if card.evoke is not None and stripped.lower().startswith("evoke "):
+    # The em dash is the non-mana spelling: "Evoke—Exile a green card from
+    # your hand." (Endurance), whose price is not a mana string.
+    if card.evoke is not None and stripped.lower().startswith(("evoke ", "evoke—", "evoke-")):
         return True
 
     # "Bestow {1}{G}" is that same card-level alternative cost once more, and

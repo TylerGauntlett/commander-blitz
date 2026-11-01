@@ -42,6 +42,19 @@
     },
     "zone": "graveyard"
   },
+  "abundant_countryside": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "abundant_growth": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "academy_manufactor": {
     "battlefield_count": 33,
     "hand_size": {
@@ -1177,6 +1190,15 @@
   "bane_alley_blackguard": {
     "zone": "battlefield"
   },
+  "bane_of_progress": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "banehound": {
     "zone": "battlefield"
   },
@@ -1346,6 +1368,14 @@
     "battlefield_count": 33,
     "life": {
       "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "belonging": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 3,
+      "id": "shapeshifter_1_1_c_changeling"
     },
     "zone": "battlefield"
   },
@@ -2288,6 +2318,16 @@
     },
     "zone": "graveyard"
   },
+  "cavalier_of_thorns": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 6
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "battlefield"
+  },
   "cave_of_the_frost_dragon": {
     "zone": "battlefield"
   },
@@ -2968,6 +3008,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cream_of_the_crop": {
+    "zone": "battlefield"
+  },
   "creative_technique": {
     "graveyard_size": {
       "0": 4
@@ -2978,6 +3021,11 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "graveyard"
+  },
+  "crib_swap": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
   "crimson_kobolds": {
@@ -3568,6 +3616,10 @@
   "deranged_whelp": {
     "zone": "battlefield"
   },
+  "descendants_fury": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "desert_cerodon": {
     "zone": "battlefield"
   },
@@ -4060,6 +4112,16 @@
   "echoing_deeps": {
     "zone": "battlefield"
   },
+  "eclipsed_flamekin": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "eclipsed_steppe": {
     "zone": "battlefield"
   },
@@ -4168,6 +4230,17 @@
       "0": 40
     },
     "zone": "battlefield"
+  },
+  "elemental_spectacle": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 43
+    },
+    "tokens": {
+      "count": 1,
+      "id": "elemental_5_5_rg"
+    },
+    "zone": "graveyard"
   },
   "elementalist_adept": {
     "zone": "battlefield"
@@ -4642,6 +4715,10 @@
     },
     "zone": "graveyard"
   },
+  "faeburrow_elder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "faerie_artisans": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -5065,6 +5142,10 @@
   "flameborn_viron": {
     "zone": "battlefield"
   },
+  "flamebraider": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "flamerush_rider": {
     "zone": "battlefield"
   },
@@ -5316,6 +5397,11 @@
     "zone": "battlefield"
   },
   "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "foundation_breaker": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "foundry_assembler": {
@@ -6219,6 +6305,16 @@
   "greensleeves_maro_sorcerer": {
     "zone": "battlefield"
   },
+  "greenwarden_of_murasa": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "greenweaver_druid": {
     "zone": "battlefield"
   },
@@ -6830,6 +6926,14 @@
       "0": 44
     }
   },
+  "hoofprints_of_the_stag": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "horde_of_notions": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "horizon_of_progress": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7064,6 +7168,13 @@
       "graveyard"
     ]
   },
+  "incandescent_soulstoke": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "incremental_blight": {
     "zone": "graveyard"
   },
@@ -7123,6 +7234,11 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "ingot_chewer": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "inkmoth_nexus": {
@@ -7477,6 +7593,16 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "jubilation": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "trample"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "jukai_messenger": {
     "zone": "battlefield"
   },
@@ -7765,6 +7891,16 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "kindred_summons": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "kinetic_ooze": {
     "counters": {
       "amount": 20,
@@ -8024,6 +8160,14 @@
     "zone": "battlefield"
   },
   "lagac_lizard": {
+    "zone": "battlefield"
+  },
+  "lamentation": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 43
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "lance": {
@@ -8584,6 +8728,15 @@
   },
   "maelstrom_of_the_spirit_dragon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "maelstrom_wanderer": {
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "haste"
+      ]
+    },
     "zone": "battlefield"
   },
   "magefire_wings": {
@@ -10219,6 +10372,14 @@
     },
     "zone": "graveyard"
   },
+  "omnath_locus_of_rage": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "omnath_locus_of_the_roil": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "omnath_locus_of_the_void": {
     "zone": "battlefield"
   },
@@ -10921,6 +11082,13 @@
   "priests_of_norn": {
     "zone": "battlefield"
   },
+  "primal_beyond": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "primal_frenzy": {
     "zone": [
       "battlefield",
@@ -11310,6 +11478,10 @@
   "raging_poltergeist": {
     "zone": "battlefield"
   },
+  "raging_ravine": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "raging_redcap": {
     "zone": "battlefield"
   },
@@ -11446,6 +11618,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "realmwalker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "reanimate": {
     "battlefield_count": 33,
@@ -11874,6 +12050,12 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "risen_reef": {
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
   },
   "risen_sanctuary": {
     "zone": "battlefield"
@@ -12709,6 +12891,11 @@
   "sharlayan_nation_of_scholars": {
     "zone": "battlefield"
   },
+  "shatter_the_sky": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "shattered_landscape": {
     "zone": "battlefield"
   },
@@ -12790,6 +12977,13 @@
     },
     "zone": "battlefield"
   },
+  "shimmercreep": {
+    "life": {
+      "0": 42,
+      "1": 38
+    },
+    "zone": "battlefield"
+  },
   "shimmering_barrier": {
     "zone": "battlefield"
   },
@@ -12848,6 +13042,14 @@
     "hand_size": {
       "0": 2
     },
+    "zone": "battlefield"
+  },
+  "shriekmaw": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "shrike_force": {
@@ -13218,6 +13420,13 @@
   "slippery_karst": {
     "zone": "battlefield"
   },
+  "slithermuse": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sliver_construct": {
     "zone": "battlefield"
   },
@@ -13236,6 +13445,13 @@
     "tokens": {
       "count": 1,
       "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
+  "smokebraider": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -13616,6 +13832,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "springleaf_parade": {
+    "battlefield_count": 53,
+    "tokens": {
+      "count": 20,
+      "id": "shapeshifter_1_1_c_changeling"
+    },
+    "zone": "battlefield"
+  },
   "springmane_cervin": {
     "life": {
       "0": 42
@@ -13966,6 +14190,10 @@
     "zone": "graveyard"
   },
   "submerged_boneyard": {
+    "zone": "battlefield"
+  },
+  "subterfuge": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "subterranean_cavern": {
@@ -14912,6 +15140,29 @@
       "0": 2
     }
   },
+  "thriving_bluff": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thriving_grove": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thriving_heath": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thriving_isle": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "thriving_moor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "throne_of_the_high_city": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15004,6 +15255,13 @@
     "life": {
       "0": 43
     }
+  },
+  "titan_of_industry": {
+    "life": {
+      "0": 45
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
   },
   "titan_of_littjara": {
     "zone": "battlefield"
@@ -15898,6 +16156,14 @@
     "zone": "battlefield"
   },
   "vernal_fen": {
+    "zone": "battlefield"
+  },
+  "vernal_sovereign": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "elemental_x_x_gw_creature_count"
+    },
     "zone": "battlefield"
   },
   "vestige_of_emrakul": {
@@ -16871,6 +17137,10 @@
     "zone": "battlefield"
   },
   "yargle_glutton_of_urborg": {
+    "zone": "battlefield"
+  },
+  "yarok_the_desecrated": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "yavimaya_coast": {

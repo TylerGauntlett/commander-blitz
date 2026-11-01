@@ -187,7 +187,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `flip_coin` | Dice |  | Flip a coin (705); `effects` on a win, `else` on a loss. | [flip_coin — won or lost](card-dsl-cookbook.md#flip_coin--won-or-lost) |
 | `roll_dice` | Dice | yes | Roll N dice with F faces; `as` records the results. | [Rolling dice](card-dsl-cookbook.md#rolling-dice) |
 | `choose_card_name` | Control flow | yes | Choose a card name; `as` records it. | ["Choose a card name"](card-dsl-cookbook.md#choose-a-card-name) |
-| `choose_color` | Control flow |  | Choose a color, readable later. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
+| `choose_color` | Control flow |  | Choose a color, readable later; `except_colors` removes colors from the offer. | ["Choose a color"](card-dsl-cookbook.md#choose-a-color) |
 | `choose_mode` | Control flow |  | Choose one or more modes and run them. | [Modal spells with a target](card-dsl-cookbook.md#modal-spells-with-a-target) |
 | `choose_permanents` | Control flow | yes | Mark permanents without acting on them; `as` records them. | [choose_permanents — marking without acting](card-dsl-cookbook.md#choose_permanents--marking-without-acting) |
 | `choose_player` | Control flow | yes | Choose a player; `as` records the seat. | [Effect ops](card-dsl.md#effect-ops) |
@@ -774,7 +774,7 @@ The alternative and additional costs that live on the *card* rather than inside 
 | `dredge` | Dredge N. | [Dredge, madness and miracle — replacements that stop to ask](card-dsl-cookbook.md#dredge-madness-and-miracle--replacements-that-stop-to-ask) |
 | `emerge` | Emerge cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `escalate` | Escalate cost (mana or a full cost), paid once per mode beyond the first. | [Escalate](card-dsl-cookbook.md#escalate) |
-| `evoke` | Evoke cost. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
+| `evoke` | Evoke cost (mana or a full cost, as a pitch evoke); the cast is evoked. | [Alternative ways to play a card](card-dsl-cookbook.md#alternative-ways-to-play-a-card) |
 | `flashback` | Flashback cost. | [Flashback](card-dsl-cookbook.md#flashback) |
 | `foretell` | Foretell cost. | [Foretell](card-dsl-cookbook.md#foretell) |
 | `gift` | The gift promised (a noun phrase). | [Gift — a promise made to one opponent, for nothing](card-dsl-cookbook.md#gift--a-promise-made-to-one-opponent-for-nothing) |

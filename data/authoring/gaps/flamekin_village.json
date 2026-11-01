@@ -1,0 +1,18 @@
+{
+  "card_id": "flamekin_village",
+  "name": "Flamekin Village",
+  "oracle_text": "As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.\n{T}: Add {R}.\n{R}, {T}: Target creature gains haste until end of turn.",
+  "blocked_sentences": [
+    "As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped."
+  ],
+  "needs": [
+    {
+      "capability": "reveal_from_hand",
+      "kind": "cost",
+      "what": "a cost that reveals a card matching a selector (here an Elemental card) from the payer's hand, the card staying in hand, usable as a self_enters_tapped replacement's `unless_cost` so the land enters untapped only if the player chooses to reveal one",
+      "why_existing_wont_do": "`unless_cost` on self_enters_tapped is offered through costs.can_pay/pay, but no cost key reveals from hand only: `behold` also accepts a permanent you control (so an Elemental on the battlefield would wrongly untap the land), and `exile_from_hand`/`discard_selector` move the card. The starting point's bare self_enters_tapped makes the land always enter tapped, which proxy.py itself flags as 'the printed condition is not modelled'. The haste line is expressible with grant_keyword on a target creature"
+    }
+  ],
+  "closest_existing": ["behold", "self_enters_tapped"],
+  "confidence": "high"
+}

@@ -823,6 +823,13 @@ class Game:
             ok = yield from pay(state, pid, card.alternative_cost.without_mana(), oid)
             if not ok:  # pragma: no cover - legality already proved payability
                 return
+        # The evoke cost's own non-mana half -- "Evoke--Exile a green card from
+        # your hand" -- charged the same way at the same moment, and priced by
+        # legality through the same `can_pay` with the same source.
+        if action.evoked and card.evoke is not None and card.evoke_payment is not None:
+            ok = yield from pay(state, pid, card.evoke_payment, oid)
+            if not ok:  # pragma: no cover - legality already proved payability
+                return
 
         # Rule 601.2g: additional costs are paid after the mana. Sacrificing
         # here rather than before means a creature that taps for mana can still

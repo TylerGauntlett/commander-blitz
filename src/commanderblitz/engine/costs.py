@@ -635,17 +635,29 @@ def _chosen_color_options(
     never picks a source that produces nothing -- and it is the same answer
     `_identity_options` gives a colourless commander.
 
+    "{T}: Add {R} or one mana of the chosen color" -- the Thriving lands --
+    carries its fixed options in `mana_chosen_color_fixed`. Those are offered
+    always and first, in printed order, and the chosen colour follows once one
+    is named: {R} alone before the choice, {R} and {G} after a green one. A
+    chosen colour the fixed options already make is not offered twice.
+
     It **only looks**: reading `chosen_color` asks nothing and puts nothing on
     the stack, so this stays a mana ability for 605.1a.
     """
+    fixed = ability.mana_chosen_color_fixed
     obj = state.objects.get(oid)
     chosen = obj.chosen_color if obj is not None else None
     if chosen is None:
-        return ()
+        return fixed
     index = SYMBOL_INDEX.get(chosen)
     if index is None:  # pragma: no cover - the loader only writes WUBRG here
-        return ()
-    return tuple(option for option in ability.mana_options if option[index])
+        return fixed
+    live = tuple(
+        option
+        for option in ability.mana_options
+        if option[index] and sum(option) == 1 and option not in fixed
+    )
+    return fixed + live
 
 
 #: How many ways a split may be offered before it is truncated. Two colours and

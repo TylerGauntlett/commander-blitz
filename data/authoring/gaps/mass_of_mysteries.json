@@ -1,0 +1,16 @@
+{
+  "card_id": "mass_of_mysteries",
+  "name": "Mass of Mysteries",
+  "oracle_text": "First strike, vigilance, trample\nAt the beginning of combat on your turn, another target Elemental you control gains myriad until end of turn. (Whenever it attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+  "blocked_sentences": [
+    "At the beginning of combat on your turn, another target Elemental you control gains myriad until end of turn"
+  ],
+  "needs": [{
+    "capability": "myriad",
+    "kind": "keyword",
+    "what": "the myriad keyword (702.116), grantable with grant_keyword until end of turn: whenever the creature attacks, for each opponent other than the defending player, its controller may create a token copy of it tapped and attacking that player or a planeswalker they control, and those tokens are exiled at end of combat",
+    "why_existing_wont_do": "myriad is not in the keyword list, so grant_keyword cannot give it. Composing it from grant_ability with a granted attacks trigger (for_each_player + may + copy_permanent with attacking/or_planeswalker, then a this_combat delayed exile) would need a player set of 'each opponent other than the defending player' that no players spec names, and a granted ability is not the keyword (it is not seen by keyword checks or copied as myriad)"
+  }],
+  "closest_existing": ["copy_permanent", "grant_ability", "grant_keyword"],
+  "confidence": "high"
+}

@@ -392,11 +392,12 @@ class TestTheLoaderRefusesANearMiss:
         assert card.abilities[0].mana_chosen_color
         assert len(card.abilities[0].mana_options) == 5
 
-    def test_it_cannot_be_one_mode_among_five(self):
-        """"Add one mana of the chosen color" is the whole ability or nothing.
+    def test_it_cannot_be_summed_inside_a_mode(self):
+        """"Add one mana of the chosen color" is a whole ability or a whole mode.
 
-        A mode is a choice made at activation, which is the *any colour* card
-        this spelling exists to refuse.
+        A mode beside fixed symbols is the Thriving lands' shape and is pinned in
+        `test_thriving_lands.py`; summed with a symbol inside one mode, the
+        chosen colour has no load-time tuple to join.
         """
         with pytest.raises(DslError, match="only effect"):
             compile_card(
@@ -420,12 +421,13 @@ class TestTheLoaderRefusesANearMiss:
                                             },
                                             {
                                                 "effects": [
+                                                    {"op": "add_mana", "mana": "{G}"},
                                                     {
                                                         "op": "add_mana",
                                                         "mana": {
                                                             "chosen_color_of": "self"
                                                         },
-                                                    }
+                                                    },
                                                 ]
                                             },
                                         ],

@@ -946,7 +946,10 @@ def reference() -> dict:
             " it no name). It works on an instant or sorcery too, read inside"
             " `spell_effects`: \"You may pay {1}{B} rather than pay this"
             " spell's mana cost. If the {1}{B} cost was paid, ...\" is"
-            " `\"evoke\": \"{1}{B}\"` plus an `if` on `{\"evoked\": true}`.",
+            " `\"evoke\": \"{1}{B}\"` plus an `if` on `{\"evoked\": true}`."
+            " A non-mana evoke is a cost node from `cost_keys`:"
+            " \"Evoke—Exile a green card from your hand.\" is `\"evoke\":"
+            " {\"exile_from_hand\": {\"colors\": [\"G\"]}}`, still evoked.",
             "Exiling from hand as a cost is two keys, the way discarding is:"
             " `exile_from_hand` picks a card by selector (\"a blue card\"),"
             " and `exile_self_from_hand` is \"Exile this card from your hand\""

@@ -28,6 +28,7 @@ import json
 import pytest
 
 from commanderblitz.cards.registry import CardRegistry, authored_card_paths
+from tests.conftest import only_oid, pt, two_seat_board
 
 
 @pytest.fixture(scope="module")
@@ -1523,3 +1524,79 @@ class TestBlightCursesTokens:
         assert not token.colors
         assert "Artifact" in token.types and "Creature" in token.types
         assert list(token.subtypes) == ["Scarecrow"]
+
+
+class TestTheDanceOfTheElementsTokens:
+    """Dance of the Elements names five tokens the pool lacked, each next to a
+    near miss that would have made its card a different card.
+
+    - Crib Swap, Belonging, Springleaf Parade and Abundant Countryside make a
+      **1/1** changeling Shapeshifter; the pool's only Shapeshifter was a 3/2.
+    - Elemental Spectacle and Omnath, Locus of Rage make a **5/5 red and
+      green** Elemental; the nearest was the 4/4 blue and red one.
+    - Hoofprints of the Stag makes a **4/4 white** Elemental with flying.
+    - Titan of Industry makes a 4/4 green **Rhino Warrior** with no
+      keywords; `rhino_4_4_g_trample` is a Rhino alone, with trample.
+    - Vernal Sovereign makes a green and white Elemental whose power and
+      toughness *are* the number of creatures you control -- a
+      characteristic-defining static, not a number fixed when it is made.
+    """
+
+    def test_the_small_shapeshifter_is_a_colorless_changeling(self, pool):
+        token = pool.get("shapeshifter_1_1_c_changeling")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert not token.colors
+        assert "Shapeshifter" in token.subtypes
+        assert any(a.text.startswith("Changeling") for a in token.abilities)
+
+    def test_the_large_shapeshifter_is_still_a_separate_token(self, pool):
+        other = pool.get("shapeshifter_3_2_c_changeling")
+        assert (other.power, other.toughness) == (3, 2)
+
+    def test_the_red_green_elemental_is_a_five_five(self, pool):
+        token = pool.get("elemental_5_5_rg")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (5, 5)
+        assert sorted(token.colors) == ["G", "R"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert not token.keywords
+
+    def test_the_white_elemental_flies(self, pool):
+        token = pool.get("elemental_4_4_w_flying")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["W"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_blue_red_elemental_is_still_a_separate_token(self, pool):
+        other = pool.get("elemental_4_4_ur")
+        assert sorted(other.colors) == ["R", "U"] and not other.keywords
+
+    def test_the_rhino_warrior_has_both_types_and_no_keywords(self, pool):
+        token = pool.get("rhino_warrior_4_4_g")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (4, 4)
+        assert sorted(token.colors) == ["G"]
+        assert sorted(token.subtypes) == ["Rhino", "Warrior"]
+        assert not token.keywords
+
+    def test_the_trampling_rhino_is_still_a_separate_token(self, pool):
+        other = pool.get("rhino_4_4_g_trample")
+        assert "Warrior" not in other.subtypes and "trample" in other.keywords
+
+    def test_the_sovereigns_elemental_counts_your_creatures(self, pool):
+        token = pool.get("elemental_x_x_gw_creature_count")
+        assert token is not None and token.is_token
+        assert sorted(token.colors) == ["G", "W"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert (token.power, token.toughness) == (0, 0)
+
+    def test_the_sovereigns_elemental_grows_with_your_board(self, builder):
+        game = two_seat_board(
+            builder,
+            mine=["elemental_x_x_gw_creature_count", "grizzly_bears"],
+            theirs=["grizzly_bears"],
+        )
+        token = only_oid(game, "elemental_x_x_gw_creature_count", 0)
+        assert pt(game, token) == (2, 2)
