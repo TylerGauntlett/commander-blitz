@@ -55,7 +55,7 @@ each heading; this table is generated from them.
 | [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) | L | high | Distributing counters from a spell | 0 |
 | [Blight Curse (Lorwyn Eclipsed Commander)](#blight-curse-lorwyn-eclipsed-commander) | L | high | nothing | 0 |
 | [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) | L | high | Divided damage from a triggered or activated ability | 0 |
-| [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) | L | high | nothing | 0 |
+| [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) | L | high | Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number | 0 |
 | [World Shaper (Edge of Eternities Commander)](#world-shaper-edge-of-eternities-commander) | L | high | nothing | 0 |
 | [Revival Trance (FINAL FANTASY VI) (Final Fantasy Commander)](#revival-trance-final-fantasy-vi-final-fantasy-commander) | S | high | nothing | 0 |
 | [Scions & Spellcraft (FINAL FANTASY XIV) (Final Fantasy Commander)](#scions--spellcraft-final-fantasy-xiv-final-fantasy-commander) | L | high | nothing | 0 |
@@ -148,6 +148,7 @@ each heading; this table is generated from them.
 | [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) | M | medium | nothing | 1 |
 | [Divided damage that may hit players](#divided-damage-that-may-hit-players) | M | medium | nothing | 1 |
 | [Replays and sharing](#replays-and-sharing) | M | medium | nothing | 1 |
+| [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) | M | medium | nothing | 1 |
 | [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) | M | medium | nothing | 1 |
 | [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) | M | medium | nothing | 0 |
 | [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) | M | medium | nothing | 0 |
@@ -163,8 +164,6 @@ Derived from the properties: an item is **ready** when nothing it depends
 on is still on this page, and the ready items are ranked by impact, then
 rank, then effort, then what they unlock. `python scripts/roadmap.py --next` prints the
 same list, and `/extend-roadmap` starts at the top of it.
-
-**In progress:** [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander).
 
 **Ready now, best first:**
 
@@ -260,13 +259,14 @@ same list, and `/extend-roadmap` starts at the top of it.
 90. [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability) — M, medium
 91. [Divided damage that may hit players](#divided-damage-that-may-hit-players) — M, medium
 92. [Replays and sharing](#replays-and-sharing) — M, medium
-93. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
-94. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
-95. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
-96. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
-97. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
-98. [Archidekt import](#archidekt-import) — S, low
-99. [Sound](#sound) — S, low
+93. [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number) — M, medium
+94. [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma) — M, medium
+95. [A mark, a wordmark, and the surfaces that carry them](#a-mark-a-wordmark-and-the-surfaces-that-carry-them) — M, medium
+96. [Compressed art, shipped for offline precon play](#compressed-art-shipped-for-offline-precon-play) — M, medium
+97. [Site imports follow their owner to the Deck](#site-imports-follow-their-owner-to-the-deck) — M, medium
+98. [Viewing a deck's list](#viewing-a-decks-list) — M, medium
+99. [Archidekt import](#archidekt-import) — S, low
+100. [Sound](#sound) — S, low
 
 **Blocked, and by what:**
 
@@ -274,6 +274,7 @@ same list, and `/extend-roadmap` starts at the top of it.
 - [Lorehold Spirit (Secrets of Strixhaven Commander)](#lorehold-spirit-secrets-of-strixhaven-commander) — [Voting: will of the council and council's dilemma](#voting-will-of-the-council-and-councils-dilemma)
 - [Quandrix Unlimited (Secrets of Strixhaven Commander)](#quandrix-unlimited-secrets-of-strixhaven-commander) — [Distributing counters from a spell](#distributing-counters-from-a-spell)
 - [Dance of the Elements (Lorwyn Eclipsed Commander)](#dance-of-the-elements-lorwyn-eclipsed-commander) — [Divided damage from a triggered or activated ability](#divided-damage-from-a-triggered-or-activated-ability)
+- [Counter Intelligence (Edge of Eternities Commander)](#counter-intelligence-edge-of-eternities-commander) — [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number)
 - [Learned judgements behind the strategy hooks](#learned-judgements-behind-the-strategy-hooks) — [Outcomes as data](#outcomes-as-data), [Replays and sharing](#replays-and-sharing), [Difficulty](#difficulty)
 - [A queue](#a-queue) — [CPU takeover and reconnection](#cpu-takeover-and-reconnection), [Brackets, derived from the list](#brackets-derived-from-the-list), [Outcomes as data](#outcomes-as-data)
 
@@ -644,6 +645,85 @@ gates pass.
 - **Is it an ADR.** Recommended: no; it widens an existing announcement
   (601.2d) without changing what is announced or when, and the line in
   rules-coverage.md moves from "not implemented" to the implemented table.
+
+### Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number
+
+Effort **M** · Impact **medium**, every Spacecraft in Edge of Eternities waits on it, two of them in the Counter Intelligence precon · Depends on nothing · Awaiting decisions.
+
+#### Today
+
+Station (702.184) is written out as a cost: `tap_permanents` with `as` and
+`power_of {"binding": …}` charges the counters. A station symbol (721) is an
+`Ability.threshold` of `{counter, at_least}`, and `cards.loader._compile_threshold`
+accepts one on an **activated** ability only: `characteristics.abilities_of`
+drops a gated ability below its number, and legality, the mana solver and the
+AI read that list. A gated trigger or static is refused at load, because the
+trigger collectors, `_ability_statics` and the player statics read printed
+faces and would treat it as always on. A printed keyword has no threshold at
+all, and nothing makes a Spacecraft a noncreature artifact below its highest
+number and an artifact creature with its printed power and toughness at it
+(721.2b). [rules-coverage.md](rules-coverage.md#not-implemented) lists all
+three as not implemented: "Spacecraft becoming artifact creatures at their
+number, and a `threshold` on anything but an activated ability."
+
+The two Planets (activated abilities only) are what ships. Inspirit, Flagship
+Vessel and Uthros Research Craft, in the Counter Intelligence precon, are the
+cards that found the rest; their gap records are
+`data/authoring/gaps/inspirit_flagship_vessel.json` and
+`data/authoring/gaps/uthros_research_craft.json`.
+
+#### The change
+
+1. A threshold on a triggered ability. Every trigger collector asks
+   `threshold_met` before it fires an ability with one, so a gated trigger
+   below its number never triggers; the ability already on the stack resolves
+   regardless (113.7a), as the activated form does.
+2. A threshold on a static ability and on a printed keyword. The static
+   collectors and the keyword reader skip a gated entry below its number, in
+   the layer they already apply it in; a keyword threshold is a static
+   `grant_keyword` on `self_only` gated the same way, or a keyword entry that
+   carries its own threshold.
+3. The Spacecraft rule. A card-level station number (the highest printed one,
+   or a field the loader checks against it) makes `chars` read the Spacecraft
+   as a noncreature artifact, with no power or toughness, below that number
+   and as an artifact creature with its printed P/T at it (721.2b), in the
+   type-changing layer.
+4. `_compile_threshold` accepts the new homes, `_check_threshold_order` keeps
+   its suffix rule, and rules-coverage.md moves the line to the implemented
+   table.
+5. Harvest the two Counter Intelligence Spacecraft and every other Spacecraft
+   the template tier or one `/author-cards` wave can then express.
+
+It does not add stationing with toughness (Tapestry Warden), which is a
+separate cost reading.
+
+#### Gate
+
+A unit test under `tests/unit/` for each home: a gated trigger that does not
+fire below its number and fires at it, a gated keyword and a gated static that
+switch on at the number and off when counters leave, the Spacecraft a
+noncreature artifact below its number (no P/T, not attackable as a creature,
+not hit by creature removal) and an artifact creature at it, and the loader
+still refusing a threshold out of order. The harvested cards pass their six
+gates.
+
+#### Open questions
+
+- **How a keyword threshold is written.** A gated `grant_keyword` static on
+  `self_only`, or a threshold field on the keyword entry itself? Recommended:
+  the gated static, because it reuses the static gate this item builds and
+  needs no new shape in `keywords`.
+- **Where the Spacecraft's number lives.** Inferred from the highest
+  threshold, or a card-level `station` field the loader checks against the
+  thresholds? Recommended: a card-level field, because the reminder text prints
+  the number and a Spacecraft whose top line is not a creature-gate would
+  otherwise be read wrongly.
+- **Is it an ADR.** Recommended: no; it extends the threshold 721 already
+  uses here to the homes the rule names, and the rules-coverage line moves to
+  the implemented table.
+- **Scope of the harvest.** The two precon cards only, or every Spacecraft
+  the template tier and one wave reach? Recommended: one template-tier
+  `--retry` and one `/author-cards` wave, the precon items' convention.
 
 ### Voting: will of the council and council's dilemma
 
@@ -1049,7 +1129,7 @@ whole-game test able to draw the deck.
 
 ### Counter Intelligence (Edge of Eternities Commander)
 
-Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on nothing · **In progress**.
+Effort **L** · Impact **high**, a coming-soon tile on the shelf becomes a deck a player can pick · Depends on [Station on Spacecraft: gated triggers, keywords and statics, and the creature at its number](#station-on-spacecraft-gated-triggers-keywords-and-statics-and-the-creature-at-its-number).
 
 #### Today
 
