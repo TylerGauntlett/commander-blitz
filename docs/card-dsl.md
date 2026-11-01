@@ -1168,6 +1168,28 @@ ability's targets are chosen in legality, where nothing would read the clause.
 The near miss is an untargeted `exile` with `random` in its `objects`, which
 never fizzles and goes on the stack with nothing to exile.
 
+### "One, two, or three targets" -- `min_count`
+
+```jsonc
+// Aberrant Return: "Put one, two, or three target creature cards from
+// graveyards onto the battlefield under your control."
+{ "id": "t1", "kind": "card_in_graveyard", "count": 3, "up_to": true, "min_count": 1,
+  "selector": { "types": ["Creature"], "zone": "graveyard", "controller": "any" } }
+```
+
+`min_count` is the floor under an `up_to` ceiling: every size from it through
+`count` is legal and none below. With fewer legal targets than the floor the
+spell has no legal declaration and is not offered (601.2c), and a triggered
+ability is not put on the stack. Every declaration path reads it: the
+enumerator's subsets (`targeting._spec_options`, largest first, no empty
+subset), a spell's mid-cast pick (`Game._ask_deferred_targets`, offered only
+while the floor can be met) and a trigger's pick (`stack._choose_each_target`).
+
+The loader refuses `min_count` without `up_to`, over a computed `count`, below 1,
+or at or above the ceiling (that is a plain `count`). The near misses: `up_to`
+alone is zero to N, so the spell could be cast at nothing; `optional` is
+"exactly N, or none"; a fixed `count` forces exactly N.
+
 ### "Each of X targets"
 
 ```jsonc

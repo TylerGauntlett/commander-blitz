@@ -1671,8 +1671,9 @@ class Game:
         of a board are too many to offer as lines. `casting.deferred_target_spec`
         has the argument and says which spec.
 
-        Any size from zero to the ceiling, the two readings that reach here both
-        including zero. ``chosen`` is the refs the line already carries for the
+        Any size from the spec's floor to the ceiling: zero for "any number" and
+        "up to N", ``min_count`` for "one, two, or three" -- legality offered the
+        line only while that floor could be met. ``chosen`` is the refs the line already carries for the
         specs before this one, struck off for the reason
         `enumerate_target_tuples` drops a tuple that reuses an object: one
         object cannot fill two targets of one spell.
@@ -1693,7 +1694,7 @@ class Game:
         if cap is not None:
             ceiling = min(ceiling, cap)
         picked = yield from ask_targets(
-            ctx, f"Targets for {card.name}", options, 0, ceiling, pid
+            ctx, f"Targets for {card.name}", options, min(spec.min_count, ceiling), ceiling, pid
         )
         return tuple(picked)
 

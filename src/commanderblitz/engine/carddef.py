@@ -112,6 +112,12 @@ class TargetSpec:
     #: "exactly N, or none", which forbids every size between 1 and N-1 -- and
     #: ``"any"`` cannot either, because it has no ceiling at all.
     up_to: bool = False
+    #: The **floor** beside an `up_to` ceiling -- "one, two, or three target
+    #: creature cards" (Aberrant Return) is ``min_count: 1`` with ``count: 3``.
+    #: Every size from the floor through the ceiling is legal and none below
+    #: it, so with fewer than ``min_count`` legal targets the spell cannot be
+    #: cast at all (601.2c). ``0`` is plain "up to N".
+    min_count: int = 0
     #: At most one chosen object per controller -- "for each player, up to one
     #: target permanent that player controls". Only meaningful with
     #: ``count == "any"``.

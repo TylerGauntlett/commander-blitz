@@ -603,7 +603,7 @@ def _choose_each_target(
     count = target_count(state, trig.controller, spec, trig.source_oid)
     if count != "any" and (not isinstance(count, int) or count < 2 or spec.optional):
         return None
-    single = replace(spec, count=1, optional=False, up_to=False)
+    single = replace(spec, count=1, optional=False, up_to=False, min_count=0)
     candidates = [
         combo[0]
         for combo in enumerate_target_tuples(
@@ -615,7 +615,11 @@ def _choose_each_target(
     if count == "any":
         floor, ceiling = 0, len(candidates)
     elif spec.up_to:
-        floor, ceiling = 0, count
+        # "One, two, or three": below the floor the ability has no legal tuple,
+        # the same call the exactly-N branch makes.
+        if len(candidates) < spec.min_count:
+            return None
+        floor, ceiling = spec.min_count, count
     else:
         # Exactly N: with fewer than N legal targets the ability cannot be put
         # on the stack with all of them, and that is the enumeration's call.
@@ -652,7 +656,7 @@ def _random_trigger_targets(
     spec, so there is no other spec to combine with and no size to ask.
     """
     count = spec.count if isinstance(spec.count, int) else 1
-    single = replace(spec, count=1, optional=False, up_to=False)
+    single = replace(spec, count=1, optional=False, up_to=False, min_count=0)
     candidates = [
         combo[0]
         for combo in enumerate_target_tuples(

@@ -332,6 +332,12 @@ class TargetModel(BaseModel):
     #: `optional` makes it "exactly N or none", and ``"any"`` has no ceiling.
     #: Pairs with either a literal or a value expression.
     up_to: bool = False
+    #: The floor beside an ``up_to`` ceiling: "**one, two, or three** target
+    #: creature cards" (Aberrant Return) is ``count: 3, up_to: true,
+    #: min_count: 1``. Sizes below it are not legal, so the spell cannot be
+    #: cast with fewer legal targets than the floor (601.2c). Requires
+    #: ``up_to`` and a literal ``count`` above it.
+    min_count: int = 0
     #: "**For each player**, exile up to one target nonland permanent that
     #: player controls." The same set of legal choices as "any number of target
     #: nonland permanents, no two controlled by the same player" -- which is

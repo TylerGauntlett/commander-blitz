@@ -506,6 +506,14 @@ def _spec_options(
         ceiling = len(options) if count == "any" else min(int(count), len(options))
         if size_cap is not None:
             ceiling = min(ceiling, size_cap)
+        # "One, two, or three target creature cards" (Aberrant Return): a floor
+        # under the ceiling, so neither the empty subset nor any smaller one is
+        # a choice -- and with fewer legal targets than the floor the spec
+        # cannot be satisfied at all, which is 601.2c's "can't be cast".
+        floor = spec.min_count
+        tail: list[tuple[TargetRef, ...]] = [] if floor else [()]
+        if ceiling < floor:
+            return []
         # Lazily, and stopped at the limit: every subset of a 38-permanent
         # board is 2**38 of them, and Deepglow Skate's "any number of target
         # permanents" -- any controller, any type -- asked for exactly that
@@ -514,14 +522,14 @@ def _spec_options(
         subsets = itertools.islice(
             (
                 tuple(c)
-                for size in range(ceiling, 0, -1)
+                for size in range(ceiling, max(floor, 1) - 1, -1)
                 for c in itertools.combinations(options, size)
                 if (not spec.one_per_player or _one_each(state, c))
                 and _within_total(state, c, spec.total_mana_value)
             ),
-            _room(limit, [()]),
+            _room(limit, tail),
         )
-        return list(dict.fromkeys([*subsets, ()]))
+        return list(dict.fromkeys([*subsets, *tail]))
     if count <= 0:
         # A computed count of zero -- "one target for each time this was
         # kicked", kicked no times. Not the same as no legal choice: the ability
@@ -625,6 +633,16 @@ def enumerate_target_tuples(
     ] = [({}, ())]
     for spec in specs:
         linked = bool(prior) and _names_a_sibling(spec.selector, prior)
+        # A deferred spec with a floor is still a 601.2c condition on the line:
+        # "one, two, or three target creature cards" with none in any graveyard
+        # is a spell that cannot be cast, so the line is offered only while the
+        # floor can be met by objects the earlier specs have not taken.
+        floor_pool = (
+            candidates(state, controller, spec, source_oid, exclude_sid=exclude_sid,
+                       bindings=bindings, x=x)
+            if spec is defer and spec.min_count
+            else None
+        )
         shared = (
             [()]
             if spec is defer
@@ -663,6 +681,10 @@ def enumerate_target_tuples(
                     x=x,
                 )
             )
+            if floor_pool is not None and (
+                sum(1 for ref in floor_pool if ref not in flat) < spec.min_count
+            ):
+                continue
             for option in options:
                 if set(option) & set(flat):
                     continue  # the same object cannot fill two targets
