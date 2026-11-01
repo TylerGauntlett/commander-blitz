@@ -10885,19 +10885,26 @@ true}` reaches nothing and the printed line would load cleanly and do nothing.
 ```jsonc
 "tucks_itself": 7          // Approach of the Second Sun: "seventh from the top"
 "tucks_itself": "bottom"   // Ultimate Nullification: "on the bottom of its owner's library"
+"tucks_itself": "shuffle"  // Black Sun's Zenith: "shuffle <this card> into its owner's library"
 ```
 
 `exiles_itself`'s shape with a library for the destination: a card-level rider
 on the slot `stack._place_after_resolution` picks, replacing only the
 **graveyard**. A number is the printed ordinal counted from 1, converted to an
 index the way `put_on_top`'s `from_top` is; `"bottom"` is the bottom, which no
-ordinal can name in a library whose size varies. The loader refuses a depth
+ordinal can name in a library whose size varies; `"shuffle"` puts it in and
+then shuffles that library (701.24a), the owner's whoever cast it. The loader
+refuses a depth
 below 1 and refuses the rider on a permanent card, which enters the
 battlefield and never reaches it.
 
 **Not `put_on_top` in the card's own effects**, with or without `bottom: true`:
 the spell is already off `state.stack` while its effects run and is then moved
 to the graveyard regardless, so the printed line would load and do nothing.
+**Not a `shuffle` op beside `"bottom"`** for the Zenith sentence: the op runs
+while the card is still on the stack, so the library is shuffled without it and
+the card then sits on the bottom, where its owner knows exactly when it comes
+back.
 
 ## Airbend — "exile them, and their owners may cast them for {2}"
 

@@ -1204,9 +1204,11 @@ def _play_once(registry: CardRegistry, card: CardDef) -> list[str]:
             spell_zones.add(Zone.EXILE)
         if played.tucks_itself is not None:
             # "…put it into its owner's library seventh from the top" -- Approach
-            # of the Second Sun. The third rider to widen this set, admitted on
-            # exactly the same terms as the two above: a **declared** flag, so a
-            # spell that merely finds itself in a library still fails the gate.
+            # of the Second Sun -- and every other form of the rider: "on the
+            # bottom", and "shuffle it into its owner's library" (Black Sun's
+            # Zenith). The third rider to widen this set, admitted on exactly the
+            # same terms as the two above: a **declared** flag, so a spell that
+            # merely finds itself in a library still fails the gate.
             spell_zones.add(Zone.LIBRARY)
         if obj.zone not in spell_zones:
             return [f"{card.id} is a spell but ended in {obj.zone.value}"]

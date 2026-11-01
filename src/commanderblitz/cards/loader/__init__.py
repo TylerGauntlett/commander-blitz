@@ -1395,10 +1395,10 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     if model.tucks_itself is not None:
         # The ordinal counts from 1, as `put_on_top`'s `from_top` does: a 0
         # would clamp silently to the top, a card drawn a turn early.
-        if model.tucks_itself != "bottom" and model.tucks_itself < 1:
+        if isinstance(model.tucks_itself, int) and model.tucks_itself < 1:
             raise DslError(
                 f"{where}: 'tucks_itself' is a depth counted from 1 (first from "
-                f"the top), or 'bottom'"
+                f"the top), 'bottom' or 'shuffle'"
             )
         # Rebound's guard, for its reason: the rider replaces the graveyard,
         # and a permanent spell enters the battlefield instead.

@@ -1348,7 +1348,12 @@ class CardModel(BaseModel):
     #: ``"bottom"`` is "put <this card> on the bottom of its owner's library"
     #: (Ultimate Nullification): no ordinal names the bottom of a library
     #: whose size varies.
-    tucks_itself: int | Literal["bottom"] | None = None
+    #:
+    #: ``"shuffle"`` is "shuffle <this card> into its owner's library" (the
+    #: Sun's Zenith cycle): the card goes in, then that library is shuffled. A
+    #: `shuffle` op in the card's own effects runs while the card is still on
+    #: the stack, so it would shuffle the library *without* it.
+    tucks_itself: int | Literal["bottom", "shuffle"] | None = None
     #: **Overload** (702.96a): "You may cast this spell for its overload cost.
     #: If you do, change its text by replacing all instances of 'target' with
     #: 'each'." A third cast variant beside kicked and evoked, and the text

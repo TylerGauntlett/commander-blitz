@@ -1322,8 +1322,9 @@ class CardDef:
     #: Approach of the Second Sun's "seventh from the top". The eighth rider
     #: on the resolution slot, and the only one whose destination is a library
     #: and whose value is a depth rather than a flag. The printed ordinal,
-    #: counting from 1, or ``"bottom"`` for "on the bottom of its owner's
-    #: library" (Ultimate Nullification).
+    #: counting from 1, ``"bottom"`` for "on the bottom of its owner's
+    #: library" (Ultimate Nullification), or ``"shuffle"`` for "shuffle it into
+    #: its owner's library" (Black Sun's Zenith).
     tucks_itself: int | str | None = None
     #: **Overload**. A third cast variant, and the only one that changes what
     #: the spell *targets* rather than what it costs: an overloaded spell is put

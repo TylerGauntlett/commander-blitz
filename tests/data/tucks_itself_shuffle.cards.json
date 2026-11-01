@@ -1,0 +1,18 @@
+{
+  "_comment": "Cards that exist only for tests/unit/zones/test_tucks_itself_shuffle.py. Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_tucks_itself_shuffle` is the `tucks_itself: \"shuffle\"` rider on a sorcery that also gains 2 life, so the test can see both that the effects ran and where the card went.",
+  "cards": [
+    {
+      "id": "t_tucks_itself_shuffle",
+      "name": "Test Tucks Itself Shuffle",
+      "oracle_text": "You gain 2 life. Shuffle Test Tucks Itself Shuffle into its owner's library.",
+      "mana_cost": "{1}{W}",
+      "types": ["Sorcery"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "tucks_itself": "shuffle",
+      "spell_effects": [
+        { "op": "gain_life", "player": "you", "amount": { "const": 2 } }
+      ]
+    }
+  ]
+}
