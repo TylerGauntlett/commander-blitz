@@ -5114,6 +5114,10 @@
   "flameborn_viron": {
     "zone": "battlefield"
   },
+  "flamebraider": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "flamerush_rider": {
     "zone": "battlefield"
   },
@@ -5365,6 +5369,11 @@
     "zone": "battlefield"
   },
   "foul_orchard": {
+    "zone": "battlefield"
+  },
+  "foundation_breaker": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "foundry_assembler": {
@@ -6266,6 +6275,16 @@
     ]
   },
   "greensleeves_maro_sorcerer": {
+    "zone": "battlefield"
+  },
+  "greenwarden_of_murasa": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 1
+    },
+    "hand_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "greenweaver_druid": {
@@ -7172,6 +7191,11 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "ingot_chewer": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "inkmoth_nexus": {

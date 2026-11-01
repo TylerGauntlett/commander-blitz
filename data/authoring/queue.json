@@ -96922,12 +96922,12 @@
     },
     "Flamebraider": {
       "edhrec_rank": 5710,
-      "gate": "template",
+      "gate": null,
       "name": "Flamebraider",
-      "reason": "no template for: {T}: Add two mana in any combination of colors. Spend this mana only to cast Elemental spe",
+      "reason": "",
       "scryfall_id": "b8aa428c-5a77-444f-b75e-a113e46fe4e0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flamebreak": {
@@ -101222,12 +101222,12 @@
     },
     "Foundation Breaker": {
       "edhrec_rank": 2911,
-      "gate": "template",
+      "gate": null,
       "name": "Foundation Breaker",
-      "reason": "no template for: When this creature enters, you may destroy target artifact or enchantment",
+      "reason": "",
       "scryfall_id": "d990b59f-2ad1-4224-9f1e-2574eadce1a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Founding of Omashu": {
@@ -117692,12 +117692,12 @@
     },
     "Greenwarden of Murasa": {
       "edhrec_rank": 3760,
-      "gate": "template",
+      "gate": null,
       "name": "Greenwarden of Murasa",
-      "reason": "no template for: When this creature enters, you may return target card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "24249343-8274-4c16-bb51-4d37b4b60741",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greenweaver Druid": {
@@ -136802,12 +136802,12 @@
     },
     "Ingot Chewer": {
       "edhrec_rank": 5254,
-      "gate": "template",
+      "gate": null,
       "name": "Ingot Chewer",
-      "reason": "no template for: When this creature enters, destroy target artifact",
+      "reason": "",
       "scryfall_id": "c2086d4e-c202-4677-8dee-ecabd61cf921",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ingris Stingerquill": {

@@ -1,0 +1,18 @@
+{
+  "card_id": "impulsivity",
+  "name": "Impulsivity",
+  "oracle_text": "When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.\nEncore {7}{R}{R} ({7}{R}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "blocked_sentences": [
+    "When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead."
+  ],
+  "needs": [
+    {
+      "capability": "free_cast_exile_instead",
+      "kind": "op",
+      "what": "the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack",
+      "why_existing_wont_do": "`cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape)."
+    }
+  ],
+  "closest_existing": ["cast_from_hand", "cast_card", "play_exiled"],
+  "confidence": "high"
+}

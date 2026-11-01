@@ -7242,6 +7242,12 @@
     "file": "foul_orchard.jpg",
     "scryfall_id": "1e1bad7b-e102-4dff-b79a-fd755c2b6d49"
   },
+  "foundation_breaker": {
+    "artist": "Yeong-Hao Han",
+    "bytes": 42635,
+    "file": "foundation_breaker.jpg",
+    "scryfall_id": "d990b59f-2ad1-4224-9f1e-2574eadce1a3"
+  },
   "foundry_assembler": {
     "artist": "Karl Kopinski",
     "bytes": 82135,
@@ -8531,6 +8537,12 @@
     "bytes": 55003,
     "file": "greensleeves_maro_sorcerer.jpg",
     "scryfall_id": "643b6832-0fa1-4ce8-bda8-00fe9810ffeb"
+  },
+  "greenwarden_of_murasa": {
+    "artist": "Eric Deschamps",
+    "bytes": 84001,
+    "file": "greenwarden_of_murasa.jpg",
+    "scryfall_id": "24249343-8274-4c16-bb51-4d37b4b60741"
   },
   "greenweaver_druid": {
     "artist": "Justin Sweet",
@@ -9888,6 +9900,12 @@
     "bytes": 52298,
     "file": "ingenious_smith.jpg",
     "scryfall_id": "2962e4d3-3f01-47d4-abe3-75658700c132"
+  },
+  "ingot_chewer": {
+    "artist": "Kev Walker",
+    "bytes": 48266,
+    "file": "ingot_chewer.jpg",
+    "scryfall_id": "c2086d4e-c202-4677-8dee-ecabd61cf921"
   },
   "inkling_2_1_wb_flying": {
     "artist": "Nia Kovalevski",

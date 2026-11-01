@@ -4724,6 +4724,10 @@
     "artist": "Svetlin Velinov",
     "scryfall_id": "9601ea62-a609-4bc5-a2f0-f7615b4dd5fa"
   },
+  "flamebraider": {
+    "artist": "Pete Venters",
+    "scryfall_id": "b8aa428c-5a77-444f-b75e-a113e46fe4e0"
+  },
   "flamerush_rider": {
     "artist": "Min Yum",
     "scryfall_id": "0de4181f-652e-4eab-8de0-57a346c51994"
@@ -4939,6 +4943,10 @@
   "foul_orchard": {
     "artist": "Yeong-Hao Han",
     "scryfall_id": "1e1bad7b-e102-4dff-b79a-fd755c2b6d49"
+  },
+  "foundation_breaker": {
+    "artist": "Yeong-Hao Han",
+    "scryfall_id": "d990b59f-2ad1-4224-9f1e-2574eadce1a3"
   },
   "foundry_assembler": {
     "artist": "Karl Kopinski",
@@ -5815,6 +5823,10 @@
   "greensleeves_maro_sorcerer": {
     "artist": "Jason Loik & Matthew Cohen",
     "scryfall_id": "643b6832-0fa1-4ce8-bda8-00fe9810ffeb"
+  },
+  "greenwarden_of_murasa": {
+    "artist": "Eric Deschamps",
+    "scryfall_id": "24249343-8274-4c16-bb51-4d37b4b60741"
   },
   "greenweaver_druid": {
     "artist": "Justin Sweet",
@@ -6744,6 +6756,10 @@
   "ingenious_smith": {
     "artist": "Michael Machira",
     "scryfall_id": "2962e4d3-3f01-47d4-abe3-75658700c132"
+  },
+  "ingot_chewer": {
+    "artist": "Kev Walker",
+    "scryfall_id": "c2086d4e-c202-4677-8dee-ecabd61cf921"
   },
   "inkling_2_1_wb_flying": {
     "artist": "Nia Kovalevski",

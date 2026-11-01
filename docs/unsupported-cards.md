@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**143 cards** blocked by **128** capabilities.
+**146 cards** blocked by **132** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -48,6 +48,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
+| [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
@@ -64,6 +65,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
+| [elemental-4-4-w-flying](#elemental-4-4-w-flying) | 1 | 9533 | token |
 | [elemental-5-5-rg](#elemental-5-5-rg) | 1 | 12518 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
@@ -77,6 +79,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
+| [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
@@ -90,6 +93,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
+| [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
@@ -815,6 +819,21 @@ Blocks **1** card.
 
 </details>
 
+## companion
+
+Blocks **1** card.
+
+- **(engine)** the Companion keyword ability (702.139): a deckbuilding condition checked against the starting deck (here: no card's mana cost contains the same mana symbol more than once), a chosen-companion slot outside the game, and a special action, once per game, paying {3} at sorcery speed to put the companion into its owner's hand
+  <br>Why the existing vocabulary won't do: No card_level_cost_keys, card_level_rider_keys or keyword covers it: the deck validator has no companion condition, there is no outside-the-game zone, and no special action moves a card from outside the game to hand; moxfield import explicitly ignores companions
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jegantha, the Wellspring** (rank 3861) — `jegantha_the_wellspring`
+  - Companion — No card in your starting deck has more than one of the same mana symbol in its mana cost. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)
+  - {T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs.
+
+</details>
+
 ## conditional-mana-ability
 
 Blocks **1** card.
@@ -1045,6 +1064,20 @@ Blocks **1** card.
 
 </details>
 
+## elemental-4-4-w-flying
+
+Blocks **1** card.
+
+- **(token)** a 4/4 white Elemental creature token with flying
+  <br>Why the existing vocabulary won't do: token_ids has elemental_4_4_ur (blue-red, no flying) and elemental_3_3_ur_flying (3/3 blue-red); the white 4/4 fliers are Angel, Angel Warrior and Bird Soldier, wrong creature type. The rest of the card is expressible: a draw trigger with a may add_counters, a remove_counters cost, and a your-turn activation condition.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hoofprints of the Stag** (rank 9533) — `hoofprints_of_the_stag`
+  - {2}{W}, Remove four hoofprint counters from this enchantment: Create a 4/4 white Elemental creature token with flying. Activate only during your turn.
+
+</details>
+
 ## elemental-5-5-rg
 
 Blocks **1** card.
@@ -1236,6 +1269,20 @@ Blocks **1** card.
 
 </details>
 
+## free-cast-exile-instead
+
+Blocks **1** card.
+
+- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
+  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Impulsivity** (rank 6248) — `impulsivity`
+  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
+
+</details>
+
 ## free-cast-tuck-to-library-bottom
 
 Blocks **1** card.
@@ -1419,6 +1466,21 @@ Blocks **1** card.
 
 - **Yuna, Grand Summoner** (rank 3706) — `yuna_grand_summoner`
   - Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.
+
+</details>
+
+## mana-cant-pay-generic
+
+Blocks **1** card.
+
+- **(value)** a mana_restriction (or add_mana rider) that forbids the produced mana from paying the generic portion of any cost while still letting it pay coloured, hybrid and other non-generic pips of spells, abilities and other payments
+  <br>Why the existing vocabulary won't do: mana_restriction (engine/mana.py compile_restriction) restricts by what is being paid for -- cast / activate / other, filtered by spell types, mana value or X -- never by which pip of the cost the mana pays, so the generic-versus-coloured split this sentence needs has no spelling; dropping it makes a strictly better card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Jegantha, the Wellspring** (rank 3861) — `jegantha_the_wellspring`
+  - Companion — No card in your starting deck has more than one of the same mana symbol in its mana cost. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)
+  - {T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs.
 
 </details>
 
