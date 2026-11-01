@@ -1,0 +1,18 @@
+{
+  "card_id": "ashling_the_limitless",
+  "name": "Ashling, the Limitless",
+  "oracle_text": "Elemental permanent spells you cast from your hand gain evoke {4} as you cast them. (If you cast a spell for its evoke cost, it's sacrificed when it enters.)\nWhenever you sacrifice a nontoken Elemental, create a token that's a copy of it. The token gains haste until end of turn. At the beginning of your next end step, sacrifice it unless you pay {W}{U}{B}{R}{G}.",
+  "blocked_sentences": [
+    "Elemental permanent spells you cast from your hand gain evoke {4} as you cast them"
+  ],
+  "needs": [
+    {
+      "capability": "evoke",
+      "kind": "static_effect",
+      "what": "a static that grants evoke with a printed mana price to a class of spells (affects_spells: permanent spells with subtype Elemental, controller you) cast from a given zone (hand only): the cast line offers the granted mana cost as an alternative cost, marks the spell evoked, and the permanent it becomes is sacrificed when it enters (the evoke sacrifice trigger), with the evoked condition readable by the spell's own enters triggers",
+      "why_existing_wont_do": "card-level `evoke` only prices the card's own printed evoke; `granted_alternative_cost` accepts only pay_energy/pay_life and attaches no sacrifice-on-enter or evoked flag, and has no zone gate for 'from your hand'; `grant_warp` grants a mana alternative cost but with warp's exile-at-end-step rider, not evoke's sacrifice on entering"
+    }
+  ],
+  "closest_existing": ["granted_alternative_cost", "grant_warp", "evoke"],
+  "confidence": "high"
+}

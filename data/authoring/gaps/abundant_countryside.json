@@ -1,0 +1,14 @@
+{
+  "card_id": "abundant_countryside",
+  "name": "Abundant Countryside",
+  "oracle_text": "{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell.\n{6}, {T}: Create a 1/1 colorless Shapeshifter creature token with changeling. (It's every creature type.)",
+  "blocked_sentences": ["{6}, {T}: Create a 1/1 colorless Shapeshifter creature token with changeling. (It's every creature type.)"],
+  "needs": [{
+    "capability": "shapeshifter_1_1_c_changeling",
+    "kind": "token",
+    "what": "a 1/1 colorless Shapeshifter creature token with changeling (it's every creature type)",
+    "why_existing_wont_do": "token_ids has only shapeshifter_3_2_c_changeling, a 3/2; the other 1/1 colorless tokens (spirit_1_1_c, hero_1_1_c, etc.) have the wrong subtype and lack changeling. The mana line is expressible via add_mana with mana_restriction; only the token is missing"
+  }],
+  "closest_existing": ["shapeshifter_3_2_c_changeling"],
+  "confidence": "high"
+}

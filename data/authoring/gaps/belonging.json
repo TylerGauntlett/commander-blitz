@@ -1,0 +1,14 @@
+{
+  "card_id": "belonging",
+  "name": "Belonging",
+  "oracle_text": "When this creature enters, create three 1/1 colorless Shapeshifter creature tokens with changeling. (They're every creature type.)\nEncore {6}{W}{W} ({6}{W}{W}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "blocked_sentences": ["When this creature enters, create three 1/1 colorless Shapeshifter creature tokens with changeling. (They're every creature type.)"],
+  "needs": [{
+    "capability": "shapeshifter_1_1_c_changeling",
+    "kind": "token",
+    "what": "a 1/1 colorless Shapeshifter creature token with changeling (it's every creature type)",
+    "why_existing_wont_do": "token_ids has only shapeshifter_3_2_c_changeling, a 3/2; overriding its power/toughness on create_token would be a substitute token, and the other 1/1 colorless tokens have the wrong subtype and lack changeling. The Encore line is expressible exactly as Angel of Indemnity writes it (graveyard activated ability, exile_from_graveyard self cost, for_each_player copy_permanent + must_attack_player + haste + delayed sacrifice); only the token is missing"
+  }],
+  "closest_existing": ["shapeshifter_3_2_c_changeling"],
+  "confidence": "high"
+}
