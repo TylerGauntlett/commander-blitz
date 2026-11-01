@@ -201702,12 +201702,12 @@
     },
     "Phyrexian Metamorph": {
       "edhrec_rank": 310,
-      "gate": "template",
+      "gate": null,
       "name": "Phyrexian Metamorph",
-      "reason": "no template for: You may have this creature enter as a copy of any artifact or creature on the battlefield,",
+      "reason": "",
       "scryfall_id": "a564c2e8-f49f-4ed7-850f-7c8bc92e4926",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Phyrexian Missionary": {

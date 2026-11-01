@@ -179,6 +179,11 @@ class GameObject:
     #: `GameState.card_of` into the copied face so the legend rule never sees a
     #: Legendary, and cleared with `copying`.
     copying_remove_supertypes: frozenset[str] | None = None
+    #: Card types the copy carries *in addition to* the copied ones (707.9b) --
+    #: Phyrexian Metamorph's "…except it's an artifact in addition to its other
+    #: types". Written, read and cleared beside `copying_keywords`, for its
+    #: reasons.
+    copying_add_types: frozenset[str] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -1216,6 +1221,7 @@ class GameObject:
         self.copying_name = None
         self.copying_keywords = None
         self.copying_remove_supertypes = None
+        self.copying_add_types = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False

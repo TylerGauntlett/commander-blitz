@@ -128336,6 +128336,46 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "phyrexian_metamorph",
+      "mana_cost": "{3}{U/P}",
+      "name": "Phyrexian Metamorph",
+      "oracle_text": "({U/P} can be paid with either {U} or 2 life.)\nYou may have this creature enter as a copy of any artifact or creature on the battlefield, except it's an artifact in addition to its other types.",
+      "power": 0,
+      "replacements": [
+        {
+          "copying": {
+            "any_types": [
+              "Artifact",
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "event": "self_enters_as_copy",
+          "except_": {
+            "add_types": [
+              "Artifact"
+            ]
+          }
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Shapeshifter"
+      ],
+      "toughness": 0,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {

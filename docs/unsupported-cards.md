@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**151 cards** blocked by **139** capabilities.
+**150 cards** blocked by **138** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -69,7 +69,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
-| [enters-as-copy-add-types](#enters-as-copy-add-types) | 1 | 310 | replacement |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -1116,20 +1115,6 @@ Blocks **1** card.
 
 - **Elvish Promenade** (rank 3100) — `elvish_promenade`
   - Create a 1/1 green Elf Warrior creature token for each Elf you control.
-
-</details>
-
-## enters-as-copy-add-types
-
-Blocks **1** card.
-
-- **(replacement)** the `self_enters_as_copy` replacement's `except_` needs an `add_types` key (707.9b) that writes card types into the copy's copiable values, so `{"add_types": ["Artifact"]}` makes a copy of a nonartifact creature an artifact creature for as long as it is a copy
-  <br>Why the existing vocabulary won't do: `self_enters_as_copy` (Spark Double, Dack's Duplicate, Chameleon) exists with `copying` able to say `any_types: ["Artifact", "Creature"]`, but `ENTERS_COPY_EXCEPT_KEYS` in cards/loader/__init__.py accepts only add_keywords, remove_supertypes, name and enters_with, and `move_object` in engine/zones.py sets no type addition on the object. Dropping the clause would make a copy of a nonartifact creature lose the artifact type, a different card. `copy_overrides.add_types` exists in characteristics.py for `copy_permanent` token copies but is not reachable from the as-enters replacement
-
-<details><summary>Cards waiting on this</summary>
-
-- **Phyrexian Metamorph** (rank 310) — `phyrexian_metamorph`
-  - You may have this creature enter as a copy of any artifact or creature on the battlefield, except it's an artifact in addition to its other types.
 
 </details>
 

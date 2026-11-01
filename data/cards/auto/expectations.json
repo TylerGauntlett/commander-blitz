@@ -10993,6 +10993,10 @@
   "phyrexian_hulk": {
     "zone": "battlefield"
   },
+  "phyrexian_metamorph": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "phyrexian_tower": {
     "battlefield_count": 33,
     "zone": "battlefield"
