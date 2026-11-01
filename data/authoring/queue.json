@@ -116482,12 +116482,12 @@
     },
     "Grave Venerations": {
       "edhrec_rank": 4504,
-      "gate": "template",
+      "gate": null,
       "name": "Grave Venerations",
-      "reason": "no template for: When this enchantment enters, you become the monarch",
+      "reason": "",
       "scryfall_id": "bd6c6906-7328-4b03-b8d3-11b80d3291ae",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grave-Shell Scarab": {
@@ -118262,12 +118262,12 @@
     },
     "Grim Poppet": {
       "edhrec_rank": 8718,
-      "gate": "template",
+      "gate": null,
       "name": "Grim Poppet",
-      "reason": "no template for: This creature enters with three -1/-1 counters on it",
+      "reason": "",
       "scryfall_id": "7b23f412-c5eb-48f1-ad84-ae42171944c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Grim Reaper's Scythe": {
@@ -119532,12 +119532,12 @@
     },
     "Gruul Turf": {
       "edhrec_rank": 432,
-      "gate": "template",
+      "gate": null,
       "name": "Gruul Turf",
-      "reason": "no template for: When this land enters, return a land you control to its owner's hand",
+      "reason": "",
       "scryfall_id": "f19d2b68-1415-4a0c-bb68-cfacb611c4d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gruul War Chant": {
@@ -128552,12 +128552,12 @@
     },
     "Hoarder's Greed": {
       "edhrec_rank": 9983,
-      "gate": "template",
+      "gate": null,
       "name": "Hoarder's Greed",
-      "reason": "no template for: You lose 2 life and draw two cards, then clash with an opponent. If you win, repeat this p",
+      "reason": "",
       "scryfall_id": "1293ed24-781c-465f-8561-39b01e7ba388",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hoarder's Overflow": {
@@ -133452,12 +133452,12 @@
     },
     "Ifnir Deadlands": {
       "edhrec_rank": 4557,
-      "gate": "template",
+      "gate": null,
       "name": "Ifnir Deadlands",
-      "reason": "no template for: {T}, Pay 1 life: Add {B}",
+      "reason": "",
       "scryfall_id": "902e260d-71ba-4342-9794-fefe2b531c00",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Igneous Cur": {

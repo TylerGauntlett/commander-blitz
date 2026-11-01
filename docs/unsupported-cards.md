@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**142 cards** blocked by **129** capabilities.
+**143 cards** blocked by **130** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -125,6 +125,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [shuffle-self-into-library](#shuffle-self-into-library) | 1 | 1947 | engine |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [snake-1-1-g-deathtouch](#snake-1-1-g-deathtouch) | 1 | 3982 | token |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -1909,6 +1910,20 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## snake-1-1-g-deathtouch
+
+Blocks **1** card.
+
+- **(token)** a 1/1 green Snake creature token with deathtouch
+  <br>Why the existing vocabulary won't do: token_ids has only snake_1_1_b_deathtouch, which is black, not green; the trigger itself is expressible as counter_placed with counter -1/-1, put_by you, batched, filtered to creatures
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hapatra, Vizier of Poisons** (rank 3982) — `hapatra_vizier_of_poisons`
+  - Whenever you put one or more -1/-1 counters on a creature, create a 1/1 green Snake creature token with deathtouch.
 
 </details>
 

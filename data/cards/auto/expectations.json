@@ -6069,6 +6069,10 @@
     },
     "zone": "battlefield"
   },
+  "grave_venerations": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "graveborn_muse": {
     "battlefield_count": 33,
     "hand_size": {
@@ -6179,6 +6183,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "grim_poppet": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 3,
+      "kind": "-1/-1"
+    },
+    "zone": "battlefield"
+  },
   "grixis_panorama": {
     "zone": "battlefield"
   },
@@ -6202,6 +6214,12 @@
   },
   "gruul_signet": {
     "zone": "battlefield"
+  },
+  "gruul_turf": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 2
+    }
   },
   "gryff_vanguard": {
     "hand_size": {
@@ -6707,6 +6725,18 @@
   "hitchclaw_recluse": {
     "zone": "battlefield"
   },
+  "hoarder_s_greed": {
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 38
+    },
+    "zone": "graveyard"
+  },
   "hobgoblin_captain": {
     "zone": "battlefield"
   },
@@ -6898,6 +6928,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "ifnir_deadlands": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ignoble_hierarch": {
