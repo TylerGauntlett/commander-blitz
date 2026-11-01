@@ -205,6 +205,34 @@ class TestTheEarlierGates:
         assert "already in the pool" in verdict.reason
 
 
+class TestTheSandboxHandFeedsADiscardCost:
+    """One spare Forest per card the additional cost discards, never fewer than one.
+
+    A card cannot discard itself to pay its own cost (601.2a), so Cathartic
+    Reunion's "discard two cards" was unplayable beside a single spare.
+    """
+
+    REUNION = {
+        **DIVINATION,
+        "id": "auto_test_reunion",
+        "name": "Auto Test Reunion",
+        "oracle_text": "As an additional cost to cast this spell, discard two cards.\nDraw two cards.",
+        "additional_cost": {"discard": 2},
+    }
+
+    def _hand(self, pool: CardRegistry, payload: dict) -> list[str]:
+        card = V.compile_card(V.CardModel.model_validate(payload))
+        merged = V.CardRegistry({**{c.id: c for c in pool}, card.id: card})
+        game = V.build_sandbox(merged, card.id)
+        return [game.state.objects[oid].def_id for oid in game.state.players[0].hand]
+
+    def test_a_two_card_discard_gets_two_spares(self, hand_written):
+        assert self._hand(hand_written, self.REUNION) == ["auto_test_reunion", "forest", "forest"]
+
+    def test_every_other_card_keeps_one(self, hand_written):
+        assert self._hand(hand_written, DIVINATION) == ["auto_test_divination", "forest"]
+
+
 class TestTheSandboxIsUsable:
     def test_it_builds_from_whatever_pool_it_is_given(self, pool):
         """No dependency on test-only fixture cards.

@@ -576,8 +576,25 @@ def build_sandbox(registry: CardRegistry, card_id: str, *, in_hand: bool = True)
         # "measurement happens before cleanup, so until-end-of-turn effects are
         # still live". Before this, Call for Aid was measured *after* its
         # control effect had worn off.
-        builder.hand(0, [card_id, "forest"])
+        #
+        # One spare per card the additional cost discards, never fewer than
+        # one: Cathartic Reunion's "discard two cards" had only one card of
+        # fodder and was unplayable here for the same reason. Every other card
+        # keeps the single Forest, so no authored `hand_size` moves.
+        builder.hand(0, [card_id, *["forest"] * spare_cards_in_hand(under_test)])
     return builder.build(advance=False)
+
+
+def spare_cards_in_hand(card: CardDef | None) -> int:
+    """How many spare Forests sit beside ``card`` in the sandbox hand.
+
+    One, unless the card's additional cost discards more than that: a card can
+    never discard itself to pay its own cost (601.2a), so "as an additional
+    cost to cast this spell, discard two cards" needs two other cards in hand.
+    """
+    if card is None or card.additional_cost is None:
+        return 1
+    return max(1, card.additional_cost.discard)
 
 
 #: The spells every card with a `kind: "spell"` target finds on the stack.
