@@ -1049,6 +1049,15 @@ class Ability:
     activate_steps: tuple[str, ...] = ()
     #: Forecast: "only once each turn", counted per (object, ability index).
     once_each_turn: bool = False
+    #: Who may activate this ability (602.1, 602.2): ``"you"`` -- the
+    #: permanent's controller, the default for every activated ability --
+    #: ``"opponent"`` ("Only your opponents may activate this ability",
+    #: Oft-Nabbed Goat) or ``"any"`` ("Any player may activate this ability").
+    #: Relative to the controller *now*, so a Goat that changed hands is
+    #: activated by its new controller's opponents. The activating player pays
+    #: the cost and controls the ability on the stack (602.2), which
+    #: `Game._activate` already does for whoever acts.
+    activated_by: str = "you"
     #: A station symbol (721): ``(counter kind, N)`` -- this permanent has the
     #: ability only while it has N or more of that counter. Read by
     #: `characteristics.abilities_of`, which leaves the ability out below N, so

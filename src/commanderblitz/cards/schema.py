@@ -677,6 +677,10 @@ class AbilityModel(BaseModel):
     #: `ability_cost_reduction`: whose activation is discounted -- "abilities
     #: **you** activate". The *activating player*, not the permanent's
     #: controller: an opponent equipping your Equipment is their activation.
+    #:
+    #: On an **activated ability**: who may activate it -- ``"opponent"`` is
+    #: "Only your opponents may activate this ability" (Oft-Nabbed Goat),
+    #: ``"any"`` is "Any player may activate this ability" (`Ability.activated_by`).
     activated_by: str | None = None
     #: `ability_cost_reduction`: what the activation must be **aimed at** --
     #: "equip abilities you activate **that target enchanted creature**".

@@ -3302,6 +3302,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         is_cycling=model.is_cycling,
         activate_steps=tuple(model.activate_steps),
         once_each_turn=model.once_each_turn,
+        activated_by=_activated_by(model, kind, active_zones, cost, where),
         threshold=threshold,
         trigger=trigger,
         active_zones=active_zones,
@@ -3330,6 +3331,44 @@ _MANA_SPENT_SOURCE_KEYS = frozenset(
         "shares_a_creature_type_with",
     }
 )
+
+
+def _activated_by(model: AbilityModel, kind: AbilityKind, active_zones, cost, where: str) -> str:
+    """Who may activate this ability: `Ability.activated_by`, validated.
+
+    "Only your opponents may activate this ability" (Oft-Nabbed Goat) is
+    ``"opponent"``, "Any player may activate this ability" is ``"any"``, and
+    the default is the controller alone. Refused wherever it could not mean
+    what it says: on anything but an activated ability, on one that works from
+    a hand or graveyard (hidden or owner-only zones another player is never
+    offered), on a loyalty ability (606.3 is the controller's), and on a mana
+    ability, which the payment solver activates for its controller only.
+    """
+    who = model.activated_by
+    if who is None:
+        return "you"
+    if who not in ("you", "opponent", "any"):
+        raise DslError(
+            f"{where}.activated_by: must be 'you', 'opponent' or 'any', got {who!r}"
+        )
+    if kind is not AbilityKind.ACTIVATED:
+        raise DslError(
+            f"{where}: 'activated_by' says who may activate an ability, so it only "
+            f"means anything on an activated ability or an ability_cost_reduction static"
+        )
+    if tuple(active_zones) != (Zone.BATTLEFIELD,):
+        raise DslError(
+            f"{where}: 'activated_by' is for an ability of a permanent; another "
+            f"player is never offered an ability from a hand or graveyard"
+        )
+    if cost is not None and cost.loyalty is not None:
+        raise DslError(f"{where}: a loyalty ability is activated by its controller (606.3)")
+    if model.is_mana_ability:
+        raise DslError(
+            f"{where}: 'activated_by' on a mana ability is not supported -- the "
+            f"payment solver taps only its controller's sources"
+        )
+    return who
 
 
 def _mana_spent_trigger(model: AbilityModel, index: int, where: str) -> Ability | None:

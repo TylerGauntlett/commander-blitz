@@ -1,0 +1,62 @@
+{
+  "_comment": "Cards that exist only for tests/unit/costs/test_opponent_activated_ability.py. Never part of a deck list. `t_oft_nabbed_goat` is Oft-Nabbed Goat as printed; `t_town_well` is an any-player ability, the sibling wording (\"Any player may activate this ability\").",
+  "cards": [
+    {
+      "id": "t_oft_nabbed_goat",
+      "name": "Test Oft-Nabbed Goat",
+      "oracle_text": "{1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery.\nWhen this creature dies, if it had one or more -1/-1 counters on it, its owner draws that many cards and each other player loses that much life.",
+      "mana_cost": "{B}",
+      "types": ["Creature"],
+      "subtypes": ["Goat"],
+      "power": 3,
+      "toughness": 3,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery.",
+          "cost": {"mana": "{1}"},
+          "activated_by": "opponent",
+          "sorcery_speed_only": true,
+          "effects": [
+            {"op": "draw", "amount": {"const": 1}, "player": "you"},
+            {"op": "gain_control", "objects": {"zone": "battlefield", "self_only": true}, "player": "you", "duration": "permanent"},
+            {"op": "add_counters", "objects": {"zone": "battlefield", "self_only": true}, "counter": "-1/-1", "amount": {"const": 1}}
+          ]
+        },
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, if it had one or more -1/-1 counters on it, its owner draws that many cards and each other player loses that much life.",
+          "trigger": {
+            "event": "dies",
+            "source": "self",
+            "condition": {"cmp": ">=", "left": {"counters_had": "-1/-1"}, "right": {"const": 1}}
+          },
+          "effects": [
+            {"op": "draw", "amount": {"counters_had": "-1/-1"}, "player": {"owner_of": "self"}},
+            {"op": "lose_life", "amount": {"counters_had": "-1/-1"}, "player": {"not": {"owner_of": "self"}}}
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_town_well",
+      "name": "Test Town Well",
+      "oracle_text": "{2}: Draw a card. Any player may activate this ability.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{2}: Draw a card. Any player may activate this ability.",
+          "cost": {"mana": "{2}"},
+          "activated_by": "any",
+          "effects": [{"op": "draw", "amount": {"const": 1}, "player": "you"}]
+        }
+      ]
+    }
+  ]
+}

@@ -11503,6 +11503,38 @@ card's keyword list, and this is a permission. It is read by `legality` and by
 the mana solver — mana abilities are activated abilities too, and a locked land
 that still tapped for mana would make the effect worth nothing.
 
+## "Only your opponents may activate this ability"
+
+```jsonc
+{ "kind": "activated",
+  "cost": { "mana": "{1}" },
+  "activated_by": "opponent",      // "any" for "Any player may activate this ability"
+  "sorcery_speed_only": true,
+  "effects": [
+    { "op": "draw", "amount": { "const": 1 }, "player": "you" },
+    { "op": "gain_control", "objects": { "zone": "battlefield", "self_only": true },
+      "player": "you", "duration": "permanent" },
+    { "op": "add_counters", "objects": { "zone": "battlefield", "self_only": true },
+      "counter": "-1/-1", "amount": { "const": 1 } } ] }
+```
+
+Oft-Nabbed Goat. `activated_by` says who is offered the ability: `"you"` (the
+default) is the permanent's controller, `"opponent"` is every other player and
+`"any"` is everyone (602.1). It is read against the controller *now*, so once the
+Goat has changed hands its old owner is one of the opponents who may take it
+back.
+
+The activator pays the cost and controls the ability on the stack (602.2), so in
+its effects `"you"` is the activator: they draw and they gain control.
+`sorcery_speed_only` is their own main phase with an empty stack.
+
+The loader refuses `activated_by` on anything but an activated ability of a
+permanent: not on a trigger, not on an ability that works from a hand or
+graveyard, not on a loyalty ability (606.3), and not on a mana ability, which the
+payment solver activates for its controller alone. On an
+`ability_cost_reduction` static the same key means something else: whose
+activations are discounted.
+
 ## Embalm — an ability activated from the graveyard
 
 ```jsonc
