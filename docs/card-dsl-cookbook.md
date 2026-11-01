@@ -5949,7 +5949,11 @@ refused, because whichever won would be the card and the other would silently
 never be charged.
 
 Unlike `additional_cost` there **is** a half-a-cost guard, and it is `kicker`'s:
-a `multikicker` no effect reads via `additional_paid` is refused. "Sacrifice an
+a `multikicker` nothing reads via `additional_paid` is refused. The readers it
+looks for are effects, targets, trigger conditions and replacements, so
+Everflowing Chalice's "enters with a charge counter on it for each time it was
+kicked" is a `self_enters_with_counters` replacement with `amount:
+{"additional_paid": true}`, not an enters trigger. "Sacrifice an
 artifact" can be the whole of a cost, but "any number of times" only means
 something to a card that counts the times — without a reader the card charges
 more and does the same thing. A free (`{0}`) or X multikicker is refused too:

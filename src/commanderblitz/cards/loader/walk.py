@@ -261,10 +261,10 @@ def _mentions_condition(model: CardModel, key: str) -> bool:
 def _mentions_key_anywhere(model: CardModel, key: str) -> bool:
     """Does ``key`` appear anywhere on this card, replacements and statics included?
 
-    `_mentions_condition` searches effects, targets and trigger conditions only.
-    A condition that is read mostly by a **replacement** -- `escaped`, whose
-    printed home is "escapes with" -- needs the whole card searched, which is
-    safe only for a key no other part of the schema spells.
+    `_mentions_condition` searches effects, targets, trigger conditions and
+    replacements, but not statics or costs. A key read from one of those needs
+    the whole card searched, which is safe only for a key no other part of the
+    schema spells.
     """
 
     def walk(node: Any) -> bool:
@@ -310,6 +310,11 @@ def _mentions(model: CardModel, predicate: Any) -> bool:
         return [t.model_dump(exclude_none=True) for t in models]
 
     if walk(model.spell_effects) or walk(targets_of(model.targets)):
+        return True
+    # Replacements too: "enters with a charge counter on it for each time it was
+    # kicked" is a 614.1c replacement, so its `amount` is the one place
+    # Everflowing Chalice reads `additional_paid`.
+    if walk([r.model_dump(exclude_none=True) for r in model.replacements]):
         return True
     return any(
         walk(a.effects)
