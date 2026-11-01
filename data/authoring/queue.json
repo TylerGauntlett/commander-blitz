@@ -135542,12 +135542,12 @@
     },
     "Incremental Blight": {
       "edhrec_rank": 6270,
-      "gate": "template",
+      "gate": null,
       "name": "Incremental Blight",
-      "reason": "no template for: Put a -1/-1 counter on target creature, two -1/-1 counters on another target creature, and",
+      "reason": "",
       "scryfall_id": "67028351-3023-4433-96fe-f5c32710bdf0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Incremental Growth": {
@@ -153102,12 +153102,12 @@
     },
     "Kulrath Knight": {
       "edhrec_rank": 5671,
-      "gate": "template",
+      "gate": null,
       "name": "Kulrath Knight",
-      "reason": "no template for: Creatures your opponents control with counters on them can't attack or block",
+      "reason": "",
       "scryfall_id": "c28c15bd-6fb3-4250-81c4-d42f3efdb6f6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kulrath Mystic": {
@@ -168912,12 +168912,12 @@
     },
     "Massacre Girl, Known Killer": {
       "edhrec_rank": 1673,
-      "gate": "template",
+      "gate": null,
       "name": "Massacre Girl, Known Killer",
-      "reason": "no template for: Creatures you control have wither",
+      "reason": "",
       "scryfall_id": "8ef53e5e-709c-4613-a5ab-6bf12961b2e1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Massacre Girl, Most Wanted": {
@@ -172702,12 +172702,12 @@
     },
     "Midnight Banshee": {
       "edhrec_rank": 4687,
-      "gate": "template",
+      "gate": null,
       "name": "Midnight Banshee",
-      "reason": "no template for: At the beginning of your upkeep, put a -1/-1 counter on each nonblack creature",
+      "reason": "",
       "scryfall_id": "f0a38737-22e6-469f-94d8-12b9a62f4495",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Midnight Charm": {

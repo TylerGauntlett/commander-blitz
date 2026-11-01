@@ -1,0 +1,14 @@
+{
+  "card_id": "liliana_death_wielder",
+  "name": "Liliana, Death Wielder",
+  "oracle_text": "+2: Put a -1/-1 counter on up to one target creature.\n−3: Destroy target creature with a -1/-1 counter on it.\n−10: Return all creature cards from your graveyard to the battlefield.",
+  "blocked_sentences": ["−3: Destroy target creature with a -1/-1 counter on it."],
+  "needs": [{
+    "capability": "has_counter_of_kind",
+    "kind": "selector",
+    "what": "a selector/target filter key matching a permanent with at least one counter of a NAMED kind (e.g. {\"has_counter\": \"-1/-1\"}), so a target spec can say \"target creature with a -1/-1 counter on it\" and the targeting legality is checked on selection and on resolution",
+    "why_existing_wont_do": "`has_counters` is a boolean over any kind of counter (selectors.py reads any(n > 0 for n in obj.counters.values())), so it would allow targeting a creature with only +1/+1 or stun counters; `modified` is broader still; `counters_on`/`counters_had` are values usable only in an `if` at resolution, which would change what may be targeted rather than what the printed target restriction allows"
+  }],
+  "closest_existing": ["has_counters", "counters_on"],
+  "confidence": "high"
+}

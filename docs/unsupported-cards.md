@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**143 cards** blocked by **130** capabilities.
+**145 cards** blocked by **132** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,6 +53,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [counters-put-this-turn](#counters-put-this-turn) | 1 | 6895 | value |
 | [damage-cant-be-prevented](#damage-cant-be-prevented) | 1 | 5549 | static_effect |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -80,6 +81,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
+| [has-counter-of-kind](#has-counter-of-kind) | 1 | 7978 | selector |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
@@ -876,6 +878,20 @@ Blocks **1** card.
 
 </details>
 
+## counters-put-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-player turn ledger value, e.g. {"counters_put_this_turn": "you", "filter": {"types": ["Creature"]}}, counting counters (any kind) the player put on creatures this turn, recorded at placement by the engine whether or not the reading permanent was on the battlefield, usable as an end_step trigger's intervening-if condition compared > 0
+  <br>Why the existing vocabulary won't do: value_keys has turn ledgers for life gained, cards drawn, creatures died etc. but nothing for counters placed; a counter_placed trigger plus set_turn_flag/has_turn_flag would add an unprinted trigger and miss counters put on creatures earlier in the turn before this enchantment entered, so it would not be the printed card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lasting Tarfire** (rank 6895) — `lasting_tarfire`
+  - At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent.
+
+</details>
+
 ## damage-cant-be-prevented
 
 Blocks **1** card.
@@ -1264,6 +1280,20 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
+
+</details>
+
+## has-counter-of-kind
+
+Blocks **1** card.
+
+- **(selector)** a selector/target filter key matching a permanent with at least one counter of a NAMED kind (e.g. {"has_counter": "-1/-1"}), so a target spec can say "target creature with a -1/-1 counter on it" and the targeting legality is checked on selection and on resolution
+  <br>Why the existing vocabulary won't do: `has_counters` is a boolean over any kind of counter (selectors.py reads any(n > 0 for n in obj.counters.values())), so it would allow targeting a creature with only +1/+1 or stun counters; `modified` is broader still; `counters_on`/`counters_had` are values usable only in an `if` at resolution, which would change what may be targeted rather than what the printed target restriction allows
+
+<details><summary>Cards waiting on this</summary>
+
+- **Liliana, Death Wielder** (rank 7978) — `liliana_death_wielder`
+  - −3: Destroy target creature with a -1/-1 counter on it.
 
 </details>
 

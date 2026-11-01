@@ -6994,6 +6994,9 @@
       "graveyard"
     ]
   },
+  "incremental_blight": {
+    "zone": "graveyard"
+  },
   "incurable_ogre": {
     "zone": "battlefield"
   },
@@ -7926,6 +7929,17 @@
   "krovikan_scoundrel": {
     "zone": "battlefield"
   },
+  "kulrath_knight": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "wither"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "kyoshi_warrior_guard": {
     "zone": "battlefield"
   },
@@ -8816,6 +8830,16 @@
     },
     "zone": "graveyard"
   },
+  "massacre_girl_known_killer": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 3,
+      "keywords": [
+        "wither"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "master_of_ceremonies": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9022,6 +9046,10 @@
     "zone": "battlefield"
   },
   "midnight_assassin": {
+    "zone": "battlefield"
+  },
+  "midnight_banshee": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "midnight_clock": {

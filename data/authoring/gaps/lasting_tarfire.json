@@ -1,0 +1,18 @@
+{
+  "card_id": "lasting_tarfire",
+  "name": "Lasting Tarfire",
+  "oracle_text": "At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent.",
+  "blocked_sentences": [
+    "At the beginning of each end step, if you put a counter on a creature this turn, this enchantment deals 2 damage to each opponent."
+  ],
+  "needs": [
+    {
+      "capability": "counters_put_this_turn",
+      "kind": "value",
+      "what": "a per-player turn ledger value, e.g. {\"counters_put_this_turn\": \"you\", \"filter\": {\"types\": [\"Creature\"]}}, counting counters (any kind) the player put on creatures this turn, recorded at placement by the engine whether or not the reading permanent was on the battlefield, usable as an end_step trigger's intervening-if condition compared > 0",
+      "why_existing_wont_do": "value_keys has turn ledgers for life gained, cards drawn, creatures died etc. but nothing for counters placed; a counter_placed trigger plus set_turn_flag/has_turn_flag would add an unprinted trigger and miss counters put on creatures earlier in the turn before this enchantment entered, so it would not be the printed card"
+    }
+  ],
+  "closest_existing": ["life_gained_this_turn", "counter_placed", "set_turn_flag", "has_turn_flag"],
+  "confidence": "high"
+}

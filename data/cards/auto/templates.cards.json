@@ -80374,6 +80374,92 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "incremental_blight",
+      "mana_cost": "{3}{B}{B}",
+      "name": "Incremental Blight",
+      "oracle_text": "Put a -1/-1 counter on target creature, two -1/-1 counters on another target creature, and three -1/-1 counters on a third target creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "-1/-1",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "counter": "-1/-1",
+          "objects": {
+            "target": "t2"
+          },
+          "op": "add_counters"
+        },
+        {
+          "amount": {
+            "const": 3
+          },
+          "counter": "-1/-1",
+          "objects": {
+            "target": "t3"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t2",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "t3",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "R"
       ],
       "colors": [
@@ -92009,6 +92095,60 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "opponent",
+            "has_counters": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Creatures your opponents control with counters on them can't attack or block."
+        },
+        {
+          "affects": {
+            "controller": "opponent",
+            "has_counters": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Creatures your opponents control with counters on them can't attack or block."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "kulrath_knight",
+      "keywords": [
+        "flying",
+        "wither"
+      ],
+      "mana_cost": "{3}{B/R}{B/R}",
+      "name": "Kulrath Knight",
+      "oracle_text": "Flying\nWither (This deals damage to creatures in the form of -1/-1 counters.)\nCreatures your opponents control with counters on them can't attack or block.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Knight"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -102446,6 +102586,76 @@
     {
       "abilities": [
         {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "wither"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have wither."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature an opponent controls dies, if its toughness was less than 1, draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "toughness_had": true
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "opponent",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "massacre_girl_known_killer",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Massacre Girl, Known Killer",
+      "oracle_text": "Menace\nCreatures you control have wither. (They deal damage to creatures in the form of -1/-1 counters.)\nWhenever a creature an opponent controls dies, if its toughness was less than 1, draw a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Assassin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [
@@ -104555,6 +104765,60 @@
         "Assassin"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "-1/-1",
+              "objects": {
+                "controller": "any",
+                "count": "all",
+                "not_colors": [
+                  "B"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, put a -1/-1 counter on each nonblack creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "midnight_banshee",
+      "keywords": [
+        "wither"
+      ],
+      "mana_cost": "{3}{B}{B}{B}",
+      "name": "Midnight Banshee",
+      "oracle_text": "Wither (This deals damage to creatures in the form of -1/-1 counters.)\nAt the beginning of your upkeep, put a -1/-1 counter on each nonblack creature.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Spirit"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
