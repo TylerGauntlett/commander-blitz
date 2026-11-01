@@ -825,6 +825,8 @@ STATICS: dict[str, Entry] = {
                             '"Can\'t cause their controller to search their library"'),
     "damage_cant_be_prevented": ("No damage can be prevented: every prevention effect is skipped.",
                                  '"Damage can\'t be prevented"'),
+    "all_damage_wither": ("All damage to creatures, from every source, is dealt as -1/-1 counters.",
+                          '"All damage is dealt as though its source had wither"'),
     "cant_win_the_game": ("The player can't win the game.", None),
     "cast_as_though_flash": ("The player may cast matching spells as though they had flash.", None),
     "cast_from_graveyard": ("The player may cast matching spells from their graveyard; with "

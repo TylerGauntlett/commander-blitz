@@ -655,6 +655,11 @@ STATIC_EFFECTS = frozenset(
         # while it is on the battlefield (615.12, 101.2).  Global: no
         # `affects`, no `affects_player`.
         "damage_cant_be_prevented",
+        # Everlasting Torment.  "All damage is dealt as though its source had
+        # wither."  Read where damage to a creature becomes -1/-1 counters
+        # (`primitives.damage_permanent`), for every source, so not a
+        # `grant_keyword` static, which reaches only matching permanents.
+        "all_damage_wither",
         # Narset, Parter of Veils; Spirit of the Labyrinth.  "Each opponent
         # can't draw more than one card each turn."  A cap on a *player's*
         # draws, counted against `cards_drawn_this_turn` -- every card drawn
@@ -882,7 +887,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
 #: stop.
 UNGRANTABLE_STATIC_EFFECTS = (
     PLAYER_WIDE_STATIC_EFFECTS
-    | {"replace_token_creation", "damage_cant_be_prevented"}
+    | {"replace_token_creation", "damage_cant_be_prevented", "all_damage_wither"}
     | frozenset(ABILITY_STATICS)
 )
 

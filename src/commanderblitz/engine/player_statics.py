@@ -255,6 +255,20 @@ def damage_cant_be_prevented(state: GameState) -> bool:
     return next(_active_player_statics(state, "damage_cant_be_prevented"), None) is not None
 
 
+def all_damage_withers(state: GameState) -> bool:
+    """Is all damage dealt as though its source had wither right now?  Usually false.
+
+    Everlasting Torment: "All damage is dealt as though its source had
+    wither." Every source -- a creature, a spell on the stack, an ability whose
+    source has left, either player's -- so it cannot be a `grant_keyword`
+    static, which reaches only the permanents its `affects` matches. Read at
+    the one place damage to a creature becomes -1/-1 counters
+    (`primitives.damage_permanent`, 702.80a); damage to a player is unchanged,
+    as wither's is.
+    """
+    return next(_active_player_statics(state, "all_damage_wither"), None) is not None
+
+
 def outcome_barred_by_static(state: GameState, pid: int, effect: str) -> bool:
     """Does an active ``cant_lose_the_game`` / ``cant_win_the_game`` static name ``pid``?
 

@@ -26,6 +26,7 @@ from .enums import Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, STUN, GameObject
 from .player_statics import (
+    all_damage_withers,
     counter_placement_replacements,
     counters_prohibited,
     damage_cant_be_prevented,
@@ -932,8 +933,13 @@ def damage_permanent(
     # still fires with the same amount -- so enrage, Sengir and "damaged this
     # turn" all read a withering creature the way they read any other. Only
     # where the number lands changes.
-    withers = source_oid is not None and (
-        _has(state, source_oid, Keyword.WITHER) or _has(state, source_oid, Keyword.INFECT)
+    #
+    # "All damage is dealt as though its source had wither" (Everlasting
+    # Torment) reaches every source, a spell's and a departed one's included,
+    # so it is asked here rather than granted as a keyword.
+    withers = all_damage_withers(state) or (
+        source_oid is not None
+        and (_has(state, source_oid, Keyword.WITHER) or _has(state, source_oid, Keyword.INFECT))
     )
     # 306.8: damage dealt to a planeswalker removes that many loyalty counters.
     # Read here, beside wither, for the same reason wither is read here: this is

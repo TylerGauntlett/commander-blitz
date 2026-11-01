@@ -7597,6 +7597,25 @@ and `amount` are refused, because nothing would read them. An optional
 `condition` is honoured. It cannot be granted by `grant_ability`, since it is
 read off printed faces as the player-wide statics are.
 
+## "All damage is dealt as though its source had wither"
+
+```jsonc
+{ "kind": "static", "effect": "all_damage_wither" }
+```
+
+Everlasting Torment's third line. Damage to a creature from **every** source
+becomes -1/-1 counters (702.80a): a creature's, a spell's, an ability's whose
+source has already left the battlefield, either player's. It is read where
+wither itself is read, in `primitives.damage_permanent`. A `grant_keyword`
+static giving wither is the near miss: it reaches only the permanents its
+`affects` matches, so a Lightning Bolt would still mark damage.
+
+It is still damage: `DAMAGE_DEALT` fires with the amount, and deathtouch,
+lifelink and the damage ledger read it as usual. Damage to a player is life loss
+(wither changes nothing there), and a planeswalker or battle still loses its
+counters. `affects`, `affects_player` and `amount` are refused, and the static
+cannot be granted.
+
 ## Damage can't take you below 1
 
 ```jsonc

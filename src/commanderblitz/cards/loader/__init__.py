@@ -4757,6 +4757,18 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: damage_life_floor takes 'affects_player', 'amount' and "
                 f"an optional 'condition', and no 'affects'"
             )
+    if model.effect == "all_damage_wither" and (
+        model.affects is not None
+        or model.affects_player is not None
+        or model.amount is not None
+    ):
+        # "All damage is dealt as though its source had wither" names no
+        # source and no recipient. A filter here is read by nothing, so "damage
+        # dealt by creatures you control" would load clean and wither everything.
+        raise DslError(
+            f"{where}: all_damage_wither reaches all damage; it takes an optional "
+            f"'condition' and no 'affects', 'affects_player' or 'amount'"
+        )
     if model.effect == "damage_cant_be_prevented" and (
         model.affects is not None
         or model.affects_player is not None
@@ -4927,6 +4939,9 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         # Everlasting Torment's "Damage can't be prevented" reaches all damage,
         # to anything, from anything; its own guard above refuses a filter.
         "damage_cant_be_prevented",
+        # Its sibling line, "All damage is dealt as though its source had
+        # wither": every source, every creature.
+        "all_damage_wither",
     ):
         # Picks out *spells* or *tokens not yet created*, through
         # `affects_spells` and `affects_token`, both checked above. There are no

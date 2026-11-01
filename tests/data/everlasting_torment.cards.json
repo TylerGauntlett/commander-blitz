@@ -6,11 +6,47 @@
       "name": "Test No Prevention",
       "oracle_text": "Damage can't be prevented.",
       "mana_cost": "{2}{B/R}",
-      "types": ["Enchantment"],
-      "colors": ["B", "R"],
-      "color_identity": ["B", "R"],
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
       "abilities": [
-        {"kind": "static", "text": "Damage can't be prevented.", "effect": "damage_cant_be_prevented"}
+        {
+          "kind": "static",
+          "text": "Damage can't be prevented.",
+          "effect": "damage_cant_be_prevented"
+        }
+      ]
+    },
+    {
+      "id": "t_all_wither",
+      "name": "Test All Wither",
+      "oracle_text": "All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)",
+      "mana_cost": "{2}{B/R}",
+      "types": [
+        "Enchantment"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "All damage is dealt as though its source had wither. (A source with wither deals damage to creatures in the form of -1/-1 counters.)",
+          "effect": "all_damage_wither"
+        }
       ]
     }
   ]

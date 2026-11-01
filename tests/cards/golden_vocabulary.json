@@ -482,6 +482,7 @@
    "activate_loyalty_as_though_instant",
    "add_mana_on_tap",
    "add_subtype",
+   "all_damage_wither",
    "attack_tax",
    "attacks_if_able",
    "black_mana_as_phyrexian",
@@ -664,6 +665,7 @@
   ],
   "UNGRANTABLE_STATIC_EFFECTS": [
    "add_mana_on_tap",
+   "all_damage_wither",
    "black_mana_as_phyrexian",
    "cant_activate_abilities",
    "cant_cast_spells",
