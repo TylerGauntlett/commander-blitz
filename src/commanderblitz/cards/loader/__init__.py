@@ -412,8 +412,12 @@ def load_deck_file(path: Path) -> DeckModel:
 #: ``add_keywords`` and ``remove_supertypes`` say what `copy_permanent`'s keys
 #: of the same names say; ``name`` is `become_copy`'s ``except_name``; and
 #: ``enters_with`` is the one clause no token copy prints, because a token is
-#: never "entering" as anything but itself.
-ENTERS_COPY_EXCEPT_KEYS = frozenset({"add_keywords", "remove_supertypes", "name", "enters_with"})
+#: never "entering" as anything but itself. ``add_types`` is `copy_permanent`'s
+#: key of the same name: Phyrexian Metamorph's "…except it's an artifact in
+#: addition to its other types".
+ENTERS_COPY_EXCEPT_KEYS = frozenset(
+    {"add_keywords", "add_types", "remove_supertypes", "name", "enters_with"}
+)
 
 
 def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
@@ -441,6 +445,16 @@ def _check_enters_copy_except(spec: Mapping[str, Any], where: str) -> None:
             if k not in KNOWN_KEYWORDS:
                 raise DslError(f"{where}.add_keywords: unknown keyword {k!r}")
         refuse_numbered_grant(added, f"{where}.add_keywords")
+    if "add_types" in spec:
+        # "…except it's an artifact in addition to its other types" (Phyrexian
+        # Metamorph). Dropped, a copy of a creature is no artifact, and every
+        # artifact count and artifact removal misses it.
+        added = spec["add_types"]
+        if not isinstance(added, list) or not added:
+            raise DslError(f"{where}.add_types: must be a non-empty list")
+        for t in added:
+            if t not in KNOWN_TYPES:
+                raise DslError(f"{where}.add_types: unknown card type {t!r}")
     if "remove_supertypes" in spec:
         # "…and it isn't legendary" (Spark Double). Dropped, the copy of a
         # legendary permanent is binned by the legend rule beside its original.

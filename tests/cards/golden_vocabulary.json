@@ -89,6 +89,7 @@
   ],
   "ENTERS_COPY_EXCEPT_KEYS": [
    "add_keywords",
+   "add_types",
    "enters_with",
    "name",
    "remove_supertypes"

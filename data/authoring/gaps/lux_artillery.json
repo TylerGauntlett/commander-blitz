@@ -1,0 +1,23 @@
+{
+  "card_id": "lux_artillery",
+  "name": "Lux Artillery",
+  "oracle_text": "Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)\nAt the beginning of your end step, if there are thirty or more counters among artifacts and creatures you control, this artifact deals 10 damage to each opponent.",
+  "blocked_sentences": [
+    "Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)"
+  ],
+  "needs": [
+    {
+      "capability": "sunburst",
+      "kind": "keyword",
+      "what": "the sunburst keyword (702.44: a permanent spell enters with a +1/+1 counter, or a charge counter if it is not a creature, for each color of mana spent to cast it), plus a way for a spell_cast trigger to grant that keyword to the triggering spell while it is on the stack so the replacement applies as it enters",
+      "why_existing_wont_do": "sunburst is not in keywords; colors_of_mana_spent reads the mana spent on the source's own cast, and grant_keyword/cast_gains_keywords target permanents or spells cast via cast_from_library_top only, so nothing can give a spell already on the stack an enters-with-counters replacement scaled by its own colors spent"
+    }
+  ],
+  "closest_existing": [
+    "colors_of_mana_spent",
+    "cast_gains_keywords",
+    "grant_keyword",
+    "enters_with_additional_counters"
+  ],
+  "confidence": "high"
+}

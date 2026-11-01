@@ -603,6 +603,11 @@ class GameState:
                 copied = replace(
                     copied, supertypes=copied.supertypes - obj.copying_remove_supertypes
                 )
+            if obj.copying_add_types:
+                # "…except it's an artifact in addition to its other types"
+                # (Phyrexian Metamorph): on the copied face, so the copy is an
+                # artifact before any layer and to every reader.
+                copied = replace(copied, types=copied.types | obj.copying_add_types)
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied

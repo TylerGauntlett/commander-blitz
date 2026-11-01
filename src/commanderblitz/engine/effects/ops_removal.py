@@ -156,6 +156,7 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         # A new copy effect replaces the old one whole, exception and all.
         obj.copying_keywords = None
         obj.copying_remove_supertypes = None
+        obj.copying_add_types = None
         obj.copying_until_eot = until_eot
     ctx.state.bump_chars()
 

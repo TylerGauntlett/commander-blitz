@@ -1743,6 +1743,10 @@ def _enter_battlefield(
                 # copiable values an exception rewrites, read by `card_of`.
                 dropped = exception.get("remove_supertypes")
                 obj.copying_remove_supertypes = frozenset(dropped) if dropped else None
+                # "…except it's an artifact in addition to its other types"
+                # (Phyrexian Metamorph).
+                types_added = exception.get("add_types")
+                obj.copying_add_types = frozenset(types_added) if types_added else None
                 obj.copying_name = exception.get("name")
                 state.bump_chars()
                 # 614.12: the copied face's own "enters with" -- above all a

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**143 cards** blocked by **131** capabilities.
+**150 cards** blocked by **138** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,6 +27,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
+| [station](#station) | 2 | 1881 | engine |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -45,6 +46,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
+| [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
+| [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
@@ -54,6 +57,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [crime](#crime) | 1 | 2244 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
@@ -91,6 +95,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
+| [mana-ability-leading-rider](#mana-ability-leading-rider) | 1 | 4080 | engine |
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
@@ -99,7 +104,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
-| [multikicker](#multikicker) | 1 | 251 | cost |
 | [myriad](#myriad) | 1 | 6808 | keyword |
 | [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -113,11 +117,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
+| [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
+| [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
@@ -132,6 +138,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
+| [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
@@ -482,6 +489,29 @@ Blocks **2** cards.
 
 </details>
 
+## station
+
+Blocks **2** cards.
+
+- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (1+ begin-combat trigger) or a keyword (8+ Flying) only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it
+  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
+- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (3+ 'whenever you cast an artifact spell' trigger), a keyword (12+ Flying) and a static self-buff (12+ '+1/+0 for each artifact you control') only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T (0/8) only at its highest station threshold (12+) and a noncreature artifact below it
+  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (the packet notes: 'Activated abilities only'); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the notes forbid for striations; and nothing gates the Spacecraft becoming a 0/8 artifact creature at 12+ -- a counters-conditioned set_types static would approximate rule 721 rather than implement station. The Station activation itself is expressible (tap_permanents with `as` + add_counters power_of), but the card is only partly expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Uthros Research Craft** (rank 1881) — `uthros_research_craft`
+  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)
+  - 3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.
+  - 12+ | Flying
+  - This Spacecraft gets +1/+0 for each artifact you control.
+- **Inspirit, Flagship Vessel** (rank 3934) — `inspirit_flagship_vessel`
+  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
+  - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
+  - 8+ | Flying
+
+</details>
+
 ## targeted-discard
 
 Blocks **2** cards.
@@ -758,6 +788,36 @@ Blocks **1** card.
 
 </details>
 
+## choose-card-type-from-list
+
+Blocks **1** card.
+
+- **(op)** choose_type over a printed subset of card types (Artifact, Creature, Enchantment, Instant, Sorcery) writing chosen_card_type, e.g. an `options` list on choose_type
+  <br>Why the existing vocabulary won't do: choose_type's only fixed axes are `permanent_type` (six permanent types, no Instant/Sorcery) and `card_type` (all nine of 205.2a, adding Battle, Kindred, Land and Planeswalker); neither offers exactly the five printed choices, and offering Planeswalker/Battle/Kindred would discount spells the printed card cannot
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloud Key** (rank 611) — `cloud_key`
+  - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
+  - Spells you cast of the chosen type cost {1} less to cast
+
+</details>
+
+## chosen-card-type-cost-reduction
+
+Blocks **1** card.
+
+- **(static_effect)** spell_cost_reduction whose affects_spells.types may hold {"chosen_card_type_of": "self"}, substituted with the source's chosen_card_type when pricing a spell
+  <br>Why the existing vocabulary won't do: player_statics.spell_cost_reduction resolves only chosen_type_of (creature subtype) and chosen_color_of in its filter; chosen_card_type_of is resolved only in effect selectors and protection from_types, so a spell filter naming it would match nothing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloud Key** (rank 611) — `cloud_key`
+  - As this artifact enters, choose artifact, creature, enchantment, instant, or sorcery
+  - Spells you cast of the chosen type cost {1} less to cast
+
+</details>
+
 ## combat-damage-amount-binding
 
 Blocks **1** card.
@@ -885,6 +945,20 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+
+</details>
+
+## crime
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event fired once per spell cast or ability put on the stack whose targets include one of the controller's opponents, a permanent or spell an opponent of that controller controls, or a card in an opponent's graveyard (rule 700.13), filterable by who committed the crime (here: cause_controller opponent)
+  <br>Why the existing vocabulary won't do: becomes_target fires per targeted object and only for permanents, so it misses targeting a player or graveyard cards and would fire multiple times for one spell with several targets; spell_cast and ability_activated carry no information about whether the targets belong to an opponent; the engine has no crime concept at all
+
+<details><summary>Cards waiting on this</summary>
+
+- **Patrolling Peacemaker** (rank 2244) — `patrolling_peacemaker`
+  - Whenever an opponent commits a crime, proliferate
 
 </details>
 
@@ -1421,6 +1495,20 @@ Blocks **1** card.
 
 </details>
 
+## mana-ability-leading-rider
+
+Blocks **1** card.
+
+- **(engine)** a mana ability whose rider effect (add_counters on the source) happens BEFORE the mana is made, so a variable add_mana amount (any_one_color with amount counters_on charge, self) reads the count after the counter is placed; the payment solver's mana_amount must also see the post-rider count when deciding how much the source can produce
+  <br>Why the existing vocabulary won't do: loader/mana.py _split_mana_rider requires the add_mana half first and the rider after it, and costs.py adds mana via mana_amount (evaluated before _run_mana_rider), so X would read the pre-tap count. Writing amount as counters_on + 1 with a trailing add_counters rider is an approximation that goes wrong under counter replacement (Doubling Season / Hardened Scales put 2, real X counts both), and making it a non-mana activated ability would put it on the stack, which a mana ability (605.1a) never uses
+
+<details><summary>Cards waiting on this</summary>
+
+- **Empowered Autogenerator** (rank 4080) — `empowered_autogenerator`
+  - {T}: Put a charge counter on this artifact. Add X mana of any one color, where X is the number of charge counters on this artifact.
+
+</details>
+
 ## mana-cant-pay-generic
 
 Blocks **1** card.
@@ -1532,21 +1620,6 @@ Blocks **1** card.
 
 - **Resourceful Defense** (rank 1628) — `resourceful_defense`
   - {4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control.
-
-</details>
-
-## multikicker
-
-Blocks **1** card.
-
-- **(cost)** the multikicker guard must accept a card whose only reader of 'additional_paid' is a 'self_enters_with_counters' replacement -- i.e. loader._mentions should walk model.replacements (their 'amount' and 'condition' value expressions) the way it already walks spell_effects, targets, ability effects, ability targets and trigger conditions. The same walk feeds the mirrored check just below it ('reads additional_paid but has no additional_cost'), so both should be fixed together. Nothing else is missing: with _mentions patched to see replacements, the card {multikicker: "{2}", replacements: [{event: self_enters_with_counters, counter: "charge", amount: {additional_paid: true}}], plus a mana ability {op: add_mana, mana: "{C}", amount: {counters_on: {counter: "charge", objects: {self_only: true}}}}} passes schema, compile, residual and playable, and the sandbox measures 6 charge counters (MAX_ADDITIONAL_TIMES) -- so the fix is one walk, and the answer that follows it asserts counters {kind: "charge", amount: 6}.
-  <br>Why the existing vocabulary won't do: The printed 'Multikicker {2}' line has exactly one claimant -- the card-level 'multikicker' field (verify._covered matches it against card.multikicker; fidelity declares it). Spelling it as 'additional_cost' + 'additional_optional' + 'additional_repeatable' loads, but leaves the printed line unclaimed at the residual gate, and gate 5 only casts the card multikicked when card.multikicker is not None, so the kicks would never be paid or measured. But setting 'multikicker' fails compile with "has a 'multikicker' cost that no effect reads via 'additional_paid'", because loader._mentions never descends into model.replacements -- and a replacement is where 614.1c requires 'enters with a charge counter ... for each time it was kicked' to live. The only shape that satisfies the guard is a 'self_enters' triggered ability running add_counters {additional_paid: true}, which loads and would probably pass every gate while being the wrong card: the artifact would be seen on the battlefield at zero counters, the counters would arrive from a separate object on the stack that can be responded to or removed, and they would fire counter_placed watchers that a replacement does not. That is the approximation the brief forbids, so no answer is written.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Everflowing Chalice** (rank 251) — `everflowing_chalice`
-  - Multikicker {2} (You may pay an additional {2} any number of times as you cast this spell.)
-  - This artifact enters with a charge counter on it for each time it was kicked.
 
 </details>
 
@@ -1739,6 +1812,20 @@ Blocks **1** card.
 
 </details>
 
+## proliferate-binding
+
+Blocks **1** card.
+
+- **(op)** an `as` option on the `proliferate` op that binds the permanents which actually received a counter from that proliferate (across every repetition under replace_proliferate), so a following `choose_permanents` with objects {binding: <as>, controller: you} can pick any number of them and a `phase_out` can act on the choice
+  <br>Why the existing vocabulary won't do: `proliferate` takes no options at all (op_options is empty) and its implementation picks refs through ask_targets without recording them anywhere; no selector key (has_counters, modified, binding) or value reads 'had a counter put on them this way', and has_counters would wrongly offer every permanent you control carrying a counter, including ones you declined to proliferate
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ripples of Potential** (rank 957) — `ripples_of_potential`
+  - Proliferate, then choose any number of permanents you control that had a counter put on them this way. Those permanents phase out
+
+</details>
+
 ## protection-from-multicolored
 
 Blocks **1** card.
@@ -1806,6 +1893,20 @@ Blocks **1** card.
 
 - **Werewolf Pack Leader** (rank 8384) — `werewolf_pack_leader`
   - {3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.
+
+</details>
+
+## remove-x-counters-cost
+
+Blocks **1** card.
+
+- **(cost)** an activated-ability cost that removes an announced number X of counters (any kinds) from ONE chosen artifact or creature you control, with X bound so the effects can read it ({"x": ...}); X is bounded by the counters on the chosen permanent and is not part of the mana cost
+  <br>Why the existing vocabulary won't do: cost.remove_counters takes only a fixed amount of one named kind and only off the source; cost.remove_counters_from_among takes a fixed integer count (Cost reads int(count)) and lets the payer split the removal across several permanents, whereas this card takes all X from a single permanent; x_value defines a mana {X} from a value expression, and there is no {X} in this cost for the player to announce
+
+<details><summary>Cards waiting on this</summary>
+
+- **Moxite Refinery** (rank 5399) — `moxite_refinery`
+  - {2}, {T}, Remove X counters from an artifact or creature you control: Choose one. Activate only as a sorcery.
 
 </details>
 
@@ -2006,6 +2107,20 @@ Blocks **1** card.
 
 - **Vanguard of the Restless** (rank 11948) — `vanguard_of_the_restless`
   - Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game.
+
+</details>
+
+## sunburst
+
+Blocks **1** card.
+
+- **(keyword)** the sunburst keyword (702.44: a permanent spell enters with a +1/+1 counter, or a charge counter if it is not a creature, for each color of mana spent to cast it), plus a way for a spell_cast trigger to grant that keyword to the triggering spell while it is on the stack so the replacement applies as it enters
+  <br>Why the existing vocabulary won't do: sunburst is not in keywords; colors_of_mana_spent reads the mana spent on the source's own cast, and grant_keyword/cast_gains_keywords target permanents or spells cast via cast_from_library_top only, so nothing can give a spell already on the stack an enters-with-counters replacement scaled by its own colors spent
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lux Artillery** (rank 3735) — `lux_artillery`
+  - Whenever you cast an artifact creature spell, it gains sunburst. (It enters with a +1/+1 counter on it for each color of mana spent to cast it.)
 
 </details>
 

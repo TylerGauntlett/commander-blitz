@@ -1172,6 +1172,38 @@ class TestTheFantasticarsConstructsAreFourFourHastyFliers:
         assert not construct.keywords
 
 
+class TestGolemFoundrysGolemIsAPlainThreeThree:
+    """Golem Foundry: *"Create a 3/3 colorless Golem artifact creature token."*
+
+    `gingerbrute_1_1_c` is the pool's other Golem: a 1/1 Food with haste and
+    an evasion clause. `construct_4_4_c_artifact_flying_haste` is the nearest
+    colorless artifact body, a different creature type with two keywords.
+    """
+
+    def test_it_is_a_three_three_colorless_golem_artifact_with_nothing_else(self, pool):
+        token = pool.get("golem_3_3_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature"]
+        assert list(token.subtypes) == ["Golem"]
+        assert not token.keywords
+        assert not token.abilities
+
+    def test_titan_forges_golem_is_the_same_shape_at_nine_nine(self, pool):
+        """Titan Forge: *"Create a 9/9 colorless Golem artifact creature token."*"""
+        token = pool.get("golem_9_9_c_artifact")
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (9, 9)
+        assert not token.colors
+        assert list(token.subtypes) == ["Golem"]
+        assert not token.keywords and not token.abilities
+
+    def test_gingerbrute_is_still_a_separate_golem(self, pool):
+        gingerbrute = pool.get("gingerbrute_1_1_c")
+        assert (gingerbrute.power, gingerbrute.toughness) == (1, 1)
+
+
 class TestPrismariElementalsAreBlueAndRed:
     """Prismari Pianist, Furygale Flocking, Magma Opus and Resculpt: *"a 1/1
     blue and red Elemental"*, *"two 3/3 blue and red Elemental creature tokens
