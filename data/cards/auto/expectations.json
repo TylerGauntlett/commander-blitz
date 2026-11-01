@@ -11583,6 +11583,10 @@
     },
     "zone": "graveyard"
   },
+  "realmwalker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "reanimate": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -12010,6 +12014,12 @@
       "0": 1
     },
     "zone": "graveyard"
+  },
+  "risen_reef": {
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
   },
   "risen_sanctuary": {
     "zone": "battlefield"
@@ -12845,6 +12855,11 @@
   "sharlayan_nation_of_scholars": {
     "zone": "battlefield"
   },
+  "shatter_the_sky": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "shattered_landscape": {
     "zone": "battlefield"
   },
@@ -12926,6 +12941,13 @@
     },
     "zone": "battlefield"
   },
+  "shimmercreep": {
+    "life": {
+      "0": 42,
+      "1": 38
+    },
+    "zone": "battlefield"
+  },
   "shimmering_barrier": {
     "zone": "battlefield"
   },
@@ -12984,6 +13006,14 @@
     "hand_size": {
       "0": 2
     },
+    "zone": "battlefield"
+  },
+  "shriekmaw": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "shrike_force": {
@@ -13372,6 +13402,13 @@
     "tokens": {
       "count": 1,
       "id": "treasure_token"
+    },
+    "zone": "battlefield"
+  },
+  "smokebraider": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -14102,6 +14139,10 @@
     "zone": "graveyard"
   },
   "submerged_boneyard": {
+    "zone": "battlefield"
+  },
+  "subterfuge": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "subterranean_cavern": {

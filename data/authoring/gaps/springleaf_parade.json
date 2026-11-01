@@ -1,0 +1,18 @@
+{
+  "card_id": "springleaf_parade",
+  "name": "Springleaf Parade",
+  "oracle_text": "When this enchantment enters, create X 1/1 colorless Shapeshifter creature tokens with changeling. (They're every creature type.)\nCreature tokens you control have \"{T}: Add one mana of any color.\"",
+  "blocked_sentences": [
+    "When this enchantment enters, create X 1/1 colorless Shapeshifter creature tokens with changeling. (They're every creature type.)"
+  ],
+  "needs": [
+    {
+      "capability": "shapeshifter_1_1_c_changeling",
+      "kind": "token",
+      "what": "a 1/1 colorless Shapeshifter creature token with changeling (every creature type)",
+      "why_existing_wont_do": "token_ids has only shapeshifter_3_2_c_changeling, a 3/2; create_token's power/toughness override is accepted only on X/X (variable_pt) tokens, so it cannot shrink the 3/2 to 1/1. The second line is expressible (a grant_ability static over creature tokens you control granting a {T}: add one mana of any color mana ability)."
+    }
+  ],
+  "closest_existing": ["shapeshifter_3_2_c_changeling"],
+  "confidence": "high"
+}

@@ -1,0 +1,25 @@
+{
+  "card_id": "thriving_bluff",
+  "name": "Thriving Bluff",
+  "oracle_text": "This land enters tapped. As it enters, choose a color other than red.\n{T}: Add {R} or one mana of the chosen color.",
+  "blocked_sentences": [
+    "As it enters, choose a color other than red.",
+    "{T}: Add {R} or one mana of the chosen color."
+  ],
+  "needs": [
+    {
+      "capability": "choose_color_excluding",
+      "kind": "op",
+      "what": "a `choose_color` that excludes printed colours from the offer -- e.g. `{\"op\": \"choose_color\", \"except_colors\": [\"R\"]}` for \"choose a color other than red\" -- so the chooser is offered only the four remaining colours and `chosen_color` can never be the excluded one",
+      "why_existing_wont_do": "`choose_color` (op_options: only `prompt`; `op_choose_color` in engine/effects/ops_control.py) always offers all five COLOR_CHOICES, so the land could choose red and then tap for only {R}, which is a different card from the printed one"
+    },
+    {
+      "capability": "chosen_color_mana_or_fixed",
+      "kind": "op",
+      "what": "a mana ability offering a fixed symbol OR the permanent's chosen colour -- \"{T}: Add {R} or one mana of the chosen color\" -- i.e. a `choose_mode` whose modes are `add_mana {R}` and `add_mana {\"chosen_color_of\": \"self\"}`, with the solver's options being {R} plus the source's live `chosen_color`",
+      "why_existing_wont_do": "The loader's chosen-colour mana branch (`mana_chosen_color` in cards/loader/__init__.py) requires the ability be a single `add_mana` with `{\"chosen_color_of\": \"self\"}` and refuses a second effect; a `choose_mode` over five literal colours (the starting_point) taps for any colour, strictly better than the printed card"
+    }
+  ],
+  "closest_existing": ["choose_color", "chosen_color_of", "choose_mode", "add_mana"],
+  "confidence": "high"
+}

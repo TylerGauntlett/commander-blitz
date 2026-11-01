@@ -10856,6 +10856,10 @@
     "artist": "Howard Lyon",
     "scryfall_id": "920bb44e-aa7f-4ee9-ab19-30114f55ec9b"
   },
+  "realmwalker": {
+    "artist": "Zack Stella",
+    "scryfall_id": "52733829-27b7-40ec-a897-cabab35b3729"
+  },
   "reanimate": {
     "artist": "Mike Zeck & Bob McLeod",
     "scryfall_id": "3e560cb9-3036-46a2-a5c7-edb04d0095b7"
@@ -11203,6 +11207,10 @@
   "rise_of_the_dark_realms": {
     "artist": "Alexander Mokhov",
     "scryfall_id": "953c7338-e30d-452c-89ff-0c5fca690b2f"
+  },
+  "risen_reef": {
+    "artist": "Johan Grenier",
+    "scryfall_id": "715ad2ff-7eae-42f1-bb3c-a3afc2c9b82a"
   },
   "risen_sanctuary": {
     "artist": "Chase Stone",
@@ -12056,6 +12064,10 @@
     "artist": "David Frasheski",
     "scryfall_id": "7a745b5e-cdb8-4d05-ac5c-87be69536da6"
   },
+  "shatter_the_sky": {
+    "artist": "Bayard Wu",
+    "scryfall_id": "e79f7e98-2f80-444b-8ca2-d529472ba798"
+  },
   "shattered_landscape": {
     "artist": "Erikas Perl",
     "scryfall_id": "b3da28c7-6e92-439d-a163-91682d4f11dc"
@@ -12119,6 +12131,10 @@
   "shimmer_myr": {
     "artist": "Jana Schirmer & Johannes Voss",
     "scryfall_id": "8eb0c2fc-c7e0-41f2-b532-e4cac30d2ac7"
+  },
+  "shimmercreep": {
+    "artist": "Nils Hamm",
+    "scryfall_id": "eec27283-360e-4eb8-b934-054c98f91c7f"
   },
   "shimmering_barrier": {
     "artist": "D. Alexander Gregory",
@@ -12191,6 +12207,10 @@
   "shrieking_drake": {
     "artist": "Ian Miller",
     "scryfall_id": "9f1cc39f-898c-4e92-82a0-a17606b60574"
+  },
+  "shriekmaw": {
+    "artist": "Steve Prescott",
+    "scryfall_id": "ed2d62c2-85c9-4fd4-8a7e-0017640606be"
   },
   "shrike_force": {
     "artist": "N\u00e9stor Ossand\u00f3n Leal",
@@ -12583,6 +12603,10 @@
   "smaug_wicked_worm": {
     "artist": "Tyler Jacobson",
     "scryfall_id": "189a7d55-c3ec-4402-a3b3-72817f533e87"
+  },
+  "smokebraider": {
+    "artist": "Anthony S. Waters",
+    "scryfall_id": "d5975979-12ca-4cb5-9897-71a683104eda"
   },
   "smoldering_butcher": {
     "artist": "Zoltan Boros & Gabor Szikszai",
@@ -13279,6 +13303,10 @@
   "submerged_boneyard": {
     "artist": "Alexandre Honor\u00e9",
     "scryfall_id": "78f04f32-f672-443a-86c0-63f5f4747c67"
+  },
+  "subterfuge": {
+    "artist": "Ilse Gort",
+    "scryfall_id": "d649fca4-caa1-4438-979a-d35c76d3715d"
   },
   "subterranean_cavern": {
     "artist": "JB Casacop",

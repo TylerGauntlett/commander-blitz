@@ -217252,12 +217252,12 @@
     },
     "Realmwalker": {
       "edhrec_rank": 608,
-      "gate": "template",
+      "gate": null,
       "name": "Realmwalker",
-      "reason": "no template for: As this creature enters, choose a creature type",
+      "reason": "",
       "scryfall_id": "52733829-27b7-40ec-a897-cabab35b3729",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Realmwright": {
@@ -224892,12 +224892,12 @@
     },
     "Risen Reef": {
       "edhrec_rank": 2155,
-      "gate": "template",
+      "gate": null,
       "name": "Risen Reef",
-      "reason": "no template for: Whenever this creature or another Elemental you control enters, look at the top card of yo",
+      "reason": "",
       "scryfall_id": "715ad2ff-7eae-42f1-bb3c-a3afc2c9b82a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Risen Riptide": {
@@ -243102,12 +243102,12 @@
     },
     "Shatter the Sky": {
       "edhrec_rank": 7905,
-      "gate": "template",
+      "gate": null,
       "name": "Shatter the Sky",
-      "reason": "no template for: Each player who controls a creature with power 4 or greater draws a card. Then destroy all",
+      "reason": "",
       "scryfall_id": "e79f7e98-2f80-444b-8ca2-d529472ba798",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shatter the Source": {
@@ -244312,12 +244312,12 @@
     },
     "Shimmercreep": {
       "edhrec_rank": 10010,
-      "gate": "template",
+      "gate": null,
       "name": "Shimmercreep",
-      "reason": "no template for: Vivid — When this creature enters, each opponent loses X life and you gain X life, where X",
+      "reason": "",
       "scryfall_id": "f7c02899-5f0f-4b38-bbbc-fbc8c46419a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shimmerdrift Vale": {
@@ -245582,12 +245582,12 @@
     },
     "Shriekmaw": {
       "edhrec_rank": 1556,
-      "gate": "template",
+      "gate": null,
       "name": "Shriekmaw",
-      "reason": "no template for: When this creature enters, destroy target nonartifact, nonblack creature",
+      "reason": "",
       "scryfall_id": "ed2d62c2-85c9-4fd4-8a7e-0017640606be",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shriekwood Devourer": {
@@ -252282,12 +252282,12 @@
     },
     "Slithermuse": {
       "edhrec_rank": 9290,
-      "gate": "template",
+      "gate": "compile",
       "name": "Slithermuse",
-      "reason": "no template for: When this creature leaves the battlefield, choose an opponent. If that player has more car",
+      "reason": "slithermuse: evoke '{3}{U}' costs the same as the printed cost -- the same cast offered twice, and nobody would take the second",
       "scryfall_id": "58b1e5df-de53-4452-90a9-9ff13c4a0bd6",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Slitherwisp": {
@@ -252952,12 +252952,12 @@
     },
     "Smokebraider": {
       "edhrec_rank": 5000,
-      "gate": "template",
+      "gate": null,
       "name": "Smokebraider",
-      "reason": "no template for: {T}: Add two mana in any combination of colors. Spend this mana only to cast Elemental spe",
+      "reason": "",
       "scryfall_id": "d5975979-12ca-4cb5-9897-71a683104eda",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Smokespew Invoker": {
@@ -268092,12 +268092,12 @@
     },
     "Subterfuge": {
       "edhrec_rank": 6309,
-      "gate": "template",
+      "gate": null,
       "name": "Subterfuge",
-      "reason": "no template for: When this creature enters, target creature gains flying and \"Whenever this creature deals ",
+      "reason": "",
       "scryfall_id": "d649fca4-caa1-4438-979a-d35c76d3715d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Subterranean Cavern": {
