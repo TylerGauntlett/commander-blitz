@@ -10437,6 +10437,93 @@
     {
       "abilities": [
         {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "blight": 2
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward—Blight 2."
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "binding": "subject",
+                  "controller": "you"
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "lose_life",
+                  "player": {
+                    "controller_of": "subject"
+                  }
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more -1/-1 counters are put on a creature, draw a card if you control that creature. If you don't control it, its controller loses 1 life.",
+          "trigger": {
+            "controller": "any",
+            "counter": "-1/-1",
+            "event": "counter_placed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "auntie_ool_cursewretch",
+      "mana_cost": "{1}{B}{R}{G}",
+      "name": "Auntie Ool, Cursewretch",
+      "oracle_text": "Ward—Blight 2. (To blight 2, a player puts two -1/-1 counters on a creature they control.)\nWhenever one or more -1/-1 counters are put on a creature, draw a card if you control that creature. If you don't control it, its controller loses 1 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -22196,6 +22283,68 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "additional_cost": {
+        "blight": 1
+      },
+      "additional_optional": true,
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "burning_curiosity",
+      "mana_cost": "{2}{R}",
+      "name": "Burning Curiosity",
+      "oracle_text": "As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)\nExile the top two cards of your library. If this spell's additional cost was paid, exile the top three cards instead. Until the end of your next turn, you may play those cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "additional_paid": true
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "else": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "end_of_your_next_turn",
+              "player": "you"
+            }
+          ],
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "end_of_your_next_turn",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

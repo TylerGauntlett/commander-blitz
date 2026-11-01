@@ -967,6 +967,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "auntie_ool_cursewretch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "auntie_s_hovel": {
     "zone": "battlefield"
   },
@@ -1958,6 +1962,15 @@
   "buried_ruin": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "burning_curiosity": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 38
+    },
+    "zone": "graveyard"
   },
   "burrowing": {
     "zone": [

@@ -16222,12 +16222,12 @@
     },
     "Auntie Ool, Cursewretch": {
       "edhrec_rank": 6570,
-      "gate": "template",
+      "gate": null,
       "name": "Auntie Ool, Cursewretch",
-      "reason": "no template for: Ward—Blight 2",
+      "reason": "",
       "scryfall_id": "9a2e4252-9fbc-4d43-8935-db2cafaa7b5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Auntie's Hovel": {
@@ -36502,12 +36502,12 @@
     },
     "Burning Curiosity": {
       "edhrec_rank": 9313,
-      "gate": "template",
+      "gate": null,
       "name": "Burning Curiosity",
-      "reason": "no template for: As an additional cost to cast this spell, you may blight 1",
+      "reason": "",
       "scryfall_id": "689ed288-6228-4d7e-b198-56a12b8be299",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Burning Earth": {
