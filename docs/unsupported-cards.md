@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**145 cards** blocked by **132** capabilities.
+**147 cards** blocked by **134** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -97,11 +97,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
+| [move-counter-any-kind](#move-counter-any-kind) | 1 | 561 | op |
 | [multikicker](#multikicker) | 1 | 251 | cost |
 | [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
+| [opponent-activated-ability](#opponent-activated-ability) | 1 | 6193 | engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
@@ -1511,6 +1513,20 @@ Blocks **1** card.
 
 </details>
 
+## move-counter-any-kind
+
+Blocks **1** card.
+
+- **(op)** a move_counters mode that moves ONE counter of a kind the controller chooses on resolution from among the kinds on the source ("move a counter"), e.g. `choose_kind: true` with `amount: {const: 1}`, removing it from the `from` target and adding the same kind to the `objects` target
+  <br>Why the existing vocabulary won't do: move_counters takes either a single printed `counter` kind (default +1/+1) or `all_kinds`, which moves the whole multiset; neither lets the player pick which one counter of any kind moves, so naming +1/+1 would make the land useless with charge/loyalty/oil counters and all_kinds moves every counter instead of one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Nesting Grounds** (rank 561) — `nesting_grounds`
+  - {1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery.
+
+</details>
+
 ## multikicker
 
 Blocks **1** card.
@@ -1584,6 +1600,20 @@ Blocks **1** card.
 
 - **Marang River Regent // Coil and Catch** (rank 3355) — `marang_river_regent_coil_and_catch_omen`
   - Coil and Catch -- Instant - Omen, {3}{U}: Return up to two target nonland permanents to their owners' hands. (Then shuffle this card into its owner's library.)
+
+</details>
+
+## opponent-activated-ability
+
+Blocks **1** card.
+
+- **(engine)** an activated ability on a permanent that players other than its controller may activate ("Only your opponents may activate this ability", and the sibling "Any player may activate this ability"), paid for by the activator, with the activator bound as the ability's controller so that 'draw a card' and 'gain control of this creature' (gain_control player: the activator) resolve for them, and sorcery timing checked on the activator's turn
+  <br>Why the existing vocabulary won't do: Activated abilities are only offered to the permanent's controller. The only 'activated_by' key in the DSL belongs to the ability_cost_reduction static and the loader refuses it on any other ability ('activated_by only mean anything on an ability_cost_reduction static'); nothing in ability_keys lets an opponent activate an ability of a permanent they do not control.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Oft-Nabbed Goat** (rank 6193) — `oft_nabbed_goat`
+  - {1}: Draw a card. Gain control of this creature and put a -1/-1 counter on it. Only your opponents may activate this ability and only as a sorcery.
 
 </details>
 

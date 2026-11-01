@@ -184632,12 +184632,12 @@
     },
     "Necroskitter": {
       "edhrec_rank": 2951,
-      "gate": "template",
+      "gate": null,
       "name": "Necroskitter",
-      "reason": "no template for: Whenever a creature an opponent controls with a -1/-1 counter on it dies, you may return t",
+      "reason": "",
       "scryfall_id": "1743ff46-7bfe-46f7-a2cf-170dd92bf28f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Necrosquito": {
@@ -200092,12 +200092,12 @@
     },
     "Persist": {
       "edhrec_rank": 1362,
-      "gate": "template",
+      "gate": null,
       "name": "Persist",
-      "reason": "no template for: Return target nonlegendary creature card from your graveyard to the battlefield with a -1/",
+      "reason": "",
       "scryfall_id": "b7a56356-91bf-42f5-ab21-af2c48e78fc3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Persistent Constrictor": {
@@ -209632,12 +209632,12 @@
     },
     "Puca's Covenant": {
       "edhrec_rank": 8589,
-      "gate": "template",
+      "gate": null,
       "name": "Puca's Covenant",
-      "reason": "no template for: Whenever a creature you control with a counter on it dies, you may return another target p",
+      "reason": "",
       "scryfall_id": "0ed38a8d-9c77-4f21-90f5-f6a4c947d6d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Puca's Eye": {
@@ -210072,12 +210072,12 @@
     },
     "Puppeteer Clique": {
       "edhrec_rank": 2549,
-      "gate": "template",
+      "gate": null,
       "name": "Puppeteer Clique",
-      "reason": "no template for: When this creature enters, put target creature card from an opponent's graveyard onto the ",
+      "reason": "",
       "scryfall_id": "ffb08d08-9936-4525-bd72-3c2b77783d7d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Pure // Simple": {

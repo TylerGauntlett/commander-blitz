@@ -9647,6 +9647,10 @@
     },
     "zone": "battlefield"
   },
+  "necroskitter": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "necrotic_hex": {
     "battlefield_count": 36,
     "tokens": {
@@ -10538,6 +10542,16 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "persist": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "persistent_petitioners": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10973,6 +10987,13 @@
     },
     "zone": "battlefield"
   },
+  "puca_s_covenant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "pugnacious_hammerskull": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11002,6 +11023,10 @@
     "zone": "graveyard"
   },
   "puppet_master_string_puller": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "puppeteer_clique": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

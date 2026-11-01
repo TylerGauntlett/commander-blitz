@@ -1,0 +1,18 @@
+{
+  "card_id": "nesting_grounds",
+  "name": "Nesting Grounds",
+  "oracle_text": "{T}: Add {C}.\n{1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery.",
+  "blocked_sentences": [
+    "{1}, {T}: Move a counter from target permanent you control onto a second target permanent. Activate only as a sorcery."
+  ],
+  "needs": [
+    {
+      "capability": "move_counter_any_kind",
+      "kind": "op",
+      "what": "a move_counters mode that moves ONE counter of a kind the controller chooses on resolution from among the kinds on the source (\"move a counter\"), e.g. `choose_kind: true` with `amount: {const: 1}`, removing it from the `from` target and adding the same kind to the `objects` target",
+      "why_existing_wont_do": "move_counters takes either a single printed `counter` kind (default +1/+1) or `all_kinds`, which moves the whole multiset; neither lets the player pick which one counter of any kind moves, so naming +1/+1 would make the land useless with charge/loyalty/oil counters and all_kinds moves every counter instead of one"
+    }
+  ],
+  "closest_existing": ["move_counters", "remove_counters"],
+  "confidence": "high"
+}
