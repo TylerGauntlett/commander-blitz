@@ -411,7 +411,7 @@ class TestActivatedAbilities:
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
             _provide_the_untap_fodder(game, registry, ability)
-            _provide_the_counter_fodder(game, registry, ability)
+            _provide_the_counter_fodder(game, registry, ability, oid)
             _satisfy_the_activation_condition(game, registry, ability, oid)
             _stock_the_hand(game, ability)
             _provide_the_target(game, registry, oid, ability)
@@ -706,7 +706,7 @@ def _provide_the_untap_fodder(game: Game, registry, ability) -> None:
         game.state.battlefield.append(fodder.oid)
 
 
-def _provide_the_counter_fodder(game: Game, registry, ability) -> None:
+def _provide_the_counter_fodder(game: Game, registry, ability, oid: int) -> None:
     """Put out a permanent carrying enough counters for a
     `remove_counters_from_among` cost.
 
@@ -721,6 +721,11 @@ def _provide_the_counter_fodder(game: Game, registry, ability) -> None:
     if not spec:
         return
     wanted = int(spec.get("count", 1) or 1)
+    if spec.get("self_only"):
+        # Gavel of the Righteous: "Equip--...remove a counter from this
+        # Equipment." The pool is the source alone, so the counters go there.
+        game.state.objects[oid].counters[PLUS_ONE] = wanted
+        return
     types = spec.get("types") or (spec.get("any_types") or ["Creature"])[:1]
     match = _fodder_for(registry, {"types": list(types)})
     if match is None:

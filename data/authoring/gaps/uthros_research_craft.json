@@ -1,0 +1,24 @@
+{
+  "card_id": "uthros_research_craft",
+  "name": "Uthros Research Craft",
+  "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)\n3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.\n12+ | Flying\nThis Spacecraft gets +1/+0 for each artifact you control.",
+  "blocked_sentences": [
+    "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)",
+    "3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.",
+    "12+ | Flying",
+    "This Spacecraft gets +1/+0 for each artifact you control."
+  ],
+  "needs": [
+    {
+      "capability": "station",
+      "kind": "engine",
+      "what": "Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (3+ 'whenever you cast an artifact spell' trigger), a keyword (12+ Flying) and a static self-buff (12+ '+1/+0 for each artifact you control') only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T (0/8) only at its highest station threshold (12+) and a noncreature artifact below it",
+      "why_existing_wont_do": "Ability.threshold is accepted only on activated abilities (the packet notes: 'Activated abilities only'); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the notes forbid for striations; and nothing gates the Spacecraft becoming a 0/8 artifact creature at 12+ -- a counters-conditioned set_types static would approximate rule 721 rather than implement station. The Station activation itself is expressible (tap_permanents with `as` + add_counters power_of), but the card is only partly expressible"
+    }
+  ],
+  "closest_existing": [
+    "threshold",
+    "tap_permanents"
+  ],
+  "confidence": "high"
+}

@@ -1,0 +1,19 @@
+{
+  "card_id": "empowered_autogenerator",
+  "name": "Empowered Autogenerator",
+  "oracle_text": "This artifact enters tapped.\n{T}: Put a charge counter on this artifact. Add X mana of any one color, where X is the number of charge counters on this artifact.",
+  "blocked_sentences": [
+    "{T}: Put a charge counter on this artifact. Add X mana of any one color, where X is the number of charge counters on this artifact."
+  ],
+  "needs": [
+    {
+      "capability": "mana_ability_leading_rider",
+      "kind": "engine",
+      "what": "a mana ability whose rider effect (add_counters on the source) happens BEFORE the mana is made, so a variable add_mana amount (any_one_color with amount counters_on charge, self) reads the count after the counter is placed; the payment solver's mana_amount must also see the post-rider count when deciding how much the source can produce",
+      "why_existing_wont_do": "loader/mana.py _split_mana_rider requires the add_mana half first and the rider after it, and costs.py adds mana via mana_amount (evaluated before _run_mana_rider), so X would read the pre-tap count. Writing amount as counters_on + 1 with a trailing add_counters rider is an approximation that goes wrong under counter replacement (Doubling Season / Hardened Scales put 2, real X counts both), and making it a non-mana activated ability would put it on the stack, which a mana ability (605.1a) never uses",
+      "closest_existing": "add_mana any_one_color + amount (Helga) with an add_counters rider (Temple of Cyclical Time shape)"
+    }
+  ],
+  "closest_existing": ["add_mana", "add_counters"],
+  "confidence": "high"
+}
