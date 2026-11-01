@@ -327,7 +327,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),
     "set_pt": ("Modify", "Set base power and toughness for a duration.", None),
-    "animate": ("Modify", "A noncreature becomes a creature (types, P/T, colors) for a duration.",
+    "animate": ("Modify", "A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T.",
                 "Creature-lands"),
     "add_subtype": ("Modify", "Permanents gain a subtype in addition to their others, "
                     "for good or for a duration.",

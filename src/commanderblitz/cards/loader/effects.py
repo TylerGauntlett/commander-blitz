@@ -3589,8 +3589,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
         # size would silently make a 0/0 that dies to state-based actions the
         # moment it arrives.
-        if "power" not in effect or "toughness" not in effect:
-            raise DslError(f"{where}: animate needs 'power' and 'toughness'")
+        #
+        # The one exception is an animation into a *non-creature*, which has
+        # no size to name: "target creature becomes a Treasure artifact ... and
+        # loses all other card types" (Vraska, Betrayal's Sting). Its base
+        # power and toughness are left alone. Both keys or neither, always.
+        sized = ("power" in effect, "toughness" in effect)
+        becomes_creature = "Creature" in (effect.get("types") or ("Creature",))
+        if sized != (True, True) and (becomes_creature or any(sized)):
+            raise DslError(
+                f"{where}: animate needs 'power' and 'toughness' (only an "
+                f"animation into a non-creature may leave out both)"
+            )
+        keep_colors = effect.get("keep_colors", False)
+        if not isinstance(keep_colors, bool):
+            raise DslError(f"{where}: animate's 'keep_colors' is true or false")
+        if keep_colors and not effect.get("exact", False):
+            # A non-exact animation already keeps the colours and adds its own.
+            raise DslError(
+                f"{where}: 'keep_colors' means anything only on an exact animation "
+                f"-- a non-exact one adds its colours to the permanent's own"
+            )
+        if keep_colors and effect.get("colors"):
+            raise DslError(
+                f"{where}: 'keep_colors' and 'colors' contradict each other -- "
+                f"the colours are either left as they are or replaced"
+            )
         for word in effect.get("your_turn_keywords", ()) or ():
             if word not in KNOWN_KEYWORDS:
                 raise DslError(

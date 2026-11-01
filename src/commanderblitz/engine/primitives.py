@@ -1966,6 +1966,8 @@ def animate(
     permanent: bool = False,
     exact: bool = False,
     until_player: int | None = None,
+    keep_colors: bool = False,
+    keep_pt: bool = False,
 ) -> None:
     """ "It becomes a 4/4 Elemental creature until end of turn. It's still a land."
 
@@ -1986,6 +1988,11 @@ def animate(
     replace the permanent's own (`TempEffect.exact`). Its keywords, if any, are
     granted for as long as the permanent lasts. A your-turn-only keyword has no
     permanent form and is refused rather than silently timed.
+
+    ``keep_colors`` and ``keep_pt`` are Vraska, Betrayal's Sting's "target
+    creature becomes a Treasure artifact ... and loses all other card types":
+    an exact type replacement that names no colour and no size, so both stay
+    what they were (`TempEffect.keeps_colors`, `TempEffect.keeps_pt`).
     """
 
     obj = state.objects.get(oid)
@@ -2004,7 +2011,11 @@ def animate(
         exact=exact,
         timestamp=state.alloc_timestamp(),
         until_player=until_player,
+        keeps_colors=keep_colors,
+        keeps_pt=keep_pt,
     )
+    if keep_pt:
+        power = toughness = None  # nothing to announce: the size did not change
     if permanent:
         obj.animations.append(effect)
         for word in keywords:

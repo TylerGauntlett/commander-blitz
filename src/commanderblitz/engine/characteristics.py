@@ -548,6 +548,9 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #     types exactly these ("becomes a green Elk creature"). Subtypes of
         #     a card type it no longer has go with that type (205.1b, the rule
         #     `set_types` below applies too); supertypes are untouched.
+        #     `keeps_colors` leaves the colours as they are ("becomes a Treasure
+        #     artifact" names none), and `keeps_pt` the base size of an
+        #     animation into a non-creature that names no size.
         animations = sorted(
             (*obj.animations, *(t for t in obj.until_eot if t.kind == "animate")),
             key=lambda t: t.timestamp,
@@ -567,13 +570,15 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                     if SUBTYPE_CLASS.get(sub, "Creature") in types
                     and SUBTYPE_CLASS.get(sub, "Creature") != "Creature"
                 }
-                colors = set(temp.colors)
+                if not temp.keeps_colors:
+                    colors = set(temp.colors)
             else:
                 types.update(temp.types)
                 colors.update(temp.colors)
             subtypes.update(temp.subtypes)
-            power = temp.power
-            toughness = temp.toughness
+            if not temp.keeps_pt:
+                power = temp.power
+                toughness = temp.toughness
 
         # 0. type replacement -- "as long as it has a slumber counter, it's a
         #    land (it's not a creature)". Before the grants, so a card that both

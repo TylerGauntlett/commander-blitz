@@ -8359,6 +8359,34 @@ after it flies. Grants made earlier **in the same resolution** survive, which is
 what The Irencrag's "it gains … and loses all other abilities" needs. The
 cutoff is `EffectContext.began_at`, and every grant carries a timestamp.
 
+### "…becomes a Treasure artifact … and loses all other card types and abilities"
+
+Vraska, Betrayal's Sting's −2 is the exact animation into a non-creature that
+names no colour and no size:
+
+```jsonc
+{ "op": "lose_all_abilities", "objects": { "target": "t1" } },
+{ "op": "animate",
+  "types": ["Artifact"], "subtypes": ["Treasure"],
+  "exact": true, "keep_colors": true,
+  "duration": "permanent",
+  "objects": { "target": "t1" } },
+{ "op": "grant_ability", "objects": { "target": "t1" }, "ability": 0,
+  "duration": "permanent" }  // grantable_abilities[0]: the Treasure's mana ability
+```
+
+- **`keep_colors`** leaves the colours as they are instead of replacing them
+  with `colors`. It is accepted only with `exact` (an additive animation already
+  keeps them) and refused beside `colors`. Without it, an exact animation that
+  names no colour makes the permanent colourless, which is Oko's reading and
+  stays his.
+- **No `power` and `toughness`** is allowed only when `types` has no
+  `Creature`. The base size is then left alone, so a later effect that makes it
+  a creature without naming a size reads the printed one. Both keys or neither.
+- The granted mana ability sacrifices its own permanent, and `Game._activate_mana`
+  passes the ability it read before paying to `costs.activate_mana_ability`,
+  because once the permanent is gone it no longer lists a granted ability.
+
 # Recipes — Tokens, counters and attachments
 
 ## Role tokens — "create a Wicked Role token attached to it"

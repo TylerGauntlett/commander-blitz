@@ -123,6 +123,16 @@ class TempEffect:
     #: Goblin stops being a Goblin, per the card's rulings. Supertypes are never
     #: touched: an Oko'd legend is a legendary Elk.
     exact: bool = False
+    #: For an ``exact`` ``kind == "animate"``: the colours are left as they
+    #: are rather than replaced by ``colors``. Vraska, Betrayal's Sting's
+    #: "target creature becomes a Treasure artifact ... and loses all other card
+    #: types" names no colour, and a Treasure that went colourless would stop
+    #: answering "destroy target green permanent".
+    keeps_colors: bool = False
+    #: For ``kind == "animate"``: the animation names no size, so the base
+    #: power and toughness are left alone. Only a non-creature animation may
+    #: say nothing about its size (the loader's rule) -- the same Treasure.
+    keeps_pt: bool = False
     #: For ``kind == "animate"``: when it began (613.7), from
     #: `GameState.alloc_timestamp`. Two animations each set a base P/T and the
     #: later one wins, which has to be decidable across the two lists an
@@ -167,6 +177,8 @@ class TempEffect:
             "previous_controller": self.previous_controller,
             "new_controller": self.new_controller,
             "exact": self.exact,
+            "keeps_colors": self.keeps_colors,
+            "keeps_pt": self.keeps_pt,
             "until_player": self.until_player,
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,

@@ -2109,6 +2109,7 @@ def activate_mana_ability(
     pid: int,
     option_index: int = 0,
     source_traits: ManaOrigin | None = None,
+    ability: Any = None,
 ) -> None:
     """Tap a permanent for mana.  Mana abilities never use the stack.
 
@@ -2130,8 +2131,15 @@ def activate_mana_ability(
     Treasure. That path passes the snapshot it took while the token was still on
     the battlefield. Left ``None`` -- the payment solver's path, which only ever
     taps -- the snapshot is taken here, which is still before the tap.
+
+    ``ability`` is the same kind of snapshot, for the same path: a *granted*
+    sacrifice-for-mana ability (Vraska, Betrayal's Sting's Treasure) is on the
+    permanent only while it is on the battlefield, so once the cost has
+    sacrificed it `abilities_of` no longer lists it. `Game._activate_mana`
+    hands over the ability it read before paying.
     """
-    ability = abilities_of(state, oid)[ability_index]
+    if ability is None:
+        ability = abilities_of(state, oid)[ability_index]
     if source_traits is None:
         source_traits = mana_source_traits(state, oid)
 

@@ -425,6 +425,13 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
     permanent's power happens to be right now.  An animation names the base
     value, so counters and anthems add to it instead of being cancelled by it.
     """
+    # "Target creature becomes a Treasure artifact ... and loses all other card
+    # types" (Vraska, Betrayal's Sting) names no size and no colour: a
+    # non-creature animation may leave out `power`/`toughness` (the loader
+    # allows it only then), and `keep_colors` on an exact one leaves the
+    # colours as they are.
+    keep_pt = "power" not in spec and "toughness" not in spec
+    keep_colors = bool(spec.get("keep_colors", False))
     power = evaluate_value(ctx, spec.get("power", 0))
     toughness = evaluate_value(ctx, spec.get("toughness", 0))
     types = [str(t) for t in spec.get("types", ("Creature",))]
@@ -465,6 +472,8 @@ def op_animate(ctx: EffectContext, spec: Mapping[str, Any]):
             permanent=permanent,
             exact=exact,
             until_player=until_player,
+            keep_colors=keep_colors,
+            keep_pt=keep_pt,
         )
         for keyword in keywords:
             grant_keyword(

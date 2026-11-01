@@ -1,0 +1,200 @@
+{
+  "_comment": "Cards that exist only for tests/unit/effects/test_become_type_keep_colors.py. Never part of a deck list. `t_treasure_vraska` is Vraska, Betrayal's Sting's -2 on its own; `t_legend_drake` is a legendary green flier with an activated ability, so every characteristic the -2 keeps or takes away is visible.",
+  "cards": [
+    {
+      "id": "t_treasure_vraska",
+      "name": "Test Treasure Vraska",
+      "oracle_text": "−2: Target creature becomes a Treasure artifact with \"{T}, Sacrifice this artifact: Add one mana of any color\" and loses all other card types and abilities.",
+      "mana_cost": "{4}{B}",
+      "types": [
+        "Planeswalker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Vraska"
+      ],
+      "loyalty": 6,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "−2: Target creature becomes a Treasure artifact with \"{T}, Sacrifice this artifact: Add one mana of any color\" and loses all other card types and abilities.",
+          "cost": {
+            "loyalty": -2
+          },
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "lose_all_abilities",
+              "objects": {
+                "target": "t1"
+              }
+            },
+            {
+              "op": "animate",
+              "objects": {
+                "target": "t1"
+              },
+              "types": [
+                "Artifact"
+              ],
+              "subtypes": [
+                "Treasure"
+              ],
+              "exact": true,
+              "keep_colors": true,
+              "duration": "permanent"
+            },
+            {
+              "op": "grant_ability",
+              "objects": {
+                "target": "t1"
+              },
+              "ability": 0,
+              "duration": "permanent"
+            }
+          ]
+        }
+      ],
+      "grantable_abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}, Sacrifice this artifact: Add one mana of any color.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true,
+            "sacrifice": {
+              "zone": "battlefield",
+              "controller": "you",
+              "self_only": true,
+              "count": 1
+            }
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "White",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Blue",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Black",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Red",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "label": "Green",
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_legend_drake",
+      "name": "Test Legend Drake",
+      "oracle_text": "Flying\n{1}: This creature gets +1/+0 until end of turn.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Artifact",
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Drake"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "keywords": [
+        "flying"
+      ],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}: This creature gets +1/+0 until end of turn.",
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "op": "pump",
+              "objects": {
+                "zone": "battlefield",
+                "self_only": true
+              },
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

@@ -1833,6 +1833,7 @@ class Game:
             pid,
             action.mana_option or 0,
             source_traits=traits,
+            ability=ability,
         )
 
     def _pass_priority(self) -> None:
