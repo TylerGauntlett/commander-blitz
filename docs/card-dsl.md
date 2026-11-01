@@ -1534,6 +1534,8 @@ Anywhere a number is expected -- the leaf list is
 { "counters_on": { "counter": "+1/+1", "objects": { "self_only": true } } }
 { "counters_on": { "counter": "charge",         // Wickersmith's Tools; a sacrifice cost's `as`
                    "objects": { "binding": "sacrificed" } } }  //   snapshot keeps its counters
+{ "counters_on": { "counter": "any",            // every kind summed, live (Ferrafor)
+                  "objects": { "types": ["Creature"], "controller": { "target": "t1" } } } }
 { "counters_had": "-1/-1" }                     // what a creature that just died had
 { "counters_had": "any" }                       // …of every kind, summed (Angelic Sleuth)
 { "power_had": true } { "toughness_had": true }  // …and the P/T it died with
@@ -5490,7 +5492,7 @@ smaller than the effect-side `value_keys`:
 |---|---|
 | `{"const": n}` | a literal |
 | `{"count": filter}` | how many objects match, in any [countable zone](#counting-filters-and-the-zone-key) |
-| `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks |
+| `{"counters_on": {"counter": …, "objects": …}}` | how many counters of a kind sit on the objects the filter picks; `"any"` sums every kind (122.1) |
 | `{"mana_symbols": {"of": "G", "objects": …}}` | chroma — pips in printed costs |
 | `{"permanents_entered_this_turn": filter}` | [how many arrived this turn](#which-permanents-entered-the-battlefield-this-turn), not how many are standing there |
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |

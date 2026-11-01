@@ -89,7 +89,7 @@ from .carddef import Ability, CardDef, ward_ability
 from .enums import KEYWORD_COUNTERS, SUBTYPE_CLASS, Keyword, Zone
 from .errors import DslError
 from .mana import ManaOrigin, printed_cost_is
-from .objects import MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
+from .objects import ANY_COUNTER_KIND, MINUS_ONE, PLUS_ONE, TIME_COUNTER, GameObject
 from .structs import PROTECTION_COLORLESS, PROTECTION_EVERYTHING, Characteristics
 from .text_change import apply_to_ability
 from .text_change import apply_to_subtypes as apply_text_changes
@@ -1772,7 +1772,7 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         spec = expr["counters_on"] or {}
         kind = str(spec.get("counter", PLUS_ONE))
         return sum(
-            obj.counter(kind)
+            counters_of_kind(obj, kind)
             for obj in _matching_objects(state, spec.get("objects") or {"self_only": True}, source)
         )
     raise DslError(f"unknown static value {sorted(expr)}")
@@ -2200,6 +2200,17 @@ def _compare_printed(value: int, spec: Any) -> bool:
 def has_any_counter(obj: GameObject) -> bool:
     """Does ``obj`` have one or more counters of any kind on it (122.1)?"""
     return any(n > 0 for n in obj.counters.values())
+
+
+def counters_of_kind(obj: GameObject, kind: str) -> int:
+    """How many counters of ``kind`` sit on ``obj`` -- every kind for ``"any"``.
+
+    The one reader behind both value languages' ``counters_on``, so an effect's
+    amount and a static's magnitude cannot disagree about what "counters" means.
+    """
+    if kind == ANY_COUNTER_KIND:
+        return sum(n for n in obj.counters.values() if n > 0)
+    return obj.counter(kind)
 
 
 def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool:

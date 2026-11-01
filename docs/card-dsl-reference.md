@@ -323,7 +323,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `const` | A literal number. | [Value expressions](card-dsl.md#value-expressions) |
 | `count` | How many objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_had` | Counters of a kind (or "any", every kind) the permanent that just left had. | [Value expressions](card-dsl.md#value-expressions) |
-| `counters_on` | Counters of a kind on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
+| `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
@@ -958,7 +958,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 |---|---|---|
 | `const` | A literal number. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `count` | How many objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
-| `counters_on` | Counters of a kind on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
+| `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `extreme_value` | The greatest/least printed mana value among a counting filter's pool, or a `union` of them. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `greatest_commander_mana_value` | The greatest printed mana value among your commanders, wherever they are. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |

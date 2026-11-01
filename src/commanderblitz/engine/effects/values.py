@@ -41,10 +41,17 @@ from __future__ import annotations
 from collections.abc import Mapping
 from typing import Any
 
-from ..characteristics import _matches_printed, auras_matching, chars, min_count, min_life
+from ..characteristics import (
+    _matches_printed,
+    auras_matching,
+    chars,
+    counters_of_kind,
+    min_count,
+    min_life,
+)
 from ..enums import KEYWORD_COUNTERS
 from ..errors import DslError
-from ..objects import FINALITY, PLUS_ONE, SHIELD, STUN
+from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
 from .selectors import (
     ENCHANTED_BY_CONTROLLERS,
@@ -440,7 +447,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "counters_on" in expr:
         # How many counters of a kind sit on an object -- which is what "double
         # the number of +1/+1 counters on this creature" needs, and the one
-        # quantity the value language could not previously reach.
+        # quantity the value language could not previously reach. `"any"` is
+        # every kind summed -- Ferrafor's "the number of counters among
+        # creatures target player controls".
         spec = expr["counters_on"]
         kind = str(spec.get("counter", PLUS_ONE))
 
@@ -450,9 +459,14 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
             # A snapshot -- a sacrifice cost's `as` -- answers with the counters
             # the object had as it last existed on the battlefield (608.2h),
             # since the object itself lost them as it moved (400.7).
-            return int(snap["counters"].get(kind, 0))
+            had = snap["counters"]
+            if kind == ANY_COUNTER_KIND:
+                return sum(int(n) for n in had.values())
+            return int(had.get(kind, 0))
         pool = resolve_pool(ctx, objects)
-        return sum(ctx.state.objects[oid].counter(kind) for oid in pool if oid in ctx.state.objects)
+        return sum(
+            counters_of_kind(ctx.state.objects[oid], kind) for oid in pool if oid in ctx.state.objects
+        )
     if "additional_paid" in expr:
         # Casualty and replicate. Read off the object being cast, which is what
         # a "when you cast this spell" trigger is sourced to.
@@ -1222,7 +1236,9 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
     has, so the anthem would silently sum charge counters across the board.
 
     The kind itself goes through :func:`validate_counter_kind`, so a keyword
-    near-miss is refused here exactly as it is on ``add_counters``.
+    near-miss is refused here exactly as it is on ``add_counters``. The one
+    word that is not a kind is ``"any"``: every kind summed (122.1), Ferrafor's
+    "the number of counters among creatures target player controls".
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object")
@@ -1235,7 +1251,8 @@ def validate_counters_on(spec: Any, where: str, *, validate_objects: Any = None)
             f"to '{PLUS_ONE}' in the evaluator and so would read 0 for ever on a "
             f"permanent that carries some other kind"
         )
-    validate_counter_kind(spec["counter"], f"{where}.counter")
+    if spec["counter"] != ANY_COUNTER_KIND:
+        validate_counter_kind(spec["counter"], f"{where}.counter")
     if not spec.get("objects"):
         raise DslError(
             f"{where}: needs 'objects' -- an empty selector is not "
