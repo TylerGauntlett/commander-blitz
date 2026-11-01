@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**133 cards** blocked by **120** capabilities.
+**143 cards** blocked by **128** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,6 +18,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
+| [evoke](#evoke) | 3 | 1343 | cost, static_effect |
+| [shapeshifter-1-1-c-changeling](#shapeshifter-1-1-c-changeling) | 3 | 2425 | token |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
@@ -33,6 +35,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
+| [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
@@ -58,8 +61,10 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [distribute-moved-counters](#distribute-moved-counters) | 1 | 387 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
+| [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
+| [elemental-5-5-rg](#elemental-5-5-rg) | 1 | 12518 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
@@ -71,6 +76,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
+| [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
@@ -106,11 +112,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
+| [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
 | [replace-dies-link](#replace-dies-link) | 1 | 2740 | replacement |
 | [retrace](#retrace) | 1 | 5451 | engine |
+| [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -300,6 +308,52 @@ Blocks **3** cards.
   - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
 - **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
   - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
+## evoke
+
+Blocks **3** cards.
+
+- **(static_effect)** a static that grants evoke with a printed mana price to a class of spells (affects_spells: permanent spells with subtype Elemental, controller you) cast from a given zone (hand only): the cast line offers the granted mana cost as an alternative cost, marks the spell evoked, and the permanent it becomes is sacrificed when it enters (the evoke sacrifice trigger), with the evoked condition readable by the spell's own enters triggers
+  <br>Why the existing vocabulary won't do: card-level `evoke` only prices the card's own printed evoke; `granted_alternative_cost` accepts only pay_energy/pay_life and attaches no sacrifice-on-enter or evoked flag, and has no zone gate for 'from your hand'; `grant_warp` grants a mana alternative cost but with warp's exile-at-end-step rider, not evoke's sacrifice on entering
+- **(cost)** an evoke cost that is a non-mana Cost -- 'Evoke--Exile a green card from your hand' (the MH3/MH2 pitch Incarnations: Endurance, Solitude, Grief, Fury, Subtlety) -- offered from hand as an alternative to the printed cost and setting the same cast-evoked flag that the card's 'when it enters, if evoked, sacrifice it' rule reads (702.74a supplies that sacrifice).
+  <br>Why the existing vocabulary won't do: `evoke` is parsed as a ManaCost only (loader `ManaCost.parse(model.evoke)`, carddef `evoke: ManaCost | None`). `alternative_cost` takes a full Cost with `exile_from_hand: {colors: [G]}` (as Force of Will / Pyrokinesis do), but per its schema note it deliberately does not report `cast_evoked`, so the evoke sacrifice cannot be keyed off it, and the loader refuses an 'evoked' condition on a card without an `evoke` cost.
+- **(cost)** an evoke cost that is a non-mana Cost -- 'Evoke--Exile a red card from your hand' (`exile_from_hand: {colors: [R]}`) -- offered from hand instead of the printed cost, marking the spell cast evoked so the 702.74a sacrifice-on-enter happens and the `evoked` condition reads true
+  <br>Why the existing vocabulary won't do: card-level `evoke` is parsed as a ManaCost only (`ManaCost.parse(model.evoke)`); `alternative_cost` accepts `exile_from_hand` but does not set the evoked flag, so the creature would not be sacrificed on entering, and the loader refuses an `evoked` condition on a card without an `evoke` cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Endurance** (rank 1343) — `endurance`
+  - Evoke—Exile a green card from your hand.
+  - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
+- **Fury** (rank 2389) — `fury`
+  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
+  - Evoke—Exile a red card from your hand.
+- **Ashling, the Limitless** (rank 5749) — `ashling_the_limitless`
+  - Elemental permanent spells you cast from your hand gain evoke {4} as you cast them
+
+</details>
+
+## shapeshifter-1-1-c-changeling
+
+Blocks **3** cards.
+
+- **(token)** a 1/1 colorless Shapeshifter creature token with changeling (it's every creature type)
+  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_3_2_c_changeling, a 3/2; the other 1/1 colorless tokens (spirit_1_1_c, hero_1_1_c, etc.) have the wrong subtype and lack changeling. The mana line is expressible via add_mana with mana_restriction; only the token is missing
+- **(token)** a 1/1 colorless Shapeshifter creature token with changeling (it's every creature type)
+  <br>Why the existing vocabulary won't do: token_ids has only shapeshifter_3_2_c_changeling, a 3/2; overriding its power/toughness on create_token would be a substitute token, and the other 1/1 colorless tokens have the wrong subtype and lack changeling. The Encore line is expressible exactly as Angel of Indemnity writes it (graveyard activated ability, exile_from_graveyard self cost, for_each_player copy_permanent + must_attack_player + haste + delayed sacrifice); only the token is missing
+- **(token)** a 1/1 colorless Shapeshifter creature token with changeling (It is every creature type.)
+  <br>Why the existing vocabulary won't do: token_ids holds only shapeshifter_3_2_c_changeling (a 3/2); no 1/1 colorless changeling Shapeshifter token exists, and a nearly-right token must not be substituted. The rest (exile on target t1, create_token with controller of the exiled target via snapshot, and Changeling via add_subtype) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Crib Swap** (rank 2425) — `crib_swap`
+  - Exile target creature. Its controller creates a 1/1 colorless Shapeshifter creature token with changeling.
+- **Abundant Countryside** (rank 3283) — `abundant_countryside`
+  - {6}, {T}: Create a 1/1 colorless Shapeshifter creature token with changeling. (It's every creature type.)
+- **Belonging** (rank 7727) — `belonging`
+  - When this creature enters, create three 1/1 colorless Shapeshifter creature tokens with changeling. (They're every creature type.)
 
 </details>
 
@@ -572,6 +626,20 @@ Blocks **1** card.
 - **Delirium** (rank 12129) — `delirium`
   - Cast this spell only during an opponent's turn.
   - Tap target creature that player controls. That creature deals damage equal to its power to the player.
+
+</details>
+
+## add-mana-on-tap-any-color
+
+Blocks **1** card.
+
+- **(static_effect)** an add_mana_on_tap payload meaning 'one mana of any color', chosen by the tapping player each time the triggered mana ability resolves (605.1b), e.g. add_mana: {"any_color": 1}, with the mana solver treating it as a wildcard pip
+  <br>Why the existing vocabulary won't do: add_mana_on_tap with tapped_permanent {attached: true} covers the enchanted-land trigger (Wild Growth, Utopia Sprawl), but its add_mana accepts only a literal production string or {"chosen_color_of": "self"}; the loader refuses any other dynamic form, and player_statics._mana_added runs inside cost payment where no choice can be asked, so a per-tap color choice cannot be expressed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fertile Ground** (rank 1052) — `fertile_ground`
+  - Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.
 
 </details>
 
@@ -933,6 +1001,21 @@ Blocks **1** card.
 
 </details>
 
+## divided-damage-on-trigger
+
+Blocks **1** card.
+
+- **(engine)** `damage` with `divided` inside a triggered ability's effects, with the division announced when the trigger is put on the stack and its targets chosen (603.3d / 601.2d), over an ability-level target spec of 'any number of target creatures and/or planeswalkers' capped at one target per point of damage
+  <br>Why the existing vocabulary won't do: `damage.divided` exists, but `loader._check_division_homes` refuses it anywhere but a top-level spell effect ('divided damage is only supported as a top-level effect of a spell'), because `Game._ask_damage_division` is only called from `Game._cast` and `engine.division.divided_damage` reads only `card.spell_effects`. `distribute_counters` is the activated-ability-only analogue and divides counters, not damage; splitting into fixed per-target `damage` effects would fix the target count and the split, an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Fury** (rank 2389) — `fury`
+  - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
+  - Evoke—Exile a red card from your hand.
+
+</details>
+
 ## double-x
 
 Blocks **1** card.
@@ -959,6 +1042,20 @@ Blocks **1** card.
 
 - **Karmic Guide** (rank 961) — `karmic_guide`
   - Echo {3}{W}{W} (At the beginning of your upkeep, if this came under your control since the beginning of your last upkeep, sacrifice it unless you pay its echo cost.)
+
+</details>
+
+## elemental-5-5-rg
+
+Blocks **1** card.
+
+- **(token)** a 5/5 red and green Elemental creature token (no abilities)
+  <br>Why the existing vocabulary won't do: token_ids has Elementals only as elemental_1_1_ur, elemental_2_2_g, elemental_3_3_ur_flying and elemental_4_4_ur; none is a 5/5 red-green. The rest of the card is expressible: the count is the value distinct of color over permanents you control, and the life gain is gain_life with creatures_you_control
+
+<details><summary>Cards waiting on this</summary>
+
+- **Elemental Spectacle** (rank 12518) — `elemental_spectacle`
+  - Vivid — Create a number of 5/5 red and green Elemental creature tokens equal to the number of colors among permanents you control.
 
 </details>
 
@@ -1122,6 +1219,20 @@ Blocks **1** card.
   - Look at the cards in the other pile.
   - You may cast a spell from among them without paying its mana cost.
   - Put the rest into your hand.
+
+</details>
+
+## foretold
+
+Blocks **1** card.
+
+- **(value)** a condition key `foretold: true` that an `if` inside spell_effects can read, true when the resolving spell was cast from exile for its foretell cost (the CastAction's `foretold` flag carried onto the stack object)
+  <br>Why the existing vocabulary won't do: The card-level `foretell` cost key lets the card be foretold and cast, and the engine tracks `foretold` on the cast action, but condition_keys has no way to ask it: `evoked`, `kicked`, `overloaded`, `impending` and `cost_option` each read a different alternative/additional cost, and `cast_from_hand`/`zone_is` cannot tell a foretold cast from any other cast out of exile
+
+<details><summary>Cards waiting on this</summary>
+
+- **Haunting Voyage** (rank 3713) — `haunting_voyage`
+  - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
 
 </details>
 
@@ -1628,6 +1739,21 @@ Blocks **1** card.
 
 </details>
 
+## random-order-bottom
+
+Blocks **1** card.
+
+- **(op)** a `random_order` option on `put_on_top` (with `bottom: true`) that places the moved cards on the bottom of the library in a random order, for 'puts all the cards from their graveyard on the bottom of their library in a random order' (Endurance, also Tormod's Crypt-style tucks, cascade/discover leftovers).
+  <br>Why the existing vocabulary won't do: `put_on_top` (ops_cards.py) offers `bottom` and `any_order` (owner chooses order) or pool order; neither is random, and a `shuffle` op afterwards would randomise the whole library, not just the bottom segment.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Endurance** (rank 1343) — `endurance`
+  - Evoke—Exile a green card from your hand.
+  - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
+
+</details>
+
 ## remove-all-counters
 
 Blocks **1** card.
@@ -1696,6 +1822,20 @@ Blocks **1** card.
 
 - **Throes of Chaos** (rank 5451) — `throes_of_chaos`
   - Retrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)
+
+</details>
+
+## reveal-from-hand
+
+Blocks **1** card.
+
+- **(cost)** a cost that reveals a card matching a selector (here an Elemental card) from the payer's hand, the card staying in hand, usable as a self_enters_tapped replacement's `unless_cost` so the land enters untapped only if the player chooses to reveal one
+  <br>Why the existing vocabulary won't do: `unless_cost` on self_enters_tapped is offered through costs.can_pay/pay, but no cost key reveals from hand only: `behold` also accepts a permanent you control (so an Elemental on the battlefield would wrongly untap the land), and `exile_from_hand`/`discard_selector` move the card. The starting point's bare self_enters_tapped makes the land always enter tapped, which proxy.py itself flags as 'the printed condition is not modelled'. The haste line is expressible with grant_keyword on a target creature
+
+<details><summary>Cards waiting on this</summary>
+
+- **Flamekin Village** (rank 3623) — `flamekin_village`
+  - As this land enters, you may reveal an Elemental card from your hand. If you don't, this land enters tapped.
 
 </details>
 

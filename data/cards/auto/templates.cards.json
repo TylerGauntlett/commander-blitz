@@ -508,6 +508,121 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, draw a card.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Enchanted land has \"{T}: Add one mana of any color.\""
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "mana": "{W}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{U}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{B}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{R}",
+                      "op": "add_mana"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "mana": "{G}",
+                      "op": "add_mana"
+                    }
+                  ]
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color."
+        }
+      ],
+      "id": "abundant_growth",
+      "mana_cost": "{G}",
+      "name": "Abundant Growth",
+      "oracle_text": "Enchant land\nWhen this Aura enters, draw a card.\nEnchanted land has \"{T}: Add one mana of any color.\"",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_token": {
             "subtypes": [
               "Clue",
@@ -12857,6 +12972,64 @@
         "Rogue"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "as": "destroyed",
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "count": "all",
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            },
+            {
+              "amount": {
+                "count": {
+                  "binding": "destroyed"
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, destroy all artifacts and enchantments. Put a +1/+1 counter on this creature for each permanent destroyed this way.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "bane_of_progress",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Bane of Progress",
+      "oracle_text": "When this creature enters, destroy all artifacts and enchantments. Put a +1/+1 counter on this creature for each permanent destroyed this way.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -25638,6 +25811,106 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 5
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to": "graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, reveal the top five cards of your library. Put a land card from among them onto the battlefield and the rest into your graveyard.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "exists": {
+                  "self_only": true,
+                  "zone": "graveyard"
+                }
+              },
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                },
+                {
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "put_on_top"
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Exile Cavalier of Thorns to put the targeted card on top of your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature dies, you may exile it. If you do, put another target card from your graveyard on top of your library.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "cavalier_of_thorns",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{G}{G}{G}",
+      "name": "Cavalier of Thorns",
+      "oracle_text": "Reach\nWhen this creature enters, reveal the top five cards of your library. Put a land card from among them onto the battlefield and the rest into your graveyard.\nWhen this creature dies, you may exile it. If you do, put another target card from your graveyard on top of your library.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Knight"
+      ],
+      "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -33993,6 +34266,57 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "power_of": {
+                      "binding": "subject"
+                    }
+                  },
+                  "destination": "library_top",
+                  "objects": {
+                    "count": 1
+                  },
+                  "op": "look_at_top",
+                  "rest_to_bottom": true
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control enters, you may look at the top X cards of your library, where X is that creature's power. If you do, put one of those cards on top of your library and the rest on the bottom of your library in any order.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "cream_of_the_crop",
+      "mana_cost": "{1}{G}",
+      "name": "Cream of the Crop",
+      "oracle_text": "Whenever a creature you control enters, you may look at the top X cards of your library, where X is that creature's power. If you do, put one of those cards on top of your library and the rest on the bottom of your library in any order.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "stack"
           ],
@@ -40393,6 +40717,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "fury_sacrificed",
+                  "objects": {
+                    "binding": "damagers",
+                    "chooser": "controller",
+                    "count": {
+                      "const": 1
+                    }
+                  },
+                  "op": "sacrifice",
+                  "snapshot": "fury_sacrificed_lki"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "binding": "fury_sacrificed"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "destination": "battlefield",
+                      "objects": {
+                        "shares_a_creature_type_with": "fury_sacrificed_lki",
+                        "types": [
+                          "Creature"
+                        ]
+                      },
+                      "op": "reveal_until",
+                      "player": "you",
+                      "rest_to_bottom": true
+                    }
+                  ]
+                }
+              ],
+              "op": "may",
+              "player": "you",
+              "prompt": "Sacrifice one of those creatures?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control deal combat damage to a player, you may sacrifice one of them. If you do, reveal cards from the top of your library until you reveal a creature card that shares a creature type with the sacrificed creature. Put that card onto the battlefield and the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "descendants_fury",
+      "mana_cost": "{3}{R}",
+      "name": "Descendants' Fury",
+      "oracle_text": "Whenever one or more creatures you control deal combat damage to a player, you may sacrifice one of them. If you do, reveal cards from the top of your library until you reveal a creature card that shares a creature type with the sacrificed creature. Put that card onto the battlefield and the rest on the bottom of your library in a random order.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "active_zones": [
             "hand"
           ],
@@ -46488,6 +46888,72 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "any_of": [
+                  {
+                    "subtypes": [
+                      "Elemental"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Island"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Mountain"
+                    ]
+                  }
+                ],
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to_bottom": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, look at the top four cards of your library. You may reveal an Elemental, Island, or Mountain card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U"
+      ],
+      "colors": [
+        "R",
+        "U"
+      ],
+      "id": "eclipsed_flamekin",
+      "mana_cost": "{1}{U/R}{U/R}",
+      "name": "Eclipsed Flamekin",
+      "oracle_text": "When this creature enters, look at the top four cards of your library. You may reveal an Elemental, Island, or Mountain card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Scout"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -52457,6 +52923,142 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "W"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "This creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "U"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "This creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "B"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "This creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "R"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "This creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "exists": {
+              "colors": [
+                "G"
+              ],
+              "controller": "you"
+            }
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": 1,
+          "text": "This creature gets +1/+1 for each color among permanents you control.",
+          "toughness": 1
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "each_color_among": {
+                "controller": "you",
+                "zone": "battlefield"
+              },
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: For each color among permanents you control, add one mana of that color."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "faeburrow_elder",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{G}{W}",
+      "name": "Faeburrow Elder",
+      "oracle_text": "Vigilance\nThis creature gets +1/+1 for each color among permanents you control.\n{T}: For each color among permanents you control, add one mana of that color.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Treefolk",
+        "Druid"
+      ],
+      "toughness": 0,
+      "types": [
+        "Creature"
       ]
     },
     {

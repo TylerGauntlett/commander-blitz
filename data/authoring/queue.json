@@ -942,12 +942,12 @@
     },
     "Abundant Growth": {
       "edhrec_rank": 2444,
-      "gate": "template",
+      "gate": null,
       "name": "Abundant Growth",
-      "reason": "no template for: When this Aura enters, draw a card",
+      "reason": "",
       "scryfall_id": "88b8b051-3f05-4cc1-9506-732faa25553a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Abundant Harvest": {
@@ -19862,12 +19862,12 @@
     },
     "Bane of Progress": {
       "edhrec_rank": 1233,
-      "gate": "template",
+      "gate": null,
       "name": "Bane of Progress",
-      "reason": "no template for: When this creature enters, destroy all artifacts and enchantments. Put a +1/+1 counter on ",
+      "reason": "",
       "scryfall_id": "54c98a43-d358-4bb5-ba65-dff25c2f12ea",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bane of the Living": {
@@ -41642,12 +41642,12 @@
     },
     "Cavalier of Thorns": {
       "edhrec_rank": 5337,
-      "gate": "template",
+      "gate": null,
       "name": "Cavalier of Thorns",
-      "reason": "no template for: When this creature enters, reveal the top five cards of your library. Put a land card from",
+      "reason": "",
       "scryfall_id": "ace83f5b-2349-46b8-b27f-bf705912a6df",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cavalry Drillmaster": {
@@ -55692,12 +55692,12 @@
     },
     "Cream of the Crop": {
       "edhrec_rank": 5829,
-      "gate": "template",
+      "gate": null,
       "name": "Cream of the Crop",
-      "reason": "no template for: Whenever a creature you control enters, you may look at the top X cards of your library, w",
+      "reason": "",
       "scryfall_id": "943be0ee-cab1-4678-9ee0-960919ed519e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Creative Outburst": {
@@ -66902,12 +66902,12 @@
     },
     "Descendants' Fury": {
       "edhrec_rank": 4554,
-      "gate": "template",
+      "gate": null,
       "name": "Descendants' Fury",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, you may sacrifi",
+      "reason": "",
       "scryfall_id": "55af97c0-3377-4a77-8a8a-5bc894d7d678",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Descendants' Path": {
@@ -79222,12 +79222,12 @@
     },
     "Eclipsed Flamekin": {
       "edhrec_rank": 8957,
-      "gate": "template",
+      "gate": null,
       "name": "Eclipsed Flamekin",
-      "reason": "no template for: When this creature enters, look at the top four cards of your library. You may reveal an E",
+      "reason": "",
       "scryfall_id": "6271b82d-5922-4de0-b763-129908ece6ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eclipsed Kithkin": {
@@ -89882,12 +89882,12 @@
     },
     "Faeburrow Elder": {
       "edhrec_rank": 504,
-      "gate": "template",
+      "gate": null,
       "name": "Faeburrow Elder",
-      "reason": "no template for: This creature gets +1/+1 for each color among permanents you control",
+      "reason": "",
       "scryfall_id": "145dcac4-2c53-4ae9-9ede-24dc07474b01",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Faerie Artisans": {

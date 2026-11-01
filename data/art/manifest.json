@@ -64,6 +64,12 @@
     "file": "absorb.jpg",
     "scryfall_id": "21892cbc-1af2-4ea1-8907-cec514b53004"
   },
+  "abundant_growth": {
+    "artist": "Vincent Proce",
+    "bytes": 85936,
+    "file": "abundant_growth.jpg",
+    "scryfall_id": "88b8b051-3f05-4cc1-9506-732faa25553a"
+  },
   "academy_manufactor": {
     "artist": "David Szabo",
     "bytes": 71679,
@@ -1570,6 +1576,12 @@
     "bytes": 90094,
     "file": "bane_alley_blackguard.jpg",
     "scryfall_id": "15fcad03-4567-4f96-976e-01a07d8ab050"
+  },
+  "bane_of_progress": {
+    "artist": "Lars Grant-West",
+    "bytes": 58350,
+    "file": "bane_of_progress.jpg",
+    "scryfall_id": "54c98a43-d358-4bb5-ba65-dff25c2f12ea"
   },
   "banehound": {
     "artist": "YW Tang",
@@ -3138,6 +3150,12 @@
     "file": "caustic_exhale.jpg",
     "scryfall_id": "488152ce-2048-4ccb-b2d6-b9628958286f"
   },
+  "cavalier_of_thorns": {
+    "artist": "Jehan Choo",
+    "bytes": 73120,
+    "file": "cavalier_of_thorns.jpg",
+    "scryfall_id": "ace83f5b-2349-46b8-b27f-bf705912a6df"
+  },
   "cave_of_the_frost_dragon": {
     "artist": "Johannes Voss",
     "bytes": 92562,
@@ -4095,6 +4113,12 @@
     "file": "creakwood_liege.jpg",
     "scryfall_id": "9a05c8f9-e810-498d-ab51-632661dd000d"
   },
+  "cream_of_the_crop": {
+    "artist": "Howard Lyon",
+    "bytes": 56935,
+    "file": "cream_of_the_crop.jpg",
+    "scryfall_id": "943be0ee-cab1-4678-9ee0-960919ed519e"
+  },
   "creative_technique": {
     "artist": "Gaboleps",
     "file": "creative_technique.jpg",
@@ -4856,6 +4880,12 @@
     "bytes": 73076,
     "file": "deranged_whelp.jpg",
     "scryfall_id": "fd06f9eb-112e-458b-83c8-3761df6d60ff"
+  },
+  "descendants_fury": {
+    "artist": "Aldo Dom\u00ednguez",
+    "bytes": 73265,
+    "file": "descendants_fury.jpg",
+    "scryfall_id": "55af97c0-3377-4a77-8a8a-5bc894d7d678"
   },
   "desert_cerodon": {
     "artist": "Igor Kieryluk",
@@ -5644,6 +5674,12 @@
     "file": "echoing_deeps.jpg",
     "scryfall_id": "6f80b450-70fe-4148-a7ce-1463c4c7b28c"
   },
+  "eclipsed_flamekin": {
+    "artist": "Vanessa Gillings",
+    "bytes": 71336,
+    "file": "eclipsed_flamekin.jpg",
+    "scryfall_id": "6271b82d-5922-4de0-b763-129908ece6ee"
+  },
   "eclipsed_steppe": {
     "artist": "Leon Tukker",
     "bytes": 33553,
@@ -6365,6 +6401,12 @@
     "bytes": 69583,
     "file": "fact_or_fiction.jpg",
     "scryfall_id": "fc8d66ed-8a01-41ce-805c-05333322c6f6"
+  },
+  "faeburrow_elder": {
+    "artist": "Mark Zug",
+    "bytes": 73590,
+    "file": "faeburrow_elder.jpg",
+    "scryfall_id": "145dcac4-2c53-4ae9-9ede-24dc07474b01"
   },
   "faerie_1_1_u_flying": {
     "artist": "Iris Compiet",

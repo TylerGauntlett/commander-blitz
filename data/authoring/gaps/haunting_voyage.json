@@ -1,0 +1,18 @@
+{
+  "card_id": "haunting_voyage",
+  "name": "Haunting Voyage",
+  "oracle_text": "Choose a creature type. Return up to two creature cards of that type from your graveyard to the battlefield. If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.\nForetell {5}{B}{B} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+  "blocked_sentences": [
+    "If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead."
+  ],
+  "needs": [
+    {
+      "capability": "foretold",
+      "kind": "value",
+      "what": "a condition key `foretold: true` that an `if` inside spell_effects can read, true when the resolving spell was cast from exile for its foretell cost (the CastAction's `foretold` flag carried onto the stack object)",
+      "why_existing_wont_do": "The card-level `foretell` cost key lets the card be foretold and cast, and the engine tracks `foretold` on the cast action, but condition_keys has no way to ask it: `evoked`, `kicked`, `overloaded`, `impending` and `cost_option` each read a different alternative/additional cost, and `cast_from_hand`/`zone_is` cannot tell a foretold cast from any other cast out of exile"
+    }
+  ],
+  "closest_existing": ["evoked", "overloaded", "kicked", "foretell"],
+  "confidence": "high"
+}

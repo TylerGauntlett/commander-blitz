@@ -42,6 +42,15 @@
     },
     "zone": "graveyard"
   },
+  "abundant_growth": {
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "academy_manufactor": {
     "battlefield_count": 33,
     "hand_size": {
@@ -1177,6 +1186,15 @@
   "bane_alley_blackguard": {
     "zone": "battlefield"
   },
+  "bane_of_progress": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "battlefield"
+  },
   "banehound": {
     "zone": "battlefield"
   },
@@ -2288,6 +2306,16 @@
     },
     "zone": "graveyard"
   },
+  "cavalier_of_thorns": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 6
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "battlefield"
+  },
   "cave_of_the_frost_dragon": {
     "zone": "battlefield"
   },
@@ -2968,6 +2996,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "cream_of_the_crop": {
+    "zone": "battlefield"
+  },
   "creative_technique": {
     "graveyard_size": {
       "0": 4
@@ -3568,6 +3599,10 @@
   "deranged_whelp": {
     "zone": "battlefield"
   },
+  "descendants_fury": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "desert_cerodon": {
     "zone": "battlefield"
   },
@@ -4058,6 +4093,16 @@
     "zone": "battlefield"
   },
   "echoing_deeps": {
+    "zone": "battlefield"
+  },
+  "eclipsed_flamekin": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
     "zone": "battlefield"
   },
   "eclipsed_steppe": {
@@ -4641,6 +4686,10 @@
       "0": 35
     },
     "zone": "graveyard"
+  },
+  "faeburrow_elder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "faerie_artisans": {
     "battlefield_count": 33,

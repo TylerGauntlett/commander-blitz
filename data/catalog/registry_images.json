@@ -47,6 +47,10 @@
     "artist": "Andrew Goldhawk",
     "scryfall_id": "21892cbc-1af2-4ea1-8907-cec514b53004"
   },
+  "abundant_growth": {
+    "artist": "Vincent Proce",
+    "scryfall_id": "88b8b051-3f05-4cc1-9506-732faa25553a"
+  },
   "academy_manufactor": {
     "artist": "ConcernedApe",
     "scryfall_id": "545f6d3a-5101-407c-acde-168c5097d866"
@@ -1062,6 +1066,10 @@
   "bane_alley_blackguard": {
     "artist": "Mike Bierek",
     "scryfall_id": "15fcad03-4567-4f96-976e-01a07d8ab050"
+  },
+  "bane_of_progress": {
+    "artist": "Lars Grant-West",
+    "scryfall_id": "54c98a43-d358-4bb5-ba65-dff25c2f12ea"
   },
   "banehound": {
     "artist": "YW Tang",
@@ -2143,6 +2151,10 @@
     "artist": "Camille Alquier",
     "scryfall_id": "488152ce-2048-4ccb-b2d6-b9628958286f"
   },
+  "cavalier_of_thorns": {
+    "artist": "Jehan Choo",
+    "scryfall_id": "ace83f5b-2349-46b8-b27f-bf705912a6df"
+  },
   "cave_of_the_frost_dragon": {
     "artist": "Johannes Voss",
     "scryfall_id": "bde28ceb-8b92-4a8c-8e35-5c9f72d20d52"
@@ -2799,6 +2811,10 @@
     "artist": "Cole Eastburn",
     "scryfall_id": "9a05c8f9-e810-498d-ab51-632661dd000d"
   },
+  "cream_of_the_crop": {
+    "artist": "Howard Lyon",
+    "scryfall_id": "943be0ee-cab1-4678-9ee0-960919ed519e"
+  },
   "creative_technique": {
     "artist": "Gaboleps",
     "scryfall_id": "c0b5ba5f-ac25-4134-91c1-9677ba86576c"
@@ -3302,6 +3318,10 @@
   "deranged_whelp": {
     "artist": "Zoltan Boros",
     "scryfall_id": "fd06f9eb-112e-458b-83c8-3761df6d60ff"
+  },
+  "descendants_fury": {
+    "artist": "Aldo Dom\u00ednguez",
+    "scryfall_id": "55af97c0-3377-4a77-8a8a-5bc894d7d678"
   },
   "desert_cerodon": {
     "artist": "Igor Kieryluk",
@@ -3843,6 +3863,10 @@
     "artist": "Sam Chivers",
     "scryfall_id": "6f80b450-70fe-4148-a7ce-1463c4c7b28c"
   },
+  "eclipsed_flamekin": {
+    "artist": "Vanessa Gillings",
+    "scryfall_id": "6271b82d-5922-4de0-b763-129908ece6ee"
+  },
   "eclipsed_steppe": {
     "artist": "Leon Tukker",
     "scryfall_id": "93ca39ae-0173-44ba-8c66-9f52f468983d"
@@ -4347,6 +4371,10 @@
   "fact_or_fiction": {
     "artist": "Matt Cavotta",
     "scryfall_id": "eb1a25c5-1918-40f3-b54f-5d31cf6b4eb2"
+  },
+  "faeburrow_elder": {
+    "artist": "Mark Zug",
+    "scryfall_id": "145dcac4-2c53-4ae9-9ede-24dc07474b01"
   },
   "faerie_1_1_u_flying": {
     "artist": "Iris Compiet",
