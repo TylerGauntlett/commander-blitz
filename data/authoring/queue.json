@@ -86382,12 +86382,12 @@
     },
     "Estinien Varlineau": {
       "edhrec_rank": 10408,
-      "gate": "template",
+      "gate": null,
       "name": "Estinien Varlineau",
-      "reason": "no template for: Whenever you cast a noncreature spell, put a +1/+1 counter on . It gains flying until end ",
+      "reason": "",
       "scryfall_id": "356432cf-a17c-4147-9d02-921960032d0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Estrid's Invocation": {

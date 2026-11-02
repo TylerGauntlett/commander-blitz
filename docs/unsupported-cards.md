@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**167 cards** blocked by **152** capabilities.
+**166 cards** blocked by **151** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -123,7 +123,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [playable-permission-cost-reduction](#playable-permission-cost-reduction) | 1 | 9151 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
-| [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -1932,20 +1931,6 @@ Blocks **1** card.
 
 - **Yavimaya Bloomsage // Channel** (rank 12705) — `yavimaya_bloomsage_channel`
   - Until end of turn, any time you could activate a mana ability, you may pay 1 life. If you do, add {C}.
-
-</details>
-
-## players-dealt-combat-damage-by-subtype
-
-Blocks **1** card.
-
-- **(selector)** a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any creature with a given subtype (Dragon, any controller, subtype read when the damage was dealt), so X can be counted as the number of distinct such opponents -- e.g. {"dealt_combat_damage_by": {"any_of": ["self", {"subtypes": ["Dragon"]}]}} plus a value that counts the players a player spec resolves to
-  <br>Why the existing vocabulary won't do: The `dealt_combat_damage_by` player spec takes only "self" and stands alone (loader.effects._validate_player_spec refuses any other subject), and its ledger `players_dealt_combat_damage_by` is keyed by attacker oid without the attacker's subtypes at damage time; the `combat_damage_by` condition (prowl) reads `combat_damage_types`, a game-wide yes/no over subtypes that records no seat and cannot count opponents; no value key counts the players a player spec resolves to. The first sentence (spell_cast trigger, add_counters + grant_keyword flying) is expressible on its own
-
-<details><summary>Cards waiting on this</summary>
-
-- **Estinien Varlineau** (rank 10408) — `estinien_varlineau`
-  - At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.
 
 </details>
 

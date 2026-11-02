@@ -4638,6 +4638,10 @@
   "espers_to_magicite": {
     "zone": "graveyard"
   },
+  "estinien_varlineau": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "etched_oracle": {
     "battlefield_count": 33,
     "counters": {

@@ -53471,6 +53471,119 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, put a +1/+1 counter on Estinien Varlineau. It gains flying until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "dealt_combat_damage_by": {
+                    "any_of": [
+                      "self",
+                      {
+                        "subtypes": [
+                          "Dragon"
+                        ]
+                      }
+                    ]
+                  },
+                  "except": "you"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "player_count": {
+                  "dealt_combat_damage_by": {
+                    "any_of": [
+                      "self",
+                      {
+                        "subtypes": [
+                          "Dragon"
+                        ]
+                      }
+                    ]
+                  },
+                  "except": "you"
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "estinien_varlineau",
+      "mana_cost": "{2}{W}{B}",
+      "name": "Estinien Varlineau",
+      "oracle_text": "Whenever you cast a noncreature spell, put a +1/+1 counter on Estinien Varlineau. It gains flying until end of turn.\nAt the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "remove_counters": {
