@@ -11992,12 +11992,12 @@
     },
     "Archfiend of Depravity": {
       "edhrec_rank": 1584,
-      "gate": "template",
+      "gate": null,
       "name": "Archfiend of Depravity",
-      "reason": "no template for: At the beginning of each opponent's end step, that player chooses up to two creatures they",
+      "reason": "",
       "scryfall_id": "aa0ba9cb-e45c-4c23-baab-38e01391ec6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archfiend of Despair": {
@@ -50532,12 +50532,12 @@
     },
     "Combustible Gearhulk": {
       "edhrec_rank": 1011,
-      "gate": "template",
+      "gate": null,
       "name": "Combustible Gearhulk",
-      "reason": "no template for: When this creature enters, target opponent may have you draw three cards. If the player do",
+      "reason": "",
       "scryfall_id": "07cc036d-f46e-490d-adbb-d6974c4e10fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Combustion Man": {
@@ -97652,12 +97652,12 @@
     },
     "Flayer of the Hatebound": {
       "edhrec_rank": 5137,
-      "gate": "template",
+      "gate": null,
       "name": "Flayer of the Hatebound",
-      "reason": "no template for: Undying",
+      "reason": "",
       "scryfall_id": "fe233fa7-bc38-45f5-bfe5-da93877f1075",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flaying Tendrils": {
@@ -138052,12 +138052,12 @@
     },
     "Interceptor, Shadow's Hound": {
       "edhrec_rank": 11144,
-      "gate": "template",
+      "gate": null,
       "name": "Interceptor, Shadow's Hound",
-      "reason": "no template for: Assassins you control have menace",
+      "reason": "",
       "scryfall_id": "30be9a07-5803-4bef-9313-391c926bfcec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Intercessor's Arrest": {
@@ -228662,12 +228662,12 @@
     },
     "Ruin Grinder": {
       "edhrec_rank": 4903,
-      "gate": "template",
+      "gate": null,
       "name": "Ruin Grinder",
-      "reason": "no template for: When this creature dies, each player may discard their hand and draw seven cards",
+      "reason": "",
       "scryfall_id": "a0eafd12-c0c9-4fe3-a4bb-40ab7b64e47c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ruin Processor": {
