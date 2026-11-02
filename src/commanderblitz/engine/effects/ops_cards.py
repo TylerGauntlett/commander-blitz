@@ -231,6 +231,11 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     "and mana of any type can be spent to cast that spell" -- and belongs to
     the same grant rather than to the player or the turn.
 
+    ``as_adventure`` is Hildibrand Manderville's "you may cast it from your
+    graveyard **as an Adventure**": only the card's Adventure half is offered,
+    never its creature face, and the half resolves onto its adventure in exile
+    (715.3d) so the creature may be cast from there afterwards.
+
     ``limit`` is "a spell", singular. Counted per granting permanent in the turn
     ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
     spells and one Locke milling three cards is still one.
@@ -250,6 +255,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # card is exiled as it resolves, so the grant is worth one cast per card
         # rather than as many as the turn's mana allows.
         obj.playable_exiles = bool(spec.get("as_flashback"))
+        # "…cast it from your graveyard **as an Adventure**" (Hildibrand
+        # Manderville): the permission reaches the Adventure half only, and
+        # the half's own resolution exiles it on an adventure (715.3d).
+        obj.playable_as_adventure = bool(spec.get("as_adventure"))
         # "…and mana of any type can be spent to cast that spell" travels with
         # the permission it is printed beside, and expires with it: the flag is
         # read only where `playable_turn` already gates the offer.

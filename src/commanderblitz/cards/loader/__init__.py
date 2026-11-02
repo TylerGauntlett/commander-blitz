@@ -1848,6 +1848,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'second_face_zone' needs a 'second_face' -- there is no "
                 f"second cast for it to restrict"
             )
+    # "When this dies, you may cast it from your graveyard as an Adventure."
+    # A permission over the card's *own* object that reaches only its Adventure
+    # half, so the card has to have one: on any other card the grant would load
+    # and offer nothing at all.
+    if not model.adventure:
+        trees: list[Any] = [model.spell_effects]
+        trees.extend(a.effects for a in model.abilities)
+        for tree in trees:
+            for effect in _walk_effect_specs(tree):
+                objects = effect.get("objects")
+                if (
+                    effect.get("as_adventure")
+                    and isinstance(objects, Mapping)
+                    and objects.get("self_only")
+                ):
+                    raise DslError(
+                        f"{where}: 'as_adventure' over this card needs it to be an "
+                        f"adventurer card ('adventure' with a 'second_face')"
+                    )
     # Fuse is a *third* line on a split card, so it needs the other two: a card
     # with nothing to fuse to is an ordinary spell that says a word, and fusing
     # onto a graveyard-only half would offer from hand a line that half may not

@@ -201,6 +201,19 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
         # offer it with something on the stack.
         if obj.playable_sorcery_only and not sorcery_speed:
             continue
+        # "…you may cast it from your graveyard **as an Adventure**" --
+        # Hildibrand Manderville. The permission reaches one face, so the
+        # Adventure half is offered (timed, priced and targeted off its own
+        # `CardDef`) and the front face is not. The half's printed zone is the
+        # hand, which this permission is the exception to, so the zone gate is
+        # waived; everything after the cast is the ordinary Adventure.
+        if obj.playable_as_adventure:
+            out.extend(
+                _second_face_actions(
+                    state, pid, oid, card, obj.zone, sorcery_speed, permitted=True
+                )
+            )
+            continue
         if card.is_land or not _timing_ok(state, pid, card, sorcery_speed):
             continue
         out.extend(
@@ -407,8 +420,15 @@ def _second_face_actions(
     card: CardDef,
     zone: Zone,
     sorcery_speed: bool,
+    *,
+    permitted: bool = False,
 ) -> list[Action]:
     """The lines for casting this card as its second face, if there are any.
+
+    ``permitted`` is a "you may cast it as an Adventure" permission on the
+    object (`playable_as_adventure`), which casts the half from a zone its
+    `second_face_zone` does not name -- so the zone gate is skipped, and the
+    fuse line, which is a hand-only third option, is never offered.
 
     One card, two spells. Everything the variant needs -- the price, the name,
     the targets, the timing -- is read off the *second face's* ``CardDef``, so
@@ -421,7 +441,7 @@ def _second_face_actions(
     """
     if card.second_face is None:
         return []
-    if SECOND_FACE_ZONES.get(card.second_face_zone) is not zone:
+    if not permitted and SECOND_FACE_ZONES.get(card.second_face_zone) is not zone:
         return []
     face = state.registry.get(card.second_face)
     # A land half is **played**, not cast, and `_land_actions` offers it. Without
@@ -446,7 +466,7 @@ def _second_face_actions(
     # together, both target lists chosen together. Priced and enumerated off a
     # card built from the two, so `_cast_variant` needs no notion of fusion: it
     # is pricing one spell, as it always is.
-    if card.fuse and zone is Zone.HAND:
+    if card.fuse and zone is Zone.HAND and not permitted:
         both = dataclasses.replace(
             card,
             name=f"{card.name} // {face.name}",

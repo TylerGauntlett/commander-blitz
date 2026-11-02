@@ -3667,6 +3667,33 @@ The rider fires **as the spell resolves** (715.3c), which is what the boundary
 tests are about: an Adventure that is countered or whose target vanished is an
 ordinary card in an ordinary graveyard, not a free spell waiting in exile.
 
+### Casting the Adventure from somewhere else — `as_adventure`
+
+```jsonc
+{ "kind": "triggered", "trigger": { "event": "dies", "source": "self" },
+  "effects": [ { "op": "grant_playable",
+                 "objects": { "self_only": true, "zone": "graveyard" },
+                 "playable": "end_of_your_next_turn",
+                 "as_adventure": true } ] }
+```
+
+"When Hildibrand Manderville dies, you may cast it from your graveyard **as an
+Adventure** until the end of your next turn." `as_adventure: true` on
+`grant_playable` narrows the permission to one face: the Adventure half is
+offered from wherever the card now is (its `second_face_zone` is waived for the
+permission), timed, priced and targeted off the half, and the front face is not
+offered at all. Resolving, the half goes on its adventure in exile as usual, so
+the creature is castable from there afterwards. The flag rides on the permission
+and ends with it.
+
+The loader refuses `as_adventure` anywhere but `grant_playable`, any value but
+`true`, beside `as_flashback` (two different exiles) or `playable_free`, and over
+`self_only` on a card that is not an adventurer. The near miss is the same
+`grant_playable` without the key, which offers the **creature** out of the
+graveyard: a different, stronger card. `second_face_zone: "graveyard"` is the
+other near miss, and is Aftermath — always castable from the graveyard, never
+from hand.
+
 ## Face-down permanents — morph, megamorph and manifest
 
 ```jsonc

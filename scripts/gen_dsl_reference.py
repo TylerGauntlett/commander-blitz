@@ -208,7 +208,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  'Hideaway — "that one, from there"'),
     "play_exiled": ("Cards", "Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                     '"You may play the exiled card this turn" — impulse draw'),
-    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration.",
+    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half.",
                        H_PLAYABLE),
     "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn.",
                              "Casting out of every graveyard, until end of turn"),

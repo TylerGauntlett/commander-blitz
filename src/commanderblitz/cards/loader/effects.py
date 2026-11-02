@@ -2157,6 +2157,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: 'grant_playable' needs 'objects' -- there is nothing to grant permission on"
         )
+    if "as_adventure" in effect:
+        # "…you may cast it from your graveyard as an Adventure" narrows a
+        # `grant_playable` permission to the Adventure half. Anywhere else it
+        # would load, print its sentence and narrow nothing.
+        if op != "grant_playable":
+            raise DslError(
+                f"{where}: 'as_adventure' narrows a grant_playable permission to the "
+                f"card's Adventure half, so it needs one"
+            )
+        if effect["as_adventure"] is not True:
+            raise DslError(f"{where}.as_adventure: the only value is true")
+        if effect.get("as_flashback"):
+            # Two different exiles for one resolution: flashback's is final,
+            # the Adventure's is the one the creature is cast out of (715.3d).
+            raise DslError(
+                f"{where}: 'as_adventure' and 'as_flashback' send the resolved spell "
+                f"to two different exiles -- write the one the card says"
+            )
+        if effect.get("playable_free"):
+            # The Adventure line is priced off the half's own mana cost; no
+            # card prints a free one, and the free rider is read on the front
+            # face's line only.
+            raise DslError(
+                f"{where}: 'as_adventure' casts the Adventure at its printed cost; "
+                f"'playable_free' beside it is not supported"
+            )
     if op == "exile" and effect.get("playable_this_turn") and "objects" not in effect:
         raise DslError(
             f"{where}: 'playable_this_turn' needs 'objects' -- "

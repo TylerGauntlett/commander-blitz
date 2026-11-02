@@ -226,7 +226,7 @@ under [Simplified](#simplified); what is missing outright is under
 |---|---|
 | **Transforming double-faced cards** | Two `CardDef`s over one `GameObject`, `transformed` picking which face `GameState.card_of` returns; enters front face up (712.13a) |
 | **Modal double-faced lands** | The land half is a land drop with `second_face=True` (`legality._second_face_land`), `showing_second_face` set before the move so the land's enters-replacements apply (Malakir Rebirth) |
-| **A second castable face — adventure, aftermath, split cards** | `second_face` with `second_face_zone` and `adventure`; `showing_second_face` set as the spell goes on the stack, the exile rider firing only as the Adventure resolves (715.3c, 702.127a) |
+| **A second castable face — adventure, aftermath, split cards** | `second_face` with `second_face_zone` and `adventure`; `showing_second_face` set as the spell goes on the stack, the exile rider firing only as the Adventure resolves (715.3c, 702.127a); `grant_playable`'s `as_adventure` permits only the Adventure half out of another zone (Hildibrand Manderville) |
 | **Flip cards** | 711: `back_face` plus `transform`; a flipped permanent that leaves comes back unflipped (712.13a) |
 | **Meld** | 701.37: `melds_with` and `melds_into`, the pair exiled and re-entered as a new permanent with `melded_mana_value` |
 | **Face-down permanents — morph, megamorph, manifest** | `chars` returns a 2/2 colourless shell (`FACE_DOWN_CHARS`) while `card_of` keeps the real card; morph casts for `{3}` (702.37a), manifest turns up only a creature card (701.34c); turning up is `ActionKind.ACTIVATE` with `ability_index` 0 |

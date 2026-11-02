@@ -829,6 +829,12 @@ class GameObject:
     #: *instant* may only be cast at sorcery speed, and its own type line still
     #: says instant.
     playable_sorcery_only: bool = False
+    #: "…you may cast it from your graveyard **as an Adventure**" -- Hildibrand
+    #: Manderville. A restriction on which *face* the permission reaches: the
+    #: Adventure half (the card's `second_face`) is offered, and the front face
+    #: is not. Resolving, the half goes on its adventure as any Adventure does
+    #: (715.3d), because `showing_second_face` is what that rider reads.
+    playable_as_adventure: bool = False
     #: Which permanent's permission made this card playable, when that
     #: permission caps how many of its cards may be cast -- Locke, Treasure
     #: Hunter: "you may cast **a spell** from among those cards", singular, out
@@ -1273,6 +1279,7 @@ class GameObject:
         self.playable_duration = "this_turn"
         self.playable_free = False
         self.playable_sorcery_only = False
+        self.playable_as_adventure = False
         self.playable_group = None
         self.playable_any_type = False
         self.playable_any_color = False
