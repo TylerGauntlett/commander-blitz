@@ -3234,6 +3234,37 @@ fires, and the turn ledger keeps what was declared. After blockers are declared
 the op does nothing. The near misses are `cant_attack_player` and
 `must_attack_planeswalker`, which shape a declaration that has not happened yet.
 
+## Removing a creature from combat — `remove_from_combat`
+
+```jsonc
+{ "kind": "triggered",
+  "text": "When this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.",
+  "trigger": { "event": "self_enters" },
+  "effects": [
+    { "op": "remove_from_combat", "objects": { "attached": true } },
+    { "op": "snapshot", "objects": { "attached": true }, "as": "enchanted" },
+    { "op": "draw", "player": "you",
+      "amount": { "count": { "zone": "battlefield", "types": ["Creature"], "tapped": true,
+                             "controller": { "controller_of": "enchanted" } } } } ] }
+```
+
+Observed Stasis. `remove_from_combat` takes `objects` (required; the loader
+refuses the op without it) and puts each creature in it that is attacking or
+blocking into `CombatState.removed`, the set regeneration, phasing and a change
+of control already use (506.4). From then on it is not an attacking or blocking
+creature for selectors, block legality or combat damage: it deals and is dealt
+none. What it fought stays where it was (509.1h): an attacker whose blocker is
+removed is still blocked, so it deals no damage unless it has trample, and a
+blocker whose attacker is removed is still blocking. The declaration is not
+undone: attack triggers already fired, the turn ledger keeps the attack, and the
+creature cannot be declared again this combat. Before blockers are declared, a
+defending player nobody attacks any more is not asked to block. Outside combat,
+and for a creature not in it, the op does nothing.
+
+The near misses: `tap` leaves an attacker attacking, `prevent_combat_damage`
+stops the damage but leaves the creature in combat for everything else, and
+`redirect_attack` moves an attack rather than ending it.
+
 ## "Tap X untapped Myr" — an optional choice of any number at resolution
 
 ```jsonc

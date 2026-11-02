@@ -977,6 +977,7 @@
   "regenerate",
   "remove_counters",
   "remove_counters_from_among",
+  "remove_from_combat",
   "rename",
   "repeat",
   "repeat_while",

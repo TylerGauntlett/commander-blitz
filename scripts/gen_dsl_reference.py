@@ -268,6 +268,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "goad": ("Board", "Goad creatures until your next turn, or for the rest of the game.", "Goad"),
     "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",
                         "Reselecting an attack — `redirect_attack`"),
+    "remove_from_combat": ("Board", "Remove creatures from combat (506.4); what they fought stays blocked or blocking.",
+                           "Removing a creature from combat — `remove_from_combat`"),
     "cant_block": ("Board", "Creatures can't block this turn.",
                    "The `cant_block` **op** — the same sentence with a clock"),
     "unblockable": ("Board", "Creatures can't be blocked this turn (optionally except by blockers matching a filter).",

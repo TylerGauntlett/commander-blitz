@@ -10,7 +10,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 
 | Family | Count |
 |---|---|
-| [Effect ops](#effect-ops) | 159 |
+| [Effect ops](#effect-ops) | 160 |
 | [Selectors](#selectors) | 72 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 67 |
@@ -124,6 +124,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board |  | Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling. | [Removing counters of any kind — any_kind](card-dsl.md#removing-counters-of-any-kind--any_kind) |
 | `remove_counters_from_among` | Board | yes | Remove counters of any kinds from among a pool of permanents, one at a time; `as` records how many. | [Removing counters from among permanents — the remove_counters_from_among op](card-dsl.md#removing-counters-from-among-permanents--the-remove_counters_from_among-op) |
+| `remove_from_combat` | Board |  | Remove creatures from combat (506.4); what they fought stays blocked or blocking. | [Removing a creature from combat — remove_from_combat](card-dsl-cookbook.md#removing-a-creature-from-combat--remove_from_combat) |
 | `replace_deaths` | Board |  | If it would die this turn, exile (or another zone) instead. | ["If it would die this turn, exile it instead"](card-dsl-cookbook.md#if-it-would-die-this-turn-exile-it-instead) |
 | `replace_leaves_battlefield` | Board |  | If it would leave the battlefield this turn, do something else. | [Effect ops](card-dsl.md#effect-ops) |
 | `rotate_control` | Board |  | Pass permanents around the table to the left or right. | ["Choose left or right" — passing the board around the table](card-dsl-cookbook.md#choose-left-or-right--passing-the-board-around-the-table) |

@@ -2436,6 +2436,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'redirect_attack' needs 'objects' naming the attacking "
             f"creature to reselect for, normally {{'target': 't1'}}"
         )
+    if op == "remove_from_combat" and not effect.get("objects"):
+        # Same hole as `redirect_attack`: an empty pool removes nothing, and an
+        # Observed Stasis written that way would leave the attacker swinging.
+        raise DslError(
+            f"{where}: 'remove_from_combat' needs 'objects' naming the creatures "
+            f"to remove, e.g. {{'attached': true}} or {{'target': 't1'}}"
+        )
     if op == "choose_permanents" and "as" not in effect:
         # It changes nothing on the board, so a choice nobody reads back is a
         # question put to the player for no reason -- and a card written that
