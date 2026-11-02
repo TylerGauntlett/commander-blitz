@@ -3782,6 +3782,39 @@ A copy does **not** encode again (702.97b): it is not a card. Epic carries the
 same `not is_token` guard, and both keywords make copies that resolve through
 the very code that armed them.
 
+## Casting a copy for a printed price
+
+```jsonc
+// "Exile up to one target instant or sorcery card from defending player's
+//  graveyard. If you do, copy it. You may cast the copy by paying {3} rather
+//  than paying its mana cost." -- Blue Mage's Cane's granted trigger
+"effects": [
+  { "op": "exile", "objects": { "target": "t1" }, "as": "banked" },
+  { "op": "cast_copy", "objects": { "binding": "banked" }, "cost": "{3}" } ]
+```
+
+`cast_copy`'s `cost` is a mana string naming an **alternative cost** (118.9):
+the copy is cast by paying it instead of the copied card's mana cost. Without
+`cost` the copy is cast free.
+
+- The cast line's adjustments apply on top (601.2f): spell cost reductions and
+  taxes, priced against the targets the copy declares, and the copied card's
+  own restricted-mana purpose. An X in the copied card is 0 (107.3).
+- It is always a choice. The caster is asked once per card, whether or not
+  `optional` is set, and only when some target line is payable (118.4). A
+  card with no legal target is not offered.
+- The copy declares its targets (601.2c, asked when there is more than one
+  line), then goes on the stack, then the price is paid and recorded on it.
+- Kicker and optional additional costs are not offered. A card whose
+  additional cost is mandatory is not offered at all. `cast_card` makes the
+  same narrowing.
+- The loader refuses a `cost` that is not a non-empty mana string, or one
+  holding an X.
+
+The near miss is `may` around a `pay` of `{3}` and a free `cast_copy`. That
+charges the {3} as a payment of its own, beside the spell, so a discount or a
+tax on spells never reaches it.
+
 ## Haunt — the exile link pointing the other way
 
 ```jsonc

@@ -87,7 +87,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `cant_attack_player` | Board |  | Creatures (a player's, or named `objects`) can't attack a player (or only their walkers of a subtype) until a duration ends. | ["That player can't attack you"](card-dsl-cookbook.md#that-player-cant-attack-you) |
 | `cant_block` | Board |  | Creatures can't block this turn. | [The cant_block op — the same sentence with a clock](card-dsl-cookbook.md#the-cant_block-op--the-same-sentence-with-a-clock) |
 | `cant_sacrifice` | Board |  | Permanents can't be sacrificed for a duration. | [The cant_sacrifice op — a prohibition on a game action, not a zone change](card-dsl-cookbook.md#the-cant_sacrifice-op--a-prohibition-on-a-game-action-not-a-zone-change) |
-| `cast_copy` | Board |  | Cast a copy of an encoded or linked card without paying its cost. | [Effect ops](card-dsl.md#effect-ops) |
+| `cast_copy` | Board |  | Cast a copy of an encoded or linked card, free or for a `cost` instead. | [Casting a copy for a printed price](card-dsl-cookbook.md#casting-a-copy-for-a-printed-price) |
 | `copy_permanent` | Board | yes | Create a token copy of a permanent; `as` records the copies. | [Token copies](card-dsl-cookbook.md#token-copies) |
 | `create_token` | Board | yes | Create N tokens by id; `as` records them; `power`/`toughness` size an X/X token. | [An X/X token — "create an X/X blue Shark creature token"](card-dsl-cookbook.md#an-xx-token--create-an-xx-blue-shark-creature-token) |
 | `destroy` | Board | yes | Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed. | [Effect ops](card-dsl.md#effect-ops) |

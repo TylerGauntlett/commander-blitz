@@ -3574,6 +3574,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: cast_card takes no {key!r} -- it casts the 'objects' "
                     f"pool at its mana cost (a free cast is cast_from_hand)"
                 )
+    if op == "cast_copy" and "cost" in effect:
+        # "You may cast the copy by paying {3} rather than paying its mana
+        # cost": an alternative cost, a mana string. An unparsable one would
+        # raise mid-resolution, and an X in it has nothing to announce it --
+        # no printed price of this shape carries one.
+        price = effect["cost"]
+        if not isinstance(price, str) or not price:
+            raise DslError(f"{where}: cast_copy's 'cost' is a mana cost string like '{{3}}'")
+        try:
+            parsed = ManaCost.parse(price)
+        except DslError as exc:
+            raise DslError(f"{where}: cast_copy cost {price!r} is not a mana cost") from exc
+        if parsed.x_count:
+            raise DslError(f"{where}: cast_copy's alternative cost {price!r} cannot hold an X")
     if op == "exchange_life_total":
         # 701.12: the player half is named on every printing ("target
         # opponent's", "your"), and the creature half is always the ability's
