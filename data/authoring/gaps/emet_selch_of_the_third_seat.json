@@ -1,0 +1,25 @@
+{
+  "card_id": "emet_selch_of_the_third_seat",
+  "name": "Emet-Selch of the Third Seat",
+  "oracle_text": "Spells you cast from your graveyard cost {2} less to cast.\nWhenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.",
+  "blocked_sentences": [
+    "Spells you cast from your graveyard cost {2} less to cast.",
+    "Whenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn."
+  ],
+  "needs": [
+    {
+      "capability": "cost_reduction_by_cast_zone",
+      "kind": "static_effect",
+      "what": "a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from (e.g. from_zone: \"graveyard\", or zones: [\"graveyard\"]), so \"spells you cast from your graveyard cost {2} less\" discounts flashback, retrace, cast_card and granted graveyard casts but not hand or command-zone casts",
+      "why_existing_wont_do": "player_statics.spell_cost_reduction is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never learns the zone the cast is made from. from_zone exists only on free_cast_permission's filter, and the card-level cost_reduction filter's `zone` key reads permanents for a count, not the spell's origin. An unfiltered spell_cost_reduction would also discount every hand cast, which is a different card"
+    },
+    {
+      "capability": "batched_life_lost",
+      "kind": "trigger_event",
+      "what": "`batched: true` on the `life_lost` trigger, grouping the simultaneous life loss of several players (e.g. \"each opponent loses 2 life\", or one combat damage step hitting two opponents) into one firing, so \"whenever one or more opponents lose life\" triggers once per batch rather than once per opponent",
+      "why_existing_wont_do": "triggers.BATCHED_EVENTS holds permanent_enters, leaves_graveyard, token_created, attacks_unblocked, dealt_damage and discard only, so the loader refuses `batched` on life_lost. An unbatched `life_lost` with controller opponent fires once per opponent, and since the once-each-turn limit is on the cast rather than the trigger (a declined trigger leaves the cast available), the extra triggers hand out extra chances to cast that the printed card does not give. The cast itself is sayable (cast_card with exiles: true, as Helmut Zemo, Mastermind, guarded by a set_turn_flag / has_turn_flag pair for \"do this only once each turn\")"
+    }
+  ],
+  "closest_existing": ["spell_cost_reduction", "free_cast_permission", "life_lost", "cast_card"],
+  "confidence": "high"
+}

@@ -1,0 +1,18 @@
+{
+  "card_id": "hildibrand_manderville_gentleman_s_rise",
+  "name": "Hildibrand Manderville // Gentleman's Rise",
+  "oracle_text": "Creature tokens you control get +1/+1.\nWhen Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn.",
+  "blocked_sentences": [
+    "When Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn."
+  ],
+  "needs": [
+    {
+      "capability": "cast_adventure_from_graveyard",
+      "kind": "engine",
+      "what": "a playable permission (from a dies trigger, lasting until the end of your next turn) that lets the card be cast from the graveyard only as its Adventure half (Gentleman's Rise, {2}{B} Instant - Adventure: create a 2/2 black Zombie creature token), with the normal Adventure exile-on-resolution so the creature can later be cast from exile",
+      "why_existing_wont_do": "grant_playable with playable 'end_of_your_next_turn' marks the card in the graveyard, but casting._cast_actions offers only the front face (_cast_options on the printed card) for a playable-permission card, and the second-face cast lines are gated by second_face_zone, which is 'hand' for an Adventure; setting second_face_zone 'graveyard' would make it Aftermath-like (castable from graveyard always, never from hand) and still let the creature face be cast from the graveyard. Nothing restricts a permission to one face."
+    }
+  ],
+  "closest_existing": ["grant_playable", "second_face", "adventure", "second_face_zone"],
+  "confidence": "high"
+}

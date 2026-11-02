@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**162 cards** blocked by **147** capabilities.
+**173 cards** blocked by **156** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 2 | 3206 | static_effect |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
+| [free-cast-exile-instead](#free-cast-exile-instead) | 2 | 2714 | op |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -33,6 +35,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
+| [wizard-0-1-b-noncreature-ping-token](#wizard-0-1-b-noncreature-ping-token) | 2 | 2485 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
@@ -42,11 +45,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [batched-life-lost](#batched-life-lost) | 1 | 3206 | trigger_event |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
+| [cast-adventure-from-graveyard](#cast-adventure-from-graveyard) | 1 | 10479 | engine |
+| [cast-copy-alternative-cost](#cast-copy-alternative-cost) | 1 | 7708 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
@@ -57,7 +63,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
-| [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
@@ -83,8 +88,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
+| [for-as-long-as-you-control-source](#for-as-long-as-you-control-source) | 1 | 8396 | engine |
 | [foretold](#foretold) | 1 | 3713 | value |
-| [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -105,6 +110,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
+| [max-life-lost-this-turn](#max-life-lost-this-turn) | 1 | 2780 | value |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -116,6 +122,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [playable-permission-cost-reduction](#playable-permission-cost-reduction) | 1 | 9151 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
@@ -129,6 +136,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
+| [remove-from-combat](#remove-from-combat) | 1 | 5628 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -146,6 +154,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
+| [static-typed-spells-cast-this-turn](#static-typed-spells-cast-this-turn) | 1 | 3703 | value |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
@@ -474,6 +483,25 @@ Blocks **2** cards.
 
 </details>
 
+## cost-reduction-by-cast-zone
+
+Blocks **2** cards.
+
+- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from, e.g. except_zones: ["hand"] (or zones: ["graveyard", "exile", "library", "command"]), so "spells you cast from anywhere other than your hand cost {2} less" discounts graveyard, exile, library-top and command-zone casts but not hand casts
+  <br>Why the existing vocabulary won't do: spell_cost_reduction (player_statics.spell_cost_reduction) is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never sees the zone the spell is cast from, and affects_spells has no zones/except_zones key. except_zones exists only on cant_cast_spells_from_zones, which forbids rather than discounts. A plain spell_cost_reduction with no zone filter would also discount hand casts, which is a different card
+- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from (e.g. from_zone: "graveyard", or zones: ["graveyard"]), so "spells you cast from your graveyard cost {2} less" discounts flashback, retrace, cast_card and granted graveyard casts but not hand or command-zone casts
+  <br>Why the existing vocabulary won't do: player_statics.spell_cost_reduction is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never learns the zone the cast is made from. from_zone exists only on free_cast_permission's filter, and the card-level cost_reduction filter's `zone` key reads permanents for a count, not the spell's origin. An unfiltered spell_cost_reduction would also discount every hand cast, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Emet-Selch of the Third Seat** (rank 3206) — `emet_selch_of_the_third_seat`
+  - Spells you cast from your graveyard cost {2} less to cast.
+  - Whenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.
+- **Advanced Reconstruction** (rank 10245) — `advanced_reconstruction`
+  - Spells you cast from anywhere other than your hand cost {2} less to cast.
+
+</details>
+
 ## escape
 
 Blocks **2** cards.
@@ -491,6 +519,24 @@ Blocks **2** cards.
   - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
 - **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
   - When Uro enters, sacrifice it unless it escaped.
+
+</details>
+
+## free-cast-exile-instead
+
+Blocks **2** cards.
+
+- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
+  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
+- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into your graveyard, exile it instead') on a free resolution-time cast of a targeted card in a graveyard -- e.g. an `exiles` key on `cast_from_hand` passed through to cast_for_free(exiles_instead=...) when its `objects` names a target, so the optional free cast of target instant card from your graveyard has the spell exiled however it leaves the stack (resolving, fizzling, countered)
+  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), missing 'without paying its mana cost'. `cast_from_hand` with `objects: {target: t1}` casts free and optionally from the graveyard but its options are only objects/per_owner/player/selector/zones, with no `exiles`, so the instant would return to the graveyard. `play_exiled` has free + `exiles` but defaults `exiled_with: self` on any non-binding pool and is mandatory, so a graveyard target matches nothing. Same gap as Impulsivity.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Torrential Gearhulk** (rank 2714) — `torrential_gearhulk`
+  - When this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.
+- **Impulsivity** (rank 6248) — `impulsivity`
+  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
 
 </details>
 
@@ -620,6 +666,24 @@ Blocks **2** cards.
   - Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender
 - **Teyo, the Shieldmage** (rank 9030) — `teyo_the_shieldmage`
   - −2: Create a 0/3 white Wall creature token with defender.
+
+</details>
+
+## wizard-0-1-b-noncreature-ping-token
+
+Blocks **2** cards.
+
+- **(token)** a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and its only Wizard is wizard_2_2_u (a 2/2 blue Wizard with no abilities); no 0/1 black Wizard carrying the noncreature-spell ping trigger exists. The rest of the card (draw, lose_life, pump and grant_keyword lifelink over Wizards you control) is expressible with existing ops
+- **(token)** a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and its only Wizard is wizard_2_2_u (a 2/2 blue Wizard with no abilities); no 0/1 black Wizard carrying the noncreature-spell ping trigger exists. The rest of the card is expressible: draw then discard, lose_life, an `if` on the `cast_from_hand` condition around create_token, and the card-level `rebound` rider
+
+<details><summary>Cards waiting on this</summary>
+
+- **Circle of Power** (rank 2485) — `circle_of_power`
+  - You draw two cards and you lose 2 life. Create a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
+- **Transpose** (rank 2842) — `transpose`
+  - Draw a card, then discard a card. You lose 1 life. If this spell was cast from your hand, create a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
 
 </details>
 
@@ -756,6 +820,21 @@ Blocks **1** card.
 
 </details>
 
+## batched-life-lost
+
+Blocks **1** card.
+
+- **(trigger_event)** `batched: true` on the `life_lost` trigger, grouping the simultaneous life loss of several players (e.g. "each opponent loses 2 life", or one combat damage step hitting two opponents) into one firing, so "whenever one or more opponents lose life" triggers once per batch rather than once per opponent
+  <br>Why the existing vocabulary won't do: triggers.BATCHED_EVENTS holds permanent_enters, leaves_graveyard, token_created, attacks_unblocked, dealt_damage and discard only, so the loader refuses `batched` on life_lost. An unbatched `life_lost` with controller opponent fires once per opponent, and since the once-each-turn limit is on the cast rather than the trigger (a declined trigger leaves the cast available), the extra triggers hand out extra chances to cast that the printed card does not give. The cast itself is sayable (cast_card with exiles: true, as Helmut Zemo, Mastermind, guarded by a set_turn_flag / has_turn_flag pair for "do this only once each turn")
+
+<details><summary>Cards waiting on this</summary>
+
+- **Emet-Selch of the Third Seat** (rank 3206) — `emet_selch_of_the_third_seat`
+  - Spells you cast from your graveyard cost {2} less to cast.
+  - Whenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.
+
+</details>
+
 ## block-restriction-relative-power
 
 Blocks **1** card.
@@ -825,6 +904,34 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
+
+</details>
+
+## cast-adventure-from-graveyard
+
+Blocks **1** card.
+
+- **(engine)** a playable permission (from a dies trigger, lasting until the end of your next turn) that lets the card be cast from the graveyard only as its Adventure half (Gentleman's Rise, {2}{B} Instant - Adventure: create a 2/2 black Zombie creature token), with the normal Adventure exile-on-resolution so the creature can later be cast from exile
+  <br>Why the existing vocabulary won't do: grant_playable with playable 'end_of_your_next_turn' marks the card in the graveyard, but casting._cast_actions offers only the front face (_cast_options on the printed card) for a playable-permission card, and the second-face cast lines are gated by second_face_zone, which is 'hand' for an Adventure; setting second_face_zone 'graveyard' would make it Aftermath-like (castable from graveyard always, never from hand) and still let the creature face be cast from the graveyard. Nothing restricts a permission to one face.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Hildibrand Manderville // Gentleman's Rise** (rank 10479) — `hildibrand_manderville_gentleman_s_rise`
+  - When Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn.
+
+</details>
+
+## cast-copy-alternative-cost
+
+Blocks **1** card.
+
+- **(op)** cast_copy (casting a copy of an exiled card) with an alternative cost: the caster may cast the copy by paying a printed price ({3}) instead of its mana cost, the payment made at cast time and the cast declinable if unaffordable or unwanted
+  <br>Why the existing vocabulary won't do: cast_copy accepts only objects and optional and always casts the copy without paying its mana cost (Mizzix's Mastery, Renegade Bull); nothing in its options or in may/pay attaches a substitute mana cost to the copy's cast. Wrapping it in may with pay {3} would charge the price as a separate payment rather than as the spell's alternative cost (cost increases/reductions and X would be wrong). The rest of the line is expressible: buff +0/+2, add_subtype Wizard, a grant_ability static over an attacks trigger targeting card_in_graveyard of the defending player
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blue Mage's Cane** (rank 7708) — `blue_mage_s_cane`
+  - Equipped creature gets +0/+2, is a Wizard in addition to its other types, and has "Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost."
 
 </details>
 
@@ -971,20 +1078,6 @@ Blocks **1** card.
 
 - **Sevinne's Reclamation** (rank 338) — `sevinne_s_reclamation`
   - If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.
-
-</details>
-
-## cost-reduction-by-cast-zone
-
-Blocks **1** card.
-
-- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from, e.g. except_zones: ["hand"] (or zones: ["graveyard", "exile", "library", "command"]), so "spells you cast from anywhere other than your hand cost {2} less" discounts graveyard, exile, library-top and command-zone casts but not hand casts
-  <br>Why the existing vocabulary won't do: spell_cost_reduction (player_statics.spell_cost_reduction) is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never sees the zone the spell is cast from, and affects_spells has no zones/except_zones key. except_zones exists only on cant_cast_spells_from_zones, which forbids rather than discounts. A plain spell_cost_reduction with no zone filter would also discount hand casts, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Advanced Reconstruction** (rank 10245) — `advanced_reconstruction`
-  - Spells you cast from anywhere other than your hand cost {2} less to cast.
 
 </details>
 
@@ -1351,6 +1444,20 @@ Blocks **1** card.
 
 </details>
 
+## for-as-long-as-you-control-source
+
+Blocks **1** card.
+
+- **(engine)** a duration for one-shot grants (grant_keyword, and by extension pump/animate) meaning 'for as long as you control <source>': the effect written onto the targeted permanent ends the moment the source leaves the battlefield or changes controller (611.2b)
+  <br>Why the existing vocabulary won't do: grant_keyword's duration takes only until_end_of_turn, until_your_next_turn and permanent; permanent outlives Thancred leaving, the timed ones end too early. A grant_keyword static ends with its source but its affects filter has no key binding it to the one permanent the enters trigger targeted (only attached/paired_with_source/enchanted_by), so it cannot mean 'that target'.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Thancred Waters** (rank 8396) — `thancred_waters`
+  - Royal Guard — When Thancred Waters enters, another target legendary permanent you control gains indestructible for as long as you control Thancred Waters.
+
+</details>
+
 ## foretold
 
 Blocks **1** card.
@@ -1362,20 +1469,6 @@ Blocks **1** card.
 
 - **Haunting Voyage** (rank 3713) — `haunting_voyage`
   - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
-
-</details>
-
-## free-cast-exile-instead
-
-Blocks **1** card.
-
-- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
-  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Impulsivity** (rank 6248) — `impulsivity`
-  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
 
 </details>
 
@@ -1664,6 +1757,20 @@ Blocks **1** card.
 
 </details>
 
+## max-life-lost-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value that reads the most life any ONE of the named players lost this turn, e.g. {"max_life_lost_this_turn": "each_player"}, so an intervening-if trigger condition can say "if a player lost 4 or more life this turn" as {"cmp": ">=", "left": {"max_life_lost_this_turn": "each_player"}, "right": {"const": 4}} -- the life-loss twin of the existing max_damage_taken_this_turn
+  <br>Why the existing vocabulary won't do: life_lost_this_turn sums over every player its spec names (values.py), so with each_player or each_opponent it is true when two players lost 2 each, which the card does not mean; max_damage_taken_this_turn is per-player but counts damage, not life loss (payments, drain effects); a condition has no per-player quantifier, and hard-coding seat ids into a max list or flagging inside for_each_player would be an approximation
+
+<details><summary>Cards waiting on this</summary>
+
+- **Y'shtola, Night's Blessed** (rank 2780) — `y_shtola_night_s_blessed`
+  - At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card.
+
+</details>
+
 ## may-pay-named-cost
 
 Blocks **1** card.
@@ -1826,6 +1933,20 @@ Blocks **1** card.
 
 </details>
 
+## playable-permission-cost-reduction
+
+Blocks **1** card.
+
+- **(op)** a generic-mana discount carried by a play permission, e.g. `cost_reduction: {"const": 2}` on `grant_playable` (and on `exile`/`look_at_top`'s `playable`), stored on the object beside playable_any_type/playable_free and applied by the cast path only when the spell is cast under that permission -- so "Until end of turn, you may play cards exiled with <this>. Spells you cast this way cost {2} less to cast" discounts exactly those casts, not other exile casts and not hand casts
+  <br>Why the existing vocabulary won't do: grant_playable (ops_cards.op_grant_playable) can mark the cards exiled_with self as playable this_turn, and carries any_type/any_color/playable_free riders, but has no discount rider. The spell_cost_reduction static (player_statics.spell_cost_reduction) matches only the printed CardDef via _matches_printed and never sees the cast's zone or the permission it uses; cost_reduction_filter_keys has no exiled_with. The pending cost_reduction_by_cast_zone gap (a static filtered on origin zone) would still be too broad: it would discount every exile cast, not only cards cast through this permission, and it would last while the permanent is out rather than until end of turn. Dropping the clause would make the card strictly worse than printed
+
+<details><summary>Cards waiting on this</summary>
+
+- **Urianger Augurelt** (rank 9151) — `urianger_augurelt`
+  - Play Arcanum — {T}: Until end of turn, you may play cards exiled with Urianger Augurelt. Spells you cast this way cost {2} less to cast.
+
+</details>
+
 ## played-or-cast-from-non-hand-this-turn
 
 Blocks **1** card.
@@ -1858,8 +1979,8 @@ Blocks **1** card.
 
 Blocks **1** card.
 
-- **(selector)** a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any source with a given subtype (Dragon), so X can be counted as the number of distinct such opponents -- e.g. {"dealt_combat_damage_by": {"any_of": ["self", {"subtypes": ["Dragon"]}]}} countable as a number of players
-  <br>Why the existing vocabulary won't do: The `dealt_combat_damage_by` player spec takes only "self" and stands alone (the loader refuses any other subject), so it cannot include Dragons; the `combat_damage_by` condition (prowl) is a yes/no over subtypes and neither counts players nor includes the source itself; no value key counts the players a player spec resolves to
+- **(selector)** a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any creature with a given subtype (Dragon, any controller, subtype read when the damage was dealt), so X can be counted as the number of distinct such opponents -- e.g. {"dealt_combat_damage_by": {"any_of": ["self", {"subtypes": ["Dragon"]}]}} plus a value that counts the players a player spec resolves to
+  <br>Why the existing vocabulary won't do: The `dealt_combat_damage_by` player spec takes only "self" and stands alone (loader.effects._validate_player_spec refuses any other subject), and its ledger `players_dealt_combat_damage_by` is keyed by attacker oid without the attacker's subtypes at damage time; the `combat_damage_by` condition (prowl) reads `combat_damage_types`, a game-wide yes/no over subtypes that records no seat and cannot count opponents; no value key counts the players a player spec resolves to. The first sentence (spell_cast trigger, add_counters + grant_keyword flying) is expressible on its own
 
 <details><summary>Cards waiting on this</summary>
 
@@ -2005,6 +2126,20 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
+
+</details>
+
+## remove-from-combat
+
+Blocks **1** card.
+
+- **(op)** an op that removes the creatures matched by `objects` from combat (rule 506.4): it stops being an attacking, blocking, blocked or unblocked creature, is dropped from the attack and block declarations, deals and receives no combat damage, and its blockers/attackers stay blocked/blocking per 506.4. Here `objects: {"attached": true}` on the Aura's enters trigger; a no-op outside combat
+  <br>Why the existing vocabulary won't do: No op touches combat membership. `redirect_attack` changes what an attacker attacks rather than removing it, `tap` leaves an attacker attacking, `cant_attack`/`cant_block` statics only gate future declarations, and `prevent_combat_damage`/`prevent_damage_permanent` stop damage but leave the creature attacking or blocking (so it still counts as blocked/blocking for triggers and for the creatures it fights). The draw half is expressible (`draw` with amount `{"count": {"types": ["Creature"], "tapped": true, "controller": <enchanted creature's controller>}}`), but a partly expressible card is filed whole
+
+<details><summary>Cards waiting on this</summary>
+
+- **Observed Stasis** (rank 5628) — `observed_stasis`
+  - When this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.
 
 </details>
 
@@ -2247,6 +2382,20 @@ Blocks **1** card.
 
 - **Vanguard of the Restless** (rank 11948) — `vanguard_of_the_restless`
   - Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game.
+
+</details>
+
+## static-typed-spells-cast-this-turn
+
+Blocks **1** card.
+
+- **(value)** the typed form of spells_cast_this_turn ({"player": "you", "filter": {"not_types": ["Creature"]}}) accepted as a static value, so a grant_keyword static's condition can be a cmp of noncreature spells you cast this turn >= 2
+  <br>Why the existing vocabulary won't do: static_value_keys has spells_cast_this_turn, but only as a bare player spec that counts every spell. cards/loader/statics.py rejects the {player, filter} mapping in a static by name, and characteristics.py reads only the flat turn_ledger.spells_cast total. Only the effect-side value (effects/values.py) can filter by type. Counting all spells would turn double strike on after two creature spells, which is a different and stronger card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lyse Hext** (rank 3703) — `lyse_hext`
+  - As long as you've cast two or more noncreature spells this turn, Lyse Hext has double strike.
 
 </details>
 

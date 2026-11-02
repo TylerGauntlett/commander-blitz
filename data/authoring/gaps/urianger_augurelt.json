@@ -1,0 +1,18 @@
+{
+  "card_id": "urianger_augurelt",
+  "name": "Urianger Augurelt",
+  "oracle_text": "Whenever you play a land from exile or cast a spell from exile, you gain 2 life.\nDraw Arcanum — {T}: Look at the top card of your library. You may exile it face down.\nPlay Arcanum — {T}: Until end of turn, you may play cards exiled with Urianger Augurelt. Spells you cast this way cost {2} less to cast.",
+  "blocked_sentences": [
+    "Play Arcanum — {T}: Until end of turn, you may play cards exiled with Urianger Augurelt. Spells you cast this way cost {2} less to cast."
+  ],
+  "needs": [
+    {
+      "capability": "playable_permission_cost_reduction",
+      "kind": "op",
+      "what": "a generic-mana discount carried by a play permission, e.g. `cost_reduction: {\"const\": 2}` on `grant_playable` (and on `exile`/`look_at_top`'s `playable`), stored on the object beside playable_any_type/playable_free and applied by the cast path only when the spell is cast under that permission -- so \"Until end of turn, you may play cards exiled with <this>. Spells you cast this way cost {2} less to cast\" discounts exactly those casts, not other exile casts and not hand casts",
+      "why_existing_wont_do": "grant_playable (ops_cards.op_grant_playable) can mark the cards exiled_with self as playable this_turn, and carries any_type/any_color/playable_free riders, but has no discount rider. The spell_cost_reduction static (player_statics.spell_cost_reduction) matches only the printed CardDef via _matches_printed and never sees the cast's zone or the permission it uses; cost_reduction_filter_keys has no exiled_with. The pending cost_reduction_by_cast_zone gap (a static filtered on origin zone) would still be too broad: it would discount every exile cast, not only cards cast through this permission, and it would last while the permanent is out rather than until end of turn. Dropping the clause would make the card strictly worse than printed"
+    }
+  ],
+  "closest_existing": ["grant_playable", "spell_cost_reduction", "free_cast_permission"],
+  "confidence": "high"
+}

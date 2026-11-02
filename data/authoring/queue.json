@@ -60412,12 +60412,12 @@
     },
     "Dancer's Chakrams": {
       "edhrec_rank": 4418,
-      "gate": "template",
+      "gate": null,
       "name": "Dancer's Chakrams",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "13764c53-57cc-4418-8a15-cdb72f6f3b0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dancing Scimitar": {
@@ -89262,12 +89262,12 @@
     },
     "Eye of Nidhogg": {
       "edhrec_rank": 3811,
-      "gate": "template",
+      "gate": null,
       "name": "Eye of Nidhogg",
-      "reason": "no template for: Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and dea",
+      "reason": "",
       "scryfall_id": "186862e7-91ba-47e9-bc38-e8e20772d40c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eye of Nowhere": {
@@ -91162,12 +91162,12 @@
     },
     "Fandaniel, Telophoroi Ascian": {
       "edhrec_rank": 3414,
-      "gate": "template",
+      "gate": null,
       "name": "Fandaniel, Telophoroi Ascian",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, surveil 1",
+      "reason": "",
       "scryfall_id": "08c9bf6c-fc52-4565-96d1-951a314e59e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fang Dragon // Forktail Sweep": {
@@ -103962,12 +103962,12 @@
     },
     "G'raha Tia, Scion Reborn": {
       "edhrec_rank": 6236,
-      "gate": "template",
+      "gate": null,
       "name": "G'raha Tia, Scion Reborn",
-      "reason": "no template for: Throw Wide the Gates — Whenever you cast a noncreature spell, you may pay X life, where X ",
+      "reason": "",
       "scryfall_id": "214453a2-9dcb-4bab-853f-5b56bbcbe4f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gabriel Angelfire": {
@@ -130882,12 +130882,12 @@
     },
     "Hraesvelgr of the First Brood": {
       "edhrec_rank": 8075,
-      "gate": "template",
+      "gate": null,
       "name": "Hraesvelgr of the First Brood",
-      "reason": "no template for: Flying, vigilance, ward {2}",
+      "reason": "",
       "scryfall_id": "11f0886a-fbc0-4060-b506-a0b0f9de8b0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hua Tuo, Honored Physician": {
@@ -132532,12 +132532,12 @@
     },
     "Hypnotic Sprite // Mesmeric Glare": {
       "edhrec_rank": 5711,
-      "gate": "template",
+      "gate": null,
       "name": "Hypnotic Sprite // Mesmeric Glare",
-      "reason": "proxy simplified it: only the first half exists; the other half is not modelled",
+      "reason": "",
       "scryfall_id": "4358fcf2-e07c-4a0f-8f69-5d0f83adeb20",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hypnox": {
@@ -138352,12 +138352,12 @@
     },
     "Into the Story": {
       "edhrec_rank": 5624,
-      "gate": "template",
+      "gate": null,
       "name": "Into the Story",
-      "reason": "no template for: This spell costs {3} less to cast if an opponent has seven or more cards in their graveyar",
+      "reason": "",
       "scryfall_id": "24c55c03-2c7a-416d-81d6-74a77a103704",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Into the Time Vortex": {
@@ -152532,12 +152532,12 @@
     },
     "Krile Baldesion": {
       "edhrec_rank": 7886,
-      "gate": "template",
+      "gate": null,
       "name": "Krile Baldesion",
-      "reason": "no template for: Trace Aether — Whenever you cast a noncreature spell, you may return target creature card ",
+      "reason": "",
       "scryfall_id": "125dd19b-98a0-49d9-a870-63214255e12a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kris Mage": {
@@ -181092,12 +181092,12 @@
     },
     "Murderous Rider // Swift End": {
       "edhrec_rank": 1634,
-      "gate": "template",
+      "gate": null,
       "name": "Murderous Rider // Swift End",
-      "reason": "no template for: When this creature dies, put it on the bottom of its owner's library",
+      "reason": "",
       "scryfall_id": "dd239710-62ef-43b5-aea2-e82bb385744d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Murderous Spoils": {
@@ -197532,12 +197532,12 @@
     },
     "Papalymo Totolymo": {
       "edhrec_rank": 4245,
-      "gate": "template",
+      "gate": null,
       "name": "Papalymo Totolymo",
-      "reason": "no template for: Whenever you cast a noncreature spell, deals 1 damage to each opponent and you gain 1 life",
+      "reason": "",
       "scryfall_id": "0b876b1e-fcf4-4e5c-81b0-1080ac8099ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Papercraft Decoy": {
@@ -217402,12 +217402,12 @@
     },
     "Reaper's Scythe": {
       "edhrec_rank": 7158,
-      "gate": "template",
+      "gate": null,
       "name": "Reaper's Scythe",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "723d9139-d75e-42e9-8ffc-5df053096839",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reaper's Talisman": {
@@ -231082,12 +231082,12 @@
     },
     "Sage's Nouliths": {
       "edhrec_rank": 11323,
-      "gate": "template",
+      "gate": null,
       "name": "Sage's Nouliths",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "a12ff7c3-6ae0-4098-9240-ff3fd16a5288",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage's Reverie": {
@@ -268052,12 +268052,12 @@
     },
     "Sublime Epiphany": {
       "edhrec_rank": 1710,
-      "gate": "template",
+      "gate": null,
       "name": "Sublime Epiphany",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "a71d0330-ae9b-48c4-802b-b2383958e0d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sublime Exhalation": {
@@ -268952,12 +268952,12 @@
     },
     "Summon: Good King Mog XII": {
       "edhrec_rank": 5008,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Good King Mog XII",
-      "reason": "no template for: I — Create two 1/2 white Moogle creature tokens with lifelink",
+      "reason": "",
       "scryfall_id": "3aabb93a-7fa2-4fb5-a683-db1d274ac367",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Ixion": {
@@ -306942,12 +306942,12 @@
     },
     "Void Rend": {
       "edhrec_rank": 765,
-      "gate": "template",
+      "gate": null,
       "name": "Void Rend",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "b1fe4252-f5f8-405a-82c4-2c7b35e7e7fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Void Shatter": {
@@ -314362,12 +314362,12 @@
     },
     "White Auracite": {
       "edhrec_rank": 3991,
-      "gate": "template",
+      "gate": null,
       "name": "White Auracite",
-      "reason": "no template for: When this artifact enters, exile target nonland permanent an opponent controls until this ",
+      "reason": "",
       "scryfall_id": "2df6f515-9d21-4769-b1c4-c219611bccbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "White Dragon": {

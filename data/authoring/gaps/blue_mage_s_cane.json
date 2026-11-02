@@ -1,0 +1,18 @@
+{
+  "card_id": "blue_mage_s_cane",
+  "name": "Blue Mage's Cane",
+  "oracle_text": "Job select\nEquipped creature gets +0/+2, is a Wizard in addition to its other types, and has \"Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.\"\nSpirit of the Whalaqee — Equip {2}",
+  "blocked_sentences": [
+    "Equipped creature gets +0/+2, is a Wizard in addition to its other types, and has \"Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.\""
+  ],
+  "needs": [
+    {
+      "capability": "cast_copy_alternative_cost",
+      "kind": "op",
+      "what": "cast_copy (casting a copy of an exiled card) with an alternative cost: the caster may cast the copy by paying a printed price ({3}) instead of its mana cost, the payment made at cast time and the cast declinable if unaffordable or unwanted",
+      "why_existing_wont_do": "cast_copy accepts only objects and optional and always casts the copy without paying its mana cost (Mizzix's Mastery, Renegade Bull); nothing in its options or in may/pay attaches a substitute mana cost to the copy's cast. Wrapping it in may with pay {3} would charge the price as a separate payment rather than as the spell's alternative cost (cost increases/reductions and X would be wrong). The rest of the line is expressible: buff +0/+2, add_subtype Wizard, a grant_ability static over an attacks trigger targeting card_in_graveyard of the defending player"
+    }
+  ],
+  "closest_existing": ["cast_copy", "renegade_bull", "mizzix_s_mastery"],
+  "confidence": "high"
+}

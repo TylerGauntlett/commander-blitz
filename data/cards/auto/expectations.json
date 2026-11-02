@@ -3378,6 +3378,20 @@
     },
     "zone": "graveyard"
   },
+  "dancer_s_chakrams": {
+    "battlefield_count": 34,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "lifelink"
+      ]
+    },
+    "tokens": {
+      "count": 1,
+      "id": "hero_1_1_c"
+    },
+    "zone": "battlefield"
+  },
   "dancing_scimitar": {
     "zone": "battlefield"
   },
@@ -4857,6 +4871,16 @@
   "exultant_skymarcher": {
     "zone": "battlefield"
   },
+  "eye_of_nidhogg": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "deathtouch"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "eyeblight_s_ending": {
     "zone": "graveyard"
   },
@@ -4938,6 +4962,10 @@
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "fandaniel_telophoroi_ascian": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -5711,6 +5739,16 @@
     "zone": "battlefield"
   },
   "fyndhorn_elder": {
+    "zone": "battlefield"
+  },
+  "g_raha_tia_scion_reborn": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "lifelink"
+      ]
+    },
     "zone": "battlefield"
   },
   "gaea_s_cradle": {
@@ -7199,6 +7237,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "hraesvelgr_of_the_first_brood": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
   "huatli_s_snubhorn": {
     "zone": "battlefield"
   },
@@ -7280,6 +7323,16 @@
     "zone": "battlefield"
   },
   "hyena_pack": {
+    "zone": "battlefield"
+  },
+  "hypnotic_sprite_mesmeric_glare": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying"
+      ]
+    },
     "zone": "battlefield"
   },
   "icatian_phalanx": {
@@ -7546,6 +7599,15 @@
   "into_the_roil": {
     "hand_size": {
       "0": 3
+    },
+    "zone": "graveyard"
+  },
+  "into_the_story": {
+    "hand_size": {
+      "0": 5
+    },
+    "library_size": {
+      "0": 36
     },
     "zone": "graveyard"
   },
@@ -8370,6 +8432,13 @@
     "zone": "battlefield"
   },
   "krenko_s_enforcer": {
+    "zone": "battlefield"
+  },
+  "krile_baldesion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "krosan_grip": {
@@ -9965,6 +10034,16 @@
   "murasa_brute": {
     "zone": "battlefield"
   },
+  "murderous_rider_swift_end": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "lifelink"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "murkfiend_liege": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -10918,6 +10997,10 @@
     "zone": "battlefield"
   },
   "panther_warriors": {
+    "zone": "battlefield"
+  },
+  "papalymo_totolymo": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "paradise_druid": {
@@ -11931,6 +12014,14 @@
     },
     "zone": "graveyard"
   },
+  "reaper_s_scythe": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "hero_1_1_c"
+    },
+    "zone": "battlefield"
+  },
   "rearing_embermare": {
     "zone": "battlefield"
   },
@@ -12617,6 +12708,14 @@
   },
   "sage_s_dousing": {
     "zone": "graveyard"
+  },
+  "sage_s_nouliths": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "hero_1_1_c"
+    },
+    "zone": "battlefield"
   },
   "sage_s_reverie": {
     "hand_size": {
@@ -14544,6 +14643,16 @@
     },
     "zone": "battlefield"
   },
+  "sublime_epiphany": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 3
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "submerge": {
     "battlefield_count": 31,
     "hand_size": {
@@ -14586,6 +14695,18 @@
     "zone": "battlefield"
   },
   "summon_esper_valigarmanda": {
+    "zone": "battlefield"
+  },
+  "summon_good_king_mog_xii": {
+    "battlefield_count": 35,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "tokens": {
+      "count": 2,
+      "id": "moogle_1_2_w_lifelink"
+    },
     "zone": "battlefield"
   },
   "summon_knights_of_round": {
@@ -16794,6 +16915,14 @@
   "voiceless_spirit": {
     "zone": "battlefield"
   },
+  "void_rend": {
+    "battlefield_count": 31,
+    "graveyard_size": {
+      "0": 4
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "volatile_fjord": {
     "zone": "battlefield"
   },
@@ -17210,6 +17339,11 @@
   },
   "whispersilk_cloak": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "white_auracite": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "white_orchid_phantom": {

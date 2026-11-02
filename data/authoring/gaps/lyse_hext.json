@@ -1,0 +1,18 @@
+{
+  "card_id": "lyse_hext",
+  "name": "Lyse Hext",
+  "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nNoncreature spells you cast cost {1} less to cast.\nAs long as you've cast two or more noncreature spells this turn, Lyse Hext has double strike.",
+  "blocked_sentences": [
+    "As long as you've cast two or more noncreature spells this turn, Lyse Hext has double strike."
+  ],
+  "needs": [
+    {
+      "capability": "static_typed_spells_cast_this_turn",
+      "kind": "value",
+      "what": "the typed form of spells_cast_this_turn ({\"player\": \"you\", \"filter\": {\"not_types\": [\"Creature\"]}}) accepted as a static value, so a grant_keyword static's condition can be a cmp of noncreature spells you cast this turn >= 2",
+      "why_existing_wont_do": "static_value_keys has spells_cast_this_turn, but only as a bare player spec that counts every spell. cards/loader/statics.py rejects the {player, filter} mapping in a static by name, and characteristics.py reads only the flat turn_ledger.spells_cast total. Only the effect-side value (effects/values.py) can filter by type. Counting all spells would turn double strike on after two creature spells, which is a different and stronger card"
+    }
+  ],
+  "closest_existing": ["spells_cast_this_turn"],
+  "confidence": "high"
+}

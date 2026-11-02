@@ -9,8 +9,8 @@
     {
       "capability": "players_dealt_combat_damage_by_subtype",
       "kind": "selector",
-      "what": "a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any source with a given subtype (Dragon), so X can be counted as the number of distinct such opponents -- e.g. {\"dealt_combat_damage_by\": {\"any_of\": [\"self\", {\"subtypes\": [\"Dragon\"]}]}} countable as a number of players",
-      "why_existing_wont_do": "The `dealt_combat_damage_by` player spec takes only \"self\" and stands alone (the loader refuses any other subject), so it cannot include Dragons; the `combat_damage_by` condition (prowl) is a yes/no over subtypes and neither counts players nor includes the source itself; no value key counts the players a player spec resolves to"
+      "what": "a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any creature with a given subtype (Dragon, any controller, subtype read when the damage was dealt), so X can be counted as the number of distinct such opponents -- e.g. {\"dealt_combat_damage_by\": {\"any_of\": [\"self\", {\"subtypes\": [\"Dragon\"]}]}} plus a value that counts the players a player spec resolves to",
+      "why_existing_wont_do": "The `dealt_combat_damage_by` player spec takes only \"self\" and stands alone (loader.effects._validate_player_spec refuses any other subject), and its ledger `players_dealt_combat_damage_by` is keyed by attacker oid without the attacker's subtypes at damage time; the `combat_damage_by` condition (prowl) reads `combat_damage_types`, a game-wide yes/no over subtypes that records no seat and cannot count opponents; no value key counts the players a player spec resolves to. The first sentence (spell_cast trigger, add_counters + grant_keyword flying) is expressible on its own"
     }
   ],
   "closest_existing": ["dealt_combat_damage_by", "combat_damage_by"],

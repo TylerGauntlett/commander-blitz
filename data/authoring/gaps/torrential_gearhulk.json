@@ -1,0 +1,18 @@
+{
+  "card_id": "torrential_gearhulk",
+  "name": "Torrential Gearhulk",
+  "oracle_text": "Flash\nWhen this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+  "blocked_sentences": [
+    "When this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead."
+  ],
+  "needs": [
+    {
+      "capability": "free_cast_exile_instead",
+      "kind": "op",
+      "what": "the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into your graveyard, exile it instead') on a free resolution-time cast of a targeted card in a graveyard -- e.g. an `exiles` key on `cast_from_hand` passed through to cast_for_free(exiles_instead=...) when its `objects` names a target, so the optional free cast of target instant card from your graveyard has the spell exiled however it leaves the stack (resolving, fizzling, countered)",
+      "why_existing_wont_do": "`cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), missing 'without paying its mana cost'. `cast_from_hand` with `objects: {target: t1}` casts free and optionally from the graveyard but its options are only objects/per_owner/player/selector/zones, with no `exiles`, so the instant would return to the graveyard. `play_exiled` has free + `exiles` but defaults `exiled_with: self` on any non-binding pool and is mandatory, so a graveyard target matches nothing. Same gap as Impulsivity."
+    }
+  ],
+  "closest_existing": ["cast_from_hand", "cast_card", "play_exiled"],
+  "confidence": "high"
+}
