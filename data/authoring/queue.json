@@ -49782,12 +49782,12 @@
     },
     "Coin of Fate": {
       "edhrec_rank": 13682,
-      "gate": "template",
+      "gate": null,
       "name": "Coin of Fate",
-      "reason": "no template for: {3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opp",
+      "reason": "",
       "scryfall_id": "652be579-44ad-4656-975b-5e336a9e21c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coin of Mastery": {

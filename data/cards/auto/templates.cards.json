@@ -31435,6 +31435,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, surveil 1",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "exile_from_graveyard": {
+              "as": "exiled",
+              "count": 2,
+              "types": [
+                "Creature"
+              ]
+            },
+            "mana": "{3}{W}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "chooser",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to choose one of the exiled cards"
+            },
+            {
+              "as": "chosen",
+              "objects": {
+                "binding": "exiled",
+                "chooser": {
+                  "binding": "chooser"
+                },
+                "count": 1,
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose one of the exiled cards"
+            },
+            {
+              "bottom": true,
+              "objects": {
+                "binding": "chosen",
+                "zone": "exile"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "objects": {
+                "binding": "exiled",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            },
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. You put that card on the bottom of your library and return the other to the battlefield tapped. You become the monarch"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "coin_of_fate",
+      "mana_cost": "{1}{W}",
+      "name": "Coin of Fate",
+      "oracle_text": "When this artifact enters, surveil 1.\n{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. You put that card on the bottom of your library and return the other to the battlefield tapped. You become the monarch.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],

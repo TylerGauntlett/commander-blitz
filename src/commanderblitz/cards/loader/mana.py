@@ -90,7 +90,29 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             )
     validate_selector(sacrifice_selector, f"{where}.cost.sacrifice")
     validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
-    validate_selector(model.exile_from_graveyard, f"{where}.cost.exile_from_graveyard")
+    graveyard_selector = (
+        dict(model.exile_from_graveyard) if model.exile_from_graveyard is not None else None
+    )
+    if graveyard_selector is not None and "as" in graveyard_selector:
+        # "An opponent chooses one of **the exiled cards**" (Coin of Fate). The
+        # graveyard twin of `sacrifice`'s `as`, lifted out before the selector
+        # language sees it for the same reason. Any count: what it names is the
+        # set the cost exiled, read back as `{"binding": …}`, so two cards is
+        # two cards rather than the first of them.
+        exiled_name = graveyard_selector.pop("as")
+        if not isinstance(exiled_name, str) or not exiled_name:
+            raise DslError(
+                f"{where}.cost.exile_from_graveyard.as: a binding name, got {exiled_name!r}"
+            )
+        if not defines_x:
+            # `sacrifice.as`' reason: only an activated ability's cost is
+            # handed a place to write the name, so anywhere else every read of
+            # it would be empty while the card looked implemented.
+            raise DslError(
+                f"{where}.cost.exile_from_graveyard.as: only an activated ability's "
+                f"effects can read what its cost exiled; this cost names it for nothing"
+            )
+    validate_selector(graveyard_selector, f"{where}.cost.exile_from_graveyard")
     validate_selector(model.discard_selector, f"{where}.cost.discard_selector")
     exile_hand = dict(model.exile_from_hand) if model.exile_from_hand is not None else None
     if exile_hand is not None:

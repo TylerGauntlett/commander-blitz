@@ -732,7 +732,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `discard_selector` | …matching this selector. | [Costs](card-dsl.md#costs) |
 | `discard_self` | Discard this card (cycling). | [Cycling](card-dsl-cookbook.md#cycling) |
 | `exert` | Exert the source. | [exert — the keyword as a cost](card-dsl.md#exert--the-keyword-as-a-cost) |
-| `exile_from_graveyard` | Exile matching cards from your graveyard. | [Costs](card-dsl.md#costs) |
+| `exile_from_graveyard` | Exile matching cards from your graveyard; `as` names them for the effects. | [Coin of Fate — an exile-from-graveyard cost that names what it exiled](card-dsl.md#coin-of-fate--an-exile-from-graveyard-cost-that-names-what-it-exiled) |
 | `exile_from_hand` | Exile a matching card from your hand (a pitch cost). | [exile_from_hand — the pitch cost, and why it is not a discard](card-dsl.md#exile_from_hand--the-pitch-cost-and-why-it-is-not-a-discard) |
 | `exile_self` | Exile the source. | [Costs](card-dsl.md#costs) |
 | `exile_self_from_hand` | Exile this card from your hand. | [Costs](card-dsl.md#costs) |

@@ -2734,6 +2734,9 @@
     },
     "zone": "battlefield"
   },
+  "coin_of_fate": {
+    "zone": "battlefield"
+  },
   "cold_water_snapper": {
     "zone": "battlefield"
   },

@@ -3690,6 +3690,8 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
+  "exile_from_graveyard": { "types": ["Creature"], "count": 2,
+                            "as": "exiled" },    // Coin of Fate: names *the* exiled cards
   "times": { "counters_on": { "counter": "age",            // cumulative upkeep:
                               "objects": { "self_only": true } } },  // …for each
   "x_value": { "mana_value_of": { "objects": {             // "X is the mana value
@@ -4106,6 +4108,41 @@ the cost named, so the name would bind nothing and read 0.
 Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to
 before anything had died.
+
+### Coin of Fate — an exile-from-graveyard cost that names what it exiled
+
+```jsonc
+{ "kind": "activated",
+  "text": "{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. …",
+  "cost": { "mana": "{3}{W}", "tap": true, "sacrifice": { "self_only": true },
+            "exile_from_graveyard": { "types": ["Creature"], "count": 2,
+                                      "as": "exiled" } },
+  "effects": [
+    { "op": "choose_player", "players": "each_opponent", "as": "chooser" },
+    { "op": "choose_permanents", "as": "chosen",
+      "objects": { "binding": "exiled", "zone": "exile", "count": 1,
+                   "chooser": { "binding": "chooser" } } },
+    { "op": "put_on_top", "bottom": true,
+      "objects": { "binding": "chosen", "zone": "exile" } },
+    { "op": "put_onto_battlefield", "tapped": true,
+      "objects": { "binding": "exiled", "zone": "exile" } } ] }
+```
+
+`as` on the `exile_from_graveyard` cost binds **every** card the cost exiled,
+as a list of oids, so `{"binding": …}` as a selector reaches exactly those cards
+and `count`/`chooser` pick among them. Any `count` is allowed — unlike
+`sacrifice`'s and `tap_permanents`' `as`, which name *the* one permanent — because
+the binding is the set, not its first member. Only cards that arrived in exile
+are named. Write `zone: "exile"` beside the binding: a card that leaves exile
+before the ability resolves is a new object (400.7) and no longer one of "the
+exiled cards", and without the zone the selector would follow it. The loader
+refuses an empty name, and `as` anywhere but an activated ability's cost, for
+`sacrifice`'s reason.
+
+Not `{"zone": "exile"}` alone, which is every exiled card in the game, and not
+`exiled_with: "self"`, which reads a link this cost does not write. Not the
+`exile` op with `as` in the effects: that exiles on resolution, so the ability
+could be activated with an empty graveyard.
 
 ### Station symbols — `threshold`, an ability the permanent has only at N+
 
