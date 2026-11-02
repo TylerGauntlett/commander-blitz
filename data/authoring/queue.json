@@ -135112,12 +135112,12 @@
     },
     "Impulsivity": {
       "edhrec_rank": 6248,
-      "gate": "template",
+      "gate": null,
       "name": "Impulsivity",
-      "reason": "no template for: When this creature enters, you may cast target instant or sorcery card from a graveyard wi",
+      "reason": "",
       "scryfall_id": "a85bec35-f22e-4374-ab8a-94663d69335a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imskir Iron-Eater": {

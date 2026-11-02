@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**162 cards** blocked by **147** capabilities.
+**161 cards** blocked by **146** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -84,7 +84,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
-| [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -1362,20 +1361,6 @@ Blocks **1** card.
 
 - **Haunting Voyage** (rank 3713) — `haunting_voyage`
   - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
-
-</details>
-
-## free-cast-exile-instead
-
-Blocks **1** card.
-
-- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
-  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Impulsivity** (rank 6248) — `impulsivity`
-  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
 
 </details>
 

@@ -7473,6 +7473,13 @@
       "graveyard"
     ]
   },
+  "impulsivity": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "incandescent_soulstoke": {
     "battlefield_count": 33,
     "hand_size": {
