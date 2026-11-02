@@ -1,0 +1,70 @@
+{
+  "_comment": "Cards that exist only for tests/unit/effects/test_as_long_as_you_control.py. Never part of a deck list. `t_royal_guard` is Thancred Waters' Royal Guard trigger on its own, at no cost; `t_alc_legend` is a plain legendary creature for it to protect, and `t_alc_bear` a nonlegendary one it may not target.",
+  "cards": [
+    {
+      "id": "t_royal_guard",
+      "name": "Test Royal Guard",
+      "oracle_text": "When this creature enters, another target legendary permanent you control gains indestructible for as long as you control this creature.",
+      "mana_cost": "{0}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Human", "Monk"],
+      "power": 3,
+      "toughness": 2,
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature enters, another target legendary permanent you control gains indestructible for as long as you control this creature.",
+          "trigger": {"event": "self_enters"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "supertypes": ["Legendary"],
+                "controller": "you",
+                "exclude_self": true
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "grant_keyword",
+              "keywords": ["indestructible"],
+              "objects": {"target": "t1"},
+              "duration": "as_long_as_you_control_source"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_alc_legend",
+      "name": "Test Protected Legend",
+      "oracle_text": "",
+      "mana_cost": "{2}{W}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Human", "Noble"],
+      "power": 2,
+      "toughness": 3,
+      "colors": ["W"],
+      "color_identity": ["W"]
+    },
+    {
+      "id": "t_alc_bear",
+      "name": "Test Unprotected Bear",
+      "oracle_text": "",
+      "mana_cost": "{1}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "power": 2,
+      "toughness": 2,
+      "colors": ["G"],
+      "color_identity": ["G"]
+    }
+  ]
+}

@@ -1141,6 +1141,37 @@ def damage_redirect(
     return None
 
 
+def end_source_bound(state: GameState, source: int) -> None:
+    """End every "for as long as you control ``source``" entry (611.2b).
+
+    Called as ``source`` leaves the battlefield (`zones.move_object`) and as it
+    changes controller (`primitives.change_control`): either way the seat that
+    controlled it when the effect began no longer does, and the duration is
+    over for good. Ended here rather than re-checked wherever the entry is
+    read, because the oid outlives both events -- a blinked Thancred Waters, or
+    one stolen and handed back, is under the same oid and the same controller
+    again, and a lazy "does that seat control it now" would bring the
+    indestructible back.
+
+    Walks every object rather than the battlefield list so a phased-out holder
+    loses the entry too (702.26d keeps its effects, not this one's source).
+    """
+    changed = False
+    for obj in state.objects.values():
+        if not obj.until_eot:
+            continue
+        kept = [
+            temp
+            for temp in obj.until_eot
+            if temp.while_controller is None or temp.source != source
+        ]
+        if len(kept) != len(obj.until_eot):
+            obj.until_eot = kept
+            changed = True
+    if changed:
+        state.bump_chars()
+
+
 def end_redirects_to(state: GameState, oid: int) -> None:
     """End every redirect onto ``oid``, which is leaving the battlefield.
 

@@ -49,6 +49,7 @@ from .structs import CONTROL_DURATIONS, DamageRedirect, TempEffect
 from .temp_effects import (
     combat_fogged,
     damage_redirect,
+    end_source_bound,
     life_floor,
     permanent_shielded,
     preventing_shield,
@@ -1872,6 +1873,9 @@ def change_control(
     previous = obj.controller
     obj.controller = pid
     obj.entered_turn = state.turn
+    # "…for as long as you control <this>" (611.2b): whoever began it no
+    # longer does, and a later handback does not begin it again.
+    end_source_bound(state, oid)
     if state.combat is not None:
         state.combat.remove(oid)
     if duration in ("until_end_of_turn", "end_of_your_next_turn"):
@@ -1945,10 +1949,12 @@ def pump(
     source: int | None = None,
     *,
     until_player: int | None = None,
+    while_controller: int | None = None,
 ) -> None:
     """ "Gets +3/+3 until end of turn" -- or, with ``until_player``, "gets -2/-1
     **until your next turn**" (Liliana, the Last Hope). See
-    `TempEffect.until_player` for where the longer one wears off."""
+    `TempEffect.until_player` for where the longer one wears off, and
+    `TempEffect.while_controller` for "for as long as you control" ``source``."""
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1960,6 +1966,7 @@ def pump(
             toughness=toughness,
             source=source,
             until_player=until_player,
+            while_controller=while_controller,
         )
     )
     state.bump_chars()
@@ -2102,8 +2109,14 @@ def grant_keyword(
     *,
     permanent: bool = False,
     until_player: int | None = None,
+    while_controller: int | None = None,
 ) -> None:
     """Give a permanent a keyword, until end of turn or for as long as it lasts.
+
+    ``while_controller`` is the third length: "…gains indestructible **for as
+    long as you control** Thancred Waters" -- the entry rides `until_eot` with
+    no clock and ends when ``source`` leaves or changes hands
+    (`TempEffect.while_controller`).
 
     ``permanent`` is riot's "or with **haste**", and the distinction is not
     cosmetic: an until-end-of-turn haste on a creature that entered this turn
@@ -2128,6 +2141,7 @@ def grant_keyword(
                 source=source,
                 timestamp=state.alloc_timestamp(),
                 until_player=until_player,
+                while_controller=while_controller,
             )
         )
     state.bump_chars()
@@ -2357,7 +2371,9 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
     """Whether the cleanup step now running is the end of ``temp``'s duration.
 
     "Until end of turn" ends in every cleanup.  "Until your next turn" ends in
-    none of them -- in its player's untap step instead.  "Until the end of your
+    none of them -- in its player's untap step instead -- and neither does "for
+    as long as you control" its source (`temp_effects.end_source_bound`).
+    "Until the end of your
     next turn" ends in the cleanup of the first of its seat's turns to *begin*
     after it was made, so the turn check is strict: made during that seat's own
     turn, this cleanup ends the turn it was made in, which is not "your next
@@ -2365,7 +2381,7 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
     the same words.  Reading the active player rather than a stored turn number
     is what lets an extra turn, or a seat leaving, move the end with it.
     """
-    if temp.until_player is not None:
+    if temp.until_player is not None or temp.while_controller is not None:
         return False
     if temp.until_end_of_turn_of is None:
         return True

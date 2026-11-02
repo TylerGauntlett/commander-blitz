@@ -2665,10 +2665,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         "until_end_of_turn",
         "until_your_next_turn",
         "permanent",
+        "as_long_as_you_control_source",
     ):
         raise DslError(
             f"{where}: unknown grant_keyword duration {effect['duration']!r} "
-            f"(use 'until_end_of_turn', 'until_your_next_turn' or 'permanent')"
+            f"(use 'until_end_of_turn', 'until_your_next_turn', 'permanent' or "
+            f"'as_long_as_you_control_source')"
         )
     # And the same trap on the other three `TempEffect` ops: `duration` was
     # read by none of them, so "gets -2/-1 until your next turn" written with
@@ -2676,7 +2678,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # turns Liliana, the Last Hope's +1 is printed for.
     # (`animate` is guarded with the rest of its keys below: it also takes Oko's
     # `permanent`, which neither of the other two has.)
-    if op in ("pump", "lock_abilities") and effect.get(
+    if op == "pump" and effect.get("duration", "until_end_of_turn") not in (
+        "until_end_of_turn",
+        "until_your_next_turn",
+        "as_long_as_you_control_source",
+    ):
+        raise DslError(
+            f"{where}: unknown pump duration {effect['duration']!r} "
+            f"(use 'until_end_of_turn', 'until_your_next_turn' or "
+            f"'as_long_as_you_control_source')"
+        )
+    if op == "lock_abilities" and effect.get(
         "duration", "until_end_of_turn"
     ) not in ("until_end_of_turn", "until_your_next_turn"):
         raise DslError(

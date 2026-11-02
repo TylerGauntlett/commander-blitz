@@ -325,8 +325,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 'Airbend — "exile them, and their owners may cast them for {2}"'),
     "exchange_control": ("Board", "Exchange control of two permanents.", "Exchanging control"),
     # ---- Modify ----------------------------------------------------------
-    "pump": ("Modify", "+N/+M until end of turn (or a duration).", None),
-    "grant_keyword": ("Modify", "Permanents gain keywords for a duration.",
+    "pump": ("Modify", "+N/+M until end of turn (or a duration, `as_long_as_you_control_source` included).",
+             '"For as long as you control" this'),
+    "grant_keyword": ("Modify", "Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source.",
                       "How long a granted keyword lasts"),
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),

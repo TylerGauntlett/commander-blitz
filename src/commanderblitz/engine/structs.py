@@ -163,6 +163,15 @@ class TempEffect:
     #: number, so an elimination or an extra turn that moves the seat's next
     #: turn moves the end with it -- detain's reason for keying on the seat.
     since_turn: int = 0
+    #: "…for as long as **you control** Thancred Waters" (611.2b): the seat that
+    #: must go on controlling :attr:`source` for the entry to stand, and
+    #: ``None`` on every other clock. No cleanup or untap step ends it.
+    #: `temp_effects.end_source_bound` does, eagerly, at the two moments the
+    #: duration can end -- `zones.move_object` as the source leaves the
+    #: battlefield and `primitives.change_control` as it changes hands -- so a
+    #: source that is blinked, or stolen and handed back, does not revive it:
+    #: the oid survives both, and the effect must not.
+    while_controller: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -182,6 +191,7 @@ class TempEffect:
             "until_player": self.until_player,
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,
+            "while_controller": self.while_controller,
         }
 
 

@@ -5407,6 +5407,8 @@ the turn the creature arrives and total afterwards: an until-end-of-turn haste
 evaporates at cleanup, so from the next turn a riot creature that chose haste
 looks exactly like one that chose the counter. A misspelled duration is refused
 rather than defaulted, because defaulting means shipping the wrong half.
+`until_your_next_turn` and `as_long_as_you_control_source` are the other two
+lengths; see the next two sections.
 
 ### "Until your next turn" on a pump, a keyword, an animation or a lock
 
@@ -5428,7 +5430,8 @@ rather than defaulted, because defaulting means shipping the wrong half.
 
 `pump`, `lock_abilities` and `animate` take `duration` of `until_end_of_turn`
 (the default) or `until_your_next_turn`; `grant_keyword` takes those two and
-`permanent`. The long one (611.2b) is **the controller's** next turn — the player
+`permanent`, and `grant_keyword` and `pump` also take
+[`as_long_as_you_control_source`](#for-as-long-as-you-control-this). The long one (611.2b) is **the controller's** next turn — the player
 who activated the ability, not the controller of the creature it points at — so
 in a pod it survives every opponent's turn. It rides the same `TempEffect` list
 as the end-of-turn form, with `until_player` set: `clear_until_eot` passes over
@@ -5436,6 +5439,42 @@ it and `clear_until_next_turn` drops it in that player's untap step, beside the
 other `until_your_next_turn` tables, and `sba` drops it when that player leaves
 the game. An `animate`'s keywords share its clock. Any other spelling is
 refused.
+
+### "For as long as you control" this
+
+```jsonc
+// Thancred Waters — "When Thancred Waters enters, another target legendary
+// permanent you control gains indestructible for as long as you control
+// Thancred Waters."
+{
+  "kind": "triggered",
+  "trigger": { "event": "self_enters" },
+  "targets": [{ "id": "t1", "kind": "permanent", "count": 1,
+                "selector": { "supertypes": ["Legendary"], "controller": "you",
+                              "exclude_self": true } }],
+  "effects": [{ "op": "grant_keyword", "keywords": ["indestructible"],
+                "objects": { "target": "t1" },
+                "duration": "as_long_as_you_control_source" }]
+}
+```
+
+`duration: "as_long_as_you_control_source"` on `grant_keyword` or `pump` is
+611.2b's "for as long as you control <this permanent>". The grant is a
+`TempEffect` on each object found, with `while_controller` set to the effect's
+controller; no cleanup or untap step ends it.
+`temp_effects.end_source_bound` does, the moment the source leaves the
+battlefield (`zones.move_object`) or changes controller
+(`primitives.change_control`), and for good: a source that is blinked, or
+stolen and handed back, does not bring it back. If the source is already gone,
+or under another player's control, as the effect would begin, the op does
+nothing at all rather than falling back to a shorter clock. The source is the
+resolving ability's own permanent, so the loader refuses the duration in a
+spell's `spell_effects`, where nobody controls the source, and on every other
+op.
+
+The near misses: `permanent` outlives the source, and a `grant_keyword` static
+ends with its source but re-reads its `affects` filter, which has no key for
+"the one permanent the trigger targeted".
 
 ## Granting an ability
 

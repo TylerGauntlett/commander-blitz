@@ -188,6 +188,7 @@ from .walk import (
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
     reads_placed_kind,
+    uses_source_bound_duration,
 )
 
 
@@ -1051,6 +1052,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
+    if uses_source_bound_duration(model.spell_effects):
+        raise DslError(
+            f"{where}.spell_effects: 'as_long_as_you_control_source' lasts while "
+            f"you control the source, and a spell is not a permanent anyone "
+            f"controls as it resolves (611.2b) -- it would do nothing"
+        )
     if reads_placed_kind(model.spell_effects):
         raise DslError(
             f"{where}.spell_effects: {{'binding': 'counter'}} is the kind a "

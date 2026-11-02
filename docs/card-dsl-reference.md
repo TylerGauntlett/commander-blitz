@@ -141,11 +141,11 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `animate` | Modify |  | A permanent becomes a creature, or another type (types, P/T, colors), for a duration; `exact` replaces, `keep_colors` keeps the colours, a non-creature animation may omit P/T. | [Creature-lands](card-dsl-cookbook.md#creature-lands) |
 | `become_level` | Modify |  | A Class becomes level N. | [Classes](card-dsl-cookbook.md#classes) |
 | `change_text` | Modify |  | Replace one creature type or color word with another in its text. | [change_text — "replacing all instances of one creature type"](card-dsl-cookbook.md#change_text--replacing-all-instances-of-one-creature-type) |
-| `grant_keyword` | Modify |  | Permanents gain keywords for a duration. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
+| `grant_keyword` | Modify |  | Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source. | [How long a granted keyword lasts](card-dsl-cookbook.md#how-long-a-granted-keyword-lasts) |
 | `grant_protection` | Modify |  | Permanents or players gain protection for a duration. | [Granting protection](card-dsl-cookbook.md#granting-protection) |
 | `lose_all_abilities` | Modify |  | Permanents lose all abilities for a duration. | [Losing all abilities because an effect said so](card-dsl.md#losing-all-abilities-because-an-effect-said-so) |
 | `lose_keyword` | Modify |  | Permanents found as it resolves lose keywords and can't have them until end of turn. | [The lose_keyword op — the same prohibition, until end of turn](card-dsl-cookbook.md#the-lose_keyword-op--the-same-prohibition-until-end-of-turn) |
-| `pump` | Modify |  | +N/+M until end of turn (or a duration). | [Effect ops](card-dsl.md#effect-ops) |
+| `pump` | Modify |  | +N/+M until end of turn (or a duration, `as_long_as_you_control_source` included). | ["For as long as you control" this](card-dsl-cookbook.md#for-as-long-as-you-control-this) |
 | `rename` | Modify |  | A permanent's name becomes the chosen or given name. | [Changing a permanent's name](card-dsl.md#changing-a-permanents-name) |
 | `set_pt` | Modify |  | Set base power and toughness for a duration. | [Effect ops](card-dsl.md#effect-ops) |
 | `transform` | Modify |  | Transform a double-faced permanent. | [Transforming double-faced cards](card-dsl-cookbook.md#transforming-double-faced-cards) |
