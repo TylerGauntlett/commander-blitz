@@ -1837,9 +1837,19 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     its owner keeps it (108.3), which is `push_spell` taking the card out of
     the owner's list. One question per owner, in the pool's own order, because
     "a card" with no "for each player" would be one cast in total.
+
+    ``exiles: true`` is "If that spell would be put into a graveyard, exile it
+    instead" -- Torrential Gearhulk and Impulsivity, casting a target card out
+    of a graveyard (``objects: {"target": …}``). `cast_card`'s rider on the
+    free cast: it rides on the stack item (`StackItem.exiles_instead`), so it
+    holds however the spell leaves the stack for a graveyard -- resolving,
+    fizzling or being countered -- and the same card cast later by other means
+    goes back to the graveyard. `cast_card` is the near miss and charges the
+    mana cost; `play_exiled` is free but reads its pool out of exile.
     """
 
     selector = spec.get("selector") or {}
+    exiles = bool(spec.get("exiles", False))
     prompt = "Cast a spell without paying its mana cost"
     # "…from your hand, **from your graveyard, or from among cards you own in
     # exile**" -- Kaya the Inexorable's emblem. One choice over the union of the
@@ -1896,7 +1906,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         for group in groups:
             picked = yield from ask_objects(ctx, prompt, group, 0, 1, pid, "cast_from_hand")
             if picked:
-                cast_for_free(ctx.state, pid, picked[0])
+                cast_for_free(ctx.state, pid, picked[0], exiles_instead=exiles)
 
 
 def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):

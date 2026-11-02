@@ -140,6 +140,22 @@ already there. The caster controls the spell; its owner keeps the card. Without
 `per_owner` the pool is one choice. The loader refuses `objects` beside `zones`,
 and `per_owner` without `objects`.
 
+`exiles: true` is "If that spell would be put into a graveyard, exile it
+instead". With `objects` naming a target it is Torrential Gearhulk's "you may
+cast target instant card from your graveyard without paying its mana cost":
+
+```jsonc
+// the trigger's targets: [{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+//   "selector": { "zone": "graveyard", "controller": "you", "types": ["Instant"] } }]
+{ "op": "cast_from_hand", "objects": { "target": "t1" }, "exiles": true }
+```
+
+It is `cast_card`'s rider on the free cast, carried on the stack item
+(`StackItem.exiles_instead`), so it holds whether the spell resolves, fizzles or
+is countered, and the same card cast later by another route goes back to the
+graveyard. `exiles` must be a boolean. `cast_card` is the near miss and charges
+the mana cost; `play_exiled` is free but defaults its pool to cards in exile.
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is

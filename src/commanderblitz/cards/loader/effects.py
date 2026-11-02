@@ -3649,6 +3649,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(f"{where}: cast_from_hand's 'per_owner' must be a boolean")
             if effect["per_owner"] and "objects" not in effect:
                 raise DslError(f"{where}: cast_from_hand's 'per_owner' needs 'objects'")
+        if "exiles" in effect and not isinstance(effect["exiles"], bool):
+            # `cast_card`'s rider and its refusal: a string "false" read as
+            # truthy would exile a spell the card sends back to the graveyard.
+            raise DslError(f"{where}: cast_from_hand's 'exiles' is true or false")
 
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no
