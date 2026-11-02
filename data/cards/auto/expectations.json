@@ -294,6 +294,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "alisaie_leveilleur": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "all_is_dust": {
     "battlefield_count": 30,
     "graveyard_size": {
@@ -312,6 +319,13 @@
     "zone": "battlefield"
   },
   "alpha_tyrranax": {
+    "zone": "battlefield"
+  },
+  "alphinaud_leveilleur": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "alpine_grizzly": {
@@ -842,6 +856,10 @@
       "0": 2
     }
   },
+  "ardbert_warrior_of_darkness": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "ardent_militia": {
     "zone": "battlefield"
   },
@@ -982,6 +1000,14 @@
   },
   "astral_cornucopia": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "astrologian_s_planisphere": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "hero_1_1_c"
+    },
     "zone": "battlefield"
   },
   "atraxa_praetors_voice": {
@@ -4809,6 +4835,13 @@
     },
     "zone": "graveyard"
   },
+  "exsanguinate": {
+    "life": {
+      "0": 60,
+      "1": 20
+    },
+    "zone": "graveyard"
+  },
   "extract_power": {
     "graveyard_size": {
       "0": 3
@@ -5129,6 +5162,14 @@
     "battlefield_count": 30,
     "graveyard_size": {
       "0": 1
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
+  "final_judgment": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 3
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"

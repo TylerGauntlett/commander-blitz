@@ -3555,6 +3555,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Alphinaud Leveilleur"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Alphinaud Leveilleur into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Alphinaud Leveilleur (When this creature enters, target player may put Alphinaud Leveilleur into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects_spells": {
+            "controller": "you"
+          },
+          "amount": {
+            "const": 2
+          },
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "spells_cast_this_turn": "you"
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Dualcast — The second spell you cast each turn costs {2} less to cast."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "alisaie_leveilleur",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Alisaie Leveilleur",
+      "oracle_text": "Partner with Alphinaud Leveilleur (When this creature enters, target player may put Alphinaud Leveilleur into their hand from their library, then shuffle.)\nFirst strike\nDualcast — The second spell you cast each turn costs {2} less to cast.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "all_is_dust",
@@ -3715,6 +3802,91 @@
         "Beast"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Alisaie Leveilleur"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Alisaie Leveilleur into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Alisaie Leveilleur (When this creature enters, target player may put Alisaie Leveilleur into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Eukrasia — Whenever you cast your second spell each turn, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "alphinaud_leveilleur",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Alphinaud Leveilleur",
+      "oracle_text": "Partner with Alisaie Leveilleur (When this creature enters, target player may put Alisaie Leveilleur into their hand from their library, then shuffle.)\nVigilance\nEukrasia — Whenever you cast your second spell each turn, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -9138,6 +9310,137 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a white spell, put a +1/+1 counter on each legendary creature you control. They gain vigilance until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "W"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "menace"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a black spell, put a +1/+1 counter on each legendary creature you control. They gain menace until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "B"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "ardbert_warrior_of_darkness",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Ardbert, Warrior of Darkness",
+      "oracle_text": "Whenever you cast a white spell, put a +1/+1 counter on each legendary creature you control. They gain vigilance until end of turn.\nWhenever you cast a black spell, put a +1/+1 counter on each legendary creature you control. They gain menace until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -10617,6 +10920,164 @@
         }
       ],
       "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "hero",
+              "controller": "you",
+              "op": "create_token",
+              "token": "hero_1_1_c"
+            },
+            {
+              "objects": {
+                "binding": "hero",
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Job select",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Wizard"
+          ],
+          "text": "Equipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\""
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Diana — Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 3
+          }
+        }
+      ],
+      "id": "astrologian_s_planisphere",
+      "mana_cost": "{1}{U}",
+      "name": "Astrologian's Planisphere",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\"\nDiana — Equip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
       "types": [
         "Artifact"
       ]
@@ -58331,6 +58792,35 @@
           ],
           "op": "choose_mode",
           "or_more": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "final_judgment",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Final Judgment",
+      "oracle_text": "Exile all creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
         }
       ],
       "types": [

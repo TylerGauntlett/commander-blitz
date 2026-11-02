@@ -6152,12 +6152,12 @@
     },
     "Alisaie Leveilleur": {
       "edhrec_rank": 4001,
-      "gate": "template",
+      "gate": null,
       "name": "Alisaie Leveilleur",
-      "reason": "no template for: Partner with Alphinaud Leveilleur",
+      "reason": "",
       "scryfall_id": "ba96f831-02cb-4a74-a2e4-7f76444e3cd7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alistair, the Brigadier": {
@@ -6702,12 +6702,12 @@
     },
     "Alphinaud Leveilleur": {
       "edhrec_rank": 4621,
-      "gate": "template",
+      "gate": null,
       "name": "Alphinaud Leveilleur",
-      "reason": "no template for: Partner with Alisaie Leveilleur",
+      "reason": "",
       "scryfall_id": "37e4ab61-bf18-4f9f-ba78-3e08a21aaf4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alpine Grizzly": {
@@ -12572,12 +12572,12 @@
     },
     "Ardbert, Warrior of Darkness": {
       "edhrec_rank": 5112,
-      "gate": "template",
+      "gate": null,
       "name": "Ardbert, Warrior of Darkness",
-      "reason": "no template for: Whenever you cast a white spell, put a +1/+1 counter on each legendary creature you contro",
+      "reason": "",
       "scryfall_id": "866400d8-c94b-4b1a-ba5a-20f9d92476db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arden Angel": {
@@ -15532,12 +15532,12 @@
     },
     "Astrologian's Planisphere": {
       "edhrec_rank": 5488,
-      "gate": "template",
+      "gate": null,
       "name": "Astrologian's Planisphere",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "a0f6e2d7-58b5-4a7d-8c42-e25185cd173f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Asylum Visitor": {
@@ -95042,12 +95042,12 @@
     },
     "Final Judgment": {
       "edhrec_rank": 8346,
-      "gate": "template",
+      "gate": null,
       "name": "Final Judgment",
-      "reason": "no template for: Exile all creatures",
+      "reason": "",
       "scryfall_id": "438a7db0-8005-46ac-8dd1-e7e364fd2ba7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Final Parting": {
