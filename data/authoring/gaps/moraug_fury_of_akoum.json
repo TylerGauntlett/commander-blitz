@@ -1,0 +1,22 @@
+{
+  "card_id": "moraug_fury_of_akoum",
+  "name": "Moraug, Fury of Akoum",
+  "oracle_text": "Each creature you control gets +1/+0 for each time it has attacked this turn.\nLandfall — Whenever a land you control enters, if it's your main phase, there's an additional combat phase after this phase. At the beginning of that combat, untap all creatures you control.",
+  "blocked_sentences": [
+    "Each creature you control gets +1/+0 for each time it has attacked this turn."
+  ],
+  "needs": [
+    {
+      "capability": "times_attacked_this_turn",
+      "kind": "value",
+      "what": "a per-object value for the number of times a given permanent has been declared as an attacker this turn, usable as a static `buff` amount evaluated separately for each affected creature (each creature you control gets +N/+0 where N is that creature's own attack count this turn)",
+      "why_existing_wont_do": "`attacked_this_turn` in value_keys counts players/creatures that attacked (and as a selector key it is only a boolean has-attacked flag); `combats_this_turn` and `attackers_this_turn` are turn-wide totals, not per creature; static_value_keys has no per-affected-object attack count at all, so a `buff` static cannot vary its amount by which creature it is modifying"
+    }
+  ],
+  "closest_existing": [
+    "attacked_this_turn",
+    "combats_this_turn",
+    "buff"
+  ],
+  "confidence": "high"
+}

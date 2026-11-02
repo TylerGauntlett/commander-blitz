@@ -3652,12 +3652,12 @@
     },
     "Aftermath Analyst": {
       "edhrec_rank": 645,
-      "gate": "template",
+      "gate": null,
       "name": "Aftermath Analyst",
-      "reason": "no template for: When this creature enters, mill three cards",
+      "reason": "",
       "scryfall_id": "66f135b4-8cb3-4a4e-86ae-81a3cf4b7259",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aftershock": {
@@ -19662,12 +19662,12 @@
     },
     "Baloth Prime": {
       "edhrec_rank": 4191,
-      "gate": "template",
+      "gate": null,
       "name": "Baloth Prime",
-      "reason": "no template for: Whenever you sacrifice a land, create a tapped 4/4 green Beast creature token and untap th",
+      "reason": "",
       "scryfall_id": "2c723fc9-d5c9-4126-a9a6-f80c247a4b6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baloth Pup": {
@@ -60102,12 +60102,12 @@
     },
     "Dakmor Salvage": {
       "edhrec_rank": 1285,
-      "gate": "template",
+      "gate": null,
       "name": "Dakmor Salvage",
-      "reason": "no template for: Dredge 2",
+      "reason": "",
       "scryfall_id": "72474b66-1dda-409d-8703-b026c1777081",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dakmor Scorpion": {
@@ -85832,12 +85832,12 @@
     },
     "Escape Tunnel": {
       "edhrec_rank": 819,
-      "gate": "template",
+      "gate": null,
       "name": "Escape Tunnel",
-      "reason": "no template for: {T}, Sacrifice this land: Target creature with power 2 or less can't be blocked this turn",
+      "reason": "",
       "scryfall_id": "5df90940-15ea-418c-8547-6c75d69ec6d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Escape Velocity": {
@@ -85862,12 +85862,12 @@
     },
     "Escape to the Wilds": {
       "edhrec_rank": 2310,
-      "gate": "template",
+      "gate": null,
       "name": "Escape to the Wilds",
-      "reason": "no template for: Exile the top five cards of your library. You may play cards exiled this way until the end",
+      "reason": "",
       "scryfall_id": "82267f18-ceff-4f98-bf6f-e0cbf94072d3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Escaped Experiment": {
@@ -86982,12 +86982,12 @@
     },
     "Eumidian Hatchery": {
       "edhrec_rank": 4257,
-      "gate": "template",
+      "gate": null,
       "name": "Eumidian Hatchery",
-      "reason": "no template for: {T}, Pay 1 life: Add {B}. Put a hatchling counter on this land",
+      "reason": "",
       "scryfall_id": "00281944-a9d3-4294-8f63-34ad09e4c627",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eumidian Terrabotanist": {
@@ -87002,12 +87002,12 @@
     },
     "Eumidian Wastewaker": {
       "edhrec_rank": 8133,
-      "gate": "template",
+      "gate": null,
       "name": "Eumidian Wastewaker",
-      "reason": "no template for: Whenever this creature attacks, you and defending player each discard a card or sacrifice ",
+      "reason": "",
       "scryfall_id": "3ee18d18-0167-4caa-adad-9d4435689c80",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eunuchs' Intrigues": {
@@ -100732,12 +100732,12 @@
     },
     "Formless Genesis": {
       "edhrec_rank": 5436,
-      "gate": "template",
+      "gate": null,
       "name": "Formless Genesis",
-      "reason": "no template for: Create an X/X colorless Shapeshifter creature token with changeling and deathtouch, where ",
+      "reason": "",
       "scryfall_id": "b2222cae-2b12-4163-ab1b-7d315877ee8d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Formless Nurturing": {
@@ -106052,12 +106052,12 @@
     },
     "Gaze of Granite": {
       "edhrec_rank": 4959,
-      "gate": "template",
+      "gate": null,
       "name": "Gaze of Granite",
-      "reason": "no template for: Destroy each nonland permanent with mana value X or less",
+      "reason": "",
       "scryfall_id": "97cf4cd8-9cb5-482e-92ca-da657b410e48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gaze of Justice": {
@@ -119102,12 +119102,12 @@
     },
     "Groundskeeper": {
       "edhrec_rank": 9185,
-      "gate": "template",
+      "gate": null,
       "name": "Groundskeeper",
-      "reason": "no template for: {1}{G}: Return target basic land card from your graveyard to your hand",
+      "reason": "",
       "scryfall_id": "30444f88-5a7e-46bc-ab0c-17e62fae2457",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Groundswell": {
@@ -121922,12 +121922,12 @@
     },
     "Hammer of Purphoros": {
       "edhrec_rank": 3069,
-      "gate": "template",
+      "gate": null,
       "name": "Hammer of Purphoros",
-      "reason": "no template for: Creatures you control have haste",
+      "reason": "",
       "scryfall_id": "900de725-741b-4b25-8e40-78ed7575a83f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hammer of Ruin": {
@@ -144632,12 +144632,12 @@
     },
     "Juri, Master of the Revue": {
       "edhrec_rank": 1857,
-      "gate": "template",
+      "gate": null,
       "name": "Juri, Master of the Revue",
-      "reason": "no template for: Whenever you sacrifice a permanent, put a +1/+1 counter on Juri",
+      "reason": "",
       "scryfall_id": "5006eae5-3b77-45ab-a907-f5094b2eaf1f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Jurin, Leading the Charge": {
@@ -169832,12 +169832,12 @@
     },
     "Mayhem Devil": {
       "edhrec_rank": 581,
-      "gate": "template",
+      "gate": null,
       "name": "Mayhem Devil",
-      "reason": "no template for: Whenever a player sacrifices a permanent, this creature deals 1 damage to any target",
+      "reason": "",
       "scryfall_id": "674f3a8a-4552-4289-b92a-06ce158f115c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mayhem Patrol": {
@@ -180772,12 +180772,12 @@
     },
     "Multani, Yavimaya's Avatar": {
       "edhrec_rank": 1834,
-      "gate": "template",
+      "gate": null,
       "name": "Multani, Yavimaya's Avatar",
-      "reason": "no template for: Multani gets +1/+1 for each land you control and each land card in your graveyard",
+      "reason": "",
       "scryfall_id": "c37a0136-1c40-4cd1-8787-a25c377c1741",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Multiclass Baldric": {
@@ -203942,12 +203942,12 @@
     },
     "Planetary Annihilation": {
       "edhrec_rank": 5356,
-      "gate": "template",
+      "gate": null,
       "name": "Planetary Annihilation",
-      "reason": "no template for: Each player chooses six lands they control, then sacrifices the rest. deals 6 damage to ea",
+      "reason": "",
       "scryfall_id": "65a07be7-1967-4db6-8868-94e2dde10ad5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Planetary Patrol": {
@@ -213892,12 +213892,12 @@
     },
     "Rakdos Charm": {
       "edhrec_rank": 331,
-      "gate": "template",
+      "gate": null,
       "name": "Rakdos Charm",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "64b67170-1602-4050-80c0-ade2a6cac211",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rakdos Cluestone": {
@@ -233792,12 +233792,12 @@
     },
     "Satyr Wayfinder": {
       "edhrec_rank": 1736,
-      "gate": "template",
+      "gate": null,
       "name": "Satyr Wayfinder",
-      "reason": "no template for: When this creature enters, reveal the top four cards of your library. You may put a land c",
+      "reason": "",
       "scryfall_id": "8bbbe65d-7162-42fb-94ee-d835d6c3f02a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Satyr's Cunning": {
@@ -236262,12 +236262,12 @@
     },
     "Scouring Swarm": {
       "edhrec_rank": 5838,
-      "gate": "template",
+      "gate": null,
       "name": "Scouring Swarm",
-      "reason": "no template for: Whenever you sacrifice a land, create a tapped token that's a copy of this creature if sev",
+      "reason": "",
       "scryfall_id": "1a9318ca-2974-4d3f-8951-205ba3f9c64a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scout for Survivors": {
@@ -256062,12 +256062,12 @@
     },
     "Soul of Windgrace": {
       "edhrec_rank": 5191,
-      "gate": "template",
+      "gate": null,
       "name": "Soul of Windgrace",
-      "reason": "no template for: {G}, Discard a land card: You gain 3 life",
+      "reason": "",
       "scryfall_id": "5a80f7e1-1d79-4302-a603-73eb060b97a6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Soul of Zendikar": {
@@ -260552,12 +260552,12 @@
     },
     "Splendid Reclamation": {
       "edhrec_rank": 880,
-      "gate": "template",
+      "gate": null,
       "name": "Splendid Reclamation",
-      "reason": "no template for: Return all land cards from your graveyard to the battlefield tapped",
+      "reason": "",
       "scryfall_id": "63c7f172-0aec-4629-967c-37253aed0f0d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Splendor Mare": {
@@ -261412,12 +261412,12 @@
     },
     "Sprouting Goblin": {
       "edhrec_rank": 6667,
-      "gate": "template",
+      "gate": null,
       "name": "Sprouting Goblin",
-      "reason": "no template for: Kicker {G}",
+      "reason": "",
       "scryfall_id": "f5555845-0424-4cb6-b373-57a722444a4a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sprouting Phytohydra": {
@@ -273362,12 +273362,12 @@
     },
     "Szarel, Genesis Shepherd": {
       "edhrec_rank": 4271,
-      "gate": "template",
+      "gate": null,
       "name": "Szarel, Genesis Shepherd",
-      "reason": "no template for: You may play lands from your graveyard",
+      "reason": "",
       "scryfall_id": "89b61123-b10f-4bcf-b5f9-1f302f9b22d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Szat's Will": {
@@ -287932,12 +287932,12 @@
     },
     "Tireless Tracker": {
       "edhrec_rank": 638,
-      "gate": "template",
+      "gate": null,
       "name": "Tireless Tracker",
-      "reason": "no template for: Landfall — Whenever a land you control enters, investigate",
+      "reason": "",
       "scryfall_id": "66444549-ad9b-49c6-a7c6-34e977c1085d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tireless Tribe": {
@@ -288142,12 +288142,12 @@
     },
     "Titania, Protector of Argoth": {
       "edhrec_rank": 1135,
-      "gate": "template",
+      "gate": null,
       "name": "Titania, Protector of Argoth",
-      "reason": "no template for: When Titania enters, return target land card from your graveyard to the battlefield",
+      "reason": "",
       "scryfall_id": "711f4094-9a78-42f7-8f75-f57af921dd2f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Titania, Proud Pummeler": {
@@ -300072,12 +300072,12 @@
     },
     "Uurg, Spawn of Turg": {
       "edhrec_rank": 7750,
-      "gate": "template",
+      "gate": null,
       "name": "Uurg, Spawn of Turg",
-      "reason": "no template for: Uurg's power is equal to the number of land cards in your graveyard",
+      "reason": "",
       "scryfall_id": "d1974536-9e4f-4808-9e49-a036ec7bf65c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uvilda, Dean of Perfection // Nassari, Dean of Expression": {
@@ -316122,12 +316122,12 @@
     },
     "Windgrace's Judgment": {
       "edhrec_rank": 3115,
-      "gate": "template",
+      "gate": null,
       "name": "Windgrace's Judgment",
-      "reason": "no template for: For any number of opponents, destroy target nonland permanent that player controls",
+      "reason": "",
       "scryfall_id": "f1f6efcf-6ac3-4bf9-9bd2-d5c78a5defb3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Winding Canyons": {
@@ -318862,12 +318862,12 @@
     },
     "World Breaker": {
       "edhrec_rank": 4659,
-      "gate": "template",
+      "gate": null,
       "name": "World Breaker",
-      "reason": "no template for: When you cast this spell, exile target artifact, enchantment, or land",
+      "reason": "",
       "scryfall_id": "d25856c9-cb3d-44d9-905e-007f1af65c06",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "World Map": {
@@ -319032,12 +319032,12 @@
     },
     "Worldsoul's Rage": {
       "edhrec_rank": 2683,
-      "gate": "template",
+      "gate": null,
       "name": "Worldsoul's Rage",
-      "reason": "no template for: deals X damage to any target. Put up to X land cards from your hand and/or graveyard onto ",
+      "reason": "",
       "scryfall_id": "1a54246e-1e22-4660-b2c8-fdfa2110b4fe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Worldspine Wurm": {

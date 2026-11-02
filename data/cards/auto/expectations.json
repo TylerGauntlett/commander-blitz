@@ -140,6 +140,10 @@
   "affa_protector": {
     "zone": "battlefield"
   },
+  "aftermath_analyst": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "age_of_ultron": {
     "counters": {
       "amount": 1,
@@ -1189,6 +1193,14 @@
   },
   "balmor_battlemage_captain": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "baloth_prime": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 6,
+      "kind": "stun"
+    },
     "zone": "battlefield"
   },
   "bane_alley_blackguard": {
@@ -3285,6 +3297,13 @@
   "dakmor_bat": {
     "zone": "battlefield"
   },
+  "dakmor_salvage": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "dakmor_scorpion": {
     "zone": "battlefield"
   },
@@ -4509,6 +4528,19 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "escape_to_the_wilds": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 35
+    },
+    "zone": "graveyard"
+  },
+  "escape_tunnel": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "esgaroth_garrison": {
     "battlefield_count": 33,
     "graveyard_size": {
@@ -4569,6 +4601,20 @@
   },
   "etherium_sculptor": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "eumidian_hatchery": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
+  "eumidian_wastewaker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "eureka_moment": {
@@ -5430,6 +5476,13 @@
   "forgotten_sentinel": {
     "zone": "battlefield"
   },
+  "formless_genesis": {
+    "battlefield_count": 32,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "forsaken_monument": {
     "zone": "battlefield"
   },
@@ -5720,6 +5773,11 @@
   "gavel_of_the_righteous": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "gaze_of_granite": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 2,
+    "zone": "graveyard"
   },
   "geier_reach_sanitarium": {
     "battlefield_count": 33,
@@ -6446,6 +6504,10 @@
   "grizzly_bears": {
     "zone": "battlefield"
   },
+  "groundskeeper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gruesome_deformity": {
     "zone": [
       "battlefield",
@@ -6566,6 +6628,16 @@
       "count": 1,
       "keywords": [
         "indestructible"
+      ]
+    },
+    "zone": "battlefield"
+  },
+  "hammer_of_purphoros": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 2,
+      "keywords": [
+        "haste"
       ]
     },
     "zone": "battlefield"
@@ -7724,6 +7796,10 @@
     "zone": "battlefield"
   },
   "jungle_weaver": {
+    "zone": "battlefield"
+  },
+  "juri_master_of_the_revue": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "juvenile_gloomwidow": {
@@ -9216,6 +9292,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "mayhem_devil": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mazemind_tome": {
     "life": {
       "0": 40
@@ -9810,6 +9890,10 @@
     "library_size": {
       "0": 38
     },
+    "zone": "battlefield"
+  },
+  "multani_yavimaya_s_avatar": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "murasa_brute": {
@@ -11074,6 +11158,15 @@
     },
     "zone": "battlefield"
   },
+  "planetary_annihilation": {
+    "battlefield_count": 6,
+    "graveyard_size": {
+      "0": 29,
+      "1": 2
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "plateau": {
     "zone": "battlefield"
   },
@@ -11639,6 +11732,12 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "rakdos_charm": {
+    "graveyard_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
   },
   "rakdos_guildgate": {
     "zone": "battlefield"
@@ -12512,6 +12611,13 @@
   "satyr_rambler": {
     "zone": "battlefield"
   },
+  "satyr_wayfinder": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 36
+    },
+    "zone": "battlefield"
+  },
   "savage_hunger": {
     "zone": [
       "battlefield",
@@ -12627,6 +12733,10 @@
   "scourglass": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "scouring_swarm": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "scouting_hawk": {
@@ -13764,6 +13874,13 @@
   "soul_of_the_rapids": {
     "zone": "battlefield"
   },
+  "soul_of_windgrace": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "soul_shatter": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 5,
@@ -13936,6 +14053,13 @@
   "spitting_image": {
     "zone": "graveyard"
   },
+  "splendid_reclamation": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "zone": "graveyard"
+  },
   "spore_frog": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13987,6 +14111,11 @@
   },
   "sprite_dragon": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sprouting_goblin": {
+    "battlefield_count": 33,
+    "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
   "squall_seed_mercenary": {
@@ -14570,6 +14699,10 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "szarel_genesis_shepherd": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "t_chaka_venerable_king": {
     "library_size": {
@@ -15425,6 +15558,13 @@
       "0": 43
     }
   },
+  "tireless_tracker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "titan_forge": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -15441,6 +15581,13 @@
   },
   "titan_s_grave": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "titania_protector_of_argoth": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "titania_proud_pummeler": {
@@ -16106,6 +16253,16 @@
   },
   "utvara_hellkite": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "uurg_spawn_of_turg": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "valeria_richards_precocious": {
@@ -17105,6 +17262,10 @@
     "opponent_battlefield_count": 6,
     "zone": "graveyard"
   },
+  "windgrace_s_judgment": {
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
+  },
   "windreader_sphinx": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17295,6 +17456,21 @@
   },
   "worf_chief_tactical_officer": {
     "zone": "battlefield"
+  },
+  "world_breaker": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "battlefield"
+  },
+  "worldsoul_s_rage": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 0
+    },
+    "zone": "graveyard"
   },
   "worn_powerstone": {
     "zone": "battlefield"

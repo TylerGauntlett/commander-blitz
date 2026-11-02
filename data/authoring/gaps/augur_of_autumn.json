@@ -1,0 +1,22 @@
+{
+  "card_id": "augur_of_autumn",
+  "name": "Augur of Autumn",
+  "oracle_text": "You may look at the top card of your library any time.\nYou may play lands from the top of your library.\nCoven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.",
+  "blocked_sentences": [
+    "Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library."
+  ],
+  "needs": [
+    {
+      "capability": "coven",
+      "kind": "value",
+      "what": "admission of the existing `distinct` value leaf into STATIC_VALUE_KEYS (src/commanderblitz/cards/loader/vocabulary.py) for `{\"distinct\": {\"of\": \"power\", \"objects\": {\"zone\": \"battlefield\", \"controller\": \"you\", \"types\": [\"Creature\"]}}}`, so a `cast_from_library_top` static (affects_player you, affects_spells types [Creature]) can carry `condition: {\"cmp\": \">=\", \"left\": <that distinct>, \"right\": {\"const\": 3}}`. Coven reads CURRENT power (pumps and counters count), a derived characteristic, so the static must be evaluated outside the characteristics pipeline the way `exists_derived` is for cant_attack/cant_block -- cast_from_library_top is read at cast-offer time, outside the pipeline, so it is a candidate for STATIC_DERIVED_CONDITION_EFFECTS-style admission. The same leaf unlocks every coven static.",
+      "why_existing_wont_do": "`distinct` with `of: power` already exists in values.py DISTINCT_OF (coven is named as its reason) but only in VALUE_KEYS for effects/triggers; it is absent from STATIC_VALUE_KEYS, so a static's `condition` cmp cannot name it (load error). `count` counts creatures, not distinct powers (three 2/2s would pass). `exists_derived` can ask whether one creature with a given power exists but cannot express 'three different powers' without enumerating every power triple, which is unbounded and an approximation."
+    }
+  ],
+  "closest_existing": [
+    "distinct",
+    "exists_derived",
+    "cast_from_library_top"
+  ],
+  "confidence": "high"
+}

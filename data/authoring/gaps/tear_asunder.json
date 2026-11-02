@@ -1,0 +1,16 @@
+{
+  "card_id": "tear_asunder",
+  "name": "Tear Asunder",
+  "oracle_text": "Kicker {1}{B} (You may pay an additional {1}{B} as you cast this spell.)\nExile target artifact or enchantment. If this spell was kicked, exile target nonland permanent instead.",
+  "blocked_sentences": [
+    "Exile target artifact or enchantment. If this spell was kicked, exile target nonland permanent instead."
+  ],
+  "needs": [{
+    "capability": "kicker",
+    "kind": "selector",
+    "what": "a spell target whose selector (or whole target spec) is replaced when the spell was kicked: unkicked it declares one target artifact or enchantment, kicked it declares one target nonland permanent instead. Either a `selector_if_kicked` on a TargetSpec, or support for `count: 0` / `count_if_kicked: 0` so two specs can swap which one is declared",
+    "why_existing_wont_do": "`count_if_kicked` only resizes a spec. Writing two specs (artifact/enchantment with count 1 and count_if_kicked 0, nonland with count 0 and count_if_kicked 1) loads and enumerates correctly, but `targeting.filter_legal` slices stored refs with `max(1, spec.count)`, so at resolution the kicked line's one ref lands in the first spec's bucket, fails its artifact/enchantment check, and the kicked spell exiles nothing (verified in the sandbox: the kicked cast resolves without exiling anything). Making both targets `optional` would let an unkicked cast target a nonland creature, and a `choose_mode` cannot restrict a mode to kicked casts only"
+  }],
+  "closest_existing": ["count_if_kicked", "kicked condition", "choose_mode with mode-owned targets"],
+  "confidence": "high"
+}
