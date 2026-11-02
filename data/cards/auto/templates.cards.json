@@ -8100,6 +8100,77 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "kept",
+              "objects": {
+                "chooser": {
+                  "binding": "event_player"
+                },
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": 2,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose up to two creatures to keep"
+            },
+            {
+              "chooser": "none",
+              "objects": {
+                "chooser": "none",
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": "all",
+                "exclude_binding": "kept",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each opponent's end step, that player chooses up to two creatures they control, then sacrifices the rest",
+          "trigger": {
+            "controller": "opponent",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "archfiend_of_depravity",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Archfiend of Depravity",
+      "oracle_text": "Flying\nAt the beginning of each opponent's end step, that player chooses up to two creatures they control, then sacrifices the rest.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "opponent",
           "effect": "cant_gain_life",
           "kind": "static",
@@ -31908,6 +31979,89 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "as": "milled",
+                  "op": "mill",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "objects": {
+                        "binding": "milled"
+                      }
+                    }
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Have Combustible Gearhulk's controller draw three cards?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this creature enters, target opponent may have you draw three cards. If the player doesn't, you mill three cards, then this creature deals damage to that player equal to the total mana value of those cards.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "combustible_gearhulk",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Combustible Gearhulk",
+      "oracle_text": "First strike\nWhen this creature enters, target opponent may have you draw three cards. If the player doesn't, you mill three cards, then this creature deals damage to that player equal to the total mana value of those cards.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -59677,6 +59831,104 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              },
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this creature or another creature enters from your graveyard, that creature deals damage equal to its power to any target.",
+          "trigger": {
+            "condition": {
+              "entered_from": "graveyard"
+            },
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "owner": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "flayer_of_the_hatebound",
+      "mana_cost": "{5}{R}",
+      "name": "Flayer of the Hatebound",
+      "oracle_text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)\nWhenever this creature or another creature enters from your graveyard, that creature deals damage equal to its power to any target.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Devil"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{3}{G}{W}"
           },
@@ -85979,6 +86231,101 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Assassin"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Assassins you control have menace."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "interceptor_defender",
+                  "op": "choose_player",
+                  "players": "each_opponent",
+                  "prompt": "Choose the player Interceptor, Shadow's Hound attacks"
+                },
+                {
+                  "attacking": {
+                    "binding": "interceptor_defender"
+                  },
+                  "controller": "you",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield",
+                  "or_planeswalker": true,
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}{B}"
+              },
+              "prompt": "Pay {2}{B} to return Interceptor, Shadow's Hound tapped and attacking?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with one or more legendary creatures, you may pay {2}{B}. If you do, return this card from your graveyard to the battlefield tapped and attacking.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "supertypes": [
+                  "Legendary"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "interceptor_shadow_s_hound",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Interceptor, Shadow's Hound",
+      "oracle_text": "Menace\nAssassins you control have menace.\nWhenever you attack with one or more legendary creatures, you may pay {2}{B}. If you do, return this card from your graveyard to the battlefield tapped and attacking.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dog"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -144845,6 +145192,102 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "op": "discard",
+                      "player": {
+                        "binding": "each_player"
+                      },
+                      "whole_hand": true
+                    },
+                    {
+                      "amount": {
+                        "const": 7
+                      },
+                      "op": "draw",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Discard your hand and draw seven cards?"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, each player may discard their hand and draw seven cards.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Mountain"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Mountaincycling {2} ({2}, Discard this card: Search your library for a Mountain card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ruin_grinder",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Ruin Grinder",
+      "oracle_text": "Menace\nWhen this creature dies, each player may discard their hand and draw seven cards.\nMountaincycling {2} ({2}, Discard this card: Search your library for a Mountain card, reveal it, put it into your hand, then shuffle.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {

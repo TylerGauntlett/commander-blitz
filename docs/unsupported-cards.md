@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **148** capabilities.
+**164 cards** blocked by **149** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -76,6 +76,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [exile-from-graveyard-as](#exile-from-graveyard-as) | 1 | 13682 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
@@ -1243,6 +1244,20 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
+## exile-from-graveyard-as
+
+Blocks **1** card.
+
+- **(cost)** an `as` key on the `exile_from_graveyard` cost that binds the cards it exiled (the way `tap_permanents` and `sacrifice` take `as`), so the ability's effects can select exactly those cards in exile -- here an opponent-chosen one of them (selector `chooser: "opponent"`, count 1) put on the bottom of its owner's library, and the other returned to the battlefield tapped
+  <br>Why the existing vocabulary won't do: costs.pay's exile_from_graveyard branch exiles via zones.exile with cause="cost" and neither writes a binding nor calls link_exiled, so `exiled_with: "self"` matches nothing and no binding names the paid cards; a plain `{"zone": "exile"}` selector would reach every exiled card in the game, a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Coin of Fate** (rank 13682) — `coin_of_fate`
+  - {3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. You put that card on the bottom of your library and return the other to the battlefield tapped. You become the monarch.
 
 </details>
 

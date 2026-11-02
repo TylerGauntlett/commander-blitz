@@ -755,6 +755,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "archfiend_of_depravity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archfiend_of_despair": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2776,6 +2780,13 @@
     "zone": "battlefield"
   },
   "combat_celebrant": {
+    "zone": "battlefield"
+  },
+  "combustible_gearhulk": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 37
+    },
     "zone": "battlefield"
   },
   "commander_s_insight": {
@@ -5291,6 +5302,10 @@
     },
     "zone": "graveyard"
   },
+  "flayer_of_the_hatebound": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fleecemane_lion": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7458,6 +7473,13 @@
     "zone": "battlefield"
   },
   "intelligence_bobblehead": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "interceptor_shadow_s_hound": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -12459,6 +12481,13 @@
     }
   },
   "rugged_prairie": {
+    "zone": "battlefield"
+  },
+  "ruin_grinder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "ruination_wurm": {

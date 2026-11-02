@@ -1,0 +1,16 @@
+{
+  "card_id": "coin_of_fate",
+  "name": "Coin of Fate",
+  "oracle_text": "When this artifact enters, surveil 1.\n{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. You put that card on the bottom of your library and return the other to the battlefield tapped. You become the monarch.",
+  "blocked_sentences": [
+    "{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. You put that card on the bottom of your library and return the other to the battlefield tapped. You become the monarch."
+  ],
+  "needs": [{
+    "capability": "exile_from_graveyard_as",
+    "kind": "cost",
+    "what": "an `as` key on the `exile_from_graveyard` cost that binds the cards it exiled (the way `tap_permanents` and `sacrifice` take `as`), so the ability's effects can select exactly those cards in exile -- here an opponent-chosen one of them (selector `chooser: \"opponent\"`, count 1) put on the bottom of its owner's library, and the other returned to the battlefield tapped",
+    "why_existing_wont_do": "costs.pay's exile_from_graveyard branch exiles via zones.exile with cause=\"cost\" and neither writes a binding nor calls link_exiled, so `exiled_with: \"self\"` matches nothing and no binding names the paid cards; a plain `{\"zone\": \"exile\"}` selector would reach every exiled card in the game, a different card"
+  }],
+  "closest_existing": ["tap_permanents.as", "sacrifice.as", "exiled_with"],
+  "confidence": "high"
+}
