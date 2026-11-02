@@ -207376,6 +207376,101 @@
               "amount": {
                 "const": 1
               },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "max_life_lost_this_turn": "each_player"
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 3
+                }
+              },
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "y_shtola_night_s_blessed",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{U}{B}",
+      "name": "Y'shtola, Night's Blessed",
+      "oracle_text": "Vigilance\nAt the beginning of each end step, if a player lost 4 or more life this turn, you draw a card.\nWhenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
               "counter": "+1/+1",
               "objects": {
                 "self_only": true

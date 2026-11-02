@@ -17771,6 +17771,14 @@
   "xenobotanist": {
     "zone": "battlefield"
   },
+  "y_shtola_night_s_blessed": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "yahenni_undying_partisan": {
     "battlefield_count": 33,
     "hand_size": {

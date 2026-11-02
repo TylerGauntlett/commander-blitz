@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**171 cards** blocked by **155** capabilities.
+**170 cards** blocked by **154** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -109,7 +109,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mana-cant-pay-generic](#mana-cant-pay-generic) | 1 | 3861 | value |
 | [mana-spent-enters-with-counters](#mana-spent-enters-with-counters) | 1 | 653 | replacement |
 | [mana-spent-trigger-on-activation](#mana-spent-trigger-on-activation) | 1 | 4444 | trigger_event |
-| [max-life-lost-this-turn](#max-life-lost-this-turn) | 1 | 2780 | value |
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
@@ -1735,20 +1734,6 @@ Blocks **1** card.
 
 - **Sunken Palace** (rank 4444) — `sunken_palace`
   - {1}{U}, {T}, Exile seven cards from your graveyard: Add {U}. When you spend this mana to cast a spell or activate an ability, copy that spell or ability. You may choose new targets for the copy
-
-</details>
-
-## max-life-lost-this-turn
-
-Blocks **1** card.
-
-- **(value)** a value that reads the most life any ONE of the named players lost this turn, e.g. {"max_life_lost_this_turn": "each_player"}, so an intervening-if trigger condition can say "if a player lost 4 or more life this turn" as {"cmp": ">=", "left": {"max_life_lost_this_turn": "each_player"}, "right": {"const": 4}} -- the life-loss twin of the existing max_damage_taken_this_turn
-  <br>Why the existing vocabulary won't do: life_lost_this_turn sums over every player its spec names (values.py), so with each_player or each_opponent it is true when two players lost 2 each, which the card does not mean; max_damage_taken_this_turn is per-player but counts damage, not life loss (payments, drain effects); a condition has no per-player quantifier, and hard-coding seat ids into a max list or flagging inside for_each_player would be an approximation
-
-<details><summary>Cards waiting on this</summary>
-
-- **Y'shtola, Night's Blessed** (rank 2780) — `y_shtola_night_s_blessed`
-  - At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card.
 
 </details>
 

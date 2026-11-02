@@ -320382,12 +320382,12 @@
     },
     "Y'shtola, Night's Blessed": {
       "edhrec_rank": 2780,
-      "gate": "template",
+      "gate": null,
       "name": "Y'shtola, Night's Blessed",
-      "reason": "no template for: At the beginning of each end step, if a player lost 4 or more life this turn, you draw a c",
+      "reason": "",
       "scryfall_id": "0bda4de9-d0ec-4d27-b92b-8a76779747cf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yahenni's Expertise": {
