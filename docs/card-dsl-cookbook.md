@@ -961,6 +961,35 @@ The near misses are `cast_free` on `look_at_top` or `exile_until`, which casts
 one spell while the effect resolves and never a land, and `play_exiled`, which
 does the same for a linked card. Neither leaves a permission behind.
 
+### "Spells you cast this way cost {2} less to cast"
+
+```jsonc
+// Urianger Augurelt, Play Arcanum
+{ "op": "grant_playable", "playable": "this_turn", "playable_cost_reduction": 2,
+  "objects": { "zone": "exile", "controller": "any", "exiled_with": "self" } }
+```
+
+`playable_cost_reduction` is a generic discount the permission carries, a
+positive integer, on `exile`, `look_at_top` to exile or `grant_playable`. It sets
+the object's `playable_cost_reduction` beside `playable_free`, and
+`casting.permission_cost_reduction` adds it to the price of every line the
+permission offers -- kicked, evoked and the rest, since 601.2f reduces whichever
+cost is paid -- with `Game._cast` charging the same amount from the action's
+lane flags. Like every cost reduction it reaches the generic part only. It lapses
+with the permission (`playable_live`, `turn._expire_permissions`) and leaves with
+the card (400.7).
+
+"This way" is the permission, not the zone: a card the grant covers that is also
+castable another way -- flashback out of a permitted graveyard, a foretold card --
+pays full price on that other lane, and another card in the same exile under a
+different permission is not discounted either. The loader refuses the key
+without a permission to ride on, any value but a positive integer, and beside
+`playable_free`, which leaves nothing to reduce.
+
+The near miss is a `spell_cost_reduction` static with `from_zone: "exile"`: it
+discounts every exile cast, whatever permission made it castable, and lasts while
+the permanent is on the battlefield rather than as long as the grant.
+
 ## Auras and Equipment
 
 An Aura's "Enchant creature" line is not an ability — it is the spell's

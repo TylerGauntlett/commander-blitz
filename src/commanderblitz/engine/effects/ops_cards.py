@@ -267,6 +267,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # "…without paying their mana costs" (601.2b), plot's flag on the
         # same permission and read by the same cast path.
         obj.playable_free = bool(spec.get("playable_free"))
+        # "Spells you cast this way cost {2} less to cast" (Urianger
+        # Augurelt): a discount on this permission's casts only, read by
+        # `casting.permission_cost_reduction` while the permission is live.
+        obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
         record_playable_source(ctx.state, oid, ctx.source_oid)
 
 
@@ -688,6 +692,7 @@ def _move_found(
                 obj.playable_any_type = bool(spec.get("any_type"))
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
+                obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`

@@ -36,6 +36,7 @@ from .casting import (
     deferred_target_spec,
     life_x_ceiling,
     pay_generic_tappers,
+    permission_cost_reduction,
     strive_surcharge,
 )
 from .characteristics import abilities_of, chars, mana_source_traits
@@ -509,6 +510,20 @@ class Game:
         # ``obj.zone`` is still the zone the card is cast from: `push_spell`
         # has not moved it yet, so a graveyard-only discount reads flashback.
         extra -= cost_reduction(state, pid, card, targets, zone=obj.zone)
+        # "Spells you cast this way cost {2} less" (Urianger Augurelt): the
+        # discount the permission this line casts under carries, decided from
+        # the same lane flags `_cast_variant` priced it with.
+        extra -= permission_cost_reduction(
+            state,
+            pid,
+            oid,
+            flashback=action.flashback,
+            foretold=action.foretold,
+            from_library_top=action.from_library_top,
+            prepared=action.prepared,
+            second_face=action.second_face,
+            fused=action.fused,
+        )
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on

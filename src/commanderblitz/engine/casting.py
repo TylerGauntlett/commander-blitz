@@ -1695,6 +1695,50 @@ def _spell_as_cast(card: CardDef, face_down: bool, bestowed: bool) -> CardDef:
     return card
 
 
+def permission_cost_reduction(
+    state: GameState,
+    pid: int,
+    oid: int,
+    *,
+    flashback: bool = False,
+    foretold: bool = False,
+    from_library_top: bool = False,
+    prepared: bool = False,
+    second_face: bool = False,
+    fused: bool = False,
+) -> int:
+    """How much less a cast line costs because it uses a discounted permission.
+
+    "Until end of turn, you may play cards exiled with Urianger Augurelt.
+    **Spells you cast this way** cost {2} less to cast." The discount belongs to
+    the permission (`GameObject.playable_cost_reduction`), so it is owed only on
+    a line that casts *under* it: the plain line the permitted-zone walk in
+    `_cast_actions` offers, every variant `_cast_options` builds from it
+    (kicked, evoked, ...: 601.2f reduces whatever cost is paid), and the
+    Adventure half when the permission is `as_adventure`.
+
+    Not on a line some other rule offers out of the same zone -- flashback,
+    foretell, the top of the library, a prepared copy, a split card's other
+    half -- because those are not "this way". Not after the permission has
+    lapsed, which `playable_live` decides. `_cast_variant` prices the line with
+    this and `Game._cast` charges it from the same flags off the action, so the
+    line offered is the line paid.
+    """
+    obj = state.objects.get(oid)
+    if (
+        obj is None
+        or not obj.playable_cost_reduction
+        or obj.playable_by != pid
+        or not obj.playable_live(state.turn)
+    ):
+        return 0
+    if flashback or foretold or from_library_top or prepared or fused:
+        return 0
+    if second_face and not obj.playable_as_adventure:
+        return 0
+    return obj.playable_cost_reduction
+
+
 def _cast_variant(
     state: GameState,
     pid: int,
@@ -1814,6 +1858,19 @@ def _cast_variant(
     # before `push_spell` moves it, so flashback and foretell price from where
     # the card sits.
     cast_zone = state.objects[oid].zone
+    # "Spells you cast this way cost {2} less" -- a discount the permission
+    # this line casts under carries, not the card (Urianger Augurelt).
+    variant_less += permission_cost_reduction(
+        state,
+        pid,
+        oid,
+        flashback=flashback,
+        foretold=foretold,
+        from_library_top=from_library_top,
+        prepared=prepared,
+        second_face=second_face,
+        fused=fused,
+    )
 
     if free:
         # "…without paying its mana cost." Plot (702.171a). First in the chain
@@ -1837,7 +1894,7 @@ def _cast_variant(
         cost = ManaCost.parse(alt_cost)
     elif flashback and card.flashback is not None:
         cost = card.flashback.mana
-        variant_less = variant_reduction(state, pid, card.flashback, oid)
+        variant_less += variant_reduction(state, pid, card.flashback, oid)
     elif emerge_oid is not None and card.emerge is not None:
         cost = card.emerge
     elif evoked and card.evoke is not None:

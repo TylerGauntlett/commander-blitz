@@ -88,6 +88,7 @@ def _expire_permissions(state: GameState, duration: str, *, after_grant_turn: bo
         # permission does -- a card left in exile carrying a {2} nobody may
         # spend would be a live-looking field on a dead grant.
         obj.playable_alt_cost = None
+        obj.playable_cost_reduction = 0
 
 
 def begin_step(state: GameState) -> Generator[Any, list[int]]:

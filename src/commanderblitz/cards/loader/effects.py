@@ -2250,6 +2250,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'playable_free' leaves no mana to spend, so "
                 f"'any_color'/'any_type' beside it relaxes nothing"
             )
+    if "playable_cost_reduction" in effect:
+        # "Spells you cast this way cost {2} less to cast" (Urianger
+        # Augurelt) is a rider on a "you may play it" permission, as
+        # `playable_free` is: on a bare exile it would load, print its
+        # sentence and discount nothing.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_cost_reduction' discounts the casts a 'playable' "
+                f"permission grants, so it needs one (exile / look_at_top with "
+                f"'playable', or grant_playable)"
+            )
+        amount = effect["playable_cost_reduction"]
+        if isinstance(amount, bool) or not isinstance(amount, int) or amount < 1:
+            # A reduction of 0 is no rider, and a negative one would be a tax
+            # nobody printed; "{2} less" is a fixed generic amount.
+            raise DslError(
+                f"{where}.playable_cost_reduction: the generic mana the permission's "
+                f"casts cost less, a positive integer; got {amount!r}"
+            )
+        if effect.get("playable_free"):
+            raise DslError(
+                f"{where}: 'playable_free' leaves no mana cost to reduce, so "
+                f"'playable_cost_reduction' beside it discounts nothing"
+            )
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every
         # card written before durations existed says, and `playable:
