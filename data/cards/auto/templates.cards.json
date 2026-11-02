@@ -1297,6 +1297,102 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "random": true,
+                "zone": "graveyard"
+              },
+              "op": "exile",
+              "playable_this_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, mill a card, then exile a card from your graveyard at random. You may play the exiled card this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "kind": "level",
+          "level": 2,
+          "text": "{1}{R}: Level 2"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "level": 2,
+          "text": "Whenever one or more cards leave your graveyard, this Class deals 2 damage to each opponent.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "kind": "level",
+          "level": 3,
+          "text": "{1}{R}: Level 3"
+        },
+        {
+          "affects_spells": {
+            "controller": "you",
+            "not_from_zone": "hand"
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "level": 3,
+          "text": "Spells you cast from anywhere other than your hand cost {2} less to cast."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "advanced_reconstruction",
+      "mana_cost": "{3}{R}",
+      "name": "Advanced Reconstruction",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of your first main phase, mill a card, then exile a card from your graveyard at random. You may play the exiled card this turn.\n{1}{R}: Level 2\nWhenever one or more cards leave your graveyard, this Class deals 2 damage to each opponent.\n{1}{R}: Level 3\nSpells you cast from anywhere other than your hand cost {2} less to cast.",
+      "source": "auto",
+      "subtypes": [
+        "Class"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

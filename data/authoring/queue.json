@@ -2312,12 +2312,12 @@
     },
     "Advanced Reconstruction": {
       "edhrec_rank": 10245,
-      "gate": "template",
+      "gate": null,
       "name": "Advanced Reconstruction",
-      "reason": "no template for: At the beginning of your first main phase, mill a card, then exile a card from your gravey",
+      "reason": "",
       "scryfall_id": "cc912fec-827d-4deb-8430-79f5ea31ca9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Advanced Stitchwing": {
