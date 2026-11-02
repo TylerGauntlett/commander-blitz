@@ -82932,12 +82932,12 @@
     },
     "Emet-Selch of the Third Seat": {
       "edhrec_rank": 3206,
-      "gate": "template",
+      "gate": null,
       "name": "Emet-Selch of the Third Seat",
-      "reason": "no template for: Spells you cast from your graveyard cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "8a38634f-a100-4493-87c3-0ecc51ca565d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emet-Selch, Unsundered // Hades, Sorcerer of Eld": {

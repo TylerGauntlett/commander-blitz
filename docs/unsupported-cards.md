@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**164 cards** blocked by **149** capabilities.
+**163 cards** blocked by **148** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 2 | 3206 | static_effect |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -43,7 +42,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [batched-life-lost](#batched-life-lost) | 1 | 3206 | trigger_event |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -59,6 +57,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
+| [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
@@ -476,25 +475,6 @@ Blocks **2** cards.
 
 </details>
 
-## cost-reduction-by-cast-zone
-
-Blocks **2** cards.
-
-- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from, e.g. except_zones: ["hand"] (or zones: ["graveyard", "exile", "library", "command"]), so "spells you cast from anywhere other than your hand cost {2} less" discounts graveyard, exile, library-top and command-zone casts but not hand casts
-  <br>Why the existing vocabulary won't do: spell_cost_reduction (player_statics.spell_cost_reduction) is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never sees the zone the spell is cast from, and affects_spells has no zones/except_zones key. except_zones exists only on cant_cast_spells_from_zones, which forbids rather than discounts. A plain spell_cost_reduction with no zone filter would also discount hand casts, which is a different card
-- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from (e.g. from_zone: "graveyard", or zones: ["graveyard"]), so "spells you cast from your graveyard cost {2} less" discounts flashback, retrace, cast_card and granted graveyard casts but not hand or command-zone casts
-  <br>Why the existing vocabulary won't do: player_statics.spell_cost_reduction is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never learns the zone the cast is made from. from_zone exists only on free_cast_permission's filter, and the card-level cost_reduction filter's `zone` key reads permanents for a count, not the spell's origin. An unfiltered spell_cost_reduction would also discount every hand cast, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Emet-Selch of the Third Seat** (rank 3206) — `emet_selch_of_the_third_seat`
-  - Spells you cast from your graveyard cost {2} less to cast.
-  - Whenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.
-- **Advanced Reconstruction** (rank 10245) — `advanced_reconstruction`
-  - Spells you cast from anywhere other than your hand cost {2} less to cast.
-
-</details>
-
 ## escape
 
 Blocks **2** cards.
@@ -777,21 +757,6 @@ Blocks **1** card.
 
 </details>
 
-## batched-life-lost
-
-Blocks **1** card.
-
-- **(trigger_event)** `batched: true` on the `life_lost` trigger, grouping the simultaneous life loss of several players (e.g. "each opponent loses 2 life", or one combat damage step hitting two opponents) into one firing, so "whenever one or more opponents lose life" triggers once per batch rather than once per opponent
-  <br>Why the existing vocabulary won't do: triggers.BATCHED_EVENTS holds permanent_enters, leaves_graveyard, token_created, attacks_unblocked, dealt_damage and discard only, so the loader refuses `batched` on life_lost. An unbatched `life_lost` with controller opponent fires once per opponent, and since the once-each-turn limit is on the cast rather than the trigger (a declined trigger leaves the cast available), the extra triggers hand out extra chances to cast that the printed card does not give. The cast itself is sayable (cast_card with exiles: true, as Helmut Zemo, Mastermind, guarded by a set_turn_flag / has_turn_flag pair for "do this only once each turn")
-
-<details><summary>Cards waiting on this</summary>
-
-- **Emet-Selch of the Third Seat** (rank 3206) — `emet_selch_of_the_third_seat`
-  - Spells you cast from your graveyard cost {2} less to cast.
-  - Whenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.
-
-</details>
-
 ## block-restriction-relative-power
 
 Blocks **1** card.
@@ -1007,6 +972,20 @@ Blocks **1** card.
 
 - **Sevinne's Reclamation** (rank 338) — `sevinne_s_reclamation`
   - If this spell was cast from a graveyard, you may copy this spell and may choose a new target for the copy.
+
+</details>
+
+## cost-reduction-by-cast-zone
+
+Blocks **1** card.
+
+- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from, e.g. except_zones: ["hand"] (or zones: ["graveyard", "exile", "library", "command"]), so "spells you cast from anywhere other than your hand cost {2} less" discounts graveyard, exile, library-top and command-zone casts but not hand casts
+  <br>Why the existing vocabulary won't do: spell_cost_reduction (player_statics.spell_cost_reduction) is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never sees the zone the spell is cast from, and affects_spells has no zones/except_zones key. except_zones exists only on cant_cast_spells_from_zones, which forbids rather than discounts. A plain spell_cost_reduction with no zone filter would also discount hand casts, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Advanced Reconstruction** (rank 10245) — `advanced_reconstruction`
+  - Spells you cast from anywhere other than your hand cost {2} less to cast.
 
 </details>
 

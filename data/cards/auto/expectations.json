@@ -4479,6 +4479,10 @@
   "emeritus_of_woe_demonic_tutor": {
     "zone": "battlefield"
   },
+  "emet_selch_of_the_third_seat": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "emrakul_s_messenger": {
     "battlefield_count": 33,
     "zone": "battlefield"

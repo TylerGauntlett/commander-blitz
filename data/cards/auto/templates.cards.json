@@ -51709,6 +51709,108 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "from_zone": "graveyard"
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Spells you cast from your graveyard cost {2} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "emet_selch_cast"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "as": "cast",
+                  "exiles": true,
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "cast_card"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "cast"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "flag": "emet_selch_cast",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.",
+          "trigger": {
+            "batched": true,
+            "controller": "opponent",
+            "event": "life_lost"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "emet_selch_of_the_third_seat",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Emet-Selch of the Third Seat",
+      "oracle_text": "Spells you cast from your graveyard cost {2} less to cast.\nWhenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "create_token",
