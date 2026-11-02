@@ -123361,6 +123361,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "attached": true
+              },
+              "op": "remove_from_combat"
+            },
+            {
+              "as": "enchanted",
+              "objects": {
+                "attached": true
+              },
+              "op": "snapshot"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": {
+                    "controller_of": "enchanted"
+                  },
+                  "tapped": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_all_abilities",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and can't attack or block."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and can't attack or block."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and can't attack or block."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "observed_stasis",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Observed Stasis",
+      "oracle_text": "Flash\nEnchant creature an opponent controls\nWhen this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.\nEnchanted creature loses all abilities and can't attack or block.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "obsianus_golem",

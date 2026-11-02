@@ -190742,12 +190742,12 @@
     },
     "Observed Stasis": {
       "edhrec_rank": 5628,
-      "gate": "template",
+      "gate": null,
       "name": "Observed Stasis",
-      "reason": "no template for: When this Aura enters, remove enchanted creature from combat. Then draw a card for each ta",
+      "reason": "",
       "scryfall_id": "6301c10c-8c27-4595-a0a7-30c621332b2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obsessive Astronomer": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**170 cards** blocked by **154** capabilities.
+**169 cards** blocked by **153** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -134,7 +134,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
-| [remove-from-combat](#remove-from-combat) | 1 | 5628 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
 | [repartee](#repartee) | 1 | 18369 | trigger_event |
@@ -2092,20 +2091,6 @@ Blocks **1** card.
 
 - **Nexus Mentality** (rank 12132) — `nexus_mentality`
   - • Remove all counters from target nonland permanent you control. Draw a card for each counter removed this way.
-
-</details>
-
-## remove-from-combat
-
-Blocks **1** card.
-
-- **(op)** an op that removes the creatures matched by `objects` from combat (rule 506.4): it stops being an attacking, blocking, blocked or unblocked creature, is dropped from the attack and block declarations, deals and receives no combat damage, and its blockers/attackers stay blocked/blocking per 506.4. Here `objects: {"attached": true}` on the Aura's enters trigger; a no-op outside combat
-  <br>Why the existing vocabulary won't do: No op touches combat membership. `redirect_attack` changes what an attacker attacks rather than removing it, `tap` leaves an attacker attacking, `cant_attack`/`cant_block` statics only gate future declarations, and `prevent_combat_damage`/`prevent_damage_permanent` stop damage but leave the creature attacking or blocking (so it still counts as blocked/blocking for triggers and for the creatures it fights). The draw half is expressible (`draw` with amount `{"count": {"types": ["Creature"], "tapped": true, "controller": <enchanted creature's controller>}}`), but a partly expressible card is filed whole
-
-<details><summary>Cards waiting on this</summary>
-
-- **Observed Stasis** (rank 5628) — `observed_stasis`
-  - When this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.
 
 </details>
 
