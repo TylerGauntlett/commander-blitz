@@ -1471,6 +1471,31 @@ PLAYER_SPEC_NAMES = frozenset(
 )
 
 
+def _seats_dealt_combat_damage_by(ctx: EffectContext, subject: Any) -> set[int]:
+    """The seats ``subject`` dealt combat damage to this turn, off the ledger.
+
+    ``"self"`` is the ability's source, by oid; ``{"subtypes": [...]}`` is any
+    creature that had one of those subtypes as the damage was dealt, whoever
+    controlled it; ``{"any_of": [...]}`` is the union of its subjects. The
+    loader (`loader.effects._validate_dealt_combat_damage_subject`) refuses
+    every other shape, so nothing here guesses.
+    """
+    ledger = ctx.state.turn_ledger
+    if subject == "self":
+        return set(ledger.players_dealt_combat_damage_by.get(ctx.source_oid, set()))
+    if isinstance(subject, Mapping) and "subtypes" in subject:
+        seats: set[int] = set()
+        for name in subject["subtypes"]:
+            seats |= ledger.players_dealt_combat_damage_by_subtype.get(str(name), set())
+        return seats
+    if isinstance(subject, Mapping) and "any_of" in subject:
+        seats = set()
+        for part in subject["any_of"]:
+            seats |= _seats_dealt_combat_damage_by(ctx, part)
+        return seats
+    raise DslError(f"unknown dealt_combat_damage_by subject {subject!r}")
+
+
 def select_players(ctx: EffectContext, spec: Any) -> list[int]:
     """Resolve a player specification to a list of player ids."""
     state: GameState = ctx.state
@@ -1571,7 +1596,12 @@ def select_players(ctx: EffectContext, spec: Any) -> list[int]:
             # record of an object that has since left still answers for an
             # ability it already put on the stack (last-known information).
             # Seat order, the living only; nobody when it dealt none.
-            seats = state.turn_ledger.players_dealt_combat_damage_by.get(ctx.source_oid, set())
+            #
+            # The subject widens to a creature subtype, and to a union of
+            # subjects -- Estinien Varlineau's "by Estinien Varlineau **or a
+            # Dragon**". A union of seats, so a player hit by both is one
+            # player, which is what "the number of your opponents" counts.
+            seats = _seats_dealt_combat_damage_by(ctx, spec["dealt_combat_damage_by"])
             return [pid for pid in state.alive() if pid in seats]
         if "target" in spec:
             # Only refs that *are* players. A `kind: "spell"` or `kind:

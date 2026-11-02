@@ -570,14 +570,17 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
         return
     if "dealt_combat_damage_by" in who:
         # "…whose controller was dealt combat damage by this creature this
-        # turn" -- Steel Hellkite. The same shape as `attacked_by` and refused
-        # for the same reason: any subject but "self" would load and resolve to
-        # nobody, and a card that destroys nothing looks like a quiet board.
-        if who["dealt_combat_damage_by"] != "self" or len(who) > 1:
+        # turn" -- Steel Hellkite; "…by Estinien Varlineau or a Dragon". Refused
+        # for `attacked_by`'s reason: any other subject would load and resolve
+        # to nobody, and a card that destroys nothing looks like a quiet board.
+        if len(who) > 1:
             raise DslError(
-                f"{where}: 'dealt_combat_damage_by' takes 'self' and stands alone "
+                f"{where}: 'dealt_combat_damage_by' stands alone "
                 f'({{"dealt_combat_damage_by": "self"}}), got {dict(who)!r}'
             )
+        _validate_dealt_combat_damage_subject(
+            who["dealt_combat_damage_by"], f"{where}.dealt_combat_damage_by"
+        )
         return
     if "not" in who:
         # "target player **other than** its controller." The complement of a
@@ -610,6 +613,41 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             )
 
 
+def _validate_dealt_combat_damage_subject(subject: Any, where: str) -> None:
+    """Check whom a ``dealt_combat_damage_by`` spec asks about.
+
+    ``"self"``, ``{"subtypes": [...]}`` (a non-empty list of subtype names) or
+    ``{"any_of": [...]}`` (a non-empty list of those). Every malformed subject
+    reads the ledger under a key nothing writes, so it counts nobody -- on
+    Estinien Varlineau that is a card that silently never draws.
+    """
+    shape = (
+        f'{where}: takes "self", {{"subtypes": ["Dragon"]}} or '
+        f'{{"any_of": ["self", {{"subtypes": ["Dragon"]}}]}}, got {subject!r}'
+    )
+    if subject == "self":
+        return
+    if not isinstance(subject, Mapping) or len(subject) != 1:
+        raise DslError(shape)
+    if "subtypes" in subject:
+        names = subject["subtypes"]
+        if (
+            not isinstance(names, (list, tuple))
+            or not names
+            or not all(isinstance(n, str) and n for n in names)
+        ):
+            raise DslError(f"{where}.subtypes: needs a non-empty list of subtype names, got {names!r}")
+        return
+    if "any_of" in subject:
+        parts = subject["any_of"]
+        if not isinstance(parts, (list, tuple)) or not parts:
+            raise DslError(f"{where}.any_of: needs a non-empty list of subjects, got {parts!r}")
+        for i, part in enumerate(parts):
+            _validate_dealt_combat_damage_subject(part, f"{where}.any_of[{i}]")
+        return
+    raise DslError(shape)
+
+
 def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Check every player spec a selector or value carries *inside* it.
 
@@ -625,14 +663,15 @@ def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[st
 
     Walked rather than read off known paths, because selectors nest -- inside
     `any_of`, inside `max_count_of`, inside `sum` -- and it is the same check
-    wherever the clause sits. Only the two keys a selector spells a seat with
-    are read, and only in their mapping form: the words are checked by
+    wherever the clause sits. Only the two keys a selector spells a seat with,
+    and the `player_count` value whose whole argument is a seat spec, are read,
+    and only in their mapping form: the words are checked by
     `validate_selector` already.
     """
     if isinstance(node, Mapping):
         for key, value in node.items():
             path = f"{where}.{key}"
-            if key in ("controller", "player") and isinstance(value, Mapping):
+            if key in ("controller", "player", "player_count") and isinstance(value, Mapping):
                 _validate_player_spec(value, path, target_kinds)
             else:
                 _validate_nested_player_refs(value, path, target_kinds)

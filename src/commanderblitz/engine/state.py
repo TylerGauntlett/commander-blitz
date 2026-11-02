@@ -965,7 +965,16 @@ class GameState:
             # is cast the attacker may be dead, bounced, or no longer a Faerie.
             attacker = data.get("source") or event.source
             if attacker is not None and attacker in self.objects:
-                ledger.combat_damage_types.update(chars(self, attacker).subtypes)
+                subtypes = chars(self, attacker).subtypes
+                ledger.combat_damage_types.update(subtypes)
+                # "…dealt combat damage by Estinien Varlineau or a Dragon": the
+                # same subtypes at the same moment, but per seat, so the
+                # opponents can be counted after the Dragon has gone.
+                if pid is not None:
+                    for subtype in subtypes:
+                        ledger.players_dealt_combat_damage_by_subtype.setdefault(
+                            subtype, set()
+                        ).add(pid)
             # Steel Hellkite's "whose controller was dealt combat damage by this
             # creature this turn": which seat, by which object. `player` is the
             # seat that was dealt it.

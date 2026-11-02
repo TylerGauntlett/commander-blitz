@@ -631,7 +631,7 @@ VALUES: dict[str, Entry] = {
     "max_poison_of": ("The most poison counters on any one of a spec's players (corrupted).",
                       'Corrupted — "an opponent has three or more poison counters"'),
     "min": ("The least of several values.", None),
-    "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\").",
+    "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\"; with `dealt_combat_damage_by`, \"the number of your opponents who were dealt combat damage by …\").",
                      None),
     "times_tapped_this_turn": ("Times one object has become tapped this turn, counting every tap since the turn began.",
                                "How many times a permanent has become tapped this turn"),

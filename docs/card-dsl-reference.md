@@ -358,7 +358,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `opponents_attacked_this_combat` | How many opponents the player declared attackers against this combat, a planeswalker's or battle's controller included (melee). | [Melee](card-dsl-cookbook.md#melee) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
 | `permanents_to_graveyard_this_turn` | Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm). | [Gravestorm — permanents put into a graveyard from the battlefield](card-dsl-cookbook.md#gravestorm--permanents-put-into-a-graveyard-from-the-battlefield) |
-| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"). | [Value expressions](card-dsl.md#value-expressions) |
+| `player_count` | How many players still in the game a player spec names ("the number of opponents you have"; with `dealt_combat_damage_by`, "the number of your opponents who were dealt combat damage by …"). | [Value expressions](card-dsl.md#value-expressions) |
 | `power_had` | The power the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |
 | `power_of` | An object's power. | [Value expressions](card-dsl.md#value-expressions) |
 | `resolutions_this_turn` | Times this ability has resolved this turn. | [Value expressions](card-dsl.md#value-expressions) |

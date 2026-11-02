@@ -4240,7 +4240,7 @@ The list with a line each is
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
-`{ "dealt_combat_damage_by": "self" }`
+`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ] } | { "any_of": [ … ] } }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -4286,7 +4286,7 @@ And the record goes when the creature **leaves the battlefield**: the oid
 survives the zone change but the object does not (400.7), and a flickered Angel
 attacked nobody. `"self"` is the only subject; anything else is a load error.
 
-### `dealt_combat_damage_by` — the players *this creature* dealt combat damage to this turn
+### `dealt_combat_damage_by` — the players a creature dealt combat damage to this turn
 
 ```jsonc
 // Steel Hellkite: "{X}: Destroy each nonland permanent with mana value X whose
@@ -4313,7 +4313,36 @@ The record is dropped when the oid **enters** the battlefield, because the
 permanent that comes back is a new object that has dealt nobody anything
 (400.7). It is kept when the creature leaves, so an ability it already put on
 the stack still resolves off what it did — a Hellkite killed in response still
-destroys. `"self"` is the only subject; anything else is a load error.
+destroys.
+
+The subject is one of three shapes, and anything else is a load error:
+
+| Subject | Whom it names |
+|---|---|
+| `"self"` | the seats the ability's source dealt combat damage to, by oid as above |
+| `{ "subtypes": ["Dragon"] }` | the seats dealt combat damage by any creature, under any controller, that had one of these subtypes **as the damage was dealt** |
+| `{ "any_of": [ … ] }` | the union of its subjects' seats, so a player hit by two of them is one player |
+
+```jsonc
+// Estinien Varlineau: "At the beginning of your second main phase, you draw X
+// cards and lose X life, where X is the number of your opponents who were dealt
+// combat damage by Estinien Varlineau or a Dragon this turn."
+"trigger": { "event": "postcombat_main", "controller": "you" },
+"effects": [
+  { "op": "draw", "player": "you",
+    "amount": { "player_count": {
+      "dealt_combat_damage_by": { "any_of": [ "self", { "subtypes": ["Dragon"] } ] },
+      "except": "you" } } },
+  { "op": "lose_life", "player": "you", "amount": { /* the same value */ } } ]
+```
+
+`subtypes` reads `TurnLedger.players_dealt_combat_damage_by_subtype` (subtype →
+seats), folded off the same event from the attacker's **derived** subtypes, so a
+changeling counts, a Dragon that dies or stops being one afterwards still dealt
+the damage as a Dragon, and a creature made a Dragon after combat did not.
+`except: "you"` is what makes it "your opponents": an opponent's Dragon that hit
+you put your seat in the set. The `combat_damage_by` condition (prowl) is the
+near miss — it says a Dragon got through, not to whom, so it cannot count.
 
 ### `not` — the player a card *excludes*
 
