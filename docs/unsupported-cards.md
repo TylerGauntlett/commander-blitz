@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **148** capabilities.
+**162 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -77,7 +77,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
-| [exile-until](#exile-until) | 1 | 2297 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
@@ -1258,20 +1257,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## exile-until
-
-Blocks **1** card.
-
-- **(op)** an op that, for each selected player, exiles cards one at a time from the top of that player's own library until a card matching a selector (here: nonland) is exiled, moving EVERY card walked past (lands included) to exile, and binds all the cards exiled this way (per-player accumulated) with `as` so later ops can read them
-  <br>Why the existing vocabulary won't do: `reveal_until` stops at a selector match but moves only the match to `destination`; the cards walked past go to the library bottom (`rest_to_bottom`) or get shuffled in (`shuffle_rest`), never to exile, and its binding holds only the matches. `cascade` exiles the whole walk but only from the controller's library, with a hardcoded mana-value ceiling and bottoms the rest. `exile_until` is a different sentence (exile until the source leaves). A `for_each_player` + `repeat_while` + `look_at_top` (amount 1, destination exile) loop would be a hand-built approximation with a 100-iteration guard and a look/choice on each card, not a public walk.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Plargg and Nassari** (rank 2297) — `plargg_and_nassari`
-  - At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card.
 
 </details>
 

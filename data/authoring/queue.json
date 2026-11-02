@@ -11992,12 +11992,12 @@
     },
     "Archfiend of Depravity": {
       "edhrec_rank": 1584,
-      "gate": "template",
+      "gate": null,
       "name": "Archfiend of Depravity",
-      "reason": "no template for: At the beginning of each opponent's end step, that player chooses up to two creatures they",
+      "reason": "",
       "scryfall_id": "aa0ba9cb-e45c-4c23-baab-38e01391ec6b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Archfiend of Despair": {
@@ -49782,12 +49782,12 @@
     },
     "Coin of Fate": {
       "edhrec_rank": 13682,
-      "gate": "template",
+      "gate": null,
       "name": "Coin of Fate",
-      "reason": "no template for: {3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opp",
+      "reason": "",
       "scryfall_id": "652be579-44ad-4656-975b-5e336a9e21c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Coin of Mastery": {
@@ -50532,12 +50532,12 @@
     },
     "Combustible Gearhulk": {
       "edhrec_rank": 1011,
-      "gate": "template",
+      "gate": null,
       "name": "Combustible Gearhulk",
-      "reason": "no template for: When this creature enters, target opponent may have you draw three cards. If the player do",
+      "reason": "",
       "scryfall_id": "07cc036d-f46e-490d-adbb-d6974c4e10fd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Combustion Man": {
@@ -97652,12 +97652,12 @@
     },
     "Flayer of the Hatebound": {
       "edhrec_rank": 5137,
-      "gate": "template",
+      "gate": null,
       "name": "Flayer of the Hatebound",
-      "reason": "no template for: Undying",
+      "reason": "",
       "scryfall_id": "fe233fa7-bc38-45f5-bfe5-da93877f1075",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Flaying Tendrils": {
@@ -138052,12 +138052,12 @@
     },
     "Interceptor, Shadow's Hound": {
       "edhrec_rank": 11144,
-      "gate": "template",
+      "gate": null,
       "name": "Interceptor, Shadow's Hound",
-      "reason": "no template for: Assassins you control have menace",
+      "reason": "",
       "scryfall_id": "30be9a07-5803-4bef-9313-391c926bfcec",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Intercessor's Arrest": {
@@ -203992,12 +203992,12 @@
     },
     "Plargg and Nassari": {
       "edhrec_rank": 2297,
-      "gate": "template",
+      "gate": null,
       "name": "Plargg and Nassari",
-      "reason": "no template for: At the beginning of your upkeep, each player exiles cards from the top of their library un",
+      "reason": "",
       "scryfall_id": "e66ee7c6-23bc-4fef-a566-35aee2064bd9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plargg, Dean of Chaos // Augusta, Dean of Order": {
@@ -228662,12 +228662,12 @@
     },
     "Ruin Grinder": {
       "edhrec_rank": 4903,
-      "gate": "template",
+      "gate": null,
       "name": "Ruin Grinder",
-      "reason": "no template for: When this creature dies, each player may discard their hand and draw seven cards",
+      "reason": "",
       "scryfall_id": "a0eafd12-c0c9-4fe3-a4bb-40ab7b64e47c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ruin Processor": {
@@ -230442,12 +230442,12 @@
     },
     "Sabin, Master Monk": {
       "edhrec_rank": 11543,
-      "gate": "template",
+      "gate": null,
       "name": "Sabin, Master Monk",
-      "reason": "no template for: Blitz—{2}{R}{R}, Discard a card",
+      "reason": "",
       "scryfall_id": "43bacd07-fdaf-4ce4-bf7a-dda55a99d460",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sabotage Strategist": {
@@ -240442,12 +240442,12 @@
     },
     "Sepulchral Primordial": {
       "edhrec_rank": 2194,
-      "gate": "template",
+      "gate": null,
       "name": "Sepulchral Primordial",
-      "reason": "no template for: When this creature enters, for each opponent, you may put up to one target creature card f",
+      "reason": "",
       "scryfall_id": "4a4192e9-ba32-4801-a7f5-b4dad3559e4e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sequence Engine": {
@@ -241502,12 +241502,12 @@
     },
     "Setzer, Wandering Gambler": {
       "edhrec_rank": 12252,
-      "gate": "template",
+      "gate": null,
       "name": "Setzer, Wandering Gambler",
-      "reason": "no template for: When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token",
+      "reason": "",
       "scryfall_id": "0e5b6968-fff2-4227-9442-d2b5225b29e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seven Dwarves": {
@@ -266592,12 +266592,12 @@
     },
     "Strago and Relm": {
       "edhrec_rank": 9287,
-      "gate": "template",
+      "gate": null,
       "name": "Strago and Relm",
-      "reason": "no template for: Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library ",
+      "reason": "",
       "scryfall_id": "8b880c1a-b82d-42ae-aaaf-22cdc81fe891",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strands of Night": {
@@ -280672,12 +280672,12 @@
     },
     "The Falcon, Airship Restored": {
       "edhrec_rank": 9004,
-      "gate": "template",
+      "gate": null,
       "name": "The Falcon, Airship Restored",
-      "reason": "no template for: Whenever The Falcon deals combat damage to a player, you may sacrifice it. When you do, re",
+      "reason": "",
       "scryfall_id": "080fc2be-d463-4e8e-ba42-8f3cb0c95ed3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "The Falcon, Sam Wilson": {
@@ -296372,12 +296372,12 @@
     },
     "Umaro, Raging Yeti": {
       "edhrec_rank": 12808,
-      "gate": "template",
+      "gate": null,
       "name": "Umaro, Raging Yeti",
-      "reason": "no template for: At the beginning of combat on your turn, choose one at random —",
+      "reason": "",
       "scryfall_id": "31aed8e9-44be-4e7c-85ac-a084eaecaea7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Umbilicus": {

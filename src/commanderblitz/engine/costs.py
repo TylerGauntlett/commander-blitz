@@ -1659,6 +1659,9 @@ def _counters_on(state: GameState, oid: int) -> int:
 
 def _graveyard_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     spec = dict(cost.exile_from_graveyard or {})
+    # `as` names what was exiled for the ability's effects; like
+    # `tap_permanents`' it says nothing about which cards qualify.
+    spec.pop("as", None)
     spec.setdefault("controller", "you")
     spec["zone"] = "graveyard"
     count = int(spec.pop("count", 1) or 1)
@@ -1694,8 +1697,9 @@ def pay(
     so a ``False`` return means the game state changed underneath them.
 
     ``bindings`` is where a cost that **names** what paid it writes the name --
-    `tap_permanents` with ``as``, Station's "the tapped creature", and
-    `sacrifice` with ``as``, Ghoulcaller Gisa's "the sacrificed creature". The caller
+    `tap_permanents` with ``as``, Station's "the tapped creature",
+    `sacrifice` with ``as``, Ghoulcaller Gisa's "the sacrificed creature", and
+    `exile_from_graveyard` with ``as``, Coin of Fate's "the exiled cards". The caller
     hands the same dict to the stack item, so the ability's effects read it
     back. ``None`` from every caller with no ability to hand it to; a named cost
     paid there simply names nothing.
@@ -2006,12 +2010,28 @@ def pay(
     if cost.exile_from_graveyard is not None:
         spec = dict(cost.exile_from_graveyard)
         count = int(spec.pop("count", 1) or 1)
+        name = spec.pop("as", None)
         pool = _graveyard_pool(state, pid, cost, source_oid)
         picked = yield from ask_objects(
             ctx, "Exile from your graveyard", pool, count, count, pid, "exile_cost"
         )
         for oid in picked:
             exile_object(state, oid, cause="cost")
+        if name and bindings is not None:
+            # Coin of Fate: "An opponent chooses one of **the exiled cards**."
+            # The set, not one card and not a snapshot: every card this cost
+            # took, as a list of oids the way an op's `as` records a set, so
+            # `{"binding": …}` as a selector reaches exactly those cards and
+            # `count`/`chooser` pick among them. Only what actually arrived in
+            # exile is named -- a card a replacement sent elsewhere was not
+            # exiled. The cards are still the same objects at resolution only
+            # while they stay in exile (400.7), which is why a reader writes
+            # `zone: "exile"` beside the binding.
+            bindings[str(name)] = [
+                oid
+                for oid in picked
+                if (obj := state.objects.get(oid)) is not None and obj.zone is Zone.EXILE
+            ]
 
     return True
 

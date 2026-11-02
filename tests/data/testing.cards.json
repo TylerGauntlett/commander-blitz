@@ -14403,6 +14403,45 @@
       ]
     },
     {
+      "id": "t_coin_flip_gambler",
+      "name": "Test Coin Flip Gambler",
+      "oracle_text": "Whenever you win a coin flip, create two tapped Treasure tokens.",
+      "mana_cost": "{2}{R}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you win a coin flip, create two tapped Treasure tokens.",
+          "trigger": {
+            "event": "wins_coin_flip"
+          },
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "treasure_token",
+              "amount": {
+                "const": 2
+              },
+              "tapped": true
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_connive_planner",
       "name": "Test Connive Planner",
       "oracle_text": "Whenever a creature you control connives, put a +1/+1 counter on that creature and a plan counter on this enchantment.",

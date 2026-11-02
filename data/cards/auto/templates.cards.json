@@ -8100,6 +8100,77 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "kept",
+              "objects": {
+                "chooser": {
+                  "binding": "event_player"
+                },
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": 2,
+                "optional": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose up to two creatures to keep"
+            },
+            {
+              "chooser": "none",
+              "objects": {
+                "chooser": "none",
+                "controller": {
+                  "binding": "event_player"
+                },
+                "count": "all",
+                "exclude_binding": "kept",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each opponent's end step, that player chooses up to two creatures they control, then sacrifices the rest",
+          "trigger": {
+            "controller": "opponent",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "archfiend_of_depravity",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{B}{B}",
+      "name": "Archfiend of Depravity",
+      "oracle_text": "Flying\nAt the beginning of each opponent's end step, that player chooses up to two creatures they control, then sacrifices the rest.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Demon"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "opponent",
           "effect": "cant_gain_life",
           "kind": "static",
@@ -31364,6 +31435,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this artifact enters, surveil 1",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "exile_from_graveyard": {
+              "as": "exiled",
+              "count": 2,
+              "types": [
+                "Creature"
+              ]
+            },
+            "mana": "{3}{W}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "as": "chooser",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to choose one of the exiled cards"
+            },
+            {
+              "as": "chosen",
+              "objects": {
+                "binding": "exiled",
+                "chooser": {
+                  "binding": "chooser"
+                },
+                "count": 1,
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose one of the exiled cards"
+            },
+            {
+              "bottom": true,
+              "objects": {
+                "binding": "chosen",
+                "zone": "exile"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "objects": {
+                "binding": "exiled",
+                "zone": "exile"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            },
+            {
+              "op": "become_monarch",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. You put that card on the bottom of your library and return the other to the battlefield tapped. You become the monarch"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "coin_of_fate",
+      "mana_cost": "{1}{W}",
+      "name": "Coin of Fate",
+      "oracle_text": "When this artifact enters, surveil 1.\n{3}{W}, {T}, Exile two creature cards from your graveyard, Sacrifice this artifact: An opponent chooses one of the exiled cards. You put that card on the bottom of your library and return the other to the battlefield tapped. You become the monarch.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -31908,6 +32076,89 @@
       ],
       "toughness": 1,
       "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "else": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "as": "milled",
+                  "op": "mill",
+                  "player": "you"
+                },
+                {
+                  "amount": {
+                    "mana_value_of": {
+                      "objects": {
+                        "binding": "milled"
+                      }
+                    }
+                  },
+                  "op": "damage",
+                  "target": "t1"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Have Combustible Gearhulk's controller draw three cards?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "When this creature enters, target opponent may have you draw three cards. If the player doesn't, you mill three cards, then this creature deals damage to that player equal to the total mana value of those cards.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "combustible_gearhulk",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{4}{R}{R}",
+      "name": "Combustible Gearhulk",
+      "oracle_text": "First strike\nWhen this creature enters, target opponent may have you draw three cards. If the player doesn't, you mill three cards, then this creature deals damage to that player equal to the total mana value of those cards.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
         "Creature"
       ]
     },
@@ -59677,6 +59928,104 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "counters": {
+                "+1/+1": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "counters_had": "+1/+1"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "binding": "subject"
+                }
+              },
+              "op": "damage",
+              "source_object": {
+                "binding": "subject"
+              },
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever this creature or another creature enters from your graveyard, that creature deals damage equal to its power to any target.",
+          "trigger": {
+            "condition": {
+              "entered_from": "graveyard"
+            },
+            "controller": "any",
+            "event": "permanent_enters",
+            "filter": {
+              "owner": "you",
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "flayer_of_the_hatebound",
+      "mana_cost": "{5}{R}",
+      "name": "Flayer of the Hatebound",
+      "oracle_text": "Undying (When this creature dies, if it had no +1/+1 counters on it, return it to the battlefield under its owner's control with a +1/+1 counter on it.)\nWhenever this creature or another creature enters from your graveyard, that creature deals damage equal to its power to any target.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Devil"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{3}{G}{W}"
           },
@@ -85979,6 +86328,101 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "subtypes": [
+              "Assassin"
+            ],
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Assassins you control have menace."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "interceptor_defender",
+                  "op": "choose_player",
+                  "players": "each_opponent",
+                  "prompt": "Choose the player Interceptor, Shadow's Hound attacks"
+                },
+                {
+                  "attacking": {
+                    "binding": "interceptor_defender"
+                  },
+                  "controller": "you",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "graveyard"
+                  },
+                  "op": "put_onto_battlefield",
+                  "or_planeswalker": true,
+                  "tapped": true
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "mana": "{2}{B}"
+              },
+              "prompt": "Pay {2}{B} to return Interceptor, Shadow's Hound tapped and attacking?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you attack with one or more legendary creatures, you may pay {2}{B}. If you do, return this card from your graveyard to the battlefield tapped and attacking.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "binding": "attackers",
+                "supertypes": [
+                  "Legendary"
+                ]
+              }
+            },
+            "controller": "you",
+            "event": "you_attack"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "interceptor_shadow_s_hound",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{B}{B}",
+      "name": "Interceptor, Shadow's Hound",
+      "oracle_text": "Menace\nAssassins you control have menace.\nWhenever you attack with one or more legendary creatures, you may pay {2}{B}. If you do, return this card from your graveyard to the battlefield tapped and attacking.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dog"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -130447,6 +130891,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until",
+              "player": "each_player"
+            },
+            {
+              "as": "chooser",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to choose a nonland card exiled this way"
+            },
+            {
+              "as": "chosen",
+              "objects": {
+                "binding": "exiled",
+                "chooser": {
+                  "binding": "chooser"
+                },
+                "count": 1,
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a nonland card exiled this way"
+            },
+            {
+              "objects": {
+                "binding": "exiled",
+                "count": 2,
+                "exclude_binding": "chosen",
+                "optional": true,
+                "zone": "exile"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card. An opponent chooses a nonland card exiled this way. You may cast up to two spells from among the other cards exiled this way without paying their mana costs.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "plargg_and_nassari",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Plargg and Nassari",
+      "oracle_text": "At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card. An opponent chooses a nonland card exiled this way. You may cast up to two spells from among the other cards exiled this way without paying their mana costs.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Efreet"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -144848,6 +145368,102 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "op": "discard",
+                      "player": {
+                        "binding": "each_player"
+                      },
+                      "whole_hand": true
+                    },
+                    {
+                      "amount": {
+                        "const": 7
+                      },
+                      "op": "draw",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Discard your hand and draw seven cards?"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, each player may discard their hand and draw seven cards.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "discard_self": true,
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Mountain"
+                ]
+              }
+            }
+          ],
+          "is_cycling": true,
+          "kind": "activated",
+          "text": "Mountaincycling {2} ({2}, Discard this card: Search your library for a Mountain card, reveal it, put it into your hand, then shuffle.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ruin_grinder",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Ruin Grinder",
+      "oracle_text": "Menace\nWhen this creature dies, each player may discard their hand and draw seven cards.\nMountaincycling {2} ({2}, Discard this card: Search your library for a Mountain card, reveal it, put it into your hand, then shuffle.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 4,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "R"
@@ -145532,6 +146148,149 @@
         "Drake"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz—{2}{R}{R}, Discard a card. (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "You may cast this card from your graveyard using its blitz ability.",
+          "trigger": {
+            "condition": {
+              "escaped": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "evoke": {
+        "discard": 1,
+        "mana": "{2}{R}{R}"
+      },
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "discard": 1,
+        "mana": "{2}{R}{R}"
+      },
+      "id": "sabin_master_monk",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Sabin, Master Monk",
+      "oracle_text": "Double strike\nBlitz—{2}{R}{R}, Discard a card. (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)\nYou may cast this card from your graveyard using its blitz ability.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble",
+        "Monk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -151046,6 +151805,77 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "put_onto_battlefield"
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, for each opponent, you may put up to one target creature card from that player's graveyard onto the battlefield under your control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sepulchral_primordial",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Sepulchral Primordial",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)\nWhen this creature enters, for each opponent, you may put up to one target creature card from that player's graveyard onto the battlefield under your control.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -151567,6 +152397,85 @@
         "Cleric"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "the_blackjack_3_3_c_flying_crew2"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "flip_coin"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Vehicle you control deals combat damage to a player, flip a coin.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Vehicle"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you win a coin flip, create two tapped Treasure tokens.",
+          "trigger": {
+            "event": "wins_coin_flip"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "setzer_wandering_gambler",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Setzer, Wandering Gambler",
+      "oracle_text": "When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.\nWhenever a Vehicle you control deals combat damage to a player, flip a coin.\nWhenever you win a coin flip, create two tapped Treasure tokens.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -166424,6 +167333,94 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "mana": "{2}{R}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "cast_free": true,
+              "creature_cast_gains": {
+                "abilities": [
+                  0
+                ],
+                "keywords": [
+                  "haste"
+                ]
+              },
+              "objects": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery",
+                  "Creature"
+                ]
+              },
+              "op": "exile_until",
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library until they exile an instant, sorcery, or creature card. You may cast that card without paying its mana cost. If you cast a creature spell this way, it gains haste and \"At the beginning of the end step, sacrifice this creature.\" Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "sacrifice"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of the end step, sacrifice this creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "id": "strago_and_relm",
+      "mana_cost": "{2}{R}",
+      "name": "Strago and Relm",
+      "oracle_text": "Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library until they exile an instant, sorcery, or creature card. You may cast that card without paying its mana cost. If you cast a creature spell this way, it gains haste and \"At the beginning of the end step, sacrifice this creature.\" Activate only as a sorcery.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "U"
       ],
@@ -177235,6 +178232,145 @@
             {
               "effects": [
                 {
+                  "ability": "falcon_reanimate",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "self_only": true,
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice The Falcon to return a creature card from your graveyard to the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever The Falcon deals combat damage to a player, you may sacrifice it.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "id": "falcon_reanimate",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When you do, return target creature card from your graveyard to the battlefield."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{4}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{B}: Return this card from your graveyard to the battlefield tapped."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "the_falcon_airship_restored",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "The Falcon, Airship Restored",
+      "oracle_text": "Flying\nWhenever The Falcon deals combat damage to a player, you may sacrifice it. When you do, return target creature card from your graveyard to the battlefield.\n{4}{B}: Return this card from your graveyard to the battlefield tapped.\nCrew 2",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
                   "objects": {
                     "self_only": true,
                     "zone": "battlefield"
@@ -187408,6 +188544,135 @@
         "Ally"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "exclude_self": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "pump",
+                      "power": {
+                        "const": 3
+                      },
+                      "toughness": {
+                        "const": 0
+                      }
+                    },
+                    {
+                      "keywords": [
+                        "trample"
+                      ],
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "exclude_self": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "grant_keyword"
+                    }
+                  ],
+                  "label": "Other creatures you control get +3/+0 and gain trample until end of turn."
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "discard",
+                      "player": "you",
+                      "whole_hand": true
+                    },
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Discard your hand, then draw four cards."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 5
+                      },
+                      "op": "damage",
+                      "target": "t1"
+                    }
+                  ],
+                  "label": "Umaro deals 5 damage to any target."
+                }
+              ],
+              "op": "choose_mode",
+              "random": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "mode": 2,
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, choose one at random —\n• Other creatures you control get +3/+0 and gain trample until end of turn.\n• Discard your hand, then draw four cards.\n• Umaro deals 5 damage to any target.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "umaro_raging_yeti",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Umaro, Raging Yeti",
+      "oracle_text": "Trample\nAt the beginning of combat on your turn, choose one at random —\n• Other creatures you control get +3/+0 and gain trample until end of turn.\n• Discard your hand, then draw four cards.\n• Umaro deals 5 damage to any target.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Yeti",
+        "Berserker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

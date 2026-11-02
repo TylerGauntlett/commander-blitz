@@ -755,6 +755,10 @@
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
   },
+  "archfiend_of_depravity": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "archfiend_of_despair": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2730,6 +2734,9 @@
     },
     "zone": "battlefield"
   },
+  "coin_of_fate": {
+    "zone": "battlefield"
+  },
   "cold_water_snapper": {
     "zone": "battlefield"
   },
@@ -2776,6 +2783,13 @@
     "zone": "battlefield"
   },
   "combat_celebrant": {
+    "zone": "battlefield"
+  },
+  "combustible_gearhulk": {
+    "battlefield_count": 33,
+    "library_size": {
+      "0": 37
+    },
     "zone": "battlefield"
   },
   "commander_s_insight": {
@@ -5291,6 +5305,10 @@
     },
     "zone": "graveyard"
   },
+  "flayer_of_the_hatebound": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "fleecemane_lion": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7458,6 +7476,13 @@
     "zone": "battlefield"
   },
   "intelligence_bobblehead": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "interceptor_shadow_s_hound": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
@@ -11167,6 +11192,9 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "plargg_and_nassari": {
+    "zone": "battlefield"
+  },
   "plateau": {
     "zone": "battlefield"
   },
@@ -12461,6 +12489,13 @@
   "rugged_prairie": {
     "zone": "battlefield"
   },
+  "ruin_grinder": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ruination_wurm": {
     "zone": "battlefield"
   },
@@ -12516,6 +12551,10 @@
     "zone": "battlefield"
   },
   "sabertooth_wyvern": {
+    "zone": "battlefield"
+  },
+  "sabin_master_monk": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "sabretooth_tiger": {
@@ -12995,6 +13034,10 @@
     },
     "zone": "battlefield"
   },
+  "sepulchral_primordial": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "seraph_of_dawn": {
     "zone": "battlefield"
   },
@@ -13051,6 +13094,14 @@
     "zone": "battlefield"
   },
   "servant_of_nefarox": {
+    "zone": "battlefield"
+  },
+  "setzer_wandering_gambler": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "the_blackjack_3_3_c_flying_crew2"
+    },
     "zone": "battlefield"
   },
   "severed_legion": {
@@ -14356,6 +14407,10 @@
   "story_seeker": {
     "zone": "battlefield"
   },
+  "strago_and_relm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "straw_soldiers": {
     "zone": "battlefield"
   },
@@ -15170,6 +15225,10 @@
     "zone": "battlefield"
   },
   "the_fabulous_frog_man": {
+    "zone": "battlefield"
+  },
+  "the_falcon_airship_restored": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "the_fantasticar": {
@@ -16020,6 +16079,10 @@
     "zone": "battlefield"
   },
   "umara_entangler": {
+    "zone": "battlefield"
+  },
+  "umaro_raging_yeti": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "umbral_collar_zealot": {

@@ -329,6 +329,7 @@ def move_object(
     # only for a battlefield destination, so a countered creature spell does not
     # sit in its graveyard holding a haste to cash on a later cast.
     mana_granted_keywords = obj.mana_granted_keywords
+    cast_rider = obj.cast_rider
 
     if was_on_battlefield:
         _remember_leaving_dies_replacer(state, obj)
@@ -382,6 +383,7 @@ def move_object(
     obj.left_with = left_with
     if to_zone is Zone.BATTLEFIELD:
         obj.mana_granted_keywords = mana_granted_keywords
+        obj.cast_rider = cast_rider
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
 
@@ -1918,6 +1920,21 @@ def _enter_battlefield(
 
         for keyword in sorted(granted):
             grant_keyword(state, obj.oid, keyword)
+
+    # "…it gains haste and "At the beginning of the end step, sacrifice this
+    # creature."" (Strago and Relm): the free cast's rider, cashed beside Arena
+    # of Glory's and emptied for the same reason. Permanent rather than until
+    # end of turn, because the printed sentence names no duration.
+    rider = obj.cast_rider
+    obj.cast_rider = None
+    if rider is not None:
+        # Local: `primitives` imports `zones` for `move_object`.
+        from .primitives import grant_ability, grant_keyword
+
+        for keyword in rider.keywords:
+            grant_keyword(state, obj.oid, keyword, permanent=True)
+        for index in rider.abilities:
+            grant_ability(state, obj.oid, index, rider.source, permanent=True)
 
     # 303.4f: an Aura put onto the battlefield without being cast enters
     # attached to the host `offer_aura_host` had its controller choose a moment

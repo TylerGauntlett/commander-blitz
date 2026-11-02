@@ -218,6 +218,22 @@ TRIGGER_EVENTS: dict[str, str] = {
     #: cause rather than the search: a cracked fetchland and a resolved tutor
     #: are both one search, and a "you may search" declined is none.
     "searches_library": EventType.LIBRARY_SEARCHED,
+    #: "Whenever you win a coin flip, create two tapped Treasure tokens." --
+    #: Setzer, Wandering Gambler. Once per flip won (705), fired by
+    #: `ops_cards.op_flip_coin`, the one place a coin is flipped, so a flip won
+    #: off any card's effect counts and not only the watcher's own. A lost flip
+    #: fires the same `COIN_FLIPPED` event and is turned away by
+    #: `_outcome_matches`.
+    #:
+    #: The subject is a **player** -- the one who flipped -- so it is absent
+    #: from `OBJECT_SUBJECT_TRIGGERS` and `_actor` reads `event.player`:
+    #: `controller: "you"` is "whenever **you** win a coin flip", and an
+    #: opponent winning their own flip is `controller: "opponent"`.
+    #:
+    #: The near miss is the win branch of the card's own `flip_coin`, which is
+    #: a narrower card: it pays only for the flips that one ability makes, and
+    #: never for a flip won off any other source.
+    "wins_coin_flip": EventType.COIN_FLIPPED,
     #: "Whenever a creature you control connives, …" (701.47) -- Glorious
     #: Purpose, Iron Monger, Ultron. Once per conniving permanent, after its
     #: draw, discard and counter, fired by `ops_cards.op_connive`. The subject
@@ -574,6 +590,27 @@ def _half_matches(dsl_event: str, event: GameEvent) -> bool:
     return half is None or event.data.get("to") == half
 
 
+#: DSL trigger name -> the coin-flip outcome it is about (705.2). `COIN_FLIPPED`
+#: carries ``won`` for both outcomes, and "whenever you win a coin flip" must not
+#: pay on a lost one. Compared with ``is`` against the required value, for the
+#: reason `EVENT_HALVES` is compared with ``==``: an emission that forgot to say
+#: fails the trigger rather than passing it.
+EVENT_OUTCOMES: dict[str, bool] = {
+    "wins_coin_flip": True,
+}
+
+
+def _outcome_matches(dsl_event: str, event: GameEvent) -> bool:
+    """Whether this flip came down the way ``dsl_event`` asks.
+
+    Shared by `_matches` and `_delayed_matches` for `_half_matches`' reason: a
+    delayed subscription must not be wider than the hosted trigger of the same
+    name.
+    """
+    outcome = EVENT_OUTCOMES.get(dsl_event)
+    return outcome is None or event.data.get("won") is outcome
+
+
 #: Triggers that keep working while their source is in the graveyard, because the
 #: source has just left the battlefield.
 #:
@@ -839,6 +876,8 @@ def _delayed_matches(
     # The one restriction here that is not read off a hosting permanent, and so
     # the one a delayed ability can still be asked. See `_half_matches`.
     if not _half_matches(spec.event, event):
+        return False
+    if not _outcome_matches(spec.event, event):
         return False
     if delayed.shield is not None and event.data.get("shield") != delayed.shield:
         # "If damage is prevented **this way**" (615.5): the one shield this
@@ -1227,6 +1266,10 @@ def _matches(
     # `EVENT_HALVES`. Three names take one half each, and letting the other one
     # through fires every enrage on the board off a Lightning Bolt to the face.
     if not _half_matches(spec.event, event):
+        return False
+
+    # Which outcome of a coin flip this trigger is about -- see `EVENT_OUTCOMES`.
+    if not _outcome_matches(spec.event, event):
         return False
 
     # `source: "self"` on `dealt_damage` means *this creature was dealt damage*,
@@ -1824,7 +1867,11 @@ def _actor(
     # answer only because the subject is not an object; the event's `source` is
     # the tutor or fetchland that asked, and on Path to Exile that is *my* spell
     # making *them* search, so a subject read off it would be the wrong seat.
-    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library"):
+    # `wins_coin_flip` is listed for the same reason: the actor is the player
+    # who **flipped**, and the event's `source` is the card whose effect made
+    # the flip -- on a flip one player's card makes another player take, a
+    # subject read off it would be the wrong seat.
+    if dsl_event in ("land_played", "spell_cast", "spell_copied", "upkeep", "draw_step", "end_step", "you_gain_life", "draw", "discard", "begin_combat", "becomes_target", "becomes_monarch", "ability_activated", "damage_prevented", "creatures_attack_player", "creatures_deal_combat_damage", "searches_library", "wins_coin_flip"):
         return event.player
     # `deals_damage_to_player` is here beside the combat-only trigger it
     # generalises, and for the same reason: `event.player` on a damage event is

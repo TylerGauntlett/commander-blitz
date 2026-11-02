@@ -19,7 +19,7 @@ from ..player_statics import (
 )
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
-from ..structs import GraveyardCastGrant
+from ..structs import CastRider, GraveyardCastGrant
 from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
@@ -1677,10 +1677,12 @@ def op_flip_coin(ctx: EffectContext, spec: Mapping[str, Any]):
 
     Determinism: the outcome comes from ``state.rng``, the engine's single
     seeded source, so a replay of the same seed and action tape flips the same
-    way. One ``coin_flipped`` event carries ``won`` for the log.
+    way. One ``coin_flipped`` event carries ``won``, fired through the trigger
+    bus rather than only logged, because ``wins_coin_flip`` listens for it.
     """
     won = ctx.state.rng.randint(0, 1) == 1
-    ctx.state.emit(
+    fire(
+        ctx.state,
         EventType.COIN_FLIPPED,
         player=ctx.controller,
         source=ctx.source_oid,
@@ -1754,13 +1756,37 @@ def op_roll_dice(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
-def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
+def cast_rider(ctx: EffectContext, spec: Mapping[str, Any] | None) -> CastRider | None:
+    """A free cast's ``creature_cast_gains`` as the `CastRider` `cast_for_free` stages.
+
+    "If you cast a creature spell this way, it gains …": the keywords and the
+    indices into this card's ``grantable_abilities`` that the permanent the
+    spell becomes is handed for as long as it lasts. Not a `grant_keyword` and
+    a `grant_ability` written after the cast, which would reach the spell on
+    the stack -- or a hit left uncast in exile -- and not the permanent; the
+    rider rides the cast itself, so it applies exactly when the card was cast
+    this way, and `cast_for_free` drops it for a noncreature spell.
+    """
+    if not spec or ctx.source_oid is None:
+        return None
+    return CastRider(
+        source=ctx.source_oid,
+        keywords=tuple(str(k) for k in spec.get("keywords") or ()),
+        abilities=tuple(int(i) for i in spec.get("abilities") or ()),
+    )
+
+
+def _offer_free_cast(
+    ctx: EffectContext, pid: int, oid: int, prompt: str, rider: CastRider | None = None
+):
     """ "You may cast it without paying its mana cost."  Returns whether it was.
 
     Shares `suspend.cast_for_free`, which is what makes the copy a real cast --
-    it uses the stack and can be countered. Haste is **not** shared: that flag
-    belongs to suspend, and a cascaded creature that could attack immediately
-    would be a strictly better card.
+    it uses the stack and can be countered. Suspend's haste is **not** shared:
+    a cascaded creature that could attack immediately would be a strictly
+    better card. What a card does give the creature it casts this way -- Strago
+    and Relm's "it gains haste and …" -- is ``rider``, passed through to
+    `cast_for_free` and so applied only on a yes that reached the stack.
     """
 
     obj = ctx.state.objects.get(oid)
@@ -1773,7 +1799,7 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     if not (yield from ask_yes_no(ctx, prompt, pid)):
         return False
     before = len(ctx.state.stack)
-    cast_for_free(ctx.state, pid, oid)
+    cast_for_free(ctx.state, pid, oid, rider=rider)
     return len(ctx.state.stack) > before
 
 
@@ -2292,38 +2318,66 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     - ``else_destination`` is where the hit goes when it is not cast -- declined,
       disallowed by ``cast_free_if``, or refused by `cast_for_free`. Omitted, it
       stays in exile with the rest (Wanda's Vision).
-    - ``as`` records the hit, cast or not, as a list of zero or one oids; an
-      exhausted library binds the empty list.
+    - ``player`` is whose library is walked -- "**target opponent** exiles cards
+      from the top of their library until they exile an instant, sorcery, or
+      creature card. **You** may cast that card" (Strago and Relm) is
+      ``{"target": "t1"}``. Any player spec `select_players` reads, defaulting
+      to the controller; ``"each_player"`` walks every seat's library in turn.
+      Only the library changes hands: the free-cast offer always goes to the
+      ability's **controller**, who casts the other player's card (the spell is
+      theirs to control, the card stays its owner's), and every card the walk
+      moves -- and an uncast hit sent to ``else_destination`` -- goes to its
+      **owner's** zone (400.3), never the controller's.
+    - ``creature_cast_gains`` is the rider on that cast -- "if you cast a
+      creature spell this way, it gains haste and "At the beginning of the end
+      step, sacrifice this creature."" (Strago and Relm) is
+      ``{"keywords": ["haste"], "abilities": [0]}``, ``abilities`` indexing
+      this card's ``grantable_abilities``. See `cast_rider`.
+    - ``as`` records the hits, cast or not, as a list -- one oid per walked
+      library that found one; an exhausted library adds nothing, so a single
+      walk that finds nothing binds the empty list.
     """
-    pid = ctx.controller
-    library = ctx.state.players[pid].library
+    controller = ctx.controller
     selector = spec.get("objects") or {}
-
-    hit: int | None = None
-    walked = 0
-    while library:
-        oid = library[0]
-        found = _matches_library(ctx, oid, selector)
-        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="exile_until")
-        walked += 1
-        if found:
-            hit = oid
-            break
-    ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
-
-    if binding := spec.get("as"):
-        ctx.bindings[str(binding)] = [hit] if hit is not None else []
-    if hit is None:
-        return
-    cast = False
     condition = spec.get("cast_free_if")
-    if spec.get("cast_free") and (
-        condition is None or _matches_in_zone(ctx, hit, condition, "exile")
-    ):
-        name = ctx.state.card_of(ctx.state.objects[hit]).name
-        cast = yield from _offer_free_cast(ctx, pid, hit, f"Cast {name} for free?")
-    if not cast and (where := spec.get("else_destination")):
-        move_object(ctx.state, hit, DESTINATIONS[str(where)], to_player=pid, cause="exile_until")
+    binding = spec.get("as")
+    rider = cast_rider(ctx, spec.get("creature_cast_gains"))
+    hits: list[int] = []
+    if binding:
+        # Written before the walk, so a walk that finds nothing still binds the
+        # empty list rather than leaving an earlier op's value in place.
+        ctx.bindings[str(binding)] = []
+
+    for pid in select_players(ctx, spec.get("player", "you")):
+        library = ctx.state.players[pid].library
+        hit: int | None = None
+        walked = 0
+        while library:
+            oid = library[0]
+            found = _matches_library(ctx, oid, selector)
+            move_object(ctx.state, oid, Zone.EXILE, cause="exile_until")
+            walked += 1
+            if found:
+                hit = oid
+                break
+        ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
+        if hit is None:
+            continue
+        hits.append(hit)
+        if binding:
+            # Bound before the offer, as the single walk always did: the free
+            # cast suspends this generator, and the binding is what resumes.
+            ctx.bindings[str(binding)] = list(hits)
+        cast = False
+        if spec.get("cast_free") and (
+            condition is None or _matches_in_zone(ctx, hit, condition, "exile")
+        ):
+            name = ctx.state.card_of(ctx.state.objects[hit]).name
+            cast = yield from _offer_free_cast(
+                ctx, controller, hit, f"Cast {name} for free?", rider=rider
+            )
+        if not cast and (where := spec.get("else_destination")):
+            move_object(ctx.state, hit, DESTINATIONS[str(where)], cause="exile_until")
 
 
 @register("suspend")

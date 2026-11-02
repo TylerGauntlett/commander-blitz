@@ -775,6 +775,34 @@ def _reads_announced_x(node: Any) -> bool:
     return False
 
 
+def _validate_creature_cast_gains(effect: Mapping[str, Any], where: str) -> None:
+    """The rider on an effect's free cast: "if you cast a creature spell this
+    way, it gains haste and "…"" (Strago and Relm).
+
+    A rider on a cast nobody offers would load and grant nothing, and an empty
+    one is a sentence with nothing in it. The ability indices are checked
+    against the card's ``grantable_abilities`` by `_check_grant_targets`.
+    """
+    if not effect.get("cast_free"):
+        raise DslError(f"{where}: 'creature_cast_gains' needs 'cast_free'")
+    rider = effect.get("creature_cast_gains")
+    if not isinstance(rider, Mapping):
+        raise DslError(f"{where}: must be an object with 'keywords' and/or 'abilities'")
+    unknown = set(rider) - {"keywords", "abilities"}
+    if unknown:
+        raise DslError(f"{where}: unknown keys {sorted(unknown)} (keywords, abilities)")
+    keywords = rider.get("keywords") or []
+    abilities = rider.get("abilities") or []
+    if not isinstance(keywords, list) or not isinstance(abilities, list):
+        raise DslError(f"{where}: 'keywords' and 'abilities' are lists")
+    if not keywords and not abilities:
+        raise DslError(f"{where}: grants nothing -- name 'keywords' or 'abilities'")
+    for k in keywords:
+        if k not in KNOWN_KEYWORDS:
+            raise DslError(f"{where}: unknown keyword {k!r}")
+    refuse_numbered_grant(keywords, f"{where}.keywords")
+
+
 def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Recursively validate one effect dict."""
     if not isinstance(effect, Mapping):
@@ -1521,6 +1549,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             if not effect.get("cast_free"):
                 raise DslError(f"{where}: exile_until 'cast_free_if' needs 'cast_free'")
             validate_selector(effect["cast_free_if"], f"{where}.cast_free_if")
+        if "creature_cast_gains" in effect:
+            _validate_creature_cast_gains(effect, f"{where}.creature_cast_gains")
         if "else_destination" in effect:
             if not effect.get("cast_free"):
                 # Without a cast every hit would take the "else" -- that is a
@@ -2997,17 +3027,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: 'snapshot' must be a non-empty binding name, got {effect['snapshot']!r}"
             )
     if op == "flip_coin":
-        # "Flip a coin. If you lose the flip, ..." The branches are the card: a
-        # flip with neither is a coin tossed for nothing, and a non-list branch
-        # would be read as no effects at all.
+        # "Flip a coin. If you lose the flip, ..." A non-list branch would be
+        # read as no effects at all. Both branches may be absent: Setzer's
+        # "Whenever a Vehicle you control deals combat damage to a player, flip
+        # a coin." is a bare flip, and what reads it is a `wins_coin_flip`
+        # trigger elsewhere.
         for key in ("effects", "else"):
             if key in effect and not isinstance(effect[key], list):
                 raise DslError(f"{where}.{key}: a list of effects")
-        if not effect.get("effects") and not effect.get("else"):
-            raise DslError(
-                f"{where}: flip_coin needs 'effects' (if you win the flip) or "
-                f"'else' (if you lose it) -- a flip nothing reads changes nothing"
-            )
     if op == "roll_dice":
         # The same refusal `join_forces` carries below, for the same reason: a
         # roll is never the effect, it is what the sentences after it read. A

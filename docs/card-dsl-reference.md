@@ -15,7 +15,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 66 |
 | [Conditions](#conditions) | 33 |
-| [Trigger events](#trigger-events) | 48 |
+| [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
 | [Static effects](#static-effects) | 90 |
 | [Player-wide statics](#player-wide-statics) | 44 |
@@ -53,7 +53,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `discard` | Cards | yes | A player discards N cards, chosen or at random; `as` records them. | [discard: up_to and as](card-dsl.md#discard-up_to-and-as) |
 | `discover` | Cards | yes | Discover N: exile until a nonland of mana value N or less; cast it free or take it. | [Discover — cascade's walk, N or less, cast or hand](card-dsl-cookbook.md#discover--cascades-walk-n-or-less-cast-or-hand) |
 | `draw` | Cards | yes | A player draws N cards; `as` records who drew. | [draw's as — "each opponent who drew a card this way"](card-dsl-cookbook.md#draws-as--each-opponent-who-drew-a-card-this-way) |
-| `exile_until` | Cards | yes | Exile from the top until a card matches; the rest stay exiled, the hit may be cast free. | [exile_until — a walk that leaves its cards in exile](card-dsl-cookbook.md#exile_until--a-walk-that-leaves-its-cards-in-exile) |
+| `exile_until` | Cards | yes | Exile from the top of a player's library until a card matches; the rest stay exiled, the hit may be cast free by you, a creature with a `creature_cast_gains` rider. | [exile_until — a walk that leaves its cards in exile](card-dsl-cookbook.md#exile_until--a-walk-that-leaves-its-cards-in-exile) |
 | `explore` | Cards |  | Explore: reveal the top card, land to hand or a +1/+1 counter. | [Explore](card-dsl-cookbook.md#explore) |
 | `grant_graveyard_cast` | Cards |  | Permit casting matching spells from graveyards until end of turn. | [Casting out of every graveyard, until end of turn](card-dsl-cookbook.md#casting-out-of-every-graveyard-until-end-of-turn) |
 | `grant_playable` | Cards |  | Permit playing cards from a zone that normally forbids it, for a duration. | [How long "you may play it" lasts](card-dsl-cookbook.md#how-long-you-may-play-it-lasts) |
@@ -464,6 +464,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `state` | `state` | A state holds (603.8): the trigger's `state` condition; no event. | [state — "When there are four or more page counters on this artifact"](card-dsl.md#state--when-there-are-four-or-more-page-counters-on-this-artifact) |
 | `token_created` | `token_created` | A token is created. | [Triggers](card-dsl.md#triggers) |
 | `upkeep` | `upkeep` | At the beginning of the upkeep. | [Triggers](card-dsl.md#triggers) |
+| `wins_coin_flip` | `coin_flipped` | A player wins a coin flip (705); a lost flip fires nothing. | ["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip) |
 | `you_attack` | `attackers_declared` | You attack with one or more creatures. | ["Whenever you attack"](card-dsl-cookbook.md#whenever-you-attack) |
 | `you_gain_life` | `life_gained` | You gain life. | [Triggers](card-dsl.md#triggers) |
 
@@ -731,7 +732,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `discard_selector` | …matching this selector. | [Costs](card-dsl.md#costs) |
 | `discard_self` | Discard this card (cycling). | [Cycling](card-dsl-cookbook.md#cycling) |
 | `exert` | Exert the source. | [exert — the keyword as a cost](card-dsl.md#exert--the-keyword-as-a-cost) |
-| `exile_from_graveyard` | Exile matching cards from your graveyard. | [Costs](card-dsl.md#costs) |
+| `exile_from_graveyard` | Exile matching cards from your graveyard; `as` names them for the effects. | [Coin of Fate — an exile-from-graveyard cost that names what it exiled](card-dsl.md#coin-of-fate--an-exile-from-graveyard-cost-that-names-what-it-exiled) |
 | `exile_from_hand` | Exile a matching card from your hand (a pitch cost). | [exile_from_hand — the pitch cost, and why it is not a discard](card-dsl.md#exile_from_hand--the-pitch-cost-and-why-it-is-not-a-discard) |
 | `exile_self` | Exile the source. | [Costs](card-dsl.md#costs) |
 | `exile_self_from_hand` | Exile this card from your hand. | [Costs](card-dsl.md#costs) |
@@ -1092,7 +1093,7 @@ Every `EventType` the engine emits, and which trigger events listen to it. An ev
 | `blocks` | `blocks` |  | [Triggers](card-dsl.md#triggers) |
 | `chapter_reached` | `chapter` |  | [Triggers](card-dsl.md#triggers) |
 | `city_s_blessing` |  |  | [Triggers](card-dsl.md#triggers) |
-| `coin_flipped` |  |  | [Triggers](card-dsl.md#triggers) |
+| `coin_flipped` | `wins_coin_flip` |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_planeswalker` | `deals_combat_damage_to_planeswalker` |  | [Triggers](card-dsl.md#triggers) |
 | `combat_damage_to_player` | `deals_combat_damage_to_player` |  | [Triggers](card-dsl.md#triggers) |
 | `connived` | `connives` |  | [Triggers](card-dsl.md#triggers) |

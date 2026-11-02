@@ -16,7 +16,7 @@ from typing import Any
 
 from .enums import Step, Zone
 from .mana import ManaOrigin
-from .structs import AttackMark, PermanentShield, TempEffect
+from .structs import AttackMark, CastRider, PermanentShield, TempEffect
 
 #: Counter kinds the engine understands specially.  Anything else is inert data.
 PLUS_ONE = "+1/+1"
@@ -287,6 +287,13 @@ class GameObject:
     #: a countered creature spell must not keep the promise in its graveyard and
     #: cash it on a later cast.
     mana_granted_keywords: set[str] = field(default_factory=set)
+    #: "If you cast a creature spell this way, it gains haste and "At the
+    #: beginning of the end step, sacrifice this creature."" (Strago and Relm).
+    #: `mana_granted_keywords`' twin for a free cast made by an effect, staged
+    #: and carried the same way -- across `reset_permanent_state` only to the
+    #: battlefield -- and granted for as long as the permanent lasts rather than
+    #: until end of turn. See `structs.CastRider`.
+    cast_rider: CastRider | None = None
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -1192,6 +1199,7 @@ class GameObject:
         # graveyard owing nobody haste. `move_object` restores it across this
         # reset for the one destination that is owed it -- the battlefield.
         self.mana_granted_keywords = set()
+        self.cast_rider = None
         self.granted_abilities_permanent = []
         self.animations = []
         self.tapped = False

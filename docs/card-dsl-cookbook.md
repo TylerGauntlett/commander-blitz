@@ -13194,11 +13194,58 @@ them out of the library.
 - `else_destination` (`"hand"`) is where a hit that was not cast goes: declined,
   failing `cast_free_if`, or refused by `cast_for_free`. Omitted, it stays in
   exile with the rest.
-- `as` records the hit, cast or not, as a list of zero or one oids; an exhausted
-  library binds the empty list.
+- `player` is whose library is walked, any player spec, defaulting to `"you"`.
+  Strago and Relm's "**target opponent** exiles cards from the top of their
+  library until they exile an instant, sorcery, or creature card. **You** may
+  cast that card without paying its mana cost" is
+  `"player": { "target": "t1" }` with a `kind: "player"` target. Only the
+  library changes: the `cast_free` offer always goes to the controller, who
+  casts the other player's card, and every card the walk moves -- an uncast hit
+  sent to `else_destination` included -- goes to its **owner's** zone.
+  `"each_player"` walks every seat's library in turn, offering each hit.
+- `creature_cast_gains` is the rider on that cast: what a **creature** spell
+  cast this way gains, as `{"keywords": [...], "abilities": [...]}`, with
+  `abilities` indexing this card's `grantable_abilities`. It is staged on the
+  spell only when the cast reaches the stack and cashed on the permanent the
+  spell becomes, for as long as that permanent lasts (the sentence prints no
+  duration); a declined cast, an uncast hit and a noncreature spell get nothing,
+  and a permanent that leaves and returns is a new object that owes nothing.
+- `as` records the hits, cast or not, as a list -- one oid for each walked
+  library that found one, so a single walk that runs its library out binds the
+  empty list.
 
-The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
-`cast_free`.
+```jsonc
+// Strago and Relm -- "Target opponent exiles cards from the top of their
+// library until they exile an instant, sorcery, or creature card. You may cast
+// that card without paying its mana cost. If you cast a creature spell this
+// way, it gains haste and "At the beginning of the end step, sacrifice this
+// creature.""
+{ "op": "exile_until",
+  "player": { "target": "t1" },
+  "objects": { "any_types": ["Instant", "Sorcery", "Creature"] },
+  "cast_free": true,
+  "creature_cast_gains": { "keywords": ["haste"], "abilities": [0] } }
+// with, on the card:
+"grantable_abilities": [{
+  "kind": "triggered",
+  "text": "At the beginning of the end step, sacrifice this creature.",
+  "trigger": { "event": "end_step", "controller": "any" },
+  "effects": [{ "op": "sacrifice", "objects": { "self_only": true } }] }]
+```
+
+The near misses: a `grant_keyword` and `grant_ability` written after the walk
+reach the spell on the stack (or a hit left in exile), and the battlefield
+arrival sweeps them; a `delay` with `step: "end_step"` is blitz's delayed
+trigger, which belongs to no permanent, where the quoted ability is the
+creature's own; `cast_gains_keywords` is the
+`cast_from_library_top` static's until-end-of-turn rider.
+
+The loader refuses an `amount`; `cast_free_if`, `else_destination` or
+`creature_cast_gains` without `cast_free`; and a `creature_cast_gains` that
+grants nothing, names an unknown keyword or key, or indexes a grantable ability
+the card does not have. `reveal_until` with `player` is the near miss for an opponent's
+library: it leaves the walked-past cards in the library and moves only the
+match.
 
 ## "It gains suspend" — suspending a card from an effect
 
@@ -13390,7 +13437,9 @@ opponent and `ask_player` does not stop to ask.
 ### `flip_coin` — won or lost
 
 Rule 705. `flip_coin` flips one coin for the controller and runs `effects` if
-they win the flip and `else` if they lose it; at least one is required.
+they win the flip and `else` if they lose it. Both are optional: a bare
+`{ "op": "flip_coin" }` is Setzer's "flip a coin", whose outcome only a
+`wins_coin_flip` trigger reads.
 
 ```jsonc
 // Negative Zone Portal — "flip a coin. If you lose the flip, sacrifice this
@@ -13403,10 +13452,31 @@ they win the flip and `else` if they lose it; at least one is required.
 ```
 
 The outcome comes from the engine's seeded `Rng`, and one `coin_flipped` event
-carries `won` for the log. **Not** `roll_dice` with `sides: 2`: a coin is not a
-die, so a d2 would answer "whenever you roll one or more dice" and nothing that
-asks about a coin. **Not** `choose_mode` with `random`, which picks a mode rather
-than deciding a won or lost flip.
+carries `won`, for the log and for `wins_coin_flip` below. **Not** `roll_dice`
+with `sides: 2`: a coin is not a die, so a d2 would answer "whenever you roll one
+or more dice" and nothing that asks about a coin. **Not** `choose_mode` with
+`random`, which picks a mode rather than deciding a won or lost flip.
+
+### "Whenever you win a coin flip"
+
+`wins_coin_flip` is a trigger event that fires once per flip won, whatever made
+the flip: every `flip_coin` fires `coin_flipped` through the trigger bus, and this
+trigger hears the ones whose `won` is true. A lost flip fires nothing. Its subject
+is a **player**, the one who flipped, so `controller` reads who won: `"you"` (the
+default) is "whenever you win a coin flip", `"opponent"` is an opponent winning.
+
+```jsonc
+// Setzer, Wandering Gambler — "Whenever you win a coin flip, create two tapped
+// Treasure tokens."
+{ "kind": "triggered",
+  "trigger": { "event": "wins_coin_flip" },
+  "effects": [ { "op": "create_token", "token": "treasure_token",
+                 "amount": { "const": 2 }, "tapped": true } ] }
+```
+
+The near miss is the win branch of the card's own `flip_coin` ("flip a coin; if
+you win, create two Treasures"), which is a narrower card: it pays only for the
+flips that one ability makes and misses a flip won off any other source.
 
 ## Rolling dice
 

@@ -667,6 +667,10 @@
     "artist": "Willian Murai",
     "scryfall_id": "23b4bc01-d32d-4525-beae-896e43718985"
   },
+  "archfiend_of_depravity": {
+    "artist": "N\u00e9stor Ossand\u00f3n Leal",
+    "scryfall_id": "aa0ba9cb-e45c-4c23-baab-38e01391ec6b"
+  },
   "archfiend_of_despair": {
     "artist": "Josh Hass",
     "scryfall_id": "137b69ad-3296-49f1-bddf-24818a03830f"
@@ -2535,6 +2539,10 @@
     "artist": "Mark Zug",
     "scryfall_id": "9cfb4080-0f31-4352-b47a-a36955b68a18"
   },
+  "coin_of_fate": {
+    "artist": "Kotetsu Kinoshita",
+    "scryfall_id": "652be579-44ad-4656-975b-5e336a9e21c8"
+  },
   "cold_water_snapper": {
     "artist": "Jason Kang",
     "scryfall_id": "9f697e13-22af-4419-bb5d-de7fccd2b262"
@@ -2582,6 +2590,10 @@
   "combat_celebrant": {
     "artist": "Chris Rallis",
     "scryfall_id": "b943300e-e6af-4e7f-b936-62ef9c314916"
+  },
+  "combustible_gearhulk": {
+    "artist": "Narendra Bintara Adi",
+    "scryfall_id": "07cc036d-f46e-490d-adbb-d6974c4e10fd"
   },
   "command_tower": {
     "artist": "Josu Solano",
@@ -4848,6 +4860,10 @@
     "artist": "Zoltan Boros",
     "scryfall_id": "3ffe82a4-584e-4ebd-9551-a745bed01e26"
   },
+  "flayer_of_the_hatebound": {
+    "artist": "Josu Hernaiz",
+    "scryfall_id": "fe233fa7-bc38-45f5-bfe5-da93877f1075"
+  },
   "fleecemane_lion": {
     "artist": "Thomas Chamberlain-Keen",
     "scryfall_id": "0afb3c64-c88a-417b-a1f7-2edea045cb14"
@@ -6996,6 +7012,10 @@
   "intelligence_bobblehead": {
     "artist": "Torgeir Fjereide",
     "scryfall_id": "114600bd-4bf5-4eeb-bb9d-25bfb8a54adc"
+  },
+  "interceptor_shadow_s_hound": {
+    "artist": "Sansyu",
+    "scryfall_id": "30be9a07-5803-4bef-9313-391c926bfcec"
   },
   "intermediate_chirography": {
     "artist": "Randy Gallegos",
@@ -10424,6 +10444,10 @@
     "artist": "Daren Bader",
     "scryfall_id": "3db07715-d315-4361-8af5-ce68d20e6c08"
   },
+  "plargg_and_nassari": {
+    "artist": "Yigit Koroglu",
+    "scryfall_id": "edcdb196-2483-452d-844c-96381ba51b93"
+  },
   "plateau": {
     "artist": "Cornelius Brudi",
     "scryfall_id": "2ff721e2-b12a-4cd1-b846-fccd61c6b69b"
@@ -11612,6 +11636,10 @@
     "artist": "Fred Fields",
     "scryfall_id": "6bd21c9e-de16-4ee9-ae16-6e82b490109d"
   },
+  "ruin_grinder": {
+    "artist": "Lorenzo Mastroianni",
+    "scryfall_id": "a0eafd12-c0c9-4fe3-a4bb-40ab7b64e47c"
+  },
   "ruination_wurm": {
     "artist": "Dave Kendall",
     "scryfall_id": "ce04d1ee-2605-472d-b3ee-24800342e9af"
@@ -11675,6 +11703,10 @@
   "sabertooth_wyvern": {
     "artist": "Keith Parkinson",
     "scryfall_id": "ebcdc648-b401-4c1c-9f5a-5aea8cfc9bf0"
+  },
+  "sabin_master_monk": {
+    "artist": "Kevin Glint",
+    "scryfall_id": "43bacd07-fdaf-4ce4-bf7a-dda55a99d460"
   },
   "sabretooth_tiger": {
     "artist": "Monte Michael Moore",
@@ -12156,6 +12188,10 @@
     "artist": "Livia Prima",
     "scryfall_id": "dd9723a6-51e1-41c3-9fbd-3e18c3ffead3"
   },
+  "sepulchral_primordial": {
+    "artist": "Nino Is",
+    "scryfall_id": "4a4192e9-ba32-4801-a7f5-b4dad3559e4e"
+  },
   "seraph_of_dawn": {
     "artist": "Todd Lockwood",
     "scryfall_id": "2b43e25b-0ead-4410-88b7-720313c4fd8b"
@@ -12211,6 +12247,10 @@
   "servo_1_1_c": {
     "artist": "Adri\u00e1n Rodr\u00edguez P\u00e9rez",
     "scryfall_id": "10de413b-3307-4bc7-bb21-f177543d7e21"
+  },
+  "setzer_wandering_gambler": {
+    "artist": "Norikatsu Miyoshi",
+    "scryfall_id": "0e5b6968-fff2-4227-9442-d2b5225b29e5"
   },
   "severed_legion": {
     "artist": "Dany Orizio",
@@ -13480,6 +13520,10 @@
     "artist": "Svetlin Velinov",
     "scryfall_id": "e3dae817-3db1-4edf-86ba-c2c2b238fcf5"
   },
+  "strago_and_relm": {
+    "artist": "Darius Zablockis",
+    "scryfall_id": "8b880c1a-b82d-42ae-aaaf-22cdc81fe891"
+  },
   "straw_soldiers": {
     "artist": "Cai Tingting",
     "scryfall_id": "8ae5ba21-eb8e-4663-bfd8-3e19a0c10774"
@@ -14229,6 +14273,10 @@
     "artist": "Andrea Radeck",
     "scryfall_id": "6a1858f5-16b8-4a58-8f31-b60f926fdbf8"
   },
+  "the_blackjack_3_3_c_flying_crew2": {
+    "artist": "Devin Elle Kurtz",
+    "scryfall_id": "a3803365-ed78-409f-8ca5-7aa3634faf76"
+  },
   "the_chain_veil": {
     "artist": "Volkan Ba\u01f5a",
     "scryfall_id": "1ca66955-d900-45b6-9a40-38467689a68d"
@@ -14252,6 +14300,10 @@
   "the_fabulous_frog_man": {
     "artist": "Dan Brereton",
     "scryfall_id": "9307100e-2d7e-42a9-9951-24af01ab9ded"
+  },
+  "the_falcon_airship_restored": {
+    "artist": "Kotakan",
+    "scryfall_id": "080fc2be-d463-4e8e-ba42-8f3cb0c95ed3"
   },
   "the_fantasticar": {
     "artist": "Maxim Ruabtsev",
@@ -14994,6 +15046,10 @@
   "umara_entangler": {
     "artist": "James Ryman",
     "scryfall_id": "0d4ddc45-cd67-4b2c-84d0-4604783fd8e7"
+  },
+  "umaro_raging_yeti": {
+    "artist": "Norikatsu Miyoshi",
+    "scryfall_id": "31aed8e9-44be-4e7c-85ac-a084eaecaea7"
   },
   "umbral_collar_zealot": {
     "artist": "Dmitry Burmak",
