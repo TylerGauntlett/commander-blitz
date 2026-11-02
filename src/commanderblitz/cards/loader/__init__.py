@@ -101,6 +101,7 @@ from .mana import (
     _validate_mana_amount,
 )
 from .statics import (
+    _validate_cast_zone_keys,
     _validate_cost_reduction,
     _validate_static_condition,
     _validate_static_count_filter,
@@ -122,6 +123,7 @@ from .vocabulary import (  # noqa: F401
     ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
     CAST_LOCK_FILTER_KEYS,
+    CAST_ORIGIN_ZONES,
     CONTROLLED_TARGET_KINDS,
     COST_CONDITION_HEADS,
     COST_REDUCTION_FILTER_KEYS,
@@ -186,6 +188,7 @@ from .walk import (
     _refuse_granted_chosen_qualities,
     _walk_effect_specs,
     reads_placed_kind,
+    uses_source_bound_duration,
 )
 
 
@@ -1049,6 +1052,12 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
     target_kinds = {t.id: t.kind for t in all_targets}
     for i, effect in enumerate(model.spell_effects):
         _validate_effect(effect, f"{where}.spell_effects[{i}]", target_kinds)
+    if uses_source_bound_duration(model.spell_effects):
+        raise DslError(
+            f"{where}.spell_effects: 'as_long_as_you_control_source' lasts while "
+            f"you control the source, and a spell is not a permanent anyone "
+            f"controls as it resolves (611.2b) -- it would do nothing"
+        )
     if reads_placed_kind(model.spell_effects):
         raise DslError(
             f"{where}.spell_effects: {{'binding': 'counter'}} is the kind a "
@@ -1848,6 +1857,25 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}: 'second_face_zone' needs a 'second_face' -- there is no "
                 f"second cast for it to restrict"
             )
+    # "When this dies, you may cast it from your graveyard as an Adventure."
+    # A permission over the card's *own* object that reaches only its Adventure
+    # half, so the card has to have one: on any other card the grant would load
+    # and offer nothing at all.
+    if not model.adventure:
+        trees: list[Any] = [model.spell_effects]
+        trees.extend(a.effects for a in model.abilities)
+        for tree in trees:
+            for effect in _walk_effect_specs(tree):
+                objects = effect.get("objects")
+                if (
+                    effect.get("as_adventure")
+                    and isinstance(objects, Mapping)
+                    and objects.get("self_only")
+                ):
+                    raise DslError(
+                        f"{where}: 'as_adventure' over this card needs it to be an "
+                        f"adventurer card ('adventure' with a 'second_face')"
+                    )
     # Fuse is a *third* line on a split card, so it needs the other two: a card
     # with nothing to fuse to is an ordinary spell that says a word, and fusing
     # onto a graveyard-only half would offer from hand a line that half may not
@@ -3062,7 +3090,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"trigger to where the card was played from, and means "
                     f"nothing on {model.trigger.event!r}"
                 )
-            origins = {"library", "hand", "graveyard", "exile", "command"}
+            origins = CAST_ORIGIN_ZONES
             bad = [z for z in model.trigger.from_zones if z not in origins]
             if bad or not model.trigger.from_zones:
                 raise DslError(
@@ -4268,6 +4296,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}.affects_spells: a spell has a printed face and a caster "
                 f"and no board state; unsupported keys {sorted(unknown)}"
             )
+        _validate_cast_zone_keys(model.affects_spells, f"{where}.affects_spells")
         if model.amount is None:
             raise DslError(
                 f"{where}: spell_cost_reduction needs an 'amount' -- a reduction "

@@ -163,6 +163,15 @@ class TempEffect:
     #: number, so an elimination or an extra turn that moves the seat's next
     #: turn moves the end with it -- detain's reason for keying on the seat.
     since_turn: int = 0
+    #: "…for as long as **you control** Thancred Waters" (611.2b): the seat that
+    #: must go on controlling :attr:`source` for the entry to stand, and
+    #: ``None`` on every other clock. No cleanup or untap step ends it.
+    #: `temp_effects.end_source_bound` does, eagerly, at the two moments the
+    #: duration can end -- `zones.move_object` as the source leaves the
+    #: battlefield and `primitives.change_control` as it changes hands -- so a
+    #: source that is blinked, or stolen and handed back, does not revive it:
+    #: the oid survives both, and the effect must not.
+    while_controller: int | None = None
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -182,6 +191,7 @@ class TempEffect:
             "until_player": self.until_player,
             "until_end_of_turn_of": self.until_end_of_turn_of,
             "since_turn": self.since_turn,
+            "while_controller": self.while_controller,
         }
 
 
@@ -1903,6 +1913,19 @@ class TurnLedger:
     #: stack still resolves off what the old object did -- last-known
     #: information, so a Hellkite killed in response still destroys.
     players_dealt_combat_damage_by: dict[int, set[int]] = field(default_factory=dict)
+    #: The same seats keyed by the **subtype** of the creature that dealt the
+    #: damage -- Estinien Varlineau's "the number of your opponents who were
+    #: dealt combat damage by Estinien Varlineau **or a Dragon** this turn".
+    #:
+    #: `combat_damage_types` below is the near miss: it says *that* a Dragon got
+    #: through, at a table, and not *to whom*, so it cannot count opponents. The
+    #: oid-keyed field above says whom but not what the creature was, and by the
+    #: second main phase the Dragon may be dead, bounced or no longer a Dragon.
+    #: Read off **derived** subtypes as the damage lands, for prowl's reason: a
+    #: changeling and a creature granted the type both count, and a Dragon that
+    #: loses the type afterwards still dealt the damage as one. Never cleared
+    #: per oid -- the record is about the damage, not about any object.
+    players_dealt_combat_damage_by_subtype: dict[str, set[int]] = field(default_factory=dict)
     #: Damage dealt to each player this turn.
     damage_taken: dict[int, int] = field(default_factory=dict)
     #: Life *lost* by each player this turn, which is the wider question: a
@@ -2203,6 +2226,7 @@ class TurnLedger:
         self.attacks_by_creature.clear()
         self.taps_by_permanent.clear()
         self.players_dealt_combat_damage_by.clear()
+        self.players_dealt_combat_damage_by_subtype.clear()
         self.damage_taken.clear()
         self.life_lost.clear()
         self.life_gained.clear()

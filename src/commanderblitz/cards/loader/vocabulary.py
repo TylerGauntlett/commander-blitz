@@ -977,7 +977,22 @@ SPELL_FILTER_KEYS = frozenset(
 #: ``power`` is the other: "Creature spells you cast **with power 4 or greater**
 #: cost {2} less" (Goreclaw). The spell's power as it is cast -- printed, or a
 #: `*/*`'s CDA -- read by `player_statics.spell_cost_reduction` too.
-SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self", "power"}
+#:
+#: ``from_zone`` and ``not_from_zone`` read the zone the spell is cast **from**:
+#: "Spells you cast from your graveyard cost {2} less" (Emet-Selch of the Third
+#: Seat), "…from anywhere other than your hand" (Advanced Reconstruction). One
+#: zone name or a list, out of `CAST_ORIGIN_ZONES`; matched by
+#: `player_statics.cast_zone_matches` with the zone every pricer hands down.
+SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {
+    "exclude_self",
+    "power",
+    "from_zone",
+    "not_from_zone",
+}
+
+#: The zones a card can be cast or played **from** -- what a ``from_zone`` /
+#: ``not_from_zone`` spell filter and a trigger's ``from_zones`` may name.
+CAST_ORIGIN_ZONES = frozenset({"library", "hand", "graveyard", "exile", "command"})
 
 #: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
 #:
@@ -1478,9 +1493,10 @@ STATIC_MANA_POOL_KEYS = frozenset({"unspent_mana_count"})
 #: flash". `TurnLedger.spells_cast` is written only by `GameState._tally`
 #: folding SPELL_CAST and emptied only by the cleanup step, never by a layer,
 #: and both funnels bump `char_version`, so it is a pipeline input on a poison
-#: count's terms. The bare player-spec form only, with the life leaves' specs:
-#: the effect side's typed `{"player", "filter"}` form matches the cast cards'
-#: printed faces, which no static has needed.
+#: count's terms. Takes the life leaves' bare player specs, or the effect side's
+#: typed `{"player", "filter"}` form -- Lyse Hext's "two or more noncreature
+#: spells" -- matched on the printed faces in `TurnLedger.spells_cast_ids`,
+#: which the same fold writes beside the count.
 STATIC_SPELLS_CAST_KEYS = frozenset({"spells_cast_this_turn"})
 
 #: The per-turn death leaf -- Gorma, the Gullet's "for each creature that died

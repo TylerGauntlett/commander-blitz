@@ -231,6 +231,11 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
     "and mana of any type can be spent to cast that spell" -- and belongs to
     the same grant rather than to the player or the turn.
 
+    ``as_adventure`` is Hildibrand Manderville's "you may cast it from your
+    graveyard **as an Adventure**": only the card's Adventure half is offered,
+    never its creature face, and the half resolves onto its adventure in exile
+    (715.3d) so the creature may be cast from there afterwards.
+
     ``limit`` is "a spell", singular. Counted per granting permanent in the turn
     ledger, the way a `cast_from_graveyard` permission is, so two Lockes are two
     spells and one Locke milling three cards is still one.
@@ -250,6 +255,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # card is exiled as it resolves, so the grant is worth one cast per card
         # rather than as many as the turn's mana allows.
         obj.playable_exiles = bool(spec.get("as_flashback"))
+        # "…cast it from your graveyard **as an Adventure**" (Hildibrand
+        # Manderville): the permission reaches the Adventure half only, and
+        # the half's own resolution exiles it on an adventure (715.3d).
+        obj.playable_as_adventure = bool(spec.get("as_adventure"))
         # "…and mana of any type can be spent to cast that spell" travels with
         # the permission it is printed beside, and expires with it: the flag is
         # read only where `playable_turn` already gates the offer.
@@ -258,6 +267,10 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         # "…without paying their mana costs" (601.2b), plot's flag on the
         # same permission and read by the same cast path.
         obj.playable_free = bool(spec.get("playable_free"))
+        # "Spells you cast this way cost {2} less to cast" (Urianger
+        # Augurelt): a discount on this permission's casts only, read by
+        # `casting.permission_cost_reduction` while the permission is live.
+        obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
         record_playable_source(ctx.state, oid, ctx.source_oid)
 
 
@@ -679,6 +692,7 @@ def _move_found(
                 obj.playable_any_type = bool(spec.get("any_type"))
                 obj.playable_any_color = bool(spec.get("any_color"))
                 obj.playable_free = bool(spec.get("playable_free"))
+                obj.playable_cost_reduction = int(spec.get("playable_cost_reduction", 0) or 0)
                 record_playable_source(ctx.state, oid, ctx.source_oid)
         # "Exile the top card of your library **face down**." Necropotence.
         # Face-down here is *privacy*, not the 707 morph identity `face_down`
@@ -1837,9 +1851,19 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
     its owner keeps it (108.3), which is `push_spell` taking the card out of
     the owner's list. One question per owner, in the pool's own order, because
     "a card" with no "for each player" would be one cast in total.
+
+    ``exiles: true`` is "If that spell would be put into a graveyard, exile it
+    instead" -- Torrential Gearhulk and Impulsivity, casting a target card out
+    of a graveyard (``objects: {"target": …}``). `cast_card`'s rider on the
+    free cast: it rides on the stack item (`StackItem.exiles_instead`), so it
+    holds however the spell leaves the stack for a graveyard -- resolving,
+    fizzling or being countered -- and the same card cast later by other means
+    goes back to the graveyard. `cast_card` is the near miss and charges the
+    mana cost; `play_exiled` is free but reads its pool out of exile.
     """
 
     selector = spec.get("selector") or {}
+    exiles = bool(spec.get("exiles", False))
     prompt = "Cast a spell without paying its mana cost"
     # "…from your hand, **from your graveyard, or from among cards you own in
     # exile**" -- Kaya the Inexorable's emblem. One choice over the union of the
@@ -1896,7 +1920,7 @@ def op_cast_from_hand(ctx: EffectContext, spec: Mapping[str, Any]):
         for group in groups:
             picked = yield from ask_objects(ctx, prompt, group, 0, 1, pid, "cast_from_hand")
             if picked:
-                cast_for_free(ctx.state, pid, picked[0])
+                cast_for_free(ctx.state, pid, picked[0], exiles_instead=exiles)
 
 
 def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bool = False):
@@ -1936,8 +1960,8 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     from ..player_statics import cast_lock_min_x
     from ..primitives import cast_locked_zones
     from ..stack import free_cast_modes, push_spell
-    from ..targeting import additional_sized_targets, describe_ref, enumerate_target_tuples
-    from .context import ask_mode, ask_targets, ask_x
+    from ..targeting import additional_sized_targets, enumerate_target_tuples
+    from .context import ask_x
 
     state = ctx.state
     obj = state.objects.get(oid)
@@ -1962,7 +1986,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     purpose = spell_purpose(card)
 
     def extra_for(targets) -> int:
-        return -cost_reduction(state, pid, card, targets)
+        # The zone the card is cast from -- graveyard, exile or wherever the
+        # resolving effect found it -- since it has not reached the stack yet.
+        return -cost_reduction(state, pid, card, targets, zone=zone_of(state, oid))
 
     def ceiling(extra: int) -> int:
         """The largest payable X, or -1 when nothing is payable at all."""
@@ -1992,28 +2018,7 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
         return False
     if not (yield from ask_yes_no(ctx, f"Cast {card.name}, paying its mana cost?", pid)):
         return False
-    targets = tuples[0]
-    if len(tuples) > 1 and all(len(t) == 1 for t in tuples):
-        # One target -- an Aura's "enchant creature", which is every printed
-        # permanent spell that targets: the objects themselves, so the client
-        # can point at them.
-        chosen = yield from ask_targets(
-            ctx,
-            f"Choose a target for {card.name}",
-            [(describe_ref(state, t[0]), t[0]) for t in tuples],
-            1,
-            1,
-            pid,
-        )
-        targets = (chosen[0],)
-    elif len(tuples) > 1:
-        labels = [
-            ", ".join(describe_ref(state, ref) for ref in t) or "no target" for t in tuples
-        ]
-        picked = yield from ask_mode(
-            ctx, f"Choose targets for {card.name}", labels, pid, purpose="target"
-        )
-        targets = tuples[picked[0]]
+    targets = yield from _ask_cast_targets(ctx, pid, card.name, tuples)
     extra = extra_for(targets)
     x = 0
     if cost.x_count:
@@ -2051,6 +2056,136 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
         sid=item.sid,
         card=card.id,
     )
+    return True
+
+
+def _ask_cast_targets(ctx: EffectContext, pid: int, name: str, tuples):
+    """601.2c for a cast made inside a resolution: one of ``tuples``, asked.
+
+    Asked rather than taken first-legal, because each offered tuple was priced
+    with its own discount. One tuple is no question at all.
+    """
+    from ..targeting import describe_ref
+    from .context import ask_mode, ask_targets
+
+    state = ctx.state
+    if len(tuples) > 1 and all(len(t) == 1 for t in tuples):
+        # One target -- an Aura's "enchant creature", which is every printed
+        # permanent spell that targets: the objects themselves, so the client
+        # can point at them.
+        chosen = yield from ask_targets(
+            ctx,
+            f"Choose a target for {name}",
+            [(describe_ref(state, t[0]), t[0]) for t in tuples],
+            1,
+            1,
+            pid,
+        )
+        return (chosen[0],)
+    if len(tuples) > 1:
+        labels = [
+            ", ".join(describe_ref(state, ref) for ref in t) or "no target" for t in tuples
+        ]
+        picked = yield from ask_mode(ctx, f"Choose targets for {name}", labels, pid, purpose="target")
+        return tuples[picked[0]]
+    return tuples[0]
+
+
+def cast_copy_paying(ctx: EffectContext, pid: int, oid: int, price: str):
+    """ "Copy it. You may cast the copy by paying {3} rather than paying its
+    mana cost." -- Blue Mage's Cane. `op_cast_copy` with a ``cost``.
+
+    Returns whether the copy reached the stack. ``price`` is an **alternative
+    cost** (118.9): it replaces the copied card's mana cost and nothing else,
+    so the cast line's adjustments still apply on top of it (601.2f) --
+    `cost_reduction` with the declared targets (Kasmina's tax included), the
+    spell's restricted-mana purpose -- and an X in the card's own cost is 0
+    (107.3), because the price paid has none. The copy's mana value is still
+    the card's.
+
+    The caster may always decline (118.9: an alternative cost is a choice), and
+    is asked only when some target line is payable (118.4), so a yes is never a
+    question whose answer does nothing. The steps run in 601.2's order: the
+    proposal, the targets (601.2c, asked -- each tuple priced with its own
+    discount), the copy on the stack, then the payment (601.2h), recorded on
+    the copy so "mana spent to cast it" reads the copy.
+
+    The narrowings are `_cast_paying_mana_cost`'s: no kicker or optional
+    additional cost is offered, and a card whose additional cost is mandatory is
+    not offered at all rather than cast without it.
+    """
+    from ..cost_reduction import cost_reduction
+    from ..costs import can_pay_mana, pay, spell_purpose, zone_of
+    from ..mana import ManaCost
+    from ..player_statics import cast_lock_min_x
+    from ..primitives import cast_locked_zones
+    from ..stack import free_cast_modes
+    from ..structs import StackItem
+    from ..targeting import additional_sized_targets, enumerate_target_tuples
+    from .ops_stack import put_copy_on_stack
+
+    state = ctx.state
+    obj = state.objects.get(oid)
+    if obj is None:
+        return False
+    card = state.card_of(obj)
+    if card.is_land:
+        return False
+    if card.additional_cost is not None and not card.additional_optional:
+        return False
+    if card.additional_cost_options:
+        return False
+    if zone_of(state, oid) in cast_locked_zones(state, pid):
+        return False
+    if player_cant_cast_while_resolving(state, pid, card):
+        return False
+    min_x = cast_lock_min_x(state, pid, card)
+    if min_x is None or min_x > 0:
+        # A mana-value floor the copy cannot meet: X is 0 under this price.
+        return False
+    cost = ManaCost.parse(price)
+    purpose = spell_purpose(card)
+
+    def payable(targets) -> bool:
+        extra = -cost_reduction(state, pid, card, targets)
+        return can_pay_mana(state, pid, cost, extra_generic=extra, purpose=purpose)
+
+    tuples = [
+        t
+        for t in enumerate_target_tuples(
+            state,
+            pid,
+            additional_sized_targets(card.targets, 0),
+            oid,
+            size_cap=1 if card.strive is not None else None,
+        )
+        if payable(t)
+    ]
+    if not tuples:
+        return False
+    if not (
+        yield from ask_yes_no(ctx, f"Cast a copy of {card.name} by paying {cost.text}?", pid)
+    ):
+        return False
+    targets = yield from _ask_cast_targets(ctx, pid, card.name, tuples)
+    extra = -cost_reduction(state, pid, card, targets)
+    modes, mode_refs = free_cast_modes(state, pid, card, oid)
+    template = StackItem(
+        sid=-1, kind="spell", controller=pid, def_id=obj.def_id, oid=oid, modes=modes
+    )
+    copy = put_copy_on_stack(state, pid, template, targets=tuple(targets) + mode_refs)
+    paid = yield from pay(
+        state,
+        pid,
+        Cost(mana=cost),
+        None,
+        extra_generic=extra,
+        purpose=purpose,
+        record_colors_on=copy.oid,
+    )
+    if not paid:  # pragma: no cover - the offer proved this payable
+        state.stack.remove(copy)
+        return False
     return True
 
 

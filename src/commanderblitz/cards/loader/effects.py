@@ -570,14 +570,17 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
         return
     if "dealt_combat_damage_by" in who:
         # "…whose controller was dealt combat damage by this creature this
-        # turn" -- Steel Hellkite. The same shape as `attacked_by` and refused
-        # for the same reason: any subject but "self" would load and resolve to
-        # nobody, and a card that destroys nothing looks like a quiet board.
-        if who["dealt_combat_damage_by"] != "self" or len(who) > 1:
+        # turn" -- Steel Hellkite; "…by Estinien Varlineau or a Dragon". Refused
+        # for `attacked_by`'s reason: any other subject would load and resolve
+        # to nobody, and a card that destroys nothing looks like a quiet board.
+        if len(who) > 1:
             raise DslError(
-                f"{where}: 'dealt_combat_damage_by' takes 'self' and stands alone "
+                f"{where}: 'dealt_combat_damage_by' stands alone "
                 f'({{"dealt_combat_damage_by": "self"}}), got {dict(who)!r}'
             )
+        _validate_dealt_combat_damage_subject(
+            who["dealt_combat_damage_by"], f"{where}.dealt_combat_damage_by"
+        )
         return
     if "not" in who:
         # "target player **other than** its controller." The complement of a
@@ -610,6 +613,41 @@ def _validate_player_spec(who: Any, where: str, target_kinds: Mapping[str, str])
             )
 
 
+def _validate_dealt_combat_damage_subject(subject: Any, where: str) -> None:
+    """Check whom a ``dealt_combat_damage_by`` spec asks about.
+
+    ``"self"``, ``{"subtypes": [...]}`` (a non-empty list of subtype names) or
+    ``{"any_of": [...]}`` (a non-empty list of those). Every malformed subject
+    reads the ledger under a key nothing writes, so it counts nobody -- on
+    Estinien Varlineau that is a card that silently never draws.
+    """
+    shape = (
+        f'{where}: takes "self", {{"subtypes": ["Dragon"]}} or '
+        f'{{"any_of": ["self", {{"subtypes": ["Dragon"]}}]}}, got {subject!r}'
+    )
+    if subject == "self":
+        return
+    if not isinstance(subject, Mapping) or len(subject) != 1:
+        raise DslError(shape)
+    if "subtypes" in subject:
+        names = subject["subtypes"]
+        if (
+            not isinstance(names, (list, tuple))
+            or not names
+            or not all(isinstance(n, str) and n for n in names)
+        ):
+            raise DslError(f"{where}.subtypes: needs a non-empty list of subtype names, got {names!r}")
+        return
+    if "any_of" in subject:
+        parts = subject["any_of"]
+        if not isinstance(parts, (list, tuple)) or not parts:
+            raise DslError(f"{where}.any_of: needs a non-empty list of subjects, got {parts!r}")
+        for i, part in enumerate(parts):
+            _validate_dealt_combat_damage_subject(part, f"{where}.any_of[{i}]")
+        return
+    raise DslError(shape)
+
+
 def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[str, str]) -> None:
     """Check every player spec a selector or value carries *inside* it.
 
@@ -625,14 +663,15 @@ def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[st
 
     Walked rather than read off known paths, because selectors nest -- inside
     `any_of`, inside `max_count_of`, inside `sum` -- and it is the same check
-    wherever the clause sits. Only the two keys a selector spells a seat with
-    are read, and only in their mapping form: the words are checked by
+    wherever the clause sits. Only the two keys a selector spells a seat with,
+    and the `player_count` value whose whole argument is a seat spec, are read,
+    and only in their mapping form: the words are checked by
     `validate_selector` already.
     """
     if isinstance(node, Mapping):
         for key, value in node.items():
             path = f"{where}.{key}"
-            if key in ("controller", "player") and isinstance(value, Mapping):
+            if key in ("controller", "player", "player_count") and isinstance(value, Mapping):
                 _validate_player_spec(value, path, target_kinds)
             else:
                 _validate_nested_player_refs(value, path, target_kinds)
@@ -2118,6 +2157,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         raise DslError(
             f"{where}: 'grant_playable' needs 'objects' -- there is nothing to grant permission on"
         )
+    if "as_adventure" in effect:
+        # "…you may cast it from your graveyard as an Adventure" narrows a
+        # `grant_playable` permission to the Adventure half. Anywhere else it
+        # would load, print its sentence and narrow nothing.
+        if op != "grant_playable":
+            raise DslError(
+                f"{where}: 'as_adventure' narrows a grant_playable permission to the "
+                f"card's Adventure half, so it needs one"
+            )
+        if effect["as_adventure"] is not True:
+            raise DslError(f"{where}.as_adventure: the only value is true")
+        if effect.get("as_flashback"):
+            # Two different exiles for one resolution: flashback's is final,
+            # the Adventure's is the one the creature is cast out of (715.3d).
+            raise DslError(
+                f"{where}: 'as_adventure' and 'as_flashback' send the resolved spell "
+                f"to two different exiles -- write the one the card says"
+            )
+        if effect.get("playable_free"):
+            # The Adventure line is priced off the half's own mana cost; no
+            # card prints a free one, and the free rider is read on the front
+            # face's line only.
+            raise DslError(
+                f"{where}: 'as_adventure' casts the Adventure at its printed cost; "
+                f"'playable_free' beside it is not supported"
+            )
     if op == "exile" and effect.get("playable_this_turn") and "objects" not in effect:
         raise DslError(
             f"{where}: 'playable_this_turn' needs 'objects' -- "
@@ -2184,6 +2249,34 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: 'playable_free' leaves no mana to spend, so "
                 f"'any_color'/'any_type' beside it relaxes nothing"
+            )
+    if "playable_cost_reduction" in effect:
+        # "Spells you cast this way cost {2} less to cast" (Urianger
+        # Augurelt) is a rider on a "you may play it" permission, as
+        # `playable_free` is: on a bare exile it would load, print its
+        # sentence and discount nothing.
+        grants = op == "grant_playable" or (
+            op in ("exile", "look_at_top")
+            and ("playable" in effect or effect.get("playable_this_turn"))
+        )
+        if not grants:
+            raise DslError(
+                f"{where}: 'playable_cost_reduction' discounts the casts a 'playable' "
+                f"permission grants, so it needs one (exile / look_at_top with "
+                f"'playable', or grant_playable)"
+            )
+        amount = effect["playable_cost_reduction"]
+        if isinstance(amount, bool) or not isinstance(amount, int) or amount < 1:
+            # A reduction of 0 is no rider, and a negative one would be a tax
+            # nobody printed; "{2} less" is a fixed generic amount.
+            raise DslError(
+                f"{where}.playable_cost_reduction: the generic mana the permission's "
+                f"casts cost less, a positive integer; got {amount!r}"
+            )
+        if effect.get("playable_free"):
+            raise DslError(
+                f"{where}: 'playable_free' leaves no mana cost to reduce, so "
+                f"'playable_cost_reduction' beside it discounts nothing"
             )
     if "playable" in effect or "playable_this_turn" in effect:
         # Two spellings of one key: `playable_this_turn: true` is what every
@@ -2436,6 +2529,13 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: 'redirect_attack' needs 'objects' naming the attacking "
             f"creature to reselect for, normally {{'target': 't1'}}"
         )
+    if op == "remove_from_combat" and not effect.get("objects"):
+        # Same hole as `redirect_attack`: an empty pool removes nothing, and an
+        # Observed Stasis written that way would leave the attacker swinging.
+        raise DslError(
+            f"{where}: 'remove_from_combat' needs 'objects' naming the creatures "
+            f"to remove, e.g. {{'attached': true}} or {{'target': 't1'}}"
+        )
     if op == "choose_permanents" and "as" not in effect:
         # It changes nothing on the board, so a choice nobody reads back is a
         # question put to the player for no reason -- and a card written that
@@ -2593,10 +2693,12 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         "until_end_of_turn",
         "until_your_next_turn",
         "permanent",
+        "as_long_as_you_control_source",
     ):
         raise DslError(
             f"{where}: unknown grant_keyword duration {effect['duration']!r} "
-            f"(use 'until_end_of_turn', 'until_your_next_turn' or 'permanent')"
+            f"(use 'until_end_of_turn', 'until_your_next_turn', 'permanent' or "
+            f"'as_long_as_you_control_source')"
         )
     # And the same trap on the other three `TempEffect` ops: `duration` was
     # read by none of them, so "gets -2/-1 until your next turn" written with
@@ -2604,7 +2706,17 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
     # turns Liliana, the Last Hope's +1 is printed for.
     # (`animate` is guarded with the rest of its keys below: it also takes Oko's
     # `permanent`, which neither of the other two has.)
-    if op in ("pump", "lock_abilities") and effect.get(
+    if op == "pump" and effect.get("duration", "until_end_of_turn") not in (
+        "until_end_of_turn",
+        "until_your_next_turn",
+        "as_long_as_you_control_source",
+    ):
+        raise DslError(
+            f"{where}: unknown pump duration {effect['duration']!r} "
+            f"(use 'until_end_of_turn', 'until_your_next_turn' or "
+            f"'as_long_as_you_control_source')"
+        )
+    if op == "lock_abilities" and effect.get(
         "duration", "until_end_of_turn"
     ) not in ("until_end_of_turn", "until_your_next_turn"):
         raise DslError(
@@ -3502,6 +3614,20 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: cast_card takes no {key!r} -- it casts the 'objects' "
                     f"pool at its mana cost (a free cast is cast_from_hand)"
                 )
+    if op == "cast_copy" and "cost" in effect:
+        # "You may cast the copy by paying {3} rather than paying its mana
+        # cost": an alternative cost, a mana string. An unparsable one would
+        # raise mid-resolution, and an X in it has nothing to announce it --
+        # no printed price of this shape carries one.
+        price = effect["cost"]
+        if not isinstance(price, str) or not price:
+            raise DslError(f"{where}: cast_copy's 'cost' is a mana cost string like '{{3}}'")
+        try:
+            parsed = ManaCost.parse(price)
+        except DslError as exc:
+            raise DslError(f"{where}: cast_copy cost {price!r} is not a mana cost") from exc
+        if parsed.x_count:
+            raise DslError(f"{where}: cast_copy's alternative cost {price!r} cannot hold an X")
     if op == "exchange_life_total":
         # 701.12: the player half is named on every printing ("target
         # opponent's", "your"), and the creature half is always the ability's
@@ -3642,6 +3768,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 raise DslError(f"{where}: cast_from_hand's 'per_owner' must be a boolean")
             if effect["per_owner"] and "objects" not in effect:
                 raise DslError(f"{where}: cast_from_hand's 'per_owner' needs 'objects'")
+        if "exiles" in effect and not isinstance(effect["exiles"], bool):
+            # `cast_card`'s rider and its refusal: a string "false" read as
+            # truthy would exile a spell the card sends back to the graveyard.
+            raise DslError(f"{where}: cast_from_hand's 'exiles' is true or false")
 
     if op == "animate":
         # "Becomes a 4/4 creature" is the whole point, and an animation with no

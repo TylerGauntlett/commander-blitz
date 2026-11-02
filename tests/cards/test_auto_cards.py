@@ -106,6 +106,15 @@ class TestEveryAutoCardStillPasses:
         missing = sorted(set(by_id) - set(expectations) - BACK_FACE_IDS)
         assert missing == [], f"authored with no expectation: {missing[:10]}"
 
+    def test_no_card_of_its_own_is_anybody_s_face(self):
+        # An expectation marks a card authored in its own right; a face never
+        # has one. An id that is both is a real card some other card's link
+        # landed on -- Stensian Sanguinist's `prepared_face` naming the real
+        # Exsanguinate -- and `link_faces` then hides it from `by_name`, so no
+        # deck list can name it any more.
+        stolen = sorted(BACK_FACE_IDS & set(_expectations()))
+        assert stolen == [], f"cards of their own linked as a face: {stolen[:10]}"
+
     def test_no_orphan_expectations(self, by_id):
         expectations = _expectations()
         orphans = sorted(set(expectations) - set(by_id))

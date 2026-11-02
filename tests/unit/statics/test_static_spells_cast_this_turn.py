@@ -265,11 +265,10 @@ class TestTheLoader:
     def test_a_player_spec_loads(self, who):
         self.compile({"spells_cast_this_turn": who})
 
-    def test_the_typed_form_is_refused(self):
-        """The effect side's `{"player", "filter"}` matches cast cards' faces,
-        which no static reads; refused by name rather than read as 0."""
-        with pytest.raises(DslError, match="bare player spec"):
-            self.compile({"spells_cast_this_turn": {"player": "opponent", "filter": {"types": ["Instant"]}}})
+    def test_the_typed_form_loads_too(self):
+        """The effect side's `{"player", "filter"}`; its readings are pinned in
+        `test_static_typed_spells_cast.py`."""
+        self.compile({"spells_cast_this_turn": {"player": "opponent", "filter": {"types": ["Instant"]}}})
 
     @pytest.mark.parametrize("who", ["active_player", "opponents", True])
     def test_an_unknown_player_spec_is_refused(self, who):

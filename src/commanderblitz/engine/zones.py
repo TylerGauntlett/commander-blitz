@@ -31,7 +31,7 @@ from .mana import OTHER_PAYMENT
 from .objects import FINALITY, GameObject
 from .player_statics import counter_placement_replacements, counters_prohibited
 from .structs import CONVOKED_BINDING
-from .temp_effects import end_redirects_to
+from .temp_effects import end_redirects_to, end_source_bound
 from .triggers import delayed_watches_departure, fire
 
 if TYPE_CHECKING:  # pragma: no cover
@@ -356,6 +356,9 @@ def move_object(
         # battlefield)". It is not, and the object that may come back is a new
         # one (400.7) under the same oid. See `structs.DamageRedirect`.
         end_redirects_to(state, oid)
+        # "…for as long as you control this creature" is over (611.2b), and
+        # the permanent that may come back under the same oid is not it.
+        end_source_bound(state, oid)
         # "Each creature that convoked this spell" (702.51c) is that object,
         # and the one that may come back under the same oid is not it.
         for item in state.stack:
@@ -2205,6 +2208,7 @@ def end_permissions_until_next_exile(state: GameState, source_oid: int | None) -
         obj.playable_any_color = False
         obj.playable_free = False
         obj.playable_alt_cost = None
+        obj.playable_cost_reduction = 0
     source.playable_grants = []
 
 

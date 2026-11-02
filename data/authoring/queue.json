@@ -2312,12 +2312,12 @@
     },
     "Advanced Reconstruction": {
       "edhrec_rank": 10245,
-      "gate": "template",
+      "gate": null,
       "name": "Advanced Reconstruction",
-      "reason": "no template for: At the beginning of your first main phase, mill a card, then exile a card from your gravey",
+      "reason": "",
       "scryfall_id": "cc912fec-827d-4deb-8430-79f5ea31ca9b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Advanced Stitchwing": {
@@ -6152,12 +6152,12 @@
     },
     "Alisaie Leveilleur": {
       "edhrec_rank": 4001,
-      "gate": "template",
+      "gate": null,
       "name": "Alisaie Leveilleur",
-      "reason": "no template for: Partner with Alphinaud Leveilleur",
+      "reason": "",
       "scryfall_id": "ba96f831-02cb-4a74-a2e4-7f76444e3cd7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alistair, the Brigadier": {
@@ -6702,12 +6702,12 @@
     },
     "Alphinaud Leveilleur": {
       "edhrec_rank": 4621,
-      "gate": "template",
+      "gate": null,
       "name": "Alphinaud Leveilleur",
-      "reason": "no template for: Partner with Alisaie Leveilleur",
+      "reason": "",
       "scryfall_id": "37e4ab61-bf18-4f9f-ba78-3e08a21aaf4d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Alpine Grizzly": {
@@ -12572,12 +12572,12 @@
     },
     "Ardbert, Warrior of Darkness": {
       "edhrec_rank": 5112,
-      "gate": "template",
+      "gate": null,
       "name": "Ardbert, Warrior of Darkness",
-      "reason": "no template for: Whenever you cast a white spell, put a +1/+1 counter on each legendary creature you contro",
+      "reason": "",
       "scryfall_id": "866400d8-c94b-4b1a-ba5a-20f9d92476db",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arden Angel": {
@@ -15532,12 +15532,12 @@
     },
     "Astrologian's Planisphere": {
       "edhrec_rank": 5488,
-      "gate": "template",
+      "gate": null,
       "name": "Astrologian's Planisphere",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "a0f6e2d7-58b5-4a7d-8c42-e25185cd173f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Asylum Visitor": {
@@ -29522,12 +29522,12 @@
     },
     "Blue Mage's Cane": {
       "edhrec_rank": 7708,
-      "gate": "template",
+      "gate": null,
       "name": "Blue Mage's Cane",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "1b3188ab-feb9-4486-bda0-1b80f128f7d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blue Mana Battery": {
@@ -46792,12 +46792,12 @@
     },
     "Circle of Power": {
       "edhrec_rank": 2485,
-      "gate": "template",
+      "gate": null,
       "name": "Circle of Power",
-      "reason": "no template for: You draw two cards and you lose 2 life. Create a 0/1 black Wizard creature token with \"Whe",
+      "reason": "",
       "scryfall_id": "b6dc1f5a-a6cc-4ab4-8bb9-e216e24ca735",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Circle of Protection: Art": {
@@ -60412,12 +60412,12 @@
     },
     "Dancer's Chakrams": {
       "edhrec_rank": 4418,
-      "gate": "template",
+      "gate": null,
       "name": "Dancer's Chakrams",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "13764c53-57cc-4418-8a15-cdb72f6f3b0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Dancing Scimitar": {
@@ -82932,12 +82932,12 @@
     },
     "Emet-Selch of the Third Seat": {
       "edhrec_rank": 3206,
-      "gate": "template",
+      "gate": null,
       "name": "Emet-Selch of the Third Seat",
-      "reason": "no template for: Spells you cast from your graveyard cost {2} less to cast",
+      "reason": "",
       "scryfall_id": "8a38634f-a100-4493-87c3-0ecc51ca565d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Emet-Selch, Unsundered // Hades, Sorcerer of Eld": {
@@ -86382,12 +86382,12 @@
     },
     "Estinien Varlineau": {
       "edhrec_rank": 10408,
-      "gate": "template",
+      "gate": null,
       "name": "Estinien Varlineau",
-      "reason": "no template for: Whenever you cast a noncreature spell, put a +1/+1 counter on . It gains flying until end ",
+      "reason": "",
       "scryfall_id": "356432cf-a17c-4147-9d02-921960032d0e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Estrid's Invocation": {
@@ -89262,12 +89262,12 @@
     },
     "Eye of Nidhogg": {
       "edhrec_rank": 3811,
-      "gate": "template",
+      "gate": null,
       "name": "Eye of Nidhogg",
-      "reason": "no template for: Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and dea",
+      "reason": "",
       "scryfall_id": "186862e7-91ba-47e9-bc38-e8e20772d40c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eye of Nowhere": {
@@ -91162,12 +91162,12 @@
     },
     "Fandaniel, Telophoroi Ascian": {
       "edhrec_rank": 3414,
-      "gate": "template",
+      "gate": null,
       "name": "Fandaniel, Telophoroi Ascian",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, surveil 1",
+      "reason": "",
       "scryfall_id": "08c9bf6c-fc52-4565-96d1-951a314e59e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fang Dragon // Forktail Sweep": {
@@ -95042,12 +95042,12 @@
     },
     "Final Judgment": {
       "edhrec_rank": 8346,
-      "gate": "template",
+      "gate": null,
       "name": "Final Judgment",
-      "reason": "no template for: Exile all creatures",
+      "reason": "",
       "scryfall_id": "438a7db0-8005-46ac-8dd1-e7e364fd2ba7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Final Parting": {
@@ -103962,12 +103962,12 @@
     },
     "G'raha Tia, Scion Reborn": {
       "edhrec_rank": 6236,
-      "gate": "template",
+      "gate": null,
       "name": "G'raha Tia, Scion Reborn",
-      "reason": "no template for: Throw Wide the Gates — Whenever you cast a noncreature spell, you may pay X life, where X ",
+      "reason": "",
       "scryfall_id": "214453a2-9dcb-4bab-853f-5b56bbcbe4f8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gabriel Angelfire": {
@@ -127982,12 +127982,12 @@
     },
     "Hildibrand Manderville // Gentleman's Rise": {
       "edhrec_rank": 10479,
-      "gate": "template",
+      "gate": null,
       "name": "Hildibrand Manderville // Gentleman's Rise",
-      "reason": "no template for: Creature tokens you control get +1/+1",
+      "reason": "",
       "scryfall_id": "60aed76e-2265-471d-8e41-1d8605603b78",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hill Giant": {
@@ -130882,12 +130882,12 @@
     },
     "Hraesvelgr of the First Brood": {
       "edhrec_rank": 8075,
-      "gate": "template",
+      "gate": null,
       "name": "Hraesvelgr of the First Brood",
-      "reason": "no template for: Flying, vigilance, ward {2}",
+      "reason": "",
       "scryfall_id": "11f0886a-fbc0-4060-b506-a0b0f9de8b0b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hua Tuo, Honored Physician": {
@@ -132532,12 +132532,12 @@
     },
     "Hypnotic Sprite // Mesmeric Glare": {
       "edhrec_rank": 5711,
-      "gate": "template",
+      "gate": null,
       "name": "Hypnotic Sprite // Mesmeric Glare",
-      "reason": "proxy simplified it: only the first half exists; the other half is not modelled",
+      "reason": "",
       "scryfall_id": "4358fcf2-e07c-4a0f-8f69-5d0f83adeb20",
-      "source": "",
-      "status": "unexpressible",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hypnox": {
@@ -135112,12 +135112,12 @@
     },
     "Impulsivity": {
       "edhrec_rank": 6248,
-      "gate": "template",
+      "gate": null,
       "name": "Impulsivity",
-      "reason": "no template for: When this creature enters, you may cast target instant or sorcery card from a graveyard wi",
+      "reason": "",
       "scryfall_id": "a85bec35-f22e-4374-ab8a-94663d69335a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Imskir Iron-Eater": {
@@ -138352,12 +138352,12 @@
     },
     "Into the Story": {
       "edhrec_rank": 5624,
-      "gate": "template",
+      "gate": null,
       "name": "Into the Story",
-      "reason": "no template for: This spell costs {3} less to cast if an opponent has seven or more cards in their graveyar",
+      "reason": "",
       "scryfall_id": "24c55c03-2c7a-416d-81d6-74a77a103704",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Into the Time Vortex": {
@@ -152532,12 +152532,12 @@
     },
     "Krile Baldesion": {
       "edhrec_rank": 7886,
-      "gate": "template",
+      "gate": null,
       "name": "Krile Baldesion",
-      "reason": "no template for: Trace Aether — Whenever you cast a noncreature spell, you may return target creature card ",
+      "reason": "",
       "scryfall_id": "125dd19b-98a0-49d9-a870-63214255e12a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kris Mage": {
@@ -163652,12 +163652,12 @@
     },
     "Lyse Hext": {
       "edhrec_rank": 3703,
-      "gate": "template",
+      "gate": null,
       "name": "Lyse Hext",
-      "reason": "no template for: Noncreature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "227ada0a-e1b5-44ed-8303-d6449069599f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lyzolda, the Blood Witch": {
@@ -181092,12 +181092,12 @@
     },
     "Murderous Rider // Swift End": {
       "edhrec_rank": 1634,
-      "gate": "template",
+      "gate": null,
       "name": "Murderous Rider // Swift End",
-      "reason": "no template for: When this creature dies, put it on the bottom of its owner's library",
+      "reason": "",
       "scryfall_id": "dd239710-62ef-43b5-aea2-e82bb385744d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Murderous Spoils": {
@@ -190742,12 +190742,12 @@
     },
     "Observed Stasis": {
       "edhrec_rank": 5628,
-      "gate": "template",
+      "gate": null,
       "name": "Observed Stasis",
-      "reason": "no template for: When this Aura enters, remove enchanted creature from combat. Then draw a card for each ta",
+      "reason": "",
       "scryfall_id": "6301c10c-8c27-4595-a0a7-30c621332b2c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Obsessive Astronomer": {
@@ -197532,12 +197532,12 @@
     },
     "Papalymo Totolymo": {
       "edhrec_rank": 4245,
-      "gate": "template",
+      "gate": null,
       "name": "Papalymo Totolymo",
-      "reason": "no template for: Whenever you cast a noncreature spell, deals 1 damage to each opponent and you gain 1 life",
+      "reason": "",
       "scryfall_id": "0b876b1e-fcf4-4e5c-81b0-1080ac8099ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Papercraft Decoy": {
@@ -217402,12 +217402,12 @@
     },
     "Reaper's Scythe": {
       "edhrec_rank": 7158,
-      "gate": "template",
+      "gate": null,
       "name": "Reaper's Scythe",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "723d9139-d75e-42e9-8ffc-5df053096839",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Reaper's Talisman": {
@@ -231082,12 +231082,12 @@
     },
     "Sage's Nouliths": {
       "edhrec_rank": 11323,
-      "gate": "template",
+      "gate": null,
       "name": "Sage's Nouliths",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "a12ff7c3-6ae0-4098-9240-ff3fd16a5288",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sage's Reverie": {
@@ -268052,12 +268052,12 @@
     },
     "Sublime Epiphany": {
       "edhrec_rank": 1710,
-      "gate": "template",
+      "gate": null,
       "name": "Sublime Epiphany",
-      "reason": "no template for: Choose one or more —",
+      "reason": "",
       "scryfall_id": "a71d0330-ae9b-48c4-802b-b2383958e0d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sublime Exhalation": {
@@ -268952,12 +268952,12 @@
     },
     "Summon: Good King Mog XII": {
       "edhrec_rank": 5008,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Good King Mog XII",
-      "reason": "no template for: I — Create two 1/2 white Moogle creature tokens with lifelink",
+      "reason": "",
       "scryfall_id": "3aabb93a-7fa2-4fb5-a683-db1d274ac367",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Ixion": {
@@ -279492,12 +279492,12 @@
     },
     "Thancred Waters": {
       "edhrec_rank": 8396,
-      "gate": "template",
+      "gate": null,
       "name": "Thancred Waters",
-      "reason": "no template for: Royal Guard — When enters, another target legendary permanent you control gains indestruct",
+      "reason": "",
       "scryfall_id": "bcd85c4e-c674-4753-ae82-80293554fdc5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thanos, Death's Consort": {
@@ -289872,12 +289872,12 @@
     },
     "Torrential Gearhulk": {
       "edhrec_rank": 2714,
-      "gate": "template",
+      "gate": null,
       "name": "Torrential Gearhulk",
-      "reason": "no template for: When this creature enters, you may cast target instant card from your graveyard without pa",
+      "reason": "",
       "scryfall_id": "a6a0afd5-f3f9-459e-bd03-1a7a3521b570",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Torsten Von Ursus": {
@@ -291392,12 +291392,12 @@
     },
     "Transpose": {
       "edhrec_rank": 2842,
-      "gate": "template",
+      "gate": null,
       "name": "Transpose",
-      "reason": "no template for: Draw a card, then discard a card. You lose 1 life. If this spell was cast from your hand, ",
+      "reason": "",
       "scryfall_id": "51cb61ab-0508-4668-8680-051d38df7ccb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trap Digger": {
@@ -299492,12 +299492,12 @@
     },
     "Urianger Augurelt": {
       "edhrec_rank": 9151,
-      "gate": "template",
+      "gate": null,
       "name": "Urianger Augurelt",
-      "reason": "no template for: Whenever you play a land from exile or cast a spell from exile, you gain 2 life",
+      "reason": "",
       "scryfall_id": "44d44107-da15-41b9-8dfb-6335c1cbd83a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uril, the Miststalker": {
@@ -306942,12 +306942,12 @@
     },
     "Void Rend": {
       "edhrec_rank": 765,
-      "gate": "template",
+      "gate": null,
       "name": "Void Rend",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "b1fe4252-f5f8-405a-82c4-2c7b35e7e7fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Void Shatter": {
@@ -314362,12 +314362,12 @@
     },
     "White Auracite": {
       "edhrec_rank": 3991,
-      "gate": "template",
+      "gate": null,
       "name": "White Auracite",
-      "reason": "no template for: When this artifact enters, exile target nonland permanent an opponent controls until this ",
+      "reason": "",
       "scryfall_id": "2df6f515-9d21-4769-b1c4-c219611bccbb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "White Dragon": {
@@ -320382,12 +320382,12 @@
     },
     "Y'shtola, Night's Blessed": {
       "edhrec_rank": 2780,
-      "gate": "template",
+      "gate": null,
       "name": "Y'shtola, Night's Blessed",
-      "reason": "no template for: At the beginning of each end step, if a player lost 4 or more life this turn, you draw a c",
+      "reason": "",
       "scryfall_id": "0bda4de9-d0ec-4d27-b92b-8a76779747cf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yahenni's Expertise": {

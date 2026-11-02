@@ -1,0 +1,60 @@
+{
+  "_comment": "Cards that exist only for tests/unit/combat/test_remove_from_combat.py. Never part of a deck list. t_rfc_stasis is Observed Stasis's enters trigger at {0}, without its static line; t_rfc_trick is the bare op on a target, castable by either seat at any step.",
+  "cards": [
+    {
+      "id": "t_rfc_stasis",
+      "name": "Test Removal Stasis",
+      "oracle_text": "Flash\nEnchant creature an opponent controls\nWhen this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.",
+      "mana_cost": "{0}",
+      "types": ["Enchantment"],
+      "subtypes": ["Aura"],
+      "keywords": ["flash"],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {"zone": "battlefield", "types": ["Creature"], "controller": "opponent"}
+        }
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.",
+          "trigger": {"event": "self_enters"},
+          "effects": [
+            {"op": "remove_from_combat", "objects": {"attached": true}},
+            {"op": "snapshot", "objects": {"attached": true}, "as": "enchanted"},
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "count": {
+                  "zone": "battlefield",
+                  "types": ["Creature"],
+                  "tapped": true,
+                  "controller": {"controller_of": "enchanted"}
+                }
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_rfc_trick",
+      "name": "Test Removal Trick",
+      "oracle_text": "Remove target creature from combat.",
+      "mana_cost": "{0}",
+      "types": ["Instant"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [{"op": "remove_from_combat", "objects": {"target": "t1"}}]
+    }
+  ]
+}

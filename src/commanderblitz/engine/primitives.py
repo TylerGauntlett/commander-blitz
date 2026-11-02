@@ -49,6 +49,7 @@ from .structs import CONTROL_DURATIONS, DamageRedirect, TempEffect
 from .temp_effects import (
     combat_fogged,
     damage_redirect,
+    end_source_bound,
     life_floor,
     permanent_shielded,
     preventing_shield,
@@ -378,7 +379,14 @@ def gain_life(state: GameState, pid: int, amount: int, source: int | None = None
     return amount
 
 
-def lose_life(state: GameState, pid: int, amount: int, source: int | None = None) -> int:
+def lose_life(
+    state: GameState,
+    pid: int,
+    amount: int,
+    source: int | None = None,
+    *,
+    batch: int | None = None,
+) -> int:
     """Take life off a player, applying any replacement of the loss.
 
     Returns **what was actually lost**, not what was asked for, and the
@@ -390,6 +398,10 @@ def lose_life(state: GameState, pid: int, amount: int, source: int | None = None
     The multiplier applies to life paid as a *cost* too (`costs.pay_life`),
     which is right: 118.4 makes paying life a loss of life like any other, and
     Bloodletter of Aclazotz says "would lose life" without naming a source.
+
+    ``batch`` is the simultaneous life-loss event this loss belongs to, put on
+    `LIFE_LOST` for a ``batched`` `life_lost` trigger to group by: the effect
+    op or cost payment taking it, `state.event_batch`, unless the caller says.
     """
     if amount <= 0:
         return 0
@@ -400,7 +412,10 @@ def lose_life(state: GameState, pid: int, amount: int, source: int | None = None
         return 0
     amount *= life_loss_multiplier(state, pid)
     _move_life(state, pid, -amount)
-    fire(state, EventType.LIFE_LOST, player=pid, source=source, amount=amount)
+    fire(
+        state, EventType.LIFE_LOST, player=pid, source=source, amount=amount,
+        batch=state.event_batch if batch is None else batch,
+    )
     return amount
 
 
@@ -411,9 +426,16 @@ def damage_player(
     source_oid: int | None,
     *,
     is_combat: bool = False,
+    batch: int | None = None,
     redirected: tuple[DamageRedirect, ...] = (),
 ) -> int:
     """Deal damage to a player, applying lifelink and commander damage tracking.
+
+    ``batch`` is the simultaneous damage event this damage belongs to, put on
+    the `LIFE_LOST` it causes for a ``batched`` `life_lost` trigger to group
+    by, and handed to `damage_permanent` when a redirect moves it. Combat
+    damage passes the step's own (510.2); anything else is part of the effect
+    op dealing it, `state.event_batch`.
 
     ``redirected`` is the redirects this damage has already been through, so
     none applies to it twice (614.5); only the redirect itself passes it.
@@ -431,7 +453,7 @@ def damage_player(
     if (redirect := damage_redirect(state, pid=pid, applied=redirected)) is not None:
         return damage_permanent(
             state, redirect.to, amount, source_oid,
-            is_combat=is_combat, redirected=(*redirected, redirect),
+            is_combat=is_combat, batch=batch, redirected=(*redirected, redirect),
         )
     # "Damage can't be prevented" (Everlasting Torment): every prevention below
     # is skipped -- the shield, protection, the dealer's shield, the fog, absorb
@@ -628,7 +650,10 @@ def damage_player(
         # not the damage -- protection is the effect that stops the damage, and
         # Teferi's Protection prints both sentences because they differ.
         if lost:
-            fire(state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost)
+            fire(
+                state, EventType.LIFE_LOST, player=pid, source=source_oid, amount=lost,
+                batch=state.event_batch if batch is None else batch,
+            )
     # Toxic N (702.164b, 120.3g): *combat* damage to a player from a creature
     # with toxic also gives that player N poison counters -- "in addition to the
     # damage's other results", so it sits after the branch above rather than in
@@ -1848,6 +1873,9 @@ def change_control(
     previous = obj.controller
     obj.controller = pid
     obj.entered_turn = state.turn
+    # "…for as long as you control <this>" (611.2b): whoever began it no
+    # longer does, and a later handback does not begin it again.
+    end_source_bound(state, oid)
     if state.combat is not None:
         state.combat.remove(oid)
     if duration in ("until_end_of_turn", "end_of_your_next_turn"):
@@ -1921,10 +1949,12 @@ def pump(
     source: int | None = None,
     *,
     until_player: int | None = None,
+    while_controller: int | None = None,
 ) -> None:
     """ "Gets +3/+3 until end of turn" -- or, with ``until_player``, "gets -2/-1
     **until your next turn**" (Liliana, the Last Hope). See
-    `TempEffect.until_player` for where the longer one wears off."""
+    `TempEffect.until_player` for where the longer one wears off, and
+    `TempEffect.while_controller` for "for as long as you control" ``source``."""
 
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -1936,6 +1966,7 @@ def pump(
             toughness=toughness,
             source=source,
             until_player=until_player,
+            while_controller=while_controller,
         )
     )
     state.bump_chars()
@@ -2078,8 +2109,14 @@ def grant_keyword(
     *,
     permanent: bool = False,
     until_player: int | None = None,
+    while_controller: int | None = None,
 ) -> None:
     """Give a permanent a keyword, until end of turn or for as long as it lasts.
+
+    ``while_controller`` is the third length: "…gains indestructible **for as
+    long as you control** Thancred Waters" -- the entry rides `until_eot` with
+    no clock and ends when ``source`` leaves or changes hands
+    (`TempEffect.while_controller`).
 
     ``permanent`` is riot's "or with **haste**", and the distinction is not
     cosmetic: an until-end-of-turn haste on a creature that entered this turn
@@ -2104,6 +2141,7 @@ def grant_keyword(
                 source=source,
                 timestamp=state.alloc_timestamp(),
                 until_player=until_player,
+                while_controller=while_controller,
             )
         )
     state.bump_chars()
@@ -2333,7 +2371,9 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
     """Whether the cleanup step now running is the end of ``temp``'s duration.
 
     "Until end of turn" ends in every cleanup.  "Until your next turn" ends in
-    none of them -- in its player's untap step instead.  "Until the end of your
+    none of them -- in its player's untap step instead -- and neither does "for
+    as long as you control" its source (`temp_effects.end_source_bound`).
+    "Until the end of your
     next turn" ends in the cleanup of the first of its seat's turns to *begin*
     after it was made, so the turn check is strict: made during that seat's own
     turn, this cleanup ends the turn it was made in, which is not "your next
@@ -2341,7 +2381,7 @@ def _ends_this_cleanup(state: GameState, temp: TempEffect) -> bool:
     the same words.  Reading the active player rather than a stored turn number
     is what lets an extra turn, or a seat leaving, move the end with it.
     """
-    if temp.until_player is not None:
+    if temp.until_player is not None or temp.while_controller is not None:
         return False
     if temp.until_end_of_turn_of is None:
         return True

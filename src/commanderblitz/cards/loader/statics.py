@@ -25,6 +25,7 @@ from commanderblitz.engine.effects.values import (
 from commanderblitz.engine.errors import DslError
 
 from .vocabulary import (
+    CAST_ORIGIN_ZONES,
     COST_CONDITION_HEADS,
     COST_REDUCTION_FILTER_KEYS,
     COST_REDUCTION_KEYS,
@@ -32,6 +33,7 @@ from .vocabulary import (
     COST_REDUCTION_ZONES,
     KNOWN_SUPERTYPES,
     KNOWN_TYPES,
+    SPELL_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
     STATIC_CONDITION_OPS,
     STATIC_COUNT_FILTER_KEYS,
@@ -424,6 +426,86 @@ def _validate_static_extreme_value(spec: Any, where: str) -> None:
     _validate_static_count_filter(objects, f"{where}.objects")
 
 
+def _validate_static_typed_spells_cast(spec: Mapping[str, Any], where: str) -> None:
+    """The typed per-turn cast leaf, ``{"player": …, "filter": …}``.
+
+    "As long as you've cast two or more **noncreature** spells this turn" --
+    Lyse Hext. The effect side's typed form, matched by the same
+    `characteristics._matches_printed` against the face each cast recorded in
+    `TurnLedger.spells_cast_ids`. So the filter takes the printed-face keys a
+    spell filter does, less `controller` (``player`` already names the
+    caster): a board-state key would load and match nothing, and a misspelled
+    type would count zero for ever and quietly switch the static off.
+    """
+    if unknown := set(spec) - {"player", "filter"}:
+        raise DslError(
+            f"{where}: unknown keys {sorted(unknown)} (a player spec, or 'player' and 'filter')"
+        )
+    who = spec.get("player", "you")
+    if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
+        raise DslError(
+            f"{where}.player: must name one of {sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"
+        )
+    filt = spec.get("filter")
+    if not isinstance(filt, Mapping) or not filt:
+        raise DslError(
+            f"{where}.filter: a non-empty filter on the cast spells' printed faces, "
+            f"e.g. {{'not_types': ['Creature']}}; an unfiltered count is the bare "
+            f"player spec, got {filt!r}"
+        )
+    allowed = SPELL_FILTER_KEYS - {"controller"}
+    if unknown := set(filt) - allowed:
+        raise DslError(
+            f"{where}.filter: a cast spell is matched on its printed face; "
+            f"unsupported keys {sorted(unknown)} (allowed: {sorted(allowed)})"
+        )
+    _check_mana_cost_key(filt, f"{where}.filter")
+    for key in ("types", "any_types", "not_types"):
+        for name in filt.get(key) or ():
+            if name not in KNOWN_TYPES:
+                raise DslError(
+                    f"{where}.filter.{key}: unknown type {name!r} (known: {sorted(KNOWN_TYPES)})"
+                )
+    for name in filt.get("supertypes") or ():
+        if name not in KNOWN_SUPERTYPES:
+            raise DslError(
+                f"{where}.filter.supertypes: unknown supertype {name!r} "
+                f"(known: {sorted(KNOWN_SUPERTYPES)})"
+            )
+
+
+def _validate_cast_zone_keys(filt: Mapping[str, Any], where: str) -> None:
+    """``from_zone`` / ``not_from_zone``: zones a card can be cast from.
+
+    Each is one zone name or a non-empty list of them, out of
+    `CAST_ORIGIN_ZONES`. A typo (``"graveyards"``) or a zone nothing is cast
+    from (``"battlefield"``) would load clean and discount nothing, and a zone
+    named on both sides would discount nothing either -- both refused here.
+    """
+    named: dict[str, set[str]] = {}
+    for key in ("from_zone", "not_from_zone"):
+        spec = filt.get(key)
+        if spec is None:
+            continue
+        zones = [spec] if isinstance(spec, str) else spec
+        if (
+            not isinstance(zones, list)
+            or not zones
+            or any(not isinstance(z, str) or z not in CAST_ORIGIN_ZONES for z in zones)
+        ):
+            raise DslError(
+                f"{where}.{key}: a zone a card is cast from, or a non-empty list of "
+                f"them, from {sorted(CAST_ORIGIN_ZONES)}; got {spec!r}"
+            )
+        named[key] = set(zones)
+    both = named.get("from_zone", set()) & named.get("not_from_zone", set())
+    if both:
+        raise DslError(
+            f"{where}: {sorted(both)} is named by both 'from_zone' and "
+            f"'not_from_zone', so no cast from it could ever match"
+        )
+
+
 def _validate_static_value(value: Any, where: str) -> None:
     """Static abilities allow ``const``, ``count`` and the per-player leaves."""
     if isinstance(value, int):
@@ -537,13 +619,8 @@ def _validate_static_value(value: Any, where: str) -> None:
             validate_objects=_validate_static_count_filter,
         )
     if isinstance(value.get("spells_cast_this_turn"), Mapping):
-        # The effect side's typed form, `{"player": …, "filter": …}`. Refused by
-        # name rather than by the generic message below, which would read as
-        # though the leaf itself were unknown here.
-        raise DslError(
-            f"{where}.spells_cast_this_turn: a static takes the bare player spec "
-            f"only, e.g. 'opponent' (an opponent has cast a spell this turn), "
-            f"got {value['spells_cast_this_turn']!r}"
+        _validate_static_typed_spells_cast(
+            value["spells_cast_this_turn"], f"{where}.spells_cast_this_turn"
         )
     for key in (
         STATIC_LIFE_KEYS
@@ -553,6 +630,8 @@ def _validate_static_value(value: Any, where: str) -> None:
         | STATIC_DEATHS_KEYS
     ) & set(value):
         who = value[key]
+        if key in STATIC_SPELLS_CAST_KEYS and isinstance(who, Mapping):
+            continue  # the typed form, checked above
         if not isinstance(who, str) or who not in STATIC_LIFE_PLAYERS:
             raise DslError(
                 f"{where}.{key}: must name one of {sorted(STATIC_LIFE_PLAYERS)}, got {who!r}"

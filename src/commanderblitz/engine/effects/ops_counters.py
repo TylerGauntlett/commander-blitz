@@ -30,6 +30,7 @@ from .board_helpers import (
 )
 from .context import EffectContext, ask_yes_no
 from .counter_removal import remove_counters_one_at_a_time
+from .ops_cards import cast_copy_paying
 from .registry import register
 from .selectors import (
     choose_objects,
@@ -905,6 +906,11 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     ``optional`` is the printed "you **may** cast the copy", asked once per
     card. Cipher does not set it -- its own "may" is the reflexive trigger that
     got here -- so nothing gained a prompt.
+
+    ``cost`` is "you may cast the copy **by paying {3} rather than paying its
+    mana cost**" -- Blue Mage's Cane: an alternative cost (118.9), priced and
+    paid by `ops_cards.cast_copy_paying`. Always a choice, so it asks whether
+    or not ``optional`` is set, and only when the price is payable.
     """
 
     if "objects" in spec:
@@ -925,6 +931,9 @@ def op_cast_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         if player_cant_cast_while_resolving(ctx.state, ctx.controller, ctx.state.card_of(obj)):
             # A filtered lock (Narset Transcendent's emblem) stops this copy
             # alone; the total one was answered above.
+            continue
+        if "cost" in spec:
+            yield from cast_copy_paying(ctx, ctx.controller, oid, str(spec["cost"]))
             continue
         if optional and not (
             yield from ask_yes_no(

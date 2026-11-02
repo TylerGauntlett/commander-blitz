@@ -1,0 +1,104 @@
+{
+  "_comment": "Shapes for tests/unit/casting/test_cast_adventure_from_graveyard.py. t_afg_hildi is Hildibrand Manderville's shape: an adventurer whose death grants 'you may cast it from your graveyard as an Adventure until the end of your next turn' (grant_playable with as_adventure). t_afg_rise is its Adventure, an instant that gains 3 life so the resolution is observable without a token. t_afg_plain is the near miss written without as_adventure, which grants the creature face. t_afg_kill is the removal that makes either of them die.",
+  "cards": [
+    {
+      "id": "t_afg_hildi",
+      "name": "Test Gentleman",
+      "oracle_text": "When this creature dies, you may cast it from your graveyard as an Adventure until the end of your next turn.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 2,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "second_face": "t_afg_rise",
+      "adventure": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, you may cast it from your graveyard as an Adventure until the end of your next turn.",
+          "trigger": {"event": "dies", "source": "self"},
+          "effects": [
+            {
+              "op": "grant_playable",
+              "objects": {"self_only": true, "zone": "graveyard"},
+              "playable": "end_of_your_next_turn",
+              "as_adventure": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_afg_rise",
+      "name": "Test Rise",
+      "mana_cost": "{2}{B}",
+      "types": ["Instant"],
+      "subtypes": ["Adventure"],
+      "colors": ["B"],
+      "spell_effects": [
+        {"op": "gain_life", "player": "you", "amount": {"const": 3}}
+      ]
+    },
+    {
+      "id": "t_afg_plain",
+      "name": "Test Plain Gentleman",
+      "oracle_text": "When this creature dies, you may cast it from your graveyard until the end of your next turn.",
+      "mana_cost": "{1}{B}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "power": 2,
+      "toughness": 1,
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "second_face": "t_afg_plain_rise",
+      "adventure": true,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this creature dies, you may cast it from your graveyard until the end of your next turn.",
+          "trigger": {"event": "dies", "source": "self"},
+          "effects": [
+            {
+              "op": "grant_playable",
+              "objects": {"self_only": true, "zone": "graveyard"},
+              "playable": "end_of_your_next_turn"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_afg_plain_rise",
+      "name": "Test Plain Rise",
+      "mana_cost": "{2}{B}",
+      "types": ["Instant"],
+      "subtypes": ["Adventure"],
+      "colors": ["B"],
+      "spell_effects": [
+        {"op": "gain_life", "player": "you", "amount": {"const": 3}}
+      ]
+    },
+    {
+      "id": "t_afg_kill",
+      "name": "Test Afg Kill",
+      "oracle_text": "Destroy target creature.",
+      "mana_cost": "{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {"zone": "battlefield", "controller": "any", "types": ["Creature"]}
+        }
+      ],
+      "spell_effects": [
+        {"op": "destroy", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

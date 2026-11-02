@@ -140,6 +140,22 @@ already there. The caster controls the spell; its owner keeps the card. Without
 `per_owner` the pool is one choice. The loader refuses `objects` beside `zones`,
 and `per_owner` without `objects`.
 
+`exiles: true` is "If that spell would be put into a graveyard, exile it
+instead". With `objects` naming a target it is Torrential Gearhulk's "you may
+cast target instant card from your graveyard without paying its mana cost":
+
+```jsonc
+// the trigger's targets: [{ "id": "t1", "kind": "card_in_graveyard", "count": 1,
+//   "selector": { "zone": "graveyard", "controller": "you", "types": ["Instant"] } }]
+{ "op": "cast_from_hand", "objects": { "target": "t1" }, "exiles": true }
+```
+
+It is `cast_card`'s rider on the free cast, carried on the stack item
+(`StackItem.exiles_instead`), so it holds whether the spell resolves, fizzles or
+is countered, and the same card cast later by another route goes back to the
+graveyard. `exiles` must be a boolean. `cast_card` is the near miss and charges
+the mana cost; `play_exiled` is free but defaults its pool to cards in exile.
+
 `scry` takes `player` (whose library) and `chooser` (who decides) separately.
 They are the same person for scry and different people for **fateseal** —
 `{"op": "scry", "player": {"target": "t1"}, "chooser": "you"}` — and that is
@@ -1543,6 +1559,7 @@ Anywhere a number is expected -- the leaf list is
 { "damage_taken_this_turn": "each_opponent" }   // bloodthirst; SUMMED over the spec
 { "max_damage_taken_this_turn": "each_opponent" } // "an opponent was dealt N or more"; ONE player's total
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
+{ "max_life_lost_this_turn": "each_player" }    // "a player lost N or more life"; ONE player's total
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "counters_put_this_turn": { "player": "you",  // "if you put a counter on a creature this turn";
     "types": ["Creature"] } }                   //   who PUT them (122.6a), enters-with counts (122.6)
@@ -3612,6 +3629,9 @@ Two things about that ledger are load-bearing:
   took 4 each. `max_damage_taken_this_turn` reads each player's total and
   takes the greatest, so the `cmp` asks about one opponent — the
   `life_of` / `min_life_of` split, for the same reason.
+  `max_life_lost_this_turn` is its life-loss twin (Y'shtola, Night's Blessed:
+  "if a player lost 4 or more life this turn"), counting everything
+  `life_lost_this_turn` does — damage, drains, life paid — one player at a time.
 - **A count per seat is not a record per object.** `cards_discarded_this_turn`
   ("if you discarded a card this turn", Typhoid Mary, Fractured) counts DISCARD
   events by the discarding player, so a card discarded and since exiled, cast
@@ -4220,7 +4240,7 @@ The list with a line each is
 `{ "controller_of_target": "t1" }` ·
 `{ "controller_of": "snapshot_name" }` · `{ "owner_of": "snapshot_name" }` ·
 `{ "binding": "name" }` · `{ "not": { … } }` · `{ "attacked_by": "self" }` ·
-`{ "dealt_combat_damage_by": "self" }`
+`{ "dealt_combat_damage_by": "self" | { "subtypes": [ … ] } | { "any_of": [ … ] } }`
 
 `{"binding": …}` names whichever seat a trigger, a `for_each_player` or a
 `choose_player` put under that name. It is the only one of these that can name
@@ -4266,7 +4286,7 @@ And the record goes when the creature **leaves the battlefield**: the oid
 survives the zone change but the object does not (400.7), and a flickered Angel
 attacked nobody. `"self"` is the only subject; anything else is a load error.
 
-### `dealt_combat_damage_by` — the players *this creature* dealt combat damage to this turn
+### `dealt_combat_damage_by` — the players a creature dealt combat damage to this turn
 
 ```jsonc
 // Steel Hellkite: "{X}: Destroy each nonland permanent with mana value X whose
@@ -4293,7 +4313,36 @@ The record is dropped when the oid **enters** the battlefield, because the
 permanent that comes back is a new object that has dealt nobody anything
 (400.7). It is kept when the creature leaves, so an ability it already put on
 the stack still resolves off what it did — a Hellkite killed in response still
-destroys. `"self"` is the only subject; anything else is a load error.
+destroys.
+
+The subject is one of three shapes, and anything else is a load error:
+
+| Subject | Whom it names |
+|---|---|
+| `"self"` | the seats the ability's source dealt combat damage to, by oid as above |
+| `{ "subtypes": ["Dragon"] }` | the seats dealt combat damage by any creature, under any controller, that had one of these subtypes **as the damage was dealt** |
+| `{ "any_of": [ … ] }` | the union of its subjects' seats, so a player hit by two of them is one player |
+
+```jsonc
+// Estinien Varlineau: "At the beginning of your second main phase, you draw X
+// cards and lose X life, where X is the number of your opponents who were dealt
+// combat damage by Estinien Varlineau or a Dragon this turn."
+"trigger": { "event": "postcombat_main", "controller": "you" },
+"effects": [
+  { "op": "draw", "player": "you",
+    "amount": { "player_count": {
+      "dealt_combat_damage_by": { "any_of": [ "self", { "subtypes": ["Dragon"] } ] },
+      "except": "you" } } },
+  { "op": "lose_life", "player": "you", "amount": { /* the same value */ } } ]
+```
+
+`subtypes` reads `TurnLedger.players_dealt_combat_damage_by_subtype` (subtype →
+seats), folded off the same event from the attacker's **derived** subtypes, so a
+changeling counts, a Dragon that dies or stops being one afterwards still dealt
+the damage as a Dragon, and a creature made a Dragon after combat did not.
+`except: "you"` is what makes it "your opponents": an opponent's Dragon that hit
+you put your seat in the set. The `combat_damage_by` condition (prowl) is the
+near miss — it says a Dragon got through, not to whom, so it cannot count.
 
 ### `not` — the player a card *excludes*
 
@@ -5630,7 +5679,7 @@ smaller than the effect-side `value_keys`:
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
-| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — the bare player spec only |
+| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — a bare player spec, or `{"player", "filter"}` for spells of a type |
 | `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
@@ -6035,10 +6084,31 @@ The ledger is a pipeline input on a poison count's terms: only the cast fold
 writes it and only the cleanup step empties it, never a layer (ADR 0001), and
 both bump `char_version`, so a `buff` with the same condition moves the moment
 the spell is cast and again when the turn ends. A static takes the life
-leaves' player specs and the bare spec only; the loader refuses the effect
-side's typed `{"player", "filter"}` form by name. A `spell_cast` trigger setting
-a turn flag is the near miss: it is an ability the card does not print, and it
-misses a spell cast before the permanent entered.
+leaves' player specs. A `spell_cast` trigger setting a turn flag is the near
+miss: it is an ability the card does not print, and it misses a spell cast
+before the permanent entered.
+
+"Spells **of a type**" is the effect side's typed form, `{"player", "filter"}`:
+
+```jsonc
+// Lyse Hext -- "As long as you've cast two or more noncreature spells this
+// turn, Lyse Hext has double strike."
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["double_strike"],
+  "affects": { "self_only": true },
+  "condition": { "cmp": ">=",
+                 "left": { "spells_cast_this_turn": { "player": "you",
+                           "filter": { "not_types": ["Creature"] } } },
+                 "right": { "const": 2 } } }
+```
+
+It counts the faces the same fold records in `TurnLedger.spells_cast_ids`,
+matched on their printed characteristics by `_matches_printed`, so "two
+creature spells" never satisfies it — the bare count would. `player` defaults
+to `you` and takes the same specs. `filter` is required and non-empty, and
+takes the spell-filter keys less `controller` (`types`, `any_types`,
+`not_types`, `subtypes`, `supertypes`, `colors`, `min_colors`, `keywords`,
+`not_keywords`, `name`, `mana_cost`); the loader refuses a board-state key,
+an unknown type or supertype, and an empty filter (that is the bare spec).
 
 #### "At least 7 life more than your starting life total"
 

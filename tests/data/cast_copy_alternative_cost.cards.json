@@ -1,0 +1,50 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_cast_copy_alternative_cost.py. t_cane_copy is Blue Mage's Cane's granted trigger as a sorcery: exile an instant or sorcery card from an opponent's graveyard, copy it, and offer the copy's cast for {3} rather than its mana cost. t_cane_draw_x is a copied card with an X in its cost, which the {3} price leaves at 0 (107.3). t_cane_murder is a copied card whose only legal targets are creatures.",
+  "cards": [
+    {
+      "id": "t_cane_copy",
+      "name": "Test Cane Lesson",
+      "oracle_text": "Exile target instant or sorcery card from an opponent's graveyard. Copy it. You may cast the copy by paying {3} rather than paying its mana cost.",
+      "mana_cost": "{U}",
+      "types": ["Sorcery"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "targets": [
+        {"id": "t1", "kind": "card_in_graveyard", "count": 1,
+         "selector": {"zone": "graveyard", "controller": "opponent",
+                      "any_types": ["Instant", "Sorcery"]}}
+      ],
+      "spell_effects": [
+        {"op": "exile", "objects": {"target": "t1"}, "as": "banked"},
+        {"op": "cast_copy", "objects": {"binding": "banked"}, "cost": "{3}"}
+      ]
+    },
+    {
+      "id": "t_cane_draw_x",
+      "name": "Test Cane Insight",
+      "oracle_text": "Draw X cards.",
+      "mana_cost": "{X}{U}",
+      "types": ["Instant"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "spell_effects": [
+        {"op": "draw", "player": "you", "amount": {"x": true}}
+      ]
+    },
+    {
+      "id": "t_cane_murder",
+      "name": "Test Cane Murder",
+      "oracle_text": "Destroy target creature.",
+      "mana_cost": "{1}{B}",
+      "types": ["Instant"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "targets": [
+        {"id": "t1", "kind": "permanent", "count": 1, "selector": {"types": ["Creature"]}}
+      ],
+      "spell_effects": [
+        {"op": "destroy", "objects": {"target": "t1"}}
+      ]
+    }
+  ]
+}

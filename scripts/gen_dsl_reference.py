@@ -55,6 +55,7 @@ from commanderblitz.cards.loader.vocabulary import (
     KEYWORD_ALIASES,
     MANA_RIDER_OPS,
     PLAYER_WIDE_STATIC_EFFECTS,
+    SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
     STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
@@ -208,11 +209,11 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                  'Hideaway — "that one, from there"'),
     "play_exiled": ("Cards", "Cast the exiled card without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                     '"You may play the exiled card this turn" — impulse draw'),
-    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration.",
+    "grant_playable": ("Cards", "Permit playing cards from a zone that normally forbids it, for a duration; `as_adventure` narrows it to the card's Adventure half; `playable_cost_reduction` discounts the casts made under it.",
                        H_PLAYABLE),
     "grant_graveyard_cast": ("Cards", "Permit casting matching spells from graveyards until end of turn.",
                              "Casting out of every graveyard, until end of turn"),
-    "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost.",
+    "cast_from_hand": ("Cards", "Cast a spell from hand (or listed zones, or a named pool once per owner) without paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard.",
                        None),
     "cast_card": ("Cards", "Cast a named card during resolution, paying its mana cost; `exiles` exiles the spell instead of putting it into a graveyard; `as` records what was cast.",
                   H_CAST_CARD),
@@ -268,6 +269,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "goad": ("Board", "Goad creatures until your next turn, or for the rest of the game.", "Goad"),
     "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",
                         "Reselecting an attack — `redirect_attack`"),
+    "remove_from_combat": ("Board", "Remove creatures from combat (506.4); what they fought stays blocked or blocking.",
+                           "Removing a creature from combat — `remove_from_combat`"),
     "cant_block": ("Board", "Creatures can't block this turn.",
                    "The `cant_block` **op** — the same sentence with a clock"),
     "unblockable": ("Board", "Creatures can't be blocked this turn (optionally except by blockers matching a filter).",
@@ -298,8 +301,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                   "Aura swap — an exchange, not two moves"),
     "encode": ("Board", "Cipher: exile the spell encoded on a creature.",
                "Cipher — the third direction an exile link can point"),
-    "cast_copy": ("Board", "Cast a copy of an encoded or linked card without paying its cost.",
-                  None),
+    "cast_copy": ("Board", "Cast a copy of an encoded or linked card, free or for a `cost` instead.",
+                  "Casting a copy for a printed price"),
     "manifest": ("Board", "Manifest the top card of a library face down as a 2/2.", H_MORPH),
     "meld": ("Board", "Meld the source with its named partner into one permanent.", H_MELD),
     "phase_out": ("Board", "Permanents phase out.", '"Target creature phases out"'),
@@ -322,8 +325,9 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                 'Airbend — "exile them, and their owners may cast them for {2}"'),
     "exchange_control": ("Board", "Exchange control of two permanents.", "Exchanging control"),
     # ---- Modify ----------------------------------------------------------
-    "pump": ("Modify", "+N/+M until end of turn (or a duration).", None),
-    "grant_keyword": ("Modify", "Permanents gain keywords for a duration.",
+    "pump": ("Modify", "+N/+M until end of turn (or a duration, `as_long_as_you_control_source` included).",
+             '"For as long as you control" this'),
+    "grant_keyword": ("Modify", "Permanents gain keywords for a duration; `as_long_as_you_control_source` lasts while you control the source.",
                       "How long a granted keyword lasts"),
     "grant_protection": ("Modify", "Permanents or players gain protection for a duration.",
                          "Granting protection"),
@@ -624,11 +628,12 @@ VALUES: dict[str, Entry] = {
     "max": ("The greatest of several values.", None),
     "max_count_of": ("The most objects any one player of a spec has.", H_PER_PLAYER),
     "max_damage_taken_this_turn": ("The most damage any one of a spec's players was dealt this turn.", H_LEDGER),
+    "max_life_lost_this_turn": ("The most life any one of a spec's players lost this turn.", H_LEDGER),
     "max_life_of": ("The highest life total among a spec's players.", None),
     "max_poison_of": ("The most poison counters on any one of a spec's players (corrupted).",
                       'Corrupted — "an opponent has three or more poison counters"'),
     "min": ("The least of several values.", None),
-    "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\").",
+    "player_count": ("How many players still in the game a player spec names (\"the number of opponents you have\"; with `dealt_combat_damage_by`, \"the number of your opponents who were dealt combat damage by …\").",
                      None),
     "times_tapped_this_turn": ("Times one object has become tapped this turn, counting every tap since the turn began.",
                                "How many times a permanent has become tapped this turn"),
@@ -709,7 +714,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                       None),
     "greatest_commander_mana_value": (
         "The greatest printed mana value among your commanders, wherever they are.", None),
-    "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; the bare spec only.",
+    "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; or `{player, filter}` "
+                              "for spells of a type, matched on printed faces.",
                               '"As long as an opponent has cast a spell this turn"'),
 }
 
@@ -766,7 +772,7 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "land_played": ("A land is played.", None),
     "leaves_battlefield": ("A permanent leaves the battlefield.", None),
     "leaves_graveyard": ("A card leaves a graveyard.", None),
-    "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn.",
+    "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches.",
                   '"Whenever an opponent loses life"'),
     "mutates": ("A creature mutates.", '"Whenever this creature mutates…"'),
     "permanent_enters": ("A permanent enters the battlefield.", None),
@@ -953,6 +959,18 @@ COST_REDUCTION: dict[str, Entry] = {
 COST_REDUCTION_FILTER: dict[str, Entry] = {
     "any_of": ("Count an *or* of characteristics.", "A reduction that counts an *or* of characteristics"),
     "zone": ("Count in a zone other than the battlefield.", "Counting filters, and the `zone` key"),
+}
+
+#: Keys only a `spell_cost_reduction`'s `affects_spells` takes, beyond `SPELL_FILTER_KEYS`.
+SPELL_COST_REDUCTION_FILTER: dict[str, Entry] = {
+    "exclude_self": ("Not this card (\"other\" Dragon spells) -- the eminence case.",
+                     "Eminence — a static that works from the command zone"),
+    "from_zone": ("Cast from this zone, or one of a list (\"from your graveyard\").",
+                  "A discount that asks where the spell is cast from"),
+    "not_from_zone": ("Not cast from this zone or list (\"other than your hand\").",
+                      "A discount that asks where the spell is cast from"),
+    "power": ("The spell's power as cast: printed, or a `*/*`'s CDA.",
+              "`power` / `toughness` — a *derived* characteristic, read at a fixed layer"),
 }
 
 ABILITY_COSTS: dict[str, Entry] = {
@@ -1365,6 +1383,14 @@ def families() -> list[Family]:
             "Spell filter keys", "What the filter may say", tuple(sorted(SPELL_FILTER_KEYS)),
             SELECTORS.get,
             "The keys an `affects_spells` filter may use.",
+        ),
+        Family(
+            "Spell cost-reduction filter keys", H_COST_REDUCTION,
+            tuple(sorted(SPELL_COST_REDUCTION_FILTER_KEYS - SPELL_FILTER_KEYS)),
+            SPELL_COST_REDUCTION_FILTER.get,
+            "Keys a `spell_cost_reduction`'s `affects_spells` accepts beyond the spell "
+            "filter keys: the ones only a price acts on.",
+            own=SPELL_COST_REDUCTION_FILTER,
         ),
         Family(
             "Cost-reduction filter keys", H_COST_REDUCTION,

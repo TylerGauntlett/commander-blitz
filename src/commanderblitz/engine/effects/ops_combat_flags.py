@@ -1024,3 +1024,53 @@ def op_redirect_attack(ctx: EffectContext, spec: Mapping[str, Any]):
         )
         if not still_attacked and state.step < Step.DECLARE_BLOCKERS:
             combat.pending_blockers = [p for p in combat.pending_blockers if p != old]
+
+
+@register("remove_from_combat")
+def op_remove_from_combat(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Remove enchanted creature from combat." -- Observed Stasis.
+
+    Rule 506.4: a creature removed from combat stops being an attacking,
+    blocking, blocked or unblocked creature. The engine already had the
+    mechanism -- `CombatState.remove`, which regeneration (701.15a), phasing and
+    a change of control (506.4 itself) all call -- and every combat read goes
+    through it: `attacking`, `blocking`, the blocker legality checks, the
+    unblocked-attacker events and both halves of combat damage skip a removed
+    creature. So this op only names the creatures; ``objects`` is required.
+
+    What 506.4 and 509.1h leave behind, and the existing reads already keep:
+
+    - An attacker whose blocker is removed **stays blocked**. `_attacker_assignments`
+      asks whether the attacker *was* blocked off the declared `block_order`, so
+      without trample it deals no damage, as a blocked creature whose blockers
+      all died does not.
+    - A blocker whose attacker is removed **stays blocking**, and deals no
+      damage: there is no attacker in combat to deal it to.
+    - The declaration is not undone: the turn ledger (`creatures_attacked`,
+      `players_attacked_by`) and every attack trigger already fired keep what
+      was declared, and a creature removed and still on the battlefield cannot
+      be declared again, because `can_attack` refuses one already in
+      `combat.attackers`.
+
+    Before blockers are declared, a defending player nobody attacks any more is
+    dropped from the blocker queue, which is what `redirect_attack` does for the
+    same window. Outside combat, and for a creature not in it, the op does
+    nothing.
+    """
+    state = ctx.state
+    combat = state.combat
+    if combat is None:
+        return
+    defenders = {pid for oid, pid in combat.attackers.items() if combat.attacking(oid)}
+    for oid in resolve_pool(ctx, spec.get("objects") or {}):
+        obj = state.objects.get(oid)
+        if obj is None or not obj.on_battlefield:
+            continue
+        if combat.attacking(oid) or combat.blocking(oid):
+            combat.remove(oid)
+    if state.step < Step.DECLARE_BLOCKERS:
+        still = {pid for oid, pid in combat.attackers.items() if combat.attacking(oid)}
+        gone = defenders - still
+        if gone:
+            combat.pending_blockers = [p for p in combat.pending_blockers if p not in gone]
+    yield from ()

@@ -1297,6 +1297,102 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "mill",
+              "player": "you"
+            },
+            {
+              "objects": {
+                "controller": "you",
+                "count": 1,
+                "random": true,
+                "zone": "graveyard"
+              },
+              "op": "exile",
+              "playable_this_turn": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your first main phase, mill a card, then exile a card from your graveyard at random. You may play the exiled card this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "precombat_main"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "kind": "level",
+          "level": 2,
+          "text": "{1}{R}: Level 2"
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "level": 2,
+          "text": "Whenever one or more cards leave your graveyard, this Class deals 2 damage to each opponent.",
+          "trigger": {
+            "batched": true,
+            "controller": "you",
+            "event": "leaves_graveyard"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{R}"
+          },
+          "kind": "level",
+          "level": 3,
+          "text": "{1}{R}: Level 3"
+        },
+        {
+          "affects_spells": {
+            "controller": "you",
+            "not_from_zone": "hand"
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "level": 3,
+          "text": "Spells you cast from anywhere other than your hand cost {2} less to cast."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "advanced_reconstruction",
+      "mana_cost": "{3}{R}",
+      "name": "Advanced Reconstruction",
+      "oracle_text": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of your first main phase, mill a card, then exile a card from your graveyard at random. You may play the exiled card this turn.\n{1}{R}: Level 2\nWhenever one or more cards leave your graveyard, this Class deals 2 damage to each opponent.\n{1}{R}: Level 3\nSpells you cast from anywhere other than your hand cost {2} less to cast.",
+      "source": "auto",
+      "subtypes": [
+        "Class"
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -3555,6 +3651,93 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Alphinaud Leveilleur"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Alphinaud Leveilleur into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Alphinaud Leveilleur (When this creature enters, target player may put Alphinaud Leveilleur into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects_spells": {
+            "controller": "you"
+          },
+          "amount": {
+            "const": 2
+          },
+          "condition": {
+            "cmp": "==",
+            "left": {
+              "spells_cast_this_turn": "you"
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Dualcast — The second spell you cast each turn costs {2} less to cast."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "alisaie_leveilleur",
+      "keywords": [
+        "first_strike"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Alisaie Leveilleur",
+      "oracle_text": "Partner with Alphinaud Leveilleur (When this creature enters, target player may put Alphinaud Leveilleur into their hand from their library, then shuffle.)\nFirst strike\nDualcast — The second spell you cast each turn costs {2} less to cast.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "all_is_dust",
@@ -3715,6 +3898,91 @@
         "Beast"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "count": 1,
+                  "destination": "hand",
+                  "op": "search_library",
+                  "player": {
+                    "target": "t1"
+                  },
+                  "selector": {
+                    "name": "Alisaie Leveilleur"
+                  },
+                  "shuffle": true
+                }
+              ],
+              "op": "may",
+              "player": {
+                "target": "t1"
+              },
+              "prompt": "Put Alisaie Leveilleur into your hand from your library?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player"
+            }
+          ],
+          "text": "Partner with Alisaie Leveilleur (When this creature enters, target player may put Alisaie Leveilleur into their hand from their library, then shuffle.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Eukrasia — Whenever you cast your second spell each turn, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "alphinaud_leveilleur",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Alphinaud Leveilleur",
+      "oracle_text": "Partner with Alisaie Leveilleur (When this creature enters, target player may put Alisaie Leveilleur into their hand from their library, then shuffle.)\nVigilance\nEukrasia — Whenever you cast your second spell each turn, draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -9138,6 +9406,137 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "vigilance"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a white spell, put a +1/+1 counter on each legendary creature you control. They gain vigilance until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "W"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "menace"
+              ],
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a black spell, put a +1/+1 counter on each legendary creature you control. They gain menace until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "colors": [
+                "B"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "ardbert_warrior_of_darkness",
+      "mana_cost": "{1}{W}{B}",
+      "name": "Ardbert, Warrior of Darkness",
+      "oracle_text": "Whenever you cast a white spell, put a +1/+1 counter on each legendary creature you control. They gain vigilance until end of turn.\nWhenever you cast a black spell, put a +1/+1 counter on each legendary creature you control. They gain menace until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -10617,6 +11016,164 @@
         }
       ],
       "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "hero",
+              "controller": "you",
+              "op": "create_token",
+              "token": "hero_1_1_c"
+            },
+            {
+              "objects": {
+                "binding": "hero",
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Job select",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Wizard"
+          ],
+          "text": "Equipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\""
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Diana — Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "draw",
+            "nth": 3
+          }
+        }
+      ],
+      "id": "astrologian_s_planisphere",
+      "mana_cost": "{1}{U}",
+      "name": "Astrologian's Planisphere",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature is a Wizard in addition to its other types and has \"Whenever you cast a noncreature spell and whenever you draw your third card each turn, put a +1/+1 counter on this creature.\"\nDiana — Equip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
       "types": [
         "Artifact"
       ]
@@ -19003,6 +19560,163 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "hero",
+              "controller": "you",
+              "op": "create_token",
+              "token": "hero_1_1_c"
+            },
+            {
+              "objects": {
+                "binding": "hero",
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Job select",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 0
+          },
+          "text": "Equipped creature gets +0/+2, is a Wizard in addition to its other types, and has \"Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.\"",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Wizard"
+          ],
+          "text": "Equipped creature gets +0/+2, is a Wizard in addition to its other types, and has \"Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +0/+2, is a Wizard in addition to its other types, and has \"Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Spirit of the Whalaqee — Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "as": "banked",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            },
+            {
+              "cost": "{3}",
+              "objects": {
+                "binding": "banked"
+              },
+              "op": "cast_copy"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "optional": true,
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": {
+                  "binding": "defender"
+                },
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "blue_mage_s_cane",
+      "mana_cost": "{2}{U}",
+      "name": "Blue Mage's Cane",
+      "oracle_text": "Job select\nEquipped creature gets +0/+2, is a Wizard in addition to its other types, and has \"Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost.\"\nSpirit of the Whalaqee — Equip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -29869,6 +30583,82 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "circle_of_power",
+      "mana_cost": "{3}{B}",
+      "name": "Circle of Power",
+      "oracle_text": "You draw two cards and you lose 2 life. Create a 0/1 black Wizard creature token with \"Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.\"\nWizards you control get +1/+0 and gain lifelink until end of turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "wizard_0_1_b_noncreature_ping"
+        },
+        {
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "subtypes": [
+              "Wizard"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "pump",
+          "power": {
+            "const": 1
+          },
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "keywords": [
+            "lifelink"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "subtypes": [
+              "Wizard"
+            ],
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -38555,6 +39345,170 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "hero",
+              "controller": "you",
+              "op": "create_token",
+              "token": "hero_1_1_c"
+            },
+            {
+              "objects": {
+                "binding": "hero",
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Job select",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2, has lifelink and \"Other commanders you control get +2/+2 and have lifelink,\" and is a Performer in addition to its other types.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2, has lifelink and \"Other commanders you control get +2/+2 and have lifelink,\" and is a Performer in addition to its other types."
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2, has lifelink and \"Other commanders you control get +2/+2 and have lifelink,\" and is a Performer in addition to its other types."
+        },
+        {
+          "ability": 1,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2, has lifelink and \"Other commanders you control get +2/+2 and have lifelink,\" and is a Performer in addition to its other types."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Performer"
+          ],
+          "text": "Equipped creature gets +2/+2, has lifelink and \"Other commanders you control get +2/+2 and have lifelink,\" and is a Performer in addition to its other types."
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Krishna — Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "is_commander": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Other commanders you control get +2/+2 and have lifelink.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "is_commander": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "lifelink"
+          ],
+          "kind": "static",
+          "text": "Other commanders you control get +2/+2 and have lifelink."
+        }
+      ],
+      "id": "dancer_s_chakrams",
+      "mana_cost": "{3}{W}",
+      "name": "Dancer's Chakrams",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +2/+2, has lifelink and \"Other commanders you control get +2/+2 and have lifelink,\" and is a Performer in addition to its other types.\nKrishna — Equip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -50851,6 +51805,108 @@
     {
       "abilities": [
         {
+          "affects_spells": {
+            "controller": "you",
+            "from_zone": "graveyard"
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Spells you cast from your graveyard cost {2} less to cast."
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "emet_selch_cast"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "as": "cast",
+                  "exiles": true,
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "cast_card"
+                },
+                {
+                  "condition": {
+                    "exists": {
+                      "binding": "cast"
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "flag": "emet_selch_cast",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ]
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "you",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Whenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.",
+          "trigger": {
+            "batched": true,
+            "controller": "opponent",
+            "event": "life_lost"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "emet_selch_of_the_third_seat",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Emet-Selch of the Third Seat",
+      "oracle_text": "Spells you cast from your graveyard cost {2} less to cast.\nWhenever one or more opponents lose life, you may cast target instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead. Do this only once each turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "op": "create_token",
@@ -52770,6 +53826,119 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            },
+            {
+              "keywords": [
+                "flying"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, put a +1/+1 counter on Estinien Varlineau. It gains flying until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "dealt_combat_damage_by": {
+                    "any_of": [
+                      "self",
+                      {
+                        "subtypes": [
+                          "Dragon"
+                        ]
+                      }
+                    ]
+                  },
+                  "except": "you"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "player_count": {
+                  "dealt_combat_damage_by": {
+                    "any_of": [
+                      "self",
+                      {
+                        "subtypes": [
+                          "Dragon"
+                        ]
+                      }
+                    ]
+                  },
+                  "except": "you"
+                }
+              },
+              "op": "lose_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "postcombat_main"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "estinien_varlineau",
+      "mana_cost": "{2}{W}{B}",
+      "name": "Estinien Varlineau",
+      "oracle_text": "Whenever you cast a noncreature spell, put a +1/+1 counter on Estinien Varlineau. It gains flying until end of turn.\nAt the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "remove_counters": {
@@ -54677,6 +55846,39 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "exsanguinate_66d881",
+      "mana_cost": "{X}{B}{B}",
+      "name": "Exsanguinate",
+      "oracle_text": "Each opponent loses X life. You gain life equal to the life lost this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "lost",
+          "op": "lose_life",
+          "player": "each_opponent"
+        },
+        {
+          "amount": {
+            "binding": "lost"
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -54730,6 +55932,116 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "colors": [
+            "B"
+          ],
+          "effect": "set_colors",
+          "kind": "static",
+          "text": "Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and deathtouch, and is goaded."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_creature_types",
+          "kind": "static",
+          "subtypes": [
+            "Dragon"
+          ],
+          "text": "Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and deathtouch, and is goaded."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "const": 4
+          },
+          "text": "Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and deathtouch, and is goaded.",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "flying",
+            "deathtouch"
+          ],
+          "kind": "static",
+          "text": "Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and deathtouch, and is goaded."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "goaded",
+          "kind": "static",
+          "text": "Enchanted creature is a black Dragon with base power and toughness 4/2, has flying and deathtouch, and is goaded."
+        },
+        {
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Eye of Nidhogg is put into a graveyard from the battlefield, return it to its owner's hand.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eye_of_nidhogg",
+      "mana_cost": "{2}{B}",
+      "name": "Eye of Nidhogg",
+      "oracle_text": "Enchant creature\nEnchanted creature is a black Dragon with base power and toughness 4/2, has flying and deathtouch, and is goaded. (It attacks each combat if able and attacks a player other than you if able.)\nWhen Eye of Nidhogg is put into a graveyard from the battlefield, return it to its owner's hand.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
       ]
     },
     {
@@ -55782,6 +57094,116 @@
         "Druid"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast an instant or sorcery spell, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_types": [
+                "Instant",
+                "Sorcery"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [],
+                  "else": [
+                    {
+                      "amount": {
+                        "times": [
+                          {
+                            "const": 2
+                          },
+                          {
+                            "count": {
+                              "any_types": [
+                                "Instant",
+                                "Sorcery"
+                              ],
+                              "controller": "you",
+                              "zone": "graveyard"
+                            }
+                          }
+                        ]
+                      },
+                      "op": "lose_life",
+                      "player": {
+                        "binding": "each_player"
+                      }
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "sacrifice": {
+                      "controller": "you",
+                      "count": 1,
+                      "is_token": false,
+                      "types": [
+                        "Creature"
+                      ],
+                      "zone": "battlefield"
+                    }
+                  },
+                  "player": {
+                    "binding": "each_player"
+                  },
+                  "prompt": "Sacrifice a nontoken creature? (Otherwise lose 2 life for each instant and sorcery card in Fandaniel's controller's graveyard.)"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, each opponent may sacrifice a nontoken creature of their choice. Each opponent who doesn't loses 2 life for each instant and sorcery card in your graveyard.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "fandaniel_telophoroi_ascian",
+      "mana_cost": "{4}{B}",
+      "name": "Fandaniel, Telophoroi Ascian",
+      "oracle_text": "Whenever you cast an instant or sorcery spell, surveil 1.\nAt the beginning of your end step, each opponent may sacrifice a nontoken creature of their choice. Each opponent who doesn't loses 2 life for each instant and sorcery card in your graveyard.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -58298,6 +59720,35 @@
           ],
           "op": "choose_mode",
           "or_more": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "final_judgment",
+      "mana_cost": "{4}{W}{W}",
+      "name": "Final Judgment",
+      "oracle_text": "Exile all creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "exile"
         }
       ],
       "types": [
@@ -63956,6 +65407,105 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "graha_gates_opened"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "flag": "graha_gates_opened",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    },
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "as": "hero",
+                      "op": "create_token",
+                      "token": "hero_1_1_c"
+                    },
+                    {
+                      "amount": {
+                        "mana_value_of": {
+                          "binding": "subject"
+                        }
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "binding": "hero"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "op": "may",
+                  "pay": {
+                    "pay_life": {
+                      "mana_value_of": {
+                        "binding": "subject"
+                      }
+                    }
+                  },
+                  "prompt": "Pay life equal to that spell's mana value to create a Hero?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Throw Wide the Gates — Whenever you cast a noncreature spell, you may pay X life, where X is that spell's mana value. If you do, create a 1/1 colorless Hero creature token and put X +1/+1 counters on it. Do this only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "g_raha_tia_scion_reborn",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{W}{U}{B}",
+      "name": "G'raha Tia, Scion Reborn",
+      "oracle_text": "Lifelink\nThrow Wide the Gates — Whenever you cast a noncreature spell, you may pay X life, where X is that spell's mana value. If you do, create a 1/1 colorless Hero creature token and put X +1/+1 counters on it. Do this only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -65922,6 +67472,34 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gentleman_s_rise_hildibrand",
+      "mana_cost": "{2}{B}",
+      "name": "Gentleman's Rise",
+      "oracle_text": "Create a 2/2 black Zombie creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "zombie_2_2_b"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -80855,6 +82433,74 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creature tokens you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "as_adventure": true,
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "grant_playable",
+              "playable": "end_of_your_next_turn"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hildibrand_manderville_gentleman_s_rise",
+      "mana_cost": "{1}{W}",
+      "name": "Hildibrand Manderville // Gentleman's Rise",
+      "oracle_text": "Creature tokens you control get +1/+1.\nWhen Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn.",
+      "power": 2,
+      "second_face": "gentleman_s_rise_hildibrand",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -82188,6 +83834,139 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Flying, vigilance, ward {2}"
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Shiva's Aid — When Hraesvelgr enters and whenever you cast a noncreature spell, target creature gets +1/+0 until end of turn and can't be blocked this turn.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Shiva's Aid — When Hraesvelgr enters and whenever you cast a noncreature spell, target creature gets +1/+0 until end of turn and can't be blocked this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hraesvelgr_of_the_first_brood",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Hraesvelgr of the First Brood",
+      "oracle_text": "Flying, vigilance, ward {2}\nShiva's Aid — When Hraesvelgr enters and whenever you cast a noncreature spell, target creature gets +1/+0 until end of turn and can't be blocked this turn.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elder",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
@@ -83375,6 +85154,33 @@
         "Hyena"
       ],
       "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "adventure": true,
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "hypnotic_sprite_mesmeric_glare",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{U}{U}",
+      "name": "Hypnotic Sprite // Mesmeric Glare",
+      "oracle_text": "Flying",
+      "power": 2,
+      "second_face": "mesmeric_glare",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Faerie"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -84644,6 +86450,130 @@
       ],
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "exiles": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cast_from_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_types": [
+                  "Instant",
+                  "Sorcery"
+                ],
+                "controller": "any",
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{7}{R}{R}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {7}{R}{R} ({7}{R}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "impulsivity",
+      "mana_cost": "{6}{R}",
+      "name": "Impulsivity",
+      "oracle_text": "When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.\nEncore {7}{R}{R} ({7}{R}{R}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Incarnation"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -86651,6 +88581,48 @@
             ],
             "zone": "battlefield"
           }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "cost_reduction": {
+        "amount": 3,
+        "condition": {
+          "cmp": ">=",
+          "left": {
+            "max_count_of": {
+              "objects": {
+                "zone": "graveyard"
+              },
+              "player": "each_opponent"
+            }
+          },
+          "right": {
+            "const": 7
+          }
+        }
+      },
+      "id": "into_the_story",
+      "mana_cost": "{5}{U}{U}",
+      "name": "Into the Story",
+      "oracle_text": "This spell costs {3} less to cast if an opponent has seven or more cards in their graveyard.\nDraw four cards.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "draw",
+          "player": "you"
         }
       ],
       "types": [
@@ -97027,6 +98999,106 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "krile_trace_aether"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "destination": "hand",
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "return_from_graveyard"
+                    },
+                    {
+                      "flag": "krile_trace_aether",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "player": "you",
+                  "prompt": "Return the creature card to your hand?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "mana_value": {
+                  "op": "=",
+                  "value": {
+                    "mana_value_of": {
+                      "binding": "subject"
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Trace Aether — Whenever you cast a noncreature spell, you may return target creature card with mana value equal to that spell's mana value from your graveyard to your hand. Do this only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "krile_baldesion",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{W}{U}",
+      "name": "Krile Baldesion",
+      "oracle_text": "Lifelink\nTrace Aether — Whenever you cast a noncreature spell, you may return target creature card with mana value equal to that spell's mana value from your graveyard to your hand. Do this only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -104451,6 +106523,104 @@
         {
           "effects": [
             {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "pump",
+              "power": {
+                "const": 1
+              },
+              "toughness": {
+                "const": 1
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Prowess",
+          "trigger": {
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "affects_spells": {
+            "controller": "you",
+            "not_types": [
+              "Creature"
+            ]
+          },
+          "amount": {
+            "const": 1
+          },
+          "effect": "spell_cost_reduction",
+          "kind": "static",
+          "text": "Noncreature spells you cast cost {1} less to cast."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "spells_cast_this_turn": {
+                "filter": {
+                  "not_types": [
+                    "Creature"
+                  ]
+                },
+                "player": "you"
+              }
+            },
+            "right": {
+              "const": 2
+            }
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "double_strike"
+          ],
+          "kind": "static",
+          "text": "As long as you've cast two or more noncreature spells this turn, Lyse Hext has double strike."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "lyse_hext",
+      "mana_cost": "{1}{W}{U}",
+      "name": "Lyse Hext",
+      "oracle_text": "Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nNoncreature spells you cast cost {1} less to cast.\nAs long as you've cast two or more noncreature spells this turn, Lyse Hext has double strike.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rebel",
+        "Monk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "op": "become_monarch",
               "player": {
                 "target": "t1"
@@ -109636,6 +111806,46 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "mesmeric_glare",
+      "mana_cost": "{2}{U}",
+      "name": "Mesmeric Glare",
+      "oracle_text": "Counter target spell with mana value 3 or less.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "const": 3
+              }
+            }
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -114871,6 +117081,54 @@
       "subtypes": [
         "Troll",
         "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "bottom": true,
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, put it on the bottom of its owner's library.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "murderous_rider_swift_end",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{1}{B}{B}",
+      "name": "Murderous Rider // Swift End",
+      "oracle_text": "Lifelink\nWhen this creature dies, put it on the bottom of its owner's library.",
+      "power": 2,
+      "second_face": "swift_end",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Knight"
       ],
       "toughness": 3,
       "types": [
@@ -121889,6 +124147,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "attached": true
+              },
+              "op": "remove_from_combat"
+            },
+            {
+              "as": "enchanted",
+              "objects": {
+                "attached": true
+              },
+              "op": "snapshot"
+            },
+            {
+              "amount": {
+                "count": {
+                  "controller": {
+                    "controller_of": "enchanted"
+                  },
+                  "tapped": true,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "lose_all_abilities",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and can't attack or block."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_attack",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and can't attack or block."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "cant_block",
+          "kind": "static",
+          "text": "Enchanted creature loses all abilities and can't attack or block."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "observed_stasis",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Observed Stasis",
+      "oracle_text": "Flash\nEnchant creature an opponent controls\nWhen this Aura enters, remove enchanted creature from combat. Then draw a card for each tapped creature its controller controls.\nEnchanted creature loses all abilities and can't attack or block.",
+      "source": "auto",
+      "subtypes": [
+        "Aura"
+      ],
+      "targets": [
+        {
+          "id": "enchanted",
+          "kind": "permanent",
+          "selector": {
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [],
       "colors": [],
       "id": "obsianus_golem",
@@ -127111,6 +129468,120 @@
         "Warrior"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, Papalymo Totolymo deals 1 damage to each opponent and you gain 1 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">=",
+                    "left": {
+                      "life_lost_this_turn": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "objects": {
+                        "chooser": "owner",
+                        "controller": {
+                          "binding": "each_player"
+                        },
+                        "count": 1,
+                        "extreme": {
+                          "of": "power",
+                          "pick": "greatest"
+                        },
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, {T}, Sacrifice Papalymo Totolymo: Each opponent who lost life this turn sacrifices a creature with the greatest power among creatures they control."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "papalymo_totolymo",
+      "mana_cost": "{W}{B}",
+      "name": "Papalymo Totolymo",
+      "oracle_text": "Whenever you cast a noncreature spell, Papalymo Totolymo deals 1 damage to each opponent and you gain 1 life.\n{4}, {T}, Sacrifice Papalymo Totolymo: Each opponent who lost life this turn sacrifices a creature with the greatest power among creatures they control.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Dwarf",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -139173,6 +141644,163 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "hero",
+              "controller": "you",
+              "op": "create_token",
+              "token": "hero_1_1_c"
+            },
+            {
+              "objects": {
+                "binding": "hero",
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Job select",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "life_lost_this_turn": {
+                        "binding": "each_player"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "soul",
+                      "objects": {
+                        "self_only": true,
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ]
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_player"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, put a soul counter on this Equipment for each player who lost life this turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "counters_on": {
+              "counter": "soul",
+              "objects": {
+                "self_only": true
+              }
+            }
+          },
+          "text": "Equipped creature gets +1/+1 for each soul counter on this Equipment and is an Assassin in addition to its other types.",
+          "toughness": {
+            "counters_on": {
+              "counter": "soul",
+              "objects": {
+                "self_only": true
+              }
+            }
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Assassin"
+          ],
+          "text": "Equipped creature gets +1/+1 for each soul counter on this Equipment and is an Assassin in addition to its other types."
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Death Sickle — Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "reaper_s_scythe",
+      "mana_cost": "{2}{B}",
+      "name": "Reaper's Scythe",
+      "oracle_text": "Job select\nAt the beginning of your end step, put a soul counter on this Equipment for each player who lost life this turn.\nEquipped creature gets +1/+1 for each soul counter on this Equipment and is an Assassin in addition to its other types.\nDeath Sickle — Equip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -146548,6 +149176,151 @@
       "types": [
         "Kindred",
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "hero",
+              "controller": "you",
+              "op": "create_token",
+              "token": "hero_1_1_c"
+            },
+            {
+              "objects": {
+                "binding": "hero",
+                "count": 1,
+                "zone": "battlefield"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Job select",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Equipped creature gets +1/+0, has \"Whenever this creature attacks, untap target attacking creature,\" and is a Cleric in addition to its other types.",
+          "toughness": {
+            "const": 0
+          }
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +1/+0, has \"Whenever this creature attacks, untap target attacking creature,\" and is a Cleric in addition to its other types."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Cleric"
+          ],
+          "text": "Equipped creature gets +1/+0, has \"Whenever this creature attacks, untap target attacking creature,\" and is a Cleric in addition to its other types."
+        },
+        {
+          "cost": {
+            "mana": "{3}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Hagneia — Equip {3}"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, untap target attacking creature.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "sage_s_nouliths",
+      "mana_cost": "{1}{U}",
+      "name": "Sage's Nouliths",
+      "oracle_text": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+0, has \"Whenever this creature attacks, untap target attacking creature,\" and is a Cleric in addition to its other types.\nHagneia — Equip {3}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -166046,7 +168819,7 @@
       "name": "Stensian Sanguinist // Exsanguinate",
       "oracle_text": "Whenever you attack, target creature gains deathtouch until end of turn. Whenever that creature deals combat damage to a player this combat, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
       "power": 2,
-      "prepared_face": "exsanguinate",
+      "prepared_face": "exsanguinate_66d881",
       "source": "auto",
       "subtypes": [
         "Vampire",
@@ -168453,6 +171226,134 @@
       ]
     },
     {
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "sublime_epiphany",
+      "mana_cost": "{4}{U}{U}",
+      "name": "Sublime Epiphany",
+      "oracle_text": "Choose one or more —\n• Counter target spell.\n• Counter target activated or triggered ability.\n• Return target nonland permanent to its owner's hand.\n• Create a token that's a copy of target creature you control.\n• Target player draws a card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered_spell"
+                }
+              ],
+              "label": "Counter target spell."
+            },
+            {
+              "effects": [
+                {
+                  "op": "counter",
+                  "target": "countered_ability"
+                }
+              ],
+              "label": "Counter target activated or triggered ability."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "bounced"
+                  },
+                  "op": "return_to_hand"
+                }
+              ],
+              "label": "Return target nonland permanent to its owner's hand."
+            },
+            {
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "target": "copied"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "label": "Create a token that's a copy of target creature you control."
+            },
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "target": "drawer"
+                  }
+                }
+              ],
+              "label": "Target player draws a card."
+            }
+          ],
+          "op": "choose_mode",
+          "or_more": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "countered_spell",
+          "kind": "spell",
+          "mode": 0
+        },
+        {
+          "count": 1,
+          "id": "countered_ability",
+          "kind": "ability_on_stack",
+          "mode": 1
+        },
+        {
+          "count": 1,
+          "id": "bounced",
+          "kind": "permanent",
+          "mode": 2,
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "copied",
+          "kind": "permanent",
+          "mode": 3,
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "drawer",
+          "kind": "player",
+          "mode": 4,
+          "selector": {
+            "controller": "any"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "alternative_cost": {
         "condition": {
           "all": [
@@ -169292,6 +172193,154 @@
         "Drake"
       ],
       "toughness": 3,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "moogle_1_2_w_lifelink"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Create two 1/2 white Moogle creature tokens with lifelink."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "is_token": true,
+                    "not_subtypes": [
+                      "Saga"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Whenever you cast a noncreature spell this turn, create a token that's a copy of a non-Saga token you control.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "binding": "subject",
+                    "not_types": [
+                      "Creature"
+                    ],
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Whenever you cast a noncreature spell this turn, create a token that's a copy of a non-Saga token you control."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "is_token": true,
+                    "not_subtypes": [
+                      "Saga"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "copy_permanent"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "Whenever you cast a noncreature spell this turn, create a token that's a copy of a non-Saga token you control.",
+              "trigger": {
+                "condition": {
+                  "exists": {
+                    "binding": "subject",
+                    "not_types": [
+                      "Creature"
+                    ],
+                    "zone": "stack"
+                  }
+                },
+                "controller": "you",
+                "event": "spell_cast"
+              }
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Whenever you cast a noncreature spell this turn, create a token that's a copy of a non-Saga token you control."
+        },
+        {
+          "chapter": 4,
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "exclude_self": true,
+                "subtypes": [
+                  "Moogle"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "chapter",
+          "text": "IV — Put two +1/+1 counters on each other Moogle you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "final_chapter": 4,
+      "id": "summon_good_king_mog_xii",
+      "keywords": [
+        "flying",
+        "lifelink"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Summon: Good King Mog XII",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI — Create two 1/2 white Moogle creature tokens with lifelink.\nII, III — Whenever you cast a noncreature spell this turn, create a token that's a copy of a non-Saga token you control.\nIV — Put two +1/+1 counters on each other Moogle you control.\nFlying, lifelink",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Moogle"
+      ],
+      "toughness": 4,
       "types": [
         "Enchantment",
         "Creature"
@@ -170717,6 +173766,54 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "swift_end",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Swift End",
+      "oracle_text": "Destroy target creature or planeswalker. You lose 2 life.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        },
+        {
+          "amount": {
+            "const": 2
+          },
+          "op": "lose_life",
+          "player": "you"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -177672,6 +180769,96 @@
         "Legendary"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "as_long_as_you_control_source",
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "supertypes": [
+                  "Legendary"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Royal Guard — When Thancred Waters enters, another target legendary permanent you control gains indestructible for as long as you control Thancred Waters.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, Thancred Waters gains indestructible until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "thancred_waters",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Thancred Waters",
+      "oracle_text": "Flash\nRoyal Guard — When Thancred Waters enters, another target legendary permanent you control gains indestructible for as long as you control Thancred Waters.\nWhenever you cast a noncreature spell, Thancred Waters gains indestructible until end of turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -184739,6 +187926,63 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "exiles": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cast_from_hand"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Instant"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "torrential_gearhulk",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Torrential Gearhulk",
+      "oracle_text": "Flash\nWhen this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 6,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "G",
         "W"
@@ -185533,6 +188777,61 @@
       "types": [
         "Enchantment",
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "transpose",
+      "mana_cost": "{2}{B}",
+      "name": "Transpose",
+      "oracle_text": "Draw a card, then discard a card. You lose 1 life. If this spell was cast from your hand, create a 0/1 black Wizard creature token with \"Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.\"\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)",
+      "rebound": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "discard",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "lose_life",
+          "player": "you"
+        },
+        {
+          "condition": {
+            "cast_from_hand": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "wizard_0_1_b_noncreature_ping"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -190855,6 +194154,117 @@
         "Legendary"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you play a land from exile or cast a spell from exile, you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "land_played",
+            "from_zones": [
+              "exile"
+            ]
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you play a land from exile or cast a spell from exile, you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "from_zones": [
+              "exile"
+            ]
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "face_down": true,
+              "link": true,
+              "objects": {
+                "count": 1,
+                "optional": true
+              },
+              "op": "look_at_top",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "Draw Arcanum — {T}: Look at the top card of your library. You may exile it face down."
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "any",
+                "exiled_with": "self",
+                "zone": "exile"
+              },
+              "op": "grant_playable",
+              "playable": "this_turn",
+              "playable_cost_reduction": 2
+            }
+          ],
+          "kind": "activated",
+          "text": "Play Arcanum — {T}: Until end of turn, you may play cards exiled with Urianger Augurelt. Spells you cast this way cost {2} less to cast."
+        }
+      ],
+      "color_identity": [
+        "U",
+        "W"
+      ],
+      "colors": [
+        "U",
+        "W"
+      ],
+      "id": "urianger_augurelt",
+      "mana_cost": "{W}{U}",
+      "name": "Urianger Augurelt",
+      "oracle_text": "Whenever you play a land from exile or cast a spell from exile, you gain 2 life.\nDraw Arcanum — {T}: Look at the top card of your library. You may exile it face down.\nPlay Arcanum — {T}: Until end of turn, you may play cards exiled with Urianger Augurelt. Spells you cast this way cost {2} less to cast.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -196279,6 +199689,47 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "void_rend",
+      "mana_cost": "{W}{U}{B}",
+      "name": "Void Rend",
+      "oracle_text": "This spell can't be countered.\nDestroy target nonland permanent.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ],
+      "uncounterable": true
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -200595,6 +204046,68 @@
       "subtypes": [
         "Equipment"
       ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile",
+              "until_leaves": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "not_types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When this artifact enters, exile target nonland permanent an opponent controls until this artifact leaves the battlefield.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{W}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {W}."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "white_auracite",
+      "mana_cost": "{2}{W}{W}",
+      "name": "White Auracite",
+      "oracle_text": "When this artifact enters, exile target nonland permanent an opponent controls until this artifact leaves the battlefield.\n{T}: Add {W}.",
+      "source": "auto",
       "types": [
         "Artifact"
       ]
@@ -204994,6 +208507,101 @@
         "Scientist"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if a player lost 4 or more life this turn, you draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "max_life_lost_this_turn": "each_player"
+              },
+              "right": {
+                "const": 4
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "mana_value": {
+                "op": ">=",
+                "value": {
+                  "const": 3
+                }
+              },
+              "not_types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "U",
+        "W"
+      ],
+      "id": "y_shtola_night_s_blessed",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{1}{W}{U}{B}",
+      "name": "Y'shtola, Night's Blessed",
+      "oracle_text": "Vigilance\nAt the beginning of each end step, if a player lost 4 or more life this turn, you draw a card.\nWhenever you cast a noncreature spell with mana value 3 or greater, Y'shtola deals 2 damage to each opponent and you gain 2 life.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Warlock"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]

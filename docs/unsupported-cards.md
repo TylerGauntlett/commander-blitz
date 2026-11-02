@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**162 cards** blocked by **147** capabilities.
+**159 cards** blocked by **144** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -57,7 +57,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
-| [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
@@ -84,7 +83,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
-| [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -118,7 +116,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
-| [players-dealt-combat-damage-by-subtype](#players-dealt-combat-damage-by-subtype) | 1 | 10408 | selector |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
 | [prime-number](#prime-number) | 1 | 11527 | value |
@@ -974,20 +971,6 @@ Blocks **1** card.
 
 </details>
 
-## cost-reduction-by-cast-zone
-
-Blocks **1** card.
-
-- **(static_effect)** a spell_cost_reduction static whose affects_spells can filter on the zone the spell is being cast from, e.g. except_zones: ["hand"] (or zones: ["graveyard", "exile", "library", "command"]), so "spells you cast from anywhere other than your hand cost {2} less" discounts graveyard, exile, library-top and command-zone casts but not hand casts
-  <br>Why the existing vocabulary won't do: spell_cost_reduction (player_statics.spell_cost_reduction) is handed only a CardDef and matches affects_spells against the printed face via _matches_printed; it never sees the zone the spell is cast from, and affects_spells has no zones/except_zones key. except_zones exists only on cant_cast_spells_from_zones, which forbids rather than discounts. A plain spell_cost_reduction with no zone filter would also discount hand casts, which is a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Advanced Reconstruction** (rank 10245) — `advanced_reconstruction`
-  - Spells you cast from anywhere other than your hand cost {2} less to cast.
-
-</details>
-
 ## council-s-dilemma
 
 Blocks **1** card.
@@ -1362,20 +1345,6 @@ Blocks **1** card.
 
 - **Haunting Voyage** (rank 3713) — `haunting_voyage`
   - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
-
-</details>
-
-## free-cast-exile-instead
-
-Blocks **1** card.
-
-- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
-  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Impulsivity** (rank 6248) — `impulsivity`
-  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
 
 </details>
 
@@ -1851,20 +1820,6 @@ Blocks **1** card.
 
 - **Yavimaya Bloomsage // Channel** (rank 12705) — `yavimaya_bloomsage_channel`
   - Until end of turn, any time you could activate a mana ability, you may pay 1 life. If you do, add {C}.
-
-</details>
-
-## players-dealt-combat-damage-by-subtype
-
-Blocks **1** card.
-
-- **(selector)** a player spec (or value) naming the opponents dealt combat damage this turn by this creature OR by any source with a given subtype (Dragon), so X can be counted as the number of distinct such opponents -- e.g. {"dealt_combat_damage_by": {"any_of": ["self", {"subtypes": ["Dragon"]}]}} countable as a number of players
-  <br>Why the existing vocabulary won't do: The `dealt_combat_damage_by` player spec takes only "self" and stands alone (the loader refuses any other subject), so it cannot include Dragons; the `combat_damage_by` condition (prowl) is a yes/no over subtypes and neither counts players nor includes the source itself; no value key counts the players a player spec resolves to
-
-<details><summary>Cards waiting on this</summary>
-
-- **Estinien Varlineau** (rank 10408) — `estinien_varlineau`
-  - At the beginning of your second main phase, you draw X cards and lose X life, where X is the number of your opponents who were dealt combat damage by Estinien Varlineau or a Dragon this turn.
 
 </details>
 
