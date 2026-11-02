@@ -712,7 +712,8 @@ STATIC_VALUE_EXTRAS: dict[str, Entry] = {
                       None),
     "greatest_commander_mana_value": (
         "The greatest printed mana value among your commanders, wherever they are.", None),
-    "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; the bare spec only.",
+    "spells_cast_this_turn": ("Spells a player spec's players have cast this turn; or `{player, filter}` "
+                              "for spells of a type, matched on printed faces.",
                               '"As long as an opponent has cast a spell this turn"'),
 }
 

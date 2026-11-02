@@ -1478,9 +1478,10 @@ STATIC_MANA_POOL_KEYS = frozenset({"unspent_mana_count"})
 #: flash". `TurnLedger.spells_cast` is written only by `GameState._tally`
 #: folding SPELL_CAST and emptied only by the cleanup step, never by a layer,
 #: and both funnels bump `char_version`, so it is a pipeline input on a poison
-#: count's terms. The bare player-spec form only, with the life leaves' specs:
-#: the effect side's typed `{"player", "filter"}` form matches the cast cards'
-#: printed faces, which no static has needed.
+#: count's terms. Takes the life leaves' bare player specs, or the effect side's
+#: typed `{"player", "filter"}` form -- Lyse Hext's "two or more noncreature
+#: spells" -- matched on the printed faces in `TurnLedger.spells_cast_ids`,
+#: which the same fold writes beside the count.
 STATIC_SPELLS_CAST_KEYS = frozenset({"spells_cast_this_turn"})
 
 #: The per-turn death leaf -- Gorma, the Gullet's "for each creature that died

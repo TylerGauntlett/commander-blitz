@@ -976,7 +976,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 | `min_count_of` | The fewest objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `min_life_of` | The lowest life total among a spec's players. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `permanents_entered_this_turn` | How many matching permanents entered this turn. | [Which permanents entered the battlefield this turn](card-dsl.md#which-permanents-entered-the-battlefield-this-turn) |
-| `spells_cast_this_turn` | Spells a player spec's players have cast this turn; the bare spec only. | ["As long as an opponent has cast a spell this turn"](card-dsl.md#as-long-as-an-opponent-has-cast-a-spell-this-turn) |
+| `spells_cast_this_turn` | Spells a player spec's players have cast this turn; or `{player, filter}` for spells of a type, matched on printed faces. | ["As long as an opponent has cast a spell this turn"](card-dsl.md#as-long-as-an-opponent-has-cast-a-spell-this-turn) |
 | `starting_life_of` | The life total a player began with. | ["At least 7 life more than your starting life total"](card-dsl.md#at-least-7-life-more-than-your-starting-life-total) |
 | `sum` | a + b + …. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `times` | a * b. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |

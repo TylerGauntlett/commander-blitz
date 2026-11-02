@@ -1712,8 +1712,27 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
         # off SPELL_CAST and the cleanup step empties it, no layer touches it,
         # and both bump `char_version`, so a cached answer cannot outlive the
         # cast that changed it or the turn that ended it.
-        pids = _static_players(state, source, expr["spells_cast_this_turn"])
-        return sum(state.turn_ledger.spells_cast.get(p, 0) for p in pids)
+        spec = expr["spells_cast_this_turn"]
+        if not isinstance(spec, Mapping):
+            pids = _static_players(state, source, spec)
+            return sum(state.turn_ledger.spells_cast.get(p, 0) for p in pids)
+        # Lyse Hext: "As long as you've cast two or more **noncreature** spells
+        # this turn". The effect side's typed form, counted off the ids the same
+        # fold records beside the flat total -- which knows only how many, so
+        # two creature spells would switch the static on. Matched on the printed
+        # face the cast recorded, as the effect side matches it: a resolved
+        # spell has no board state left to ask about, and a face is no layer's
+        # output, so the input argument above still holds.
+        pids = _static_players(state, source, spec.get("player", "you"))
+        filt = spec["filter"]
+        registry = state.registry
+        return sum(
+            1
+            for p in pids
+            for cast_id in state.turn_ledger.spells_cast_ids.get(p, ())
+            # `in` before `get`: `get` raises on an id the registry lacks.
+            if cast_id in registry and _matches_printed(registry.get(cast_id), filt)
+        )
     if "creatures_died_this_turn" in expr:
         # Gorma, the Gullet: "...for each creature that died under your control
         # this turn." The effect side's morbid leaf, keyed by the creature's

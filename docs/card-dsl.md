@@ -5650,7 +5650,7 @@ smaller than the effect-side `value_keys`:
 | `{"min_life_of": …}` / `{"max_life_of": …}` | [one player's life at a time](#an-opponent-has-10-or-less-life) |
 | `{"max_poison_of": …}` | [the most poison counters on one player](#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `{"unspent_mana_count": …}` | [the unspent mana in the players' pools](#for-each-unspent-mana-you-have) |
-| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — the bare player spec only |
+| `{"spells_cast_this_turn": …}` | [how many spells the players have cast this turn](#as-long-as-an-opponent-has-cast-a-spell-this-turn) — a bare player spec, or `{"player", "filter"}` for spells of a type |
 | `{"creatures_died_this_turn": …}` | how many creatures died under the players' control this turn, off `TurnLedger.creatures_died`; the bare player spec only, and the death fold and the cleanup step both bump `char_version` (Gorma, the Gullet's [entering counters](card-dsl-cookbook.md#enters_with_additional_counters--a-static-about-other-arrivals)) |
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
@@ -6055,10 +6055,31 @@ The ledger is a pipeline input on a poison count's terms: only the cast fold
 writes it and only the cleanup step empties it, never a layer (ADR 0001), and
 both bump `char_version`, so a `buff` with the same condition moves the moment
 the spell is cast and again when the turn ends. A static takes the life
-leaves' player specs and the bare spec only; the loader refuses the effect
-side's typed `{"player", "filter"}` form by name. A `spell_cast` trigger setting
-a turn flag is the near miss: it is an ability the card does not print, and it
-misses a spell cast before the permanent entered.
+leaves' player specs. A `spell_cast` trigger setting a turn flag is the near
+miss: it is an ability the card does not print, and it misses a spell cast
+before the permanent entered.
+
+"Spells **of a type**" is the effect side's typed form, `{"player", "filter"}`:
+
+```jsonc
+// Lyse Hext -- "As long as you've cast two or more noncreature spells this
+// turn, Lyse Hext has double strike."
+{ "kind": "static", "effect": "grant_keyword", "keywords": ["double_strike"],
+  "affects": { "self_only": true },
+  "condition": { "cmp": ">=",
+                 "left": { "spells_cast_this_turn": { "player": "you",
+                           "filter": { "not_types": ["Creature"] } } },
+                 "right": { "const": 2 } } }
+```
+
+It counts the faces the same fold records in `TurnLedger.spells_cast_ids`,
+matched on their printed characteristics by `_matches_printed`, so "two
+creature spells" never satisfies it — the bare count would. `player` defaults
+to `you` and takes the same specs. `filter` is required and non-empty, and
+takes the spell-filter keys less `controller` (`types`, `any_types`,
+`not_types`, `subtypes`, `supertypes`, `colors`, `min_colors`, `keywords`,
+`not_keywords`, `name`, `mana_cost`); the loader refuses a board-state key,
+an unknown type or supertype, and an empty filter (that is the bare spec).
 
 #### "At least 7 life more than your starting life total"
 
