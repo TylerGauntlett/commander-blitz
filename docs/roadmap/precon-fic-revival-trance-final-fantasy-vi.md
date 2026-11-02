@@ -6,7 +6,7 @@ effort: S
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
 depends_on: []
-status: proposed
+status: in_progress
 rank: 18
 ---
 
