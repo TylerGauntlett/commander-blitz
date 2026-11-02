@@ -54677,6 +54677,39 @@
     },
     {
       "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "exsanguinate_66d881",
+      "mana_cost": "{X}{B}{B}",
+      "name": "Exsanguinate",
+      "oracle_text": "Each opponent loses X life. You gain life equal to the life lost this way.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "as": "lost",
+          "op": "lose_life",
+          "player": "each_opponent"
+        },
+        {
+          "amount": {
+            "binding": "lost"
+          },
+          "op": "gain_life",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -166046,7 +166079,7 @@
       "name": "Stensian Sanguinist // Exsanguinate",
       "oracle_text": "Whenever you attack, target creature gains deathtouch until end of turn. Whenever that creature deals combat damage to a player this combat, this creature becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)",
       "power": 2,
-      "prepared_face": "exsanguinate",
+      "prepared_face": "exsanguinate_66d881",
       "source": "auto",
       "subtypes": [
         "Vampire",
