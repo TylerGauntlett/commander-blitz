@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**160 cards** blocked by **145** capabilities.
+**159 cards** blocked by **144** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -114,7 +114,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [playable-permission-cost-reduction](#playable-permission-cost-reduction) | 1 | 9151 | op |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [plot](#plot) | 1 | 7506 | op |
@@ -1793,20 +1792,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## playable-permission-cost-reduction
-
-Blocks **1** card.
-
-- **(op)** a generic-mana discount carried by a play permission, e.g. `cost_reduction: {"const": 2}` on `grant_playable` (and on `exile`/`look_at_top`'s `playable`), stored on the object beside playable_any_type/playable_free and applied by the cast path only when the spell is cast under that permission -- so "Until end of turn, you may play cards exiled with <this>. Spells you cast this way cost {2} less to cast" discounts exactly those casts, not other exile casts and not hand casts
-  <br>Why the existing vocabulary won't do: grant_playable (ops_cards.op_grant_playable) can mark the cards exiled_with self as playable this_turn, and carries any_type/any_color/playable_free riders, but has no discount rider. The spell_cost_reduction static (player_statics.spell_cost_reduction) matches only the printed CardDef via _matches_printed and never sees the cast's zone or the permission it uses; cost_reduction_filter_keys has no exiled_with. The pending cost_reduction_by_cast_zone gap (a static filtered on origin zone) would still be too broad: it would discount every exile cast, not only cards cast through this permission, and it would last while the permanent is out rather than until end of turn. Dropping the clause would make the card strictly worse than printed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Urianger Augurelt** (rank 9151) — `urianger_augurelt`
-  - Play Arcanum — {T}: Until end of turn, you may play cards exiled with Urianger Augurelt. Spells you cast this way cost {2} less to cast.
 
 </details>
 

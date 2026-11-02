@@ -16544,6 +16544,10 @@
     },
     "zone": "battlefield"
   },
+  "urianger_augurelt": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "urza_s_cave": {
     "zone": "battlefield"
   },

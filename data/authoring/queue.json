@@ -299492,12 +299492,12 @@
     },
     "Urianger Augurelt": {
       "edhrec_rank": 9151,
-      "gate": "template",
+      "gate": null,
       "name": "Urianger Augurelt",
-      "reason": "no template for: Whenever you play a land from exile or cast a spell from exile, you gain 2 life",
+      "reason": "",
       "scryfall_id": "44d44107-da15-41b9-8dfb-6335c1cbd83a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Uril, the Miststalker": {
