@@ -145980,6 +145980,149 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Blitz—{2}{R}{R}, Discard a card. (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)",
+          "trigger": {
+            "condition": {
+              "evoked": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "duration": "permanent",
+              "keyword": "haste",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "ability": 0,
+              "duration": "permanent",
+              "objects": {
+                "self_only": true
+              },
+              "op": "grant_ability"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step"
+            }
+          ],
+          "kind": "triggered",
+          "text": "You may cast this card from your graveyard using its blitz ability.",
+          "trigger": {
+            "condition": {
+              "escaped": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "evoke": {
+        "discard": 1,
+        "mana": "{2}{R}{R}"
+      },
+      "evoke_label": "blitz",
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature dies, draw a card.",
+          "trigger": {
+            "controller": "any",
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "graveyard_cast": "graveyard",
+      "graveyard_cost": {
+        "discard": 1,
+        "mana": "{2}{R}{R}"
+      },
+      "id": "sabin_master_monk",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{4}{R}",
+      "name": "Sabin, Master Monk",
+      "oracle_text": "Double strike\nBlitz—{2}{R}{R}, Discard a card. (If you cast this spell for its blitz cost, it gains haste and \"When this creature dies, draw a card.\" Sacrifice it at the beginning of the next end step.)\nYou may cast this card from your graveyard using its blitz ability.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Noble",
+        "Monk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -151484,6 +151627,77 @@
         "Legendary"
       ],
       "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "controller": "you",
+                      "objects": {
+                        "binding": "each"
+                      },
+                      "op": "put_onto_battlefield"
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "for_each"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "one_per_player": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When this creature enters, for each opponent, you may put up to one target creature card from that player's graveyard onto the battlefield under your control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "sepulchral_primordial",
+      "keywords": [
+        "intimidate"
+      ],
+      "mana_cost": "{5}{B}{B}",
+      "name": "Sepulchral Primordial",
+      "oracle_text": "Intimidate (This creature can't be blocked except by artifact creatures and/or creatures that share a color with it.)\nWhen this creature enters, for each opponent, you may put up to one target creature card from that player's graveyard onto the battlefield under your control.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Avatar"
+      ],
+      "toughness": 4,
       "types": [
         "Creature"
       ]
@@ -177678,6 +177892,145 @@
             {
               "effects": [
                 {
+                  "ability": "falcon_reanimate",
+                  "op": "reflexive_trigger"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "self_only": true,
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice The Falcon to return a creature card from your graveyard to the battlefield?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever The Falcon deals combat damage to a player, you may sacrifice it.",
+          "trigger": {
+            "event": "deals_combat_damage_to_player",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "id": "falcon_reanimate",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When you do, return target creature card from your graveyard to the battlefield."
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{4}{B}"
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}{B}: Return this card from your graveyard to the battlefield tapped."
+        },
+        {
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "animate",
+              "power": {
+                "const": 4
+              },
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "Crew 2"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "the_falcon_airship_restored",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}",
+      "name": "The Falcon, Airship Restored",
+      "oracle_text": "Flying\nWhenever The Falcon deals combat damage to a player, you may sacrifice it. When you do, return target creature card from your graveyard to the battlefield.\n{4}{B}: Return this card from your graveyard to the battlefield tapped.\nCrew 2",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Vehicle"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
                   "objects": {
                     "self_only": true,
                     "zone": "battlefield"
@@ -187851,6 +188204,135 @@
         "Ally"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "exclude_self": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "pump",
+                      "power": {
+                        "const": 3
+                      },
+                      "toughness": {
+                        "const": 0
+                      }
+                    },
+                    {
+                      "keywords": [
+                        "trample"
+                      ],
+                      "objects": {
+                        "controller": "you",
+                        "count": "all",
+                        "exclude_self": true,
+                        "types": [
+                          "Creature"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "grant_keyword"
+                    }
+                  ],
+                  "label": "Other creatures you control get +3/+0 and gain trample until end of turn."
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "discard",
+                      "player": "you",
+                      "whole_hand": true
+                    },
+                    {
+                      "amount": {
+                        "const": 4
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Discard your hand, then draw four cards."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 5
+                      },
+                      "op": "damage",
+                      "target": "t1"
+                    }
+                  ],
+                  "label": "Umaro deals 5 damage to any target."
+                }
+              ],
+              "op": "choose_mode",
+              "random": true
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "mode": 2,
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, choose one at random —\n• Other creatures you control get +3/+0 and gain trample until end of turn.\n• Discard your hand, then draw four cards.\n• Umaro deals 5 damage to any target.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "umaro_raging_yeti",
+      "keywords": [
+        "trample"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Umaro, Raging Yeti",
+      "oracle_text": "Trample\nAt the beginning of combat on your turn, choose one at random —\n• Other creatures you control get +3/+0 and gain trample until end of turn.\n• Discard your hand, then draw four cards.\n• Umaro deals 5 damage to any target.",
+      "power": 6,
+      "source": "auto",
+      "subtypes": [
+        "Yeti",
+        "Berserker"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 6,
       "types": [
         "Creature"
       ]

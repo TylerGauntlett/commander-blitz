@@ -12547,6 +12547,10 @@
   "sabertooth_wyvern": {
     "zone": "battlefield"
   },
+  "sabin_master_monk": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sabretooth_tiger": {
     "zone": "battlefield"
   },
@@ -13022,6 +13026,10 @@
         "lifelink"
       ]
     },
+    "zone": "battlefield"
+  },
+  "sepulchral_primordial": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "seraph_of_dawn": {
@@ -15201,6 +15209,10 @@
   "the_fabulous_frog_man": {
     "zone": "battlefield"
   },
+  "the_falcon_airship_restored": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "the_fantasticar": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16049,6 +16061,10 @@
     "zone": "battlefield"
   },
   "umara_entangler": {
+    "zone": "battlefield"
+  },
+  "umaro_raging_yeti": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "umbral_collar_zealot": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**164 cards** blocked by **149** capabilities.
+**166 cards** blocked by **153** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -79,6 +79,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [exile-from-graveyard-as](#exile-from-graveyard-as) | 1 | 13682 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
+| [exile-until-opponent-library](#exile-until-opponent-library) | 1 | 9287 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
@@ -87,6 +88,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
+| [free-cast-haste-and-end-step-sacrifice](#free-cast-haste-and-end-step-sacrifice) | 1 | 9287 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -154,6 +156,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
+| [the-blackjack-token](#the-blackjack-token) | 1 | 12252 | token |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
@@ -161,6 +164,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [win-coin-flip](#win-coin-flip) | 1 | 12252 | trigger_event |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -1290,6 +1294,20 @@ Blocks **1** card.
 
 </details>
 
+## exile-until-opponent-library
+
+Blocks **1** card.
+
+- **(op)** a `player` key on `exile_until` (e.g. {"target": "t1"} for a target opponent) so the walk exiles from the top of THAT player's library while the free-cast offer (`cast_free`) still goes to the ability's controller, who casts the opponent's card
+  <br>Why the existing vocabulary won't do: `op_exile_until` in engine/effects/ops_cards.py hardcodes `pid = ctx.controller` and walks only `ctx.state.players[pid].library`; it takes no `player`. `reveal_until` takes `player` and `playable_free`, but it leaves the walked-past cards in the library (bottom/shuffle) rather than exiled, and grants a later play permission instead of an immediate cast; `cascade` is controller-only with a mana-value ceiling and bottoms the rest
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strago and Relm** (rank 9287) — `strago_and_relm`
+  - Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library until they exile an instant, sorcery, or creature card. You may cast that card without paying its mana cost. If you cast a creature spell this way, it gains haste and "At the beginning of the end step, sacrifice this creature." Activate only as a sorcery.
+
+</details>
+
 ## exiled-this-way-lki
 
 Blocks **1** card.
@@ -1406,6 +1424,20 @@ Blocks **1** card.
 
 - **Impulsivity** (rank 6248) — `impulsivity`
   - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
+
+</details>
+
+## free-cast-haste-and-end-step-sacrifice
+
+Blocks **1** card.
+
+- **(op)** a rider on a free cast made by an effect (`exile_until` cast_free, or `_offer_free_cast` generally): if the spell cast is a creature spell, the permanent it becomes gains haste and the granted triggered ability "At the beginning of the end step, sacrifice this creature." -- applied to the resulting permanent (not the spell), only when the card was actually cast this way
+  <br>Why the existing vocabulary won't do: `cast_gains_keywords` is the only keyword rider on a cast spell and the loader refuses it outside the `cast_from_library_top` static; `exile_until` exposes no `as`-bound result telling whether the hit was cast (its `as` binds the hit cast or not), so a following `grant_keyword` + `grant_ability` would wrongly apply to an uncast card left in exile or to a spell still on the stack before it becomes a permanent; `cast_for_free`'s `haste` flag is suspend's internal and not reachable from the DSL, and it carries no end-step sacrifice
+
+<details><summary>Cards waiting on this</summary>
+
+- **Strago and Relm** (rank 9287) — `strago_and_relm`
+  - Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library until they exile an instant, sorcery, or creature card. You may cast that card without paying its mana cost. If you cast a creature spell this way, it gains haste and "At the beginning of the end step, sacrifice this creature." Activate only as a sorcery.
 
 </details>
 
@@ -2364,6 +2396,21 @@ Blocks **1** card.
 
 </details>
 
+## the-blackjack-token
+
+Blocks **1** card.
+
+- **(token)** The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2 (crew 2 = an activated ability whose cost is tap_permanents with total_power 2, making it an artifact creature until end of turn)
+  <br>Why the existing vocabulary won't do: token_ids holds no Vehicle token at all; the nearest are pilot_1_1_c_crew2 (a Pilot creature that helps crew) and treasure_token, neither of which is a named legendary flying Vehicle
+
+<details><summary>Cards waiting on this</summary>
+
+- **Setzer, Wandering Gambler** (rank 12252) — `setzer_wandering_gambler`
+  - When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.
+  - Whenever you win a coin flip, create two tapped Treasure tokens.
+
+</details>
+
 ## this-combat-duration
 
 Blocks **1** card.
@@ -2459,6 +2506,21 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## win-coin-flip
+
+Blocks **1** card.
+
+- **(trigger_event)** a trigger event that fires whenever a player wins a coin flip, filterable by who flipped ("whenever you win a coin flip"), fired from the flip_coin op whenever its result is a win -- including flips caused by other cards' effects, not only this card's own
+  <br>Why the existing vocabulary won't do: trigger_events has no coin-flip event; the engine emits EventType.COIN_FLIPPED (carrying `won`) from the flip_coin op only for the log, and no trigger can listen to it. Putting the Treasure creation in the second ability's flip_coin win branch would miss every coin flip won from any other source, a narrower card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Setzer, Wandering Gambler** (rank 12252) — `setzer_wandering_gambler`
+  - When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.
+  - Whenever you win a coin flip, create two tapped Treasure tokens.
 
 </details>
 

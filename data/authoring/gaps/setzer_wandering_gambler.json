@@ -1,0 +1,25 @@
+{
+  "card_id": "setzer_wandering_gambler",
+  "name": "Setzer, Wandering Gambler",
+  "oracle_text": "When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.\nWhenever a Vehicle you control deals combat damage to a player, flip a coin.\nWhenever you win a coin flip, create two tapped Treasure tokens.",
+  "blocked_sentences": [
+    "When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.",
+    "Whenever you win a coin flip, create two tapped Treasure tokens."
+  ],
+  "needs": [
+    {
+      "capability": "win_coin_flip",
+      "kind": "trigger_event",
+      "what": "a trigger event that fires whenever a player wins a coin flip, filterable by who flipped (\"whenever you win a coin flip\"), fired from the flip_coin op whenever its result is a win -- including flips caused by other cards' effects, not only this card's own",
+      "why_existing_wont_do": "trigger_events has no coin-flip event; the engine emits EventType.COIN_FLIPPED (carrying `won`) from the flip_coin op only for the log, and no trigger can listen to it. Putting the Treasure creation in the second ability's flip_coin win branch would miss every coin flip won from any other source, a narrower card"
+    },
+    {
+      "capability": "the_blackjack_token",
+      "kind": "token",
+      "what": "The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2 (crew 2 = an activated ability whose cost is tap_permanents with total_power 2, making it an artifact creature until end of turn)",
+      "why_existing_wont_do": "token_ids holds no Vehicle token at all; the nearest are pilot_1_1_c_crew2 (a Pilot creature that helps crew) and treasure_token, neither of which is a named legendary flying Vehicle"
+    }
+  ],
+  "closest_existing": ["flip_coin", "deals_combat_damage_to_player", "treasure_token", "pilot_1_1_c_crew2"],
+  "confidence": "high"
+}
