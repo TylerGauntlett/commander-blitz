@@ -15400,6 +15400,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "thancred_waters": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thassa_s_oracle": {
     "battlefield_count": 33,
     "hand_size": {

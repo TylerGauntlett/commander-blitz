@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **148** capabilities.
+**162 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -83,7 +83,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
-| [for-as-long-as-you-control-source](#for-as-long-as-you-control-source) | 1 | 8396 | engine |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
@@ -1349,20 +1348,6 @@ Blocks **1** card.
   - Look at the cards in the other pile.
   - You may cast a spell from among them without paying its mana cost.
   - Put the rest into your hand.
-
-</details>
-
-## for-as-long-as-you-control-source
-
-Blocks **1** card.
-
-- **(engine)** a duration for one-shot grants (grant_keyword, and by extension pump/animate) meaning 'for as long as you control <source>': the effect written onto the targeted permanent ends the moment the source leaves the battlefield or changes controller (611.2b)
-  <br>Why the existing vocabulary won't do: grant_keyword's duration takes only until_end_of_turn, until_your_next_turn and permanent; permanent outlives Thancred leaving, the timed ones end too early. A grant_keyword static ends with its source but its affects filter has no key binding it to the one permanent the enters trigger targeted (only attached/paired_with_source/enchanted_by), so it cannot mean 'that target'.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Thancred Waters** (rank 8396) — `thancred_waters`
-  - Royal Guard — When Thancred Waters enters, another target legendary permanent you control gains indestructible for as long as you control Thancred Waters.
 
 </details>
 

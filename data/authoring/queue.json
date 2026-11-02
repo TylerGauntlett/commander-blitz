@@ -279492,12 +279492,12 @@
     },
     "Thancred Waters": {
       "edhrec_rank": 8396,
-      "gate": "template",
+      "gate": null,
       "name": "Thancred Waters",
-      "reason": "no template for: Royal Guard — When enters, another target legendary permanent you control gains indestruct",
+      "reason": "",
       "scryfall_id": "bcd85c4e-c674-4753-ae82-80293554fdc5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thanos, Death's Consort": {
