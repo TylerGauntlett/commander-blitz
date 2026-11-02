@@ -67120,6 +67120,34 @@
       ]
     },
     {
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gentleman_s_rise_hildibrand",
+      "mana_cost": "{2}{B}",
+      "name": "Gentleman's Rise",
+      "oracle_text": "Create a 2/2 black Zombie creature token.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "create_token",
+          "token": "zombie_2_2_b"
+        }
+      ],
+      "subtypes": [
+        "Adventure"
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -82045,6 +82073,74 @@
         "Insect"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "is_token": true,
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 1
+          },
+          "text": "Creature tokens you control get +1/+1.",
+          "toughness": {
+            "const": 1
+          }
+        },
+        {
+          "effects": [
+            {
+              "as_adventure": true,
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "grant_playable",
+              "playable": "end_of_your_next_turn"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "adventure": true,
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "hildibrand_manderville_gentleman_s_rise",
+      "mana_cost": "{1}{W}",
+      "name": "Hildibrand Manderville // Gentleman's Rise",
+      "oracle_text": "Creature tokens you control get +1/+1.\nWhen Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn.",
+      "power": 2,
+      "second_face": "gentleman_s_rise_hildibrand",
+      "second_face_zone": "hand",
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Detective"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]

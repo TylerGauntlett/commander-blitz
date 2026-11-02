@@ -127982,12 +127982,12 @@
     },
     "Hildibrand Manderville // Gentleman's Rise": {
       "edhrec_rank": 10479,
-      "gate": "template",
+      "gate": null,
       "name": "Hildibrand Manderville // Gentleman's Rise",
-      "reason": "no template for: Creature tokens you control get +1/+1",
+      "reason": "",
       "scryfall_id": "60aed76e-2265-471d-8e41-1d8605603b78",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hill Giant": {

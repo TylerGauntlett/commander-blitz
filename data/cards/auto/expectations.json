@@ -7126,6 +7126,13 @@
   "highspire_mantis": {
     "zone": "battlefield"
   },
+  "hildibrand_manderville_gentleman_s_rise": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "hill_giant": {
     "zone": "battlefield"
   },

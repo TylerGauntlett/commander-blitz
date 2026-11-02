@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**166 cards** blocked by **151** capabilities.
+**165 cards** blocked by **150** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,7 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
-| [cast-adventure-from-graveyard](#cast-adventure-from-graveyard) | 1 | 10479 | engine |
 | [cast-copy-alternative-cost](#cast-copy-alternative-cost) | 1 | 7708 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
@@ -863,20 +862,6 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
-
-</details>
-
-## cast-adventure-from-graveyard
-
-Blocks **1** card.
-
-- **(engine)** a playable permission (from a dies trigger, lasting until the end of your next turn) that lets the card be cast from the graveyard only as its Adventure half (Gentleman's Rise, {2}{B} Instant - Adventure: create a 2/2 black Zombie creature token), with the normal Adventure exile-on-resolution so the creature can later be cast from exile
-  <br>Why the existing vocabulary won't do: grant_playable with playable 'end_of_your_next_turn' marks the card in the graveyard, but casting._cast_actions offers only the front face (_cast_options on the printed card) for a playable-permission card, and the second-face cast lines are gated by second_face_zone, which is 'hand' for an Adventure; setting second_face_zone 'graveyard' would make it Aftermath-like (castable from graveyard always, never from hand) and still let the creature face be cast from the graveyard. Nothing restricts a permission to one face.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Hildibrand Manderville // Gentleman's Rise** (rank 10479) — `hildibrand_manderville_gentleman_s_rise`
-  - When Hildibrand Manderville dies, you may cast it from your graveyard as an Adventure until the end of your next turn.
 
 </details>
 
