@@ -1,0 +1,884 @@
+{
+  "id": "fic_scions_spellcraft_final_fantasy_xiv",
+  "name": "Scions & Spellcraft (FINAL FANTASY XIV)",
+  "commanders": [
+    "y_shtola_night_s_blessed"
+  ],
+  "color_identity": [
+    "B",
+    "U",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "FIC",
+    "set_name": "Final Fantasy Commander",
+    "date": "2025-06-13"
+  },
+  "notes": "Final Fantasy Commander precon, card for card (https://mtgjson.com/api/v5/decks/ScionsSpellcraftFinalFantasyXiv_FIC.json).",
+  "tags": [
+    "Spellslinger",
+    "Drain",
+    "Legends",
+    "Graveyard"
+  ],
+  "strategy": "Y'shtola, Night's Blessed turns every noncreature spell with mana value 3 or greater into 2 damage to each opponent and 2 life for you, and draws a card at each end step once a player has lost 4 or more life that turn. The deck is built to hit both halves: Papalymo Totolymo pings the table on every noncreature spell, Circle of Power and Transpose leave Wizards that do the same, and Exsanguinate, Syphon Mind and Bastion of Remembrance push a turn's loss past four. The Scions back it up: Alphinaud Leveilleur and Alisaie Leveilleur reward the second spell each turn, G'raha Tia, Scion Reborn pays life into Heroes, Krile Baldesion and Emet-Selch of the Third Seat bring cards back from the graveyard, and Urianger Augurelt plays from exile. Final Judgment, Crux of Fate, Cleansing Nova, Void Rend and Swords to Plowshares answer the board, Torrential Gearhulk and Dig Through Time refuel, and the Job select Equipment arrive with a Hero to wear them.",
+  "archetype": "spellslinger",
+  "printings": {
+    "alisaie_leveilleur": {
+      "scryfall_id": "ba96f831-02cb-4a74-a2e4-7f76444e3cd7",
+      "artist": "Justyna Dura",
+      "set_code": "fic",
+      "collector_number": "9"
+    },
+    "alphinaud_leveilleur": {
+      "scryfall_id": "65331e86-1ff3-45e4-b789-7afec4ca9bd5",
+      "artist": "Justyna Dura",
+      "set_code": "fic",
+      "collector_number": "33"
+    },
+    "arcane_sanctum": {
+      "scryfall_id": "82ce1102-a88c-46ff-9fc1-7153beb50b6a",
+      "artist": "Constantin Marin",
+      "set_code": "fic",
+      "collector_number": "373"
+    },
+    "arcane_signet": {
+      "scryfall_id": "4c861c4c-0520-46d9-b281-63a1188417dc",
+      "artist": "Madeline Boni",
+      "set_code": "fic",
+      "collector_number": "335"
+    },
+    "archaeomancer_s_map": {
+      "scryfall_id": "c6ff5063-c93f-4b21-8d08-ab0e8e046d39",
+      "artist": "Erikas Perl",
+      "set_code": "fic",
+      "collector_number": "230"
+    },
+    "archmage_emeritus": {
+      "scryfall_id": "e85c555a-f034-4c79-92d8-610527d16529",
+      "artist": "Josephine Chang",
+      "set_code": "fic",
+      "collector_number": "261"
+    },
+    "ardbert_warrior_of_darkness": {
+      "scryfall_id": "9fc1ac8a-bbd4-4d17-81d9-fd04876084b1",
+      "artist": "Thanh Tuấn",
+      "set_code": "fic",
+      "collector_number": "77"
+    },
+    "ash_barrens": {
+      "scryfall_id": "77df073b-49dc-4743-82a3-d595bc938761",
+      "artist": "Sam Burley",
+      "set_code": "fic",
+      "collector_number": "374"
+    },
+    "astrologian_s_planisphere": {
+      "scryfall_id": "bfa4e927-1d6f-4a64-9801-7d168a5ef3f6",
+      "artist": "Josephine Chang",
+      "set_code": "fin",
+      "collector_number": "46"
+    },
+    "authority_of_the_consuls": {
+      "scryfall_id": "53e3fa87-8de0-4e3a-90bf-780dd0a9fb48",
+      "artist": "Julia Vasilyeva",
+      "set_code": "fic",
+      "collector_number": "232"
+    },
+    "baleful_strix": {
+      "scryfall_id": "4ae1ec4a-5367-4663-841b-4038ae30a690",
+      "artist": "Andrea Tentori Montalto",
+      "set_code": "fic",
+      "collector_number": "318"
+    },
+    "bastion_of_remembrance": {
+      "scryfall_id": "68846892-3cdb-4a17-aef7-dd7a3aed22ff",
+      "artist": "Jeremy Paillotin",
+      "set_code": "fic",
+      "collector_number": "274"
+    },
+    "blue_mage_s_cane": {
+      "scryfall_id": "9b3cfc13-db4e-4ec3-8444-f715bcd43be6",
+      "artist": "Eglė Mosakaitė",
+      "set_code": "fic",
+      "collector_number": "35"
+    },
+    "champions_from_beyond": {
+      "scryfall_id": "d1031ce5-063f-4c38-a6a9-abc15d254dfc",
+      "artist": "Darius Zablockis",
+      "set_code": "fic",
+      "collector_number": "11"
+    },
+    "choked_estuary": {
+      "scryfall_id": "d9cf2b77-afb0-4c21-bc23-6942ec292035",
+      "artist": "Jeremy Paillotin",
+      "set_code": "fic",
+      "collector_number": "379"
+    },
+    "circle_of_power": {
+      "scryfall_id": "c969bd0f-f174-4e2f-b95c-c9ccd5d0b8ba",
+      "artist": "Josephine Chang",
+      "set_code": "fin",
+      "collector_number": "92"
+    },
+    "cleansing_nova": {
+      "scryfall_id": "81096eba-ad0a-4fa8-8d56-5a1ea9a9155b",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "fic",
+      "collector_number": "235"
+    },
+    "command_tower": {
+      "scryfall_id": "9ac9c12b-5135-4124-b01b-336560907940",
+      "artist": "Alayna Danner",
+      "set_code": "fic",
+      "collector_number": "382"
+    },
+    "contaminated_aquifer": {
+      "scryfall_id": "bf544abb-c338-4da4-bb77-eddd3aaacc9a",
+      "artist": "Jeremy Paillotin",
+      "set_code": "fic",
+      "collector_number": "383"
+    },
+    "coveted_jewel": {
+      "scryfall_id": "5b4ce244-d34f-4e96-9fe5-a0a8cefb92c7",
+      "artist": "Bruno Biazotto",
+      "set_code": "fic",
+      "collector_number": "341"
+    },
+    "crux_of_fate": {
+      "scryfall_id": "4d507db6-29a6-4816-8e37-5b6e318d740f",
+      "artist": "Alexander Mokhov",
+      "set_code": "fic",
+      "collector_number": "275"
+    },
+    "cut_a_deal": {
+      "scryfall_id": "b42f5488-949f-434a-a9cf-c98e070d6a7f",
+      "artist": "Mintautas Šukys",
+      "set_code": "fic",
+      "collector_number": "238"
+    },
+    "dancer_s_chakrams": {
+      "scryfall_id": "27ec595f-406b-4539-8d2e-eb98df1a0fc9",
+      "artist": "Domco.",
+      "set_code": "fic",
+      "collector_number": "17"
+    },
+    "darkwater_catacombs": {
+      "scryfall_id": "bcb5a670-7c8f-4b76-82c6-c89abffbb4bd",
+      "artist": "Jeremy Paillotin",
+      "set_code": "fic",
+      "collector_number": "384"
+    },
+    "demolition_field": {
+      "scryfall_id": "7f6d8cae-face-4bff-8c0a-348cefe1e9dd",
+      "artist": "David Frasheski",
+      "set_code": "fic",
+      "collector_number": "385"
+    },
+    "desolate_mire": {
+      "scryfall_id": "a0ecbdad-aebf-421d-a71e-e112f8c0e4bb",
+      "artist": "Hristo D. Chukov",
+      "set_code": "fic",
+      "collector_number": "386"
+    },
+    "dig_through_time": {
+      "scryfall_id": "766b2e52-6ba1-4222-a9f4-01a2bf3e9443",
+      "artist": "Erikas Perl",
+      "set_code": "fic",
+      "collector_number": "263"
+    },
+    "drowned_catacomb": {
+      "scryfall_id": "8a47d5f6-e08d-4311-97d0-16f7737b83a0",
+      "artist": "Constantin Marin",
+      "set_code": "fic",
+      "collector_number": "388"
+    },
+    "emet_selch_of_the_third_seat": {
+      "scryfall_id": "dd3141de-633e-48e3-a89f-a91339f5e882",
+      "artist": "Magali Villeneuve",
+      "set_code": "fic",
+      "collector_number": "81"
+    },
+    "estinien_varlineau": {
+      "scryfall_id": "7812c768-8417-4689-9a51-f577c1cf5dc0",
+      "artist": "Fang Xinyu",
+      "set_code": "fic",
+      "collector_number": "82"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "351f791c-4bee-4fce-aee4-d0214ca0c945",
+      "artist": "Jeremy Paillotin",
+      "set_code": "fic",
+      "collector_number": "389"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "47c2b572-b54a-444c-8d74-b005e94d751f",
+      "artist": "David Frasheski",
+      "set_code": "fic",
+      "collector_number": "390"
+    },
+    "exsanguinate": {
+      "scryfall_id": "333c8e71-fe90-408c-aabd-c5b7d83d0f03",
+      "artist": "Anthony Devine",
+      "set_code": "fic",
+      "collector_number": "276"
+    },
+    "eye_of_nidhogg": {
+      "scryfall_id": "186862e7-91ba-47e9-bc38-e8e20772d40c",
+      "artist": "Erion Makuo",
+      "set_code": "fic",
+      "collector_number": "44"
+    },
+    "fandaniel_telophoroi_ascian": {
+      "scryfall_id": "08c9bf6c-fc52-4565-96d1-951a314e59e5",
+      "artist": "Paulius Daščioras",
+      "set_code": "fic",
+      "collector_number": "46"
+    },
+    "fetid_heath": {
+      "scryfall_id": "5277f73d-b964-4ce6-823d-ce0fbf0a2d28",
+      "artist": "Allen Morris",
+      "set_code": "fic",
+      "collector_number": "391"
+    },
+    "final_judgment": {
+      "scryfall_id": "438a7db0-8005-46ac-8dd1-e7e364fd2ba7",
+      "artist": "Rimas Valeikis",
+      "set_code": "fic",
+      "collector_number": "243"
+    },
+    "g_raha_tia_scion_reborn": {
+      "scryfall_id": "f90eb8ef-ad70-4d6c-9958-e6153f8599bc",
+      "artist": "YASUNARI HIRASAKA",
+      "set_code": "fic",
+      "collector_number": "3"
+    },
+    "glacial_fortress": {
+      "scryfall_id": "d75d748f-38c3-4a7f-8211-db62d5314180",
+      "artist": "Wei Guan",
+      "set_code": "fic",
+      "collector_number": "400"
+    },
+    "hermes_overseer_of_elpis": {
+      "scryfall_id": "e04a05e5-7bff-46a4-aae1-6713977e6e30",
+      "artist": "Darius Zablockis",
+      "set_code": "fic",
+      "collector_number": "36"
+    },
+    "hildibrand_manderville_gentleman_s_rise": {
+      "scryfall_id": "60aed76e-2265-471d-8e41-1d8605603b78",
+      "artist": "AKAGI",
+      "set_code": "fic",
+      "collector_number": "83"
+    },
+    "hraesvelgr_of_the_first_brood": {
+      "scryfall_id": "abcfefe3-c66d-4512-bcc3-c9a39cfbb983",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fic",
+      "collector_number": "37"
+    },
+    "hypnotic_sprite_mesmeric_glare": {
+      "scryfall_id": "4358fcf2-e07c-4a0f-8f69-5d0f83adeb20",
+      "artist": "Mizutametori",
+      "set_code": "fic",
+      "collector_number": "264"
+    },
+    "idyllic_beachfront": {
+      "scryfall_id": "afe2ebec-0310-4b2f-ace4-fb293a1e4837",
+      "artist": "David Astruga",
+      "set_code": "fic",
+      "collector_number": "404"
+    },
+    "into_the_story": {
+      "scryfall_id": "24c55c03-2c7a-416d-81d6-74a77a103704",
+      "artist": "Paulius Daščioras",
+      "set_code": "fic",
+      "collector_number": "266"
+    },
+    "island": {
+      "scryfall_id": "b92ec9f6-a56d-40c6-aee2-7d5e1524c985",
+      "artist": "Fariba Khamseh",
+      "set_code": "fin",
+      "collector_number": "297"
+    },
+    "isolated_chapel": {
+      "scryfall_id": "8ca61142-d0ed-42cb-9a51-0e44151f2b44",
+      "artist": "Henry Wong",
+      "set_code": "fic",
+      "collector_number": "405"
+    },
+    "krile_baldesion": {
+      "scryfall_id": "125dd19b-98a0-49d9-a870-63214255e12a",
+      "artist": "Jason Kiantoro",
+      "set_code": "fic",
+      "collector_number": "86"
+    },
+    "lethal_scheme": {
+      "scryfall_id": "0802be9f-686f-4321-afa4-d472241de653",
+      "artist": "Daniel Correia",
+      "set_code": "fic",
+      "collector_number": "277"
+    },
+    "lingering_souls": {
+      "scryfall_id": "e464408d-3e50-4a9e-beca-b91e15baacaf",
+      "artist": "Jurijus Chitrovas",
+      "set_code": "fic",
+      "collector_number": "245"
+    },
+    "lyse_hext": {
+      "scryfall_id": "97845ece-ceef-468c-a4e3-6fde1413c9f0",
+      "artist": "Ramza Psyru",
+      "set_code": "fic",
+      "collector_number": "88"
+    },
+    "murderous_rider_swift_end": {
+      "scryfall_id": "dd239710-62ef-43b5-aea2-e82bb385744d",
+      "artist": "David Astruga",
+      "set_code": "fic",
+      "collector_number": "279"
+    },
+    "observed_stasis": {
+      "scryfall_id": "6301c10c-8c27-4595-a0a7-30c621332b2c",
+      "artist": "Toni Infante",
+      "set_code": "fic",
+      "collector_number": "40"
+    },
+    "papalymo_totolymo": {
+      "scryfall_id": "0b876b1e-fcf4-4e5c-81b0-1080ac8099ed",
+      "artist": "Immanuela Crovius",
+      "set_code": "fic",
+      "collector_number": "90"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "4dd83a5d-1908-4141-8449-fac5e77cd6c0",
+      "artist": "Gal Or",
+      "set_code": "fic",
+      "collector_number": "411"
+    },
+    "plains": {
+      "scryfall_id": "9dd2d666-7c6b-48ce-93dc-c004ebdd1fe9",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fin",
+      "collector_number": "294"
+    },
+    "port_town": {
+      "scryfall_id": "f1ac3b7f-a1db-49df-ba02-fc80cb2f70af",
+      "artist": "Enora Mercier",
+      "set_code": "fic",
+      "collector_number": "412"
+    },
+    "prairie_stream": {
+      "scryfall_id": "ce3a0ad9-6b7a-470c-8e49-4121fea72c89",
+      "artist": "Alayna Danner",
+      "set_code": "fic",
+      "collector_number": "413"
+    },
+    "propaganda": {
+      "scryfall_id": "8fdbe10e-4a5c-43ee-abb5-20a8d5be9727",
+      "artist": "Gintas Galvanauskas",
+      "set_code": "fic",
+      "collector_number": "268"
+    },
+    "reaper_s_scythe": {
+      "scryfall_id": "e1e53ff2-c321-4fc8-b4d7-eb253d670c5b",
+      "artist": "Colin Boyer",
+      "set_code": "fic",
+      "collector_number": "48"
+    },
+    "relic_of_legends": {
+      "scryfall_id": "ed235727-7e60-4b37-8947-4b3613711c4d",
+      "artist": "Russell Dongjun Lu",
+      "set_code": "fic",
+      "collector_number": "354"
+    },
+    "rite_of_replication": {
+      "scryfall_id": "e1d1c0ab-6f75-4144-baab-59b2194742f9",
+      "artist": "Erikas Perl",
+      "set_code": "fic",
+      "collector_number": "270"
+    },
+    "sage_s_nouliths": {
+      "scryfall_id": "a12ff7c3-6ae0-4098-9240-ff3fd16a5288",
+      "artist": "Justyna Dura",
+      "set_code": "fin",
+      "collector_number": "70"
+    },
+    "scavenger_grounds": {
+      "scryfall_id": "a4e3f65d-8d73-4fd1-9de4-813ba6e40940",
+      "artist": "Salvatorre Zee Yazzie",
+      "set_code": "fic",
+      "collector_number": "419"
+    },
+    "shineshadow_snarl": {
+      "scryfall_id": "e45eff2e-c624-4c59-b192-a9d7dc2eeeba",
+      "artist": "Piotr Dura",
+      "set_code": "fic",
+      "collector_number": "422"
+    },
+    "skycloud_expanse": {
+      "scryfall_id": "0972c465-0369-4ac2-9912-2898fad1bdba",
+      "artist": "David Frasheski",
+      "set_code": "fic",
+      "collector_number": "423"
+    },
+    "snuff_out": {
+      "scryfall_id": "a3b1fc65-3620-4052-a1f8-1779d95029c7",
+      "artist": "Thanh Tuấn",
+      "set_code": "fic",
+      "collector_number": "285"
+    },
+    "sol_ring": {
+      "scryfall_id": "1abcafa9-0f27-482f-95a9-24520f0106b8",
+      "artist": "Piotr Dura",
+      "set_code": "fic",
+      "collector_number": "359"
+    },
+    "sublime_epiphany": {
+      "scryfall_id": "a71d0330-ae9b-48c4-802b-b2383958e0d4",
+      "artist": "S. Makimura",
+      "set_code": "fic",
+      "collector_number": "271"
+    },
+    "summon_good_king_mog_xii": {
+      "scryfall_id": "c14098d6-28ae-492f-8ffc-7d115d83ce6a",
+      "artist": "Andrea Radeck",
+      "set_code": "fic",
+      "collector_number": "26"
+    },
+    "sunken_hollow": {
+      "scryfall_id": "3eb96a33-46db-4d84-9a7f-9bb6a19a1a93",
+      "artist": "Constantin Marin",
+      "set_code": "fic",
+      "collector_number": "429"
+    },
+    "sunken_ruins": {
+      "scryfall_id": "2dbd21b1-d6cf-4d10-8a31-aa52208c95d7",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fic",
+      "collector_number": "430"
+    },
+    "sunlit_marsh": {
+      "scryfall_id": "4b163c67-2e88-4181-90c9-3f15eba59d03",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fic",
+      "collector_number": "431"
+    },
+    "swamp": {
+      "scryfall_id": "f66094ef-059b-4511-aa6e-835906736de4",
+      "artist": "Domenico Cava",
+      "set_code": "fin",
+      "collector_number": "300"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "06554274-78ee-4bfc-b203-b81cb4639427",
+      "artist": "Le Vuong",
+      "set_code": "fic",
+      "collector_number": "256"
+    },
+    "syphon_mind": {
+      "scryfall_id": "601be092-2353-4b86-ac01-e8fbdbed29b7",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fic",
+      "collector_number": "288"
+    },
+    "talisman_of_dominance": {
+      "scryfall_id": "c7fb7ff7-aef0-4893-a120-e17a082cd07f",
+      "artist": "Toni Infante",
+      "set_code": "fic",
+      "collector_number": "364"
+    },
+    "talisman_of_hierarchy": {
+      "scryfall_id": "79696e14-837f-431a-b5fb-fe3620bb8262",
+      "artist": "Madeline Boni",
+      "set_code": "fic",
+      "collector_number": "365"
+    },
+    "talisman_of_progress": {
+      "scryfall_id": "2dc4dfe7-ae80-4a6e-b588-fd497c35fe37",
+      "artist": "Bruno Biazotto",
+      "set_code": "fic",
+      "collector_number": "367"
+    },
+    "tataru_taru": {
+      "scryfall_id": "93176e85-2343-43a8-8578-69699b464b86",
+      "artist": "Livia Prima",
+      "set_code": "fic",
+      "collector_number": "30"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "f1cb4775-8e14-4c83-a417-40d1432ac90a",
+      "artist": "Craig Elliott",
+      "set_code": "fic",
+      "collector_number": "438"
+    },
+    "thancred_waters": {
+      "scryfall_id": "cc74ea74-05cf-4a33-84df-94ec34e816fe",
+      "artist": "Wisnu Tan",
+      "set_code": "fic",
+      "collector_number": "31"
+    },
+    "thought_vessel": {
+      "scryfall_id": "5c617d99-354a-4586-9a09-1671c0e88754",
+      "artist": "Daniel Correia",
+      "set_code": "fic",
+      "collector_number": "368"
+    },
+    "tome_of_legends": {
+      "scryfall_id": "08b0d5aa-8d76-4951-a326-0f4078fdfd28",
+      "artist": "Smirtouille",
+      "set_code": "fic",
+      "collector_number": "369"
+    },
+    "torrential_gearhulk": {
+      "scryfall_id": "a6a0afd5-f3f9-459e-bd03-1a7a3521b570",
+      "artist": "Erikas Perl",
+      "set_code": "fic",
+      "collector_number": "272"
+    },
+    "transpose": {
+      "scryfall_id": "66392b0e-8691-42a4-bc84-03b017174a73",
+      "artist": "Toni Infante",
+      "set_code": "fic",
+      "collector_number": "52"
+    },
+    "underground_river": {
+      "scryfall_id": "c219a41a-d5f4-42f3-841c-2518be583198",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fic",
+      "collector_number": "439"
+    },
+    "urianger_augurelt": {
+      "scryfall_id": "44d44107-da15-41b9-8dfb-6335c1cbd83a",
+      "artist": "Vilhelmas Banys",
+      "set_code": "fic",
+      "collector_number": "96"
+    },
+    "vindicate": {
+      "scryfall_id": "1b2c1bf2-d03a-4cd5-ab51-26c928949497",
+      "artist": "Thanh Tuấn",
+      "set_code": "fic",
+      "collector_number": "330"
+    },
+    "void_rend": {
+      "scryfall_id": "b1fe4252-f5f8-405a-82c4-2c7b35e7e7fb",
+      "artist": "Justyna Dura",
+      "set_code": "fic",
+      "collector_number": "331"
+    },
+    "white_auracite": {
+      "scryfall_id": "2df6f515-9d21-4769-b1c4-c219611bccbb",
+      "artist": "Magali Villeneuve",
+      "set_code": "fin",
+      "collector_number": "41"
+    },
+    "y_shtola_night_s_blessed": {
+      "scryfall_id": "c7f2c2d5-e052-49e8-b5de-712858c2ea78",
+      "artist": "Magali Villeneuve",
+      "set_code": "fic",
+      "collector_number": "7"
+    }
+  },
+  "cards": [
+    {
+      "id": "alisaie_leveilleur"
+    },
+    {
+      "id": "alphinaud_leveilleur"
+    },
+    {
+      "id": "arcane_sanctum"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "archaeomancer_s_map"
+    },
+    {
+      "id": "archmage_emeritus"
+    },
+    {
+      "id": "ardbert_warrior_of_darkness"
+    },
+    {
+      "id": "ash_barrens"
+    },
+    {
+      "id": "astrologian_s_planisphere"
+    },
+    {
+      "id": "authority_of_the_consuls"
+    },
+    {
+      "id": "baleful_strix"
+    },
+    {
+      "id": "bastion_of_remembrance"
+    },
+    {
+      "id": "blue_mage_s_cane"
+    },
+    {
+      "id": "champions_from_beyond"
+    },
+    {
+      "id": "choked_estuary"
+    },
+    {
+      "id": "circle_of_power"
+    },
+    {
+      "id": "cleansing_nova"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "contaminated_aquifer"
+    },
+    {
+      "id": "coveted_jewel"
+    },
+    {
+      "id": "crux_of_fate"
+    },
+    {
+      "id": "cut_a_deal"
+    },
+    {
+      "id": "dancer_s_chakrams"
+    },
+    {
+      "id": "darkwater_catacombs"
+    },
+    {
+      "id": "demolition_field"
+    },
+    {
+      "id": "desolate_mire"
+    },
+    {
+      "id": "dig_through_time"
+    },
+    {
+      "id": "drowned_catacomb"
+    },
+    {
+      "id": "emet_selch_of_the_third_seat"
+    },
+    {
+      "id": "estinien_varlineau"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "exsanguinate"
+    },
+    {
+      "id": "eye_of_nidhogg"
+    },
+    {
+      "id": "fandaniel_telophoroi_ascian"
+    },
+    {
+      "id": "fetid_heath"
+    },
+    {
+      "id": "final_judgment"
+    },
+    {
+      "id": "g_raha_tia_scion_reborn"
+    },
+    {
+      "id": "glacial_fortress"
+    },
+    {
+      "id": "hermes_overseer_of_elpis"
+    },
+    {
+      "id": "hildibrand_manderville_gentleman_s_rise"
+    },
+    {
+      "id": "hraesvelgr_of_the_first_brood"
+    },
+    {
+      "id": "hypnotic_sprite_mesmeric_glare"
+    },
+    {
+      "id": "idyllic_beachfront"
+    },
+    {
+      "id": "into_the_story"
+    },
+    {
+      "id": "island",
+      "qty": 3
+    },
+    {
+      "id": "isolated_chapel"
+    },
+    {
+      "id": "krile_baldesion"
+    },
+    {
+      "id": "lethal_scheme"
+    },
+    {
+      "id": "lingering_souls"
+    },
+    {
+      "id": "lyse_hext"
+    },
+    {
+      "id": "murderous_rider_swift_end"
+    },
+    {
+      "id": "observed_stasis"
+    },
+    {
+      "id": "papalymo_totolymo"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "plains",
+      "qty": 4
+    },
+    {
+      "id": "port_town"
+    },
+    {
+      "id": "prairie_stream"
+    },
+    {
+      "id": "propaganda"
+    },
+    {
+      "id": "reaper_s_scythe"
+    },
+    {
+      "id": "relic_of_legends"
+    },
+    {
+      "id": "rite_of_replication"
+    },
+    {
+      "id": "sage_s_nouliths"
+    },
+    {
+      "id": "scavenger_grounds"
+    },
+    {
+      "id": "shineshadow_snarl"
+    },
+    {
+      "id": "skycloud_expanse"
+    },
+    {
+      "id": "snuff_out"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sublime_epiphany"
+    },
+    {
+      "id": "summon_good_king_mog_xii"
+    },
+    {
+      "id": "sunken_hollow"
+    },
+    {
+      "id": "sunken_ruins"
+    },
+    {
+      "id": "sunlit_marsh"
+    },
+    {
+      "id": "swamp",
+      "qty": 4
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "syphon_mind"
+    },
+    {
+      "id": "talisman_of_dominance"
+    },
+    {
+      "id": "talisman_of_hierarchy"
+    },
+    {
+      "id": "talisman_of_progress"
+    },
+    {
+      "id": "tataru_taru"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "thancred_waters"
+    },
+    {
+      "id": "thought_vessel"
+    },
+    {
+      "id": "tome_of_legends"
+    },
+    {
+      "id": "torrential_gearhulk"
+    },
+    {
+      "id": "transpose"
+    },
+    {
+      "id": "underground_river"
+    },
+    {
+      "id": "urianger_augurelt"
+    },
+    {
+      "id": "vindicate"
+    },
+    {
+      "id": "void_rend"
+    },
+    {
+      "id": "white_auracite"
+    }
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 4,
+    "interaction": 4,
+    "resilience": 3,
+    "pilot": 4
+  },
+  "signature": [
+    {
+      "card_id": "y_shtola_night_s_blessed",
+      "why": "Drains each opponent for 2 and gains you 2 on every noncreature spell with mana value 3 or greater, and draws a card at each end step once a player has lost 4 or more life that turn."
+    },
+    {
+      "card_id": "papalymo_totolymo",
+      "why": "Deals 1 damage to each opponent and gains you 1 life on every noncreature spell, and sacrifices to make each opponent who lost life this turn sacrifice their biggest creature."
+    },
+    {
+      "card_id": "emet_selch_of_the_third_seat",
+      "why": "Spells you cast from your graveyard cost {2} less, and once a turn, when opponents lose life, it recasts an instant or sorcery from your graveyard and exiles it after."
+    },
+    {
+      "card_id": "exsanguinate",
+      "why": "Drains each opponent for X and gains you all of it, enough on its own to turn on Y'shtola's draw."
+    }
+  ]
+}
