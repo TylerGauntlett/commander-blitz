@@ -309,6 +309,29 @@ ATTACK_MARK_DURATIONS = ("end_of_your_next_turn", "this_turn")
 
 
 @dataclass(frozen=True)
+class CastRider:
+    """What a creature spell cast free by an effect gains as it becomes a
+    permanent -- Strago and Relm's "if you cast a creature spell this way, it
+    gains haste and "At the beginning of the end step, sacrifice this
+    creature."".
+
+    Staged on the spell (`GameObject.cast_rider`) by `suspend.cast_for_free`
+    only once the cast has happened and only for a creature spell, and cashed
+    by `zones._enter_battlefield` on the permanent it becomes. Both halves are
+    for as long as the permanent lasts: the sentence prints no duration.
+
+    ``keywords`` are granted as riot's are (`granted_keywords`); ``abilities``
+    index ``source``'s ``grantable_abilities``, handed over as the
+    `grant_ability` op's ``duration: "permanent"`` would, so a granted trigger
+    is an ability of the creature rather than a delayed trigger of the card's.
+    """
+
+    source: int
+    keywords: tuple[str, ...] = ()
+    abilities: tuple[int, ...] = ()
+
+
+@dataclass(frozen=True)
 class AttackMark:
     """"Target creature attacks **that player** each combat if able." A
     requirement written on one creature that names the defending player --

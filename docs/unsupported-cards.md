@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **148** capabilities.
+**162 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -85,7 +85,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
 | [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
-| [free-cast-haste-and-end-step-sacrifice](#free-cast-haste-and-end-step-sacrifice) | 1 | 9287 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -1377,20 +1376,6 @@ Blocks **1** card.
 
 - **Impulsivity** (rank 6248) — `impulsivity`
   - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
-
-</details>
-
-## free-cast-haste-and-end-step-sacrifice
-
-Blocks **1** card.
-
-- **(op)** a rider on a free cast made by an effect (`exile_until` cast_free, or `_offer_free_cast` generally): if the spell cast is a creature spell, the permanent it becomes gains haste and the granted triggered ability "At the beginning of the end step, sacrifice this creature." -- applied to the resulting permanent (not the spell), only when the card was actually cast this way
-  <br>Why the existing vocabulary won't do: `cast_gains_keywords` is the only keyword rider on a cast spell and the loader refuses it outside the `cast_from_library_top` static; `exile_until` exposes no `as`-bound result telling whether the hit was cast (its `as` binds the hit cast or not), so a following `grant_keyword` + `grant_ability` would wrongly apply to an uncast card left in exile or to a spell still on the stack before it becomes a permanent; `cast_for_free`'s `haste` flag is suspend's internal and not reachable from the DSL, and it carries no end-step sacrifice
-
-<details><summary>Cards waiting on this</summary>
-
-- **Strago and Relm** (rank 9287) — `strago_and_relm`
-  - Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library until they exile an instant, sorcery, or creature card. You may cast that card without paying its mana cost. If you cast a creature spell this way, it gains haste and "At the beginning of the end step, sacrifice this creature." Activate only as a sorcery.
 
 </details>
 

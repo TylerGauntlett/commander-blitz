@@ -242,6 +242,8 @@ def _check_grant_targets(
     trees.extend(a.effects for a in grantable)
     for tree in trees:
         for effect in _walk_effect_specs(tree):
+            for index in (effect.get("creature_cast_gains") or {}).get("abilities") or ():
+                check(index, f"{effect.get('op')} creature_cast_gains")
             if effect.get("op") != "grant_ability":
                 continue
             index = effect.get("ability", effect.get("ability_index"))

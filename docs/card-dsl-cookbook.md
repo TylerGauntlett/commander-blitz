@@ -13203,12 +13203,47 @@ them out of the library.
   casts the other player's card, and every card the walk moves -- an uncast hit
   sent to `else_destination` included -- goes to its **owner's** zone.
   `"each_player"` walks every seat's library in turn, offering each hit.
+- `creature_cast_gains` is the rider on that cast: what a **creature** spell
+  cast this way gains, as `{"keywords": [...], "abilities": [...]}`, with
+  `abilities` indexing this card's `grantable_abilities`. It is staged on the
+  spell only when the cast reaches the stack and cashed on the permanent the
+  spell becomes, for as long as that permanent lasts (the sentence prints no
+  duration); a declined cast, an uncast hit and a noncreature spell get nothing,
+  and a permanent that leaves and returns is a new object that owes nothing.
 - `as` records the hits, cast or not, as a list -- one oid for each walked
   library that found one, so a single walk that runs its library out binds the
   empty list.
 
-The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
-`cast_free`. `reveal_until` with `player` is the near miss for an opponent's
+```jsonc
+// Strago and Relm -- "Target opponent exiles cards from the top of their
+// library until they exile an instant, sorcery, or creature card. You may cast
+// that card without paying its mana cost. If you cast a creature spell this
+// way, it gains haste and "At the beginning of the end step, sacrifice this
+// creature.""
+{ "op": "exile_until",
+  "player": { "target": "t1" },
+  "objects": { "any_types": ["Instant", "Sorcery", "Creature"] },
+  "cast_free": true,
+  "creature_cast_gains": { "keywords": ["haste"], "abilities": [0] } }
+// with, on the card:
+"grantable_abilities": [{
+  "kind": "triggered",
+  "text": "At the beginning of the end step, sacrifice this creature.",
+  "trigger": { "event": "end_step", "controller": "any" },
+  "effects": [{ "op": "sacrifice", "objects": { "self_only": true } }] }]
+```
+
+The near misses: a `grant_keyword` and `grant_ability` written after the walk
+reach the spell on the stack (or a hit left in exile), and the battlefield
+arrival sweeps them; a `delay` with `step: "end_step"` is blitz's delayed
+trigger, which belongs to no permanent, where the quoted ability is the
+creature's own; `cast_gains_keywords` is the
+`cast_from_library_top` static's until-end-of-turn rider.
+
+The loader refuses an `amount`; `cast_free_if`, `else_destination` or
+`creature_cast_gains` without `cast_free`; and a `creature_cast_gains` that
+grants nothing, names an unknown keyword or key, or indexes a grantable ability
+the card does not have. `reveal_until` with `player` is the near miss for an opponent's
 library: it leaves the walked-past cards in the library and moves only the
 match.
 

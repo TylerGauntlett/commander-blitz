@@ -266592,12 +266592,12 @@
     },
     "Strago and Relm": {
       "edhrec_rank": 9287,
-      "gate": "template",
+      "gate": null,
       "name": "Strago and Relm",
-      "reason": "no template for: Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library ",
+      "reason": "",
       "scryfall_id": "8b880c1a-b82d-42ae-aaaf-22cdc81fe891",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Strands of Night": {

@@ -19,7 +19,7 @@ from ..player_statics import (
 )
 from ..primitives import add_counters, mill_cards, shuffle_library
 from ..stack import pull_spell_off_stack
-from ..structs import GraveyardCastGrant
+from ..structs import CastRider, GraveyardCastGrant
 from ..suspend import cast_for_free, make_suspended
 from ..triggers import entering_together, fire
 from ..zones import (
@@ -1756,13 +1756,37 @@ def op_roll_dice(ctx: EffectContext, spec: Mapping[str, Any]):
         )
 
 
-def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
+def cast_rider(ctx: EffectContext, spec: Mapping[str, Any] | None) -> CastRider | None:
+    """A free cast's ``creature_cast_gains`` as the `CastRider` `cast_for_free` stages.
+
+    "If you cast a creature spell this way, it gains …": the keywords and the
+    indices into this card's ``grantable_abilities`` that the permanent the
+    spell becomes is handed for as long as it lasts. Not a `grant_keyword` and
+    a `grant_ability` written after the cast, which would reach the spell on
+    the stack -- or a hit left uncast in exile -- and not the permanent; the
+    rider rides the cast itself, so it applies exactly when the card was cast
+    this way, and `cast_for_free` drops it for a noncreature spell.
+    """
+    if not spec or ctx.source_oid is None:
+        return None
+    return CastRider(
+        source=ctx.source_oid,
+        keywords=tuple(str(k) for k in spec.get("keywords") or ()),
+        abilities=tuple(int(i) for i in spec.get("abilities") or ()),
+    )
+
+
+def _offer_free_cast(
+    ctx: EffectContext, pid: int, oid: int, prompt: str, rider: CastRider | None = None
+):
     """ "You may cast it without paying its mana cost."  Returns whether it was.
 
     Shares `suspend.cast_for_free`, which is what makes the copy a real cast --
-    it uses the stack and can be countered. Haste is **not** shared: that flag
-    belongs to suspend, and a cascaded creature that could attack immediately
-    would be a strictly better card.
+    it uses the stack and can be countered. Suspend's haste is **not** shared:
+    a cascaded creature that could attack immediately would be a strictly
+    better card. What a card does give the creature it casts this way -- Strago
+    and Relm's "it gains haste and …" -- is ``rider``, passed through to
+    `cast_for_free` and so applied only on a yes that reached the stack.
     """
 
     obj = ctx.state.objects.get(oid)
@@ -1775,7 +1799,7 @@ def _offer_free_cast(ctx: EffectContext, pid: int, oid: int, prompt: str):
     if not (yield from ask_yes_no(ctx, prompt, pid)):
         return False
     before = len(ctx.state.stack)
-    cast_for_free(ctx.state, pid, oid)
+    cast_for_free(ctx.state, pid, oid, rider=rider)
     return len(ctx.state.stack) > before
 
 
@@ -2304,6 +2328,11 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
       theirs to control, the card stays its owner's), and every card the walk
       moves -- and an uncast hit sent to ``else_destination`` -- goes to its
       **owner's** zone (400.3), never the controller's.
+    - ``creature_cast_gains`` is the rider on that cast -- "if you cast a
+      creature spell this way, it gains haste and "At the beginning of the end
+      step, sacrifice this creature."" (Strago and Relm) is
+      ``{"keywords": ["haste"], "abilities": [0]}``, ``abilities`` indexing
+      this card's ``grantable_abilities``. See `cast_rider`.
     - ``as`` records the hits, cast or not, as a list -- one oid per walked
       library that found one; an exhausted library adds nothing, so a single
       walk that finds nothing binds the empty list.
@@ -2312,6 +2341,7 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     selector = spec.get("objects") or {}
     condition = spec.get("cast_free_if")
     binding = spec.get("as")
+    rider = cast_rider(ctx, spec.get("creature_cast_gains"))
     hits: list[int] = []
     if binding:
         # Written before the walk, so a walk that finds nothing still binds the
@@ -2343,7 +2373,9 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
             condition is None or _matches_in_zone(ctx, hit, condition, "exile")
         ):
             name = ctx.state.card_of(ctx.state.objects[hit]).name
-            cast = yield from _offer_free_cast(ctx, controller, hit, f"Cast {name} for free?")
+            cast = yield from _offer_free_cast(
+                ctx, controller, hit, f"Cast {name} for free?", rider=rider
+            )
         if not cast and (where := spec.get("else_destination")):
             move_object(ctx.state, hit, DESTINATIONS[str(where)], cause="exile_until")
 

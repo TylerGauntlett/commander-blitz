@@ -14407,6 +14407,10 @@
   "story_seeker": {
     "zone": "battlefield"
   },
+  "strago_and_relm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "straw_soldiers": {
     "zone": "battlefield"
   },
