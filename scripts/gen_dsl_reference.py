@@ -770,7 +770,7 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "land_played": ("A land is played.", None),
     "leaves_battlefield": ("A permanent leaves the battlefield.", None),
     "leaves_graveyard": ("A card leaves a graveyard.", None),
-    "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn.",
+    "life_lost": ("A player loses life; with `nth`, that player's Nth separate loss this turn; `batched` fires once per simultaneous loss, however many players it reaches.",
                   '"Whenever an opponent loses life"'),
     "mutates": ("A creature mutates.", '"Whenever this creature mutates…"'),
     "permanent_enters": ("A permanent enters the battlefield.", None),

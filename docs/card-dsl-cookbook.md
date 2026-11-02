@@ -9147,8 +9147,10 @@ is blocked or unblocked at that one instant (509.1h); a second combat is a secon
 group. `discard` groups by the discard: one `replacements.discard` call -- a
 "discard two cards", one player's share of "each player discards", the
 cleanup-step trim, one creature's connive -- is one group, and two discards
-are two. `dealt_damage` groups by the damage event, below. The loader refuses
-`batched` on any other event, where nothing would group it.
+are two. `life_lost` groups by the loss: one effect op or cost payment, or one
+combat damage step however many players it hits; it is below. `dealt_damage`
+groups by the damage event, below. The loader refuses `batched` on any other
+event, where nothing would group it.
 
 "Whenever you discard one or more land cards, each opponent loses 2 life."
 (Doctor Doom, King of Latveria)
@@ -9211,6 +9213,23 @@ is the whole first step, and a first striker's damage is it. Lethal damage
 still triggers the ability, and it resolves with him gone, which is the
 reminder text. Without `batched` the cap keeps the first source's event and
 `amount` reads one blocker's damage.
+
+"Whenever one or more opponents lose life, you may cast target instant or
+sorcery card from your graveyard." (Emet-Selch of the Third Seat)
+
+```jsonc
+"trigger": {"event": "life_lost", "controller": "opponent", "batched": true}
+```
+
+`life_lost` groups by the simultaneous loss: one effect op or cost payment
+("each opponent loses 2 life", a `damage` op to each opponent) or one combat
+damage step (510.2; a first-strike step is its own, 510.4), however many seats
+it reaches, so a drain across the table fires once rather than once per
+opponent. `controller` is asked of each loss first, so your own loss in an
+"each player loses" cannot spend the firing. Two instructions are two losses,
+even in one resolution. Nothing is summed, since the group spans players:
+`amount` and `event_player` are the first opponent's, so a card that pays out
+"that much" per opponent wants the unbatched trigger.
 
 ## "Enters with a counter on it **for each** …"
 
@@ -12700,6 +12719,10 @@ was taken from an opponent.
 The `controller` clause names the player who *lost* the life, and the quantity
 is the `amount` binding — not `life_lost_this_turn`, which is cumulative and
 would gain the running total on a second loss in the same turn.
+
+It fires once per player who lost life. "Whenever **one or more** opponents
+lose life" is `batched: true`, which fires once per simultaneous loss (see
+["Whenever one or more …"](#whenever-one-or-more---batched)).
 
 **Damage fires it too**, because the reminder text on every card of this shape
 says "(Damage causes loss of life.)" — a trigger that heard only `lose_life`

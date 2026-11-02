@@ -1598,7 +1598,9 @@ def deal_combat_damage(
 
     # 510.2: all of this step's combat damage is dealt at once, so it is one
     # batch -- what a `batched` `dealt_damage` trigger groups by, and sums, so
-    # a creature blocked by two others is dealt damage once, for the total.
+    # a creature blocked by two others is dealt damage once, for the total,
+    # and what a `batched` `life_lost` trigger groups by, so two opponents hit
+    # in one step "lose life" once.
     # Captured here and passed down rather than read as each point lands, so
     # nothing a replacement runs mid-step can split the event. A first-strike
     # step is a batch of its own (510.4).
@@ -1621,7 +1623,8 @@ def deal_combat_damage(
             else:
                 landed.append(assignment)
             amount = damage_player(
-                state, assignment.to_player, assignment.amount, assignment.source, is_combat=True
+                state, assignment.to_player, assignment.amount, assignment.source,
+                is_combat=True, batch=batch,
             )
         else:
             landed.append(assignment)

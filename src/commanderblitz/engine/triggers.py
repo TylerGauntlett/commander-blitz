@@ -425,6 +425,17 @@ STATE_TRIGGER = "state"
 #: one or more **land** cards" drains once for two lands. The `filter` is asked
 #: per card before the batch is spent, so a land and a nonland discarded
 #: together fire it once and two nonlands not at all.
+#:
+#: `life_lost` takes it from `primitives.lose_life` and `primitives.damage_player`:
+#: one effect op or cost payment (`state.event_batch`) -- "each opponent loses
+#: 2 life" is one event for every seat it reaches -- or one combat damage step
+#: (510.2, `combat.deal_combat_damage`), however many players it hits. So
+#: Emet-Selch of the Third Seat's "whenever one or more opponents lose life"
+#: fires once for a drain across the table, not once per opponent. `controller`
+#: is asked of each loss before the batch is spent, so your own loss beside an
+#: opponent's cannot use up the firing. Unlike `dealt_damage` nothing is
+#: summed: the batch spans players, so the bindings (`amount`, `event_player`)
+#: are the first matching loss's.
 BATCHED_EVENTS = frozenset(
     {
         "permanent_enters",
@@ -433,6 +444,7 @@ BATCHED_EVENTS = frozenset(
         "attacks_unblocked",
         "dealt_damage",
         "discard",
+        "life_lost",
     }
 )
 
