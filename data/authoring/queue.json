@@ -46792,12 +46792,12 @@
     },
     "Circle of Power": {
       "edhrec_rank": 2485,
-      "gate": "template",
+      "gate": null,
       "name": "Circle of Power",
-      "reason": "no template for: You draw two cards and you lose 2 life. Create a 0/1 black Wizard creature token with \"Whe",
+      "reason": "",
       "scryfall_id": "b6dc1f5a-a6cc-4ab4-8bb9-e216e24ca735",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Circle of Protection: Art": {
@@ -291392,12 +291392,12 @@
     },
     "Transpose": {
       "edhrec_rank": 2842,
-      "gate": "template",
+      "gate": null,
       "name": "Transpose",
-      "reason": "no template for: Draw a card, then discard a card. You lose 1 life. If this spell was cast from your hand, ",
+      "reason": "",
       "scryfall_id": "51cb61ab-0508-4668-8680-051d38df7ccb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Trap Digger": {

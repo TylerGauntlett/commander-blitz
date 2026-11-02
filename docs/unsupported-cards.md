@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**173 cards** blocked by **156** capabilities.
+**171 cards** blocked by **155** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -35,7 +35,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
-| [wizard-0-1-b-noncreature-ping-token](#wizard-0-1-b-noncreature-ping-token) | 2 | 2485 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
@@ -666,24 +665,6 @@ Blocks **2** cards.
   - Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender
 - **Teyo, the Shieldmage** (rank 9030) — `teyo_the_shieldmage`
   - −2: Create a 0/3 white Wall creature token with defender.
-
-</details>
-
-## wizard-0-1-b-noncreature-ping-token
-
-Blocks **2** cards.
-
-- **(token)** a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and its only Wizard is wizard_2_2_u (a 2/2 blue Wizard with no abilities); no 0/1 black Wizard carrying the noncreature-spell ping trigger exists. The rest of the card (draw, lose_life, pump and grant_keyword lifelink over Wizards you control) is expressible with existing ops
-- **(token)** a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and its only Wizard is wizard_2_2_u (a 2/2 blue Wizard with no abilities); no 0/1 black Wizard carrying the noncreature-spell ping trigger exists. The rest of the card is expressible: draw then discard, lose_life, an `if` on the `cast_from_hand` condition around create_token, and the card-level `rebound` rider
-
-<details><summary>Cards waiting on this</summary>
-
-- **Circle of Power** (rank 2485) — `circle_of_power`
-  - You draw two cards and you lose 2 life. Create a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
-- **Transpose** (rank 2842) — `transpose`
-  - Draw a card, then discard a card. You lose 1 life. If this spell was cast from your hand, create a 0/1 black Wizard creature token with "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent."
 
 </details>
 

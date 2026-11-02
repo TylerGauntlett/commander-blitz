@@ -1758,3 +1758,47 @@ class TestTheWorldShaperTokens:
 
     def test_the_small_changeling_has_no_deathtouch(self, pool):
         assert "deathtouch" not in pool.get("shapeshifter_1_1_c_changeling").keywords
+
+
+class TestTheScionsWizardPings:
+    """Circle of Power and Transpose: *"a 0/1 black Wizard creature token with
+    'Whenever you cast a noncreature spell, this token deals 1 damage to each
+    opponent.'"* The pool's other Wizard is a vanilla 2/2 blue, two power and a
+    colour away, with no trigger at all."""
+
+    TOKEN = "wizard_0_1_b_noncreature_ping"
+
+    def test_it_is_a_zero_one_black_wizard(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token and token.is_creature
+        assert (token.power, token.toughness) == (0, 1)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Wizard"]
+        assert not token.keywords
+
+    def test_it_carries_the_noncreature_spell_trigger(self, pool):
+        (ability,) = pool.get(self.TOKEN).abilities
+        assert ability.text.startswith("Whenever you cast a noncreature spell")
+
+    def test_the_blue_wizard_is_still_a_separate_vanilla_token(self, pool):
+        other = pool.get("wizard_2_2_u")
+        assert (other.power, other.toughness) == (2, 2)
+        assert sorted(other.colors) == ["U"]
+        assert not other.abilities
+
+    def test_a_noncreature_spell_pings_each_opponent(self, builder):
+        """Brainstorm deals no damage of its own, so the point lost is the token's."""
+        game = (
+            builder(players=2)
+            .battlefield(0, [self.TOKEN, "island"])
+            .hand(0, ["brainstorm"])
+            .build()
+        )
+        before = game.state.players[1].life
+        cast = next(
+            a for a in game.legal_actions()
+            if a.kind is ActionKind.CAST and game.state.objects[a.source].def_id == "brainstorm"
+        )
+        game.apply(cast)
+        settle_completely(game)
+        assert game.state.players[1].life == before - 1

@@ -3597,6 +3597,50 @@
       "is_token": true
     },
     {
+      "id": "wizard_0_1_b_noncreature_ping",
+      "name": "Wizard Token",
+      "oracle_text": "0/1 black Wizard creature token with \"Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.\"",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Wizard"
+      ],
+      "power": 0,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "not_types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "damage",
+              "amount": {
+                "const": 1
+              },
+              "player": "each_opponent"
+            }
+          ]
+        }
+      ],
+      "is_token": true
+    },
+    {
       "id": "elf_warrior_1_1_g",
       "name": "Elf Warrior Token",
       "oracle_text": "1/1 green Elf Warrior creature token.",
