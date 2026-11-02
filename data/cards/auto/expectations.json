@@ -11192,6 +11192,9 @@
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
+  "plargg_and_nassari": {
+    "zone": "battlefield"
+  },
   "plateau": {
     "zone": "battlefield"
   },

@@ -203992,12 +203992,12 @@
     },
     "Plargg and Nassari": {
       "edhrec_rank": 2297,
-      "gate": "template",
+      "gate": null,
       "name": "Plargg and Nassari",
-      "reason": "no template for: At the beginning of your upkeep, each player exiles cards from the top of their library un",
+      "reason": "",
       "scryfall_id": "e66ee7c6-23bc-4fef-a566-35aee2064bd9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Plargg, Dean of Chaos // Augusta, Dean of Order": {

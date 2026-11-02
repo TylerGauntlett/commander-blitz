@@ -130891,6 +130891,82 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "exiled",
+              "objects": {
+                "not_types": [
+                  "Land"
+                ]
+              },
+              "op": "exile_until",
+              "player": "each_player"
+            },
+            {
+              "as": "chooser",
+              "op": "choose_player",
+              "players": "each_opponent",
+              "prompt": "Choose an opponent to choose a nonland card exiled this way"
+            },
+            {
+              "as": "chosen",
+              "objects": {
+                "binding": "exiled",
+                "chooser": {
+                  "binding": "chooser"
+                },
+                "count": 1,
+                "zone": "exile"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose a nonland card exiled this way"
+            },
+            {
+              "objects": {
+                "binding": "exiled",
+                "count": 2,
+                "exclude_binding": "chosen",
+                "optional": true,
+                "zone": "exile"
+              },
+              "op": "play_exiled"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card. An opponent chooses a nonland card exiled this way. You may cast up to two spells from among the other cards exiled this way without paying their mana costs.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "plargg_and_nassari",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Plargg and Nassari",
+      "oracle_text": "At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card. An opponent chooses a nonland card exiled this way. You may cast up to two spells from among the other cards exiled this way without paying their mana costs.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Efreet"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

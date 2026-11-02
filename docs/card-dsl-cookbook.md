@@ -13194,11 +13194,23 @@ them out of the library.
 - `else_destination` (`"hand"`) is where a hit that was not cast goes: declined,
   failing `cast_free_if`, or refused by `cast_for_free`. Omitted, it stays in
   exile with the rest.
-- `as` records the hit, cast or not, as a list of zero or one oids; an exhausted
-  library binds the empty list.
+- `player` is whose library is walked, any player spec, defaulting to `"you"`.
+  Strago and Relm's "**target opponent** exiles cards from the top of their
+  library until they exile an instant, sorcery, or creature card. **You** may
+  cast that card without paying its mana cost" is
+  `"player": { "target": "t1" }` with a `kind: "player"` target. Only the
+  library changes: the `cast_free` offer always goes to the controller, who
+  casts the other player's card, and every card the walk moves -- an uncast hit
+  sent to `else_destination` included -- goes to its **owner's** zone.
+  `"each_player"` walks every seat's library in turn, offering each hit.
+- `as` records the hits, cast or not, as a list -- one oid for each walked
+  library that found one, so a single walk that runs its library out binds the
+  empty list.
 
 The loader refuses an `amount`, and `cast_free_if` or `else_destination` without
-`cast_free`.
+`cast_free`. `reveal_until` with `player` is the near miss for an opponent's
+library: it leaves the walked-past cards in the library and moves only the
+match.
 
 ## "It gains suspend" — suspending a card from an effect
 

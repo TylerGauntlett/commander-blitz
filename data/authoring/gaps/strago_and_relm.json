@@ -7,12 +7,6 @@
   ],
   "needs": [
     {
-      "capability": "exile_until_opponent_library",
-      "kind": "op",
-      "what": "a `player` key on `exile_until` (e.g. {\"target\": \"t1\"} for a target opponent) so the walk exiles from the top of THAT player's library while the free-cast offer (`cast_free`) still goes to the ability's controller, who casts the opponent's card",
-      "why_existing_wont_do": "`op_exile_until` in engine/effects/ops_cards.py hardcodes `pid = ctx.controller` and walks only `ctx.state.players[pid].library`; it takes no `player`. `reveal_until` takes `player` and `playable_free`, but it leaves the walked-past cards in the library (bottom/shuffle) rather than exiled, and grants a later play permission instead of an immediate cast; `cascade` is controller-only with a mana-value ceiling and bottoms the rest"
-    },
-    {
       "capability": "free_cast_haste_and_end_step_sacrifice",
       "kind": "op",
       "what": "a rider on a free cast made by an effect (`exile_until` cast_free, or `_offer_free_cast` generally): if the spell cast is a creature spell, the permanent it becomes gains haste and the granted triggered ability \"At the beginning of the end step, sacrifice this creature.\" -- applied to the resulting permanent (not the spell), only when the card was actually cast this way",

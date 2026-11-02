@@ -2294,38 +2294,58 @@ def op_exile_until(ctx: EffectContext, spec: Mapping[str, Any]):
     - ``else_destination`` is where the hit goes when it is not cast -- declined,
       disallowed by ``cast_free_if``, or refused by `cast_for_free`. Omitted, it
       stays in exile with the rest (Wanda's Vision).
-    - ``as`` records the hit, cast or not, as a list of zero or one oids; an
-      exhausted library binds the empty list.
+    - ``player`` is whose library is walked -- "**target opponent** exiles cards
+      from the top of their library until they exile an instant, sorcery, or
+      creature card. **You** may cast that card" (Strago and Relm) is
+      ``{"target": "t1"}``. Any player spec `select_players` reads, defaulting
+      to the controller; ``"each_player"`` walks every seat's library in turn.
+      Only the library changes hands: the free-cast offer always goes to the
+      ability's **controller**, who casts the other player's card (the spell is
+      theirs to control, the card stays its owner's), and every card the walk
+      moves -- and an uncast hit sent to ``else_destination`` -- goes to its
+      **owner's** zone (400.3), never the controller's.
+    - ``as`` records the hits, cast or not, as a list -- one oid per walked
+      library that found one; an exhausted library adds nothing, so a single
+      walk that finds nothing binds the empty list.
     """
-    pid = ctx.controller
-    library = ctx.state.players[pid].library
+    controller = ctx.controller
     selector = spec.get("objects") or {}
-
-    hit: int | None = None
-    walked = 0
-    while library:
-        oid = library[0]
-        found = _matches_library(ctx, oid, selector)
-        move_object(ctx.state, oid, Zone.EXILE, to_player=pid, cause="exile_until")
-        walked += 1
-        if found:
-            hit = oid
-            break
-    ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
-
-    if binding := spec.get("as"):
-        ctx.bindings[str(binding)] = [hit] if hit is not None else []
-    if hit is None:
-        return
-    cast = False
     condition = spec.get("cast_free_if")
-    if spec.get("cast_free") and (
-        condition is None or _matches_in_zone(ctx, hit, condition, "exile")
-    ):
-        name = ctx.state.card_of(ctx.state.objects[hit]).name
-        cast = yield from _offer_free_cast(ctx, pid, hit, f"Cast {name} for free?")
-    if not cast and (where := spec.get("else_destination")):
-        move_object(ctx.state, hit, DESTINATIONS[str(where)], to_player=pid, cause="exile_until")
+    binding = spec.get("as")
+    hits: list[int] = []
+    if binding:
+        # Written before the walk, so a walk that finds nothing still binds the
+        # empty list rather than leaving an earlier op's value in place.
+        ctx.bindings[str(binding)] = []
+
+    for pid in select_players(ctx, spec.get("player", "you")):
+        library = ctx.state.players[pid].library
+        hit: int | None = None
+        walked = 0
+        while library:
+            oid = library[0]
+            found = _matches_library(ctx, oid, selector)
+            move_object(ctx.state, oid, Zone.EXILE, cause="exile_until")
+            walked += 1
+            if found:
+                hit = oid
+                break
+        ctx.state.emit("exile_until", player=pid, source=ctx.source_oid, exiled=walked)
+        if hit is None:
+            continue
+        hits.append(hit)
+        if binding:
+            # Bound before the offer, as the single walk always did: the free
+            # cast suspends this generator, and the binding is what resumes.
+            ctx.bindings[str(binding)] = list(hits)
+        cast = False
+        if spec.get("cast_free") and (
+            condition is None or _matches_in_zone(ctx, hit, condition, "exile")
+        ):
+            name = ctx.state.card_of(ctx.state.objects[hit]).name
+            cast = yield from _offer_free_cast(ctx, controller, hit, f"Cast {name} for free?")
+        if not cast and (where := spec.get("else_destination")):
+            move_object(ctx.state, hit, DESTINATIONS[str(where)], cause="exile_until")
 
 
 @register("suspend")

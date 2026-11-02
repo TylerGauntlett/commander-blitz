@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**164 cards** blocked by **150** capabilities.
+**163 cards** blocked by **148** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -77,8 +77,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
-| [exile-until](#exile-until) | 1 | 2297 | op |
-| [exile-until-opponent-library](#exile-until-opponent-library) | 1 | 9287 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
@@ -1260,34 +1258,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## exile-until
-
-Blocks **1** card.
-
-- **(op)** an op that, for each selected player, exiles cards one at a time from the top of that player's own library until a card matching a selector (here: nonland) is exiled, moving EVERY card walked past (lands included) to exile, and binds all the cards exiled this way (per-player accumulated) with `as` so later ops can read them
-  <br>Why the existing vocabulary won't do: `reveal_until` stops at a selector match but moves only the match to `destination`; the cards walked past go to the library bottom (`rest_to_bottom`) or get shuffled in (`shuffle_rest`), never to exile, and its binding holds only the matches. `cascade` exiles the whole walk but only from the controller's library, with a hardcoded mana-value ceiling and bottoms the rest. `exile_until` is a different sentence (exile until the source leaves). A `for_each_player` + `repeat_while` + `look_at_top` (amount 1, destination exile) loop would be a hand-built approximation with a 100-iteration guard and a look/choice on each card, not a public walk.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Plargg and Nassari** (rank 2297) — `plargg_and_nassari`
-  - At the beginning of your upkeep, each player exiles cards from the top of their library until they exile a nonland card.
-
-</details>
-
-## exile-until-opponent-library
-
-Blocks **1** card.
-
-- **(op)** a `player` key on `exile_until` (e.g. {"target": "t1"} for a target opponent) so the walk exiles from the top of THAT player's library while the free-cast offer (`cast_free`) still goes to the ability's controller, who casts the opponent's card
-  <br>Why the existing vocabulary won't do: `op_exile_until` in engine/effects/ops_cards.py hardcodes `pid = ctx.controller` and walks only `ctx.state.players[pid].library`; it takes no `player`. `reveal_until` takes `player` and `playable_free`, but it leaves the walked-past cards in the library (bottom/shuffle) rather than exiled, and grants a later play permission instead of an immediate cast; `cascade` is controller-only with a mana-value ceiling and bottoms the rest
-
-<details><summary>Cards waiting on this</summary>
-
-- **Strago and Relm** (rank 9287) — `strago_and_relm`
-  - Sketch and Lore — {2}{R}, {T}: Target opponent exiles cards from the top of their library until they exile an instant, sorcery, or creature card. You may cast that card without paying its mana cost. If you cast a creature spell this way, it gains haste and "At the beginning of the end step, sacrifice this creature." Activate only as a sorcery.
 
 </details>
 
