@@ -55,6 +55,7 @@ from commanderblitz.cards.loader.vocabulary import (
     KEYWORD_ALIASES,
     MANA_RIDER_OPS,
     PLAYER_WIDE_STATIC_EFFECTS,
+    SPELL_COST_REDUCTION_FILTER_KEYS,
     SPELL_FILTER_KEYS,
     STATIC_AFFECTS_FILTER_KEYS,
     STATIC_CONDITION_HEADS,
@@ -959,6 +960,18 @@ COST_REDUCTION_FILTER: dict[str, Entry] = {
     "zone": ("Count in a zone other than the battlefield.", "Counting filters, and the `zone` key"),
 }
 
+#: Keys only a `spell_cost_reduction`'s `affects_spells` takes, beyond `SPELL_FILTER_KEYS`.
+SPELL_COST_REDUCTION_FILTER: dict[str, Entry] = {
+    "exclude_self": ("Not this card (\"other\" Dragon spells) -- the eminence case.",
+                     "Eminence — a static that works from the command zone"),
+    "from_zone": ("Cast from this zone, or one of a list (\"from your graveyard\").",
+                  "A discount that asks where the spell is cast from"),
+    "not_from_zone": ("Not cast from this zone or list (\"other than your hand\").",
+                      "A discount that asks where the spell is cast from"),
+    "power": ("The spell's power as cast: printed, or a `*/*`'s CDA.",
+              "`power` / `toughness` — a *derived* characteristic, read at a fixed layer"),
+}
+
 ABILITY_COSTS: dict[str, Entry] = {
     "blight": ("Blight N: the payer puts N -1/-1 counters on a creature they control.",
                "`blight` — -1/-1 counters on a creature the payer chooses"),
@@ -1369,6 +1382,14 @@ def families() -> list[Family]:
             "Spell filter keys", "What the filter may say", tuple(sorted(SPELL_FILTER_KEYS)),
             SELECTORS.get,
             "The keys an `affects_spells` filter may use.",
+        ),
+        Family(
+            "Spell cost-reduction filter keys", H_COST_REDUCTION,
+            tuple(sorted(SPELL_COST_REDUCTION_FILTER_KEYS - SPELL_FILTER_KEYS)),
+            SPELL_COST_REDUCTION_FILTER.get,
+            "Keys a `spell_cost_reduction`'s `affects_spells` accepts beyond the spell "
+            "filter keys: the ones only a price acts on.",
+            own=SPELL_COST_REDUCTION_FILTER,
         ),
         Family(
             "Cost-reduction filter keys", H_COST_REDUCTION,

@@ -2469,6 +2469,50 @@ same reason and by the same route. A `spell_cast` trigger cannot substitute: it
 fires after the spell is paid for, so the best it could do is refund mana, which
 is not the same as being able to afford the spell.
 
+### A discount that asks where the spell is cast from
+
+```jsonc
+// Emet-Selch of the Third Seat — "Spells you cast from your graveyard cost {2}
+// less to cast."
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "affects_spells": { "controller": "you", "from_zone": "graveyard" },
+  "amount": 2 }
+
+// Advanced Reconstruction, level 3 — "Spells you cast from anywhere other than
+// your hand cost {2} less to cast."
+{ "kind": "static", "effect": "spell_cost_reduction",
+  "affects_spells": { "controller": "you", "not_from_zone": "hand" },
+  "amount": 2 }
+```
+
+`from_zone` is the zone (or a list of zones) the spell must be cast **from**;
+`not_from_zone` the zone or zones it must not be. Each names zones out of
+`CAST_ORIGIN_ZONES` — `hand`, `graveyard`, `exile`, `library`, `command` — and the
+loader refuses any other value, an empty list, and a zone named on both sides,
+each of which would load clean and discount nothing. The keys sit beside the
+printed-face keys and are ANDed with them: "instant and sorcery spells you cast
+from exile" is `{"any_types": ["Instant", "Sorcery"], "from_zone": "exile"}`.
+
+The zone is the one the card sits in as the cast is proposed and priced, so the
+graveyard covers every way a card leaves it for the stack: flashback, retrace, a
+`cast_from_graveyard` permission, a granted graveyard cast and a resolving
+`cast_card`. A commander is cast from `command`, a foretold or plotted card from
+`exile`. Every pricer hands that zone to `cost_reduction.cost_reduction` —
+`casting._cast_variant`, `Game._cast` and `ops_cards._cast_paying_mana_cost`
+read the object's zone before `push_spell` moves it — and
+`player_statics.cast_zone_matches` decides. A pricer that passes no zone gets no
+discount from a zone-filtered static, so a new cast lane that forgets the
+plumbing fails closed.
+
+**Not `free_cast_permission`'s `from_zone`.** That key shares the spelling and
+the matcher, but its static frees the cast outright rather than discounting it,
+and the loader holds it to `hand`. **Not a card-level `cost_reduction`'s
+`zone`**, which says where to *count* permanents for Ghalta-style arithmetic and
+says nothing about the spell being priced. **Not "spells you cast this way"**
+either: that discount belongs to one permission rather than to a zone, so it has
+to know which permission the cast took, which a zone filter cannot say. It can
+reuse the same `zone` plumbing, but not these keys.
+
 ### Making *other* spells cost more, in life
 
 ```jsonc

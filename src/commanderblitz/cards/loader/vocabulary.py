@@ -977,7 +977,22 @@ SPELL_FILTER_KEYS = frozenset(
 #: ``power`` is the other: "Creature spells you cast **with power 4 or greater**
 #: cost {2} less" (Goreclaw). The spell's power as it is cast -- printed, or a
 #: `*/*`'s CDA -- read by `player_statics.spell_cost_reduction` too.
-SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {"exclude_self", "power"}
+#:
+#: ``from_zone`` and ``not_from_zone`` read the zone the spell is cast **from**:
+#: "Spells you cast from your graveyard cost {2} less" (Emet-Selch of the Third
+#: Seat), "…from anywhere other than your hand" (Advanced Reconstruction). One
+#: zone name or a list, out of `CAST_ORIGIN_ZONES`; matched by
+#: `player_statics.cast_zone_matches` with the zone every pricer hands down.
+SPELL_COST_REDUCTION_FILTER_KEYS = SPELL_FILTER_KEYS | {
+    "exclude_self",
+    "power",
+    "from_zone",
+    "not_from_zone",
+}
+
+#: The zones a card can be cast or played **from** -- what a ``from_zone`` /
+#: ``not_from_zone`` spell filter and a trigger's ``from_zones`` may name.
+CAST_ORIGIN_ZONES = frozenset({"library", "hand", "graveyard", "exile", "command"})
 
 #: What a ``cant_cast_spells`` static's ``affects_spells`` filter may use.
 #:

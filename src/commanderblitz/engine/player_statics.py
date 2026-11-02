@@ -1121,8 +1121,50 @@ def block_alone_forbidden(state: GameState, oid: int) -> bool:
     return _alone_forbidden(state, oid, "cant_block_alone")
 
 
+#: The `affects_spells` keys that read the zone a spell is cast **from**.
+CAST_ZONE_KEYS = frozenset({"from_zone", "not_from_zone"})
+
+
+def cast_zone_matches(filt: Mapping[str, Any], zone: Any) -> bool:
+    """Does a cast made from ``zone`` satisfy ``filt``'s zone keys?
+
+    ``from_zone`` names the zone (or zones) the spell must be cast from --
+    "spells you cast **from your graveyard**" (Emet-Selch of the Third Seat);
+    ``not_from_zone`` the zone(s) it must not be -- "spells you cast **from
+    anywhere other than your hand**" (Advanced Reconstruction). Either is one
+    zone name or a list of them. A filter with neither matches every zone.
+
+    ``zone`` is the zone the card was cast from, as a `Zone` or its string
+    value. 601.2a puts the card on the stack before 601.2f totals its cost, but
+    the engine prices before `push_spell` moves the object, so every pricer
+    reads the origin straight off the object.
+    ``None`` -- a caller that did not say -- fails closed on either key, so a
+    new pricing lane that forgets the zone discounts nothing rather than
+    everything.
+    """
+    wanted = filt.get("from_zone")
+    refused = filt.get("not_from_zone")
+    if wanted is None and refused is None:
+        return True
+    if zone is None:
+        return False
+    here = str(getattr(zone, "value", zone))
+
+    def names(spec: Any) -> set[str]:
+        return {spec} if isinstance(spec, str) else {str(z) for z in spec}
+
+    if wanted is not None and here not in names(wanted):
+        return False
+    return not (refused is not None and here in names(refused))
+
+
 def spell_cost_reduction(
-    state: GameState, pid: int, card: CardDef, targets: Sequence[Any] | None = None
+    state: GameState,
+    pid: int,
+    card: CardDef,
+    targets: Sequence[Any] | None = None,
+    *,
+    zone: Any = None,
 ) -> int:
     """How much less ``pid`` pays for ``card`` because of statics on the board.
 
@@ -1160,6 +1202,11 @@ def spell_cost_reduction(
     a gate asked before any target exists, and the clause is read generously
     then; see `ability_cost_reduction`, which takes the same shape for the same
     reason.
+
+    ``zone`` is the zone the spell is being cast **from**, read by the
+    ``from_zone`` / ``not_from_zone`` keys through `cast_zone_matches` -- a
+    graveyard discount must reach flashback, a granted graveyard cast and a
+    resolving `cast_card` alike, and never the hand or the command zone.
     """
     total = 0
     for source_obj, static in _battlefield_statics(state):
@@ -1178,6 +1225,9 @@ def spell_cost_reduction(
             continue
         if filt.get("exclude_self") and card.id == state.card_of(source_obj).id:
             continue
+        if not cast_zone_matches(filt, zone):
+            continue
+        filt = {k: v for k, v in filt.items() if k not in CAST_ZONE_KEYS}
         # "Creature spells you cast **of the chosen type** cost {1} less."
         # Herald's Horn. The substitution needs the permanent that made the
         # choice, and this loop has had it all along -- `_battlefield_statics`
@@ -2268,10 +2318,9 @@ def free_cast_permission(
         # "…from your hand" (Tamiyo, Field Researcher's emblem; Omniscience).
         # ``zone`` is where this cast is being made from; a caller that does not
         # say is refused rather than freed, so a new cast lane fails closed.
-        if "from_zone" in filt:
-            if zone != filt["from_zone"]:
-                continue
-            filt = {k: v for k, v in filt.items() if k != "from_zone"}
+        if not cast_zone_matches(filt, zone):
+            continue
+        filt = {k: v for k, v in filt.items() if k not in CAST_ZONE_KEYS}
         resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
         if _matches_printed(card, resolved):
             return True

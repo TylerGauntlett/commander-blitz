@@ -1981,7 +1981,9 @@ def _cast_paying_mana_cost(ctx: EffectContext, pid: int, oid: int, *, exiles: bo
     purpose = spell_purpose(card)
 
     def extra_for(targets) -> int:
-        return -cost_reduction(state, pid, card, targets)
+        # The zone the card is cast from -- graveyard, exile or wherever the
+        # resolving effect found it -- since it has not reached the stack yet.
+        return -cost_reduction(state, pid, card, targets, zone=zone_of(state, oid))
 
     def ceiling(extra: int) -> int:
         """The largest payable X, or -1 when nothing is payable at all."""

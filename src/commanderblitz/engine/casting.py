@@ -1809,6 +1809,11 @@ def _cast_variant(
     # variant-blind by design -- Ghalta costs less however you cast it -- and a
     # rider written there would discount the printed hand cast too.
     variant_less = 0
+    # The zone the card is cast *from*, for "spells you cast from your
+    # graveyard" (`spell_cost_reduction`'s ``from_zone``) -- read off the object
+    # before `push_spell` moves it, so flashback and foretell price from where
+    # the card sits.
+    cast_zone = state.objects[oid].zone
 
     if free:
         # "…without paying its mana cost." Plot (702.171a). First in the chain
@@ -1967,7 +1972,7 @@ def _cast_variant(
         # yet, and refusing here would drop a spell that is affordable once
         # discounted. `_priced_tuples` re-prices each tuple exactly.
         def _discount_for(aimed_at):
-            return cost_reduction(state, pid, card, aimed_at) + variant_less
+            return cost_reduction(state, pid, card, aimed_at, zone=cast_zone) + variant_less
 
         discount = _discount_for(None)
 

@@ -25,6 +25,7 @@ from commanderblitz.engine.effects.values import (
 from commanderblitz.engine.errors import DslError
 
 from .vocabulary import (
+    CAST_ORIGIN_ZONES,
     COST_CONDITION_HEADS,
     COST_REDUCTION_FILTER_KEYS,
     COST_REDUCTION_KEYS,
@@ -471,6 +472,38 @@ def _validate_static_typed_spells_cast(spec: Mapping[str, Any], where: str) -> N
                 f"{where}.filter.supertypes: unknown supertype {name!r} "
                 f"(known: {sorted(KNOWN_SUPERTYPES)})"
             )
+
+
+def _validate_cast_zone_keys(filt: Mapping[str, Any], where: str) -> None:
+    """``from_zone`` / ``not_from_zone``: zones a card can be cast from.
+
+    Each is one zone name or a non-empty list of them, out of
+    `CAST_ORIGIN_ZONES`. A typo (``"graveyards"``) or a zone nothing is cast
+    from (``"battlefield"``) would load clean and discount nothing, and a zone
+    named on both sides would discount nothing either -- both refused here.
+    """
+    named: dict[str, set[str]] = {}
+    for key in ("from_zone", "not_from_zone"):
+        spec = filt.get(key)
+        if spec is None:
+            continue
+        zones = [spec] if isinstance(spec, str) else spec
+        if (
+            not isinstance(zones, list)
+            or not zones
+            or any(not isinstance(z, str) or z not in CAST_ORIGIN_ZONES for z in zones)
+        ):
+            raise DslError(
+                f"{where}.{key}: a zone a card is cast from, or a non-empty list of "
+                f"them, from {sorted(CAST_ORIGIN_ZONES)}; got {spec!r}"
+            )
+        named[key] = set(zones)
+    both = named.get("from_zone", set()) & named.get("not_from_zone", set())
+    if both:
+        raise DslError(
+            f"{where}: {sorted(both)} is named by both 'from_zone' and "
+            f"'not_from_zone', so no cast from it could ever match"
+        )
 
 
 def _validate_static_value(value: Any, where: str) -> None:

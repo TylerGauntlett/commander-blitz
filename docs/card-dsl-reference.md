@@ -31,6 +31,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Static conditions](#static-conditions) | 14 |
 | [Static values](#static-values) | 18 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
+| [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 4 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
 | [Mana rider ops](#mana-rider-ops) | 6 |
 | [Delayed-trigger keys](#delayed-trigger-keys) | 5 |
@@ -1000,6 +1001,17 @@ The keys an `affects_spells` filter may use. Defined under [What the filter may 
 | `subtypes` | Has one of these subtypes. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
 | `supertypes` | Has one of these supertypes. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
 | `types` | Has all of these card types. | [What the filter may say](card-dsl-cookbook.md#what-the-filter-may-say) |
+
+## Spell cost-reduction filter keys
+
+Keys a `spell_cost_reduction`'s `affects_spells` accepts beyond the spell filter keys: the ones only a price acts on. Defined under [Cost reduction](card-dsl-cookbook.md#cost-reduction).
+
+| Name | Description | Defined in |
+|---|---|---|
+| `exclude_self` | Not this card ("other" Dragon spells) -- the eminence case. | [Eminence — a static that works from the command zone](card-dsl-cookbook.md#eminence--a-static-that-works-from-the-command-zone) |
+| `from_zone` | Cast from this zone, or one of a list ("from your graveyard"). | [A discount that asks where the spell is cast from](card-dsl-cookbook.md#a-discount-that-asks-where-the-spell-is-cast-from) |
+| `not_from_zone` | Not cast from this zone or list ("other than your hand"). | [A discount that asks where the spell is cast from](card-dsl-cookbook.md#a-discount-that-asks-where-the-spell-is-cast-from) |
+| `power` | The spell's power as cast: printed, or a `*/*`'s CDA. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 
 ## Cost-reduction filter keys
 

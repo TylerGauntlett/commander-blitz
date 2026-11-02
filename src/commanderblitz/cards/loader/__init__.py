@@ -101,6 +101,7 @@ from .mana import (
     _validate_mana_amount,
 )
 from .statics import (
+    _validate_cast_zone_keys,
     _validate_cost_reduction,
     _validate_static_condition,
     _validate_static_count_filter,
@@ -122,6 +123,7 @@ from .vocabulary import (  # noqa: F401
     ABILITY_CLASS_KEYS,
     ATTACKING_OPS,
     CAST_LOCK_FILTER_KEYS,
+    CAST_ORIGIN_ZONES,
     CONTROLLED_TARGET_KINDS,
     COST_CONDITION_HEADS,
     COST_REDUCTION_FILTER_KEYS,
@@ -3081,7 +3083,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
                     f"trigger to where the card was played from, and means "
                     f"nothing on {model.trigger.event!r}"
                 )
-            origins = {"library", "hand", "graveyard", "exile", "command"}
+            origins = CAST_ORIGIN_ZONES
             bad = [z for z in model.trigger.from_zones if z not in origins]
             if bad or not model.trigger.from_zones:
                 raise DslError(
@@ -4287,6 +4289,7 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}.affects_spells: a spell has a printed face and a caster "
                 f"and no board state; unsupported keys {sorted(unknown)}"
             )
+        _validate_cast_zone_keys(model.affects_spells, f"{where}.affects_spells")
         if model.amount is None:
             raise DslError(
                 f"{where}: spell_cost_reduction needs an 'amount' -- a reduction "

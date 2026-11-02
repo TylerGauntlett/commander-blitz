@@ -506,7 +506,9 @@ class Game:
         # The targets the action actually carries, so a discount that reads
         # them charges the number legality offered -- `_priced_tuples` priced
         # this very tuple.
-        extra -= cost_reduction(state, pid, card, targets)
+        # ``obj.zone`` is still the zone the card is cast from: `push_spell`
+        # has not moved it yet, so a graveyard-only discount reads flashback.
+        extra -= cost_reduction(state, pid, card, targets, zone=obj.zone)
 
         # Kicker is an additional cost, paid at the same time as the mana cost
         # and not separable from it: there is no state in which the spell is on

@@ -1,0 +1,77 @@
+{
+  "_comment": "Shapes for tests/unit/costs/test_cost_reduction_by_cast_zone.py. t_czr_graveyard is Emet-Selch of the Third Seat's first line on its own; t_czr_elsewhere is Advanced Reconstruction's level-3 line as a plain static. t_czr_flare is a sorcery whose flashback has generic mana for a discount to reach; t_czr_relic an artifact a graveyard permission or cast_card can cast; t_czr_commander a commander for the command-zone lane.",
+  "cards": [
+    {
+      "id": "t_czr_graveyard",
+      "name": "Test Graveyard Discount",
+      "oracle_text": "Spells you cast from your graveyard cost {2} less to cast.",
+      "mana_cost": "{2}",
+      "types": ["Artifact", "Creature"],
+      "subtypes": ["Construct"],
+      "colors": [],
+      "color_identity": [],
+      "power": 2,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells you cast from your graveyard cost {2} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {"controller": "you", "from_zone": "graveyard"},
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "id": "t_czr_elsewhere",
+      "name": "Test Elsewhere Discount",
+      "oracle_text": "Spells you cast from anywhere other than your hand cost {2} less to cast.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": [],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Spells you cast from anywhere other than your hand cost {2} less to cast.",
+          "effect": "spell_cost_reduction",
+          "affects_spells": {"controller": "you", "not_from_zone": "hand"},
+          "amount": 2
+        }
+      ]
+    },
+    {
+      "id": "t_czr_flare",
+      "name": "Test Flashback Flare",
+      "oracle_text": "Test Flashback Flare deals 1 damage to each opponent.\nFlashback {3}{R}",
+      "mana_cost": "{3}{R}",
+      "types": ["Sorcery"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "spell_effects": [{"op": "damage", "player": "each_opponent", "amount": {"const": 1}}],
+      "flashback": {"mana": "{3}{R}"}
+    },
+    {
+      "id": "t_czr_relic",
+      "name": "Test Graveyard Relic",
+      "oracle_text": "",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_czr_commander",
+      "name": "Test Zone Commander",
+      "oracle_text": "",
+      "mana_cost": "{4}{R}",
+      "types": ["Creature"],
+      "supertypes": ["Legendary"],
+      "subtypes": ["Human"],
+      "colors": ["R"],
+      "color_identity": ["R"],
+      "power": 3,
+      "toughness": 3
+    }
+  ]
+}
