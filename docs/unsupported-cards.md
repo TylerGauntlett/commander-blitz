@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**169 cards** blocked by **153** capabilities.
+**168 cards** blocked by **153** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -27,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 2 | 3206 | static_effect |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
-| [free-cast-exile-instead](#free-cast-exile-instead) | 2 | 2714 | op |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -89,6 +88,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [for-as-long-as-you-control-source](#for-as-long-as-you-control-source) | 1 | 8396 | engine |
 | [foretold](#foretold) | 1 | 3713 | value |
+| [free-cast-exile-instead](#free-cast-exile-instead) | 1 | 6248 | op |
 | [free-cast-tuck-to-library-bottom](#free-cast-tuck-to-library-bottom) | 1 | 8925 | replacement |
 | [grant-evoke](#grant-evoke) | 1 | 5749 | static_effect |
 | [grantable-player-statics](#grantable-player-statics) | 1 | 3589 | static_effect |
@@ -516,24 +516,6 @@ Blocks **2** cards.
   - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
 - **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
   - When Uro enters, sacrifice it unless it escaped.
-
-</details>
-
-## free-cast-exile-instead
-
-Blocks **2** cards.
-
-- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
-  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
-- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into your graveyard, exile it instead') on a free resolution-time cast of a targeted card in a graveyard -- e.g. an `exiles` key on `cast_from_hand` passed through to cast_for_free(exiles_instead=...) when its `objects` names a target, so the optional free cast of target instant card from your graveyard has the spell exiled however it leaves the stack (resolving, fizzling, countered)
-  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), missing 'without paying its mana cost'. `cast_from_hand` with `objects: {target: t1}` casts free and optionally from the graveyard but its options are only objects/per_owner/player/selector/zones, with no `exiles`, so the instant would return to the graveyard. `play_exiled` has free + `exiles` but defaults `exiled_with: self` on any non-binding pool and is mandatory, so a graveyard target matches nothing. Same gap as Impulsivity.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Torrential Gearhulk** (rank 2714) — `torrential_gearhulk`
-  - When this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.
-- **Impulsivity** (rank 6248) — `impulsivity`
-  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
 
 </details>
 
@@ -1448,6 +1430,20 @@ Blocks **1** card.
 
 - **Haunting Voyage** (rank 3713) — `haunting_voyage`
   - If this spell was foretold, return all creature cards of that type from your graveyard to the battlefield instead.
+
+</details>
+
+## free-cast-exile-instead
+
+Blocks **1** card.
+
+- **(op)** the `exiles: true` rider (StackItem.exiles_instead, 'if that spell would be put into a graveyard, exile it instead') on `cast_from_hand` when its `objects` names a targeted card in any graveyard -- a free resolution-time cast of a target card from a graveyard, with the spell exiled instead of going to a graveyard however it leaves the stack
+  <br>Why the existing vocabulary won't do: `cast_card` takes `exiles` but always charges the card's mana cost (_cast_paying_mana_cost), so it misses 'without paying its mana cost'. `cast_from_hand` with `objects: {target}` casts free from any graveyard but has no `exiles` key and calls cast_for_free without exiles_instead, so the spell would return to its owner's graveyard. `play_exiled` has both free and `exiles` but is built for exile: it defaults `exiled_with: self` on any non-binding pool, so a graveyard target matches nothing. Encore itself is expressible (Angel of Indemnity's shape).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Impulsivity** (rank 6248) — `impulsivity`
+  - When this creature enters, you may cast target instant or sorcery card from a graveyard without paying its mana cost. If that spell would be put into a graveyard, exile it instead.
 
 </details>
 

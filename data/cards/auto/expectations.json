@@ -15942,6 +15942,13 @@
       "graveyard"
     ]
   },
+  "torrential_gearhulk": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "zone": "battlefield"
+  },
   "torsten_von_ursus": {
     "zone": "battlefield"
   },

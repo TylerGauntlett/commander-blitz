@@ -289872,12 +289872,12 @@
     },
     "Torrential Gearhulk": {
       "edhrec_rank": 2714,
-      "gate": "template",
+      "gate": null,
       "name": "Torrential Gearhulk",
-      "reason": "no template for: When this creature enters, you may cast target instant card from your graveyard without pa",
+      "reason": "",
       "scryfall_id": "a6a0afd5-f3f9-459e-bd03-1a7a3521b570",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Torsten Von Ursus": {
