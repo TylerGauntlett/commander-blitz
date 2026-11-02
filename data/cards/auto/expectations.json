@@ -1727,6 +1727,14 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "blue_mage_s_cane": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "hero_1_1_c"
+    },
+    "zone": "battlefield"
+  },
   "bog_imp": {
     "zone": "battlefield"
   },

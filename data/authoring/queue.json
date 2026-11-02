@@ -29522,12 +29522,12 @@
     },
     "Blue Mage's Cane": {
       "edhrec_rank": 7708,
-      "gate": "template",
+      "gate": null,
       "name": "Blue Mage's Cane",
-      "reason": "no template for: Job select",
+      "reason": "",
       "scryfall_id": "1b3188ab-feb9-4486-bda0-1b80f128f7d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blue Mana Battery": {

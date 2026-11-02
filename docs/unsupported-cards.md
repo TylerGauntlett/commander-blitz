@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**165 cards** blocked by **150** capabilities.
+**164 cards** blocked by **149** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,7 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
-| [cast-copy-alternative-cost](#cast-copy-alternative-cost) | 1 | 7708 | op |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
@@ -862,20 +861,6 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
-
-</details>
-
-## cast-copy-alternative-cost
-
-Blocks **1** card.
-
-- **(op)** cast_copy (casting a copy of an exiled card) with an alternative cost: the caster may cast the copy by paying a printed price ({3}) instead of its mana cost, the payment made at cast time and the cast declinable if unaffordable or unwanted
-  <br>Why the existing vocabulary won't do: cast_copy accepts only objects and optional and always casts the copy without paying its mana cost (Mizzix's Mastery, Renegade Bull); nothing in its options or in may/pay attaches a substitute mana cost to the copy's cast. Wrapping it in may with pay {3} would charge the price as a separate payment rather than as the spell's alternative cost (cost increases/reductions and X would be wrong). The rest of the line is expressible: buff +0/+2, add_subtype Wizard, a grant_ability static over an attacks trigger targeting card_in_graveyard of the defending player
-
-<details><summary>Cards waiting on this</summary>
-
-- **Blue Mage's Cane** (rank 7708) — `blue_mage_s_cane`
-  - Equipped creature gets +0/+2, is a Wizard in addition to its other types, and has "Whenever this creature attacks, exile up to one target instant or sorcery card from defending player's graveyard. If you do, copy it. You may cast the copy by paying {3} rather than paying its mana cost."
 
 </details>
 
