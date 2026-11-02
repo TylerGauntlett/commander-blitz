@@ -37,6 +37,7 @@ PRECONS = {
     "fdc_reign_of_dragons",
     "fdc_tramplesaurus_rex",
     "fdc_wretched_ranks",
+    "fic_revival_trance_final_fantasy_vi",
     "frc_multiverse_reforged",
     "msc_avengers_assemble",
     "msc_doom_prevails",
