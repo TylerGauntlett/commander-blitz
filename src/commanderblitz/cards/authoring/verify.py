@@ -1712,6 +1712,17 @@ def _covered(card: CardDef, line: str) -> bool:
         and _claims_numbered_line(card, stripped, "annihilator", card.annihilator)
     ):
         return True
+    # "Dredge 2 (If you would draw a card, you may mill two cards instead…)" is
+    # the card-level `dredge` field, read by the draw replacement in
+    # `replacements._dredge` (702.52a) -- a replacement offered from the
+    # graveyard, so no ability on the card could honestly carry the line.
+    # Strict: the printed number must be the card's, so `dredge: 2` cannot
+    # claim a printed "Dredge 5".
+    if card.dredge:
+        bare = re.sub(r"\s*\([^)]*\)", "", stripped).strip().rstrip(".")
+        match = re.fullmatch(r"dredge (\d+)", bare.casefold())
+        if match is not None:
+            return int(match.group(1)) == card.dredge
 
     # "Kicker {1}{U}" is the cost half of a mechanic whose other half is an
     # ordinary `if`, so no ability carries this line either.
