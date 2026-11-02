@@ -9035,6 +9035,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "lyse_hext": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "m_baku_jabari_chieftain": {
     "battlefield_count": 33,
     "zone": "battlefield"

@@ -163652,12 +163652,12 @@
     },
     "Lyse Hext": {
       "edhrec_rank": 3703,
-      "gate": "template",
+      "gate": null,
       "name": "Lyse Hext",
-      "reason": "no template for: Noncreature spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "227ada0a-e1b5-44ed-8303-d6449069599f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lyzolda, the Blood Witch": {

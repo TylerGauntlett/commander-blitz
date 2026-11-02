@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**168 cards** blocked by **153** capabilities.
+**167 cards** blocked by **152** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -151,7 +151,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
-| [static-typed-spells-cast-this-turn](#static-typed-spells-cast-this-turn) | 1 | 3703 | value |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
@@ -2329,20 +2328,6 @@ Blocks **1** card.
 
 - **Vanguard of the Restless** (rank 11948) — `vanguard_of_the_restless`
   - Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game.
-
-</details>
-
-## static-typed-spells-cast-this-turn
-
-Blocks **1** card.
-
-- **(value)** the typed form of spells_cast_this_turn ({"player": "you", "filter": {"not_types": ["Creature"]}}) accepted as a static value, so a grant_keyword static's condition can be a cmp of noncreature spells you cast this turn >= 2
-  <br>Why the existing vocabulary won't do: static_value_keys has spells_cast_this_turn, but only as a bare player spec that counts every spell. cards/loader/statics.py rejects the {player, filter} mapping in a static by name, and characteristics.py reads only the flat turn_ledger.spells_cast total. Only the effect-side value (effects/values.py) can filter by type. Counting all spells would turn double strike on after two creature spells, which is a different and stronger card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lyse Hext** (rank 3703) — `lyse_hext`
-  - As long as you've cast two or more noncreature spells this turn, Lyse Hext has double strike.
 
 </details>
 
