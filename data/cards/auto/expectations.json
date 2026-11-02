@@ -13090,6 +13090,14 @@
   "servant_of_nefarox": {
     "zone": "battlefield"
   },
+  "setzer_wandering_gambler": {
+    "battlefield_count": 34,
+    "tokens": {
+      "count": 1,
+      "id": "the_blackjack_3_3_c_flying_crew2"
+    },
+    "zone": "battlefield"
+  },
   "severed_legion": {
     "zone": "battlefield"
   },

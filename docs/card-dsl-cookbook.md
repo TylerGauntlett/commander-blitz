@@ -13390,7 +13390,9 @@ opponent and `ask_player` does not stop to ask.
 ### `flip_coin` — won or lost
 
 Rule 705. `flip_coin` flips one coin for the controller and runs `effects` if
-they win the flip and `else` if they lose it; at least one is required.
+they win the flip and `else` if they lose it. Both are optional: a bare
+`{ "op": "flip_coin" }` is Setzer's "flip a coin", whose outcome only a
+`wins_coin_flip` trigger reads.
 
 ```jsonc
 // Negative Zone Portal — "flip a coin. If you lose the flip, sacrifice this
@@ -13403,10 +13405,31 @@ they win the flip and `else` if they lose it; at least one is required.
 ```
 
 The outcome comes from the engine's seeded `Rng`, and one `coin_flipped` event
-carries `won` for the log. **Not** `roll_dice` with `sides: 2`: a coin is not a
-die, so a d2 would answer "whenever you roll one or more dice" and nothing that
-asks about a coin. **Not** `choose_mode` with `random`, which picks a mode rather
-than deciding a won or lost flip.
+carries `won`, for the log and for `wins_coin_flip` below. **Not** `roll_dice`
+with `sides: 2`: a coin is not a die, so a d2 would answer "whenever you roll one
+or more dice" and nothing that asks about a coin. **Not** `choose_mode` with
+`random`, which picks a mode rather than deciding a won or lost flip.
+
+### "Whenever you win a coin flip"
+
+`wins_coin_flip` is a trigger event that fires once per flip won, whatever made
+the flip: every `flip_coin` fires `coin_flipped` through the trigger bus, and this
+trigger hears the ones whose `won` is true. A lost flip fires nothing. Its subject
+is a **player**, the one who flipped, so `controller` reads who won: `"you"` (the
+default) is "whenever you win a coin flip", `"opponent"` is an opponent winning.
+
+```jsonc
+// Setzer, Wandering Gambler — "Whenever you win a coin flip, create two tapped
+// Treasure tokens."
+{ "kind": "triggered",
+  "trigger": { "event": "wins_coin_flip" },
+  "effects": [ { "op": "create_token", "token": "treasure_token",
+                 "amount": { "const": 2 }, "tapped": true } ] }
+```
+
+The near miss is the win branch of the card's own `flip_coin` ("flip a coin; if
+you win, create two Treasures"), which is a narrower card: it pays only for the
+flips that one ability makes and misses a flip won off any other source.
 
 ## Rolling dice
 

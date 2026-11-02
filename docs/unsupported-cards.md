@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**166 cards** blocked by **152** capabilities.
+**165 cards** blocked by **151** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -163,7 +163,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [win-coin-flip](#win-coin-flip) | 1 | 12252 | trigger_event |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -2490,20 +2489,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## win-coin-flip
-
-Blocks **1** card.
-
-- **(trigger_event)** a trigger event that fires whenever a player wins a coin flip, filterable by who flipped ("whenever you win a coin flip"), fired from the flip_coin op whenever its result is a win -- including flips caused by other cards' effects, not only this card's own
-  <br>Why the existing vocabulary won't do: trigger_events has no coin-flip event; the engine emits EventType.COIN_FLIPPED (carrying `won`) from the flip_coin op only for the log, and no trigger can listen to it. Putting the Treasure creation in the second ability's flip_coin win branch would miss every coin flip won from any other source, a narrower card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Setzer, Wandering Gambler** (rank 12252) — `setzer_wandering_gambler`
-  - Whenever you win a coin flip, create two tapped Treasure tokens.
 
 </details>
 

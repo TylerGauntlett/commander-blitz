@@ -152229,6 +152229,85 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "the_blackjack_3_3_c_flying_crew2"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "flip_coin"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a Vehicle you control deals combat damage to a player, flip a coin.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player",
+            "filter": {
+              "subtypes": [
+                "Vehicle"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "create_token",
+              "tapped": true,
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you win a coin flip, create two tapped Treasure tokens.",
+          "trigger": {
+            "event": "wins_coin_flip"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "setzer_wandering_gambler",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Setzer, Wandering Gambler",
+      "oracle_text": "When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.\nWhenever a Vehicle you control deals combat damage to a player, flip a coin.\nWhenever you win a coin flip, create two tapped Treasure tokens.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rogue",
+        "Pilot"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],

@@ -4760,7 +4760,7 @@ Events: `self_enters` · `permanent_enters` · `dies` · `creature_dies` ·
 `becomes_monarch` ·
 `counter_placed` · `sacrificed` · `leaves_graveyard` · `token_created` · `draw` · `discard` · `cycle` ·
 `ability_activated` · `damage_prevented` · `deals_damage_to_player` ·
-`searches_library` · `state`
+`searches_library` · `wins_coin_flip` · `state`
 
 ### `state` — "When there are four or more page counters on this artifact"
 
@@ -5304,6 +5304,12 @@ carries `owner` (whose library); every search op today searches the searcher's
 own. `spell_cast` and `ability_activated` are the near misses and fire on the
 cause: they count a conditional tutor that never searched and miss a search a
 trigger performed.
+
+**`wins_coin_flip`** fires once per coin flip won (705), from `op_flip_coin`, the
+one place a coin is flipped, so a flip won off any card counts. Its subject is a
+**player**: `controller` and `event_player` name the player who flipped and won.
+A lost flip fires nothing. See
+["Whenever you win a coin flip"](card-dsl-cookbook.md#whenever-you-win-a-coin-flip).
 
 **`becomes_untapped`** is inspired, and it is nearly all untap step.
 `untap_permanent` fires it, and the untap step fires one event per permanent like

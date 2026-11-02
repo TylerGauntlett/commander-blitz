@@ -241502,12 +241502,12 @@
     },
     "Setzer, Wandering Gambler": {
       "edhrec_rank": 12252,
-      "gate": "template",
+      "gate": null,
       "name": "Setzer, Wandering Gambler",
-      "reason": "no template for: When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token",
+      "reason": "",
       "scryfall_id": "0e5b6968-fff2-4227-9442-d2b5225b29e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Seven Dwarves": {

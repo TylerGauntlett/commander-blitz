@@ -1677,10 +1677,12 @@ def op_flip_coin(ctx: EffectContext, spec: Mapping[str, Any]):
 
     Determinism: the outcome comes from ``state.rng``, the engine's single
     seeded source, so a replay of the same seed and action tape flips the same
-    way. One ``coin_flipped`` event carries ``won`` for the log.
+    way. One ``coin_flipped`` event carries ``won``, fired through the trigger
+    bus rather than only logged, because ``wins_coin_flip`` listens for it.
     """
     won = ctx.state.rng.randint(0, 1) == 1
-    ctx.state.emit(
+    fire(
+        ctx.state,
         EventType.COIN_FLIPPED,
         player=ctx.controller,
         source=ctx.source_oid,

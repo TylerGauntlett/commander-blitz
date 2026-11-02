@@ -782,6 +782,8 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
                      "`spell_copied`, and why magecraft is two abilities"),
     "token_created": ("A token is created.", None),
     "upkeep": ("At the beginning of the upkeep.", None),
+    "wins_coin_flip": ("A player wins a coin flip (705); a lost flip fires nothing.",
+                       '"Whenever you win a coin flip"'),
     "you_attack": ("You attack with one or more creatures.", '"Whenever you attack"'),
     "you_gain_life": ("You gain life.", None),
 }
