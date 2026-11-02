@@ -28,7 +28,9 @@ import json
 import pytest
 
 from commanderblitz.cards.registry import CardRegistry, authored_card_paths
-from tests.conftest import only_oid, pt, two_seat_board
+from commanderblitz.engine.characteristics import chars
+from commanderblitz.engine.enums import ActionKind
+from tests.conftest import keywords, only_oid, pt, settle_completely, two_seat_board
 
 
 @pytest.fixture(scope="module")
@@ -695,6 +697,74 @@ class TestKherKeepsKoboldsCarryTheirName:
         plant = pool.get("plant_0_1_g")
         assert plant is not None
         assert sorted(plant.colors) == ["G"]
+
+
+class TestSetzersBlackjackIsALegendaryFlyingVehicle:
+    """Setzer, Wandering Gambler: *"create **The Blackjack, a legendary 3/3
+    colorless Vehicle artifact token with flying and crew 2**."*
+
+    Every part is a characteristic a card reads. The name and the supertype put
+    it under the legend rule; the Vehicle subtype is what Setzer's second
+    ability watches; and it is an artifact, not a creature, until it is crewed.
+    `pilot_1_1_c_crew2` is the pool's only other crew-related token and is the
+    creature that does the crewing, not a Vehicle; `komas_coil_3_3_u` is the
+    other named 3/3 and is a blue Serpent creature.
+    """
+
+    TOKEN = "the_blackjack_3_3_c_flying_crew2"
+
+    def test_it_is_a_legendary_three_three_colorless_flying_vehicle(self, pool):
+        token = pool.get(self.TOKEN)
+        assert token is not None and token.is_token
+        assert token.name == "The Blackjack"
+        assert sorted(token.supertypes) == ["Legendary"]
+        assert list(token.types) == ["Artifact"]
+        assert list(token.subtypes) == ["Vehicle"]
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors and not token.color_identity
+        assert list(token.keywords) == ["flying"]
+        assert not token.is_creature
+
+    def test_its_one_ability_is_crew_two(self, pool):
+        (crew,) = pool.get(self.TOKEN).abilities
+        assert crew.text == "Crew 2"
+        assert crew.cost.tap_permanents["total_power"] == 2
+
+    def test_a_two_power_creature_crews_it_into_a_three_three_flier(self, builder):
+        game = two_seat_board(builder, mine=[self.TOKEN, "grizzly_bears"])
+        vehicle = only_oid(game, self.TOKEN, 0)
+        assert "Creature" not in chars(game.state, vehicle).types
+        game.apply(
+            next(
+                a
+                for a in game.legal_actions()
+                if a.kind is ActionKind.ACTIVATE and a.source == vehicle
+            )
+        )
+        settle_completely(game)
+        assert {"Artifact", "Creature"} <= chars(game.state, vehicle).types
+        assert pt(game, vehicle) == (3, 3)
+        assert "flying" in keywords(game, vehicle)
+
+    @staticmethod
+    def _can_crew(game, vehicle: int) -> bool:
+        return any(
+            a.kind is ActionKind.ACTIVATE and a.source == vehicle
+            for a in game.legal_actions()
+        )
+
+    def test_a_one_power_creature_cannot_crew_it(self, builder):
+        game = two_seat_board(builder, mine=[self.TOKEN, "llanowar_elves"])
+        assert not self._can_crew(game, only_oid(game, self.TOKEN, 0))
+
+    def test_a_pilot_crews_it_as_a_three(self, builder):
+        game = two_seat_board(builder, mine=[self.TOKEN, "pilot_1_1_c_crew2"])
+        assert self._can_crew(game, only_oid(game, self.TOKEN, 0))
+
+    def test_the_pilot_is_still_a_separate_token(self, pool):
+        pilot = pool.get("pilot_1_1_c_crew2")
+        assert pilot.is_creature and list(pilot.subtypes) == ["Pilot"]
+        assert "Vehicle" not in pilot.subtypes
 
 
 class TestEzurisPredationMakesPhyrexianBeasts:

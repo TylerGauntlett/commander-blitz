@@ -3060,6 +3060,61 @@
       "is_token": true
     },
     {
+      "id": "the_blackjack_3_3_c_flying_crew2",
+      "name": "The Blackjack",
+      "oracle_text": "The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ],
+      "subtypes": [
+        "Vehicle"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "keywords": [
+        "flying"
+      ],
+      "colors": [],
+      "color_identity": [],
+      "is_token": true,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Crew 2",
+          "cost": {
+            "tap_permanents": {
+              "controller": "you",
+              "total_power": 2,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "op": "animate",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "power": {
+                "const": 3
+              },
+              "toughness": {
+                "const": 3
+              },
+              "types": [
+                "Creature"
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "thopter_1_1_c_flying",
       "name": "Thopter Token",
       "oracle_text": "1/1 colorless Thopter artifact creature token with flying.",

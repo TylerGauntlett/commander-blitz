@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**166 cards** blocked by **153** capabilities.
+**166 cards** blocked by **152** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -156,7 +156,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
-| [the-blackjack-token](#the-blackjack-token) | 1 | 12252 | token |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
@@ -2396,21 +2395,6 @@ Blocks **1** card.
 
 </details>
 
-## the-blackjack-token
-
-Blocks **1** card.
-
-- **(token)** The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2 (crew 2 = an activated ability whose cost is tap_permanents with total_power 2, making it an artifact creature until end of turn)
-  <br>Why the existing vocabulary won't do: token_ids holds no Vehicle token at all; the nearest are pilot_1_1_c_crew2 (a Pilot creature that helps crew) and treasure_token, neither of which is a named legendary flying Vehicle
-
-<details><summary>Cards waiting on this</summary>
-
-- **Setzer, Wandering Gambler** (rank 12252) — `setzer_wandering_gambler`
-  - When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.
-  - Whenever you win a coin flip, create two tapped Treasure tokens.
-
-</details>
-
 ## this-combat-duration
 
 Blocks **1** card.
@@ -2519,7 +2503,6 @@ Blocks **1** card.
 <details><summary>Cards waiting on this</summary>
 
 - **Setzer, Wandering Gambler** (rank 12252) — `setzer_wandering_gambler`
-  - When Setzer enters, create The Blackjack, a legendary 3/3 colorless Vehicle artifact token with flying and crew 2.
   - Whenever you win a coin flip, create two tapped Treasure tokens.
 
 </details>
