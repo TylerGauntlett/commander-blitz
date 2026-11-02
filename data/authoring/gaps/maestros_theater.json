@@ -1,0 +1,22 @@
+{
+  "card_id": "maestros_theater",
+  "name": "Maestros Theater",
+  "oracle_text": "When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.",
+  "blocked_sentences": [
+    "When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life."
+  ],
+  "needs": [
+    {
+      "capability": "self_sacrificing_permanent_gate",
+      "kind": "engine",
+      "what": "authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new",
+      "why_existing_wont_do": "verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix"
+    }
+  ],
+  "closest_existing": [
+    "reflexive_trigger",
+    "sacrifice",
+    "search_library"
+  ],
+  "confidence": "high"
+}
