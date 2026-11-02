@@ -1718,6 +1718,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "mill",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, mill three cards. (Put the top three cards of your library into your graveyard.)",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{G}, Sacrifice this creature: Return all land cards from your graveyard to the battlefield tapped."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "aftermath_analyst",
+      "mana_cost": "{1}{G}",
+      "name": "Aftermath Analyst",
+      "oracle_text": "When this creature enters, mill three cards. (Put the top three cards of your library into your graveyard.)\n{3}{G}, Sacrifice this creature: Return all land cards from your graveyard to the battlefield tapped.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Detective"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "chapter": 1,
           "effects": [
             {
@@ -13162,6 +13231,93 @@
         "Legendary"
       ],
       "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "tapped": true,
+              "token": "beast_4_4_g"
+            },
+            {
+              "objects": {
+                "self_only": true
+              },
+              "op": "untap"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a land, create a tapped 4/4 green Beast creature token and untap this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{4}, Sacrifice a land: You gain 2 life."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "baloth_prime",
+      "mana_cost": "{3}{G}",
+      "name": "Baloth Prime",
+      "oracle_text": "This creature enters tapped with six stun counters on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)\nWhenever you sacrifice a land, create a tapped 4/4 green Beast creature token and untap this creature.\n{4}, Sacrifice a land: You gain 2 life.",
+      "power": 10,
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        },
+        {
+          "amount": 6,
+          "counter": "stun",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Beast"
+      ],
+      "toughness": 10,
       "types": [
         "Creature"
       ]
@@ -37698,6 +37854,41 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {B}."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "dredge": 2,
+      "id": "dakmor_salvage",
+      "name": "Dakmor Salvage",
+      "oracle_text": "This land enters tapped.\n{T}: Add {B}.\nDredge 2 (If you would draw a card, you may mill two cards instead. If you do, return this card from your graveyard to your hand.)",
+      "replacements": [
+        {
+          "event": "self_enters_tapped"
+        }
+      ],
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -51896,6 +52087,130 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "escape_to_the_wilds",
+      "mana_cost": "{3}{R}{G}",
+      "name": "Escape to the Wilds",
+      "oracle_text": "Exile the top five cards of your library. You may play cards exiled this way until the end of your next turn.\nYou may play an additional land this turn.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 5
+          },
+          "destination": "exile",
+          "objects": {
+            "count": "all"
+          },
+          "op": "look_at_top",
+          "playable": "end_of_your_next_turn",
+          "player": "you"
+        },
+        {
+          "amount": {
+            "const": 1
+          },
+          "op": "extra_land_drop",
+          "player": "you"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "count": 1,
+              "destination": "battlefield",
+              "op": "search_library",
+              "player": "you",
+              "selector": {
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle."
+        },
+        {
+          "cost": {
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "power": {
+                  "op": "<=",
+                  "value": {
+                    "const": 2
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{T}, Sacrifice this land: Target creature with power 2 or less can't be blocked this turn."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "escape_tunnel",
+      "name": "Escape Tunnel",
+      "oracle_text": "{T}, Sacrifice this land: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\n{T}, Sacrifice this land: Target creature with power 2 or less can't be blocked this turn.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
       "abilities": [
         {
           "affects": {
@@ -52492,6 +52807,290 @@
       "toughness": 2,
       "types": [
         "Artifact",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
+            "pay_life": 1,
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{B}",
+              "op": "add_mana"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "hatchling",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}, Pay 1 life: Add {B}. Put a hatchling counter on this land."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "counters_had": "hatchling"
+              },
+              "op": "create_token",
+              "token": "insect_1_1_b_flying"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this land is put into a graveyard from the battlefield, for each hatchling counter on it, create a 1/1 black Insect creature token with flying.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [],
+      "id": "eumidian_hatchery",
+      "mana_cost": "",
+      "name": "Eumidian Hatchery",
+      "oracle_text": "{T}, Pay 1 life: Add {B}. Put a hatchling counter on this land.\nWhen this land is put into a graveyard from the battlefield, for each hatchling counter on it, create a 1/1 black Insect creature token with flying.",
+      "source": "auto",
+      "types": [
+        "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "chooser": "you",
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "as": "you_discarded",
+                      "op": "discard",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Discard a card"
+                },
+                {
+                  "effects": [
+                    {
+                      "as": "you_sacrificed",
+                      "objects": {
+                        "controller": "you",
+                        "count": 1,
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "label": "Sacrifice a permanent"
+                }
+              ],
+              "op": "choose_mode"
+            },
+            {
+              "chooser": {
+                "binding": "defender"
+              },
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "as": "they_discarded",
+                      "op": "discard",
+                      "player": {
+                        "binding": "defender"
+                      }
+                    }
+                  ],
+                  "label": "Discard a card"
+                },
+                {
+                  "effects": [
+                    {
+                      "as": "they_sacrificed",
+                      "objects": {
+                        "chooser": {
+                          "binding": "defender"
+                        },
+                        "controller": {
+                          "binding": "defender"
+                        },
+                        "count": 1,
+                        "zone": "battlefield"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "label": "Sacrifice a permanent"
+                }
+              ],
+              "op": "choose_mode"
+            },
+            {
+              "amount": {
+                "sum": [
+                  {
+                    "count": {
+                      "binding": "you_discarded",
+                      "is_token": false,
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "graveyard"
+                    }
+                  },
+                  {
+                    "count": {
+                      "binding": "you_sacrificed",
+                      "is_token": false,
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "graveyard"
+                    }
+                  },
+                  {
+                    "count": {
+                      "binding": "they_discarded",
+                      "is_token": false,
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "graveyard"
+                    }
+                  },
+                  {
+                    "count": {
+                      "binding": "they_sacrificed",
+                      "is_token": false,
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "graveyard"
+                    }
+                  }
+                ]
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever this creature attacks, you and defending player each discard a card or sacrifice a permanent. You draw a card for each land card put into a graveyard this way.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "exile_from_graveyard": {
+              "count": 1,
+              "self_only": true
+            },
+            "mana": "{6}{B}{B}"
+          },
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "encore_copy",
+                  "controller": "you",
+                  "objects": {
+                    "controller": "any",
+                    "self_only": true,
+                    "zone": "exile"
+                  },
+                  "op": "copy_permanent"
+                },
+                {
+                  "defender": {
+                    "binding": "each_player"
+                  },
+                  "duration": "this_turn",
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "must_attack_player"
+                },
+                {
+                  "duration": "permanent",
+                  "keywords": [
+                    "haste"
+                  ],
+                  "objects": {
+                    "binding": "encore_copy",
+                    "count": "all"
+                  },
+                  "op": "grant_keyword"
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "binding": "encore_copy",
+                        "count": "all"
+                      },
+                      "op": "sacrifice"
+                    }
+                  ],
+                  "op": "delay",
+                  "step": "end_step",
+                  "text": "Sacrifice them at the beginning of the next end step."
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "text": "Encore {6}{B}{B} ({6}{B}{B}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)"
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "eumidian_wastewaker",
+      "mana_cost": "{2}{B}{B}",
+      "name": "Eumidian Wastewaker",
+      "oracle_text": "Whenever this creature attacks, you and defending player each discard a card or sacrifice a permanent. You draw a card for each land card put into a graveyard this way.\nEncore {6}{B}{B} ({6}{B}{B}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Cleric"
+      ],
+      "toughness": 4,
+      "types": [
         "Creature"
       ]
     },
@@ -60949,6 +61548,93 @@
       "abilities": [
         {
           "affects": {
+            "self_only": true
+          },
+          "effect": "add_subtype",
+          "kind": "static",
+          "subtypes": [
+            "Human",
+            "Soldier",
+            "Warrior",
+            "Wizard",
+            "Cleric",
+            "Rogue",
+            "Knight",
+            "Elf",
+            "Goblin",
+            "Zombie",
+            "Vampire",
+            "Spirit",
+            "Beast",
+            "Elemental",
+            "Dragon",
+            "Angel",
+            "Demon",
+            "Sphinx",
+            "Bird",
+            "Cat",
+            "Snake",
+            "Insect",
+            "Serpent",
+            "Giant",
+            "Orc",
+            "Merfolk",
+            "Druid",
+            "Shaman",
+            "Bear",
+            "Wall"
+          ],
+          "text": "Changeling (This card is every creature type.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "formless_genesis",
+      "mana_cost": "{2}{G}",
+      "name": "Formless Genesis",
+      "oracle_text": "Changeling (This card is every creature type.)\nCreate an X/X colorless Shapeshifter creature token with changeling and deathtouch, where X is the number of land cards in your graveyard.\nRetrace (You may cast this card from your graveyard by discarding a land card in addition to paying its other costs.)",
+      "retrace": true,
+      "source": "auto",
+      "spell_effects": [
+        {
+          "op": "create_token",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "token": "shapeshifter_x_x_c_changeling_deathtouch",
+          "toughness": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ],
+              "zone": "graveyard"
+            }
+          }
+        }
+      ],
+      "subtypes": [
+        "Shapeshifter"
+      ],
+      "types": [
+        "Kindred",
+        "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "colorless": true,
             "controller": "you",
             "types": [
@@ -64336,6 +65022,43 @@
       ],
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "gaze_of_granite",
+      "mana_cost": "{X}{B}{B}{G}",
+      "name": "Gaze of Granite",
+      "oracle_text": "Destroy each nonland permanent with mana value X or less.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "mana_value": {
+              "op": "<=",
+              "value": {
+                "x": true
+              }
+            },
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "destroy"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -73169,6 +73892,63 @@
     {
       "abilities": [
         {
+          "cost": {
+            "mana": "{1}{G}"
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "supertypes": [
+                  "Basic"
+                ],
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "{1}{G}: Return target basic land card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "groundskeeper",
+      "mana_cost": "{G}",
+      "name": "Groundskeeper",
+      "oracle_text": "{1}{G}: Return target basic land card from your graveyard to your hand.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Druid"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -74858,6 +75638,68 @@
         "Legendary"
       ],
       "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "haste"
+          ],
+          "kind": "static",
+          "text": "Creatures you control have haste."
+        },
+        {
+          "cost": {
+            "mana": "{2}{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "player": "you",
+              "token": "golem_3_3_c_enchantment_artifact"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{R}, {T}, Sacrifice a land: Create a 3/3 colorless Golem enchantment artifact creature token."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "hammer_of_purphoros",
+      "mana_cost": "{1}{R}{R}",
+      "name": "Hammer of Purphoros",
+      "oracle_text": "Creatures you control have haste.\n{2}{R}, {T}, Sacrifice a land: Create a 3/3 colorless Golem enchantment artifact creature token.",
+      "source": "auto",
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Enchantment",
         "Artifact"
       ]
     },
@@ -89363,6 +90205,86 @@
         "Spider"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a permanent, put a +1/+1 counter on Juri.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_had": true
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "When Juri dies, it deals damage equal to its power to any target.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "juri_master_of_the_revue",
+      "mana_cost": "{B}{R}",
+      "name": "Juri, Master of the Revue",
+      "oracle_text": "Whenever you sacrifice a permanent, put a +1/+1 counter on Juri.\nWhen Juri dies, it deals damage equal to its power to any target.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Shaman"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
@@ -107150,6 +108072,62 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "any",
+              "selector": {
+                "any_types": [
+                  "Creature",
+                  "Planeswalker",
+                  "Battle"
+                ]
+              }
+            }
+          ],
+          "text": "Whenever a player sacrifices a permanent, this creature deals 1 damage to any target.",
+          "trigger": {
+            "controller": "any",
+            "event": "sacrificed"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "mayhem_devil",
+      "mana_cost": "{1}{B}{R}",
+      "name": "Mayhem Devil",
+      "oracle_text": "Whenever a player sacrifices a permanent, this creature deals 1 damage to any target.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Devil"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "put_counters": {
               "amount": 1,
@@ -113321,6 +114299,115 @@
         "Elemental"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "graveyard"
+                }
+              }
+            ]
+          },
+          "text": "Multani gets +1/+1 for each land you control and each land card in your graveyard.",
+          "toughness": {
+            "sum": [
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ]
+                }
+              },
+              {
+                "count": {
+                  "controller": "you",
+                  "types": [
+                    "Land"
+                  ],
+                  "zone": "graveyard"
+                }
+              }
+            ]
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{1}{G}",
+            "return_to_hand": {
+              "controller": "you",
+              "count": 2,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{G}, Return two lands you control to their owner's hand: Return this card from your graveyard to your hand."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "multani_yavimaya_s_avatar",
+      "keywords": [
+        "reach",
+        "trample"
+      ],
+      "mana_cost": "{4}{G}{G}",
+      "name": "Multani, Yavimaya's Avatar",
+      "oracle_text": "Reach, trample\nMultani gets +1/+1 for each land you control and each land card in your graveyard.\n{1}{G}, Return two lands you control to their owner's hand: Return this card from your graveyard to your hand.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elemental",
+        "Avatar"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 0,
       "types": [
         "Creature"
       ]
@@ -129289,6 +130376,75 @@
       ]
     },
     {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "planetary_annihilation",
+      "mana_cost": "{3}{R}{R}",
+      "name": "Planetary Annihilation",
+      "oracle_text": "Each player chooses six lands they control, then sacrifices the rest. Planetary Annihilation deals 6 damage to each creature.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "effects": [
+            {
+              "as": "kept",
+              "objects": {
+                "chooser": {
+                  "binding": "each_player"
+                },
+                "controller": {
+                  "binding": "each_player"
+                },
+                "count": 6,
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "choose_permanents",
+              "prompt": "Choose six lands to keep"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_player"
+        },
+        {
+          "objects": {
+            "chooser": "none",
+            "controller": "any",
+            "count": "all",
+            "exclude_binding": "kept",
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "sacrifice"
+        },
+        {
+          "amount": {
+            "const": 6
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -135851,6 +137007,108 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "R"
+      ],
+      "id": "rakdos_charm",
+      "mana_cost": "{B}{R}",
+      "name": "Rakdos Charm",
+      "oracle_text": "Choose one —\n• Exile target player's graveyard.\n• Destroy target artifact.\n• Each creature deals 1 damage to its controller.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "count": "all",
+                    "player": {
+                      "target": "graveyard_owner"
+                    },
+                    "zone": "graveyard"
+                  },
+                  "op": "exile"
+                }
+              ],
+              "label": "Exile target player's graveyard."
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "target": "shattered"
+                  },
+                  "op": "destroy"
+                }
+              ],
+              "label": "Destroy target artifact."
+            },
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "damage",
+                      "player": {
+                        "controller_of": "each"
+                      },
+                      "source_object": {
+                        "binding": "each"
+                      }
+                    }
+                  ],
+                  "objects": {
+                    "controller": "any",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "for_each"
+                }
+              ],
+              "label": "Each creature deals 1 damage to its controller."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "graveyard_owner",
+          "kind": "player",
+          "mode": 0,
+          "selector": {}
+        },
+        {
+          "id": "shattered",
+          "kind": "permanent",
+          "mode": 1,
+          "selector": {
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {
@@ -145426,6 +146684,55 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 4
+              },
+              "destination": "hand",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "rest_to": "graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, reveal the top four cards of your library. You may put a land card from among them into your hand. Put the rest into your graveyard.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "satyr_wayfinder",
+      "mana_cost": "{1}{G}",
+      "name": "Satyr Wayfinder",
+      "oracle_text": "When this creature enters, reveal the top four cards of your library. You may put a land card from among them into your hand. Put the rest into your graveyard.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Satyr"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -146989,6 +148296,87 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "count": {
+                    "controller": "you",
+                    "types": [
+                      "Land"
+                    ],
+                    "zone": "graveyard"
+                  }
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "create_token",
+                  "tapped": true,
+                  "token": "insect_1_1_b_flying"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "controller": "you",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "copy_permanent",
+                  "tapped": true
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a land, create a tapped token that's a copy of this creature if seven or more land cards are in your graveyard. Otherwise, create a tapped 1/1 black Insect creature token with flying.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "scouring_swarm",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{B}{G}",
+      "name": "Scouring Swarm",
+      "oracle_text": "Flying\nWhenever you sacrifice a land, create a tapped token that's a copy of this creature if seven or more land cards are in your graveyard. Otherwise, create a tapped 1/1 black Insect creature token with flying.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -159545,6 +160933,162 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Soul of Windgrace enters or attacks, you may put a land card from a graveyard onto the battlefield tapped under your control.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "objects": {
+                "controller": "any",
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever Soul of Windgrace enters or attacks, you may put a land card from a graveyard onto the battlefield tapped under your control.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "discard": 1,
+            "discard_selector": {
+              "types": [
+                "Land"
+              ]
+            },
+            "mana": "{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{G}, Discard a land card: You gain 3 life."
+        },
+        {
+          "cost": {
+            "discard": 1,
+            "discard_selector": {
+              "types": [
+                "Land"
+              ]
+            },
+            "mana": "{1}{R}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}{R}, Discard a land card: Draw a card."
+        },
+        {
+          "cost": {
+            "discard": 1,
+            "discard_selector": {
+              "types": [
+                "Land"
+              ]
+            },
+            "mana": "{2}{B}"
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "tap"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{B}, Discard a land card: Soul of Windgrace gains indestructible until end of turn. Tap it."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "soul_of_windgrace",
+      "mana_cost": "{1}{B}{R}{G}",
+      "name": "Soul of Windgrace",
+      "oracle_text": "Whenever Soul of Windgrace enters or attacks, you may put a land card from a graveyard onto the battlefield tapped under your control.\n{G}, Discard a land card: You gain 3 life.\n{1}{R}, Discard a land card: Draw a card.\n{2}{B}, Discard a land card: Soul of Windgrace gains indestructible until end of turn. Tap it.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Cat",
+        "Avatar"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -161537,6 +163081,38 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "splendid_reclamation",
+      "mana_cost": "{3}{G}",
+      "name": "Splendid Reclamation",
+      "oracle_text": "Return all land cards from your graveyard to the battlefield tapped.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "types": [
+              "Land"
+            ],
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard",
+          "tapped": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "cost": {
@@ -162133,6 +163709,90 @@
         "Dragon"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": {
+                "const": 1
+              },
+              "destination": "hand",
+              "op": "search_library",
+              "player": "you",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Plains",
+                  "Island",
+                  "Swamp",
+                  "Mountain",
+                  "Forest"
+                ],
+                "types": [
+                  "Land"
+                ]
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, if it was kicked, search your library for a land card with a basic land type, reveal it, put it into your hand, then shuffle.",
+          "trigger": {
+            "condition": {
+              "kicked": true
+            },
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{R}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{R}, {T}, Sacrifice a land: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "sprouting_goblin",
+      "kicker": "{G}",
+      "mana_cost": "{1}{R}",
+      "name": "Sprouting Goblin",
+      "oracle_text": "Kicker {G} (You may pay an additional {G} as you cast this spell.)\nWhen this creature enters, if it was kicked, search your library for a land card with a basic land type, reveal it, put it into your hand, then shuffle.\n{R}, {T}, Sacrifice a land: Draw a card.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Druid"
+      ],
+      "toughness": 2,
       "types": [
         "Creature"
       ]
@@ -169124,6 +170784,90 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "play_lands_from_graveyard",
+          "kind": "static",
+          "text": "You may play lands from your graveyard."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever you sacrifice another nontoken permanent during your turn, put a number of +1/+1 counters equal to Szarel's power on up to one other target creature.",
+          "trigger": {
+            "condition": {
+              "is_your_turn": true
+            },
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "exclude_self": true,
+              "is_token": false
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G",
+        "R"
+      ],
+      "colors": [
+        "B",
+        "G",
+        "R"
+      ],
+      "id": "szarel_genesis_shepherd",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{B}{R}{G}",
+      "name": "Szarel, Genesis Shepherd",
+      "oracle_text": "Flying\nYou may play lands from your graveyard.\nWhenever you sacrifice another nontoken permanent during your turn, put a number of +1/+1 counters equal to Szarel's power on up to one other target creature.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Insect",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -180418,6 +182162,79 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "clue_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Landfall — Whenever a land you control enters, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true,
+                "zone": "battlefield"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you sacrifice a Clue, put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "you",
+            "event": "sacrificed",
+            "filter": {
+              "subtypes": [
+                "Clue"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tireless_tracker",
+      "mana_cost": "{2}{G}",
+      "name": "Tireless Tracker",
+      "oracle_text": "Landfall — Whenever a land you control enters, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice a Clue, put a +1/+1 counter on this creature.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{3}",
             "tap": true
@@ -180789,6 +182606,86 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "controller": "you",
+              "destination": "battlefield",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Titania enters, return target land card from your graveyard to the battlefield.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "elemental_5_3_g"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a land you control is put into a graveyard from the battlefield, create a 5/3 green Elemental creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "leaves_battlefield",
+            "filter": {
+              "types": [
+                "Land"
+              ]
+            },
+            "to_zones": [
+              "graveyard"
+            ]
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "titania_protector_of_argoth",
+      "mana_cost": "{3}{G}{G}",
+      "name": "Titania, Protector of Argoth",
+      "oracle_text": "When Titania enters, return target land card from your graveyard to the battlefield.\nWhenever a land you control is put into a graveyard from the battlefield, create a 5/3 green Elemental creature token.",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -188268,6 +190165,96 @@
         "Dragon"
       ],
       "toughness": 6,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Land"
+              ],
+              "zone": "graveyard"
+            }
+          },
+          "text": "Uurg's power is equal to the number of land cards in your graveyard.",
+          "toughness": {
+            "const": 5
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "surveil",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, surveil 1.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{B}{G}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{B}{G}, Sacrifice a land: You gain 2 life."
+        }
+      ],
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "uurg_spawn_of_turg",
+      "mana_cost": "{B}{B}{G}",
+      "name": "Uurg, Spawn of Turg",
+      "oracle_text": "Uurg's power is equal to the number of land cards in your graveyard.\nAt the beginning of your upkeep, surveil 1. (Look at the top card of your library. You may put that card into your graveyard.)\n{B}{G}, Sacrifice a land: You gain 2 life.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Frog",
+        "Beast"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
       "types": [
         "Creature"
       ]
@@ -198891,6 +200878,47 @@
       ]
     },
     {
+      "color_identity": [
+        "B",
+        "G"
+      ],
+      "colors": [
+        "B",
+        "G"
+      ],
+      "id": "windgrace_s_judgment",
+      "mana_cost": "{3}{B}{G}",
+      "name": "Windgrace's Judgment",
+      "oracle_text": "For any number of opponents, destroy target nonland permanent that player controls.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": "any",
+          "id": "t1",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "controller": "opponent",
+            "not_types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -201217,6 +203245,153 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "active_zones": [
+            "stack"
+          ],
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_types": [
+                  "Artifact",
+                  "Enchantment",
+                  "Land"
+                ],
+                "controller": "any",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you cast this spell, exile target artifact, enchantment, or land.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "source": "self"
+          }
+        },
+        {
+          "active_zones": [
+            "graveyard"
+          ],
+          "cost": {
+            "mana": "{2}{C}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Land"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "activated",
+          "text": "{2}{C}, Sacrifice a land: Return this card from your graveyard to your hand. ({C} represents colorless mana.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [],
+      "id": "world_breaker",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{6}{G}",
+      "name": "World Breaker",
+      "oracle_text": "Devoid (This card has no color.)\nWhen you cast this spell, exile target artifact, enchantment, or land.\nReach\n{2}{C}, Sacrifice a land: Return this card from your graveyard to your hand. ({C} represents colorless mana.)",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "toughness": 7,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "worldsoul_s_rage",
+      "mana_cost": "{X}{R}{G}",
+      "name": "Worldsoul's Rage",
+      "oracle_text": "Worldsoul's Rage deals X damage to any target. Put up to X land cards from your hand and/or graveyard onto the battlefield tapped.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "damage",
+          "target": "t"
+        },
+        {
+          "count": {
+            "x": true
+          },
+          "destination": "battlefield",
+          "op": "search_zones",
+          "player": "you",
+          "selector": {
+            "types": [
+              "Land"
+            ]
+          },
+          "tapped": true,
+          "zones": [
+            "hand",
+            "graveyard"
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t",
+          "kind": "any",
+          "selector": {
+            "any_types": [
+              "Creature",
+              "Planeswalker",
+              "Battle"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

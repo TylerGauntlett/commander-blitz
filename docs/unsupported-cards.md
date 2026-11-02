@@ -10,14 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**150 cards** blocked by **138** capabilities.
+**163 cards** blocked by **148** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [station](#station) | 4 | 1695 | engine |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
+| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
@@ -27,7 +29,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
-| [station](#station) | 2 | 1881 | engine |
+| [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 2 | 902 | trigger_event |
 | [targeted-discard](#targeted-discard) | 2 | 11817 | op |
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
@@ -51,12 +53,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
+| [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [cost-reduction-by-cast-zone](#cost-reduction-by-cast-zone) | 1 | 10245 | static_effect |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
+| [coven](#coven) | 1 | 1129 | value |
 | [crime](#crime) | 1 | 2244 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
@@ -70,12 +74,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
+| [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exile-until](#exile-until) | 1 | 2297 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
 | [faerie-rogue-1-1-b-flying-token](#faerie-rogue-1-1-b-flying-token) | 1 | 3457 | token |
+| [filtered-discard](#filtered-discard) | 1 | 9279 | op |
 | [first-x-spell-cost-reduction](#first-x-spell-cost-reduction) | 1 | 8360 | static_effect |
 | [fixed-piles-opponent-chooses](#fixed-piles-opponent-chooses) | 1 | 12369 | op |
 | [foretold](#foretold) | 1 | 3713 | value |
@@ -89,6 +95,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
+| [kicker](#kicker) | 1 | 868 | selector |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
@@ -119,6 +126,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
 | [protection-from-multicolored](#protection-from-multicolored) | 1 | 1516 | static_effect |
+| [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
@@ -129,12 +137,13 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
+| [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
-| [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 1 | 714 | engine |
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
+| [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
@@ -146,6 +155,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
+| [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
@@ -299,6 +309,40 @@ Blocks **5** cards.
 
 </details>
 
+## station
+
+Blocks **4** cards.
+
+- **(engine)** Station symbols (721) on a static ability (3+ additional land drop) and a keyword (8+ Flying), plus the Spacecraft rule that it is an artifact creature with its printed P/T only at 8+ and a noncreature artifact below it
+  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
+- **(engine)** Station symbols (721) on keywords: an `8+ | Flying, vigilance, haste` line the permanent HAS only at 8+ charge counters, plus the Spacecraft rule that it is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it. Its 2+ activated ability is expressible with Ability.threshold today
+  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
+- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (1+ begin-combat trigger) or a keyword (8+ Flying) only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it
+  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
+- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (3+ 'whenever you cast an artifact spell' trigger), a keyword (12+ Flying) and a static self-buff (12+ '+1/+0 for each artifact you control') only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T (0/8) only at its highest station threshold (12+) and a noncreature artifact below it
+  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (the packet notes: 'Activated abilities only'); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the notes forbid for striations; and nothing gates the Spacecraft becoming a 0/8 artifact creature at 12+ -- a counters-conditioned set_types static would approximate rule 721 rather than implement station. The Station activation itself is expressible (tap_permanents with `as` + add_counters power_of), but the card is only partly expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Exploration Broodship** (rank 1695) — `exploration_broodship`
+  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
+  - 3+ | You may play an additional land on each of your turns.
+  - 8+ | Flying
+- **Uthros Research Craft** (rank 1881) — `uthros_research_craft`
+  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)
+  - 3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.
+  - 12+ | Flying
+  - This Spacecraft gets +1/+0 for each artifact you control.
+- **Hearthhull, the Worldseed** (rank 3555) — `hearthhull_the_worldseed`
+  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
+  - 8+ | Flying, vigilance, haste
+- **Inspirit, Flagship Vessel** (rank 3934) — `inspirit_flagship_vessel`
+  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
+  - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
+  - 8+ | Flying
+
+</details>
+
 ## copy-exception-ability
 
 Blocks **3** cards.
@@ -318,6 +362,24 @@ Blocks **3** cards.
   - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
 - **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
   - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
+## self-sacrificing-permanent-gate
+
+Blocks **3** cards.
+
+- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
+  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
+
+<details><summary>Cards waiting on this</summary>
+
+- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Cabaretti Courtyard** (rank 963) — `cabaretti_courtyard`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Mountain, Forest, or Plains card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
+- **Maestros Theater** (rank 1257) — `maestros_theater`
+  - When this land enters, sacrifice it. When you do, search your library for a basic Island, Swamp, or Mountain card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
 
 </details>
 
@@ -489,26 +551,21 @@ Blocks **2** cards.
 
 </details>
 
-## station
+## put-into-graveyard-from-anywhere
 
 Blocks **2** cards.
 
-- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (1+ begin-combat trigger) or a keyword (8+ Flying) only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T only at its highest station threshold (8+) and a noncreature artifact below it
-  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic
-- **(engine)** Station symbols (721) on triggered and static/keyword abilities: a `threshold: {counter: charge, at_least: N}` that makes the permanent HAVE a triggered ability (3+ 'whenever you cast an artifact spell' trigger), a keyword (12+ Flying) and a static self-buff (12+ '+1/+0 for each artifact you control') only at N+ charge counters, plus the Spacecraft rule that the permanent is an artifact creature with its printed P/T (0/8) only at its highest station threshold (12+) and a noncreature artifact below it
-  <br>Why the existing vocabulary won't do: Ability.threshold is accepted only on activated abilities (the packet notes: 'Activated abilities only'); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the notes forbid for striations; and nothing gates the Spacecraft becoming a 0/8 artifact creature at 12+ -- a counters-conditioned set_types static would approximate rule 721 rather than implement station. The Station activation itself is expressible (tap_permanents with `as` + add_counters power_of), but the card is only partly expressible
+- **(trigger_event)** a trigger event that fires whenever a card matching a filter (here: a land card, any owner) is put into a graveyard from ANY zone -- battlefield, hand (discard), library (mill), stack -- usable on an ability with active_zones ["graveyard"] so the card triggers while it sits in its owner's graveyard (Ashen Ghoul / Vengevine style recursion)
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] only sees permanents leaving the battlefield (a sacrificed or destroyed land) and misses discarded, milled and countered-from-stack cards; discard covers only the hand; dies is creatures only; there is no mill or generic zone-change-to-graveyard event in trigger_events. The may-pay {G}{G} and return_to_hand halves are expressible once the event exists.
+- **(trigger_event)** a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once ("one or more")
+  <br>Why the existing vocabulary won't do: leaves_battlefield with to_zones ["graveyard"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today.
 
 <details><summary>Cards waiting on this</summary>
 
-- **Uthros Research Craft** (rank 1881) — `uthros_research_craft`
-  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 12+.)
-  - 3+ | Whenever you cast an artifact spell, draw a card. Put a charge counter on this Spacecraft.
-  - 12+ | Flying
-  - This Spacecraft gets +1/+0 for each artifact you control.
-- **Inspirit, Flagship Vessel** (rank 3934) — `inspirit_flagship_vessel`
-  - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
-  - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
-  - 8+ | Flying
+- **The Gitrog Monster** (rank 902) — `the_gitrog_monster`
+  - Whenever one or more land cards are put into your graveyard from anywhere, draw a card.
+- **Centaur Vinecrasher** (rank 10988) — `centaur_vinecrasher`
+  - Whenever a land card is put into a graveyard from anywhere, you may pay {G}{G}. If you do, return this card from your graveyard to your hand.
 
 </details>
 
@@ -862,6 +919,20 @@ Blocks **1** card.
 
 </details>
 
+## conditional-play-exiled-with-source
+
+Blocks **1** card.
+
+- **(static_effect)** a static ability on the permanent granting its controller permission to play (cast spells and play lands from) the cards exiled with this permanent (selector zone exile, exiled_with self), switched on by a static condition -- here is_your_turn AND a condition 'you have sacrificed a nontoken permanent this turn'. The permission must turn on and off as the condition changes, and must apply to every card ever exiled with the source, including ones exiled on an opponent's turn
+  <br>Why the existing vocabulary won't do: The exile op's playable/playable_free and grant_playable fix a permission at the moment of exiling with a duration from playable_durations (this_turn, while_exiled, until_next_exile_by_source, ...), none of which is gated on a live condition; there is no static_effect for 'play cards exiled with this' (free_cast_permission, cast_from_library_top and play_lands_from_graveyard are other zones). Exiling with playable: while_exiled would let the cards be played on any turn with no sacrifice, which is a different card
+
+<details><summary>Cards waiting on this</summary>
+
+- **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
+  - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
+
+</details>
+
 ## convoke
 
 Blocks **1** card.
@@ -945,6 +1016,20 @@ Blocks **1** card.
 
 - **Force of Negation** (rank 266) — `force_of_negation`
   - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
+
+</details>
+
+## coven
+
+Blocks **1** card.
+
+- **(value)** admission of the existing `distinct` value leaf into STATIC_VALUE_KEYS (src/commanderblitz/cards/loader/vocabulary.py) for `{"distinct": {"of": "power", "objects": {"zone": "battlefield", "controller": "you", "types": ["Creature"]}}}`, so a `cast_from_library_top` static (affects_player you, affects_spells types [Creature]) can carry `condition: {"cmp": ">=", "left": <that distinct>, "right": {"const": 3}}`. Coven reads CURRENT power (pumps and counters count), a derived characteristic, so the static must be evaluated outside the characteristics pipeline the way `exists_derived` is for cant_attack/cant_block -- cast_from_library_top is read at cast-offer time, outside the pipeline, so it is a candidate for STATIC_DERIVED_CONDITION_EFFECTS-style admission. The same leaf unlocks every coven static.
+  <br>Why the existing vocabulary won't do: `distinct` with `of: power` already exists in values.py DISTINCT_OF (coven is named as its reason) but only in VALUE_KEYS for effects/triggers; it is absent from STATIC_VALUE_KEYS, so a static's `condition` cmp cannot name it (load error). `count` counts creatures, not distinct powers (three 2/2s would pass). `exists_derived` can ask whether one creature with a given power exists but cannot express 'three different powers' without enumerating every power triple, which is unbounded and an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Augur of Autumn** (rank 1129) — `augur_of_autumn`
+  - Coven — As long as you control three or more creatures with different powers, you may cast creature spells from the top of your library.
 
 </details>
 
@@ -1132,6 +1217,20 @@ Blocks **1** card.
 
 </details>
 
+## enters-untapped
+
+Blocks **1** card.
+
+- **(static_effect)** a static effect on one permanent, filtered by `affects` (here Land, controller you), that makes matching permanents enter the battlefield untapped however they arrive: it overrides a land's own printed self_enters_tapped replacement (no 'pay 3 life' prompt needed), a board enters_tapped static from another permanent, and an effect that puts the land onto the battlefield tapped (the Lander token's own search, fetchlands, ramp spells)
+  <br>Why the existing vocabulary won't do: The closest is the `enters_tapped` static, read by zones._apply_board_enters_tapped, which only ever sets `tapped` to True; nothing in static_effects sets it back to False or suppresses the self_enters_tapped replacement and the `tapped: true` put_onto_battlefield path in stack.py. The second line is expressible (a `you_attack` trigger with create_token `lander_token`)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Horizon Explorer** (rank 1877) — `horizon_explorer`
+  - Lands you control enter untapped.
+
+</details>
+
 ## escalate-non-mana
 
 Blocks **1** card.
@@ -1216,6 +1315,20 @@ Blocks **1** card.
 
 - **Alela, Cunning Conqueror** (rank 3457) — `alela_cunning_conqueror`
   - Whenever you cast your first spell during each opponent's turn, create a 1/1 black Faerie Rogue creature token with flying.
+
+</details>
+
+## filtered-discard
+
+Blocks **1** card.
+
+- **(op)** a `selector` (card filter over the discarding player's hand, here `{"types": ["Land"]}`) on the `discard` effect op, so a resolving ability can say "you may discard one or more land cards": only matching cards are offered, any number from 0 (up_to, read with `cards_in_hand`-style ceiling over the matching cards) and they are discarded simultaneously as one discard event, recorded by `as` so a following `reflexive_trigger` can set its target `count` to `{"count": {"binding": ...}}` with `up_to`
+  <br>Why the existing vocabulary won't do: op_discard takes only amount, as, player, random, up_to and whole_hand and offers the player's whole hand to `ask_objects`, so a nonland card could be discarded and counted toward "that many". The cost key `discard` + `discard_selector` does filter to lands, but it is a fixed count, so a `may` with `pay` cannot express "one or more"; looping a one-card `may pay` via `repeat_while` would discard the lands as separate events (a batched "whenever you discard one or more land cards" trigger such as Doctor Doom's would fire once per land) and is an approximation.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Loamcrafter Faun** (rank 9279) — `loamcrafter_faun`
+  - When this creature enters, you may discard one or more land cards. When you do, return up to that many target nonland permanent cards from your graveyard to your hand.
 
 </details>
 
@@ -1405,6 +1518,20 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
+
+</details>
+
+## kicker
+
+Blocks **1** card.
+
+- **(selector)** a spell target whose selector (or whole target spec) is replaced when the spell was kicked: unkicked it declares one target artifact or enchantment, kicked it declares one target nonland permanent instead. Either a `selector_if_kicked` on a TargetSpec, or support for `count: 0` / `count_if_kicked: 0` so two specs can swap which one is declared
+  <br>Why the existing vocabulary won't do: `count_if_kicked` only resizes a spec. Writing two specs (artifact/enchantment with count 1 and count_if_kicked 0, nonland with count 0 and count_if_kicked 1) loads and enumerates correctly, but `targeting.filter_legal` slices stored refs with `max(1, spec.count)`, so at resolution the kicked line's one ref lands in the first spec's bucket, fails its artifact/enchantment check, and the kicked spell exiles nothing (verified in the sandbox: the kicked cast resolves without exiling anything). Making both targets `optional` would let an unkicked cast target a nonland creature, and a `choose_mode` cannot restrict a mode to kicked casts only
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tear Asunder** (rank 868) — `tear_asunder`
+  - Exile target artifact or enchantment. If this spell was kicked, exile target nonland permanent instead.
 
 </details>
 
@@ -1840,6 +1967,20 @@ Blocks **1** card.
 
 </details>
 
+## punisher-sacrifice
+
+Blocks **1** card.
+
+- **(op)** an opponent's optional sacrifice that is only offered when they actually have a matching permanent ('may sacrifice ... For each opponent who doesn't'), with the refusal branch (that player loses 2 life, you draw a card) run for an opponent who declines OR cannot sacrifice -- i.e. `may` with `pay: {sacrifice: <selector with a resolution binding>}` evaluated in the resolving effect's context
+  <br>Why the existing vocabulary won't do: `may` with `effects`/`else` lets an opponent with no matching permanent answer yes, sacrifice nothing and dodge the penalty; `may` with `pay.sacrifice` checks affordability in `costs._sacrifice_pool`, which builds a bare EffectContext with no bindings, so the 'shares a card type with it' filter cannot be expressed in the cost
+
+<details><summary>Cards waiting on this</summary>
+
+- **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
+  - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
+
+</details>
+
 ## raccoon-3-3-g
 
 Blocks **1** card.
@@ -1981,6 +2122,20 @@ Blocks **1** card.
 
 </details>
 
+## sacrificed-this-turn
+
+Blocks **1** card.
+
+- **(value)** a turn-ledger value (or static condition) counting nontoken permanents the player sacrificed this turn, e.g. {"permanents_sacrificed_this_turn": {"player": "you", "filter": {"is_token": false}}}, readable from a static ability's condition and counting sacrifices made before this creature entered
+  <br>Why the existing vocabulary won't do: value_keys has permanents_to_graveyard_this_turn and creatures_died_this_turn but nothing keyed on sacrifice or on nontoken; static_value_keys is smaller still. A sacrificed trigger setting a turn flag would miss sacrifices made before the creature entered, and has_turn_flag is in condition_keys but not static_condition_keys
+
+<details><summary>Cards waiting on this</summary>
+
+- **Evendo Brushrazer** (rank 4225) — `evendo_brushrazer`
+  - During your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature.
+
+</details>
+
 ## sandbox-graveyard-spell-prop
 
 Blocks **1** card.
@@ -2039,20 +2194,6 @@ Blocks **1** card.
 
 </details>
 
-## self-sacrificing-permanent-gate
-
-Blocks **1** card.
-
-- **(engine)** authoring gate 4 accepting a permanent whose own printed enters trigger sacrifices it, so the card ends in the graveyard as printed; the card is expressible today (a self_enters sacrifice of self_only, then a reflexive_trigger that fetches a basic and gains 1 life) and the DSL needs nothing new
-  <br>Why the existing vocabulary won't do: verify._play_once allows a permanent to end only on the battlefield (an Aura also in the graveyard), and tests/cards/test_authoring.py::TestASelfLegalTriggerIsExercisedAgainstTheBoard::test_a_permanent_that_genuinely_vanishes_is_still_rejected pins that a creature whose text is 'When this creature enters, sacrifice it.' must still fail, so widening the gate is a decision for the owner rather than a card fix
-
-<details><summary>Cards waiting on this</summary>
-
-- **Riveteers Overlook** (rank 714) — `riveteers_overlook`
-  - When this land enters, sacrifice it. When you do, search your library for a basic Swamp, Mountain, or Forest card, put it onto the battlefield tapped, then shuffle and you gain 1 life.
-
-</details>
-
 ## self-suspend-on-resolution
 
 Blocks **1** card.
@@ -2064,6 +2205,20 @@ Blocks **1** card.
 
 - **Rousing Refrain** (rank 2750) — `rousing_refrain`
   - Exile Rousing Refrain with three time counters on it.
+
+</details>
+
+## shares-card-type-with-sacrificed
+
+Blocks **1** card.
+
+- **(selector)** a selector clause matching permanents that share a permanent card type with an object sacrificed earlier in the same resolution, read from that object's last-known types (the snapshot the sacrifice op's `snapshot` key captures), so a sacrificed token (Treasure, Clue, creature token) still answers with its types after it has ceased to exist
+  <br>Why the existing vocabulary won't do: `shares_permanent_type_with` reads the bound oid's CURRENT characteristics via chars(state, oid): the `as` binding is a list, which `_bound_oid` rejects (matches nothing), and the `snapshot` binding resolves to the oid, whose object is gone for a token and back to printed types for a nontoken card in the graveyard -- so the opponent's sacrifice pool is empty or wrong exactly when it matters
+
+<details><summary>Cards waiting on this</summary>
+
+- **Braids, Arisen Nightmare** (rank 291) — `braids_arisen_nightmare`
+  - If you do, each opponent may sacrifice a permanent of their choice that shares a card type with it. For each opponent who doesn't, that player loses 2 life and you draw a card.
 
 </details>
 
@@ -2219,6 +2374,20 @@ Blocks **1** card.
 
 - **Hope of Ghirapur** (rank 3240) — `hope_of_ghirapur`
   - Sacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.
+
+</details>
+
+## times-attacked-this-turn
+
+Blocks **1** card.
+
+- **(value)** a per-object value for the number of times a given permanent has been declared as an attacker this turn, usable as a static `buff` amount evaluated separately for each affected creature (each creature you control gets +N/+0 where N is that creature's own attack count this turn)
+  <br>Why the existing vocabulary won't do: `attacked_this_turn` in value_keys counts players/creatures that attacked (and as a selector key it is only a boolean has-attacked flag); `combats_this_turn` and `attackers_this_turn` are turn-wide totals, not per creature; static_value_keys has no per-affected-object attack count at all, so a `buff` static cannot vary its amount by which creature it is modifying
+
+<details><summary>Cards waiting on this</summary>
+
+- **Moraug, Fury of Akoum** (rank 988) — `moraug_fury_of_akoum`
+  - Each creature you control gets +1/+0 for each time it has attacked this turn.
 
 </details>
 

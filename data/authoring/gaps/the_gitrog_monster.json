@@ -1,0 +1,16 @@
+{
+  "card_id": "the_gitrog_monster",
+  "name": "The Gitrog Monster",
+  "oracle_text": "Deathtouch\nAt the beginning of your upkeep, sacrifice The Gitrog Monster unless you sacrifice a land.\nYou may play an additional land on each of your turns.\nWhenever one or more land cards are put into your graveyard from anywhere, draw a card.",
+  "blocked_sentences": [
+    "Whenever one or more land cards are put into your graveyard from anywhere, draw a card."
+  ],
+  "needs": [{
+    "capability": "put_into_graveyard_from_anywhere",
+    "kind": "trigger_event",
+    "what": "a trigger event that fires when a card matching a filter (here: a land card, owner = you) is put into a graveyard from ANY zone -- battlefield (sacrifice/destroy), hand (discard), library (mill, surveil), stack -- and supports `batched: true` so that several land cards moved by one event (a mill of three lands, a discard of two lands) trigger it exactly once (\"one or more\")",
+    "why_existing_wont_do": "leaves_battlefield with to_zones [\"graveyard\"] sees only permanents leaving the battlefield and misses discarded, milled and surveilled land cards, which are the card's whole engine (Gitrog + discard/dredge loops); discard covers only the hand and carries no card-type filter on the moved card from library; there is no mill or generic zone-change-to-graveyard event in trigger_events. Combining leaves_battlefield and discard triggers would still miss mill/surveil and would trigger twice for a single simultaneous event that moves lands from two zones. The draw half is a plain draw op once the event exists. The upkeep 'sacrifice unless you sacrifice a land' and extra_land_drops lines are expressible today."
+  }],
+  "closest_existing": ["leaves_battlefield", "discard", "cards_to_graveyard_this_turn"],
+  "confidence": "high"
+}

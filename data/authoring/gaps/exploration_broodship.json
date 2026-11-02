@@ -1,0 +1,23 @@
+{
+  "card_id": "exploration_broodship",
+  "name": "Exploration Broodship",
+  "oracle_text": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n3+ | You may play an additional land on each of your turns.\n8+ | Flying\nOnce during each of your turns, you may cast a permanent spell from your graveyard by sacrificing a land in addition to paying its other costs.",
+  "blocked_sentences": [
+    "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)",
+    "3+ | You may play an additional land on each of your turns.",
+    "8+ | Flying"
+  ],
+  "needs": [
+    {
+      "capability": "station",
+      "kind": "engine",
+      "what": "Station symbols (721) on a static ability (3+ additional land drop) and a keyword (8+ Flying), plus the Spacecraft rule that it is an artifact creature with its printed P/T only at 8+ and a noncreature artifact below it",
+      "why_existing_wont_do": "Ability.threshold is accepted only on activated abilities (loader _compile_threshold refuses others); a trigger `condition` or static `condition` on counters would leave the ability on the permanent, which the packet notes forbid for striations; and nothing gates the Spacecraft becoming a 5/5 artifact creature at 8+ -- a counters-conditioned set_types static would be an invented approximation of rule 721 rather than the station mechanic"
+    }
+  ],
+  "closest_existing": [
+    "threshold",
+    "tap_permanents"
+  ],
+  "confidence": "high"
+}

@@ -408,6 +408,7 @@ class TestActivatedAbilities:
             _pay_the_counters(game, oid, ability)
             _afford_the_life(game, ability)
             _afford_the_energy(game, ability)
+            _afford_the_colorless(game, registry, ability)
             _provide_the_sacrifice(game, registry, ability)
             _provide_the_tap_fodder(game, registry, ability)
             _provide_the_untap_fodder(game, registry, ability)
@@ -536,6 +537,26 @@ def _afford_the_energy(game: Game, ability) -> None:
     needed = getattr(cost, "pay_energy", 0) if cost is not None else 0
     if needed:
         game.state.players[0].energy = max(game.state.players[0].energy, int(needed))
+
+
+def _afford_the_colorless(game: Game, registry, ability) -> None:
+    """Put out a Wastes for each {C} the ability's mana cost prints.
+
+    The mana base is the five basics, which make no colorless mana, and 107.4c
+    says {C} can be paid only with colorless mana -- so World Breaker's "{2}{C},
+    Sacrifice a land: Return this card from your graveyard to your hand" was
+    reported as unusable on a board where it was only unaffordable. The life
+    and energy helpers' argument, for the one mana symbol the basics cannot
+    make.
+    """
+    cost = ability.cost
+    mana = str(getattr(cost, "mana", "") or "") if cost is not None else ""
+    needed = mana.upper().count("{C}")
+    if not needed or "wastes" not in registry:
+        return
+    for _ in range(needed):
+        land = new_object(game.state, "wastes", owner=0, zone=Zone.BATTLEFIELD)
+        game.state.battlefield.append(land.oid)
 
 
 def _pay_the_counters(game: Game, oid: int, ability) -> None:

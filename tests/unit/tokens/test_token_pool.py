@@ -1632,3 +1632,59 @@ class TestTheDanceOfTheElementsTokens:
         )
         token = only_oid(game, "elemental_x_x_gw_creature_count", 0)
         assert pt(game, token) == (2, 2)
+
+
+class TestTheWorldShaperTokens:
+    """Eumidian Hatchery and Scouring Swarm: *"a 1/1 black Insect creature token
+    with flying"*; Hammer of Purphoros: *"a 3/3 colorless Golem enchantment
+    artifact creature token"*; Titania, Protector of Argoth: *"a 5/3 green
+    Elemental creature token"*; Formless Genesis: *"an X/X colorless
+    Shapeshifter creature token with changeling and deathtouch"*. Each sits
+    beside a near miss that is not it."""
+
+    def test_the_black_insect_is_a_one_one_flier(self, pool):
+        token = pool.get("insect_1_1_b_flying")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (1, 1)
+        assert sorted(token.colors) == ["B"]
+        assert list(token.subtypes) == ["Insect"]
+        assert list(token.keywords) == ["flying"]
+
+    def test_the_green_and_white_insects_are_still_separate_tokens(self, pool):
+        assert sorted(pool.get("insect_1_1_g").colors) == ["G"]
+        assert not pool.get("insect_1_1_g").keywords
+        assert (pool.get("insect_2_1_w_flying").power, pool.get("insect_2_1_w_flying").toughness) == (2, 1)
+
+    def test_the_hammers_golem_is_an_enchantment_too(self, pool):
+        token = pool.get("golem_3_3_c_enchantment_artifact")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (3, 3)
+        assert not token.colors
+        assert sorted(token.types) == ["Artifact", "Creature", "Enchantment"]
+        assert list(token.subtypes) == ["Golem"]
+
+    def test_the_plain_golem_is_not_an_enchantment(self, pool):
+        assert "Enchantment" not in pool.get("golem_3_3_c_artifact").types
+
+    def test_titanias_elemental_is_a_green_five_three(self, pool):
+        token = pool.get("elemental_5_3_g")
+        assert token is not None and token.is_token
+        assert (token.power, token.toughness) == (5, 3)
+        assert sorted(token.colors) == ["G"]
+        assert list(token.subtypes) == ["Elemental"]
+        assert not token.keywords
+
+    def test_the_red_green_five_five_is_still_a_separate_token(self, pool):
+        other = pool.get("elemental_5_5_rg")
+        assert (other.power, other.toughness) == (5, 5)
+
+    def test_the_formless_shapeshifter_has_deathtouch_and_variable_size(self, pool):
+        token = pool.get("shapeshifter_x_x_c_changeling_deathtouch")
+        assert token is not None and token.is_token
+        assert not token.colors
+        assert list(token.keywords) == ["deathtouch"]
+        assert token.variable_pt
+        assert any(a.text.startswith("Changeling") for a in token.abilities)
+
+    def test_the_small_changeling_has_no_deathtouch(self, pool):
+        assert "deathtouch" not in pool.get("shapeshifter_1_1_c_changeling").keywords

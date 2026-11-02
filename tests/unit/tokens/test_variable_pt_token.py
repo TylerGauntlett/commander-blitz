@@ -137,7 +137,12 @@ class TestTheToken:
         pool = CardRegistry.from_dir()
         flagged = sorted(c.id for c in pool if c.variable_pt)
         assert flagged == sorted(
-            [SHARK, "dragon_illusion_x_x_r_flying_haste", "illusion_x_x_u"]
+            [
+                SHARK,
+                "dragon_illusion_x_x_r_flying_haste",
+                "illusion_x_x_u",
+                "shapeshifter_x_x_c_changeling_deathtouch",
+            ]
         )
         assert not pool.get("fractal_0_0_gu").variable_pt
 

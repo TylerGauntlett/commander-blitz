@@ -4,7 +4,7 @@ title: "Station on Spacecraft: gated triggers, keywords and statics, and the cre
 area: cards
 effort: M
 impact: medium
-why: every Spacecraft in Edge of Eternities waits on it, two of them in the Counter Intelligence precon
+why: every Spacecraft in Edge of Eternities waits on it, two in the Counter Intelligence precon and two in World Shaper, whose commander is one
 depends_on: []
 status: proposed
 ---
@@ -29,7 +29,11 @@ The two Planets (activated abilities only) are what ships. Inspirit, Flagship
 Vessel and Uthros Research Craft, in the Counter Intelligence precon, are the
 cards that found the rest; their gap records are
 `data/authoring/gaps/inspirit_flagship_vessel.json` and
-`data/authoring/gaps/uthros_research_craft.json`.
+`data/authoring/gaps/uthros_research_craft.json`. World Shaper's commander,
+Hearthhull, the Worldseed (an `8+` keyword line), and Exploration Broodship (a
+`3+` static and an `8+` keyword) wait on it too:
+`data/authoring/gaps/hearthhull_the_worldseed.json` and
+`data/authoring/gaps/exploration_broodship.json`.
 
 ## The change
 
@@ -50,7 +54,7 @@ cards that found the rest; their gap records are
 4. `_compile_threshold` accepts the new homes, `_check_threshold_order` keeps
    its suffix rule, and rules-coverage.md moves the line to the implemented
    table.
-5. Harvest the two Counter Intelligence Spacecraft and every other Spacecraft
+5. Harvest the two Counter Intelligence Spacecraft, the two World Shaper ones and every other Spacecraft
    the template tier or one `/author-cards` wave can then express.
 
 It does not add stationing with toughness (Tapestry Warden), which is a
