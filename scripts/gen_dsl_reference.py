@@ -624,6 +624,7 @@ VALUES: dict[str, Entry] = {
     "max": ("The greatest of several values.", None),
     "max_count_of": ("The most objects any one player of a spec has.", H_PER_PLAYER),
     "max_damage_taken_this_turn": ("The most damage any one of a spec's players was dealt this turn.", H_LEDGER),
+    "max_life_lost_this_turn": ("The most life any one of a spec's players lost this turn.", H_LEDGER),
     "max_life_of": ("The highest life total among a spec's players.", None),
     "max_poison_of": ("The most poison counters on any one of a spec's players (corrupted).",
                       'Corrupted — "an opponent has three or more poison counters"'),

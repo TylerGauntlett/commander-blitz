@@ -28,6 +28,8 @@ forms::
     {"player_count": "each_opponent"}  how many players the spec names
     {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
         "each_opponent"}                this turn, where the plain tally sums
+    {"max_life_lost_this_turn":       the most life ONE of them lost this
+        "each_player"}                  turn (damage, drains and payments)
     {"starting_life_of": "you"}       the life total one seat began with (103.4)
     {"commander_casts_this_game":     casts of their commanders from the
         "you"}                          command zone this game (903.8's tally)
@@ -189,6 +191,13 @@ VALUE_KEYS = frozenset(
         # `min_` twin, which no printed card needs yet.
         "max_damage_taken_this_turn",
         "life_lost_this_turn",
+        # "…if **a player** lost 4 or more life this turn" -- Y'shtola, Night's
+        # Blessed. The life-loss twin of `max_damage_taken_this_turn`, for the
+        # same reason: `life_lost_this_turn` SUMS over its spec, so two players
+        # losing 2 each would read 4 and open a threshold nobody reached. Off
+        # `TurnLedger.life_lost`, so damage counts (119.3) as do drains and
+        # life paid (119.4); infect, which costs no life, does not.
+        "max_life_lost_this_turn",
         # "…if you gained life this turn" -- Witch of the Moors. The gain twin
         # of the line above; "did it happen" is a `cmp` against 0.
         "life_gained_this_turn",
@@ -729,6 +738,9 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
     if "life_lost_this_turn" in expr:
         pids = _players(ctx, expr["life_lost_this_turn"])
         return sum(ledger.life_lost.get(p, 0) for p in pids)
+    if "max_life_lost_this_turn" in expr:
+        pids = _players(ctx, expr["max_life_lost_this_turn"])
+        return max((ledger.life_lost.get(p, 0) for p in pids), default=0)
     if "life_gained_this_turn" in expr:
         pids = _players(ctx, expr["life_gained_this_turn"])
         return sum(ledger.life_gained.get(p, 0) for p in pids)

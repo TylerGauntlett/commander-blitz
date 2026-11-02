@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 159 |
 | [Selectors](#selectors) | 72 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 66 |
+| [Values](#values) | 67 |
 | [Conditions](#conditions) | 33 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
@@ -345,6 +345,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `max` | The greatest of several values. | [Value expressions](card-dsl.md#value-expressions) |
 | `max_count_of` | The most objects any one player of a spec has. | [Counting one player at a time](card-dsl.md#counting-one-player-at-a-time) |
 | `max_damage_taken_this_turn` | The most damage any one of a spec's players was dealt this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `max_life_lost_this_turn` | The most life any one of a spec's players lost this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `max_life_of` | The highest life total among a spec's players. | [Value expressions](card-dsl.md#value-expressions) |
 | `max_poison_of` | The most poison counters on any one of a spec's players (corrupted). | [Corrupted — "an opponent has three or more poison counters"](card-dsl.md#corrupted--an-opponent-has-three-or-more-poison-counters) |
 | `min` | The least of several values. | [Value expressions](card-dsl.md#value-expressions) |

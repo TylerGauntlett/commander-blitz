@@ -1543,6 +1543,7 @@ Anywhere a number is expected -- the leaf list is
 { "damage_taken_this_turn": "each_opponent" }   // bloodthirst; SUMMED over the spec
 { "max_damage_taken_this_turn": "each_opponent" } // "an opponent was dealt N or more"; ONE player's total
 { "life_lost_this_turn": "each_opponent" }      // spectacle; damage counts towards it
+{ "max_life_lost_this_turn": "each_player" }    // "a player lost N or more life"; ONE player's total
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "counters_put_this_turn": { "player": "you",  // "if you put a counter on a creature this turn";
     "types": ["Creature"] } }                   //   who PUT them (122.6a), enters-with counts (122.6)
@@ -3612,6 +3613,9 @@ Two things about that ledger are load-bearing:
   took 4 each. `max_damage_taken_this_turn` reads each player's total and
   takes the greatest, so the `cmp` asks about one opponent — the
   `life_of` / `min_life_of` split, for the same reason.
+  `max_life_lost_this_turn` is its life-loss twin (Y'shtola, Night's Blessed:
+  "if a player lost 4 or more life this turn"), counting everything
+  `life_lost_this_turn` does — damage, drains, life paid — one player at a time.
 - **A count per seat is not a record per object.** `cards_discarded_this_turn`
   ("if you discarded a card this turn", Typhoid Mary, Fractured) counts DISCARD
   events by the discarding player, so a card discarded and since exiled, cast
