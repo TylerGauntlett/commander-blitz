@@ -26,6 +26,10 @@ forms::
     {"max_poison_of": "each_opponent"}  the most poison counters on one of them
     {"unspent_mana_count": "you"}     the mana in those players' pools
     {"player_count": "each_opponent"}  how many players the spec names
+    {"player_count": {"player": …,     how many of them have a count passing
+                      "objects": …,     a comparison: "the number of opponents
+                      "cmp": ">",       who control more creatures than you"
+                      "than": …}}
     {"max_damage_taken_this_turn":    the most damage ONE of them was dealt
         "each_opponent"}                this turn, where the plain tally sums
     {"max_life_lost_this_turn":       the most life ONE of them lost this
@@ -44,6 +48,8 @@ from collections.abc import Mapping
 from typing import Any
 
 from ..characteristics import (
+    _COMPARISONS,
+    _compare,
     _matches_printed,
     auras_matching,
     chars,
@@ -624,7 +630,10 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         pids = _players(ctx, expr["unspent_mana_count"])
         return sum(ctx.state.players[p].mana_pool.total() for p in pids)
     if "player_count" in expr:
-        pids = _players(ctx, expr["player_count"])
+        spec = expr["player_count"]
+        if isinstance(spec, Mapping) and "objects" in spec:
+            return _players_whose_count_compares(ctx, spec)
+        pids = _players(ctx, spec)
         return len({p for p in pids if ctx.state.is_alive(p)})
     if "cards_in_hand" in expr:
         pids = _players(ctx, expr["cards_in_hand"])
@@ -1027,6 +1036,21 @@ def _counts_per_player(ctx: EffectContext, spec: Any) -> list[int]:
     return counts
 
 
+def _players_whose_count_compares(ctx: EffectContext, spec: Mapping[str, Any]) -> int:
+    """How many of ``spec["player"]``'s players have a count passing ``cmp``.
+
+    "…equal to the number of opponents who control more creatures than you"
+    (Heidegger, Shinra Executive). The per-player counts are
+    `_counts_per_player`'s, the same measurement `max_count_of` extremes, and
+    ``than`` is read **once**, before any of them is compared: the value is the
+    amount of one instruction, so the whole headcount is taken at one moment
+    and nothing the instruction then does can feed back into it.
+    """
+    than = evaluate_value(ctx, spec.get("than"))
+    op = str(spec["cmp"])
+    return sum(1 for n in _counts_per_player(ctx, spec) if _compare(op, n, than))
+
+
 def _characteristic(ctx: EffectContext, ref: Any, which: str) -> int:
     """Read power/toughness/mana value from a target, binding or snapshot."""
     if isinstance(ref, Mapping) and "var" in ref:
@@ -1330,6 +1354,31 @@ def validate_counters_put_this_turn(spec: Any, where: str) -> None:
     kind = spec.get("counter", ANY_COUNTER_KIND)
     if kind != ANY_COUNTER_KIND:
         validate_counter_kind(kind, f"{where}.counter")
+
+
+#: The keys of `player_count`'s comparing form, beside `validate_per_player_count`'s.
+PLAYER_COUNT_WHERE_KEYS = frozenset({"cmp", "than"})
+
+
+def validate_player_count_where(spec: Mapping[str, Any], where: str) -> None:
+    """``{"player_count": {"player", "objects", "cmp", "than"}}``.
+
+    The per-player half is `validate_per_player_count` -- the same spec list,
+    the same refusal of an injected ``controller`` -- and both comparison keys
+    are required: without ``cmp`` there is no test, and a ``than`` defaulted to
+    0 would turn "more creatures than you" into "any creatures".
+    """
+    validate_per_player_count(
+        {k: v for k, v in spec.items() if k not in PLAYER_COUNT_WHERE_KEYS}, where
+    )
+    op = spec.get("cmp")
+    if not isinstance(op, str) or op not in _COMPARISONS:
+        raise DslError(f"{where}.cmp: must be one of {sorted(_COMPARISONS)}, got {op!r}")
+    if "than" not in spec:
+        raise DslError(
+            f"{where}: needs 'than' -- what each player's count is compared with"
+        )
+    validate_value(spec["than"], f"{where}.than")
 
 
 def validate_per_player_count(spec: Any, where: str, *, validate_objects: Any = None) -> None:
@@ -1645,7 +1694,11 @@ def validate_value(expr: Any, where: str) -> None:
                 f"{where}.cards_discarded_this_turn: needs a player spec, e.g. 'you' "
                 f"(who discarded), got {who!r}"
             )
-    if "player_count" in expr:
+    if "player_count" in expr and isinstance(expr["player_count"], Mapping) and (
+        "objects" in expr["player_count"]
+    ):
+        validate_player_count_where(expr["player_count"], f"{where}.player_count")
+    elif "player_count" in expr:
         who = expr["player_count"]
         if not isinstance(who, Mapping) and (
             not isinstance(who, str) or who not in PLAYER_SPEC_NAMES

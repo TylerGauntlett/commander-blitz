@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**168 cards** blocked by **154** capabilities.
+**167 cards** blocked by **153** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -63,7 +63,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
-| [count-players-matching](#count-players-matching) | 1 | 12326 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -1066,20 +1065,6 @@ Blocks **1** card.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
-
-</details>
-
-## count-players-matching
-
-Blocks **1** card.
-
-- **(value)** a value that counts the players in a player spec who satisfy a per-player comparison, e.g. {"player_count_where": {"players": "each_opponent", "cmp": ">", "left": {"count": {"types": ["Creature"], "controller": {"binding": "counted_player"}}}, "right": {"creatures_you_control": true}}} -- "the number of opponents who control more creatures than you", evaluated once at resolution so it can be the amount of a single create_token
-  <br>Why the existing vocabulary won't do: player_count counts every player a spec names with no filter, and select_players has no conditional form; max_count_of/min_count_of answer 'an opponent'/'each opponent' (existential/universal) but not 'how many'. for_each_player over each_opponent with an if + create_token of 1 is the near miss and is a different card: it creates the tokens in separate events (several batched 'one or more tokens' triggers instead of one) and, unless the comparison is snapshotted, each token made raises creatures_you_control before the next opponent is compared
-
-<details><summary>Cards waiting on this</summary>
-
-- **Heidegger, Shinra Executive** (rank 12326) — `heidegger_shinra_executive`
-  - At the beginning of your end step, create a number of 1/1 white Soldier creature tokens equal to the number of opponents who control more creatures than you.
 
 </details>
 

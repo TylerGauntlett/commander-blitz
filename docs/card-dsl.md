@@ -1625,6 +1625,29 @@ counted, because a player who has left is nobody's opponent (800.4a). It is
 effect-side only; no static prints a headcount. The near miss is
 `{"count": …}`, which counts objects and cannot reach a player.
 
+Its comparing form counts only the players whose own count passes a test:
+"create a number of 1/1 white Soldier creature tokens equal to the number of
+opponents who control more creatures than you" (Heidegger, Shinra Executive) is
+
+```jsonc
+{ "player_count": { "player": "each_opponent",
+                    "objects": { "types": ["Creature"] },
+                    "cmp": ">",
+                    "than": { "count": { "types": ["Creature"], "controller": "you" } } } }
+```
+
+`player` and `objects` are `max_count_of`'s, validated by the same
+`validate_per_player_count`: one of its player words, a required selector, and
+the per-player scope injected, so `controller` inside `objects` is refused.
+`cmp` is one of the condition comparisons and `than` any value; both are
+required, because a defaulted `than` of 0 would read "more creatures" as "any
+creatures". `than` is evaluated once, before any player is compared, and the
+whole leaf is one number, so it is the amount of a single `create_token`. The
+near miss is a `for_each_player` with an `if` and a token of one each: separate
+events, and each token raises your count before the next opponent is measured.
+`max_count_of` and `min_count_of` answer "an opponent" and "each opponent", not
+how many.
+
 `half` is the one division in the language, and it takes its rounding direction
 as a **required** key: 107.1a makes the card say which way a fraction goes, and
 both directions are printed (Peer into the Abyss rounds up, Heartless

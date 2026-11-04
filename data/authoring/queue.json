@@ -125302,12 +125302,12 @@
     },
     "Heidegger, Shinra Executive": {
       "edhrec_rank": 12326,
-      "gate": "template",
+      "gate": null,
       "name": "Heidegger, Shinra Executive",
-      "reason": "no template for: At the beginning of combat on your turn, target creature you control gets +X/+0 until end ",
+      "reason": "",
       "scryfall_id": "8e216baf-0e3c-4173-a852-5c5aeb3a9d79",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Heightened Awareness": {

@@ -671,7 +671,11 @@ def _validate_nested_player_refs(node: Any, where: str, target_kinds: Mapping[st
     if isinstance(node, Mapping):
         for key, value in node.items():
             path = f"{where}.{key}"
-            if key in ("controller", "player", "player_count") and isinstance(value, Mapping):
+            if key == "player_count" and isinstance(value, Mapping) and "objects" in value:
+                # The comparing form is not a seat spec: its `player` is one of
+                # the per-player words, and `than` may carry a nested one.
+                _validate_nested_player_refs(value, path, target_kinds)
+            elif key in ("controller", "player", "player_count") and isinstance(value, Mapping):
                 _validate_player_spec(value, path, target_kinds)
             else:
                 _validate_nested_player_refs(value, path, target_kinds)

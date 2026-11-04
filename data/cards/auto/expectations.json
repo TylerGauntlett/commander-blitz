@@ -7023,6 +7023,10 @@
   "hedron_crawler": {
     "zone": "battlefield"
   },
+  "heidegger_shinra_executive": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "heirloom_blade": {
     "battlefield_count": 33,
     "zone": "battlefield"
