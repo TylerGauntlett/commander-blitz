@@ -51692,12 +51692,12 @@
     },
     "Conformer Shuriken": {
       "edhrec_rank": 4114,
-      "gate": "template",
+      "gate": null,
       "name": "Conformer Shuriken",
-      "reason": "no template for: Equipped creature has \"Whenever this creature attacks, tap target creature defending playe",
+      "reason": "",
       "scryfall_id": "019615fa-4bec-41e8-9c4c-2c6f91bdefb2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Confound": {
@@ -64302,12 +64302,12 @@
     },
     "Decimate": {
       "edhrec_rank": 939,
-      "gate": "template",
+      "gate": null,
       "name": "Decimate",
-      "reason": "no template for: Destroy target artifact, target creature, target enchantment, and target land",
+      "reason": "",
       "scryfall_id": "dae88c31-77a5-40aa-84be-d74b4545a6ee",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Decimator Beetle": {
@@ -80792,12 +80792,12 @@
     },
     "Elena, Turk Recruit": {
       "edhrec_rank": 6254,
-      "gate": "template",
+      "gate": null,
       "name": "Elena, Turk Recruit",
-      "reason": "no template for: When Elena enters, return target non-Assassin historic card from your graveyard to your ha",
+      "reason": "",
       "scryfall_id": "c392f20f-4ad0-4302-9b12-15131e8fc9a3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elenda and Azor": {
@@ -88562,12 +88562,12 @@
     },
     "Explorer's Scope": {
       "edhrec_rank": 2245,
-      "gate": "template",
+      "gate": null,
       "name": "Explorer's Scope",
-      "reason": "no template for: Whenever equipped creature attacks, look at the top card of your library. If it's a land c",
+      "reason": "",
       "scryfall_id": "bc50f65f-1866-4fa6-b318-1d981845723b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Explosion of Riches": {
@@ -103472,12 +103472,12 @@
     },
     "Furious Rise": {
       "edhrec_rank": 8922,
-      "gate": "template",
+      "gate": null,
       "name": "Furious Rise",
-      "reason": "no template for: At the beginning of your end step, if you control a creature with power 4 or greater, exil",
+      "reason": "",
       "scryfall_id": "a886ed1a-d6a4-46d2-8b97-ee4a533773fb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Furious Spinesplitter": {

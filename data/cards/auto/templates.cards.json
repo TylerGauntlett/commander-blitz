@@ -34362,6 +34362,138 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature has \"Whenever this creature attacks, tap target creature defending player controls. If that creature has greater power than this creature, put a number of +1/+1 counters on this creature equal to the difference.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "power_of": {
+                    "target": "t1"
+                  }
+                },
+                "right": {
+                  "power_of": {
+                    "self": true
+                  }
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "minus": [
+                      {
+                        "power_of": {
+                          "target": "t1"
+                        }
+                      },
+                      {
+                        "power_of": {
+                          "self": true
+                        }
+                      }
+                    ]
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true,
+                    "zone": "battlefield"
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": {
+                  "binding": "defender"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature attacks, tap target creature defending player controls. If that creature has greater power than this creature, put a number of +1/+1 counters on this creature equal to the difference.",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "conformer_shuriken",
+      "mana_cost": "{2}",
+      "name": "Conformer Shuriken",
+      "oracle_text": "Equipped creature has \"Whenever this creature attacks, tap target creature defending player controls. If that creature has greater power than this creature, put a number of +1/+1 counters on this creature equal to the difference.\"\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],
@@ -42494,6 +42626,100 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "decimate",
+      "mana_cost": "{2}{R}{G}",
+      "name": "Decimate",
+      "oracle_text": "Destroy target artifact, target creature, target enchantment, and target land. (You can't cast this spell unless you have legal choices for all its targets.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "artifact"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "target": "creature"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "target": "enchantment"
+          },
+          "op": "destroy"
+        },
+        {
+          "objects": {
+            "target": "land"
+          },
+          "op": "destroy"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "artifact",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Artifact"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "creature",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "enchantment",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Enchantment"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "count": 1,
+          "id": "land",
+          "kind": "permanent",
+          "selector": {
+            "controller": "any",
+            "types": [
+              "Land"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {
@@ -51458,6 +51684,120 @@
         {
           "effects": [
             {
+              "destination": "hand",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "supertypes": [
+                      "Legendary"
+                    ]
+                  },
+                  {
+                    "subtypes": [
+                      "Saga"
+                    ]
+                  }
+                ],
+                "controller": "you",
+                "not_subtypes": [
+                  "Assassin"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "When Elena enters, return target non-Assassin historic card from your graveyard to your hand.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a historic spell, put a +1/+1 counter on Elena.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "filter": {
+              "any_of": [
+                {
+                  "types": [
+                    "Artifact"
+                  ]
+                },
+                {
+                  "supertypes": [
+                    "Legendary"
+                  ]
+                },
+                {
+                  "subtypes": [
+                    "Saga"
+                  ]
+                }
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "elena_turk_recruit",
+      "mana_cost": "{2}{W}",
+      "name": "Elena, Turk Recruit",
+      "oracle_text": "When Elena enters, return target non-Assassin historic card from your graveyard to your hand. (Artifacts, legendaries, and Sagas are historic.)\nWhenever you cast a historic spell, put a +1/+1 counter on Elena.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Assassin"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
@@ -56451,6 +56791,82 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "count": 1,
+                "optional": true,
+                "types": [
+                  "Land"
+                ]
+              },
+              "op": "look_at_top",
+              "player": "you",
+              "tapped": true
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever equipped creature attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.",
+          "trigger": {
+            "controller": "any",
+            "event": "attacks",
+            "filter": {
+              "attached": true
+            }
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {1}"
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "explorer_s_scope",
+      "mana_cost": "{1}",
+      "name": "Explorer's Scope",
+      "oracle_text": "Whenever equipped creature attacks, look at the top card of your library. If it's a land card, you may put it onto the battlefield tapped.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -65881,6 +66297,61 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "destination": "exile",
+              "objects": {
+                "count": 1
+              },
+              "op": "look_at_top",
+              "playable": "until_next_exile_by_source",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, if you control a creature with power 4 or greater, exile the top card of your library. You may play that card until you exile another card with this enchantment.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "power": {
+                  "op": ">=",
+                  "value": {
+                    "const": 4
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "furious_rise",
+      "mana_cost": "{2}{R}",
+      "name": "Furious Rise",
+      "oracle_text": "At the beginning of your end step, if you control a creature with power 4 or greater, exile the top card of your library. You may play that card until you exile another card with this enchantment.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

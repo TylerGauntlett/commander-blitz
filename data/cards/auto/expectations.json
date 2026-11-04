@@ -2935,6 +2935,10 @@
   "conduit_pylons": {
     "zone": "battlefield"
   },
+  "conformer_shuriken": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "conifer_strider": {
     "zone": "battlefield"
   },
@@ -3679,6 +3683,14 @@
   },
   "deceptive_landscape": {
     "zone": "battlefield"
+  },
+  "decimate": {
+    "battlefield_count": 30,
+    "graveyard_size": {
+      "0": 5
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
   },
   "decisive_denial": {
     "zone": "graveyard"
@@ -4426,6 +4438,10 @@
   "elementalist_adept": {
     "zone": "battlefield"
   },
+  "elena_turk_recruit": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "elenda_the_dusk_rose": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4916,6 +4932,10 @@
       "0": 39
     },
     "zone": "graveyard"
+  },
+  "explorer_s_scope": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "expressive_iteration": {
     "graveyard_size": {
@@ -5794,6 +5814,10 @@
     },
     "opponent_battlefield_count": 4,
     "zone": "graveyard"
+  },
+  "furious_rise": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "furious_strength": {
     "zone": [
