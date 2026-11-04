@@ -326,6 +326,14 @@ class TargetModel(BaseModel):
     #: step before 601.2c declares the targets. Refused on a card with no
     #: ``gift``, on an ability's targets and on a mode-owned spec.
     gift_promised: bool | None = None
+    #: Which **tier** declares this target: the index of the card's
+    #: ``additional_cost_options`` a cast must have paid. Tiered (702.183)
+    #: chooses the tier as an additional cost at 601.2b, one step before 601.2c
+    #: declares targets, so "• Cross-Slash -- {0} -- Destroy target tapped
+    #: creature" is a target only the Cross-Slash cast has. Absent: every tier.
+    #: Refused on a card without ``additional_cost_options``, on an ability's
+    #: targets, and beside ``mode``, ``gift_promised`` or ``count_if_kicked``.
+    cost_option: int | None = None
     #: "Return **up to** X target creature cards." The `count` is a ceiling and
     #: every size from zero through it is legal, which is the one reading none
     #: of the three above can give: a number forces exactly that many,

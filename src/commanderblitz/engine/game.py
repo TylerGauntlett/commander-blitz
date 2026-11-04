@@ -455,7 +455,10 @@ class Game:
         # A promised cast declares the promised list (601.2b, then 601.2c):
         # legality enumerated this line from it, and `stack._resolve_spell`
         # splits the stored refs by it.
-        specs = card.targets_for(gift_promised=action.gift_to is not None)
+        # A tiered cast declares the list of the tier it paid, for the same reason.
+        specs = card.targets_for(
+            gift_promised=action.gift_to is not None, cost_option=action.additional_choice
+        )
         if action.kicked and (swapped := kicked_targets(specs)) is not None:
             specs = swapped
         # 601.2b before 601.2c: "as an additional cost to cast this spell, pay

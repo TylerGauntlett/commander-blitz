@@ -1790,7 +1790,21 @@ def _cast_variant(
     # every repeat count of `_charge_additional_cost` all pass through, and a
     # caller that forgot would offer the unsized `tuples`. The variants with a
     # target list of the rule's own (morph, overload, bestow, mutate) keep it.
-    specs = card.targets_for(gift_promised=gift_to is not None)
+    specs = card.targets_for(gift_promised=gift_to is not None, cost_option=additional_choice)
+    # Tiered (702.183): the tier is an additional cost chosen at 601.2b, so a
+    # line that pays one declares that tier's own list at 601.2c -- Cloud's
+    # Limit Break's Omnislash line points at nothing, and Cross-Slash's needs a
+    # tapped creature. The callers' ``tuples`` were built from the shared list.
+    tiered = additional_choice is not None and additional_choice in card.cost_option_targets
+    if tiered and not (face_down or overloaded or bestowed or mutated or fused):
+        tuples = enumerate_target_tuples(
+            state,
+            pid,
+            specs,
+            oid,
+            exclude_sid=state.objects[oid].stack_id,
+            defer=deferred_target_spec(state, card, specs),
+        )
     if not (face_down or overloaded or bestowed or mutated or fused) and any(
         spec.additional_sized for spec in specs
     ):
@@ -1814,7 +1828,7 @@ def _cast_variant(
     # left once that line's targeting tax is counted. `Game._cast` then floors
     # the announcement at the number of targets the line declared.
     if divided_damage(card):
-        specs = card.targets_for(gift_promised=gift_to is not None)
+        specs = card.targets_for(gift_promised=gift_to is not None, cost_option=additional_choice)
         tuples = [
             t
             for t in tuples

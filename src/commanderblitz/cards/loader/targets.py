@@ -37,6 +37,7 @@ def _compile_targets(
     mana_cost: str | None = None,
     has_kicker: bool = False,
     has_gift: bool = False,
+    cost_options: int = 0,
 ) -> tuple[TargetSpec, ...]:
     """Compile a card's or ability's target list, with the one ordering rule.
 
@@ -193,16 +194,27 @@ def _compile_targets(
                 f"names a choice that can never be made"
             )
     _check_gift_targets(specs, where, on_spell=on_spell, has_gift=has_gift)
+    _check_tier_targets(specs, where, on_spell=on_spell, cost_options=cost_options)
     fixed = [spec for spec in specs if spec.mode is None]
-    # A gift-gated card declares one of two lists, and the ordering rule is
-    # about the refs one cast stores -- so each list has to satisfy it, not
-    # the printed union, which no cast ever declares.
+    # A gift-gated or tiered card declares one of several lists, and the
+    # ordering rule is about the refs one cast stores -- so each list has to
+    # satisfy it, not the printed union, which no cast ever declares.
     gated = any(spec.gift_promised is not None for spec in fixed)
-    for promised in (False, True) if gated else (None,):
+    tiered = any(spec.cost_option is not None for spec in fixed)
+    sides = (
+        [("gift", False), ("gift", True)]
+        if gated
+        else [("tier", n) for n in range(cost_options)]
+        if tiered
+        else [(None, None)]
+    )
+    for gate, side in sides:
         declared = [
             spec
             for spec in fixed
-            if promised is None or spec.gift_promised in (None, promised)
+            if gate is None
+            or (gate == "gift" and spec.gift_promised in (None, side))
+            or (gate == "tier" and spec.cost_option in (None, side))
         ]
         variable = [i for i, spec in enumerate(declared) if spec.variable_size]
         if len(variable) > 1:
@@ -259,6 +271,47 @@ def _check_gift_targets(
         if spec.count_if_kicked is not None:
             raise DslError(
                 f"{label}: 'gift_promised' and 'count_if_kicked' on one target "
+                f"are two cast-time choices sizing one spec -- no printing does it"
+            )
+
+
+def _check_tier_targets(
+    specs: tuple[TargetSpec, ...], where: str, *, on_spell: bool, cost_options: int
+) -> None:
+    """Every restriction on a target's ``cost_option``, each a card that would
+    load wrong.
+
+    Legal at all because Tiered (702.183) chooses the tier as an additional
+    cost at 601.2b, one step before 601.2c declares the targets. Each refusal
+    is a place with no such cast, or a spelling naming a tier the card lacks.
+    """
+    for spec in specs:
+        if spec.cost_option is None:
+            continue
+        label = f"{where}.target[{spec.id}]"
+        if not on_spell:
+            raise DslError(
+                f"{label}: 'cost_option' is about a cast, and an ability's "
+                f"targets are declared without one"
+            )
+        if not 0 <= spec.cost_option < cost_options:
+            raise DslError(
+                f"{label}: cost option {spec.cost_option} does not exist -- the card "
+                f"offers {cost_options} 'additional_cost_options'"
+            )
+        if spec.mode is not None:
+            raise DslError(
+                f"{label}: a mode-owned target cannot also be owned by a "
+                f"'cost_option' -- the two choices would each decide it"
+            )
+        if spec.gift_promised is not None:
+            raise DslError(
+                f"{label}: 'cost_option' and 'gift_promised' on one card are two "
+                f"cast-time target lists -- no printing does it"
+            )
+        if spec.count_if_kicked is not None:
+            raise DslError(
+                f"{label}: 'cost_option' and 'count_if_kicked' on one target "
                 f"are two cast-time choices sizing one spec -- no printing does it"
             )
 
@@ -535,6 +588,7 @@ def _compile_target(
         total_mana_value=model.total_mana_value,
         mode=model.mode,
         gift_promised=model.gift_promised,
+        cost_option=model.cost_option,
     )
 
 

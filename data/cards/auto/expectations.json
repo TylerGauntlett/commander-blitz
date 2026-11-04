@@ -2802,6 +2802,11 @@
   "cloud_manta": {
     "zone": "battlefield"
   },
+  "cloud_s_limit_break": {
+    "battlefield_count": 32,
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
+  },
   "cloudcrown_oak": {
     "zone": "battlefield"
   },

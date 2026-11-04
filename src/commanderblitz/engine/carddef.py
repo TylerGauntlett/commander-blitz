@@ -106,6 +106,12 @@ class TargetSpec:
     #: nothing in the engine reads the field itself -- it records the printed
     #: clause the way `mode` records which bullet owns a spec.
     gift_promised: bool | None = None
+    #: The index of the **tier** that declares this spec -- which of the card's
+    #: `additional_cost_options` the cast paid -- or ``None`` for every tier.
+    #: Split by the loader into :attr:`CardDef.cost_option_targets`, the way
+    #: :attr:`gift_promised` is split into :attr:`CardDef.gift_targets`, so the
+    #: engine never reads the field itself.
+    cost_option: int | None = None
     #: "Return **up to X** target creature cards from your graveyard." The
     #: ``count`` is a *ceiling* rather than an exact number, so every size from
     #: zero through it is a legal choice. `optional` cannot say it -- that is
@@ -1230,6 +1236,15 @@ class CardDef:
     #: `stack._resolve_spell`, which must agree on the list or the stored refs
     #: are split into the wrong buckets.
     gift_targets: tuple[TargetSpec, ...] | None = None
+    #: The card-level specs a cast declares when it paid one **tier** -- one of
+    #: `additional_cost_options` -- keyed by that option's index, for the
+    #: options whose list differs from :attr:`targets`. Tiered (702.183) makes
+    #: the tier an additional cost chosen at 601.2b, so Cloud's Limit Break's
+    #: Cross-Slash declares one tapped creature, Blade Beam any number with
+    #: different controllers and Omnislash none. Empty for every other card.
+    #: Read through :meth:`targets_for`, by the same callers as
+    #: :attr:`gift_targets` and for the same reason.
+    cost_option_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     spell_effects: tuple[Mapping[str, Any], ...] = ()
     replacements: tuple[Mapping[str, Any], ...] = ()
     #: Starting loyalty. Kept as a characteristic as well as compiled into a
@@ -1565,7 +1580,11 @@ class CardDef:
         return None if asks_another_player(spec) or is_budgeted(spec) else spec
 
     def specs_for_modes(
-        self, modes: Sequence[int], *, gift_promised: bool = False
+        self,
+        modes: Sequence[int],
+        *,
+        gift_promised: bool = False,
+        cost_option: int | None = None,
     ) -> tuple[TargetSpec, ...]:
         """The target specs a cast of this spell actually declared.
 
@@ -1578,14 +1597,18 @@ class CardDef:
         A card with no mode-owned targets returns :attr:`targets` unchanged,
         which is every card in the pool but the modal ones.
 
-        ``gift_promised`` picks the side of the promise the cast was on -- see
-        :meth:`targets_for`.
+        ``gift_promised`` picks the side of the promise the cast was on, and
+        ``cost_option`` the tier it paid -- see :meth:`targets_for`.
         """
         return _specs_for_modes(
-            self.targets_for(gift_promised=gift_promised), self.mode_targets, modes
+            self.targets_for(gift_promised=gift_promised, cost_option=cost_option),
+            self.mode_targets,
+            modes,
         )
 
-    def targets_for(self, *, gift_promised: bool) -> tuple[TargetSpec, ...]:
+    def targets_for(
+        self, *, gift_promised: bool, cost_option: int | None = None
+    ) -> tuple[TargetSpec, ...]:
         """The card-level specs a cast declares, on its side of the gift promise.
 
         601.2b announces the promise and 601.2c declares the targets after it,
@@ -1593,7 +1616,13 @@ class CardDef:
         graveyard" (Consumed by Greed) is a target only the promised cast has.
         :attr:`targets` unchanged for an unpromised cast and for every card
         with no gift-gated spec.
+
+        ``cost_option`` is the tier the cast paid (702.183): an additional cost
+        chosen at 601.2b, so the tier's own list -- :attr:`cost_option_targets`
+        -- is what 601.2c declares. The loader refuses a card with both.
         """
+        if cost_option is not None and cost_option in self.cost_option_targets:
+            return self.cost_option_targets[cost_option]
         if gift_promised and self.gift_targets is not None:
             return self.gift_targets
         return self.targets

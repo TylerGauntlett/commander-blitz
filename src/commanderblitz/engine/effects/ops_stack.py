@@ -165,10 +165,12 @@ def _choose_new_targets(ctx: EffectContext, original, chooser: int | None = None
         chooser = ctx.controller
     card = ctx.state.registry.get(original.def_id)
     specs = getattr(card, "targets", ()) or ()
-    if original.gift_to is not None:
-        # The copy keeps the promise (707.10), so it re-chooses among the
-        # promised specs -- the list its stored refs were declared under.
-        specs = card.targets_for(gift_promised=True)
+    if original.gift_to is not None or original.cost_option is not None:
+        # The copy keeps the promise and the tier (707.10), so it re-chooses
+        # among the specs its stored refs were declared under.
+        specs = card.targets_for(
+            gift_promised=original.gift_to is not None, cost_option=original.cost_option
+        )
     if not specs:
         return None
     options = enumerate_target_tuples(
@@ -251,6 +253,10 @@ def put_copy_on_stack(state, controller: int, original, targets=None):
         # declared under the promised target list, so `stack._resolve_spell`
         # has to split them by that list rather than the unpromised one.
         gift_to=original.gift_to,
+        # And the tier paid (702.183 makes it an additional cost, so 707.10
+        # copies it): the copy's `{"cost_option": n}` branch and the target
+        # list its refs are split by are the original's.
+        cost_option=original.cost_option,
         # Everything but the convoking creatures: 702.51c's "convoked it" is a
         # creature tapped to *pay* for the spell, and a copy was never paid for
         # -- convoke is neither an additional nor an alternative cost, so

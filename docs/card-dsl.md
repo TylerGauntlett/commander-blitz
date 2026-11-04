@@ -4962,6 +4962,33 @@ The index rides the stack item and is stamped onto the object **before**
 and `kicked`. Written after them it would read `None`, every branch would fail,
 and the spell would cost mana and do nothing at all.
 
+**A tier's own targets** are a target spec's `cost_option`: the index of the
+tier that declares it. Cloud's Limit Break's Cross-Slash destroys "target tapped
+creature", Blade Beam "any number of target tapped creatures with different
+controllers" (`count: "any"`, `one_per_player`) and Omnislash targets nothing:
+
+```jsonc
+"targets": [
+  { "id": "t1", "kind": "permanent", "cost_option": 0, "selector": { … "tapped": true } },
+  { "id": "t2", "kind": "permanent", "cost_option": 1, "count": "any",
+    "one_per_player": true, "selector": { … "tapped": true } }
+]
+```
+
+Legal because 702.183 makes the tier an additional cost chosen at 601.2b, one
+step before 601.2c declares targets. The loader splits the specs into
+`CardDef.cost_option_targets`, one list per option — the specs naming that tier
+plus every spec naming none, in printed order — and leaves only the shared ones
+in `targets`. Each tier's cast line enumerates its own list, so a tier whose
+required target is missing is simply not offered while the others stay
+castable; the cast, resolution and a copy (707.10 carries the tier) rebuild the
+same list through `CardDef.targets_for`. Each tier's list obeys the
+variable-size-last rule on its own. The near miss is one shared card-level
+target branched on at resolution: it would make Omnislash need and announce a
+target it never prints. Refused on a card without that many
+`additional_cost_options`, on an ability's targets, and beside `mode`,
+`gift_promised` or `count_if_kicked`.
+
 ### Spree — "choose **one or more** additional costs"
 
 Smuggler's Surprise. Three priced modes, and the caster buys any non-empty

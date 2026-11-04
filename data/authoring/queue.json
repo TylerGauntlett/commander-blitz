@@ -48762,12 +48762,12 @@
     },
     "Cloud's Limit Break": {
       "edhrec_rank": 5496,
-      "gate": "template",
+      "gate": null,
       "name": "Cloud's Limit Break",
-      "reason": "no template for: Tiered",
+      "reason": "",
       "scryfall_id": "1eb10082-4f0a-41f9-9a70-0d3c7ead249f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cloud, Ex-SOLDIER": {

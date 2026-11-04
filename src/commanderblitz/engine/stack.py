@@ -840,7 +840,10 @@ def _resolve_spell(state: GameState, item: StackItem) -> Generator[Any, list[int
     # And the side of the gift promise it was cast on, for the same reason:
     # "if the gift was promised, return target creature card…" is a spec only
     # the promised cast declared, so only its refs have a bucket for it.
-    specs = card.specs_for_modes(item.modes, gift_promised=item.gift_to is not None)
+    # And the tier it paid (702.183), whose list the cast declared.
+    specs = card.specs_for_modes(
+        item.modes, gift_promised=item.gift_to is not None, cost_option=item.cost_option
+    )
     if item.fused and card.second_face is not None:
         # Both halves' targets, in the order legality offered them.
         specs = tuple(card.targets) + tuple(state.registry.get(card.second_face).targets)

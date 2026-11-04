@@ -32750,6 +32750,110 @@
       ]
     },
     {
+      "additional_cost_options": [
+        {
+          "mana": "{0}"
+        },
+        {
+          "mana": "{1}"
+        },
+        {
+          "mana": "{3}{W}"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "cloud_s_limit_break",
+      "mana_cost": "{1}{W}",
+      "name": "Cloud's Limit Break",
+      "oracle_text": "Tiered (Choose one additional cost.)\n• Cross-Slash — {0} — Destroy target tapped creature.\n• Blade Beam — {1} — Destroy any number of target tapped creatures with different controllers.\n• Omnislash — {3}{W} — Destroy all tapped creatures.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "condition": {
+            "cost_option": 0
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 1
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "target": "t2"
+              },
+              "op": "destroy"
+            }
+          ]
+        },
+        {
+          "condition": {
+            "cost_option": 2
+          },
+          "op": "if",
+          "then": [
+            {
+              "objects": {
+                "count": "all",
+                "tapped": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "targets": [
+        {
+          "cost_option": 0,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "tapped": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        },
+        {
+          "cost_option": 1,
+          "count": "any",
+          "id": "t2",
+          "kind": "permanent",
+          "one_per_player": true,
+          "selector": {
+            "tapped": true,
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "G"
       ],

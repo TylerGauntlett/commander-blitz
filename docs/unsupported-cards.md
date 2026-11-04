@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**167 cards** blocked by **153** capabilities.
+**166 cards** blocked by **152** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -158,7 +158,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
-| [tiered](#tiered) | 1 | 5496 | engine |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -2423,21 +2422,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## tiered
-
-Blocks **1** card.
-
-- **(engine)** target specs owned by one tier of a tiered card: a target declared at 601.2c only when that `additional_cost_options` index was paid (here tier 0 declares exactly one tapped creature, tier 1 declares `count: "any"` tapped creatures with `one_per_player`, tier 2 declares none), keyed by cost option the way `mode_targets` is keyed by choose_mode index and `gift_targets` by the gift promise, and rebuilt in the same order on resolution
-  <br>Why the existing vocabulary won't do: Tiered is `additional_cost_options` plus `if {cost_option: n}` (Fire Magic, Ice Magic), but those cards share one card-level target across every tier. A TargetSpec's `mode` binds it to a choose_mode mode chosen at cast, not to the paid cost option, and `specs_for_modes` only reads item.modes; a shared card-level spec would force Omnislash to declare a target (uncastable with no tapped creature, or fizzling) and could not be both exactly-one for Cross-Slash and any-number-one-per-player for Blade Beam. Writing it as choose_mode drops the per-mode prices, and spree is one-or-more, not exactly one, and no spree card carries targets either.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cloud's Limit Break** (rank 5496) — `cloud_s_limit_break`
-  - • Cross-Slash — {0} — Destroy target tapped creature.
-  - • Blade Beam — {1} — Destroy any number of target tapped creatures with different controllers.
 
 </details>
 

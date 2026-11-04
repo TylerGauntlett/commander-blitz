@@ -1031,6 +1031,8 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         has_kicker=model.kicker is not None or model.multikicker is not None,
         # `gift_promised` names the 601.2b promise, so there has to be one.
         has_gift=model.gift is not None,
+        # `cost_option` names a tier, chosen at 601.2b, so it has to exist.
+        cost_options=len(model.additional_cost_options),
     )
     card_level = tuple(spec for spec in all_targets if spec.mode is None)
     # The two sides of the gift promise, when a spec names one. The unpromised
@@ -1043,6 +1045,16 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         if any(spec.gift_promised is not None for spec in card_level)
         else None
     )
+    # Each tier's list, when a spec names a tier (702.183): `targets` keeps
+    # only the specs every tier shares, and a tiered card's cost is mandatory,
+    # so every cast line reads its own tier's list through `targets_for`.
+    cost_option_targets: dict[int, tuple[TargetSpec, ...]] = {}
+    if any(spec.cost_option is not None for spec in targets):
+        cost_option_targets = {
+            n: tuple(spec for spec in targets if spec.cost_option in (None, n))
+            for n in range(len(model.additional_cost_options))
+        }
+        targets = tuple(spec for spec in targets if spec.cost_option is None)
     mode_targets: dict[int, tuple[TargetSpec, ...]] = {}
     for spec in all_targets:
         if spec.mode is not None:
@@ -2248,6 +2260,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         targets=targets,
         mode_targets=mode_targets,
         gift_targets=gift_targets,
+        cost_option_targets=cost_option_targets,
         spell_effects=tuple(model.spell_effects),
         replacements=_implied_replacements(model),
         abilities=abilities,
