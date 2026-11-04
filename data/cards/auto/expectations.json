@@ -17043,6 +17043,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "vincent_vengeful_atoner": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "vine_trellis": {
     "zone": "battlefield"
   },
@@ -17943,6 +17947,10 @@
     "zone": "battlefield"
   },
   "wreckage_wickerfolk": {
+    "zone": "battlefield"
+  },
+  "wrecking_ball_arm": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "wrecking_crew": {

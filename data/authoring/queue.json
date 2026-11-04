@@ -304952,12 +304952,12 @@
     },
     "Vincent, Vengeful Atoner": {
       "edhrec_rank": 4250,
-      "gate": "template",
+      "gate": null,
       "name": "Vincent, Vengeful Atoner",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, put a +1/+1 cou",
+      "reason": "",
       "scryfall_id": "96c957b1-ef31-4575-9003-fe4a649d303b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vindictive Flamestoker": {
@@ -319502,12 +319502,12 @@
     },
     "Wrecking Ball Arm": {
       "edhrec_rank": 3163,
-      "gate": "template",
+      "gate": null,
       "name": "Wrecking Ball Arm",
-      "reason": "no template for: Equipped creature has base power and toughness 7/7 and can't be blocked by creatures with ",
+      "reason": "",
       "scryfall_id": "c934a62e-d327-44ce-9155-7dc424daec36",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Wrecking Beast": {

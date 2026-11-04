@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**159 cards** blocked by **144** capabilities.
+**174 cards** blocked by **158** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,6 +18,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [station](#station) | 4 | 1695 | engine |
+| [cast-from-exile](#cast-from-exile) | 3 | 2839 | value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -25,6 +26,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
+| [equipped](#equipped) | 2 | 4652 | selector |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -34,19 +36,23 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
+| [ability-cost-reduction-any-first-each-turn](#ability-cost-reduction-any-first-each-turn) | 1 | 5385 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [aura-named-host-check](#aura-named-host-check) | 1 | 4043 | engine |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
+| [becomes-target-of-activated-ability](#becomes-target-of-activated-ability) | 1 | 5385 | trigger_event |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
+| [cast-time-snapshot](#cast-time-snapshot) | 1 | 3285 | value |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
@@ -54,10 +60,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
+| [control-while-you-control-source](#control-while-you-control-source) | 1 | 6202 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
+| [count-players-matching](#count-players-matching) | 1 | 12326 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -90,12 +98,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
+| [improvise](#improvise) | 1 | 970 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [kicker](#kicker) | 1 | 868 | selector |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
+| [lose-keyword-timestamped](#lose-keyword-timestamped) | 1 | 866 | static_effect |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
@@ -106,6 +116,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
+| [modified](#modified) | 1 | 4004 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [myriad](#myriad) | 1 | 6808 | keyword |
@@ -125,6 +136,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
+| [rebel-2-2-r-token](#rebel-2-2-r-token) | 1 | 7666 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
@@ -133,6 +145,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
+| [sacrificed-source-lki](#sacrificed-source-lki) | 1 | 2784 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -150,6 +163,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
+| [tiered](#tiered) | 1 | 5496 | engine |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -339,6 +353,28 @@ Blocks **4** cards.
 
 </details>
 
+## cast-from-exile
+
+Blocks **3** cards.
+
+- **(value)** a condition key `cast_from_exile: true` (or a general `cast_from_zone`), true when the resolving spell was cast out of exile -- a foretold cast here, but also any other cast from exile, as the printed text says
+  <br>Why the existing vocabulary won't do: condition_keys has `cast_from_hand` and `cast_from_graveyard` but no exile; `{"not": {"cast_from_hand": true}}` would also be true for a cast from the graveyard or command zone, and there is no `foretold` key either (see haunting_voyage's gap)
+- **(value)** a condition `cast_from_exile` (sibling of `cast_from_graveyard` / `cast_from_hand`) that reads a stamp written by stack.push_spell when the resolving spell was cast out of exile -- foretold, plotted, adventure, or any exile play permission
+  <br>Why the existing vocabulary won't do: condition_keys has `cast_from_graveyard` and `cast_from_hand` but nothing for exile; `zone_is` reports the spell's current zone (the stack); `not` of hand-or-graveyard would also be true for a cast from the library top or command zone, so it is not exact. The rest of the card (grant_keyword indestructible to permanents you control, prevent_damage to you this turn, card-level `foretell`) is expressible
+- **(value)** a condition `cast_from_exile` (sibling of `cast_from_graveyard` / `cast_from_hand`) that reads a stamp written by stack.push_spell when the resolving spell was cast out of exile -- foretold, plotted, adventure, or any exile play permission
+  <br>Why the existing vocabulary won't do: condition_keys has `cast_from_graveyard` and `cast_from_hand` but nothing for exile; `zone_is` reports the spell's current zone (the stack); `not` of hand-or-graveyard would also be true for a cast from the library top or command zone, so it is not exact. The rest of the card (damage 7 to each creature, for_each_player opponents + choose_permanents artifact-or-land + destroy, card-level `foretell`) is expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Ultimate Magic: Holy** (rank 2839) — `ultimate_magic_holy`
+  - If this spell was cast from exile, prevent all damage that would be dealt to you this turn.
+- **Lifestream's Blessing** (rank 3285) — `lifestream_s_blessing`
+  - Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life.
+- **Ultimate Magic: Meteor** (rank 8080) — `ultimate_magic_meteor`
+  - If this spell was cast from exile, for each opponent, choose an artifact or land that player controls. Destroy the chosen permanents.
+
+</details>
+
 ## copy-exception-ability
 
 Blocks **3** cards.
@@ -468,6 +504,24 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
+
+</details>
+
+## equipped
+
+Blocks **2** cards.
+
+- **(selector)** a selector key matching a creature that has one or more Equipment attached to it (by anybody's Equipment), e.g. {"equipped": true}, usable inside a `count` value so "the number of equipped creatures you control" is {"count": {"types": ["Creature"], "controller": "you", "equipped": true}}
+  <br>Why the existing vocabulary won't do: `attached` matches only the object the ability's own source is attached to (Equipment -> its creature), not any creature carrying an Equipment; `enchanted_by` asks about Auras only (aura_controllers skips non-Auras); `modified` also counts creatures with counters or your Auras, so it would overcount; `attached_to` filters the attachment's host from the attachment's side, not the host's side. The rest of the line (attacks trigger, damage with defender_of self) is already expressible
+- **(selector)** an effect-selector key `equipped: true` (and `false`) matching a permanent that has one or more Equipment attached to it (anybody's Equipment, 301.5 / 700.9), so "draw a card for each equipped attacking creature you control" is `draw` with amount `{"count": {"types": ["Creature"], "controller": "you", "attacking": true, "equipped": true}}` -- the Equipment twin of `enchanted_by`
+  <br>Why the existing vocabulary won't do: `enchanted_by` counts only Auras (`aura_controllers` filters on is_aura/bestow); `modified` also matches creatures with counters or your Auras, so it over-counts; `attached` names the source's own host; and counting Equipment with `attached_to: {attacking creature you control}` counts Equipment, not creatures, so a creature carrying two Equipment draws two cards instead of one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloud, Ex-SOLDIER** (rank 4652) — `cloud_ex_soldier`
+  - Whenever Cloud attacks, draw a card for each equipped attacking creature you control. Then if Cloud has power 7 or greater, create two Treasure tokens.
+- **Barret Wallace** (rank 10273) — `barret_wallace`
+  - Whenever Barret Wallace attacks, it deals damage equal to the number of equipped creatures you control to defending player.
 
 </details>
 
@@ -640,6 +694,21 @@ Blocks **2** cards.
 
 </details>
 
+## ability-cost-reduction-any-first-each-turn
+
+Blocks **1** card.
+
+- **(static_effect)** an ability_cost_reduction static that reaches ANY activated ability (an 'affects_abilities' class meaning every non-mana activated ability), limited to the first such activation by you each turn during your turn (a per-turn use counter, consumed when a matching activation is paid), combined with the existing 'targeting' clause {controller: you, types: [Creature]}
+  <br>Why the existing vocabulary won't do: ability_cost_reduction requires 'affects_abilities' and ABILITY_CLASS_KEYS holds only 'equip', so it cannot name every activated ability; player_statics.ability_cost_reduction never reads a max_per_turn, and static_max_per_turn is accepted only on graveyard-cast/flashback-style statics, so 'the first ... during your turn' cannot be counted (an is_your_turn condition alone would discount every activation, not the first)
+
+<details><summary>Cards waiting on this</summary>
+
+- **Professor Hojo** (rank 5385) — `professor_hojo`
+  - The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.
+  - Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.
+
+</details>
+
 ## activate-only-as-an-instant
 
 Blocks **1** card.
@@ -725,6 +794,20 @@ Blocks **1** card.
 
 </details>
 
+## aura-named-host-check
+
+Blocks **1** card.
+
+- **(engine)** An arrival that names the Aura's host ('return ... to the battlefield attached to that creature') and tests that named host against the Aura's enchant clause (its first target spec, plus protection) before the move, leaving an Aura that can't legally enchant it in the graveyard (303.4g) -- e.g. a value for host_named that is a selector (the host) rather than a boolean, checked by zones.offer_aura_host's legality test instead of offering a choice
+  <br>Why the existing vocabulary won't do: host_named: true on return_from_graveyard plus a following attach (the Forum Filibuster pattern) trusts the named host -- docs/rules-coverage.md says the attach and host_named are never re-tested -- so an 'Enchant land' or 'enchant creature an opponent controls' Aura would enter and stay attached to the returned creature instead of remaining in the graveyard as the printed parenthetical says. Dropping host_named lets offer_aura_host keep illegal Auras in the graveyard, but then the player picks ANY legal host rather than 'that creature', and the following attach would then move it onto the named creature unchecked anyway
+
+<details><summary>Cards waiting on this</summary>
+
+- **Unfinished Business** (rank 4043) — `unfinished_business`
+  - Return target creature card from your graveyard to the battlefield, then return up to two target Aura and/or Equipment cards from your graveyard to the battlefield attached to that creature. (If the Auras can't enchant that creature, they remain in your graveyard.)
+
+</details>
+
 ## base-power-trigger-filter
 
 Blocks **1** card.
@@ -750,6 +833,21 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
+
+</details>
+
+## becomes-target-of-activated-ability
+
+Blocks **1** card.
+
+- **(trigger_event)** a becomes_target trigger restricted to targeting by an ACTIVATED ability (not a spell and not a triggered ability), e.g. targeted_by: "activated_ability", which needs BECAME_TARGET events to carry whether the targeting object is an activated ability; batched over 'one or more creatures you control' with max_per_turn 1
+  <br>Why the existing vocabulary won't do: trigger targeted_by accepts only 'spell' or 'ability', and triggers.py reads only the event's is_spell flag, so 'ability' also fires off triggered abilities (e.g. an opponent's ETB trigger targeting your creature), which is a wider card than the printed 'activated ability'
+
+<details><summary>Cards waiting on this</summary>
+
+- **Professor Hojo** (rank 5385) — `professor_hojo`
+  - The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.
+  - Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.
 
 </details>
 
@@ -822,6 +920,20 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
+
+</details>
+
+## cast-time-snapshot
+
+Blocks **1** card.
+
+- **(value)** a value read as the spell is cast and stamped on its stack object, so resolution can use it: here the greatest power among creatures its caster controlled at cast time (e.g. `{"as_cast": {"extreme_value": ...}}` or a cast-time `snapshot` binding readable from spell_effects)
+  <br>Why the existing vocabulary won't do: `extreme_value`/`max` over a creature selector is evaluated at resolution, so a creature that dies or shrinks in response changes X; `snapshot` is an op that runs at resolution, and `power_of`/`power_had` read one object, not the board at cast time. Only `cast_during` and the `cast_from_*` stamps are recorded at cast, and none carries a number
+
+<details><summary>Cards waiting on this</summary>
+
+- **Lifestream's Blessing** (rank 3285) — `lifestream_s_blessing`
+  - Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life.
 
 </details>
 
@@ -929,6 +1041,20 @@ Blocks **1** card.
 
 </details>
 
+## control-while-you-control-source
+
+Blocks **1** card.
+
+- **(op)** a gain_control duration that lasts for as long as the effect's controller controls the source permanent ("gain control of target noncreature artifact for as long as you control Yuffie"), handing control back when the source leaves the battlefield or changes controller
+  <br>Why the existing vocabulary won't do: gain_control's duration is limited to engine CONTROL_DURATIONS (permanent, until_end_of_turn, end_of_your_next_turn); 'permanent' would keep the artifact after Yuffie leaves, which is a strictly stronger card. The source-bound duration 'as_long_as_you_control_source' exists only for characteristic-changing ops (ops_characteristics SOURCE_BOUND), not for control changes
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yuffie, Materia Hunter** (rank 6202) — `yuffie_materia_hunter`
+  - When Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie.
+
+</details>
+
 ## convoke
 
 Blocks **1** card.
@@ -984,6 +1110,20 @@ Blocks **1** card.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
+
+</details>
+
+## count-players-matching
+
+Blocks **1** card.
+
+- **(value)** a value that counts the players in a player spec who satisfy a per-player comparison, e.g. {"player_count_where": {"players": "each_opponent", "cmp": ">", "left": {"count": {"types": ["Creature"], "controller": {"binding": "counted_player"}}}, "right": {"creatures_you_control": true}}} -- "the number of opponents who control more creatures than you", evaluated once at resolution so it can be the amount of a single create_token
+  <br>Why the existing vocabulary won't do: player_count counts every player a spec names with no filter, and select_players has no conditional form; max_count_of/min_count_of answer 'an opponent'/'each opponent' (existential/universal) but not 'how many'. for_each_player over each_opponent with an if + create_token of 1 is the near miss and is a different card: it creates the tokens in separate events (several batched 'one or more tokens' triggers instead of one) and, unless the comparison is snapshotted, each token made raises creatures_you_control before the next opponent is compared
+
+<details><summary>Cards waiting on this</summary>
+
+- **Heidegger, Shinra Executive** (rank 12326) — `heidegger_shinra_executive`
+  - At the beginning of your end step, create a number of 1/1 white Soldier creature tokens equal to the number of opponents who control more creatures than you.
 
 </details>
 
@@ -1447,6 +1587,20 @@ Blocks **1** card.
 
 </details>
 
+## improvise
+
+Blocks **1** card.
+
+- **(static_effect)** a player-wide static that grants a pay_generic_with currency (here "tap_artifacts", improvise) to spells its controller casts that match an affects_spells filter (not_types: ["Artifact"]), so the cast offers the tap-artifacts-to-pay-{1} line for those spells as if each had printed improvise
+  <br>Why the existing vocabulary won't do: pay_generic_with is a card-level cost key read only off the spell's own CardDef (casting.py / game.py check card.pay_generic_with), so it cannot be conferred by another permanent; no static in static_effects grants it (spell_cost_reduction is a flat discount, not tapping artifacts; granted_alternative_cost replaces the cost rather than adding a payment currency; cast_gains_keywords only grants battlefield keywords like haste), and improvise is not in the keyword list
+
+<details><summary>Cards waiting on this</summary>
+
+- **Inspiring Statuary** (rank 970) — `inspiring_statuary`
+  - Nonartifact spells you cast have improvise
+
+</details>
+
 ## impulse-from-opponent-library
 
 Blocks **1** card.
@@ -1529,6 +1683,20 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
+
+</details>
+
+## lose-keyword-timestamped
+
+Blocks **1** card.
+
+- **(static_effect)** a static that removes a named keyword from the affected permanents in layer 6 in timestamp order (613.7), so a grant of that keyword with a later timestamp (Jump, an anthem cast afterwards, a flying counter) gives it back: 'Equipped creature ... loses flying' with affects {attached: true}, distinct from the 'can't have or gain' prohibition
+  <br>Why the existing vocabulary won't do: The lose_keyword static is implemented in characteristics.py as a standing 'can't have or gain' prohibition applied after every adder (layer 2 grants, keyword counters, until-end-of-turn grants, granted_keywords), so it would stop a later Jump or flying grant from giving the equipped creature flying; the printed 'loses flying' is a plain one-time removal that later-timestamped grants override. lose_all_abilities is far too broad. The +10/+10 half (buff) and Equip {8} are expressible.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Colossus Hammer** (rank 866) — `colossus_hammer`
+  - Equipped creature gets +10/+10 and loses flying.
 
 </details>
 
@@ -1672,6 +1840,20 @@ Blocks **1** card.
 
 - **Quandrix Command** (rank 4339) — `quandrix_command`
   - • Target player shuffles up to three target cards from their graveyard into their library.
+
+</details>
+
+## modified
+
+Blocks **1** card.
+
+- **(selector)** the `modified` filter key (has a counter of any kind, OR is equipped by any Equipment, OR is enchanted by an Aura the static's controller controls) accepted in a static ability's `affects` filter, so a `grant_keyword` static can read "other modified creatures you control" continuously
+  <br>Why the existing vocabulary won't do: `modified` exists only in `selector_keys` (effect selectors, `_is_modified` in engine/effects/selectors.py), not in `static_affects_filter_keys`. An `any_of` union in `affects` covers two limbs (`has_counters: true`, `enchanted_by: {controller: you}`) but no static filter key asks whether an Equipment is attached to the creature: `attached` and `attached_to_host` read from the attachment's own end, and `attached_to` filters the host of the source, so the equipped limb would be silently dropped
+
+<details><summary>Cards waiting on this</summary>
+
+- **Red XIII, Proud Warrior** (rank 4004) — `red_xiii_proud_warrior`
+  - Other modified creatures you control have vigilance and trample
 
 </details>
 
@@ -1949,6 +2131,20 @@ Blocks **1** card.
 
 </details>
 
+## rebel-2-2-r-token
+
+Blocks **1** card.
+
+- **(token)** a 2/2 red Rebel creature token
+  <br>Why the existing vocabulary won't do: the packet's token_ids has no Rebel token; the only 2/2 red token is human_knight_2_2_r_trample_haste, a Human Knight with trample and haste, which is a different token (111.4). The trigger itself (permanent_enters filtered to Equipment you control) and the combat attach line (begin_combat + attach with two targets) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Barret, Avalanche Leader** (rank 7666) — `barret_avalanche_leader`
+  - Avalanche! — Whenever an Equipment you control enters, create a 2/2 red Rebel creature token.
+
+</details>
+
 ## remove-all-counters
 
 Blocks **1** card.
@@ -2059,6 +2255,20 @@ Blocks **1** card.
 
 - **Crowded Crypt** (rank 2403) — `crowded_crypt`
   - {4}{B}{B}, {T}, Sacrifice this artifact: Create a 2/2 black Zombie creature token with decayed for each corpse counter on this artifact.
+
+</details>
+
+## sacrificed-source-lki
+
+Blocks **1** card.
+
+- **(value)** Last-known information of a permanent sacrificed as an activation cost, readable when the ability resolves: every kind and amount of counter it had (to put that many of each kind on the target), and the set of Equipment that were attached to it as it left (so an `attach` can pick one of them and attach it to the target)
+  <br>Why the existing vocabulary won't do: `counters_had` and `auras_had` read the `had_counters`/`had_auras` bindings that only a leaves/dies trigger event supplies, so an activated ability whose cost sacrificed its source reads 0; `move_counters` needs its source still on the battlefield; `costs.bind_paid_object` records only power/toughness of a paid object; `_equipment_had` snapshots only a count of Equipment, not which ones, and nothing exposes it to a selector; the `attached`/`attached_to` selectors see the live board, where the Equipment is already unattached by resolution
+
+<details><summary>Cards waiting on this</summary>
+
+- **Zack Fair** (rank 2784) — `zack_fair`
+  - {1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.
 
 </details>
 
@@ -2300,6 +2510,21 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## tiered
+
+Blocks **1** card.
+
+- **(engine)** target specs owned by one tier of a tiered card: a target declared at 601.2c only when that `additional_cost_options` index was paid (here tier 0 declares exactly one tapped creature, tier 1 declares `count: "any"` tapped creatures with `one_per_player`, tier 2 declares none), keyed by cost option the way `mode_targets` is keyed by choose_mode index and `gift_targets` by the gift promise, and rebuilt in the same order on resolution
+  <br>Why the existing vocabulary won't do: Tiered is `additional_cost_options` plus `if {cost_option: n}` (Fire Magic, Ice Magic), but those cards share one card-level target across every tier. A TargetSpec's `mode` binds it to a choose_mode mode chosen at cast, not to the paid cost option, and `specs_for_modes` only reads item.modes; a shared card-level spec would force Omnislash to declare a target (uncastable with no tapped creature, or fizzling) and could not be both exactly-one for Cross-Slash and any-number-one-per-player for Blade Beam. Writing it as choose_mode drops the per-mode prices, and spree is one-or-more, not exactly one, and no spree card carries targets either.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Cloud's Limit Break** (rank 5496) — `cloud_s_limit_break`
+  - • Cross-Slash — {0} — Destroy target tapped creature.
+  - • Blade Beam — {1} — Destroy any number of target tapped creatures with different controllers.
 
 </details>
 

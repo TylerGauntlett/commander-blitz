@@ -1,0 +1,18 @@
+{
+  "card_id": "yuffie_materia_hunter",
+  "name": "Yuffie, Materia Hunter",
+  "oracle_text": "Ninjutsu {1}{R} ({1}{R}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhen Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie. Then you may attach an Equipment you control to Yuffie.",
+  "blocked_sentences": [
+    "When Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie."
+  ],
+  "needs": [
+    {
+      "capability": "control_while_you_control_source",
+      "kind": "op",
+      "what": "a gain_control duration that lasts for as long as the effect's controller controls the source permanent (\"gain control of target noncreature artifact for as long as you control Yuffie\"), handing control back when the source leaves the battlefield or changes controller",
+      "why_existing_wont_do": "gain_control's duration is limited to engine CONTROL_DURATIONS (permanent, until_end_of_turn, end_of_your_next_turn); 'permanent' would keep the artifact after Yuffie leaves, which is a strictly stronger card. The source-bound duration 'as_long_as_you_control_source' exists only for characteristic-changing ops (ops_characteristics SOURCE_BOUND), not for control changes"
+    }
+  ],
+  "closest_existing": ["gain_control", "as_long_as_you_control_source"],
+  "confidence": "high"
+}

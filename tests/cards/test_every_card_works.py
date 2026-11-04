@@ -648,11 +648,29 @@ def _provide_the_sacrifice(game: Game, registry, ability) -> None:
     count = spec.get("count", 1)
     wanted = max(1, int(count) if isinstance(count, int) else 1)
     match = _fodder_for(registry, spec, wanted)
+    # Professional Face-Breaker sacrifices *a Treasure*, and the only Treasures
+    # are tokens: no printed card has the subtype, so the creature-shaped search
+    # above finds nothing. A subtype with no card type names its own kind, so
+    # the token is the fodder.
+    if match is None and spec.get("subtypes") and not spec.get("types"):
+        wanted_subtypes = {str(s) for s in spec["subtypes"]}
+        match = next(
+            (
+                c
+                for c in sorted(registry, key=lambda c: c.id)
+                if c.is_token and wanted_subtypes & set(c.subtypes)
+            ),
+            None,
+        )
     if match is None:
         return
     for _ in range(wanted):
         fodder = new_object(game.state, match.id, owner=0, zone=Zone.BATTLEFIELD)
         game.state.battlefield.append(fodder.oid)
+        # Sephiroth's Reunion sacrifices *a modified creature*: one with a
+        # counter on it is the cheapest way to be one.
+        if spec.get("modified"):
+            fodder.counters[PLUS_ONE] = 1
 
 
 def _provide_the_tap_fodder(game: Game, registry, ability) -> None:
