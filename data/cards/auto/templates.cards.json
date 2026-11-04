@@ -165527,6 +165527,85 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "controller": "you",
+                      "op": "create_token",
+                      "token": "soldier_1_1_w"
+                    }
+                  ],
+                  "label": "Create a 1/1 white Soldier creature token."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "chooser": "controller",
+                        "controller": "you",
+                        "count": 2,
+                        "optional": true,
+                        "subtypes": [
+                          "Soldier"
+                        ],
+                        "zone": "battlefield"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Put a +1/+1 counter on each of up to two Soldiers you control."
+                }
+              ],
+              "op": "choose_mode",
+              "up_to_if": {
+                "condition": {
+                  "exists": {
+                    "controller": "you",
+                    "is_commander": true,
+                    "zone": "battlefield"
+                  }
+                },
+                "count": 2
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, choose one. If you control a commander, you may choose both instead.\n• Create a 1/1 white Soldier creature token.\n• Put a +1/+1 counter on each of up to two Soldiers you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "soldier_military_program",
+      "mana_cost": "{2}{W}",
+      "name": "SOLDIER Military Program",
+      "oracle_text": "At the beginning of combat on your turn, choose one. If you control a commander, you may choose both instead.\n• Create a 1/1 white Soldier creature token.\n• Put a +1/+1 counter on each of up to two Soldiers you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -174297,6 +174376,277 @@
       "types": [
         "Enchantment",
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
+              "amount": {
+                "const": 3
+              },
+              "op": "damage",
+              "target": "t1"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "I — Lightning — This creature deals 3 damage to each of up to two target creatures."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "duration": "this_turn",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "cant_block"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 3,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "II — Ice — Up to three target creatures can't block this turn."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "kujata_discarded",
+              "op": "discard",
+              "player": "you"
+            },
+            {
+              "amount": {
+                "const": 2
+              },
+              "op": "draw",
+              "player": "you"
+            },
+            {
+              "condition": {
+                "cmp": ">",
+                "left": {
+                  "count": {
+                    "binding": "kujata_discarded",
+                    "controller": "any"
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "ability": "kujata_fire",
+                  "op": "reflexive_trigger"
+                }
+              ]
+            }
+          ],
+          "kind": "chapter",
+          "text": "III — Fire — Discard a card, then draw two cards."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "kujata_discarded",
+                    "controller": "any"
+                  }
+                }
+              },
+              "op": "damage",
+              "player": "each_opponent"
+            }
+          ],
+          "id": "kujata_fire",
+          "kind": "reflexive",
+          "text": "When you discard a card this way, this creature deals damage equal to that card's mana value to each opponent."
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "summon_kujata",
+      "keywords": [
+        "trample",
+        "haste"
+      ],
+      "mana_cost": "{5}{R}",
+      "name": "Summon: Kujata",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Lightning — This creature deals 3 damage to each of up to two target creatures.\nII — Ice — Up to three target creatures can't block this turn.\nIII — Fire — Discard a card, then draw two cards. When you discard a card this way, this creature deals damage equal to that card's mana value to each opponent.\nTrample, haste",
+      "power": 7,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Ox"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects_player": "you",
+          "effect": "look_at_library_top",
+          "kind": "static",
+          "text": "You may look at the top card of your library any time."
+        },
+        {
+          "affects_player": "you",
+          "affects_spells": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "condition": {
+            "is_attached": true
+          },
+          "effect": "cast_from_library_top",
+          "kind": "static",
+          "text": "As long as this Equipment is attached to a creature, you may cast creature spells from the top of your library."
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "const": 2
+          },
+          "text": "Equipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\"",
+          "toughness": {
+            "const": 2
+          }
+        },
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "vigilance"
+          ],
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\""
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\""
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "grantable_abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "mana": "{G}",
+              "op": "add_mana"
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add {G}."
+        }
+      ],
+      "id": "summoning_materia",
+      "mana_cost": "{2}{G}",
+      "name": "Summoning Materia",
+      "oracle_text": "You may look at the top card of your library any time.\nAs long as this Equipment is attached to a creature, you may cast creature spells from the top of your library.\nEquipped creature gets +2/+2 and has vigilance and \"{T}: Add {G}.\"\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
       ]
     },
     {
@@ -187962,6 +188312,92 @@
       ],
       "types": [
         "Sorcery"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "controller": "you",
+                "count": "all",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "op": "untap"
+            },
+            {
+              "condition": {
+                "all": [
+                  {
+                    "is_your_turn": true
+                  },
+                  {
+                    "cmp": "==",
+                    "left": {
+                      "combats_this_turn": true
+                    },
+                    "right": {
+                      "const": 1
+                    }
+                  }
+                ]
+              },
+              "op": "if",
+              "then": [
+                {
+                  "op": "extra_combat"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control with power 7 or greater deal combat damage to a player, untap all creatures you control. If it's the first combat phase of your turn, there is an additional combat phase after this phase.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "power": {
+                "op": ">=",
+                "value": 7
+              }
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "R",
+        "W"
+      ],
+      "id": "tifa_martial_artist",
+      "keywords": [
+        "melee"
+      ],
+      "mana_cost": "{1}{R}{G}{W}",
+      "name": "Tifa, Martial Artist",
+      "oracle_text": "Melee (Whenever this creature attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nWhenever one or more creatures you control with power 7 or greater deal combat damage to a player, untap all creatures you control. If it's the first combat phase of your turn, there is an additional combat phase after this phase.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Monk"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
       ]
     },
     {

@@ -230312,12 +230312,12 @@
     },
     "SOLDIER Military Program": {
       "edhrec_rank": 7387,
-      "gate": "template",
+      "gate": null,
       "name": "SOLDIER Military Program",
-      "reason": "no template for: At the beginning of combat on your turn, choose one. If you control a commander, you may c",
+      "reason": "",
       "scryfall_id": "dddad2c2-bd19-42bd-aad6-bbf23ccef269",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "SP//dr, Piloted by Peni": {
@@ -268982,12 +268982,12 @@
     },
     "Summon: Kujata": {
       "edhrec_rank": 6198,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Kujata",
-      "reason": "no template for: I — Lightning — This creature deals 3 damage to each of up to two target creatures",
+      "reason": "",
       "scryfall_id": "a469904f-f144-4e70-b689-c7869e40bcb2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Leviathan": {
@@ -269142,12 +269142,12 @@
     },
     "Summoning Materia": {
       "edhrec_rank": 6708,
-      "gate": "template",
+      "gate": null,
       "name": "Summoning Materia",
-      "reason": "no template for: You may look at the top card of your library any time",
+      "reason": "",
       "scryfall_id": "176401fb-f87c-4085-9dac-e6c8a843e32e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summoning Station": {
@@ -287062,12 +287062,12 @@
     },
     "Tifa, Martial Artist": {
       "edhrec_rank": 3988,
-      "gate": "template",
+      "gate": null,
       "name": "Tifa, Martial Artist",
-      "reason": "no template for: Whenever one or more creatures you control with power 7 or greater deal combat damage to a",
+      "reason": "",
       "scryfall_id": "09f09db5-ee5a-4a4b-9dbb-aca0dff04fcf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tiger Claws": {

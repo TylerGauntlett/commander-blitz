@@ -14162,6 +14162,10 @@
   "solar_array": {
     "zone": "battlefield"
   },
+  "soldier_military_program": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "solstice_revelations": {
     "hand_size": {
       "0": 1
@@ -14883,6 +14887,20 @@
     "tokens": {
       "count": 3,
       "id": "knight_2_2_w"
+    },
+    "zone": "battlefield"
+  },
+  "summon_kujata": {
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
+  "summoning_materia": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
     },
     "zone": "battlefield"
   },
@@ -15921,6 +15939,13 @@
     "hand_size": {
       "0": 5
     }
+  },
+  "tifa_martial_artist": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "tiger_claws": {
     "zone": [
