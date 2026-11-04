@@ -558,6 +558,8 @@ STATIC_FILTER_EXTRAS: dict[str, Entry] = {
     "any_of": ("A union of whole static filters, each with its own `exclude_self`; `affects` only.",
                "`any_of` — a union of static filters"),
     "attached_to_host": ("Attached to the static's own source (\"equipped creature\").", None),
+    "modified": ("Is modified: a counter, an Equipment by its printed face, or your Aura (`true` only).",
+                 "Selectors — \"which objects\""),
     "paired": ("Is paired (soulbond).", "Soulbond — a relationship that is not attachment"),
     "paired_with_source": ("Paired with the static's own source.",
                            "Soulbond — a relationship that is not attachment"),

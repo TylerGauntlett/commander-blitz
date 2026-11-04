@@ -399,6 +399,7 @@
    "is_token",
    "keywords",
    "mana_cost",
+   "modified",
    "not_keywords",
    "not_supertypes",
    "not_types",

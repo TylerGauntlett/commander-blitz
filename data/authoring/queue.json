@@ -218552,12 +218552,12 @@
     },
     "Red XIII, Proud Warrior": {
       "edhrec_rank": 4004,
-      "gate": "template",
+      "gate": null,
       "name": "Red XIII, Proud Warrior",
-      "reason": "no template for: Other modified creatures you control have vigilance and trample",
+      "reason": "",
       "scryfall_id": "10407b26-be28-4628-9567-746681e5c834",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Redcap Gutter-Dweller": {

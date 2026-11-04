@@ -2303,6 +2303,30 @@ def is_equipped(state: GameState, oid: int) -> bool:
     return False
 
 
+def is_modified_printed(state: GameState, obj: GameObject, controller: int) -> bool:
+    """The static ``modified`` filter key: a counter, an Equipment, or your Aura.
+
+    "Other **modified** creatures you control have vigilance and trample" (Red
+    XIII, Proud Warrior). The keyword-action definition `selectors._is_modified`
+    answers for effects, asked of a static's filter: one or more counters of any
+    kind, one or more Equipment attached (anybody's, 301.5c), or one or more
+    Auras attached whose controller is ``controller`` -- the static's.
+
+    Every limb is a pipeline **input**, so a static may read it without
+    depending on another static's output (ADR 0001): counters are
+    `has_counters`' board state; the Aura limb is `enchanted_by`'s walk; and the
+    Equipment is told by its printed face, as `sba` bins it, rather than by its
+    derived subtypes as `is_equipped` tells it -- those are layer 4's output.
+    """
+    if has_any_counter(obj):
+        return True
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is not None and other.attached_to == obj.oid and state.card_of(other).is_equipment:
+            return True
+    return enchanted_by(state, obj.oid, {"controller": "you"}, controller)
+
+
 def aura_controllers(state: GameState, oid: int) -> list[int]:
     """Who controls each Aura attached to ``oid`` right now, one seat per Aura.
 
@@ -2580,6 +2604,11 @@ def _matches_wherever(
     if "enchanted_by" in selector and not enchanted_by(
         state, obj.oid, selector["enchanted_by"], source.controller
     ):
+        return False
+    # "Other **modified** creatures you control have vigilance and trample"
+    # (Red XIII, Proud Warrior). Counters, attachment and printed faces, all
+    # pipeline inputs; `is_modified_printed` says why each limb is.
+    if selector.get("modified") and not is_modified_printed(state, obj, source.controller):
         return False
     if "is_commander" in selector and bool(obj.is_commander) != bool(selector["is_commander"]):
         return False

@@ -6181,8 +6181,18 @@ language is a conjunction and the definition is a disjunction across three
 unrelated relationships. The Aura limb is the only one that asks about control,
 and that asymmetry is the card: an opponent's Pacifism does not make your
 creature modified, so Silkguard written without it would hand hexproof to
-exactly the creature the opponent was answering. Effect-side only — the cards
-that print the word grant something once, not continuously.
+exactly the creature the opponent was answering.
+
+A static's `affects` takes it too, `true` only — "Other modified creatures you
+control have vigilance and trample" (Red XIII, Proud Warrior) is
+`{"types": ["Creature"], "controller": "you", "exclude_self": true, "modified": true}`.
+There it is answered by `characteristics.is_modified_printed`, which reads only
+pipeline inputs (ADR 0001): counters, the Aura walk `enchanted_by` makes, and an
+Equipment told by its **printed** face, as `sba` bins it, where the effect-side
+key reads derived subtypes. An artifact some static makes an Equipment does not
+modify for a static. The other static filter languages (`blockers`, cost
+reductions, counting filters) refuse it, and an `any_of` of `has_counters` and
+`enchanted_by` is the near miss that drops the equipped limb.
 
 `attached` and `attached_to_host` are the two ends of one relationship, and a
 card that prints "attached to it" needs the second. `attached` names the **host**

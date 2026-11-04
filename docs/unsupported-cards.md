@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**169 cards** blocked by **155** capabilities.
+**168 cards** blocked by **154** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -114,7 +114,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
-| [modified](#modified) | 1 | 4004 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [myriad](#myriad) | 1 | 6808 | keyword |
@@ -1797,20 +1796,6 @@ Blocks **1** card.
 
 - **Quandrix Command** (rank 4339) — `quandrix_command`
   - • Target player shuffles up to three target cards from their graveyard into their library.
-
-</details>
-
-## modified
-
-Blocks **1** card.
-
-- **(selector)** the `modified` filter key (has a counter of any kind, OR is equipped by any Equipment, OR is enchanted by an Aura the static's controller controls) accepted in a static ability's `affects` filter, so a `grant_keyword` static can read "other modified creatures you control" continuously
-  <br>Why the existing vocabulary won't do: `modified` exists only in `selector_keys` (effect selectors, `_is_modified` in engine/effects/selectors.py), not in `static_affects_filter_keys`. An `any_of` union in `affects` covers two limbs (`has_counters: true`, `enchanted_by: {controller: you}`) but no static filter key asks whether an Equipment is attached to the creature: `attached` and `attached_to_host` read from the attachment's own end, and `attached_to` filters the host of the source, so the equipped limb would be silently dropped
-
-<details><summary>Cards waiting on this</summary>
-
-- **Red XIII, Proud Warrior** (rank 4004) — `red_xiii_proud_warrior`
-  - Other modified creatures you control have vigilance and trample
 
 </details>
 

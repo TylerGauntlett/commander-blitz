@@ -1194,7 +1194,14 @@ STATIC_FILTER_KEYS = frozenset(
 #: branch. Kept off `STATIC_FILTER_KEYS` itself, which also validates
 #: `blockers`, `targeting`, `damage_source` and the counting filters -- readers
 #: that would each need the recursion argued separately.
-STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of"}
+#:
+#: And ``modified``: "Other **modified** creatures you control have vigilance
+#: and trample" (Red XIII, Proud Warrior) -- a counter, an Equipment told by its
+#: printed face, or an Aura the static's controller controls, all pipeline
+#: inputs (`characteristics.is_modified_printed`). Affects only, because the
+#: matcher behind `affects` is the one that answers it; the cost-reduction,
+#: trigger and spell filters that share `STATIC_FILTER_KEYS` have their own.
+STATIC_AFFECTS_FILTER_KEYS = STATIC_FILTER_KEYS | {"any_of", "modified"}
 
 #: Who a filter's ``owner`` (or ``controller``) may name, relative to the source.
 _FILTER_PLAYERS = ("you", "opponent")

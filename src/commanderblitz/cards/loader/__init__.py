@@ -3568,6 +3568,13 @@ def _check_static_affects(filt: Mapping[str, Any], where: str, path: str) -> Non
             f"characteristics; unsupported keys {sorted(unknown)}"
         )
     _check_owner_key(filt, path)
+    # "Modified" names no counter, Equipment or Aura, so the key is `true`
+    # alone; `false` would read as no clause at all, and a dict as `true`.
+    if "modified" in filt and filt["modified"] is not True:
+        raise DslError(
+            f"{path}.modified: true only -- a counter, an Equipment, or an Aura "
+            f"you control on the permanent"
+        )
     if not top:
         # The top level is checked by the caller's loop over every filter key.
         _check_mana_cost_key(filt, path)
