@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **149** capabilities.
+**162 cards** blocked by **148** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -137,7 +137,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [retrace](#retrace) | 1 | 5451 | engine |
 | [reveal-from-hand](#reveal-from-hand) | 1 | 3623 | cost |
 | [sacrificed-source-counters](#sacrificed-source-counters) | 1 | 2403 | value |
-| [sacrificed-source-lki](#sacrificed-source-lki) | 1 | 2784 | value |
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
@@ -2122,20 +2121,6 @@ Blocks **1** card.
 
 - **Crowded Crypt** (rank 2403) — `crowded_crypt`
   - {4}{B}{B}, {T}, Sacrifice this artifact: Create a 2/2 black Zombie creature token with decayed for each corpse counter on this artifact.
-
-</details>
-
-## sacrificed-source-lki
-
-Blocks **1** card.
-
-- **(value)** Last-known information of a permanent sacrificed as an activation cost, readable when the ability resolves: every kind and amount of counter it had (to put that many of each kind on the target), and the set of Equipment that were attached to it as it left (so an `attach` can pick one of them and attach it to the target)
-  <br>Why the existing vocabulary won't do: `counters_had` and `auras_had` read the `had_counters`/`had_auras` bindings that only a leaves/dies trigger event supplies, so an activated ability whose cost sacrificed its source reads 0; `move_counters` needs its source still on the battlefield; `costs.bind_paid_object` records only power/toughness of a paid object; `_equipment_had` snapshots only a count of Equipment, not which ones, and nothing exposes it to a selector; the `attached`/`attached_to` selectors see the live board, where the Equipment is already unattached by resolution
-
-<details><summary>Cards waiting on this</summary>
-
-- **Zack Fair** (rank 2784) — `zack_fair`
-  - {1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.
 
 </details>
 

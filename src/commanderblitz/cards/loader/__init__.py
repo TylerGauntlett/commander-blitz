@@ -2442,6 +2442,50 @@ def _check_same_as(effects: Any, cost: Cost | None, where: str) -> None:
         )
 
 
+def _sacrificed_names(node: Any) -> set[str]:
+    """Every name a ``was_attached_to`` selector key or a ``from_had_counters``
+    name under ``node`` reads."""
+    names: set[str] = set()
+    if isinstance(node, Mapping):
+        for key in ("was_attached_to", "from_had_counters"):
+            if isinstance(node.get(key), str):
+                names.add(node[key])
+        for value in node.values():
+            names |= _sacrificed_names(value)
+    elif isinstance(node, list | tuple):
+        for value in node:
+            names |= _sacrificed_names(value)
+    return names
+
+
+def _check_sacrificed_names(model: AbilityModel, cost: Cost | None, where: str) -> None:
+    """``was_attached_to`` and ``from_had_counters: <name>`` must name the
+    permanent this ability's own `sacrifice` cost binds with ``as``.
+
+    Only that cost writes the record they read (`costs.sacrificed_snapshot`). A
+    name nothing writes would leave the Equipment where it is and put no
+    counters while the card looked implemented. A target selector is refused
+    outright: targets are chosen before costs are paid (601.2c, 601.2h), so
+    the record does not exist yet.
+    """
+    for target in model.targets:
+        if _sacrificed_names(target.model_dump()):
+            raise DslError(
+                f"{where}.targets: 'was_attached_to' reads what the sacrifice cost "
+                f"recorded, and targets are chosen before costs are paid"
+            )
+    names = _sacrificed_names(model.effects)
+    if not names:
+        return
+    sacrificed = (cost.sacrifice or {}).get("as") if cost is not None else None
+    if names != {sacrificed}:
+        raise DslError(
+            f"{where}: 'was_attached_to'/'from_had_counters' {sorted(names)} must name "
+            f"the permanent this ability's sacrifice cost binds with 'as' "
+            f"(got {sacrificed!r})"
+        )
+
+
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     """One printed ability, with a Class's level read off it (716).
 
@@ -2735,6 +2779,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         else None
     )
     _check_same_as(model.effects, cost, where)
+    _check_sacrificed_names(model, cost, where)
     trigger = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
 

@@ -117,6 +117,34 @@ COUNTER_REMOVAL_UP_TO_OPS = ("remove_counters", "remove_counters_from_among")
 ANY_KIND_COUNTER_OPS = ("remove_counters", "move_counters")
 
 
+def _validate_from_had_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
+    """``from_had_counters`` on ``move_counters``: ``true`` (a leave trigger's
+    snapshot) or the name a sacrifice cost's ``as`` wrote (Zack Fair).
+
+    Read only by the every-kind move, so it means nothing without
+    ``all_kinds``; and the counters come off a permanent that has left, so a
+    ``from`` beside it would load and be ignored. A name is tied to this
+    ability's own cost by `loader._check_sacrificed_names`.
+    """
+    had = effect["from_had_counters"]
+    if op != "move_counters":
+        raise DslError(f"{where}: 'from_had_counters' only means anything on move_counters")
+    if not (had is True or (isinstance(had, str) and had)):
+        raise DslError(
+            f"{where}: 'from_had_counters' is true or a sacrifice cost's 'as' name, got {had!r}"
+        )
+    if not effect.get("all_kinds"):
+        raise DslError(
+            f"{where}: 'from_had_counters' puts every kind the permanent had; it needs "
+            f"'all_kinds'"
+        )
+    if "from" in effect:
+        raise DslError(
+            f"{where}: 'from_had_counters' reads a permanent that has left; 'from' would "
+            f"be ignored"
+        )
+
+
 def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
     """``any_kind`` and ``up_to`` on a counter removal: every refusal is a card
     that would load and quietly remove a different number or kind of counters."""
@@ -2910,6 +2938,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"(use set_flag for a word that never wears off)"
             )
     _validate_any_kind_counters(effect, op, where)
+    if "from_had_counters" in effect:
+        _validate_from_had_counters(effect, op, where)
     if op == "move_counters":
         # Without a destination the counters come off the source and go
         # nowhere, which is a card that reads "move a +1/+1 counter onto it"

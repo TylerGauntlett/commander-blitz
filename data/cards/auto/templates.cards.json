@@ -212698,6 +212698,97 @@
       "abilities": [
         {
           "cost": {
+            "mana": "{1}",
+            "sacrifice": {
+              "as": "zack",
+              "self_only": true
+            }
+          },
+          "effects": [
+            {
+              "keywords": [
+                "indestructible"
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "all_kinds": true,
+              "from_had_counters": "zack",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            },
+            {
+              "attachment": {
+                "count": 1,
+                "subtypes": [
+                  "Equipment"
+                ],
+                "was_attached_to": "zack",
+                "zone": "battlefield"
+              },
+              "objects": {
+                "target": "t1"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "zack_fair",
+      "mana_cost": "{W}",
+      "name": "Zack Fair",
+      "oracle_text": "Zack Fair enters with a +1/+1 counter on it.\n{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.",
+      "power": 0,
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [

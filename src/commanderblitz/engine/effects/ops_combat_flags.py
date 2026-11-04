@@ -236,11 +236,25 @@ def _move_every_kind(ctx: EffectContext, spec: Mapping[str, Any]):
       so the counts come from the leave event's `had_counters` snapshot, which
       is the same place `counters_had` reads and the same explicit-LKI pattern
       `snapshot` established.
+
+    ``from_had_counters`` is ``true`` for that leave event, or the name a
+    `sacrifice` cost's ``as`` wrote -- Zack Fair's "put Zack Fair's counters on
+    that creature", where the creature was sacrificed to pay for the ability
+    and its counters are read off that cost's snapshot
+    (`costs.sacrificed_snapshot`, 608.2h).
     """
-    from_had = bool(spec.get("from_had_counters"))
+    from_had = spec.get("from_had_counters")
     if from_had:
-        snapshot = ctx.bindings.get("had_counters")
-        counts = dict(snapshot) if isinstance(snapshot, Mapping) else {}
+        if isinstance(from_had, str):
+            record = ctx.bindings.get(from_had)
+            snapshot = record.get("counters") if isinstance(record, Mapping) else None
+        else:
+            snapshot = ctx.bindings.get("had_counters")
+        counts = (
+            {kind: int(n) for kind, n in snapshot.items() if int(n) > 0}
+            if isinstance(snapshot, Mapping)
+            else {}
+        )
         sources: list[int] = []
     else:
         if "from" in spec:

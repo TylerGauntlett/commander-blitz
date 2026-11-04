@@ -321772,12 +321772,12 @@
     },
     "Zack Fair": {
       "edhrec_rank": 2784,
-      "gate": "template",
+      "gate": null,
       "name": "Zack Fair",
-      "reason": "no template for: enters with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "90ab9143-23e0-437e-bc51-a46f3497c195",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Zada's Commando": {

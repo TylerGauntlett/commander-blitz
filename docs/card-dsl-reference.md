@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 160 |
-| [Selectors](#selectors) | 73 |
+| [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 67 |
 | [Conditions](#conditions) | 34 |
@@ -111,7 +111,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `manifest` | Board |  | Manifest the top card of a library face down as a 2/2. | [Face-down permanents — morph, megamorph and manifest](card-dsl-cookbook.md#face-down-permanents--morph-megamorph-and-manifest) |
 | `meld` | Board |  | Meld the source with its named partner into one permanent. | [Meld — mutate's merged permanent, with the pair fixed by the card](card-dsl-cookbook.md#meld--mutates-merged-permanent-with-the-pair-fixed-by-the-card) |
 | `monstrosity` | Board |  | Monstrosity N: become monstrous with N +1/+1 counters. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
-| `move_counters` | Board |  | Move counters from one permanent to another: one named kind, every kind (`all_kinds`), or N counters of kinds the controller picks (`any_kind`). | [Moving a counter of any kind — move_counters with any_kind](card-dsl.md#moving-a-counter-of-any-kind--move_counters-with-any_kind) |
+| `move_counters` | Board |  | Move counters from one permanent to another: one named kind, every kind (`all_kinds`, from a leave trigger's or a sacrifice cost's record with `from_had_counters`), or N counters of kinds the controller picks (`any_kind`). | [Moving a counter of any kind — move_counters with any_kind](card-dsl.md#moving-a-counter-of-any-kind--move_counters-with-any_kind) |
 | `must_attack` | Board |  | Creatures attack this turn if able. | [Attack requirements](card-dsl-cookbook.md#attack-requirements) |
 | `must_attack_planeswalker` | Board |  | Creatures attack a planeswalker this turn if able. | ["…creatures that player controls attack Gideon Jura if able"](card-dsl-cookbook.md#creatures-that-player-controls-attack-gideon-jura-if-able) |
 | `must_attack_player` | Board |  | Creatures attack a named player each combat if able, until the end of your next turn or this turn. | ["…attacks that player each combat if able"](card-dsl-cookbook.md#attacks-that-player-each-combat-if-able) |
@@ -283,6 +283,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `toughness` | A comparison on live toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `types` | Has all of these card types. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `union` | One pool made of several zones' selectors. | [One choice across two zones — union](card-dsl-cookbook.md#one-choice-across-two-zones--union) |
+| `was_attached_to` | Attached, as the same object, to the permanent a sacrifice cost's `as` recorded, when it was paid (608.2h). | [Zack Fair — what a sacrificed source had](card-dsl.md#zack-fair--what-a-sacrificed-source-had) |
 | `x_in_mana_cost` | Has {X} in its printed mana cost. | [A restriction that is not a name — mana_value, x_in_mana_cost](card-dsl-cookbook.md#a-restriction-that-is-not-a-name--mana_value-x_in_mana_cost) |
 | `zone` | Which zone to look in. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 

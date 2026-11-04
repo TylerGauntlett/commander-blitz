@@ -18112,6 +18112,13 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "zack_fair": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "zagoth_crystal": {
     "zone": "battlefield"
   },

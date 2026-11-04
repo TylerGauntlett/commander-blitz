@@ -436,6 +436,15 @@ SELECTOR_KEYS = frozenset(
         #: tokens another permanent made are not in it. "Other" is
         #: `exclude_binding` over the `as` the creating op wrote.
         "created_with",
+        #: "…attach an Equipment **that was attached to Zack Fair**" -- the
+        #: name a `sacrifice` cost's ``as`` wrote. A permanent recorded as
+        #: attached to the sacrificed permanent when it was paid
+        #: (`costs.sacrificed_snapshot`), still on the battlefield as the same
+        #: object: the record keeps each attachment's zone timestamp, so one
+        #: that left and came back (400.7) is a new object and does not match.
+        #: Last-known information (608.2h): the live `attached` and
+        #: `attached_to` keys see the Equipment already fallen off.
+        "was_attached_to",
         # "…dealt damage by this creature this turn." A trigger filter rather
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
@@ -664,6 +673,28 @@ def _bound_oids(ctx: EffectContext, name: str) -> list[int]:
         return [int(v) for v in value if isinstance(v, int)]
     bound = _bound_oid(ctx, name)
     return [bound] if bound is not None else []
+
+
+def _was_attached_to(ctx: EffectContext, oid: int, name: str) -> bool:
+    """Whether ``oid`` is, as the same object, a permanent the record ``name``
+    says was attached to the permanent it snapshotted (`costs.sacrificed_snapshot`).
+
+    A binding that is not such a record -- nothing paid, or a name bound by
+    something else -- holds no attachments and matches nothing.
+    """
+    record = ctx.bindings.get(name)
+    attached = record.get("attached") if isinstance(record, Mapping) else None
+    if not isinstance(attached, (list, tuple)):
+        return False
+    obj = ctx.state.objects.get(oid)
+    if obj is None or not obj.on_battlefield:
+        return False
+    return any(
+        isinstance(entry, Mapping)
+        and entry.get("oid") == oid
+        and entry.get("timestamp") == obj.timestamp
+        for entry in attached
+    )
 
 
 def _zone_owners(ctx: EffectContext, selector: Mapping[str, Any]) -> list[int]:
@@ -1119,6 +1150,10 @@ def matches(
         creator = state.objects.get(ctx.source_oid) if ctx.source_oid is not None else None
         if creator is None or oid not in creator.created_tokens:
             return False
+    if (name := selector.get("was_attached_to")) is not None and not _was_attached_to(
+        ctx, oid, str(name)
+    ):
+        return False
     if "phased_out_with" in selector:
         # "…until this enchantment leaves the battlefield" -- the permanents
         # *this* card phased out, and no others. The phasing twin of
@@ -1880,6 +1915,15 @@ def validate_selector(selector: Any, where: str) -> None:
         # A card can only name itself as the creator; any other value would
         # load and then silently match no token at all.
         raise DslError(f"{where}: created_with must be 'self', got {selector['created_with']!r}")
+    if "was_attached_to" in selector and not (
+        isinstance(selector["was_attached_to"], str) and selector["was_attached_to"]
+    ):
+        # The name of the binding a sacrifice cost's `as` wrote;
+        # `loader._check_sacrificed_names` ties it to this ability's cost.
+        raise DslError(
+            f"{where}: was_attached_to names a sacrifice cost's 'as' binding, "
+            f"got {selector['was_attached_to']!r}"
+        )
     if "returned_with" in selector and selector["returned_with"] != "self":
         # The link is written by this source's own return, so "self" is the
         # only answer; anything else would load and match nothing.

@@ -4174,6 +4174,47 @@ Not the `sacrifice` op with `snapshot` in the effects: that pays on resolution,
 so the ability could be activated with no other creature and responded to
 before anything had died.
 
+### Zack Fair — what a sacrificed source had
+
+```jsonc
+{ "kind": "activated",
+  "text": "{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.",
+  "cost": { "mana": "{1}", "sacrifice": { "self_only": true, "as": "zack" } },
+  "targets": [ { "id": "t1", "kind": "permanent",
+                 "selector": { "zone": "battlefield", "controller": "you",
+                               "types": ["Creature"] } } ],
+  "effects": [
+    { "op": "grant_keyword", "keywords": ["indestructible"], "objects": { "target": "t1" } },
+    { "op": "move_counters", "all_kinds": true, "from_had_counters": "zack",
+      "objects": { "target": "t1" } },
+    { "op": "attach", "objects": { "target": "t1" },
+      "attachment": { "zone": "battlefield", "subtypes": ["Equipment"],
+                      "was_attached_to": "zack", "count": 1 } } ] }
+```
+
+A `sacrifice` cost's `as` record also holds what was attached to the permanent
+as it was paid: each attachment with the zone timestamp it had. Two readers
+take the permanent's last-known information (608.2h) from it:
+
+- **`from_had_counters: <name>`** on `move_counters` with `all_kinds` puts every
+  kind of counter the sacrificed permanent had, in its amount, on `objects`.
+  `from_had_counters: true` is the same move from a leave trigger's
+  `had_counters` (The Ozolith).
+- **`was_attached_to: <name>`**, a selector key, matches a permanent recorded as
+  attached to it that is still on the battlefield as the same object. One that
+  left and came back is a new object (400.7) and does not match; one moved to
+  another creature in the meantime still does. Write `subtypes: ["Equipment"]`
+  beside it for "an Equipment", and `count: 1` for the controller to pick one.
+
+The loader refuses either name unless it is this ability's sacrifice cost `as`,
+`from_had_counters` without `all_kinds` or beside `from`, and `was_attached_to`
+in a target selector, which is chosen before costs are paid.
+
+Not `move_counters` with `from: {"self_only": true}`, which reads the
+graveyard card's empty counters, nor `counters_had`, which only a leave trigger
+binds. Not `attached` or `attached_to`: they read the live board, where the
+Equipment has already fallen off.
+
 ### Coin of Fate — an exile-from-graveyard cost that names what it exiled
 
 ```jsonc

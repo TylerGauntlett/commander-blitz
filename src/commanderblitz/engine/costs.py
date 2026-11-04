@@ -1549,6 +1549,27 @@ def returned_snapshot(state: GameState, oid: int) -> dict[str, Any]:
     return record
 
 
+def sacrificed_snapshot(state: GameState, oid: int) -> dict[str, Any]:
+    """Last-known information about a permanent a cost sacrificed, with what hung on it.
+
+    `zones.snapshot` -- characteristics and every counter -- plus
+    ``attached``: one ``{"oid": …, "timestamp": …}`` per permanent attached to
+    it (Equipment, Aura or Fortification), each with the
+    `GameObject.timestamp` of the zone it was in. An oid survives every zone
+    change, so the timestamp is what tells the attachment that was there from
+    a new object (400.7) that left and came back before the ability resolved;
+    the ``was_attached_to`` selector key matches only the first. Taken before
+    the sacrifice detaches them, which is the only moment the answer exists.
+    """
+    record = capture_snapshot(state, oid)
+    record["attached"] = [
+        {"oid": other_oid, "timestamp": state.objects[other_oid].timestamp}
+        for other_oid in state.battlefield
+        if other_oid in state.objects and state.objects[other_oid].attached_to == oid
+    ]
+    return record
+
+
 def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
     """Which permanents this cost may tap -- "five untapped Vampires you control".
 
@@ -1893,8 +1914,11 @@ def pay(
             # token with no object at all -- and in `zones.snapshot`'s shape,
             # the one the `sacrifice` op's `snapshot` key writes, so
             # `power_of {"binding": …}` and `{"binding": …}` as a selector read
-            # it without knowing a cost wrote it.
-            bindings[str(name)] = capture_snapshot(state, picked[0])
+            # it without knowing a cost wrote it. Zack Fair adds what was
+            # attached to it (`sacrificed_snapshot`), read back by the
+            # `was_attached_to` selector key, and its counters, read back by
+            # `move_counters`' `from_had_counters: <name>`.
+            bindings[str(name)] = sacrificed_snapshot(state, picked[0])
         for oid in picked:
             # The thing being paid for, so the log can say what the creature
             # was sacrificed *to* rather than only that it was sacrificed.
