@@ -212492,6 +212492,113 @@
     {
       "abilities": [
         {
+          "active_zones": [
+            "hand"
+          ],
+          "cost": {
+            "mana": "{1}{R}",
+            "return_to_hand": {
+              "as": "returned",
+              "attacking": true,
+              "blocked": false,
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "effects": [
+            {
+              "attacking": {
+                "same_as": "returned"
+              },
+              "controller": "you",
+              "objects": {
+                "self_only": true,
+                "zone": "hand"
+              },
+              "op": "put_onto_battlefield",
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "Ninjutsu {1}{R} ({1}{R}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)"
+        },
+        {
+          "effects": [
+            {
+              "duration": "as_long_as_you_control_source",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "gain_control"
+            },
+            {
+              "attachment": {
+                "controller": "you",
+                "count": 1,
+                "optional": true,
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              },
+              "objects": {
+                "self_only": true
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "not_types": [
+                  "Creature"
+                ],
+                "types": [
+                  "Artifact"
+                ]
+              }
+            }
+          ],
+          "text": "When Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie. Then you may attach an Equipment you control to Yuffie.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "yuffie_materia_hunter",
+      "mana_cost": "{2}{R}",
+      "name": "Yuffie, Materia Hunter",
+      "oracle_text": "Ninjutsu {1}{R} ({1}{R}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhen Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie. Then you may attach an Equipment you control to Yuffie.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Ninja"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

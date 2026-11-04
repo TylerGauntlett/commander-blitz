@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**166 cards** blocked by **152** capabilities.
+**165 cards** blocked by **151** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -79,7 +79,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
-| [exact-ninjutsu](#exact-ninjutsu) | 1 | 6202 | keyword |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -1291,20 +1290,6 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
-
-</details>
-
-## exact-ninjutsu
-
-Blocks **1** card.
-
-- **(keyword)** ninjutsu as 702.49 defines it: activatable only once blockers have been declared (509.1h -- before that no attacker is "unblocked"), and the ninja attacking the same player, planeswalker or battle the returned creature was attacking (702.49c), read from the creature the cost returned
-  <br>Why the existing vocabulary won't do: the cookbook shape (activated from hand, cost return_to_hand {attacking: true, blocked: false}, put_onto_battlefield attacking: true) is offered in the declare attackers step, because the `blocked` selector reads 'no blocker recorded' rather than 'blockers declared and none for it' (tests/unit/keywords/test_ninjutsu.py pins that it is offered before blocks), so the ninja can be swapped in before blocks and then be blocked; and `attacking: true` resolves through board_helpers._attack_defender to the first declared attacker's defender, not the returned creature's, and never copies its attacking_permanent -- in a multiplayer pod the ninja can attack the wrong player, or a player instead of the planeswalker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yuffie, Materia Hunter** (rank 6202) — `yuffie_materia_hunter`
-  - Ninjutsu {1}{R} ({1}{R}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)
 
 </details>
 

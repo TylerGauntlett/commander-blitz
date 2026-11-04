@@ -34,6 +34,7 @@ from .board_helpers import (
     _attacking_player,
     _offer_blocks_to,
     _players,
+    _same_attack,
 )
 from .context import EffectContext
 from .registry import register
@@ -571,10 +572,13 @@ def op_sacrifice(ctx: EffectContext, spec: Mapping[str, Any]):
 def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     """Put objects onto the battlefield, optionally tapped and attacking.
 
-    ``attacking`` is **ninjutsu**: "put this card onto the battlefield from your
-    hand tapped and attacking". It joins the combat the returned attacker just
-    left, which is why the ninja arrives unblocked -- the blocker that was there
-    was blocking a creature that is now in its owner's hand.
+    ``attacking`` is "put … onto the battlefield tapped and attacking".
+    ``true`` attacks whatever the source is attacking, or failing that the
+    first declared attacker's defender (`_attack_defender`); a player spec
+    names the seat. ``{"same_as": <name>}`` is **ninjutsu** (702.49c): the
+    player, planeswalker or battle the creature the ability's `return_to_hand`
+    cost bound as ``<name>`` was attacking (`_same_attack`). The ninja arrives
+    after blockers were declared, so it is unblocked (509.1h).
 
     Same contract `create_token`'s `attacking` has: a permanent put in this way
     was never *declared* as an attacker, so it triggers nothing that fires on
@@ -597,6 +601,11 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
     oids = yield from choose_objects(ctx, spec.get("objects"), "Put onto the battlefield")
     tapped = bool(spec.get("tapped"))
     attacking = _attacking_player(ctx, spec, _attack_defender)
+    same = (
+        _same_attack(ctx, spec)
+        if isinstance(spec.get("attacking"), Mapping) and "same_as" in spec["attacking"]
+        else None
+    )
     counters = spec.get("counters") or {}
     arrived: list[int] = []
     for oid in oids:
@@ -649,6 +658,8 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
             add_counters(ctx.state, oid, str(kind), int(amount), source=ctx.source_oid)
         if attacking is not None and ctx.state.combat is not None:
             ctx.state.combat.attackers[oid] = attacking
+            if same is not None and same[1] is not None:
+                ctx.state.combat.attacking_permanent[oid] = same[1]
             _offer_blocks_to(ctx, attacking)
             arrived.append(oid)
     # "…attacking that player or a planeswalker they control" -- asked once

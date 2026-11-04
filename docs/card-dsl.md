@@ -484,7 +484,7 @@ line each is [card-dsl-reference.md#selectors](card-dsl-reference.md#selectors).
   "attacking_player": "you",      // attacking YOU, not your planeswalker -- "you"|"opponent"|"any"|"most_life"|{"binding": name}
   "attacked_this_turn": true,     // Relentless Assault -- read AFTER combat, not during
   "entered_this_turn": true,      // Ocelot Pride -- the turn's arrivals, from the ledger
-  "blocked": false,               // ninjutsu -- is anything blocking *this attacker*
+  "blocked": false,               // ninjutsu -- unblocked once blockers are declared (509.1h); neither before
   "is_commander": false, "is_token": false, "damaged": true,
   "power":      { "op": ">=", "value": { "const": 3 } },   // the LIVE size, after counters and anthems
   "base_power": { "op": "<=", "value": { "const": 1 } },   // Angelic Aberration -- 613.2 layer 7a/7b

@@ -3254,30 +3254,50 @@ Both are board state, so neither can make one static depend on another's output.
   "active_zones": ["hand"],
   "cost": { "mana": "{1}{U}",
             "return_to_hand": { "controller": "you", "types": ["Creature"],
-                                "attacking": true, "blocked": false, "count": 1 } },
+                                "attacking": true, "blocked": false, "count": 1,
+                                "as": "returned" } },
   "effects": [ { "op": "put_onto_battlefield",
                  "objects": { "zone": "hand", "self_only": true },
-                 "controller": "you", "tapped": true, "attacking": true } ] }
+                 "controller": "you", "tapped": true,
+                 "attacking": { "same_as": "returned" } } ] }
 ```
 
-Two words, one on each half.
+Rule 702.49. Two words in the reminder text, one on each half.
 
-**`blocked`** is a selector key and is *not* the negation of `blocking`. That
-key asks whether a creature is blocking something; this asks whether anything
-is blocking **this attacker**, and the two are different creatures.
+**`blocked: false`** is "unblocked" (509.1h). An attacking creature becomes
+blocked or unblocked as blockers are declared: `blocked: true` matches an
+attacker with a blocker declared for it, or in a band that had one (702.21e),
+and keeps matching after its blockers leave combat; `blocked: false` matches an
+attacker with none. Before blockers are declared, and for a creature that is not
+attacking, the key matches neither, so ninjutsu is first offered once blocks are
+in and can never swap a ninja in to be blocked. It is not the negation of
+`blocking`, which asks about a blocker, a different creature.
 
-**`attacking`** is `create_token`'s clause, on `put_onto_battlefield` as well.
-The ninja joins the combat the returned attacker just left, which is why it
-arrives unblocked — the blocker that was there was blocking a creature now
-sitting in its owner's hand. Same contract as the token version: it was never
-*declared* as an attacker (508.4), so it triggers nothing that fires on
-attacking.
+**`attacking: { "same_as": <name> }`** is 702.49c: the ninja enters attacking
+the same player, planeswalker or battle the returned creature was attacking.
+The cost's `as` binds the returned creature as it is paid, before the bounce
+takes it out of combat (506.4): its `zones.snapshot` plus whom it was attacking
+(`costs.returned_snapshot`), so `{"binding": "returned"}` also reads its
+last-known power. A planeswalker that has since left keeps the ninja attacking
+it and dealing no combat damage (506.4c), as it would have the returned
+creature; a defending player who has left the game leaves the ninja arriving
+tapped and attacking nobody. The ninja arrives after blocks, so it is
+unblocked, and it was never *declared* (508.4), so nothing that fires on
+attacking triggers.
+
+The loader refuses `same_as` naming anything but this ability's
+`return_to_hand` `as`, `same_as` on any op but `put_onto_battlefield`, `same_as`
+beside `or_planeswalker` (the walker is copied, not chosen), and a
+`return_to_hand` `as` on a cost that returns more than one permanent or does not
+belong to an activated ability. The near miss is `attacking: true`, which
+follows the source or the first declared attacker's defender, not the returned
+creature's: at a pod that can be the wrong player, and against a planeswalker
+it is the player.
 
 The ability is offered from **hand** and satisfies the outside-the-battlefield
 guard through unearth's satisfier — an unconditional top-level effect moving
-`self_only` out. Ninjutsu is the shape that makes that satisfier obviously
-right: nothing in the *cost* removes the card, and it leaves hand because the
-effect puts it onto the battlefield.
+`self_only` out. Nothing in the *cost* removes the card; it leaves hand because
+the effect puts it onto the battlefield.
 
 ## Reselecting an attack — `redirect_attack`
 

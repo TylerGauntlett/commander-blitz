@@ -89,7 +89,27 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"can read what its cost sacrificed; this cost names it for nothing"
             )
     validate_selector(sacrifice_selector, f"{where}.cost.sacrifice")
-    validate_selector(model.return_to_hand, f"{where}.cost.return_to_hand")
+    return_selector = dict(model.return_to_hand) if model.return_to_hand is not None else None
+    if return_selector is not None and "as" in return_selector:
+        # Ninjutsu: "…attacking the same player, planeswalker or battle **the
+        # returned creature** was attacking" (702.49c). `sacrifice`'s `as`,
+        # for the creature a cost bounced, and refused on the same grounds.
+        return_name = return_selector.pop("as")
+        if not isinstance(return_name, str) or not return_name:
+            raise DslError(
+                f"{where}.cost.return_to_hand.as: a binding name, got {return_name!r}"
+            )
+        if int(return_selector.get("count", 1) or 1) != 1:
+            raise DslError(
+                f"{where}.cost.return_to_hand.as: names *the* returned permanent, so "
+                f"the cost must return exactly one -- no 'count' above 1"
+            )
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost.return_to_hand.as: only an activated ability's effects "
+                f"can read what its cost returned; this cost names it for nothing"
+            )
+    validate_selector(return_selector, f"{where}.cost.return_to_hand")
     graveyard_selector = (
         dict(model.exile_from_graveyard) if model.exile_from_graveyard is not None else None
     )

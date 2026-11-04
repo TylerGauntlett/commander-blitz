@@ -1372,6 +1372,12 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
         ),
         None,
     )
+    # Ninjutsu: "Return an **unblocked attacker** you control to hand" is a
+    # cost, not a target, and asks for the same thing -- plus blockers having
+    # been declared (509.1h), which `_walk_past_blocks` arranges.
+    bounce = getattr(ability.cost, "return_to_hand", None)
+    if wants is None and isinstance(bounce, dict) and bounce.get("attacking"):
+        wants = bounce
     if wants is None:
         return
 
@@ -1397,6 +1403,34 @@ def _provide_the_attacker(game: Game, registry, ability) -> None:
 
     if _walk_to_declare_attackers(game):
         _declare_them(game, [attacker.oid])
+        if "blocked" in wants:
+            _walk_past_blocks(game)
+
+
+def _walk_past_blocks(game: Game) -> None:
+    """Finish every block declaration empty and stop at the first priority after.
+
+    An attacker is unblocked only once blockers are declared (509.1h), so an
+    ability whose cost returns one is first activatable in the declare blockers
+    step. Nothing is blocked: the attacker this family made is the one the cost
+    wants unblocked.
+    """
+    for _ in range(40):
+        decision = game.pending()
+        combat = game.state.combat
+        if decision is None or game.over or combat is None:
+            return
+        if decision.kind is DecisionKind.PRIORITY and combat.blockers_declared:
+            return
+        wanted = (
+            ActionKind.FINISH_DECLARATION
+            if decision.kind is DecisionKind.DECLARE_BLOCKERS
+            else ActionKind.PASS
+        )
+        step = next((a for a in game.legal_actions() if a.kind is wanted), None)
+        if step is None:
+            return
+        game.apply(step)
 
 
 def _walk_to_declare_attackers(game: Game) -> bool:

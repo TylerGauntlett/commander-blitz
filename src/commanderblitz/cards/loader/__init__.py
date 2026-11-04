@@ -2407,6 +2407,40 @@ def _check_threshold_order(abilities: tuple[Ability, ...], where: str) -> None:
 _LEVEL_LINE_KEYS = frozenset({"kind", "text", "level", "cost", "sorcery_speed_only"})
 
 
+def _same_as_names(node: Any) -> set[str]:
+    """Every name an ``attacking: {"same_as": …}`` clause under ``node`` reads."""
+    names: set[str] = set()
+    if isinstance(node, Mapping):
+        who = node.get("attacking")
+        if isinstance(who, Mapping) and isinstance(who.get("same_as"), str):
+            names.add(who["same_as"])
+        for value in node.values():
+            names |= _same_as_names(value)
+    elif isinstance(node, list | tuple):
+        for value in node:
+            names |= _same_as_names(value)
+    return names
+
+
+def _check_same_as(effects: Any, cost: Cost | None, where: str) -> None:
+    """``attacking: {"same_as": <name>}`` must name this ability's returned creature.
+
+    The record it reads is written by this ability's own `return_to_hand` cost
+    (``as``) and nothing else. A name nothing writes would leave the binding
+    empty and the ninja arriving tapped and attacking nobody, while the card
+    looked implemented.
+    """
+    names = _same_as_names(effects)
+    if not names:
+        return
+    returned = (cost.return_to_hand or {}).get("as") if cost is not None else None
+    if names != {returned}:
+        raise DslError(
+            f"{where}: attacking 'same_as' {sorted(names)} must name the creature this "
+            f"ability's return_to_hand cost binds with 'as' (got {returned!r})"
+        )
+
+
 def _compile_ability(model: AbilityModel, index: int, card_where: str) -> Ability:
     """One printed ability, with a Class's level read off it (716).
 
@@ -2699,6 +2733,7 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
         if model.cost
         else None
     )
+    _check_same_as(model.effects, cost, where)
     trigger = None
     active_zones: tuple[Zone, ...] = (Zone.BATTLEFIELD,)
 

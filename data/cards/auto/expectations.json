@@ -18099,6 +18099,11 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "yuffie_materia_hunter": {
+    "battlefield_count": 34,
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "zagoth_crystal": {
     "zone": "battlefield"
   },

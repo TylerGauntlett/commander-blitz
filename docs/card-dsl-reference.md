@@ -120,7 +120,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `phase_in` | Board |  | Phased-out permanents phase in. | [Phasing — "does not exist", said by not being in a list](card-dsl-cookbook.md#phasing--does-not-exist-said-by-not-being-in-a-list) |
 | `phase_out` | Board |  | Permanents phase out. | ["Target creature phases out"](card-dsl-cookbook.md#target-creature-phases-out) |
 | `proliferate` | Board |  | Proliferate: choose permanents and players, add one of each counter. | [Proliferate — a choice over permanents and players](card-dsl.md#proliferate--a-choice-over-permanents-and-players) |
-| `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped or with counters; an Aura chooses its host as it enters unless `host_named`. | [Effect ops](card-dsl.md#effect-ops) |
+| `put_onto_battlefield` | Board |  | Put cards onto the battlefield, optionally tapped, attacking (`same_as` a returned creature for ninjutsu) or with counters; an Aura chooses its host as it enters unless `host_named`. | [Effect ops](card-dsl.md#effect-ops) |
 | `redirect_attack` | Board |  | Reselect what an attacking creature attacks; nothing is declared. | [Reselecting an attack — redirect_attack](card-dsl-cookbook.md#reselecting-an-attack--redirect_attack) |
 | `regenerate` | Board |  | Regenerate permanents (a shield for the turn). | ["It can't be regenerated."](card-dsl-cookbook.md#it-cant-be-regenerated) |
 | `remove_counters` | Board |  | Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling. | [Removing counters of any kind — any_kind](card-dsl.md#removing-counters-of-any-kind--any_kind) |
@@ -223,7 +223,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `base_power` | A comparison on base power (layer 7a/7b). | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `base_toughness` | A comparison on base toughness. | [power / toughness — a derived characteristic, read at a fixed layer](card-dsl.md#power--toughness--a-derived-characteristic-read-at-a-fixed-layer) |
 | `binding` | Exactly the objects a named `as` recorded. | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
-| `blocked` | Is (or is not) blocked by anything. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
+| `blocked` | An attacker that is blocked (or unblocked) once blockers are declared (509.1h); neither before, nor for a non-attacker. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `blocking` | Is blocking. | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `chooser` | Who picks: `controller`, `owner` or `none`. | [chooser — when somebody else picks the mode](card-dsl-cookbook.md#chooser--when-somebody-else-picks-the-mode) |
 | `colorless` | Has no colors (105.2c); true only. | ["Colorless" — colorless](card-dsl.md#colorless--colorless) |
@@ -752,7 +752,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `put_counters` | Put N counters of a kind on the source. | [put_counters — counters on the source, paid on activation](card-dsl.md#put_counters--counters-on-the-source-paid-on-activation) |
 | `remove_counters` | Remove N counters of a kind from the source. | [Costs](card-dsl.md#costs) |
 | `remove_counters_from_among` | Remove N counters of any kinds from among other permanents. | [remove_counters_from_among — counters of any kind, off other permanents](card-dsl.md#remove_counters_from_among--counters-of-any-kind-off-other-permanents) |
-| `return_to_hand` | Return a matching permanent to hand. | [Costs](card-dsl.md#costs) |
+| `return_to_hand` | Return a matching permanent to hand; `as` names it, and whom it was attacking, for the effects. | [Ninjutsu — swapping into a combat already under way](card-dsl-cookbook.md#ninjutsu--swapping-into-a-combat-already-under-way) |
 | `sacrifice` | Sacrifice a matching permanent; `as` names it for the effects. | [Ghoulcaller Gisa — a sacrifice cost that names what it sacrificed](card-dsl.md#ghoulcaller-gisa--a-sacrifice-cost-that-names-what-it-sacrificed) |
 | `tap` | {T}: tap the source. | [Costs](card-dsl.md#costs) |
 | `tap_permanents` | Tap N other permanents, or `total_power` of them (crew). | [Crew — a tap cost measured in power](card-dsl.md#crew--a-tap-cost-measured-in-power) |

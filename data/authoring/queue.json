@@ -321602,12 +321602,12 @@
     },
     "Yuffie, Materia Hunter": {
       "edhrec_rank": 6202,
-      "gate": "template",
+      "gate": null,
       "name": "Yuffie, Materia Hunter",
-      "reason": "no template for: Ninjutsu {1}{R}",
+      "reason": "",
       "scryfall_id": "f8417267-c953-4d58-8a9e-af3d0da01509",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yuki-Onna": {

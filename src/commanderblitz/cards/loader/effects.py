@@ -701,6 +701,15 @@ def _validate_attacking(who: Any, where: str, target_kinds: Mapping[str, str]) -
     """
     if isinstance(who, bool):
         return
+    if isinstance(who, Mapping) and "same_as" in who:
+        # Ninjutsu (702.49c): whom the creature the ability's cost returned was
+        # attacking. `loader._check_same_as` ties the name to the cost's `as`.
+        if set(who) != {"same_as"} or not (isinstance(who["same_as"], str) and who["same_as"]):
+            raise DslError(
+                f"{where}: {{'same_as': <name>}} takes only the binding name a "
+                f"return_to_hand cost's 'as' wrote, got {who!r}"
+            )
+        return
     if isinstance(who, str) and who in PLURAL_PLAYER_SPEC_NAMES:
         raise DslError(
             f"{where}: {who!r} can name several players and a creature attacks one -- "
@@ -2671,6 +2680,21 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         _validate_player_spec(effect["controller"], f"{where}.controller", target_kinds)
     if op in ATTACKING_OPS and "attacking" in effect:
         _validate_attacking(effect["attacking"], f"{where}.attacking", target_kinds)
+        if isinstance(effect["attacking"], Mapping) and "same_as" in effect["attacking"]:
+            # Only a card put onto the battlefield in a returned attacker's
+            # place has "the returned creature" to follow; the attack target is
+            # copied whole, so there is nothing for `or_planeswalker` to widen.
+            if op != "put_onto_battlefield":
+                raise DslError(
+                    f"{where}.attacking: 'same_as' is ninjutsu's 'attacking the same "
+                    f"player or planeswalker the returned creature was attacking', "
+                    f"which only put_onto_battlefield says"
+                )
+            if effect.get("or_planeswalker"):
+                raise DslError(
+                    f"{where}.or_planeswalker: 'same_as' already copies the planeswalker "
+                    f"the returned creature was attacking; there is no choice to widen"
+                )
     if op in ATTACKING_OPS and "or_planeswalker" in effect:
         # "…attacking that player or a planeswalker they control." A widening of
         # `attacking`, so it means nothing without one: beside no `attacking`

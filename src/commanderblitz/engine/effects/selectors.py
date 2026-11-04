@@ -440,10 +440,12 @@ SELECTOR_KEYS = frozenset(
         # than an object filter: answered from the per-turn damage ledger,
         # because the creature it asks about has usually just died.
         "damaged_by",
-        #: "…an unblocked attacking creature you control" -- ninjutsu. Asks
-        #: whether anything is blocking *this attacker*, which is not the
-        #: negation of `blocking`: that key is about a blocker, and these are
-        #: two different creatures.
+        #: "…an unblocked attacker you control" -- ninjutsu. 509.1h: an
+        #: attacking creature becomes blocked or unblocked only once blockers
+        #: have been declared, and stays blocked after its blockers leave.
+        #: Before that, and for a creature that is not attacking, it matches
+        #: neither `true` nor `false`. Not the negation of `blocking`, which
+        #: is about a blocker -- a different creature.
         "blocked",
         #: "Whenever one or more **goaded** creatures deal combat damage to one
         #: of your opponents" -- Puppet Master, String Puller. A creature that
@@ -1171,13 +1173,17 @@ def matches(
         elif not attacking_player_matches(combat, oid, str(who), ctx.controller, state):
             return False
     if "blocked" in selector:
-        # "…an **unblocked** attacking creature you control" -- ninjutsu. Not
-        # the negation of `blocking`, which is about a *blocker*: this asks
-        # whether anything is blocking **this attacker**, and the two are
-        # different creatures. A creature that is not attacking at all is not
-        # blocked either, which is why `blocked: false` is paired with
-        # `attacking: true` on every printed line of this shape.
-        is_blocked = bool(combat and any(v == oid for v in combat.blockers.values()))
+        # "…an **unblocked** attacker you control" -- ninjutsu. 509.1h: an
+        # attacking creature with a blocker declared for it becomes *blocked*,
+        # one with none becomes *unblocked*, and that happens as blockers are
+        # declared -- before then an attacker is neither, so ninjutsu is not
+        # offered in the declare attackers step. A blocked creature stays
+        # blocked when its blockers leave combat (`block_order` keeps them),
+        # and a band is blocked as a unit (702.21e). Not the negation of
+        # `blocking`, which is about a *blocker*, a different creature.
+        if combat is None or not combat.attacking(oid) or not combat.blockers_declared:
+            return False
+        is_blocked = any(combat.block_order.get(b) for b in combat.band_of(oid))
         if is_blocked != bool(selector["blocked"]):
             return False
     # "…goaded creatures…" (701.38): goaded by anyone, by a resolved goad's

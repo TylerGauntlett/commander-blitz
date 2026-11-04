@@ -1519,12 +1519,34 @@ def _return_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None)
     """
 
     spec = dict(cost.return_to_hand or {})
+    # `as` names the returned creature for the ability's effects; it says
+    # nothing about which permanents qualify.
+    spec.pop("as", None)
     spec.setdefault("controller", "you")
     spec.setdefault("zone", "battlefield")
     count = int(spec.pop("count", 1) or 1)
     ctx = EffectContext(state=state, controller=pid, source_oid=source_oid)
     pool = resolve_pool(ctx, spec)
     return pool if len(pool) >= count else []
+
+
+def returned_snapshot(state: GameState, oid: int) -> dict[str, Any]:
+    """Last-known information about a permanent a cost returned, with its attack.
+
+    `zones.snapshot`, plus ``attack``: ``{"player": …, "permanent": …}`` when
+    the creature was attacking -- the defending player, and the planeswalker
+    or battle it was attacking or ``None`` -- and ``None`` when it was not.
+    """
+    record = capture_snapshot(state, oid)
+    combat = state.combat
+    if combat is not None and combat.attacking(oid):
+        record["attack"] = {
+            "player": combat.attackers[oid],
+            "permanent": combat.attacking_permanent.get(oid),
+        }
+    else:
+        record["attack"] = None
+    return record
 
 
 def _tap_cost_pool(state: GameState, pid: int, cost: Cost, source_oid: int | None) -> list[int]:
@@ -1882,9 +1904,19 @@ def pay(
         spec = dict(cost.return_to_hand)
         count = int(spec.pop("count", 1) or 1)
         pool = _return_pool(state, pid, cost, source_oid)
+        name = spec.pop("as", None)
         picked = yield from ask_objects(
             ctx, "Return to hand", pool, count, count, pid, "return_cost"
         )
+        if name and picked and bindings is not None:
+            # Ninjutsu: the ninja enters "attacking the same player,
+            # planeswalker or battle the returned creature was attacking"
+            # (702.49c). Bouncing it removes it from combat (506.4), so whom it
+            # was attacking is fixed here, in the window where it has been
+            # chosen and has not yet moved -- `sacrifice`'s `as` snapshot, plus
+            # the attack. `put_onto_battlefield`'s `attacking: {"same_as": …}`
+            # reads it back.
+            bindings[str(name)] = returned_snapshot(state, picked[0])
         for oid in picked:
             bounce_object(state, oid, by=source_oid)
 
