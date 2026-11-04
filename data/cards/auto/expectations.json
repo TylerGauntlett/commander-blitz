@@ -7022,6 +7022,10 @@
   "helionaut": {
     "zone": "battlefield"
   },
+  "helitrooper": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "hell_s_kitchen": {
     "life": {
       "0": 41
@@ -7040,6 +7044,13 @@
   },
   "hellkite_courser": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hellkite_tyrant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "helm_of_the_host": {
@@ -7131,6 +7142,10 @@
     "zone": "battlefield"
   },
   "hero_s_blade": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "hero_s_heirloom": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

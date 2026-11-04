@@ -1,0 +1,24 @@
+{
+  "card_id": "lifestream_s_blessing",
+  "name": "Lifestream's Blessing",
+  "oracle_text": "Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life.\nForetell {4}{G} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+  "blocked_sentences": [
+    "Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life."
+  ],
+  "needs": [
+    {
+      "capability": "cast_time_snapshot",
+      "kind": "value",
+      "what": "a value read as the spell is cast and stamped on its stack object, so resolution can use it: here the greatest power among creatures its caster controlled at cast time (e.g. `{\"as_cast\": {\"extreme_value\": ...}}` or a cast-time `snapshot` binding readable from spell_effects)",
+      "why_existing_wont_do": "`extreme_value`/`max` over a creature selector is evaluated at resolution, so a creature that dies or shrinks in response changes X; `snapshot` is an op that runs at resolution, and `power_of`/`power_had` read one object, not the board at cast time. Only `cast_during` and the `cast_from_*` stamps are recorded at cast, and none carries a number"
+    },
+    {
+      "capability": "cast_from_exile",
+      "kind": "value",
+      "what": "a condition key `cast_from_exile: true` (or a general `cast_from_zone`), true when the resolving spell was cast out of exile -- a foretold cast here, but also any other cast from exile, as the printed text says",
+      "why_existing_wont_do": "condition_keys has `cast_from_hand` and `cast_from_graveyard` but no exile; `{\"not\": {\"cast_from_hand\": true}}` would also be true for a cast from the graveyard or command zone, and there is no `foretold` key either (see haunting_voyage's gap)"
+    }
+  ],
+  "closest_existing": ["extreme_value", "snapshot", "cast_from_hand", "cast_from_graveyard", "foretell"],
+  "confidence": "high"
+}

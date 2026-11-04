@@ -1,0 +1,14 @@
+{
+  "card_id": "inspiring_statuary",
+  "name": "Inspiring Statuary",
+  "oracle_text": "Nonartifact spells you cast have improvise. (Your artifacts can help cast those spells. Each artifact you tap after you're done activating mana abilities pays for {1}.)",
+  "blocked_sentences": ["Nonartifact spells you cast have improvise"],
+  "needs": [{
+    "capability": "improvise",
+    "kind": "static_effect",
+    "what": "a player-wide static that grants a pay_generic_with currency (here \"tap_artifacts\", improvise) to spells its controller casts that match an affects_spells filter (not_types: [\"Artifact\"]), so the cast offers the tap-artifacts-to-pay-{1} line for those spells as if each had printed improvise",
+    "why_existing_wont_do": "pay_generic_with is a card-level cost key read only off the spell's own CardDef (casting.py / game.py check card.pay_generic_with), so it cannot be conferred by another permanent; no static in static_effects grants it (spell_cost_reduction is a flat discount, not tapping artifacts; granted_alternative_cost replaces the cost rather than adding a payment currency; cast_gains_keywords only grants battlefield keywords like haste), and improvise is not in the keyword list"
+  }],
+  "closest_existing": ["pay_generic_with", "spell_cost_reduction", "granted_alternative_cost"],
+  "confidence": "high"
+}

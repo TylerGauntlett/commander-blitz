@@ -125562,12 +125562,12 @@
     },
     "Helitrooper": {
       "edhrec_rank": 7984,
-      "gate": "template",
+      "gate": null,
       "name": "Helitrooper",
-      "reason": "no template for: Whenever this creature attacks, another target attacking creature gains flying until end o",
+      "reason": "",
       "scryfall_id": "2073f387-9cdd-4184-8704-e6031c934b6d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Helium Squirter": {
@@ -125832,12 +125832,12 @@
     },
     "Hellkite Tyrant": {
       "edhrec_rank": 780,
-      "gate": "template",
+      "gate": null,
       "name": "Hellkite Tyrant",
-      "reason": "no template for: Whenever this creature deals combat damage to a player, gain control of all artifacts that",
+      "reason": "",
       "scryfall_id": "97ff9946-af2c-4568-847e-b828a71d0217",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hellkite Whelp": {
@@ -126742,12 +126742,12 @@
     },
     "Hero's Heirloom": {
       "edhrec_rank": 4058,
-      "gate": "template",
+      "gate": null,
       "name": "Hero's Heirloom",
-      "reason": "no template for: As long as equipped creature is legendary, it has trample and haste",
+      "reason": "",
       "scryfall_id": "08866f84-406d-4372-9893-ba22690a48ef",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Hero's Resolve": {
