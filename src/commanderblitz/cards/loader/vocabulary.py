@@ -365,6 +365,14 @@ STATIC_EFFECTS = frozenset(
         # this turn. Read by `player_statics.granted_miracle_cost` from
         # `replacements._miracle`, with the card already in hand.
         "grant_miracle",
+        # "Nonartifact spells you cast have improvise." Inspiring Statuary.
+        # `pay_generic_with` names the currency -- convoke, improvise or delve,
+        # the card-level field's three values -- and `affects_spells` the
+        # spells. Not a price like `grant_warp`: the spell keeps its mana cost
+        # and gains another way to pay its generic part. Read by
+        # `player_statics.granted_pay_generic_with`, which
+        # `casting.pay_generic_currencies` unions with the printed field.
+        "grant_pay_generic_with",
         # "You may pay eight {E} rather than pay the mana cost for permanent
         # spells you cast." Nissa, Worldsoul Speaker. `grant_warp`'s shape for
         # a price paid in something other than mana: `affects_spells` names the
@@ -835,6 +843,7 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
         "free_cast_permission",
         "grant_warp",
         "grant_miracle",
+        "grant_pay_generic_with",
         "granted_alternative_cost",
         "black_mana_as_phyrexian",
         "spend_mana_as_any_color",

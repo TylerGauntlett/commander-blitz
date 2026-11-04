@@ -1,0 +1,37 @@
+{
+  "_comment": "Cards that exist only for tests/unit/mana/test_grant_pay_generic_with.py. Never part of a deck list. t_statuary is Inspiring Statuary's shape, an artifact whose static hands improvise to its controller's nonartifact spells; t_study is a {3}{U} sorcery with no keyword of its own, and t_relic a {4} artifact with none, so the filter can be seen to bite. t_trinket and t_construct (improvise.cards.json) are the artifacts it taps.",
+  "cards": [
+    {
+      "id": "t_statuary",
+      "name": "Test Statuary",
+      "oracle_text": "Nonartifact spells you cast have improvise. (Your artifacts can help cast those spells. Each artifact you tap after you're done activating mana abilities pays for {1}.)",
+      "mana_cost": "{3}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Nonartifact spells you cast have improvise.",
+          "effect": "grant_pay_generic_with",
+          "pay_generic_with": "tap_artifacts",
+          "affects_player": "you",
+          "affects_spells": {"not_types": ["Artifact"]}
+        }
+      ]
+    },
+    {
+      "id": "t_study",
+      "name": "Test Study",
+      "oracle_text": "Draw two cards.",
+      "mana_cost": "{3}{U}",
+      "types": ["Sorcery"],
+      "spell_effects": [{"op": "draw", "player": "you", "amount": {"const": 2}}]
+    },
+    {
+      "id": "t_relic",
+      "name": "Test Relic",
+      "oracle_text": "",
+      "mana_cost": "{4}",
+      "types": ["Artifact"]
+    }
+  ]
+}

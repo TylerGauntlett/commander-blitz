@@ -137802,12 +137802,12 @@
     },
     "Inspiring Statuary": {
       "edhrec_rank": 970,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Statuary",
-      "reason": "no template for: Nonartifact spells you cast have improvise",
+      "reason": "",
       "scryfall_id": "6c28687d-b96a-4d3c-a6cb-99fbae6a384b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspiring Unicorn": {

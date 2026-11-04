@@ -879,6 +879,8 @@ STATICS: dict[str, Entry] = {
                    "`grant_warp` — a card-level price handed to somebody else's cards"),
     "grant_miracle": ("Matching cards in the player's hand have miracle for a price.",
                       "`grant_miracle` — miracle handed to cards in your hand"),
+    "grant_pay_generic_with": ("Matching spells the player casts have convoke, improvise or delve.",
+                               "`grant_pay_generic_with` — \"spells you cast have improvise\""),
     "legend_rule_exemption": ("The legend rule doesn't apply to matching permanents.",
                               "`legend_rule_exemption` — the legend rule doesn't apply"),
     "look_at_library_top": ("The player may look at the top card of their library any time.", None),

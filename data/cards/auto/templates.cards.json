@@ -90101,6 +90101,32 @@
     {
       "abilities": [
         {
+          "affects_player": "you",
+          "affects_spells": {
+            "not_types": [
+              "Artifact"
+            ]
+          },
+          "effect": "grant_pay_generic_with",
+          "kind": "static",
+          "pay_generic_with": "tap_artifacts",
+          "text": "Nonartifact spells you cast have improvise."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "inspiring_statuary",
+      "mana_cost": "{3}",
+      "name": "Inspiring Statuary",
+      "oracle_text": "Nonartifact spells you cast have improvise. (Your artifacts can help cast those spells. Each artifact you tap after you're done activating mana abilities pays for {1}.)",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

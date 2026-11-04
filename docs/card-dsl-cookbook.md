@@ -5804,6 +5804,33 @@ ceiling adds the pips a colour could pay.
 The near miss is `cost_reduction` with a count of artifacts (affinity), which
 lowers the price without tapping anything.
 
+##### `grant_pay_generic_with` — "spells you cast have improvise"
+
+A player-wide static that hands one of the three currencies to spells its
+`affects_player` casts, as if each matching spell printed the keyword.
+`pay_generic_with` names the currency (the card-level field's three values)
+and `affects_spells` the spells, matched against the face being cast; both are
+required, `affects_spells` may not be empty and may not carry `controller`
+(`affects_player` already names the caster), and `affects` is refused. The
+key `pay_generic_with` on any other static is refused.
+
+```jsonc
+// Inspiring Statuary -- "Nonartifact spells you cast have improvise."
+{ "kind": "static", "effect": "grant_pay_generic_with",
+  "pay_generic_with": "tap_artifacts", "affects_player": "you",
+  "affects_spells": { "not_types": ["Artifact"] } }
+```
+
+A spell's currencies are the printed one and every grant together
+(`casting.pay_generic_currencies`), so a keyword it already has is redundant
+and two different ones spend in one pick: a convoke spell under the Statuary is
+offered its creatures and artifacts together, tagged `convoke+improvise`, and a
+delve spell its artifacts and graveyard, `improvise+delve`. A permanent that is
+both a creature and an artifact taps once, and convokes when the spell has
+convoke. The near miss is `spell_cost_reduction`, a flat discount that taps
+nothing, and `granted_alternative_cost`, which replaces the cost rather than
+adding a way to pay it.
+
 #### Casting from the graveyard
 
 One capability, three keywords, and the only thing separating them is the price

@@ -26,16 +26,16 @@ from .carddef import Cost
 from .casting import (
     GRAVEYARD_CAST_SLOT,
     MORPH_COST,
-    PAY_GENERIC_TAP_TYPES,
     _graveyard_cast_permission,
     _spell_as_cast,
     chosen_additional,
-    convoke_colors,
     convoke_payments,
     convoke_pips,
     deferred_target_spec,
     life_x_ceiling,
-    pay_generic_tappers,
+    pay_generic_colors,
+    pay_generic_currencies,
+    pay_generic_pool,
     permission_cost_reduction,
     strive_surcharge,
 )
@@ -111,6 +111,14 @@ MAX_ADVANCE_STEPS = 20_000
 #: How many times a convoke pick that leaves the rest of the mana unpayable is
 #: asked again before `Game._ask_pay_generic` picks for the player.
 MAX_PAY_GENERIC_ASKS = 3
+#: The decision tag and the prompt's verb for each ``pay_generic_with``
+#: currency, in the order a spell with several names them.
+PAY_GENERIC_WORDS: dict[str, tuple[str, str]] = {
+    "tap_creatures": ("convoke", "tap creatures to convoke"),
+    "tap_artifacts": ("improvise", "tap artifacts to improvise"),
+    "exile_from_graveyard": ("delve", "exile cards to delve"),
+}
+
 #: How many picks of one size `Game._ask_pay_generic` tries once it is picking
 #: for the player, so a board of thirty creatures is not searched exhaustively.
 MAX_PAY_GENERIC_PICKS = 256
@@ -707,19 +715,18 @@ class Game:
         # that pip out of `cost`. Before X, because X's ceiling is what the
         # mana has left once this is spent.
         convoked: list[int] = []
+        currencies = pay_generic_currencies(state, pid, card)
         if (
-            card.pay_generic_with is not None
+            currencies
             and obj.zone is Zone.HAND
             and not action.cast_free
             and not action.from_library_top
             and not action.granted_cost
         ):
-            cost, spent, picked = yield from self._ask_pay_generic(
-                pid, card, oid, cost, extra, action.pay_generic
+            cost, spent, convoked = yield from self._ask_pay_generic(
+                pid, card, oid, currencies, cost, extra, action.pay_generic
             )
             extra -= spent
-            if card.pay_generic_with == "tap_creatures":
-                convoked = picked
 
         # How big is X? Asked here rather than settled in legality, because the
         # answer is the player's: the action carries X = 0 and this is where it
@@ -1019,7 +1026,7 @@ class Game:
         )
         if division:
             item.bindings["distribution"] = division
-        if card.pay_generic_with == "tap_creatures":
+        if "tap_creatures" in currencies:
             # 702.51c: "a creature that convoked it" is one tapped to pay for
             # it, and only this cast knows which. Read by the `convoked`
             # selector key as the spell resolves; `zones.move_object` strikes
@@ -1342,14 +1349,27 @@ class Game:
         return out
 
     def _ask_pay_generic(
-        self, pid: int, card, oid: int, cost: ManaCost, extra: int, fewest: int
+        self,
+        pid: int,
+        card,
+        oid: int,
+        currencies: frozenset[str],
+        cost: ManaCost,
+        extra: int,
+        fewest: int,
     ) -> Generator[Any, list[int], tuple[ManaCost, int, list[int]]]:
         """Convoke, improvise and delve: ask what taps, or which cards go, and spend them.
 
         Between ``fewest`` -- what legality found the mana could not cover, the
         floor the line was offered at -- and the most the cost can absorb.
         Returns the cost left to pay with mana, how many of the picked paid
-        for {1} (netted into ``extra`` by the caller), and the picked objects.
+        for {1} (netted into ``extra`` by the caller), and the creatures that
+        convoked (702.51c).
+
+        ``currencies`` is every keyword the spell has (`casting.pay_generic_currencies`),
+        printed or granted, and they are spent in one pick: a convoke spell
+        under Inspiring Statuary is offered its creatures and artifacts
+        together, as the rules let one cast use both.
 
         Convoked creatures and improvised artifacts are tapped *here*, before
         any mana is paid, so the payment below cannot also tap one of them for
@@ -1365,12 +1385,8 @@ class Game:
         the way the mana solver picks which land pays which pip.
         """
         state = self.state
-        taps = card.pay_generic_with in PAY_GENERIC_TAP_TYPES
-        convokes = card.pay_generic_with == "tap_creatures"
-        if taps:
-            pool = pay_generic_tappers(state, pid, card)
-        else:
-            pool = [other for other in state.players[pid].graveyard if other != oid]
+        convokes = "tap_creatures" in currencies
+        pool = pay_generic_pool(state, pid, oid, currencies)
         room = max(0, cost.generic + extra)
         payable_symbols = room + (convoke_pips(cost) if convokes else 0)
         most = min(payable_symbols, len(pool))
@@ -1381,16 +1397,17 @@ class Game:
 
         def price(picked: list[int]) -> tuple[ManaCost, int] | None:
             """What the rest costs once ``picked`` are spent, or ``None`` if unpayable."""
-            if not taps:
-                return cost, len(picked)
+            tapped = [o for o in picked if state.objects[o].zone is Zone.BATTLEFIELD]
             if convokes:
                 splits = convoke_payments(
-                    cost, [convoke_colors(state, other) for other in picked], room
+                    cost, [pay_generic_colors(state, o, currencies) for o in picked], room
                 )
             else:
                 splits = [(cost, len(picked))] if len(picked) <= room else []
+            if not tapped:
+                return splits[0] if splits else None
             # Tapped for the question only, with no event: nothing has happened yet.
-            for other in picked:
+            for other in tapped:
                 state.objects[other].tapped = True
             state.bump_chars()
             try:
@@ -1401,15 +1418,15 @@ class Game:
                         return left, generic
                 return None
             finally:
-                for other in picked:
+                for other in tapped:
                     state.objects[other].tapped = False
                 state.bump_chars()
 
         ctx = EffectContext(state=state, controller=pid, source_oid=oid)
-        purpose_tag, verb = {
-            "tap_creatures": ("convoke", "Tap creatures to convoke"),
-            "tap_artifacts": ("improvise", "Tap artifacts to improvise"),
-        }.get(card.pay_generic_with, ("delve", "Exile cards to delve"))
+        spoken = [PAY_GENERIC_WORDS[c] for c in PAY_GENERIC_WORDS if c in currencies]
+        purpose_tag = "+".join(tag for tag, _verb in spoken)
+        verb = " or ".join(verb for _tag, verb in spoken)
+        verb = verb[0].upper() + verb[1:]
         floor = f"at least {fewest}, " if fewest else ""
         prompt = f"{verb} for {card.name} ({floor}up to {most})"
         picked: list[int] = []
@@ -1443,13 +1460,20 @@ class Game:
             if paid is None:  # pragma: no cover - legality proved some pick pays
                 paid = (cost, min(len(picked), room))
 
+        convoked = [
+            other
+            for other in picked
+            if convokes
+            and state.objects[other].zone is Zone.BATTLEFIELD
+            and "Creature" in chars(state, other).types
+        ]
         for other in picked:
-            if taps:
+            if state.objects[other].zone is Zone.BATTLEFIELD:
                 tap_permanent(state, other)
             else:
                 exile_object(state, other, cause="cost")
         left, generic = paid
-        return left, generic, list(picked)
+        return left, generic, convoked
 
     def _ask_x(
         self,

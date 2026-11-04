@@ -7724,6 +7724,10 @@
     },
     "zone": "battlefield"
   },
+  "inspiring_statuary": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "inspiring_vantage": {
     "zone": "battlefield"
   },

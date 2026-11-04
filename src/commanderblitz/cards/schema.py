@@ -1072,6 +1072,12 @@ class AbilityModel(BaseModel):
     #: Molecule Man's ``"{0}"``. Beside `affects_spells` for `warp_cost`'s
     #: reason.
     miracle_cost: str | None = None
+    #: ``grant_pay_generic_with``: the currency the filtered spells gain --
+    #: Inspiring Statuary's ``"tap_artifacts"`` (improvise). The card-level
+    #: field's three values; beside `affects_spells` for `warp_cost`'s reason.
+    pay_generic_with: (
+        Literal["tap_creatures", "tap_artifacts", "exile_from_graveyard"] | None
+    ) = None
 
 
 class ReplacementModel(BaseModel):

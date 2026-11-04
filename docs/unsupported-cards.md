@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**164 cards** blocked by **150** capabilities.
+**163 cards** blocked by **149** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -94,7 +94,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [graveyard-play-grants-ability](#graveyard-play-grants-ability) | 1 | 3531 | static_effect |
 | [graveyard-play-shared-limit](#graveyard-play-shared-limit) | 1 | 3531 | static_effect |
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
-| [improvise](#improvise) | 1 | 970 | static_effect |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
 | [kicker](#kicker) | 1 | 868 | selector |
@@ -1508,20 +1507,6 @@ Blocks **1** card.
 
 - **Rootha, Mastering the Moment** (rank 11566) — `rootha_mastering_the_moment`
   - At the beginning of combat on your turn, if you've cast an instant or sorcery spell this turn, create an X/X blue and red Elemental creature token with flying and haste, where X is the greatest mana value among instant and sorcery spells you've cast this turn.
-
-</details>
-
-## improvise
-
-Blocks **1** card.
-
-- **(static_effect)** a player-wide static that grants a pay_generic_with currency (here "tap_artifacts", improvise) to spells its controller casts that match an affects_spells filter (not_types: ["Artifact"]), so the cast offers the tap-artifacts-to-pay-{1} line for those spells as if each had printed improvise
-  <br>Why the existing vocabulary won't do: pay_generic_with is a card-level cost key read only off the spell's own CardDef (casting.py / game.py check card.pay_generic_with), so it cannot be conferred by another permanent; no static in static_effects grants it (spell_cost_reduction is a flat discount, not tapping artifacts; granted_alternative_cost replaces the cost rather than adding a payment currency; cast_gains_keywords only grants battlefield keywords like haste), and improvise is not in the keyword list
-
-<details><summary>Cards waiting on this</summary>
-
-- **Inspiring Statuary** (rank 970) — `inspiring_statuary`
-  - Nonartifact spells you cast have improvise
 
 </details>
 

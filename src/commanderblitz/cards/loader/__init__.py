@@ -4313,6 +4313,35 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
             )
         if ManaCost.parse(model.miracle_cost).x_count:
             raise DslError(f"{where}: a miracle cost with X is not implemented")
+    elif model.effect == "grant_pay_generic_with":
+        # "Nonartifact spells you cast have improvise" -- Inspiring Statuary.
+        # `grant_warp`'s guards for its reasons: no filter is the keyword on
+        # every spell rather than the printed "nonartifact spells", and no
+        # currency is an inert static wearing a printed grant. `controller` is
+        # refused because `affects_player` already names the caster.
+        if model.affects is not None:
+            raise DslError(
+                f"{where}: grant_pay_generic_with filters spells with "
+                f"'affects_spells', not 'affects' (which picks out permanents)"
+            )
+        if not model.affects_spells:
+            raise DslError(
+                f"{where}: grant_pay_generic_with needs 'affects_spells' naming "
+                f"which spells gain the keyword -- without one every spell has it"
+            )
+        unknown = set(model.affects_spells) - (SPELL_FILTER_KEYS - {"controller"})
+        if unknown:
+            raise DslError(
+                f"{where}.affects_spells: a spell being cast has a printed face "
+                f"and no board state, and `affects_player` already names the "
+                f"caster; unsupported keys {sorted(unknown)}"
+            )
+        if model.pay_generic_with is None:
+            raise DslError(
+                f"{where}: grant_pay_generic_with needs 'pay_generic_with' -- "
+                f"'tap_creatures' (convoke), 'tap_artifacts' (improvise) or "
+                f"'exile_from_graveyard' (delve)"
+            )
     elif model.effect == "granted_alternative_cost":
         # `free_cast_permission`'s guards, for its reason: a grant with no
         # filter re-prices every spell in the game rather than the printed
@@ -5886,6 +5915,16 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
     # `grant_miracle`'s price, whitelisted for `warp_cost`'s reason.
     if model.miracle_cost is not None:
         static["miracle_cost"] = model.miracle_cost
+    # `grant_pay_generic_with`'s currency, whitelisted for `warp_cost`'s reason.
+    if model.pay_generic_with is not None:
+        if model.effect != "grant_pay_generic_with":
+            # Read by nothing else: a static carrying it would load clean and
+            # grant no keyword.
+            raise DslError(
+                f"{where}: 'pay_generic_with' on a static is read only by "
+                f"grant_pay_generic_with, not {model.effect!r}"
+            )
+        static["pay_generic_with"] = model.pay_generic_with
     # `double_triggers`' cause clause. Copied explicitly like every other field
     # here: this dict is a whitelist, not a dump of the model, so a field the
     # schema accepts and this loop forgets is silently dropped -- the static

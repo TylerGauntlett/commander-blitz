@@ -2377,6 +2377,36 @@ def granted_warp_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     return None
 
 
+def granted_pay_generic_with(state: GameState, pid: int, card: CardDef) -> frozenset[str]:
+    """The ``pay_generic_with`` currencies statics hand ``card`` as ``pid`` casts it.
+
+    "Nonartifact spells you cast have improvise" -- Inspiring Statuary. The
+    spell has the keyword while it is being cast, exactly as if it were
+    printed, so `casting.pay_generic_currencies` unions these with the card's
+    own field and every reader of the currency sees one set. ``affects_spells``
+    is matched against the face being cast, like every other cast-time grant.
+
+    A union, not the first grant: two different keywords on one spell are both
+    usable in the same cast (Statuary's improvise on a convoke spell taps
+    creatures and artifacts alike), and two instances of one keyword on a spell
+    are redundant, which a set says for free.
+    """
+    out: set[str] = set()
+    for source_obj, static in _active_player_statics(state, "grant_pay_generic_with"):
+        if not _reaches_player(source_obj, static, pid):
+            continue
+        currency = static.get("pay_generic_with")
+        filt = static.get("affects_spells")
+        if not currency or not filt:
+            # The loader requires both; defaulting the filter would hand the
+            # keyword to every spell.
+            continue
+        resolved = resolve_chosen_colors(resolve_chosen_subtypes(filt, source_obj), source_obj)
+        if _matches_printed(card, resolved):
+            out.add(str(currency))
+    return frozenset(out)
+
+
 def granted_miracle_cost(state: GameState, pid: int, card: CardDef) -> str | None:
     """The miracle cost a static hands this card in ``pid``'s hand, or None.
 
