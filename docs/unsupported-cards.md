@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**165 cards** blocked by **151** capabilities.
+**164 cards** blocked by **150** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -101,7 +101,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
 | [look-at-random-card-in-hand](#look-at-random-card-in-hand) | 1 | 2856 | op |
-| [lose-keyword-timestamped](#lose-keyword-timestamped) | 1 | 866 | static_effect |
 | [lose-the-game](#lose-the-game) | 1 | 1512 | op |
 | [lure](#lure) | 1 | 31502 | static_effect |
 | [mana-ability-delayed-enters-with-counters](#mana-ability-delayed-enters-with-counters) | 1 | 3706 | op |
@@ -1608,20 +1607,6 @@ Blocks **1** card.
 
 - **Urza's Bauble** (rank 2856) — `urza_s_bauble`
   - Look at a card at random in target player's hand.
-
-</details>
-
-## lose-keyword-timestamped
-
-Blocks **1** card.
-
-- **(static_effect)** a static that removes a named keyword from the affected permanents in layer 6 in timestamp order (613.7), so a grant of that keyword with a later timestamp (Jump, an anthem cast afterwards, a flying counter) gives it back: 'Equipped creature ... loses flying' with affects {attached: true}, distinct from the 'can't have or gain' prohibition
-  <br>Why the existing vocabulary won't do: The lose_keyword static is implemented in characteristics.py as a standing 'can't have or gain' prohibition applied after every adder (layer 2 grants, keyword counters, until-end-of-turn grants, granted_keywords), so it would stop a later Jump or flying grant from giving the equipped creature flying; the printed 'loses flying' is a plain one-time removal that later-timestamped grants override. lose_all_abilities is far too broad. The +10/+10 half (buff) and Equip {8} are expressible.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Colossus Hammer** (rank 866) — `colossus_hammer`
-  - Equipped creature gets +10/+10 and loses flying.
 
 </details>
 

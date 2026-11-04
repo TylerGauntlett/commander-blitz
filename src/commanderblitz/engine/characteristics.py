@@ -690,12 +690,25 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         if _loses_abilities(state, obj):
             keywords = set()
 
+        #    "Equipped creature gets +10/+10 **and loses flying**" (Colossus
+        #    Hammer): a plain removal, which 613.7 orders by timestamp among
+        #    the layer-6 effects -- unlike the "can't have" of step 9. Gathered
+        #    here, applied after step 8: each named keyword goes unless an
+        #    effect granting it is *newer* than the newest removal of it. So
+        #    `stamped` records every grant below with its timestamp, and only
+        #    when there is a removal to compare it against.
+        removed_at = _timestamped_removals(state, obj, statics)
+        stamped: list[tuple[int, str]] | None = [] if removed_at else None
+
         # 2. keyword grants
         for source_obj, static in statics:
             if static.get("effect") != "grant_keyword":
                 continue
             if _matches(state, obj, source_obj, static.get("affects")):
                 keywords.update(static.get("keywords", ()))
+                if stamped is not None:
+                    stamp = static_timestamp(source_obj)
+                    stamped.extend((stamp, word) for word in static.get("keywords", ()))
 
         # 2b. Keyword counters (122.1c): "a permanent with a keyword counter on
         #     it has that keyword ability".  A vigilance counter is not
@@ -732,6 +745,8 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         for kind, amount in obj.counters.items():
             if amount > 0 and kind in KEYWORD_COUNTERS:
                 keywords.add(kind)
+                if stamped is not None:
+                    stamped.append((obj.keyword_counter_at.get(kind, obj.timestamp), kind))
 
         # 3. P/T setting
         for source_obj, static in statics:
@@ -769,12 +784,16 @@ def _compute(state: GameState, oid: int) -> Characteristics:
                 if temp.only_your_turn and state.active_player != obj.controller:
                     continue
                 keywords.add(temp.keyword)
+                if stamped is not None:
+                    stamped.append((temp.timestamp, temp.keyword))
 
         # 7. haste from suspend, which is *not* an until-end-of-turn effect: it
         #    lasts as long as the permanent does. Without it a suspended creature
         #    arrives summoning sick and suspend is never worth doing.
         if obj.hasted_by_suspend:
             keywords.add(Keyword.HASTE.value)
+            if stamped is not None:
+                stamped.append((obj.timestamp, Keyword.HASTE.value))
 
         # 8. Keywords granted for as long as the permanent lasts -- riot's "or
         #    with haste", which is not a pump that wears off but part of what
@@ -783,6 +802,22 @@ def _compute(state: GameState, oid: int) -> Characteristics:
         #    general form, and the two stay separate because suspend's is set
         #    while the card is still in exile.
         keywords.update(obj.granted_keywords)
+        if stamped is not None:
+            # Riot's haste, written as the permanent arrives, carries no stamp
+            # of its own: it began with the arrival.
+            stamped.extend(
+                (obj.granted_keyword_at.get(word, obj.timestamp), word)
+                for word in obj.granted_keywords
+            )
+
+        # 8b. The timestamped removals gathered before step 2. Printed
+        #     keywords always go -- they are the object's own, not an effect
+        #     with a timestamp -- and so does every grant older than the
+        #     removal; a grant newer than it survives (613.7). A tie goes to
+        #     the removal.
+        for word, at in removed_at.items():
+            if not any(stamp > at for stamp, granted in stamped or () if granted == word):
+                keywords.discard(word)
 
         # 9. "Creatures your opponents control **lose first strike and can't
         #    have or gain first strike**" -- Archetype of Courage, and the rest
@@ -879,6 +914,38 @@ def _ability_statics(state: GameState) -> list[tuple[GameObject, Mapping[str, An
         state.ability_static_cache = out
         state.ability_static_version = state.char_version
     return state.ability_static_cache
+
+
+def static_timestamp(source: GameObject) -> int:
+    """The timestamp of a continuous effect from ``source``'s static ability.
+
+    613.7: the object's own, from when it entered its zone, or, for an Aura,
+    Equipment or Fortification, from when it became attached, whichever is
+    later. A static an object holds because something granted it reads the
+    holder's timestamp, not the later moment of the grant.
+    """
+    if source.attached_to is not None or source.attached_to_player is not None:
+        return max(source.timestamp, source.attached_timestamp)
+    return source.timestamp
+
+
+def _timestamped_removals(
+    state: GameState,
+    obj: GameObject,
+    statics: list[tuple[GameObject, Mapping[str, Any]]],
+) -> dict[str, int]:
+    """Each keyword a `lose_keyword_timestamped` static takes from ``obj``,
+    with the newest such removal's timestamp."""
+    out: dict[str, int] = {}
+    for source_obj, static in statics:
+        if static.get("effect") != "lose_keyword_timestamped":
+            continue
+        if not _matches(state, obj, source_obj, static.get("affects")):
+            continue
+        stamp = static_timestamp(source_obj)
+        for word in static.get("keywords", ()):
+            out[word] = max(out.get(word, stamp), stamp)
+    return out
 
 
 def _loses_abilities(state: GameState, obj: GameObject) -> bool:

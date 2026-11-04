@@ -9070,6 +9070,45 @@ is a layer-6 removal a later grant survives (613.7). It is not built, and the
 `cant_have` key is what stops it loading as this stronger effect.
 `lose_all_abilities` and `lock_abilities` take far more than two keywords.
 
+### `lose_keyword_timestamped` — "loses flying", with no "can't have"
+
+Colossus Hammer: *"Equipped creature gets +10/+10 **and loses flying**."*
+
+```jsonc
+{ "kind": "static",
+  "text": "Equipped creature gets +10/+10 and loses flying.",
+  "effect": "lose_keyword_timestamped",
+  "keywords": ["flying"],
+  "affects": { "attached": true } }
+```
+
+A plain removal in layer 6, ordered by timestamp among the effects that grant
+keywords (613.7). The printed keyword always goes, and so does every grant
+older than the removal; a grant **newer** than it survives. So Jump on the
+hammered creature makes it fly, and so do a flying counter put on afterwards, a
+permanent `grant_keyword` and an anthem that arrives afterwards, while a Jump
+cast before the hammer was attached, or an anthem already on the battlefield, is
+taken away. A tie goes to the removal.
+
+`characteristics._compute` gathers the removals before the grant layers and
+applies them after `granted_keywords`, comparing timestamps: a static's is its
+source's (`static_timestamp`) — `GameObject.timestamp`, taken as it entered its
+zone, or `attached_timestamp` for an Aura or Equipment, which is renewed as it
+becomes attached, so moving the hammer away and back makes it newer than a Jump
+cast in between. A keyword counter's is when it was last put on
+(`GameObject.keyword_counter_at`), or the permanent's own for one it entered
+with; a timed or permanent grant's is its `TempEffect.timestamp` or
+`granted_keyword_at`.
+
+`keywords` and `affects` are required, for `lose_keyword`'s reasons. The loader
+refuses a numbered keyword (annihilator, toxic): `annihilator_instances` counts
+instances without timestamps. It is ungrantable, since a granted static reads its
+holder's timestamp rather than the grant's.
+
+The near miss is the `lose_keyword` static, which is "can't have or gain" and
+beats every grant whatever its timestamp: written with it, the hammer would
+ground its creature through every later Jump.
+
 ### `grant_ability` as a static, and where the line now runs
 
 The `grant_ability` *op* grants for a duration and its grants are pointers only

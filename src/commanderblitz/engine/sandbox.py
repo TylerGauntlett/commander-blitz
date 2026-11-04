@@ -117,6 +117,7 @@ class GameBuilder:
             # without counters before the position is ever looked at.
             if card.defense is not None and DEFENSE not in obj.counters:
                 obj.counters[DEFENSE] = card.defense
+            obj.timestamp = self.state.alloc_timestamp()
             self.state.battlefield.append(obj.oid)
         self.state.bump_chars()
         return self

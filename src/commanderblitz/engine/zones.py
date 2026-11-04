@@ -573,6 +573,8 @@ def _add_to_zone(
     to_top: bool = False,
     to_index: int | None = None,
 ) -> None:
+    # 613.7: an object receives a timestamp as it enters a zone.
+    obj.timestamp = state.alloc_timestamp()
     if zone is Zone.BATTLEFIELD:
         state.battlefield.append(obj.oid)
         return

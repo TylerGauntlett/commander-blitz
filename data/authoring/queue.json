@@ -50352,12 +50352,12 @@
     },
     "Colossus Hammer": {
       "edhrec_rank": 866,
-      "gate": "template",
+      "gate": null,
       "name": "Colossus Hammer",
-      "reason": "no template for: Equipped creature gets +10/+10 and loses flying",
+      "reason": "",
       "scryfall_id": "f50acbb6-b295-4aaa-bd75-7a94b704b945",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Colossus of Akros": {

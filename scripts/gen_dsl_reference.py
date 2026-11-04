@@ -888,6 +888,8 @@ STATICS: dict[str, Entry] = {
                                 "`imprint_characteristics` — Duplicant's size from a card in exile"),
     "lose_keyword": ("Matching permanents lose keywords and can't have or gain them.",
                      "`lose_keyword` — the other kind of removal, at the other end of the pipeline"),
+    "lose_keyword_timestamped": ("Matching permanents lose keywords; a grant newer than the removal gives one back (613.7).",
+                                 "`lose_keyword_timestamped` — \"loses flying\", with no \"can't have\""),
     "mana_retention": ("The player doesn't lose unspent mana of the listed symbols as steps and phases end.",
                        "Player-wide statics"),
     "mana_becomes_colorless": ("Unspent mana the player would lose becomes colorless instead.",

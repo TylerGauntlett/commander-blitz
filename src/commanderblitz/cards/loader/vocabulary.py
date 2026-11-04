@@ -167,6 +167,14 @@ STATIC_EFFECTS = frozenset(
         # what separates it from `lose_all_abilities`: that one would also take
         # the opponents' flying and their triggered and activated abilities.
         "lose_keyword",
+        # Colossus Hammer: "Equipped creature gets +10/+10 and **loses
+        # flying**." The plain removal, with no "can't have": layer 6 in
+        # timestamp order (613.7), so a grant newer than the removal -- Jump,
+        # an anthem that arrived later, a flying counter put on afterwards --
+        # gives the keyword back, where `lose_keyword` outranks every grant.
+        # Applied after the grants by `characteristics._compute`, which compares
+        # each grant's timestamp with the removal's (`static_timestamp`).
+        "lose_keyword_timestamped",
         # Authority of the Consuls; Imposing Sovereign; Kismet; Frozen
         # Aether; Loxodon Gatekeeper; Root Maze; Orb of Dreams; Thalia,
         # Heretic Cathar.  "<permanents> your opponents control enter
@@ -881,6 +889,10 @@ PLAYER_WIDE_STATIC_EFFECTS = frozenset(
 #:   `characteristics._active_player_statics`, which walks printed faces and
 #:   never sees an appended granted ability.
 #:
+#: And one that would not be inert but wrong: `lose_keyword_timestamped` is a
+#: timestamp comparison, and a granted static is read with its holder's
+#: timestamp rather than the grant's.
+#:
 #: Refused by name rather than left to load, because every one of them would
 #: produce a card that loads clean, prints a line of quoted text and does
 #: nothing -- which is the exact failure the whole validation pass exists to
@@ -889,6 +901,10 @@ UNGRANTABLE_STATIC_EFFECTS = (
     PLAYER_WIDE_STATIC_EFFECTS
     | {"replace_token_creation", "damage_cant_be_prevented", "all_damage_wither"}
     | frozenset(ABILITY_STATICS)
+    # A granted static is read with its holder's timestamp, not the grant's
+    # (`characteristics.static_timestamp`), and this one is nothing but a
+    # timestamp comparison.
+    | {"lose_keyword_timestamped"}
 )
 
 #: Statics a `grant_ability` static may hand to another permanent.

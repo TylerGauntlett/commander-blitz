@@ -2890,6 +2890,10 @@
   "colossodon_yearling": {
     "zone": "battlefield"
   },
+  "colossus_hammer": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "combat_calligrapher": {
     "battlefield_count": 33,
     "hand_size": {

@@ -52,6 +52,7 @@ from commanderblitz.engine.effects.values import (
     validate_value,
 )
 from commanderblitz.engine.enums import (
+    NUMBERED_KEYWORDS,
     PERMANENT_TYPES,
     SUBTYPE_CLASS,
     AbilityKind,
@@ -5318,7 +5319,8 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
         carried = NUMBER_CARRYING_GRANT_KEYWORDS
     # Losing toxic is sayable -- `chars` drops the word and `damage_player`
     # reads the derived keywords -- so only the granting statics are refused.
-    if model.effect != "lose_keyword":
+    # `lose_keyword_timestamped` refuses them below, for its own reason.
+    if model.effect not in ("lose_keyword", "lose_keyword_timestamped"):
         refuse_numbered_grant(model.keywords, where, carried)
 
     if model.effect == "activate_loyalty_as_though_instant":
@@ -5551,6 +5553,33 @@ def _compile_static(model: AbilityModel, index: int, where: str) -> Ability:
                 f"{where}: lose_keyword needs 'affects' naming whose permanents "
                 f"lose the keyword -- the filter defaults to your own, which is "
                 f"the opposite of every printed card in this cycle"
+            )
+
+    if model.effect == "lose_keyword_timestamped":
+        # "Equipped creature ... loses flying" -- the plain removal a newer
+        # grant overrides (613.7). Its `lose_keyword` neighbour's two
+        # requirements, for that static's reasons: named keywords, and the
+        # printed clause naming whose permanents lose them.
+        if not model.keywords:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs the keywords it removes "
+                f"-- an empty list is an inert static wearing a printed removal"
+            )
+        if model.affects is None:
+            raise DslError(
+                f"{where}: lose_keyword_timestamped needs 'affects' naming whose "
+                f"permanents lose the keyword -- {{'attached': true}} is the "
+                f"printed \"equipped creature\" or \"enchanted creature\""
+            )
+        numbered = [k for k in model.keywords if k in {w.value for w in NUMBERED_KEYWORDS}]
+        if numbered:
+            # An instance of annihilator is counted off the printed card and
+            # each granting static (`annihilator_instances`), which knows no
+            # timestamps, so a removal it cannot order would leave the count
+            # disagreeing with the keyword.
+            raise DslError(
+                f"{where}: lose_keyword_timestamped cannot remove {numbered!r}: a "
+                f"numbered keyword's instances are not ordered by timestamp"
             )
 
     if model.effect == "imprint_characteristics":

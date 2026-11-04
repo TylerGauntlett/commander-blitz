@@ -22,7 +22,7 @@ from .characteristics import (
     protected_from,
 )
 from .characteristics import chars as _chars
-from .enums import Keyword, Step, Zone
+from .enums import KEYWORD_COUNTERS, Keyword, Step, Zone
 from .events import EventType
 from .objects import MINUS_ONE, PLUS_ONE, SHIELD, STUN, GameObject
 from .player_statics import (
@@ -1342,6 +1342,10 @@ def add_counters(
     # this is the only moment both exist.
     before = obj.counter(kind)
     obj.add_counter(kind, amount)
+    if amount > 0 and kind in KEYWORD_COUNTERS:
+        # When, for a timestamped keyword removal to compare against (613.7):
+        # a flying counter put on after "loses flying" gives flying back.
+        obj.keyword_counter_at[kind] = state.alloc_timestamp()
     state.bump_chars()
     if amount > 0:
         fire(
