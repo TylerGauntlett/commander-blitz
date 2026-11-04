@@ -1518,6 +1518,103 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "life_gained_this_turn": "you"
+                },
+                "right": {
+                  "const": 7
+                }
+              },
+              "else": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "controller": "you",
+                  "destination": "battlefield",
+                  "objects": {
+                    "target": "t1"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "card_in_graveyard",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "graveyard"
+              }
+            }
+          ],
+          "text": "Raise — At the beginning of your end step, if you gained life this turn, return target creature card from your graveyard to your hand. If you gained 7 or more life this turn, return that card to the battlefield instead.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "life_gained_this_turn": "you"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "W"
+      ],
+      "id": "aerith_last_ancient",
+      "keywords": [
+        "lifelink"
+      ],
+      "mana_cost": "{2}{G}{W}",
+      "name": "Aerith, Last Ancient",
+      "oracle_text": "Lifelink\nRaise — At the beginning of your end step, if you gained life this turn, return target creature card from your graveyard to your hand. If you gained 7 or more life this turn, return that card to the battlefield instead.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Cleric",
+        "Druid"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "attached": true
           },
@@ -10114,6 +10211,103 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attachment": {
+                    "target": "t1"
+                  },
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, you may attach any number of target Equipment to it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "attachment": {
+                    "target": "t1"
+                  },
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "attach"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": "any",
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever this creature enters or attacks, you may attach any number of target Equipment to it.",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "armory_automaton",
+      "mana_cost": "{3}",
+      "name": "Armory Automaton",
+      "oracle_text": "Whenever this creature enters or attacks, you may attach any number of target Equipment to it. (Control of the Equipment doesn't change.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Construct"
+      ],
+      "toughness": 2,
+      "types": [
+        "Artifact",
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -11996,6 +12190,81 @@
         "Monk"
       ],
       "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "opponent",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "text": "Avalanche of Sector 7's power is equal to the number of artifacts your opponents control.",
+          "toughness": {
+            "const": 3
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "damage",
+              "player": {
+                "binding": "event_player"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent activates an ability of an artifact they control, Avalanche of Sector 7 deals 1 damage to that player.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "ability_activated",
+            "filter": {
+              "controller": "opponent",
+              "types": [
+                "Artifact"
+              ],
+              "zone": "battlefield"
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "avalanche_of_sector_7",
+      "keywords": [
+        "menace"
+      ],
+      "mana_cost": "{2}{R}",
+      "name": "Avalanche of Sector 7",
+      "oracle_text": "Menace\nAvalanche of Sector 7's power is equal to the number of artifacts your opponents control.\nWhenever an opponent activates an ability of an artifact they control, Avalanche of Sector 7 deals 1 damage to that player.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rebel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -22997,6 +23266,78 @@
       "source": "auto",
       "types": [
         "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "self_only": true
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Ward {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)"
+        },
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "types": [
+              "Artifact"
+            ]
+          },
+          "cost": {
+            "mana": "{2}"
+          },
+          "effect": "ward",
+          "kind": "static",
+          "text": "Other artifacts you control have ward {2}."
+        },
+        {
+          "affects": {
+            "self_only": true
+          },
+          "effect": "set_pt",
+          "kind": "static",
+          "power": {
+            "count": {
+              "controller": "you",
+              "types": [
+                "Artifact"
+              ]
+            }
+          },
+          "text": "Bronze Guardian's power is equal to the number of artifacts you control.",
+          "toughness": {
+            "const": 5
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "bronze_guardian",
+      "keywords": [
+        "double_strike"
+      ],
+      "mana_cost": "{4}{W}",
+      "name": "Bronze Guardian",
+      "oracle_text": "Double strike\nWard {2} (Whenever this creature becomes the target of a spell or ability an opponent controls, counter it unless that player pays {2}.)\nOther artifacts you control have ward {2}.\nBronze Guardian's power is equal to the number of artifacts you control.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Golem"
+      ],
+      "toughness": 5,
+      "types": [
+        "Artifact",
+        "Creature"
       ]
     },
     {

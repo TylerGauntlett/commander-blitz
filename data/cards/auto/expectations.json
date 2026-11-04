@@ -112,6 +112,10 @@
   "aerial_responder": {
     "zone": "battlefield"
   },
+  "aerith_last_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "aeronaut_s_wings": {
     "zone": "battlefield"
   },
@@ -930,6 +934,10 @@
   "armored_wolf_rider": {
     "zone": "battlefield"
   },
+  "armory_automaton": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "army_of_the_damned": {
     "battlefield_count": 45,
     "tokens": {
@@ -1074,6 +1082,14 @@
     "zone": "battlefield"
   },
   "avacyn_s_pilgrim": {
+    "zone": "battlefield"
+  },
+  "avalanche_of_sector_7": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
     "zone": "battlefield"
   },
   "avatar_s_wrath": {
@@ -1996,6 +2012,10 @@
     "zone": "battlefield"
   },
   "brokers_ascendancy": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bronze_guardian": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

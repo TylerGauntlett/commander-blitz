@@ -2832,12 +2832,12 @@
     },
     "Aerith, Last Ancient": {
       "edhrec_rank": 5879,
-      "gate": "template",
+      "gate": null,
       "name": "Aerith, Last Ancient",
-      "reason": "no template for: Raise — At the beginning of your end step, if you gained life this turn, return target cre",
+      "reason": "",
       "scryfall_id": "aa1bd238-a9f5-4145-9668-eb49a3b4c2bf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aeromoeba": {
@@ -13592,12 +13592,12 @@
     },
     "Armory Automaton": {
       "edhrec_rank": 7223,
-      "gate": "template",
+      "gate": null,
       "name": "Armory Automaton",
-      "reason": "no template for: Whenever this creature enters or attacks, you may attach any number of target Equipment to",
+      "reason": "",
       "scryfall_id": "99fbb6f1-0584-45c2-b4c5-0431447913d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Armory Guard": {
@@ -17062,12 +17062,12 @@
     },
     "Avalanche of Sector 7": {
       "edhrec_rank": 10275,
-      "gate": "template",
+      "gate": null,
       "name": "Avalanche of Sector 7",
-      "reason": "no template for: 's power is equal to the number of artifacts your opponents control",
+      "reason": "",
       "scryfall_id": "20a87dbc-5deb-42ae-9097-806e9a27466f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Avarax": {
@@ -35112,12 +35112,12 @@
     },
     "Bronze Guardian": {
       "edhrec_rank": 1882,
-      "gate": "template",
+      "gate": null,
       "name": "Bronze Guardian",
-      "reason": "no template for: Ward {2}",
+      "reason": "",
       "scryfall_id": "032dc879-bf2f-4626-8aac-4d5446421923",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bronze Horse": {
