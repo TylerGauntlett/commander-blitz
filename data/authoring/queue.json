@@ -296092,22 +296092,22 @@
     },
     "Ultimate Magic: Holy": {
       "edhrec_rank": 2839,
-      "gate": "template",
+      "gate": null,
       "name": "Ultimate Magic: Holy",
-      "reason": "no template for: Permanents you control gain indestructible until end of turn. If this spell was cast from ",
+      "reason": "",
       "scryfall_id": "6c85ce70-7080-430e-8560-81bc09ca329e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ultimate Magic: Meteor": {
       "edhrec_rank": 8080,
-      "gate": "template",
+      "gate": null,
       "name": "Ultimate Magic: Meteor",
-      "reason": "no template for: deals 7 damage to each creature. If this spell was cast from exile, for each opponent, cho",
+      "reason": "",
       "scryfall_id": "809276a9-4804-422f-abb0-ba302f329e6e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ultimate Nullification": {

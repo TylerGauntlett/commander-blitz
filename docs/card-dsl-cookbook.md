@@ -6387,6 +6387,24 @@ problem. Foretell needs only the first.
 the printed cost paid in two instalments with the discount thrown in — so
 `foretold_turn` is recorded and compared.
 
+**"If this spell was cast from exile"** is the condition `cast_from_exile`, the
+third sibling of `cast_from_hand` and `cast_from_graveyard`. It reads
+`cast_from_zone`, the zone `stack.push_spell` records as the card leaves for the
+stack; `zone_is` cannot answer it, since every resolving spell is on the stack.
+It takes `true` or `false` (a string is a load error) and the same optional `of`
+binding as its siblings.
+
+```jsonc
+// Ultimate Magic: Holy — "If this spell was cast from exile, prevent all damage…"
+{ "op": "if", "condition": { "cast_from_exile": true }, "then": [ … ] }
+```
+
+It is true of any cast out of exile — foretold, plotted, an Adventure, any exile
+play permission — so it is not "if this spell was foretold" (Haunting Voyage),
+which names the cost paid. Nor is it `{"not": {"cast_from_hand": true}}`: a spell
+cast off a library top or from the command zone is neither, and a copy was never
+cast (707.10).
+
 #### Dredge, madness and miracle — replacements that stop to ask
 
 ```jsonc

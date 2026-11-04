@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**174 cards** blocked by **158** capabilities.
+**172 cards** blocked by **157** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -18,7 +18,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [station](#station) | 4 | 1695 | engine |
-| [cast-from-exile](#cast-from-exile) | 3 | 2839 | value |
 | [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
@@ -350,28 +349,6 @@ Blocks **4** cards.
   - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
   - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
   - 8+ | Flying
-
-</details>
-
-## cast-from-exile
-
-Blocks **3** cards.
-
-- **(value)** a condition key `cast_from_exile: true` (or a general `cast_from_zone`), true when the resolving spell was cast out of exile -- a foretold cast here, but also any other cast from exile, as the printed text says
-  <br>Why the existing vocabulary won't do: condition_keys has `cast_from_hand` and `cast_from_graveyard` but no exile; `{"not": {"cast_from_hand": true}}` would also be true for a cast from the graveyard or command zone, and there is no `foretold` key either (see haunting_voyage's gap)
-- **(value)** a condition `cast_from_exile` (sibling of `cast_from_graveyard` / `cast_from_hand`) that reads a stamp written by stack.push_spell when the resolving spell was cast out of exile -- foretold, plotted, adventure, or any exile play permission
-  <br>Why the existing vocabulary won't do: condition_keys has `cast_from_graveyard` and `cast_from_hand` but nothing for exile; `zone_is` reports the spell's current zone (the stack); `not` of hand-or-graveyard would also be true for a cast from the library top or command zone, so it is not exact. The rest of the card (grant_keyword indestructible to permanents you control, prevent_damage to you this turn, card-level `foretell`) is expressible
-- **(value)** a condition `cast_from_exile` (sibling of `cast_from_graveyard` / `cast_from_hand`) that reads a stamp written by stack.push_spell when the resolving spell was cast out of exile -- foretold, plotted, adventure, or any exile play permission
-  <br>Why the existing vocabulary won't do: condition_keys has `cast_from_graveyard` and `cast_from_hand` but nothing for exile; `zone_is` reports the spell's current zone (the stack); `not` of hand-or-graveyard would also be true for a cast from the library top or command zone, so it is not exact. The rest of the card (damage 7 to each creature, for_each_player opponents + choose_permanents artifact-or-land + destroy, card-level `foretell`) is expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Ultimate Magic: Holy** (rank 2839) — `ultimate_magic_holy`
-  - If this spell was cast from exile, prevent all damage that would be dealt to you this turn.
-- **Lifestream's Blessing** (rank 3285) — `lifestream_s_blessing`
-  - Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life.
-- **Ultimate Magic: Meteor** (rank 8080) — `ultimate_magic_meteor`
-  - If this spell was cast from exile, for each opponent, choose an artifact or land that player controls. Destroy the chosen permanents.
 
 </details>
 

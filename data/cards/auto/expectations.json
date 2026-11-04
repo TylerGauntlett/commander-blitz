@@ -16449,6 +16449,19 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ultimate_magic_holy": {
+    "granted": {
+      "count": 32,
+      "keywords": [
+        "indestructible"
+      ]
+    },
+    "zone": "graveyard"
+  },
+  "ultimate_magic_meteor": {
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "ultimate_nullification": {
     "battlefield_count": 30,
     "graveyard_size": {

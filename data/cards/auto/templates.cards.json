@@ -193858,6 +193858,118 @@
       ]
     },
     {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "foretell": "{2}{W}",
+      "id": "ultimate_magic_holy",
+      "mana_cost": "{2}{W}",
+      "name": "Ultimate Magic: Holy",
+      "oracle_text": "Permanents you control gain indestructible until end of turn. If this spell was cast from exile, prevent all damage that would be dealt to you this turn.\nForetell {2}{W} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        },
+        {
+          "condition": {
+            "cast_from_exile": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "duration": "this_turn",
+              "op": "prevent_damage",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "foretell": "{5}{R}",
+      "id": "ultimate_magic_meteor",
+      "mana_cost": "{5}{R}",
+      "name": "Ultimate Magic: Meteor",
+      "oracle_text": "Ultimate Magic: Meteor deals 7 damage to each creature. If this spell was cast from exile, for each opponent, choose an artifact or land that player controls. Destroy the chosen permanents.\nForetell {5}{R} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 7
+          },
+          "objects": {
+            "controller": "any",
+            "count": "all",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "damage"
+        },
+        {
+          "condition": {
+            "cast_from_exile": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "effects": [
+                {
+                  "as": "meteor_chosen",
+                  "objects": {
+                    "any_types": [
+                      "Artifact",
+                      "Land"
+                    ],
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose an artifact or land that player controls"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "meteor_chosen"
+              },
+              "op": "destroy"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "additional_cost": {
         "sacrifice": {
           "controller": "you",

@@ -14,7 +14,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Selectors](#selectors) | 72 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 67 |
-| [Conditions](#conditions) | 33 |
+| [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
 | [Static effects](#static-effects) | 90 |
@@ -385,6 +385,7 @@ Every head a condition may have: an effect's `if`, a trigger's intervening `cond
 | `any` | At least one listed condition holds. | [Conditions](card-dsl.md#conditions) |
 | `attacked_you_last_turn` | One of these players attacked you (not your planeswalker or battle) during their last completed turn. | [Conditions](card-dsl.md#conditions) |
 | `cast_during` | The phase this spell was cast in (addendum). | [Addendum — the phase a spell was cast in](card-dsl-cookbook.md#addendum--the-phase-a-spell-was-cast-in) |
+| `cast_from_exile` | This spell was cast from exile (foretell, plot or any exile play permission). | [Conditions](card-dsl.md#conditions) |
 | `cast_from_graveyard` | This spell was cast from a graveyard. | [Conditions](card-dsl.md#conditions) |
 | `cast_from_hand` | This spell was cast from hand. | [Conditions](card-dsl.md#conditions) |
 | `cmp` | Compare `left` and `right` values with `op`. | [Conditions](card-dsl.md#conditions) |

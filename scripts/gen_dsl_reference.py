@@ -672,6 +672,7 @@ CONDITIONS: dict[str, Entry] = {
                     "Addendum — the phase a spell was cast in"),
     "cast_from_graveyard": ("This spell was cast from a graveyard.", None),
     "cast_from_hand": ("This spell was cast from hand.", None),
+    "cast_from_exile": ("This spell was cast from exile (foretell, plot or any exile play permission).", None),
     "cmp": ("Compare `left` and `right` values with `op`.", None),
     "combat_damage_by": ("A player was dealt combat damage this turn by one of these subtypes (prowl).",
                          None),
