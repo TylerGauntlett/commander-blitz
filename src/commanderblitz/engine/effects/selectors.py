@@ -22,6 +22,7 @@ from ..characteristics import (
     creature_types_of,
     enchanted_by,
     has_counters_matches,
+    is_equipped,
     resolve_chosen_subtypes,
 )
 from ..enums import PERMANENT_TYPES, CardType, Supertype, Zone
@@ -121,6 +122,17 @@ SELECTOR_KEYS = frozenset(
         #: and only Auras you control. `attached` is the other, and names the
         #: one permanent the ability's own source is attached to.
         "enchanted_by",
+        #: "…the number of **equipped** creatures you control" (Barret Wallace);
+        #: "draw a card for each **equipped** attacking creature you control"
+        #: (Cloud, Ex-SOLDIER). `true` when one or more Equipment -- anybody's --
+        #: is attached to the permanent (301.5c), `false` when none is. The
+        #: Equipment twin of `enchanted_by`, answered by
+        #: `characteristics.is_equipped`.
+        #:
+        #: `modified` is the near miss: it also counts counters and your Auras.
+        #: Counting Equipment with `attached_to` counts the Equipment, so a
+        #: creature wearing two would count twice.
+        "equipped",
         #: "…for each Aura you control **that's attached to a creature**"
         #: (Sage's Reverie); "+2/+2 for each Aura **attached to it**" (Kor
         #: Spiritdancer). The other end of `enchanted_by`: an attachment matched
@@ -839,6 +851,8 @@ def matches(
     if "enchanted_by" in selector and not enchanted_by(
         state, oid, selector["enchanted_by"], ctx.controller
     ):
+        return False
+    if "equipped" in selector and is_equipped(state, oid) != selector["equipped"]:
         return False
     if (host_filter := selector.get("attached_to")) is not None and not _host_matches(
         ctx, obj.attached_to, host_filter
@@ -1928,6 +1942,14 @@ def validate_selector(selector: Any, where: str) -> None:
     # is the tempting spelling -- `goaded_by` is the field it reads -- and it
     # would be read through `bool()` as `true`, quietly meaning "by anyone"
     # whatever word was written.
+    # "Equipped" names no Equipment and no controller, so the key is a
+    # predicate. A filter on the Equipment (`{"controller": "you"}`) would be
+    # a truthy dict read as `true` -- quietly "anybody's".
+    if "equipped" in selector and not isinstance(selector["equipped"], bool):
+        raise DslError(
+            f"{where}: 'equipped' is true or false -- whether any Equipment, "
+            f"anybody's, is attached (301.5c)"
+        )
     if "goaded" in selector and not isinstance(selector["goaded"], bool):
         raise DslError(
             f"{where}: 'goaded' is true or false -- whether anyone has goaded "

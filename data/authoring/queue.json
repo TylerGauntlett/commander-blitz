@@ -20932,12 +20932,12 @@
     },
     "Barret Wallace": {
       "edhrec_rank": 10273,
-      "gate": "template",
+      "gate": null,
       "name": "Barret Wallace",
-      "reason": "no template for: Whenever attacks, it deals damage equal to the number of equipped creatures you control to",
+      "reason": "",
       "scryfall_id": "1a504dff-5857-4a61-ab99-616d5df7cf5a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barret, Avalanche Leader": {
@@ -48772,12 +48772,12 @@
     },
     "Cloud, Ex-SOLDIER": {
       "edhrec_rank": 4652,
-      "gate": "template",
+      "gate": null,
       "name": "Cloud, Ex-SOLDIER",
-      "reason": "no template for: When Cloud enters, attach up to one target Equipment you control to it",
+      "reason": "",
       "scryfall_id": "07b4e4f8-6a31-4533-be51-668ce3ddc84f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cloud, Midgar Mercenary": {

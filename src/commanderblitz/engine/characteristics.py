@@ -2280,6 +2280,29 @@ def enchanted_by(state: GameState, oid: int, spec: Any, controller: int) -> bool
     return enchanted_by_answer(aura_controllers(state, oid), spec, controller)
 
 
+def is_equipped(state: GameState, oid: int) -> bool:
+    """The ``equipped`` selector key: is one or more Equipment attached to ``oid``?
+
+    "…the number of **equipped creatures** you control" (Barret Wallace). A
+    permanent is equipped when an Equipment is attached to it (301.5c), and
+    anybody's counts: the word asks what is attached, not whose it is -- the
+    equipped limb of `modified`, and `enchanted_by`'s walk for the other kind of
+    attachment. An Equipment is told by its derived subtypes, the test
+    `selectors._is_modified` and `zones._equipment_had` make of the board.
+
+    The derived subtypes are a pipeline **output**, so this is an effect-side
+    reader only; a static's filter would have to tell the Equipment by its
+    printed face, as `sba` does, to stay clear of another static (ADR 0001).
+    """
+    for other_oid in state.battlefield:
+        other = state.objects.get(other_oid)
+        if other is None or other.attached_to != oid:
+            continue
+        if "Equipment" in chars(state, other_oid).subtypes:
+            return True
+    return False
+
+
 def aura_controllers(state: GameState, oid: int) -> list[int]:
     """Who controls each Aura attached to ``oid`` right now, one seat per Aura.
 

@@ -1396,6 +1396,28 @@ the question asked of the declaration, checked as it triggers only:
 | `attached` | names the one permanent the ability's own source is attached to |
 | `attached_to_host` | names the *other* attachments sharing the source's host, not a host |
 
+### "Equipped creatures" — `equipped`
+
+```jsonc
+// Barret Wallace: "…it deals damage equal to the number of equipped creatures you control…"
+{ "op": "damage", "amount": { "count": {
+    "zone": "battlefield", "types": ["Creature"], "controller": "you", "equipped": true } }, … }
+```
+
+Whether one or more Equipment is attached to the permanent (301.5c): `true` is
+equipped by anybody's Equipment, `false` by none. The word names no controller,
+so an Equipment an opponent moved onto your creature equips it too. The
+Equipment twin of `enchanted_by`, answered by `characteristics.is_equipped`
+from the host's end of `attached_to`, with the Equipment told by its derived
+subtypes as `modified` tells it. A selector key only, usable anywhere a
+selector is, `count` included; the loader refuses anything but a boolean.
+
+| Near miss | Why not |
+|---|---|
+| `modified` | also matches a creature with a counter or your Aura on it |
+| `{"subtypes": ["Equipment"], "attached_to": …}` | counts the Equipment, so a creature wearing two counts twice |
+| `attached` | names the one permanent the ability's own source is attached to |
+
 ### "For each Aura that was attached to it" — `auras_had`
 
 ```jsonc

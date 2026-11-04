@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**172 cards** blocked by **157** capabilities.
+**170 cards** blocked by **156** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [equipped](#equipped) | 2 | 4652 | selector |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
@@ -481,24 +480,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## equipped
-
-Blocks **2** cards.
-
-- **(selector)** a selector key matching a creature that has one or more Equipment attached to it (by anybody's Equipment), e.g. {"equipped": true}, usable inside a `count` value so "the number of equipped creatures you control" is {"count": {"types": ["Creature"], "controller": "you", "equipped": true}}
-  <br>Why the existing vocabulary won't do: `attached` matches only the object the ability's own source is attached to (Equipment -> its creature), not any creature carrying an Equipment; `enchanted_by` asks about Auras only (aura_controllers skips non-Auras); `modified` also counts creatures with counters or your Auras, so it would overcount; `attached_to` filters the attachment's host from the attachment's side, not the host's side. The rest of the line (attacks trigger, damage with defender_of self) is already expressible
-- **(selector)** an effect-selector key `equipped: true` (and `false`) matching a permanent that has one or more Equipment attached to it (anybody's Equipment, 301.5 / 700.9), so "draw a card for each equipped attacking creature you control" is `draw` with amount `{"count": {"types": ["Creature"], "controller": "you", "attacking": true, "equipped": true}}` -- the Equipment twin of `enchanted_by`
-  <br>Why the existing vocabulary won't do: `enchanted_by` counts only Auras (`aura_controllers` filters on is_aura/bestow); `modified` also matches creatures with counters or your Auras, so it over-counts; `attached` names the source's own host; and counting Equipment with `attached_to: {attacking creature you control}` counts Equipment, not creatures, so a creature carrying two Equipment draws two cards instead of one
-
-<details><summary>Cards waiting on this</summary>
-
-- **Cloud, Ex-SOLDIER** (rank 4652) — `cloud_ex_soldier`
-  - Whenever Cloud attacks, draw a card for each equipped attacking creature you control. Then if Cloud has power 7 or greater, create two Treasure tokens.
-- **Barret Wallace** (rank 10273) — `barret_wallace`
-  - Whenever Barret Wallace attacks, it deals damage equal to the number of equipped creatures you control to defending player.
 
 </details>
 

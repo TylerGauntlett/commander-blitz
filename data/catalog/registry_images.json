@@ -1191,6 +1191,10 @@
     "artist": "Heather Hudson",
     "scryfall_id": "b4f6c5d3-9dce-48dc-aa0c-9324d6e2e77f"
   },
+  "barret_wallace": {
+    "artist": "Patrik Hell",
+    "scryfall_id": "1a504dff-5857-4a61-ab99-616d5df7cf5a"
+  },
   "barrier_of_bones": {
     "artist": "Vincent Proce",
     "scryfall_id": "28129aaf-aaff-47f4-8dd2-8c576c55052c"
@@ -2542,6 +2546,10 @@
   "cloud_crusader": {
     "artist": "Aleksi Briclot",
     "scryfall_id": "83ce09da-6c1d-46ac-870e-ff58ceaba116"
+  },
+  "cloud_ex_soldier": {
+    "artist": "Justyna Dura",
+    "scryfall_id": "07b4e4f8-6a31-4533-be51-668ce3ddc84f"
   },
   "cloud_manta": {
     "artist": "Mike Bierek",

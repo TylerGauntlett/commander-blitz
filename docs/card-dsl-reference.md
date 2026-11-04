@@ -11,7 +11,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | Family | Count |
 |---|---|
 | [Effect ops](#effect-ops) | 160 |
-| [Selectors](#selectors) | 72 |
+| [Selectors](#selectors) | 73 |
 | [Player specs](#player-specs) | 9 |
 | [Values](#values) | 67 |
 | [Conditions](#conditions) | 34 |
@@ -238,6 +238,7 @@ Every key a selector ("which objects") may carry. All present keys must match. D
 | `enchanted_by` | Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`. | ["Enchanted creatures" — enchanted_by](card-dsl.md#enchanted-creatures--enchanted_by) |
 | `encoded_by` | Cards encoded on the named creature (cipher). | [Cipher — the third direction an exile link can point](card-dsl-cookbook.md#cipher--the-third-direction-an-exile-link-can-point) |
 | `entered_this_turn` | Entered the battlefield this turn. | [entered_this_turn — the same fact asked of one permanent](card-dsl.md#entered_this_turn--the-same-fact-asked-of-one-permanent) |
+| `equipped` | Has one or more Equipment attached, anybody's (`true`/`false`). | ["Equipped creatures" — equipped](card-dsl.md#equipped-creatures--equipped) |
 | `exclude_binding` | Everything except the objects under a binding ("each other"). | [Recording what an op consumed or produced — "this way", "the token"](card-dsl.md#recording-what-an-op-consumed-or-produced--this-way-the-token) |
 | `exclude_self` | Not this permanent ("other"). | [Selectors — "which objects"](card-dsl.md#selectors--which-objects) |
 | `exiled_with` | Exiled with the named source. | [Targeting a card in exile](card-dsl-cookbook.md#targeting-a-card-in-exile) |

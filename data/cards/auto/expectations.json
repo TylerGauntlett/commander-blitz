@@ -1327,6 +1327,10 @@
   "barren_moor": {
     "zone": "battlefield"
   },
+  "barret_wallace": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "barrier_of_bones": {
     "zone": "battlefield"
   },
@@ -2785,6 +2789,10 @@
     "zone": "battlefield"
   },
   "cloud_crusader": {
+    "zone": "battlefield"
+  },
+  "cloud_ex_soldier": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "cloud_manta": {

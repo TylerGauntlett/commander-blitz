@@ -484,6 +484,8 @@ SELECTORS: dict[str, Entry] = {
     "drawn_this_turn": ("Cards drawn this turn (hand only).", "Cards in a hand drawn this turn"),
     "enchanted_by": ("Has an Aura attached (`true`/`false`), or one whose controller is `you`/`opponent`.",
                      '"Enchanted creatures" — `enchanted_by`'),
+    "equipped": ("Has one or more Equipment attached, anybody's (`true`/`false`).",
+                 '"Equipped creatures" — `equipped`'),
     "encoded_by": ("Cards encoded on the named creature (cipher).",
                    "Cipher — the third direction an exile link can point"),
     "entered_this_turn": ("Entered the battlefield this turn.",
