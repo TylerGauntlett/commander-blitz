@@ -35942,12 +35942,12 @@
     },
     "Bugenhagen, Wise Elder": {
       "edhrec_rank": 2782,
-      "gate": "template",
+      "gate": null,
       "name": "Bugenhagen, Wise Elder",
-      "reason": "no template for: At the beginning of your upkeep, if you control a creature with power 7 or greater, draw a",
+      "reason": "",
       "scryfall_id": "99155fae-507a-4eab-918a-bdee021e2262",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Builder's Bane": {
@@ -37752,12 +37752,12 @@
     },
     "Cait Sith, Fortune Teller": {
       "edhrec_rank": 5878,
-      "gate": "template",
+      "gate": null,
       "name": "Cait Sith, Fortune Teller",
-      "reason": "no template for: Lucky Slots — At the beginning of combat on your turn, scry 1, then exile the top card of ",
+      "reason": "",
       "scryfall_id": "26742bbb-38b1-43c1-8b33-80a79c8ddcce",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cait, Cage Brawler": {
@@ -43482,12 +43482,12 @@
     },
     "Champion's Helm": {
       "edhrec_rank": 751,
-      "gate": "template",
+      "gate": null,
       "name": "Champion's Helm",
-      "reason": "no template for: As long as equipped creature is legendary, it has hexproof",
+      "reason": "",
       "scryfall_id": "a207957a-16e4-4830-a101-39bcd4a46e61",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Champion's Victory": {
@@ -46502,12 +46502,12 @@
     },
     "Cid, Freeflier Pilot": {
       "edhrec_rank": 2848,
-      "gate": "template",
+      "gate": null,
       "name": "Cid, Freeflier Pilot",
-      "reason": "no template for: Equipment and Vehicle spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "73e1ba99-2a8b-43de-b03c-196a1907ca19",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Cid, Timeless Artificer": {

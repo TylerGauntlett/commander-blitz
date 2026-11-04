@@ -2061,6 +2061,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "bugenhagen_wise_elder": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "bull_cerodon": {
     "zone": "battlefield"
   },
@@ -2138,6 +2142,10 @@
     "zone": "battlefield"
   },
   "caelorna_coral_tyrant": {
+    "zone": "battlefield"
+  },
+  "cait_sith_fortune_teller": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "caldera_lake": {
@@ -2526,6 +2534,10 @@
     },
     "zone": "battlefield"
   },
+  "champion_s_helm": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "champions_from_beyond": {
     "battlefield_count": 53,
     "tokens": {
@@ -2640,6 +2652,13 @@
     "zone": "battlefield"
   },
   "chrome_mox": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
+  "cid_freeflier_pilot": {
     "battlefield_count": 33,
     "hand_size": {
       "0": 1
