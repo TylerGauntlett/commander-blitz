@@ -208052,12 +208052,12 @@
     },
     "Professional Face-Breaker": {
       "edhrec_rank": 213,
-      "gate": "template",
+      "gate": null,
       "name": "Professional Face-Breaker",
-      "reason": "no template for: Whenever one or more creatures you control deal combat damage to a player, create a Treasu",
+      "reason": "",
       "scryfall_id": "d5a53791-d4e9-49e9-9daf-c8b378925afe",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Professional Wrestler": {
@@ -210132,12 +210132,12 @@
     },
     "Puresteel Paladin": {
       "edhrec_rank": 600,
-      "gate": "template",
+      "gate": null,
       "name": "Puresteel Paladin",
-      "reason": "no template for: Whenever an Equipment you control enters, you may draw a card",
+      "reason": "",
       "scryfall_id": "b7f768ce-e30e-4da6-a2e3-3e67315b1766",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Purestrain Genestealer": {
@@ -240392,12 +240392,12 @@
     },
     "Sephiroth, Fallen Hero": {
       "edhrec_rank": 4026,
-      "gate": "template",
+      "gate": null,
       "name": "Sephiroth, Fallen Hero",
-      "reason": "no template for: Jenova Cells — Whenever Sephiroth attacks, you may put a cell counter on target creature. ",
+      "reason": "",
       "scryfall_id": "42edc09b-29e7-41d1-ad4b-b904f2976a66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sephiroth, One-Winged Angel Emblem": {
@@ -251652,12 +251652,12 @@
     },
     "Slayers' Stronghold": {
       "edhrec_rank": 1246,
-      "gate": "template",
+      "gate": null,
       "name": "Slayers' Stronghold",
-      "reason": "no template for: {R}{W}, {T}: Target creature gets +2/+0 and gains vigilance and haste until end of turn",
+      "reason": "",
       "scryfall_id": "30d0754a-f7bb-4c13-b7e3-28046db48cc1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Slaying Fire": {

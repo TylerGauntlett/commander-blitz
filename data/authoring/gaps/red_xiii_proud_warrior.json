@@ -1,0 +1,18 @@
+{
+  "card_id": "red_xiii_proud_warrior",
+  "name": "Red XIII, Proud Warrior",
+  "oracle_text": "Vigilance, trample\nOther modified creatures you control have vigilance and trample. (Equipment, Auras you control, and counters are modifications.)\nCosmo Memory — When Red XIII enters, return target Aura or Equipment card from your graveyard to your hand.",
+  "blocked_sentences": [
+    "Other modified creatures you control have vigilance and trample"
+  ],
+  "needs": [
+    {
+      "capability": "modified",
+      "kind": "selector",
+      "what": "the `modified` filter key (has a counter of any kind, OR is equipped by any Equipment, OR is enchanted by an Aura the static's controller controls) accepted in a static ability's `affects` filter, so a `grant_keyword` static can read \"other modified creatures you control\" continuously",
+      "why_existing_wont_do": "`modified` exists only in `selector_keys` (effect selectors, `_is_modified` in engine/effects/selectors.py), not in `static_affects_filter_keys`. An `any_of` union in `affects` covers two limbs (`has_counters: true`, `enchanted_by: {controller: you}`) but no static filter key asks whether an Equipment is attached to the creature: `attached` and `attached_to_host` read from the attachment's own end, and `attached_to` filters the host of the source, so the equipped limb would be silently dropped"
+    }
+  ],
+  "closest_existing": ["has_counters", "enchanted_by", "any_of", "grant_keyword"],
+  "confidence": "high"
+}

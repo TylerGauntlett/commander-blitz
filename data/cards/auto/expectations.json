@@ -11727,6 +11727,10 @@
       "graveyard"
     ]
   },
+  "professional_face_breaker": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "professor_hulk": {
     "battlefield_count": 33,
     "hand_size": {
@@ -11820,6 +11824,10 @@
     "zone": "battlefield"
   },
   "puppeteer_clique": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "puresteel_paladin": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -13324,6 +13332,13 @@
     },
     "zone": "battlefield"
   },
+  "sephiroth_fallen_hero": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "sepulchral_primordial": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -13979,6 +13994,10 @@
     "zone": "battlefield"
   },
   "slash_panther": {
+    "zone": "battlefield"
+  },
+  "slayers_stronghold": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "slimebind": {
