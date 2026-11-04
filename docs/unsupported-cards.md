@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**170 cards** blocked by **156** capabilities.
+**169 cards** blocked by **155** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -134,7 +134,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
-| [rebel-2-2-r-token](#rebel-2-2-r-token) | 1 | 7666 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
@@ -2086,20 +2085,6 @@ Blocks **1** card.
 
 - **Endurance** (rank 1343) — `endurance`
   - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
-
-</details>
-
-## rebel-2-2-r-token
-
-Blocks **1** card.
-
-- **(token)** a 2/2 red Rebel creature token
-  <br>Why the existing vocabulary won't do: the packet's token_ids has no Rebel token; the only 2/2 red token is human_knight_2_2_r_trample_haste, a Human Knight with trample and haste, which is a different token (111.4). The trigger itself (permanent_enters filtered to Equipment you control) and the combat attach line (begin_combat + attach with two targets) are expressible
-
-<details><summary>Cards waiting on this</summary>
-
-- **Barret, Avalanche Leader** (rank 7666) — `barret_avalanche_leader`
-  - Avalanche! — Whenever an Equipment you control enters, create a 2/2 red Rebel creature token.
 
 </details>
 

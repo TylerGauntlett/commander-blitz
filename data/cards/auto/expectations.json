@@ -1327,6 +1327,10 @@
   "barren_moor": {
     "zone": "battlefield"
   },
+  "barret_avalanche_leader": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "barret_wallace": {
     "battlefield_count": 33,
     "zone": "battlefield"

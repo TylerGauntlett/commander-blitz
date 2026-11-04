@@ -2667,6 +2667,26 @@
       "is_token": true
     },
     {
+      "id": "rebel_2_2_r",
+      "name": "Rebel Token",
+      "oracle_text": "2/2 red Rebel creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rebel"
+      ],
+      "power": 2,
+      "toughness": 2,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true
+    },
+    {
       "id": "rhino_4_4_g_trample",
       "name": "Rhino Token",
       "oracle_text": "4/4 green Rhino creature token with trample.",

@@ -15019,6 +15019,111 @@
           "effects": [
             {
               "amount": {
+                "const": 1
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "rebel_2_2_r"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Avalanche! — Whenever an Equipment you control enters, create a 2/2 red Rebel creature token.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "controller": "you",
+              "subtypes": [
+                "Equipment"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "attachment": {
+                "target": "gear"
+              },
+              "objects": {
+                "target": "rebel"
+              },
+              "op": "attach"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "gear",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Equipment"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "rebel",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "subtypes": [
+                  "Rebel"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, attach up to one target Equipment you control to target Rebel you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "R"
+      ],
+      "colors": [
+        "G",
+        "R"
+      ],
+      "id": "barret_avalanche_leader",
+      "keywords": [
+        "reach"
+      ],
+      "mana_cost": "{2}{R}{G}",
+      "name": "Barret, Avalanche Leader",
+      "oracle_text": "Reach\nAvalanche! — Whenever an Equipment you control enters, create a 2/2 red Rebel creature token.\nAt the beginning of combat on your turn, attach up to one target Equipment you control to target Rebel you control.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Rebel"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "count": {
                   "controller": "you",
                   "equipped": true,

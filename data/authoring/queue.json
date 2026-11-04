@@ -20942,12 +20942,12 @@
     },
     "Barret, Avalanche Leader": {
       "edhrec_rank": 7666,
-      "gate": "template",
+      "gate": null,
       "name": "Barret, Avalanche Leader",
-      "reason": "no template for: Avalanche! — Whenever an Equipment you control enters, create a 2/2 red Rebel creature tok",
+      "reason": "",
       "scryfall_id": "b39a7df7-12b8-4537-9f17-25dfc6d2a5c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Barricade Breaker": {

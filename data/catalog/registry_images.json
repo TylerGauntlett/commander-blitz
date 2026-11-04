@@ -1191,6 +1191,10 @@
     "artist": "Heather Hudson",
     "scryfall_id": "b4f6c5d3-9dce-48dc-aa0c-9324d6e2e77f"
   },
+  "barret_avalanche_leader": {
+    "artist": "Dai-XT",
+    "scryfall_id": "b39a7df7-12b8-4537-9f17-25dfc6d2a5c6"
+  },
   "barret_wallace": {
     "artist": "Patrik Hell",
     "scryfall_id": "1a504dff-5857-4a61-ab99-616d5df7cf5a"
@@ -11299,6 +11303,10 @@
   "reason_believe": {
     "artist": "Daarken",
     "scryfall_id": "1ca644e3-4fb3-4d38-b714-e3d7459bd8b9"
+  },
+  "rebel_2_2_r": {
+    "artist": "Anthony Devine",
+    "scryfall_id": "6afbbdad-aeed-428a-b840-c33f59a18d0b"
   },
   "reclamation_sage": {
     "artist": "Christopher Moeller",
