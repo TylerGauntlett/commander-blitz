@@ -1155,21 +1155,37 @@ def end_source_bound(state: GameState, source: int) -> None:
 
     Walks every object rather than the battlefield list so a phased-out holder
     loses the entry too (702.26d keeps its effects, not this one's source).
+
+    A ``kind == "control"`` entry -- Yuffie, Materia Hunter's "gain control of
+    target noncreature artifact for as long as you control Yuffie" -- is a
+    control effect, and ending a control effect *is* the handback: the
+    permanent goes back through `primitives._hand_back_control`, with its
+    newest-first order and its still-the-reason check, so an artifact somebody
+    else has since taken is not handed anywhere. Handed back only after every
+    entry is dropped, because the handback is itself a control change and runs
+    this function again for the permanent it moves.
     """
     changed = False
-    for obj in state.objects.values():
+    handbacks: list[tuple[int, TempEffect]] = []
+    for oid, obj in state.objects.items():
         if not obj.until_eot:
             continue
-        kept = [
-            temp
-            for temp in obj.until_eot
-            if temp.while_controller is None or temp.source != source
-        ]
+        kept = []
+        for temp in obj.until_eot:
+            if temp.while_controller is None or temp.source != source:
+                kept.append(temp)
+            elif temp.kind == "control":
+                handbacks.append((oid, temp))
         if len(kept) != len(obj.until_eot):
             obj.until_eot = kept
             changed = True
     if changed:
         state.bump_chars()
+    if handbacks:
+        # Deferred: `primitives` imports this module.
+        from .primitives import _hand_back_control
+
+        _hand_back_control(state, handbacks)
 
 
 def end_redirects_to(state: GameState, oid: int) -> None:

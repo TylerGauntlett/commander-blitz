@@ -31,6 +31,7 @@ from .board_helpers import (
 from .context import EffectContext, ask_yes_no
 from .counter_removal import remove_counters_one_at_a_time
 from .ops_cards import cast_copy_paying
+from .ops_characteristics import source_bound_seat
 from .registry import register
 from .selectors import (
     choose_objects,
@@ -587,11 +588,22 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
     actually moved, not what was asked for, so a permanent that left in response
     -- or that was already yours, which `change_control` refuses as a no-op --
     is not one of "those creatures".
+
+    ``duration: "as_long_as_you_control_source"`` is Yuffie, Materia Hunter's
+    "gain control of target noncreature artifact for as long as you control
+    Yuffie" (611.2b): `source_bound_seat`, the clock Thancred Waters'
+    `grant_keyword` runs on, so it does nothing at all when the effect's
+    controller no longer controls the source as it would begin, and the steal
+    is handed back the moment the source leaves the battlefield or changes
+    hands (`temp_effects.end_source_bound`).
     """
     players = _players(ctx, spec.get("player", "you"))
     if not players:
         return
     duration = str(spec.get("duration", "permanent"))
+    applies, while_controller = source_bound_seat(ctx, spec)
+    if not applies:
+        return
     oids = yield from choose_objects(ctx, spec.get("objects"), "Gain control of")
     taken = [
         oid
@@ -603,6 +615,7 @@ def op_gain_control(ctx: EffectContext, spec: Mapping[str, Any]):
             source=ctx.source_oid,
             duration=duration,
             clock=ctx.controller,
+            while_controller=while_controller,
         )
     ]
     if name := spec.get("as"):

@@ -344,7 +344,8 @@ _check_counter_kind = validate_counter_kind
 def uses_source_bound_duration(effects: Any) -> bool:
     """Does any effect in this tree last "for as long as you control" its source?
 
-    ``duration: "as_long_as_you_control_source"`` on `grant_keyword` or `pump`.
+    ``duration: "as_long_as_you_control_source"`` on `grant_keyword`, `pump` or
+    `gain_control`.
     Only a permanent can be controlled for a while, so the spell compiler
     refuses it on ``spell_effects``: an instant's source is on the stack as the
     effect would begin, and 611.2b makes the whole effect do nothing -- a card

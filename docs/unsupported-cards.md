@@ -58,7 +58,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
-| [control-while-you-control-source](#control-while-you-control-source) | 1 | 6202 | op |
 | [convoke](#convoke) | 1 | 11110 | cost |
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
@@ -80,6 +79,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
+| [exact-ninjutsu](#exact-ninjutsu) | 1 | 6202 | keyword |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
 | [exiled-this-way-lki](#exiled-this-way-lki) | 1 | 6960 | value |
 | [extra-turn](#extra-turn) | 1 | 1512 | op |
@@ -995,20 +995,6 @@ Blocks **1** card.
 
 </details>
 
-## control-while-you-control-source
-
-Blocks **1** card.
-
-- **(op)** a gain_control duration that lasts for as long as the effect's controller controls the source permanent ("gain control of target noncreature artifact for as long as you control Yuffie"), handing control back when the source leaves the battlefield or changes controller
-  <br>Why the existing vocabulary won't do: gain_control's duration is limited to engine CONTROL_DURATIONS (permanent, until_end_of_turn, end_of_your_next_turn); 'permanent' would keep the artifact after Yuffie leaves, which is a strictly stronger card. The source-bound duration 'as_long_as_you_control_source' exists only for characteristic-changing ops (ops_characteristics SOURCE_BOUND), not for control changes
-
-<details><summary>Cards waiting on this</summary>
-
-- **Yuffie, Materia Hunter** (rank 6202) — `yuffie_materia_hunter`
-  - When Yuffie enters, gain control of target noncreature artifact for as long as you control Yuffie.
-
-</details>
-
 ## convoke
 
 Blocks **1** card.
@@ -1305,6 +1291,20 @@ Blocks **1** card.
 - **Collective Brutality** (rank 11817) — `collective_brutality`
   - Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)
   - • Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.
+
+</details>
+
+## exact-ninjutsu
+
+Blocks **1** card.
+
+- **(keyword)** ninjutsu as 702.49 defines it: activatable only once blockers have been declared (509.1h -- before that no attacker is "unblocked"), and the ninja attacking the same player, planeswalker or battle the returned creature was attacking (702.49c), read from the creature the cost returned
+  <br>Why the existing vocabulary won't do: the cookbook shape (activated from hand, cost return_to_hand {attacking: true, blocked: false}, put_onto_battlefield attacking: true) is offered in the declare attackers step, because the `blocked` selector reads 'no blocker recorded' rather than 'blockers declared and none for it' (tests/unit/keywords/test_ninjutsu.py pins that it is offered before blocks), so the ninja can be swapped in before blocks and then be blocked; and `attacking: true` resolves through board_helpers._attack_defender to the first declared attacker's defender, not the returned creature's, and never copies its attacking_permanent -- in a multiplayer pod the ninja can attack the wrong player, or a player instead of the planeswalker
+
+<details><summary>Cards waiting on this</summary>
+
+- **Yuffie, Materia Hunter** (rank 6202) — `yuffie_materia_hunter`
+  - Ninjutsu {1}{R} ({1}{R}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)
 
 </details>
 

@@ -211,8 +211,17 @@ ATTACK_RESTRICTION_DURATIONS = ("this_turn", "this_combat", "attacker_next_turn"
 #: is, because it is the same clock.  Enumerated rather than defaulted for a
 #: harsher reason than most: a misread ``"until_end_of_turn"`` is a *permanent*
 #: steal, which is the strictly better card the loader has always refused to
-#: let anybody write by accident.
-CONTROL_DURATIONS = ("permanent", "until_end_of_turn", "end_of_your_next_turn")
+#: let anybody write by accident.  The fourth is Yuffie, Materia Hunter's "…for
+#: as long as you control Yuffie" (611.2b), spelled the way `grant_keyword`'s
+#: Thancred Waters duration is (`TempEffect.while_controller`), because it is the
+#: same duration ending the same way: `temp_effects.end_source_bound`, which
+#: for a control entry is the handback.
+CONTROL_DURATIONS = (
+    "permanent",
+    "until_end_of_turn",
+    "end_of_your_next_turn",
+    "as_long_as_you_control_source",
+)
 
 
 @dataclass(frozen=True)

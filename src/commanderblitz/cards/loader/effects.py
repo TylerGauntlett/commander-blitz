@@ -3830,7 +3830,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
         # Nissa, Vital Force's land stays a 5/5 "until your next turn".
         duration = effect.get("duration", "until_end_of_turn")
         # Spelled out rather than built from `CONTROL_DURATIONS`: that list
-        # also has "end_of_your_next_turn", which no animation implements.
+        # also has "end_of_your_next_turn" and "as_long_as_you_control_source",
+        # which no animation implements.
         allowed = ("permanent", "until_end_of_turn", "until_your_next_turn")
         if duration not in allowed:
             raise DslError(

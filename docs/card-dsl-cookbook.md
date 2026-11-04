@@ -5499,7 +5499,8 @@ or under another player's control, as the effect would begin, the op does
 nothing at all rather than falling back to a shorter clock. The source is the
 resolving ability's own permanent, so the loader refuses the duration in a
 spell's `spell_effects`, where nobody controls the source, and on every other
-op.
+op but `gain_control`, which takes it for a steal
+([below](#for-as-long-as-you-control-the-source)).
 
 The near misses: `permanent` outlives the source, and a `grant_keyword` static
 ends with its source but re-reads its `affects` filter, which has no key for
@@ -11646,8 +11647,9 @@ built from zone changes alone would show a creature silently swapping sides.
 ```
 
 Act of Treason, Threaten, Zealous Conscripts. `duration` is `"permanent"` (the
-default), `"until_end_of_turn"` or `"end_of_your_next_turn"` (below); **any
-other spelling is a load error**. A
+default), `"until_end_of_turn"`, `"end_of_your_next_turn"` or
+`"as_long_as_you_control_source"` (both below); **any other spelling is a load
+error**. A
 `duration` the engine does not read would be understood as "until end of turn"
 by whoever wrote it and turn Act of Treason into a permanent steal — a strictly
 better card than the printed one, loading clean.
@@ -11727,6 +11729,33 @@ steal records no previous controller and still leaves with the thief.
 "It gains \"This permanent can't be sacrificed\"" is `cant_sacrifice` on the
 same clock; see that op below for why it rides the permanent rather than the
 table.
+
+### …for as long as you control the source
+
+    "When this creature enters, gain control of target noncreature artifact for
+    as long as you control this creature." (Yuffie, Materia Hunter's trigger.)
+
+```jsonc
+{ "op": "gain_control", "objects": { "target": "t1" },
+  "duration": "as_long_as_you_control_source" }
+```
+
+611.2b's source-bound duration, the one `grant_keyword` and `pump` take for
+Thancred Waters ([above](#for-as-long-as-you-control-this)), on a control
+change. The steal is a `TempEffect(kind="control")` with `while_controller` set
+to the effect's controller, and no cleanup or untap step ends it.
+`temp_effects.end_source_bound` does, the moment the source leaves the
+battlefield or changes controller, and for a control entry ending is the
+handback: the permanent goes home through `_hand_back_control`, so 302.6,
+506.4 and the `control_changed` event apply, a permanent somebody else has
+taken since is not handed anywhere, and a blinked or returned source does not
+take it again. If the source is gone, or not the effect's controller's, as the
+effect would begin, nothing is taken at all. 800.4a ends it like the timed
+steals when the thief leaves the game. Refused in a spell's `spell_effects`,
+where nobody controls the source.
+
+The near misses: `permanent` keeps the artifact after the source dies, the
+strictly better card; `until_end_of_turn` hands it back at the first cleanup.
 
 ### "Choose left or right" — passing the board around the table
 
