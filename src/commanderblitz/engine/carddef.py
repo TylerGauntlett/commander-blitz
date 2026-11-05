@@ -659,7 +659,8 @@ class TriggerSpec:
     #: ``becomes_target`` only: "becomes the target of **a spell**" (Goldspan
     #: Dragon), as against ward's "a spell or ability", which is the unclaused
     #: form.  ``"spell"`` fires on spells alone, ``"ability"`` on abilities
-    #: alone, and ``None`` on both.
+    #: alone, ``"activated_ability"`` on activated abilities alone (read off
+    #: the event's ``ability_kind``, Professor Hojo), and ``None`` on both.
     #:
     #: A restriction rather than a ``filter`` or a ``condition``, because
     #: neither can reach it.  ``filter`` is matched against the trigger's

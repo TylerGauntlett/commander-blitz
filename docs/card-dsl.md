@@ -4617,7 +4617,7 @@ and the filter keys are
     "counter": "+1/+1",              // `counter_placed` only: which kind
     "put_by": "you",                 // `counter_placed` only: YOU put them
     "mana_ability": false,           // `ability_activated` only: exclude mana abilities
-    "targeted_by": "spell",          // `becomes_target` only: a spell, not an ability
+    "targeted_by": "spell",          // `becomes_target` only: a spell, an ability, or an activated ability
     "to_zones": ["graveyard", "exile"], // `leaves_battlefield` only: where it went
     "from_zones": ["exile"]          // `spell_cast` / `land_played` only: where it was played from
   },
@@ -5596,8 +5596,20 @@ shipped user's, so leaving it off stays a real sentence rather than a default:
 
 ```jsonc
 { "event": "becomes_target", "source": "self", "controller": "any",
-  "targeted_by": "spell" }     // "spell" | "ability" | omitted, meaning both
+  "targeted_by": "spell" }     // "spell" | "ability" | "activated_ability" | omitted
 ```
+
+`"ability"` is every ability on the stack, activated and triggered alike, as
+printed "an ability" means. `"activated_ability"` is Professor Hojo's "the
+target of an **activated** ability": it reads the `ability_kind` that
+`announce_targets` copies onto the event from `StackItem.ability_kind`
+(`"activated"` or `"triggered"`, absent for a spell), so an opponent's enters
+trigger tapping your creature does not fire it, and a copy of an activated
+ability does (707.10 keeps the kind). An event that does not say `"activated"`
+never fires it. Hojo's "one or more creatures you control … only once each
+turn" is this clause with `filter: {"controller": "you", "types": ["Creature"]}`
+and `max_per_turn: 1`; the per-turn cap already folds the rest of one
+ability's targets, so it takes no `batched`.
 
 It is a restriction on the trigger because nothing else can reach it. `filter` is
 matched against the event's **subject**, which here is the permanent *being*

@@ -423,12 +423,15 @@ class TriggerModel(BaseModel):
     mana_ability: bool | None = None
     #: For ``becomes_target``: "becomes the target of **a spell**" (Goldspan
     #: Dragon).  ``"spell"`` fires on spells only, ``"ability"`` on abilities
-    #: only, omitted on both -- and omitted is ward's printed "a spell or
-    #: ability", so leaving it off is a real reading rather than a default.
+    #: only (activated and triggered alike), ``"activated_ability"`` on
+    #: activated abilities only ("the target of an activated ability" --
+    #: Professor Hojo), omitted on all three -- and omitted is ward's printed
+    #: "a spell or ability", so leaving it off is a real reading rather than a
+    #: default.
     #: Without it the only writable trigger is the wide one, and a Dragon that
     #: mints a Treasure off an opponent's tapper or your own equip is a
     #: strictly larger card.
-    targeted_by: Literal["spell", "ability"] | None = None
+    targeted_by: Literal["spell", "ability", "activated_ability"] | None = None
     #: For ``draw``: "whenever you draw your **second** card each turn".  The
     #: ordinal that draw must have had for its player this turn.  For
     #: ``spell_cast``: "whenever an opponent casts their second spell each

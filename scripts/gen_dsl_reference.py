@@ -746,7 +746,7 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
     "becomes_monarch": ("A player becomes the monarch.", H_MONARCH),
     "becomes_monstrous": ("A creature becomes monstrous.", H_MONSTROSITY),
     "becomes_tapped": ("A permanent becomes tapped.", None),
-    "becomes_target": ("A permanent or player becomes the target of a spell or ability.", None),
+    "becomes_target": ("A permanent or player becomes the target of a spell or ability; `targeted_by` narrows it to a spell, an ability or an activated ability.", None),
     "becomes_untapped": ("A permanent becomes untapped.", None),
     "begin_combat": ("At the beginning of combat.", None),
     "blocks": ("A creature blocks.", None),

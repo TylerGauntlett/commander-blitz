@@ -226,6 +226,10 @@ def announce_targets(state: GameState, item: StackItem) -> None:
                 card=state.card_of(target).id if target is not None else None,
                 sid=item.sid,
                 is_spell=1 if item.is_spell else 0,
+                # "…the target of an **activated** ability" (Professor Hojo):
+                # ``"activated"`` or ``"triggered"`` off the item, absent for a
+                # spell. See `TriggerSpec.targeted_by`.
+                ability_kind=item.ability_kind,
             )
         elif ref.kind == "player":
             # No object, so no permanent's trigger can be about it -- but the
@@ -239,6 +243,7 @@ def announce_targets(state: GameState, item: StackItem) -> None:
                 target_player=ref.id,
                 sid=item.sid,
                 is_spell=1 if item.is_spell else 0,
+                ability_kind=item.ability_kind,
             )
 
 

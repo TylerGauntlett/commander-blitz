@@ -1404,11 +1404,22 @@ def _matches(
     # Read as a presence rather than a truthiness: a `spell` clause meeting an
     # event that forgot to say would otherwise pass, which is the wide
     # direction, and one that forgot to say is exactly the bug this guards.
+    #
+    # ``"activated_ability"`` is Professor Hojo's "the target of an **activated**
+    # ability": the ``ability`` arm narrowed by the ``ability_kind`` the item
+    # recorded as it went on the stack, so an opponent's enters trigger aimed at
+    # your creature does not draw. Same presence rule: an event that does not
+    # say ``"activated"`` does not fire it.
     if spec.targeted_by is not None:
         flag = event.data.get("is_spell")
         if flag is None:
             return False
         if (spec.targeted_by == "spell") is not bool(flag):
+            return False
+        if (
+            spec.targeted_by == "activated_ability"
+            and event.data.get("ability_kind") != "activated"
+        ):
             return False
 
     # "Whenever you draw your **second** card each turn." An ordinal is a fact

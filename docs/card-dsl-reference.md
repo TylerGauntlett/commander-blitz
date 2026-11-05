@@ -432,7 +432,7 @@ Every `event` a trigger may name, and the engine event each one listens to. Defi
 | `becomes_monarch` | `became_monarch` | A player becomes the monarch. | [The monarch](card-dsl-cookbook.md#the-monarch) |
 | `becomes_monstrous` | `became_monstrous` | A creature becomes monstrous. | [Monstrosity, and holding creatures down](card-dsl-cookbook.md#monstrosity-and-holding-creatures-down) |
 | `becomes_tapped` | `tapped` | A permanent becomes tapped. | [Triggers](card-dsl.md#triggers) |
-| `becomes_target` | `became_target` | A permanent or player becomes the target of a spell or ability. | [Triggers](card-dsl.md#triggers) |
+| `becomes_target` | `became_target` | A permanent or player becomes the target of a spell or ability; `targeted_by` narrows it to a spell, an ability or an activated ability. | [Triggers](card-dsl.md#triggers) |
 | `becomes_untapped` | `untapped` | A permanent becomes untapped. | [Triggers](card-dsl.md#triggers) |
 | `begin_combat` | `begin_combat` | At the beginning of combat. | [Triggers](card-dsl.md#triggers) |
 | `blocks` | `blocks` | A creature blocks. | [Triggers](card-dsl.md#triggers) |

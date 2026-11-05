@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**160 cards** blocked by **146** capabilities.
+**160 cards** blocked by **145** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -43,7 +43,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
-| [becomes-target-of-activated-ability](#becomes-target-of-activated-ability) | 1 | 5385 | trigger_event |
 | [block-restriction-relative-power](#block-restriction-relative-power) | 1 | 6993 | static_effect |
 | [blocked-by-source](#blocked-by-source) | 1 | 21010 | selector |
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
@@ -653,7 +652,6 @@ Blocks **1** card.
 
 - **Professor Hojo** (rank 5385) — `professor_hojo`
   - The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.
-  - Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.
 
 </details>
 
@@ -767,21 +765,6 @@ Blocks **1** card.
 
 - **Urborg, Tomb of Yawgmoth** (rank 73) — `urborg_tomb_of_yawgmoth`
   - Each land is a Swamp in addition to its other land types.
-
-</details>
-
-## becomes-target-of-activated-ability
-
-Blocks **1** card.
-
-- **(trigger_event)** a becomes_target trigger restricted to targeting by an ACTIVATED ability (not a spell and not a triggered ability), e.g. targeted_by: "activated_ability", which needs BECAME_TARGET events to carry whether the targeting object is an activated ability; batched over 'one or more creatures you control' with max_per_turn 1
-  <br>Why the existing vocabulary won't do: trigger targeted_by accepts only 'spell' or 'ability', and triggers.py reads only the event's is_spell flag, so 'ability' also fires off triggered abilities (e.g. an opponent's ETB trigger targeting your creature), which is a wider card than the printed 'activated ability'
-
-<details><summary>Cards waiting on this</summary>
-
-- **Professor Hojo** (rank 5385) — `professor_hojo`
-  - The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.
-  - Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.
 
 </details>
 
