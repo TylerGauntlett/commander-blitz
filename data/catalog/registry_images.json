@@ -2411,6 +2411,10 @@
     "artist": "Matt Stewart",
     "scryfall_id": "3594f726-cdbb-4b7d-bcfe-17d5f8cd5228"
   },
+  "chasm_skulker": {
+    "artist": "Nottsuo",
+    "scryfall_id": "886ce333-44d7-458e-a3bb-a58d1d7fc69b"
+  },
   "chief_of_the_edge": {
     "artist": "David Palumbo",
     "scryfall_id": "28822a9a-97fa-4784-ad97-072fcfc7b9ed"
@@ -13659,6 +13663,10 @@
   "squee_goblin_nabob": {
     "artist": "Greg Staples",
     "scryfall_id": "8aabc541-ff2a-416f-a973-44eda8ec4706"
+  },
+  "squid_1_1_u_islandwalk": {
+    "artist": "Daniel Correia",
+    "scryfall_id": "660d8e43-13e1-464b-b251-c7c2d77732ca"
   },
   "squire": {
     "artist": "Dennis Detwiller",

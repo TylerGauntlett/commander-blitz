@@ -2628,6 +2628,13 @@
   "charity_extractor": {
     "zone": "battlefield"
   },
+  "chasm_skulker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "chief_of_the_foundry": {
     "battlefield_count": 33,
     "zone": "battlefield"

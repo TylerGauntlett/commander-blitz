@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**174 cards** blocked by **157** capabilities.
+**173 cards** blocked by **156** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -152,7 +152,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spell-permanent-or-graveyard-card-target](#spell-permanent-or-graveyard-card-target) | 1 | 7354 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [squid-1-1-u-islandwalk](#squid-1-1-u-islandwalk) | 1 | 708 | token |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -2349,20 +2348,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## squid-1-1-u-islandwalk
-
-Blocks **1** card.
-
-- **(token)** a 1/1 blue Squid creature token with islandwalk
-  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no Squid token of any kind; the rest of the card is expressible (a `draw` trigger with add_counters on self, and a `dies` trigger whose create_token amount reads `counters_had` for +1/+1 counters), so only the token definition is missing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Chasm Skulker** (rank 708) — `chasm_skulker`
-  - When this creature dies, create X 1/1 blue Squid creature tokens with islandwalk, where X is the number of +1/+1 counters on this creature. (They can't be blocked as long as defending player controls an Island.)
 
 </details>
 

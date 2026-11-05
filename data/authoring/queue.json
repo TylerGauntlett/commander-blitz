@@ -45092,12 +45092,12 @@
     },
     "Chasm Skulker": {
       "edhrec_rank": 708,
-      "gate": "template",
+      "gate": null,
       "name": "Chasm Skulker",
-      "reason": "no template for: Whenever you draw a card, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "886ce333-44d7-458e-a3bb-a58d1d7fc69b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chastise": {

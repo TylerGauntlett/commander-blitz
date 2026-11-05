@@ -406,6 +406,35 @@ class TestDawnOfHopesSoldiersHaveLifelink:
         assert "lifelink" not in other.keywords
 
 
+class TestChasmSkulkersSquidsHaveIslandwalk:
+    """Chasm Skulker: *"create X 1/1 blue Squid creature tokens with
+    **islandwalk**."*
+
+    `fish_1_1_u` is the nearest body: one-one and blue, but a Fish with no
+    keyword. Islandwalk is what lets a swarm of one-ones matter against a blue
+    opponent, so the vanilla Fish would be a weaker card than the printed one.
+    """
+
+    TOKEN = "squid_1_1_u_islandwalk"
+
+    def test_it_exists(self, pool):
+        assert pool.get(self.TOKEN) is not None
+
+    def test_it_is_a_one_one_blue_squid_with_islandwalk(self, pool):
+        squid = pool.get(self.TOKEN)
+        assert (squid.power, squid.toughness) == (1, 1)
+        assert sorted(squid.colors) == ["U"]
+        assert list(squid.subtypes) == ["Squid"]
+        assert list(squid.keywords) == ["islandwalk"]
+        assert squid.is_creature and squid.is_token
+
+    def test_the_vanilla_blue_fish_is_still_a_separate_token(self, pool):
+        other = pool.get("fish_1_1_u")
+        assert other is not None
+        assert list(other.subtypes) == ["Fish"]
+        assert not other.keywords
+
+
 class TestEmeriasCallsAngelsAreWarriorsToo:
     """Emeria's Call: *"Create two 4/4 white **Angel Warrior** creature tokens
     with flying."*
