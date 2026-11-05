@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**169 cards** blocked by **152** capabilities.
+**168 cards** blocked by **151** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -91,7 +91,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
-| [keywords-had](#keywords-had) | 1 | 1163 | value |
 | [kicker](#kicker) | 1 | 868 | selector |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -1474,20 +1473,6 @@ Blocks **1** card.
 
 - **Emissary of Soulfire** (rank 18326) — `emissary_of_soulfire`
   - Pay {E}{E}: Put an exalted counter on target creature you control. Activate only as a sorcery.
-
-</details>
-
-## keywords-had
-
-Blocks **1** card.
-
-- **(value)** a last-known-information test of the keywords a dying creature had as it left the battlefield (603.10a), usable on a creature_dies trigger -- either a `not_keywords` trigger filter key answered from the departure snapshot, or a `keywords_had` value/condition beside `counters_had`, `power_had` and `toughness_had`
-  <br>Why the existing vocabulary won't do: TRIGGER_FILTER_KEYS has `keywords` but not `not_keywords`, and `matches_card_filter` reads `keywords` off the printed card face, not last-known derived characteristics. A creature returned by this very ability carries a flying counter, so it dies WITH flying; a printed-face check would see no flying and return it again for ever, and a creature granted flying by an anthem would wrongly be returned. The value language has `counters_had`, `power_had`, `toughness_had` and `auras_had` but no keyword equivalent. The return itself is expressible (`return_from_graveyard` with `objects: {binding: subject, zone: graveyard}`, destination battlefield, default owner control, `counters: {"flying": 1}`).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Luminous Broodmoth** (rank 1163) — `luminous_broodmoth`
-  - Whenever a creature you control without flying dies, return it to the battlefield under its owner's control with a flying counter on it.
 
 </details>
 

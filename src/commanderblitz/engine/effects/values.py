@@ -57,7 +57,7 @@ from ..characteristics import (
     min_count,
     min_life,
 )
-from ..enums import KEYWORD_COUNTERS
+from ..enums import KEYWORD_COUNTERS, Keyword
 from ..errors import DslError
 from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
@@ -320,6 +320,13 @@ VALUE_KEYS = frozenset(
         # before the event fired, and by resolution they are graveyard cards.
         # Answered from the departure event's `had_auras` snapshot (603.10a).
         "auras_had",
+        # "Whenever a creature you control **without flying** dies" (Luminous
+        # Broodmoth). 1 if the departed permanent had the keyword as it left,
+        # else 0, off the departure event's `had_keywords` snapshot (603.10a).
+        # A trigger filter's `keywords` reads the printed face, which a flying
+        # counter or an anthem's grant never reaches -- a creature Broodmoth
+        # returned would come back for ever.
+        "keywords_had",
         # "…for each basic land type among lands you control" (domain), and
         # "three or more creatures with different powers" (coven). A count of
         # *distinct values* over a pool, which no other leaf can be: `count`
@@ -679,6 +686,13 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         if not isinstance(had, (list, tuple)):
             return 0
         return auras_matching(had, expr["auras_had"], ctx.controller)
+    if "keywords_had" in expr:
+        # One keyword, as a bare string: {"keywords_had": "flying"}. A trigger
+        # that never fired binds nothing and reads 0, as `counters_had` does.
+        had = ctx.bindings.get("had_keywords")
+        if not isinstance(had, (list, tuple, set, frozenset)):
+            return 0
+        return 1 if str(expr["keywords_had"]) in had else 0
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
@@ -1594,6 +1608,10 @@ def validate_starting_life_of(who: Any, where: str) -> None:
         raise DslError(f"{where}: needs a player spec, e.g. 'you'")
 
 
+#: What `keywords_had` may name: a keyword the engine implements.
+_KEYWORD_WORDS = frozenset(k.value for k in Keyword)
+
+
 def validate_auras_had(spec: Any, where: str) -> None:
     """``auras_had`` is ``true`` or ``{"controller": ...}``, as `enchanted_by` is.
 
@@ -1657,6 +1675,12 @@ def validate_value(expr: Any, where: str) -> None:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
     if "auras_had" in expr:
         validate_auras_had(expr["auras_had"], f"{where}.auras_had")
+    if "keywords_had" in expr:
+        word = expr["keywords_had"]
+        if not isinstance(word, str) or word not in _KEYWORD_WORDS:
+            raise DslError(
+                f"{where}.keywords_had: one implemented keyword, e.g. 'flying', got {word!r}"
+            )
     if "times_tapped_this_turn" in expr:
         validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
     if "command_zone_casts_of" in expr:

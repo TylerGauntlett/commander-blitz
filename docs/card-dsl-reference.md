@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 161 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 67 |
+| [Values](#values) | 68 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
@@ -338,6 +338,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `extreme_value` | The greatest/least of a quality in a pool, as one number. | [Value expressions](card-dsl.md#value-expressions) |
 | `greatest_discarded_by_a_player` | The greatest number of cards one player discarded this way. | [Discarding a whole hand, and reading the greatest that went](card-dsl.md#discarding-a-whole-hand-and-reading-the-greatest-that-went) |
 | `half` | Half of a value, rounded `up` or `down`. | [Value expressions](card-dsl.md#value-expressions) |
+| `keywords_had` | 1 if the departed permanent had a keyword (derived) as it left, else 0. | ["Without flying", asked of a creature that died — keywords_had](card-dsl.md#without-flying-asked-of-a-creature-that-died--keywords_had) |
 | `lands_you_control` | Lands the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `life_gained_this_turn` | Life the player gained this turn. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `life_lost_this_turn` | Life the player lost this turn (spectacle). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |

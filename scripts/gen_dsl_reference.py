@@ -656,6 +656,8 @@ VALUES: dict[str, Entry] = {
     "permanents_to_graveyard_this_turn": ("Permanents, tokens included, put into any graveyard from the battlefield this turn (gravestorm).",
                                           "Gravestorm — permanents put into a graveyard from the battlefield"),
     "power_had": ("The power the dying creature had.", None),
+    "keywords_had": ("1 if the departed permanent had a keyword (derived) as it left, else 0.",
+                     '"Without flying", asked of a creature that died — `keywords_had`'),
     "power_of": ("An object's power.", None),
     "resolutions_this_turn": ("Times this ability has resolved this turn.", None),
     "rolled": ("Dice results under a binding: count, by face, parity or total.", H_ROLL),

@@ -291,6 +291,12 @@ def move_object(
     if was_on_battlefield:
         _seen = chars(state, oid)
         had_power, had_toughness = _seen.power, _seen.toughness
+        # "Whenever a creature you control **without flying** dies" (Luminous
+        # Broodmoth): the keywords it had as it left (603.10a), derived -- a
+        # flying counter, an anthem's grant and a loss all count. The printed
+        # face is the trap: a creature Broodmoth returned wears a flying
+        # counter, dies with flying, and must not come back again.
+        had_keywords = sorted(_seen.keywords)
         # And for the same reason, into any record a cost made of this
         # permanent: Station reads "the tapped creature's power" at resolution,
         # as the creature last existed on the battlefield if it has gone. See
@@ -302,6 +308,7 @@ def move_object(
                 record["power"], record["toughness"] = had_power, had_toughness
     else:
         had_power = had_toughness = 0
+        had_keywords = []
     # Who sacrificed it, snapshotted with the rest: `reset_permanent_state` puts
     # control back to the owner on the way out, and "whenever **you** sacrifice"
     # is about the player who did it -- a different answer for a stolen
@@ -474,6 +481,7 @@ def move_object(
             had_power=had_power,
             had_toughness=had_toughness,
             had_auras=had_auras,
+            had_keywords=had_keywords,
             # Where it went, for a trigger's `to_zones`: "when this creature
             # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
             # must not fire on a bounce or a tuck.
@@ -508,6 +516,7 @@ def move_object(
                 had_power=had_power,
                 had_toughness=had_toughness,
                 had_auras=had_auras,
+                had_keywords=had_keywords,
                 # 1/0 for `was_attacking`'s reason.
                 was_modified=1 if was_modified else 0,
             )

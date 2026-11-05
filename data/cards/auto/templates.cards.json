@@ -109756,6 +109756,62 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "counters": {
+                "flying": 1
+              },
+              "destination": "battlefield",
+              "objects": {
+                "binding": "subject",
+                "zone": "graveyard"
+              },
+              "op": "return_from_graveyard"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature you control without flying dies, return it to the battlefield under its owner's control with a flying counter on it.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "keywords_had": "flying"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "creature_dies"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "luminous_broodmoth",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{2}{W}{W}",
+      "name": "Luminous Broodmoth",
+      "oracle_text": "Flying\nWhenever a creature you control without flying dies, return it to the battlefield under its owner's control with a flying counter on it.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Insect"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },

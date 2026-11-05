@@ -1451,6 +1451,33 @@ but `controller`.
 | `attached` | names the one permanent the ability's own source was attached to |
 | `counters_had` | the counters it died with, not its attachments |
 
+### "Without flying", asked of a creature that died — `keywords_had`
+
+```jsonc
+// Luminous Broodmoth: "Whenever a creature you control without flying dies,
+// return it to the battlefield under its owner's control with a flying counter on it."
+{ "kind": "triggered",
+  "trigger": { "event": "creature_dies", "controller": "you",
+               "condition": { "cmp": "==", "left": { "keywords_had": "flying" },
+                              "right": { "const": 0 } } },
+  "effects": [ { "op": "return_from_graveyard", "destination": "battlefield",
+                 "objects": { "binding": "subject", "zone": "graveyard" },
+                 "counters": { "flying": 1 } } ] }
+```
+
+A value, on a trigger about a permanent that has just left the battlefield: 1
+if it had the named keyword as it left (603.10a), else 0. The keyword is one
+bare string the engine implements; the loader refuses anything else.
+`zones.move_object` writes the derived keywords, from `chars()` before the
+wipe, as `had_keywords` on the `dies` and `leaves_battlefield` events, so a
+keyword counter, an anthem's grant and a removal all count. A trigger that
+never fired binds nothing and reads 0.
+
+| Near miss | Why not |
+|---|---|
+| a trigger filter's `keywords` | reads the printed face: a creature Broodmoth returned wears a flying counter, dies with flying, and would be returned again for ever |
+| `counters_had: "flying"` | sees the counter, not flying from an anthem, an Equipment or the printed line |
+
 ### "Attached to a creature" — `attached_to`
 
 ```jsonc

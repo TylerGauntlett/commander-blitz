@@ -162932,12 +162932,12 @@
     },
     "Luminous Broodmoth": {
       "edhrec_rank": 1163,
-      "gate": "template",
+      "gate": null,
       "name": "Luminous Broodmoth",
-      "reason": "no template for: Whenever a creature you control without flying dies, return it to the battlefield under it",
+      "reason": "",
       "scryfall_id": "e6fc5c0b-0b64-491d-b312-b9b2133225d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Luminous Guardian": {

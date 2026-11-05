@@ -1750,6 +1750,10 @@ EVENT_BINDING_KEYS = (
     # wore, one seat per Aura, snapshotted by `zones._auras_had` before
     # `_detach_all`. Read through the `auras_had` value key.
     "had_auras",
+    # "Whenever a creature you control without flying dies" (Luminous
+    # Broodmoth): the keywords the departed permanent had as it left, derived.
+    # Read through the `keywords_had` value key.
+    "had_keywords",
     # The X paid for the ability whose event this is, written over the `x`
     # `event_bindings` reads off the permanent. Only `cycle` carries it: "When
     # you cycle this card, create an X/X…" (Shark Typhoon) means the X in the
