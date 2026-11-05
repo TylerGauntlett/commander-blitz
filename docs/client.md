@@ -53,7 +53,7 @@ Everything lives under `frontend/src`. The rule per folder is the thing to prese
 | `screens/` | one component per address; `App.tsx` is the route table | the only place that imports `react-router`, with one exception: `components/ui/UpdateBanner.tsx` calls `useMatch` to know whether the player is at the table, and `tests/renderWithRouter.tsx` exists so its test can mount it |
 | `components/` | `game/`, `lobby/`, `menu/`, `ui/`, `screen/` — presentation | renders bare, with no provider around it; anything that needs a router, a query client or a session is wired in `screens/` |
 | `logic/` | every decision the client makes, as pure functions over the server's view | no DOM, no React; this is what the unit tests cover |
-| `state/` | `useGame.ts` and `usePod.ts` (react-query long polls), `uiStore.ts` (zustand), `useAppConfig.tsx` (`GET /api/config`), `storage.ts` and `migrate.ts`, `useHandheld.ts`, `useZoomFit.ts`, `narration.ts` | the four kinds of state below, and nothing that belongs to the server |
+| `state/` | `useGame.ts` and `usePod.ts` (react-query long polls), `uiStore.ts` (zustand), `useAppConfig.tsx` (`GET /api/config`), `storage.ts` and `migrate.ts`, `useHandheld.ts`, `useZoomFit.ts`, `viewportFit.ts`, `narration.ts` | the four kinds of state below, and nothing that belongs to the server |
 | `input/` | `pad.ts` and `padRead.ts` (the gamepad poll), `cursor.ts`, `stops.ts`, `groups.ts`, `nav.ts`, `ring.ts`, `inputMode.ts`, `useCursorNav.ts`, `longPress.ts`, `stickScroll.ts`, `repeat.ts`, and the `useTable*` hooks | two signals, one intent; the cursor is an attribute, never state |
 | `fx/` | `scheduler.ts`, `actuators.ts`, `particles.ts`, `presets.ts`, `reducedMotion.ts` | effects run concurrently on one frame loop and never touch React state |
 | `motion/` | `springs.ts` | every transition in the app, named once |
@@ -150,6 +150,13 @@ query second.
 
 **The floors are per mode**: `logic/floors.ts:FLOORS` holds a row for `handheld` and one
 for `phone`, and the gates read the row for the page's layout (see Input and the cursor).
+
+**A handheld is drawn at the Deck's height.** Every fixed piece of the handheld layout
+is in px against the Deck's panel, so a screen in the handheld band but shorter than
+`logic/viewportScale.ts:HANDHELD_DESIGN_H` is laid out at that height and scaled to fit
+through the viewport tag (ADR 0028 *A short handheld lays out at the Deck's height*).
+`state/viewportFit.ts` writes the tag before the first render, and it is the only
+writer of it; a desktop browser ignores the tag, so only touch devices are scaled.
 
 What the compact layouts give up, as rules:
 

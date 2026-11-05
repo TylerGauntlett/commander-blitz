@@ -65,6 +65,7 @@ separately:
 - [adr/0025-phone-is-a-layout-mode-touch-an-input-mode.md](adr/0025-phone-is-a-layout-mode-touch-an-input-mode.md) — a phone is a peer of the handheld layout, touch is a fourth input mode, and floors are per mode
 - [adr/0026-the-roadmap-autopilot-merges-on-green.md](adr/0026-the-roadmap-autopilot-merges-on-green.md) — the autopilot builds only items whose questions the owner answered, and auto-merge lets branch protection decide
 - [adr/0027-rule-modifying-statics-read-derived-characteristics.md](adr/0027-rule-modifying-statics-read-derived-characteristics.md) — an attack requirement and a block restriction match their filters against derived characteristics, since no layer applies them
+- [adr/0028-a-short-handheld-lays-out-at-the-decks-height.md](adr/0028-a-short-handheld-lays-out-at-the-decks-height.md) — a handheld-band screen shorter than the Deck is laid out at the Deck's height and scaled by the viewport tag, not given lower floors
 
 ## If you are here to...
 

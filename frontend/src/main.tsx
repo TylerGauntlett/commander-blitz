@@ -1,6 +1,9 @@
 // First, before any module that reads localStorage at evaluation time: moves a
 // returning player's pre-rename keys to their current names.
 import "./state/migrate";
+// Before the first render, so a screen shorter than the Deck lays the table out
+// once, at the Deck's height (ADR 0028).
+import "./state/viewportFit";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { StrictMode } from "react";
 import { createRoot } from "react-dom/client";
