@@ -128,6 +128,10 @@
 .chair {
   display: grid;
   grid-template-rows: var(--tag-h) var(--card-h) auto;
+  /* The column is the chair's width, not its widest child's: an implicit
+     \`auto\` track grows to a one-line label or button and pushes the chair
+     into its neighbour. */
+  grid-template-columns: minmax(0, 1fr);
   gap: calc(8px * var(--du));
   width: var(--card-w);
   /*
@@ -169,9 +173,15 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
 }
 
 .chair__no {
+  /* One line, whatever the chair's width: a label that wraps pushes its second
+     line down onto the card. */
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
   font-size: max(var(--type-floor), calc(16px * var(--du)));
   font-weight: 700;
-  letter-spacing: 0.14em;
+  letter-spacing: var(--chair-track, 0.14em);
   text-transform: uppercase;
   color: var(--text-faint);
 }
@@ -563,7 +573,35 @@ html[data-input="keyboard"] .chair:has([data-cursor]) {
 
 @media (max-width: 1080px) {
   .pod {
-    --card-w: calc(160px * var(--du));
+    /*
+     * The room the window has, not the stage scale alone.
+     *
+     * `--du` follows the SHORTER of the two ratios, so a window that is narrow
+     * but tall enough scaled the cards to its width twice over: at 910 wide a
+     * chair was 115px while the row had room for 200, and the copy, which does
+     * not follow `--du` down, wrapped the seat label and swamped the stamp. So
+     * the card is the largest that four chairs fit across (the row's padding
+     * and three gaps off the width) and down (the bar, the rail, the tag and
+     * the plate off the height), never past the Deck's 208 and never under what
+     * it was before.
+     */
     --chair-gap: calc(16px * var(--du));
+    --chair-track: 0.06em;
+    --card-w: max(
+      calc(160px * var(--du)),
+      min(
+        208px,
+        calc((100vw - 48px * var(--du) - 3 * var(--chair-gap)) / 4),
+        calc((100dvh - 192px * var(--du) - 200px) / 1.4)
+      )
+    );
+  }
+
+  /* The stamp's type is on the floor here, so its box is what gives: padding
+     and tracking from the card rather than fixed, so the wax stays inside the
+     card it marks. */
+  .pod .stamp {
+    padding: calc(var(--card-w) * 0.025) calc(var(--card-w) * 0.06);
+    letter-spacing: 0.1em;
   }
 }
