@@ -14125,6 +14125,10 @@
   "sickle_ripper": {
     "zone": "battlefield"
   },
+  "siege_gang_commander": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "siege_mastodon": {
     "zone": "battlefield"
   },

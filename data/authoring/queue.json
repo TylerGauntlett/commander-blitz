@@ -246422,12 +246422,12 @@
     },
     "Siege-Gang Commander": {
       "edhrec_rank": 1594,
-      "gate": "behaviour",
+      "gate": null,
       "name": "Siege-Gang Commander",
-      "reason": "goblin_1_1_r tokens is 0, expected 3; your battlefield is 33, expected 36",
+      "reason": "",
       "scryfall_id": "7d67e614-03d2-4034-b82f-25962fc378d4",
-      "source": "",
-      "status": "failed",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siege-Gang Lieutenant": {
