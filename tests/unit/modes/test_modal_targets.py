@@ -300,11 +300,25 @@ class TestTheLoaderRefusals:
         with pytest.raises(DslError, match="top-level 'choose_mode'"):
             self.compile(card)
 
-    def test_a_caster_chosen_size_inside_a_mode(self):
+    def test_a_caster_chosen_size_before_another_modes_target(self):
+        """It stores as many refs as were picked, so a later mode's ref would be
+        read back into its bucket. Last, it loads -- see
+        tests/unit/modes/test_variable_mode_target.py."""
         card = self.base()
         card["targets"][0]["count"] = 2
         card["targets"][0]["up_to"] = True
-        with pytest.raises(DslError, match="fixed number"):
+        card["targets"].append(
+            {
+                "id": "b",
+                "kind": "card_in_graveyard",
+                "mode": 1,
+                "selector": {"zone": "graveyard", "types": ["Land"]},
+            }
+        )
+        card["spell_effects"][0]["modes"][1]["effects"] = [
+            {"op": "return_to_hand", "objects": {"target": "b"}}
+        ]
+        with pytest.raises(DslError, match="must be the last target declared"):
             self.compile(card)
 
     def test_an_optional_mode_owned_target_before_another_modes_target(self):

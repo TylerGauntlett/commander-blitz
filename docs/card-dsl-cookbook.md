@@ -10973,8 +10973,9 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` on an activated (or static) ability's targets | legality fixes an activation's targets before its modes are chosen, so there is no moment left to declare one in |
 | `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with nothing left to declare a target in |
 | `mode` out of range | the card does not print that bullet |
-| `up_to` / `"any"` / a computed count on a mode-owned spec | `filter_legal` splits stored refs by position, and a caster-chosen size inside a mode leaves no way to say where the next mode's refs begin |
-| `optional` on a mode-owned spec that is not the last target declared — not the last spec of its mode, or a later mode owns a target | a declined target stores no ref, so `filter_legal` would read the next spec's ref into its bucket |
+| a computed count on a mode-owned spec | a spell's is declared before anything it could read exists; a mode-owned size must be printed — a literal `count` (with `up_to` / `min_count`) or `"any"` |
+| `one_per_player` or `total_mana_value` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
+| `optional`, `up_to` or `"any"` on a mode-owned spec that is not the last target declared — not the last spec of its mode, or a later mode owns a target | a declined or caster-sized target stores no fixed number of refs, so `filter_legal` would read the next spec's ref into its bucket |
 | a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
 
 ### "Up to one target" inside a mode
@@ -10997,6 +10998,30 @@ zero. Because declaring nothing is a legal declaration, the mode stays on offer
 `count: 1` would strike it and force the target whenever one exists. The loader
 admits it only as **the last target declared**: the last spec of its mode, with
 no later mode owning a target, so a declined one shifts no ref after it.
+
+### "One or two targets" inside a mode
+
+```jsonc
+"targets": [
+  {"id": "t1", "kind": "card_in_graveyard", "mode": 1,
+   "count": 2, "min_count": 1, "up_to": true,
+   "selector": {"zone": "graveyard", "controller": "you",
+                "any_types": ["Artifact", "Creature", "Enchantment", "Land", "Planeswalker", "Battle"]}}
+]
+```
+
+Yuna's Decision's "Find Another Way — Return **one or two** target permanent
+cards from your graveyard to your hand", beside a bullet that targets nothing.
+`up_to` (with `min_count` for a floor) or `"any"` on a mode-owned spec is a size
+the caster picks when its mode is chosen: `Game._ask_mode_targets` asks a
+spell's from the floor through the printed ceiling, and a trigger or activation
+offers every subset largest first through `enumerate_target_tuples`. The mode
+is on offer only while the floor can be met (601.2b), so with one permanent
+card in the graveyard the bullet returns that one, where a fixed `count: 2`
+would strike it; a card-level `up_to` target would instead be declared — and
+need a legal choice — under the targetless bullet too. The same
+**last-target-declared** rule as `optional` applies, for the same positional
+reason.
 
 ## "Target creature phases out"
 

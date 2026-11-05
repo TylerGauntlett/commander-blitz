@@ -1750,21 +1750,28 @@ class Game:
                     (describe_ref(state, ref), ref)
                     for ref in candidates(state, pid, spec, oid)
                 ]
-                # An int by construction: `loader.targets._check_mode_targets` refuses a
-                # caster-chosen or computed size on a mode-owned spec, because
-                # `filter_legal` splits the stored refs by position.
-                want = int(target_count(state, pid, spec, oid))
-                # "Up to one target" -- `optional`, declinable whether or not
-                # there is something to point at. The loader puts such a spec
-                # last in every declaration, so storing no ref for it shifts
-                # nothing that `filter_legal` reads after it.
+                count = target_count(state, pid, spec, oid)
+                if spec.variable_size:
+                    # "Return one or two target permanent cards" (Yuna's
+                    # Decision) -- a size the caster picks, from `min_count`
+                    # through the printed ceiling. `loader.targets._check_mode_targets`
+                    # admits only a printed size (a literal or "any"), and only
+                    # where the spec ends every declaration, so however many
+                    # refs it stores, `filter_legal` hands them all to it.
+                    ceiling = (
+                        len(options) if count == "any" else min(int(count), len(options))
+                    )
+                    floor = 0 if spec.optional else min(spec.min_count, ceiling)
+                else:
+                    # An int by construction: the loader refuses a computed
+                    # size on a mode-owned spec. "Up to one target" --
+                    # `optional` -- is declinable whether or not there is
+                    # something to point at, and the same last-declared rule
+                    # makes storing no ref for it shift nothing.
+                    ceiling = int(count)
+                    floor = 0 if spec.optional else ceiling
                 chosen = yield from ask_targets(
-                    ctx,
-                    f"Target for {card.name}",
-                    options,
-                    0 if spec.optional else want,
-                    want,
-                    pid,
+                    ctx, f"Target for {card.name}", options, floor, ceiling, pid
                 )
                 out.extend(chosen)
         return tuple(out)

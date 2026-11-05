@@ -361,26 +361,38 @@ def _check_mode_targets(
             raise DslError(
                 f"{label}: mode {spec.mode} does not exist -- the card offers {mode_count}"
             )
-        if spec.variable_size:
+        if spec.variable_size and not isinstance(spec.count, int) and spec.count != "any":
             raise DslError(
-                f"{label}: a mode-owned target must be a fixed number -- "
-                f"`filter_legal` splits the stored refs by position and a "
-                f"caster-chosen size inside a mode leaves no way to say where "
-                f"the next mode's refs begin"
+                f"{label}: a mode-owned target's size must be printed -- a "
+                f"literal 'count' (with 'up_to' and 'min_count' if the caster "
+                f"picks how many) or 'any'; a computed count has no cast-time "
+                f"value to read"
             )
-        if spec.optional and not _ends_every_declaration(spec, owned):
+        if spec.variable_size and (
+            spec.one_per_player or spec.total_mana_value is not None
+        ):
+            raise DslError(
+                f"{label}: a caster-sized mode-owned target cannot carry "
+                f"'one_per_player' or 'total_mana_value' -- the mode's targets "
+                f"are asked one spec at a time, with no check between the picks"
+            )
+        if (spec.optional or spec.variable_size) and not _ends_every_declaration(
+            spec, owned
+        ):
             # "This creature fights **up to one** target creature an opponent
-            # controls" (Summon: Magus Sisters): a declined optional stores no
-            # ref, and `filter_legal` splits the stored refs by position, so a
-            # spec declared after it would read nothing back -- or the wrong
+            # controls" (Summon: Magus Sisters), "return **one or two** target
+            # permanent cards" (Yuna's Decision): a declined optional stores no
+            # ref and a caster-sized spec stores as many as were picked, and
+            # `filter_legal` splits the stored refs by position, so a spec
+            # declared after either would read nothing back -- or the wrong
             # thing. Last in every list a cast or trigger can declare, it
             # swallows only its own refs, as a card-level variable-size spec
             # at the end of its list does.
             raise DslError(
-                f"{label}: an 'optional' mode-owned target must be the last "
-                f"target declared -- the last spec of its mode, with no later "
-                f"mode owning a target -- or a declined one shifts every ref "
-                f"after it into the wrong bucket"
+                f"{label}: an 'optional' or variable-size mode-owned target must "
+                f"be the last target declared -- the last spec of its mode, with "
+                f"no later mode owning a target -- or the refs after it land in "
+                f"the wrong bucket"
             )
     if any(spec.optional for spec in specs if spec.mode is None):
         raise DslError(
@@ -401,10 +413,11 @@ def _ends_every_declaration(spec: TargetSpec, owned: list[TargetSpec]) -> bool:
 
     `CardDef.specs_for_modes` lays a declaration out as the card-level specs,
     then each chosen mode's specs in ascending mode index. A spec whose stored
-    size is not fixed -- one that may be declined, today -- reads back
+    size is not fixed reads back
     correctly only when nothing is declared after it, and that holds for every
     choice of modes exactly when it is the last spec of its own mode and no
-    later mode owns a target.
+    later mode owns a target.  Declinable (`optional`) and caster-sized
+    (`variable_size`) specs are both of that kind.
     """
     assert spec.mode is not None
     later = [o for o in owned if o.mode is not None and o.mode > spec.mode]

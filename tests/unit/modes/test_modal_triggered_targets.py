@@ -355,8 +355,32 @@ class TestTheLoaderRefusals:
         with pytest.raises(DslError, match="must be the last target declared"):
             self.compile(ability)
 
-    def test_a_caster_chosen_size_inside_a_mode(self):
+    def test_a_caster_chosen_size_before_another_of_its_mode(self):
+        """"Any number" stores as many refs as were picked, so the next spec's
+        ref would be read back into its bucket."""
         ability = self.ability()
         ability["targets"][0]["count"] = "any"
-        with pytest.raises(DslError, match="fixed number"):
+        ability["targets"].append(
+            {
+                "id": "other",
+                "kind": "permanent",
+                "mode": 1,
+                "selector": {"zone": "battlefield", "controller": "you"},
+            }
+        )
+        ability["effects"][0]["modes"][1]["effects"].append(
+            {"op": "tap", "objects": {"target": "other"}}
+        )
+        with pytest.raises(DslError, match="must be the last target declared"):
             self.compile(ability)
+
+    def test_a_computed_size_inside_a_mode(self):
+        ability = self.ability()
+        ability["targets"][0]["count"] = {"const": 2}
+        with pytest.raises(DslError, match="size must be printed"):
+            self.compile(ability)
+
+    def test_a_caster_chosen_size_that_ends_the_declaration_loads(self):
+        ability = self.ability()
+        ability["targets"][0]["count"] = "any"
+        self.compile(ability)
