@@ -148872,12 +148872,12 @@
     },
     "Kimahri, Valiant Guardian": {
       "edhrec_rank": 7165,
-      "gate": "template",
+      "gate": null,
       "name": "Kimahri, Valiant Guardian",
-      "reason": "no template for: Ronso Rage — At the beginning of combat on your turn, put a +1/+1 counter on Kimahri and t",
+      "reason": "",
       "scryfall_id": "402780a2-ae0b-448d-a93a-e5ef6f7160d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kimoyo Beads": {

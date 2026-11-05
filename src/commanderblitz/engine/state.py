@@ -608,6 +608,22 @@ class GameState:
                 # (Phyrexian Metamorph): on the copied face, so the copy is an
                 # artifact before any layer and to every reader.
                 copied = replace(copied, types=copied.types | obj.copying_add_types)
+            if obj.copying_own_abilities:
+                # "…and it has vigilance **and this ability**" (Kimahri,
+                # Valiant Guardian): the permanent's own printed abilities,
+                # carried onto the copied face (707.9b). Appended, so every
+                # index the copied card prints keeps meaning what it printed,
+                # and renumbered so `Ability.index` agrees with its seat.
+                own = self.registry.get(obj.def_id).abilities
+                kept = [own[i] for i in obj.copying_own_abilities if 0 <= i < len(own)]
+                base = len(copied.abilities)
+                copied = replace(
+                    copied,
+                    abilities=copied.abilities
+                    + tuple(
+                        replace(ability, index=base + k) for k, ability in enumerate(kept)
+                    ),
+                )
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied

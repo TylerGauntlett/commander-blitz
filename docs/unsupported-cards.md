@@ -10,15 +10,15 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**160 cards** blocked by **144** capabilities.
+**159 cards** blocked by **144** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
-| [copy-exception-ability](#copy-exception-ability) | 4 | 1261 | op |
 | [station](#station) | 4 | 1695 | engine |
+| [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -305,32 +305,6 @@ Blocks **5** cards.
 
 </details>
 
-## copy-exception-ability
-
-Blocks **4** cards.
-
-- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
-  <br>Why the existing vocabulary won't do: copy_permanent's `except_` becomes `copy_overrides`, which characteristics._compute reads only for power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
-- **(op)** copy exceptions on `become_copy` (707.9b) beyond the name: `add_keywords` ("it has vigilance") and keeping the source's own triggered ability ("and this ability", the Ronso Rage begin_combat trigger, referenced by index or as 'self ability') as part of the copiable values, for a permanent-duration in-place copy, so Kimahri keeps its trigger and vigilance after becoming the copied creature and any copy of Kimahri also has them
-  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`, and op_become_copy explicitly resets `copying_keywords`, `copying_remove_supertypes` and `copying_add_types` to None; `add_keywords` is honoured only on the self_enters_as_copy replacement path. Following it with `grant_keyword` / `grant_ability` (duration permanent) would be a layer-6 grant rather than a copiable value, so a copy of Kimahri would lack vigilance and Ronso Rage -- an approximation. The rest (begin_combat trigger on your turn, add_counters on self, tap a target creature an opponent controls, `may` around become_copy with `except_name` and `duration: permanent`) is expressible.
-- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
-  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
-- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
-  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
-
-<details><summary>Cards waiting on this</summary>
-
-- **Twinflame** (rank 1261) — `twinflame`
-  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
-- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
-  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
-- **Kimahri, Valiant Guardian** (rank 7165) — `kimahri_valiant_guardian`
-  - Then you may have Kimahri become a copy of that creature, except its name is Kimahri, Valiant Guardian and it has vigilance and this ability.
-- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
-  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
-
-</details>
-
 ## station
 
 Blocks **4** cards.
@@ -362,6 +336,28 @@ Blocks **4** cards.
   - Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)
   - 1+ | At the beginning of combat on your turn, put your choice of a +1/+1 counter or two charge counters on up to one other target artifact.
   - 8+ | Flying
+
+</details>
+
+## copy-exception-ability
+
+Blocks **3** cards.
+
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` becomes `copy_overrides`, which characteristics._compute reads only for power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
+- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
+  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
+- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
+  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twinflame** (rank 1261) — `twinflame`
+  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
+- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
+  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
+- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
+  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
 
 </details>
 

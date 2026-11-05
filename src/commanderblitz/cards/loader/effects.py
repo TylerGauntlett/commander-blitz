@@ -104,6 +104,13 @@ COPY_EXCEPT_KEYS = frozenset(
 )
 
 
+#: The keys `become_copy`'s ``except_`` (707.9b) reads: ``add_keywords``, as
+#: on an as-enters copy ("and it has vigilance"), and ``keep_abilities``,
+#: positions in the copying card's own printed ``abilities`` the copy keeps
+#: ("and this ability", Kimahri, Valiant Guardian). The name stays on
+#: ``except_name``.
+BECOME_COPY_EXCEPT_KEYS = frozenset({"add_keywords", "keep_abilities"})
+
 #: The recorders whose `as` binding is a **set of seats** rather than of
 #: objects: `may` (the players who said yes) and `draw` (the players who
 #: actually drew). Both write a bare list of player ids.
@@ -2429,6 +2436,38 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"{where}: 'playable': {duration!r} lasts at most while the card is in "
                     f"exile, so it needs cards being exiled or already there "
                     f"(exile, look_at_top to exile, grant_playable over zone exile)"
+                )
+    if op == "become_copy" and "except_" in effect:
+        # Read only when the copy resolves: a misspelt key or keyword would
+        # arrive as a plain copy, which loses the exception and says nothing.
+        exception = effect["except_"]
+        if not isinstance(exception, Mapping) or not exception:
+            raise DslError(f"{where}.except_: needs a non-empty object -- omit it instead")
+        unknown = set(exception) - BECOME_COPY_EXCEPT_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.except_: unsupported keys {sorted(unknown)} "
+                f"(implemented: {sorted(BECOME_COPY_EXCEPT_KEYS)}; the name is 'except_name')"
+            )
+        if "add_keywords" in exception:
+            added = exception["add_keywords"]
+            if not isinstance(added, list) or not added:
+                raise DslError(f"{where}.except_.add_keywords: needs a non-empty list of keywords")
+            for k in added:
+                if k not in KNOWN_KEYWORDS:
+                    raise DslError(f"{where}.except_.add_keywords: unknown keyword {k!r}")
+            refuse_numbered_grant(added, f"{where}.except_.add_keywords")
+        if "keep_abilities" in exception:
+            # Range-checked against the card by `_check_grant_targets`.
+            kept = exception["keep_abilities"]
+            if (
+                not isinstance(kept, list)
+                or not kept
+                or not all(isinstance(i, int) and not isinstance(i, bool) for i in kept)
+            ):
+                raise DslError(
+                    f"{where}.except_.keep_abilities: needs a non-empty list of "
+                    f"positions in this card's 'abilities'"
                 )
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled

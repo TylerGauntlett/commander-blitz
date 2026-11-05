@@ -1821,6 +1821,7 @@ def _enter_battlefield(
                 # (Phyrexian Metamorph).
                 types_added = exception.get("add_types")
                 obj.copying_add_types = frozenset(types_added) if types_added else None
+                obj.copying_own_abilities = None
                 obj.copying_name = exception.get("name")
                 state.bump_chars()
                 # 614.12: the copied face's own "enters with" -- above all a

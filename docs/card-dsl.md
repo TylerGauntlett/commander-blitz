@@ -2829,6 +2829,40 @@ offer, because every printed card in this family says "you may"; an empty pool
 asks nothing, and the arriving permanent is not on the battlefield yet, so it
 cannot find itself.
 
+### A permanent that becomes a copy, except it keeps this ability
+
+```jsonc
+// Kimahri, Valiant Guardian — Ronso Rage, abilities[0]
+{ "op": "may", "effects": [
+  { "op": "become_copy", "duration": "permanent",
+    "objects": { "zone": "battlefield", "self_only": true },
+    "copying": { "target": "t1" },
+    "except_name": "Kimahri, Valiant Guardian",
+    "except_": { "add_keywords": ["vigilance"], "keep_abilities": [0] } } ] }
+```
+
+`become_copy` applies a copy in place (Gogo, Clone's shape with `duration:
+"permanent"`). `except_name` is the name the copy keeps; `except_` holds its
+other 707.9b exceptions, each written into the copiable values rather than
+granted on top:
+
+| key | meaning |
+|---|---|
+| `add_keywords` | keywords added to the copied face, on `copying_keywords` ("and it has vigilance") |
+| `keep_abilities` | positions in the copying card's **own** printed `abilities` that the copy keeps, on `copying_own_abilities` ("and this ability") |
+
+`GameState.card_of` appends the kept abilities after the copied face's own, so
+the copied card's indices keep meaning what they printed, and a kept triggered
+ability fires off the copy on later turns. A new `become_copy` replaces the
+whole copy, exceptions included; a timed copy's exceptions end at cleanup with
+it. The loader holds the key set as `BECOME_COPY_EXCEPT_KEYS` and refuses an
+unknown key, an empty exception, an unknown keyword and a position the card does
+not print.
+
+The near miss is a `grant_keyword` or `grant_ability` after the copy: a layer-6
+grant, not part of what the copy is. A copy of a copy still takes only the
+copied card's printed face ([rules coverage](rules-coverage.md)).
+
 ### A permanent whose arrival is itself replaced
 
 ```jsonc

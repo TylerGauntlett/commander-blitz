@@ -250,6 +250,16 @@ def _check_grant_targets(
         for effect in _walk_effect_specs(tree):
             for index in (effect.get("creature_cast_gains") or {}).get("abilities") or ():
                 check(index, f"{effect.get('op')} creature_cast_gains")
+            if effect.get("op") == "become_copy":
+                # "…and it has this ability": a position in this card's own
+                # printed abilities, which `card_of` skips when out of range --
+                # a copy that silently keeps nothing.
+                for pos in (effect.get("except_") or {}).get("keep_abilities") or ():
+                    if not 0 <= int(pos) < len(abilities):
+                        raise DslError(
+                            f"{where}: become_copy except_.keep_abilities names "
+                            f"'abilities[{pos}]' and this card has {len(abilities)}"
+                        )
             if effect.get("op") != "grant_ability":
                 continue
             index = effect.get("ability", effect.get("ability_index"))

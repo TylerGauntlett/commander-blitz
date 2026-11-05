@@ -184,6 +184,14 @@ class GameObject:
     #: types". Written, read and cleared beside `copying_keywords`, for its
     #: reasons.
     copying_add_types: frozenset[str] | None = None
+    #: Positions in this permanent's **own** printed ``abilities`` that the copy
+    #: keeps as part of its copiable values (707.9b) -- Kimahri, Valiant
+    #: Guardian's "…except its name is Kimahri, Valiant Guardian and it has
+    #: vigilance **and this ability**". Written by `become_copy` from its
+    #: ``except_.keep_abilities``, read by `GameState.card_of`, which appends
+    #: them after the copied face's abilities so the copied indices never move,
+    #: and cleared beside `copying_keywords`, for its reasons.
+    copying_own_abilities: tuple[int, ...] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -1260,6 +1268,7 @@ class GameObject:
         self.copying_keywords = None
         self.copying_remove_supertypes = None
         self.copying_add_types = None
+        self.copying_own_abilities = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False
