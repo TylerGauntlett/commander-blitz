@@ -1,0 +1,22 @@
+{
+  "card_id": "summon_magus_sisters",
+  "name": "Summon: Magus Sisters",
+  "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II, III — Choose one at random —\n• Combine Powers! — Put three +1/+1 counters on target creature.\n• Defense! — Put a shield counter on target creature. You gain 3 life.\n• Fight! — This creature fights up to one target creature an opponent controls.\nHaste",
+  "blocked_sentences": [
+    "• Fight! — This creature fights up to one target creature an opponent controls"
+  ],
+  "needs": [
+    {
+      "capability": "optional_mode_target",
+      "kind": "engine",
+      "what": "a target owned by one mode of a top-level choose_mode (here a random one on a Saga chapter ability) that is 'up to one' -- the mode may be chosen, including at random, with zero targets declared, and the controller may decline the target when one exists; then 'This creature fights' with nothing does nothing",
+      "why_existing_wont_do": "Target specs with 'mode' are refused by _check_mode_targets in cards/loader/targets.py if 'optional' or variable-size ('declining it is declining the mode'). A fixed count:1 mode target changes the card twice: the controller is forced to fight when an opponent has a creature, and with no opposing creature the Fight mode is struck from the random pool (pick_at_random only offers modes with legal targets), skewing the odds toward the other two modes. A card-level (non-mode) optional target cannot share the card with mode-owned targets, and the other two modes' 'target creature' needs mode-owned targets"
+    }
+  ],
+  "closest_existing": [
+    "choose_mode random",
+    "target mode",
+    "fight"
+  ],
+  "confidence": "high"
+}

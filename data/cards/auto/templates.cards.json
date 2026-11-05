@@ -178237,6 +178237,59 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "self_only": true
+              },
+              "op": "add_counters"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever an opponent casts a spell, put a +1/+1 counter on this creature and you gain 1 life.",
+          "trigger": {
+            "controller": "opponent",
+            "event": "spell_cast"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "sunscorch_regent",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{3}{W}{W}",
+      "name": "Sunscorch Regent",
+      "oracle_text": "Flying\nWhenever an opponent casts a spell, put a +1/+1 counter on this creature and you gain 1 life.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "mana": "{1}",
             "tap": true

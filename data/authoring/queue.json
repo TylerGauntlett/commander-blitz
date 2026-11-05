@@ -269992,12 +269992,12 @@
     },
     "Sunscorch Regent": {
       "edhrec_rank": 1671,
-      "gate": "template",
+      "gate": null,
       "name": "Sunscorch Regent",
-      "reason": "no template for: Whenever an opponent casts a spell, put a +1/+1 counter on this creature and you gain 1 li",
+      "reason": "",
       "scryfall_id": "25774e8c-bbc1-4a53-926c-7c01c2ac908f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunscorched Desert": {

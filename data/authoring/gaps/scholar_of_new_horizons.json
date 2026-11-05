@@ -1,0 +1,18 @@
+{
+  "card_id": "scholar_of_new_horizons",
+  "name": "Scholar of New Horizons",
+  "oracle_text": "This creature enters with a +1/+1 counter on it.\n{T}, Remove a counter from a permanent you control: Search your library for a Plains card and reveal it. If an opponent controls more lands than you, you may put that card onto the battlefield tapped. If you don't put the card onto the battlefield, put it into your hand. Then shuffle.",
+  "blocked_sentences": [
+    "{T}, Remove a counter from a permanent you control: Search your library for a Plains card and reveal it. If an opponent controls more lands than you, you may put that card onto the battlefield tapped. If you don't put the card onto the battlefield, put it into your hand. Then shuffle."
+  ],
+  "needs": [
+    {
+      "capability": "search_may_destination",
+      "kind": "op",
+      "what": "search_library support for an optional destination offered per found card after it is chosen and revealed, gated on a game-state condition: a `may_destination: \"battlefield\"` (with `tapped`) plus `may_destination_if: <condition>` such as `cmp` of the most lands any opponent controls (`max_count_of`) > `lands_you_control`, with `destination: \"hand\"` as the fallback when the player declines or the condition is false",
+      "why_existing_wont_do": "search_library's `destination_if` branches only match a selector against the found card's printed face and never ask the player, so they cannot say 'you may' or read a board condition such as 'an opponent controls more lands than you'. `reveal_until` has `may_destination` but reveals from the top rather than searching. Wrapping the search in `if` + `may` makes the player choose battlefield-or-hand before seeing which Plains is found, and searching to hand then moving it with `put_onto_battlefield` sends the card through the hand; both are different cards. The cost half ({T} plus `remove_counters_from_among` with count 1, controller you) and the enters-with-counter line (`replacements` self_enters_with_counters) are expressible today."
+    }
+  ],
+  "closest_existing": ["search_library", "reveal_until"],
+  "confidence": "low"
+}
