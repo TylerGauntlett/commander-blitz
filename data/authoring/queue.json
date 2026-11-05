@@ -6972,12 +6972,12 @@
     },
     "Altered Ego": {
       "edhrec_rank": 4125,
-      "gate": "template",
+      "gate": null,
       "name": "Altered Ego",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "d51e076a-be33-4b2b-b52f-fe7b5bc56206",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aluren": {

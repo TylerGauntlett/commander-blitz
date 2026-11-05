@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**172 cards** blocked by **155** capabilities.
+**171 cards** blocked by **154** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -74,7 +74,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
-| [enters-as-copy-x-counters](#enters-as-copy-x-counters) | 1 | 4125 | engine |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
 | [escalate-non-mana](#escalate-non-mana) | 1 | 11817 | cost |
 | [exile-target-spell](#exile-target-spell) | 1 | 539 | op |
@@ -1229,20 +1228,6 @@ Blocks **1** card.
 
 - **Elvish Promenade** (rank 3100) — `elvish_promenade`
   - Create a 1/1 green Elf Warrior creature token for each Elf you control.
-
-</details>
-
-## enters-as-copy-x-counters
-
-Blocks **1** card.
-
-- **(engine)** the `self_enters_as_copy` replacement's `except_.enters_with` entries must evaluate their `amount` with the X announced when the permanent was cast (obj.cast_x), so `{"amount": {"x": true}, "counter": "+1/+1"}` puts X counters on the copy as it enters
-  <br>Why the existing vocabulary won't do: `self_enters_as_copy` with `except_.enters_with` exists (Spark Double), but `move_object` in engine/zones.py evaluates each entry with an EffectContext built without `x=obj.cast_x`, so `{"x": true}` silently evaluates to 0 and the copy enters with no counters. The separate `self_enters_with_counters` replacement does read cast_x, but it applies whether or not a copy is chosen, so a non-copied Altered Ego would survive as a 0/0 with X counters -- a different card
-
-<details><summary>Cards waiting on this</summary>
-
-- **Altered Ego** (rank 4125) — `altered_ego`
-  - You may have this creature enter as a copy of any creature on the battlefield, except it enters with X additional +1/+1 counters on it.
 
 </details>
 
