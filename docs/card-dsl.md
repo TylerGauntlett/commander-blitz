@@ -2749,7 +2749,7 @@ The other keys, each a copiable value the copy carries until it ends:
 | `add_types` | `copy_permanent`'s key of the same name: card types the copy has in addition to the copied ones, on `copying_add_types` — Phyrexian Metamorph's `["Artifact"]` |
 | `remove_supertypes` | `copy_permanent`'s key of the same name: supertypes the copy does not take, on `copying_remove_supertypes`. The legend rule reads the result |
 | `name` | the name the copy keeps (`become_copy`'s `except_name`), on `copying_name` |
-| `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has |
+| `enters_with` | counters the copy enters with, each `{counter, amount, condition}`, the fields `self_enters_with_counters` has; `amount` is a value expression in which `{"x": true}` is the X announced on casting (Altered Ego) |
 
 `enters_with` is part of the replacement (614.1c). Its conditions are judged once
 the copy is applied, with the arriving permanent as `self_only`, so "if it's a

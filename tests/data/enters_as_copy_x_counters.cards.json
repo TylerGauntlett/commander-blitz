@@ -1,0 +1,26 @@
+{
+  "_comment": "Shapes for tests/unit/copies/test_enters_as_copy_x_counters.py. t_eacxx_ego is Altered Ego at a smaller cost: an {X}{G} 0/0 that may enter as a copy of any creature, except it enters with X additional +1/+1 counters on it.",
+  "cards": [
+    {
+      "id": "t_eacxx_ego",
+      "name": "Test Altered Ego",
+      "oracle_text": "You may have this creature enter as a copy of any creature on the battlefield, except it enters with X additional +1/+1 counters on it.",
+      "mana_cost": "{X}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Shapeshifter"],
+      "power": 0,
+      "toughness": 0,
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "replacements": [
+        {
+          "event": "self_enters_as_copy",
+          "copying": {"zone": "battlefield", "types": ["Creature"]},
+          "except_": {
+            "enters_with": [{"counter": "+1/+1", "amount": {"x": true}}]
+          }
+        }
+      ]
+    }
+  ]
+}

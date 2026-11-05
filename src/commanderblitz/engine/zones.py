@@ -1845,8 +1845,14 @@ def _enter_battlefield(
                         source=obj.oid,
                     ):
                         continue
+                    # "…except it enters with X additional +1/+1 counters on
+                    # it" (Altered Ego): X is the one announced on casting,
+                    # read from `cast_x` as `self_enters_with_counters` reads it.
                     ctx = EffectContext(
-                        state=state, controller=obj.controller, source_oid=obj.oid
+                        state=state,
+                        controller=obj.controller,
+                        source_oid=obj.oid,
+                        x=obj.cast_x,
                     )
                     entering.setdefault(str(entry["counter"]), []).append(
                         evaluate_value(ctx, entry.get("amount", 1))
