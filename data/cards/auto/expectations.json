@@ -15128,6 +15128,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "summoner_s_sending": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "summoning_materia": {
     "battlefield_count": 33,
     "hand_size": {
@@ -17548,6 +17552,14 @@
       "0": 40
     },
     "zone": "graveyard"
+  },
+  "walking_ballista": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 15,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
   },
   "walking_corpse": {
     "zone": "battlefield"

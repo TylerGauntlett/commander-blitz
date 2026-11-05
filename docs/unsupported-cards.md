@@ -10,15 +10,16 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**160 cards** blocked by **145** capabilities.
+**174 cards** blocked by **157** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
 | [combat-only-permanent-shield](#combat-only-permanent-shield) | 15 | 540 | op |
 | [prevent-damage-by-source](#prevent-damage-by-source) | 8 | 2713 | static_effect |
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
+| [copy-exception-ability](#copy-exception-ability) | 4 | 1261 | op |
 | [station](#station) | 4 | 1695 | engine |
-| [copy-exception-ability](#copy-exception-ability) | 3 | 1261 | op |
+| [mode-owned-variable-targets](#mode-owned-variable-targets) | 3 | 6294 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -26,7 +27,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
-| [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 2 | 902 | trigger_event |
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
+| [as-enters-effect](#as-enters-effect) | 1 | 5189 | replacement |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -58,6 +59,8 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
+| [counter-kinds-count](#counter-kinds-count) | 1 | 6934 | value |
+| [counter-put-on-object-this-turn](#counter-put-on-object-this-turn) | 1 | 5243 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -92,6 +95,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [greatest-mana-value-spells-cast-this-turn](#greatest-mana-value-spells-cast-this-turn) | 1 | 11566 | value |
 | [impulse-from-opponent-library](#impulse-from-opponent-library) | 1 | 271 | op |
 | [keyword-counters](#keyword-counters) | 1 | 18326 | engine |
+| [keywords-had](#keywords-had) | 1 | 1163 | value |
 | [kicker](#kicker) | 1 | 868 | selector |
 | [life-total-reduction-replacement](#life-total-reduction-replacement) | 1 | 9586 | replacement |
 | [living-metal](#living-metal) | 1 | 11641 | keyword |
@@ -115,10 +119,12 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [optional-mode-target](#optional-mode-target) | 1 | 4973 | engine |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
+| [prevented-this-way-permanent](#prevented-this-way-permanent) | 1 | 5746 | replacement |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
@@ -126,6 +132,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
+| [reflecting-mana-amount](#reflecting-mana-amount) | 1 | 647 | engine |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
@@ -137,12 +144,15 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
+| [search-may-destination](#search-may-destination) | 1 | 2666 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
+| [spell-permanent-or-graveyard-card-target](#spell-permanent-or-graveyard-card-target) | 1 | 7354 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
+| [squid-1-1-u-islandwalk](#squid-1-1-u-islandwalk) | 1 | 708 | token |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
@@ -151,12 +161,14 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
+| [timed-attack-tax](#timed-attack-tax) | 1 | 2471 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
+| [unblockable-by-your-opponents](#unblockable-by-your-opponents) | 1 | 4064 | op |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -306,6 +318,32 @@ Blocks **5** cards.
 
 </details>
 
+## copy-exception-ability
+
+Blocks **4** cards.
+
+- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` becomes `copy_overrides`, which characteristics._compute reads only for power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
+- **(op)** copy exceptions on `become_copy` (707.9b) beyond the name: `add_keywords` ("it has vigilance") and keeping the source's own triggered ability ("and this ability", the Ronso Rage begin_combat trigger, referenced by index or as 'self ability') as part of the copiable values, for a permanent-duration in-place copy, so Kimahri keeps its trigger and vigilance after becoming the copied creature and any copy of Kimahri also has them
+  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`, and op_become_copy explicitly resets `copying_keywords`, `copying_remove_supertypes` and `copying_add_types` to None; `add_keywords` is honoured only on the self_enters_as_copy replacement path. Following it with `grant_keyword` / `grant_ability` (duration permanent) would be a layer-6 grant rather than a copiable value, so a copy of Kimahri would lack vigilance and Ronso Rage -- an approximation. The rest (begin_combat trigger on your turn, add_counters on self, tap a target creature an opponent controls, `may` around become_copy with `except_name` and `duration: permanent`) is expressible.
+- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
+  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
+- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
+  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Twinflame** (rank 1261) — `twinflame`
+  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
+- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
+  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
+- **Kimahri, Valiant Guardian** (rank 7165) — `kimahri_valiant_guardian`
+  - Then you may have Kimahri become a copy of that creature, except its name is Kimahri, Valiant Guardian and it has vigilance and this ability.
+- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
+  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+
+</details>
+
 ## station
 
 Blocks **4** cards.
@@ -340,25 +378,25 @@ Blocks **4** cards.
 
 </details>
 
-## copy-exception-ability
+## mode-owned-variable-targets
 
 Blocks **3** cards.
 
-- **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
-  <br>Why the existing vocabulary won't do: copy_permanent's `except_` becomes `copy_overrides`, which characteristics._compute reads only for power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
-- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
-  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
-- **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
-  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
+- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
+  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
+- **(engine)** a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "any", count: 2, up_to: true` owned by mode 1 -- so "deals 1 damage to each of one or two targets" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets
+  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list
+- **(engine)** a mode-owned target spec (target `mode: 1` on a sorcery whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "card_in_graveyard", count: 2, min_count: 1, up_to: true` over permanent cards in your graveyard -- declared only when the Find Another Way bullet is chosen, while the other bullet (Continue the Pilgrimage) declares no targets at all
+  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position. A fixed `count: 2` would make the mode illegal with only one permanent card in the graveyard and forbid returning just one. A card-level up_to target with no `mode` would be declared, and would need a legal target, even when the caster picks the targetless sacrifice/draw mode. The first bullet can be expressed: `sacrifice` with `as`, an `if` on the binding existing, `draw`, then two `may` + `put_onto_battlefield` from hand (one Creature, one Land)
 
 <details><summary>Cards waiting on this</summary>
 
-- **Twinflame** (rank 1261) — `twinflame`
-  - Choose any number of target creatures you control. For each of them, create a token that's a copy of that creature, except it has haste. Exile those tokens at the beginning of the next end step
-- **Hofri Ghostforge** (rank 6941) — `hofri_ghostforge`
-  - Whenever another nontoken creature you control dies, exile it. If you do, create a token that's a copy of that creature, except it's a Spirit in addition to its other types and it has "When this token leaves the battlefield, return the exiled card to its owner's graveyard."
-- **Muddle, the Ever-Changing** (rank 11112) — `muddle_the_ever_changing`
-  - Whenever you cast an instant or sorcery spell, Muddle becomes a copy of up to one target nonlegendary creature you control until end of turn, except it has myriad
+- **Prismari Charm** (rank 6294) — `prismari_charm`
+  - • Prismari Charm deals 1 damage to each of one or two targets.
+- **Yuna's Decision** (rank 7357) — `yuna_s_decision`
+  - • Find Another Way — Return one or two target permanent cards from your graveyard to your hand
+- **Blessed Alliance** (rank 16968) — `blessed_alliance`
+  - • Untap up to two target creatures.
 
 </details>
 
@@ -489,24 +527,6 @@ Blocks **2** cards.
   - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
 - **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
   - When Uro enters, sacrifice it unless it escaped.
-
-</details>
-
-## mode-owned-variable-targets
-
-Blocks **2** cards.
-
-- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
-  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
-- **(engine)** a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "any", count: 2, up_to: true` owned by mode 1 -- so "deals 1 damage to each of one or two targets" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets
-  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list
-
-<details><summary>Cards waiting on this</summary>
-
-- **Prismari Charm** (rank 6294) — `prismari_charm`
-  - • Prismari Charm deals 1 damage to each of one or two targets.
-- **Blessed Alliance** (rank 16968) — `blessed_alliance`
-  - • Untap up to two target creatures.
 
 </details>
 
@@ -709,6 +729,20 @@ Blocks **1** card.
 
 - **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
   - This creature can block only creatures with flying.
+
+</details>
+
+## as-enters-effect
+
+Blocks **1** card.
+
+- **(replacement)** An 'As this enters' replacement that runs a choice-plus-effect while the permanent is entering (choose any number of artifacts, creatures and enchantments; remove all counters of every kind from them), binds the total number of counters removed, and then makes the permanent enter with a computed number of +1/+1 counters (twice that total) -- a self_enters_with_counters replacement whose amount is a value bound by an effect run as part of the same replacement
+  <br>Why the existing vocabulary won't do: self_enters_with_counters / enters_with_additional_counters take a fixed or static amount and cannot run effects or choices first; remove_counters_from_among and remove_counters (any_kind) exist only as resolving ops, so writing this as a self_enters trigger would let Sin enter as a 5/5, use the stack (respondable, wrong timing for 'enters with'), and miss interactions keyed on the counters it enters with
+
+<details><summary>Cards waiting on this</summary>
+
+- **Sin, Unending Cataclysm** (rank 5189) — `sin_unending_cataclysm`
+  - As Sin enters, remove all counters from any number of artifacts, creatures, and enchantments. Sin enters with X +1/+1 counters on it, where X is twice the number of counters removed this way.
 
 </details>
 
@@ -985,6 +1019,34 @@ Blocks **1** card.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
+
+</details>
+
+## counter-kinds-count
+
+Blocks **1** card.
+
+- **(value)** a value expression counting the number of distinct kinds of counters on an object (e.g. {"counter_kinds_on": {"objects": {"self_only": true}}}), so the granted trigger can 'draw a card for each kind of counter on it'
+  <br>Why the existing vocabulary won't do: `counters_on` reads the count of one named kind, `has_counters` is only a filter, and `distinct` accepts of: power, basic_land_type, card_type, color only (DISTINCT_OF in engine/effects/values.py) -- none counts kinds of counters
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blitzball Stadium** (rank 6934) — `blitzball_stadium`
+  - Go for the Goal! — {3}, {T}: Until end of turn, target creature gains "Whenever this creature deals combat damage to a player, draw a card for each kind of counter on it" and it can't be blocked this turn.
+
+</details>
+
+## counter-put-on-object-this-turn
+
+Blocks **1** card.
+
+- **(value)** a value (or condition) counting counters put this turn on one specific object, here the source itself, by any player and of any kind: "if a counter was put on <this permanent> this turn" as an end-step intervening-if. Needs the turn ledger's CountersPut records to carry the recipient object id so a value like {"counters_put_this_turn": {"objects": {"self_only": true}, "player": "any"}} can filter on it
+  <br>Why the existing vocabulary won't do: counters_put_this_turn filters only by who put the counters (put_by), counter kind and the recipient's card types; CountersPut in engine/structs.py records no recipient oid, so it cannot tell a counter on Wakka from one on any other creature. counters_on reads counters currently present, not counters put this turn (a +1/+1 counter later removed, or annihilated by a -1/-1, would be missed, and pre-existing counters would wrongly count). A counter_placed self trigger setting a turn flag read by has_turn_flag would add an unprinted triggered ability that uses the stack
+
+<details><summary>Cards waiting on this</summary>
+
+- **Wakka, Devoted Guardian** (rank 5243) — `wakka_devoted_guardian`
+  - Blitzball Captain — At the beginning of your end step, if a counter was put on Wakka this turn, put a +1/+1 counter on each other creature you control.
 
 </details>
 
@@ -1476,6 +1538,20 @@ Blocks **1** card.
 
 </details>
 
+## keywords-had
+
+Blocks **1** card.
+
+- **(value)** a last-known-information test of the keywords a dying creature had as it left the battlefield (603.10a), usable on a creature_dies trigger -- either a `not_keywords` trigger filter key answered from the departure snapshot, or a `keywords_had` value/condition beside `counters_had`, `power_had` and `toughness_had`
+  <br>Why the existing vocabulary won't do: TRIGGER_FILTER_KEYS has `keywords` but not `not_keywords`, and `matches_card_filter` reads `keywords` off the printed card face, not last-known derived characteristics. A creature returned by this very ability carries a flying counter, so it dies WITH flying; a printed-face check would see no flying and return it again for ever, and a creature granted flying by an anthem would wrongly be returned. The value language has `counters_had`, `power_had`, `toughness_had` and `auras_had` but no keyword equivalent. The return itself is expressible (`return_from_graveyard` with `objects: {binding: subject, zone: graveyard}`, destination battlefield, default owner control, `counters: {"flying": 1}`).
+
+<details><summary>Cards waiting on this</summary>
+
+- **Luminous Broodmoth** (rank 1163) — `luminous_broodmoth`
+  - Whenever a creature you control without flying dies, return it to the battlefield under its owner's control with a flying counter on it.
+
+</details>
+
 ## kicker
 
 Blocks **1** card.
@@ -1810,6 +1886,20 @@ Blocks **1** card.
 
 </details>
 
+## optional-mode-target
+
+Blocks **1** card.
+
+- **(engine)** a target owned by one mode of a top-level choose_mode (here a random one on a Saga chapter ability) that is 'up to one' -- the mode may be chosen, including at random, with zero targets declared, and the controller may decline the target when one exists; then 'This creature fights' with nothing does nothing
+  <br>Why the existing vocabulary won't do: Target specs with 'mode' are refused by _check_mode_targets in cards/loader/targets.py if 'optional' or variable-size ('declining it is declining the mode'). A fixed count:1 mode target changes the card twice: the controller is forced to fight when an opponent has a creature, and with no opposing creature the Fight mode is struck from the random pool (pick_at_random only offers modes with legal targets), skewing the odds toward the other two modes. A card-level (non-mode) optional target cannot share the card with mode-owned targets, and the other two modes' 'target creature' needs mode-owned targets
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summon: Magus Sisters** (rank 4973) — `summon_magus_sisters`
+  - • Fight! — This creature fights up to one target creature an opponent controls
+
+</details>
+
 ## played-or-cast-from-non-hand-this-turn
 
 Blocks **1** card.
@@ -1863,6 +1953,20 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
+
+</details>
+
+## prevented-this-way-permanent
+
+Blocks **1** card.
+
+- **(replacement)** a 'prevented this way' rider (615.5) on the one-shot permanent shield: prevent_damage_permanent with dealt 'to', duration this_turn, plus effects run each time that shield prevents damage, with the prevented amount bound (e.g. {"binding": "amount"}) so add_counters can put that many +1/+1 counters on the shielded creature
+  <br>Why the existing vocabulary won't do: prevent_damage_permanent installs the shield but the loader explicitly refuses 'effects' on it (the rider is implemented on the player-only prevent_damage shield); damage_prevented is not an available trigger event, so a delayed_trigger cannot stand in, and the replace_counters/replace_damage statics are continuous on a printed permanent rather than a this-turn effect on a chosen target
+
+<details><summary>Cards waiting on this</summary>
+
+- **Gatta and Luzzu** (rank 5746) — `gatta_and_luzzu`
+  - When Gatta and Luzzu enters, choose target creature you control. If damage would be dealt to that creature this turn, prevent that damage and put that many +1/+1 counters on it.
 
 </details>
 
@@ -1961,6 +2065,20 @@ Blocks **1** card.
 
 - **Endurance** (rank 1343) — `endurance`
   - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
+
+</details>
+
+## reflecting-mana-amount
+
+Blocks **1** card.
+
+- **(engine)** a reflecting mana ability (`add_mana` with `reflecting` + `any_type`) whose output is scaled by a board-reading `amount`, so N mana of the one reflected type is produced; here amount = {"sum": [{"const": 1}, {"times": [{"const": 2}, {"min": [{"counters_on": {"counter": "+1/+1", "objects": {"self_only": true}}}, {"const": 1}]}]}]} (1, or 3 with a +1/+1 counter)
+  <br>Why the existing vocabulary won't do: The loader's reflecting branch (cards/loader/__init__.py, the `reflect is not None` arm of the mana-ability build) hard-sets mana_amount = None, so an `amount` beside `reflecting` is never read and the ability always taps for exactly one mana; `any_one_color` and `split` honour `amount` but offer all five colours rather than what your lands could produce, and an `if` on counters is not allowed inside a mana ability
+
+<details><summary>Cards waiting on this</summary>
+
+- **Incubation Druid** (rank 647) — `incubation_druid`
+  - {T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead.
 
 </details>
 
@@ -2119,6 +2237,20 @@ Blocks **1** card.
 
 </details>
 
+## search-may-destination
+
+Blocks **1** card.
+
+- **(op)** search_library support for an optional destination offered per found card after it is chosen and revealed, gated on a game-state condition: a `may_destination: "battlefield"` (with `tapped`) plus `may_destination_if: <condition>` such as `cmp` of the most lands any opponent controls (`max_count_of`) > `lands_you_control`, with `destination: "hand"` as the fallback when the player declines or the condition is false
+  <br>Why the existing vocabulary won't do: search_library's `destination_if` branches only match a selector against the found card's printed face and never ask the player, so they cannot say 'you may' or read a board condition such as 'an opponent controls more lands than you'. `reveal_until` has `may_destination` but reveals from the top rather than searching. Wrapping the search in `if` + `may` makes the player choose battlefield-or-hand before seeing which Plains is found, and searching to hand then moving it with `put_onto_battlefield` sends the card through the hand; both are different cards. The cost half ({T} plus `remove_counters_from_among` with count 1, controller you) and the enters-with-counter line (`replacements` self_enters_with_counters) are expressible today.
+
+<details><summary>Cards waiting on this</summary>
+
+- **Scholar of New Horizons** (rank 2666) — `scholar_of_new_horizons`
+  - {T}, Remove a counter from a permanent you control: Search your library for a Plains card and reveal it. If an opponent controls more lands than you, you may put that card onto the battlefield tapped. If you don't put the card onto the battlefield, put it into your hand. Then shuffle.
+
+</details>
+
 ## search-opponent-chooses
 
 Blocks **1** card.
@@ -2191,6 +2323,20 @@ Blocks **1** card.
 
 </details>
 
+## spell-permanent-or-graveyard-card-target
+
+Blocks **1** card.
+
+- **(selector)** a single target kind whose pool spans three zones at once -- a spell on the stack, a nonland permanent on the battlefield, or a card in any graveyard -- as one instance of the word "target" (one spec, one choice), with legality re-checked per zone on resolution
+  <br>Why the existing vocabulary won't do: TargetModel.kind offers 'spell_or_permanent' (stack + battlefield only, Sink into Stupor) and 'card_in_graveyard' separately; writing two specs would make the spell target twice and require both to be legal, which is a different card. 'any' is battlefield objects plus players. The effect half already exists: put_on_top with owner_chooses: true asks the owner top-or-bottom and moves the object to its owner's library, so only the target kind is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Endless Detour** (rank 7354) — `endless_detour`
+  - The owner of target spell, nonland permanent, or card in a graveyard puts it on their choice of the top or bottom of their library.
+
+</details>
+
 ## spells-cast-per-player
 
 Blocks **1** card.
@@ -2203,6 +2349,20 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
+
+</details>
+
+## squid-1-1-u-islandwalk
+
+Blocks **1** card.
+
+- **(token)** a 1/1 blue Squid creature token with islandwalk
+  <br>Why the existing vocabulary won't do: token_ids is a closed list and has no Squid token of any kind; the rest of the card is expressible (a `draw` trigger with add_counters on self, and a `dies` trigger whose create_token amount reads `counters_had` for +1/+1 counters), so only the token definition is missing
+
+<details><summary>Cards waiting on this</summary>
+
+- **Chasm Skulker** (rank 708) — `chasm_skulker`
+  - When this creature dies, create X 1/1 blue Squid creature tokens with islandwalk, where X is the number of +1/+1 counters on this creature. (They can't be blocked as long as defending player controls an Island.)
 
 </details>
 
@@ -2318,6 +2478,20 @@ Blocks **1** card.
 
 </details>
 
+## timed-attack-tax
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect (usable from a chapter ability) that creates a player-scoped attack tax — creatures can't attack the effect's controller unless their controller pays a mana cost per attacker — lasting until the controller's next turn and independent of the source staying on the battlefield; the timed twin of the attack_tax static, read by player_statics.attack_tax at declare-attackers
+  <br>Why the existing vocabulary won't do: attack_tax exists only as a static_effect, read from battlefield statics while the source is present, with no duration; the cant_attack_player op takes until_your_next_turn but is an absolute prohibition with no price (a lock, strictly stronger than the printed tax); grant_ability (op) only grants triggered/activated abilities and has only until_end_of_turn or permanent durations, so it can't hand the Saga a timed static, and a static on the Saga would also end if the Saga left early
+
+<details><summary>Cards waiting on this</summary>
+
+- **Summon: Yojimbo** (rank 2471) — `summon_yojimbo`
+  - II, III — Until your next turn, creatures can't attack you unless their controller pays {2} for each of those creatures.
+
+</details>
+
 ## timed-cast-lock-spell-filter
 
 Blocks **1** card.
@@ -2399,6 +2573,20 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
+
+</details>
+
+## unblockable-by-your-opponents
+
+Blocks **1** card.
+
+- **(op)** a one-shot 'can't be blocked this turn by creatures controlled by opponents of THIS ABILITY'S controller' restriction on the `unblockable` op -- an exemption keyed on the effect controller (e.g. except_blockers controller relative to the granting player, or a `blockers_controlled_by: opponent_of_you` option), so a creature an opponent controls that you put counters on (wither, -1/-1 counters, Steal moving onto it is impossible but other cards do) can still be blocked by your creatures when it attacks you, yet not by any other player's
+  <br>Why the existing vocabulary won't do: The trigger itself is expressible (`counter_placed` with `put_by: you`, `controller: any`, filter types Creature, subject binding), and the Steal line is `move_counters` with `any_kind`, `amount` 1, `from` a target. But `unblockable` either refuses every blocker or exempts by `except_blockers`, a static filter matched with the ATTACKER as source (`combat.unblockable` -> `matches_static(state, blocker, attacker, ...)`), so its `controller` is relative to the attacking creature's controller, not to Rikku's controller. For a creature you control plain `unblockable` is exact, but for an opponent's creature it would also forbid your own creatures from blocking it, and no static filter can name 'creatures controlled by the player who granted this' among that creature's several opponents
+
+<details><summary>Cards waiting on this</summary>
+
+- **Rikku, Resourceful Guardian** (rank 4064) — `rikku_resourceful_guardian`
+  - Whenever you put one or more counters on a creature, until end of turn, that creature can't be blocked by creatures your opponents control.
 
 </details>
 

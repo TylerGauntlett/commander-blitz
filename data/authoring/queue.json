@@ -269132,12 +269132,12 @@
     },
     "Summoner's Sending": {
       "edhrec_rank": 9051,
-      "gate": "template",
+      "gate": null,
       "name": "Summoner's Sending",
-      "reason": "no template for: At the beginning of your end step, you may exile target creature card from a graveyard. If",
+      "reason": "",
       "scryfall_id": "8150be1a-4bac-4c67-9165-9d6fc04a69cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summoning Materia": {
@@ -309032,12 +309032,12 @@
     },
     "Walking Ballista": {
       "edhrec_rank": 439,
-      "gate": "template",
+      "gate": null,
       "name": "Walking Ballista",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "50507ec0-72ff-4110-a73c-b6f256ac2e35",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Walking Bulwark": {
