@@ -321652,12 +321652,12 @@
     },
     "Yuna's Decision": {
       "edhrec_rank": 7357,
-      "gate": "template",
+      "gate": null,
       "name": "Yuna's Decision",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "5044eedb-f7d9-4b65-aa5b-fb494d00facd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yuna's Whistle": {

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**162 cards** blocked by **145** capabilities.
+**161 cards** blocked by **145** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -19,7 +19,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [x-in-mana-cost-trigger-filter](#x-in-mana-cost-trigger-filter) | 5 | 2672 | selector, trigger_event |
 | [copy-exception-ability](#copy-exception-ability) | 4 | 1261 | op |
 | [station](#station) | 4 | 1695 | engine |
-| [mode-owned-variable-targets](#mode-owned-variable-targets) | 3 | 6294 | engine |
 | [self-sacrificing-permanent-gate](#self-sacrificing-permanent-gate) | 3 | 714 | engine |
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
@@ -27,6 +26,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
+| [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 2 | 902 | trigger_event |
@@ -366,28 +366,6 @@ Blocks **4** cards.
 
 </details>
 
-## mode-owned-variable-targets
-
-Blocks **3** cards.
-
-- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
-  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
-- **(engine)** a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "any", count: 2, up_to: true` owned by mode 1 -- so "deals 1 damage to each of one or two targets" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets
-  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list
-- **(engine)** a mode-owned target spec (target `mode: 1` on a sorcery whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "card_in_graveyard", count: 2, min_count: 1, up_to: true` over permanent cards in your graveyard -- declared only when the Find Another Way bullet is chosen, while the other bullet (Continue the Pilgrimage) declares no targets at all
-  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position. A fixed `count: 2` would make the mode illegal with only one permanent card in the graveyard and forbid returning just one. A card-level up_to target with no `mode` would be declared, and would need a legal target, even when the caster picks the targetless sacrifice/draw mode. The first bullet can be expressed: `sacrifice` with `as`, an `if` on the binding existing, `draw`, then two `may` + `put_onto_battlefield` from hand (one Creature, one Land)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Prismari Charm** (rank 6294) — `prismari_charm`
-  - • Prismari Charm deals 1 damage to each of one or two targets.
-- **Yuna's Decision** (rank 7357) — `yuna_s_decision`
-  - • Find Another Way — Return one or two target permanent cards from your graveyard to your hand
-- **Blessed Alliance** (rank 16968) — `blessed_alliance`
-  - • Untap up to two target creatures.
-
-</details>
-
 ## self-sacrificing-permanent-gate
 
 Blocks **3** cards.
@@ -515,6 +493,24 @@ Blocks **2** cards.
   - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
 - **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
   - When Uro enters, sacrifice it unless it escaped.
+
+</details>
+
+## mode-owned-variable-targets
+
+Blocks **2** cards.
+
+- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
+  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
+- **(engine)** a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "any", count: 2, up_to: true` owned by mode 1 -- so "deals 1 damage to each of one or two targets" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets
+  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list
+
+<details><summary>Cards waiting on this</summary>
+
+- **Prismari Charm** (rank 6294) — `prismari_charm`
+  - • Prismari Charm deals 1 damage to each of one or two targets.
+- **Blessed Alliance** (rank 16968) — `blessed_alliance`
+  - • Untap up to two target creatures.
 
 </details>
 

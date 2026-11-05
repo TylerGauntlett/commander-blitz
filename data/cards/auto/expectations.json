@@ -18405,6 +18405,19 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "yuna_s_decision": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
   "yuna_s_whistle": {
     "hand_size": {
       "0": 1

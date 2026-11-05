@@ -217215,6 +217215,158 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "yuna_s_decision",
+      "mana_cost": "{3}{G}",
+      "name": "Yuna's Decision",
+      "oracle_text": "Choose one —\n• Continue the Pilgrimage — Sacrifice a creature. If you do, draw a card, then you may put a creature card and/or a land card from your hand onto the battlefield.\n• Find Another Way — Return one or two target permanent cards from your graveyard to your hand.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "count": 1,
+          "modes": [
+            {
+              "effects": [
+                {
+                  "as": "pilgrimage_sacrificed",
+                  "objects": {
+                    "controller": "you",
+                    "count": 1,
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "sacrifice"
+                },
+                {
+                  "condition": {
+                    "cmp": ">",
+                    "left": {
+                      "count": {
+                        "binding": "pilgrimage_sacrificed"
+                      }
+                    },
+                    "right": {
+                      "const": 0
+                    }
+                  },
+                  "op": "if",
+                  "then": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "types": [
+                            "Creature"
+                          ],
+                          "zone": "hand"
+                        }
+                      },
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": "controller",
+                            "controller": "you",
+                            "count": 1,
+                            "types": [
+                              "Creature"
+                            ],
+                            "zone": "hand"
+                          },
+                          "op": "put_onto_battlefield"
+                        }
+                      ],
+                      "op": "may",
+                      "prompt": "Put a creature card from your hand onto the battlefield?"
+                    },
+                    {
+                      "condition": {
+                        "exists": {
+                          "controller": "you",
+                          "types": [
+                            "Land"
+                          ],
+                          "zone": "hand"
+                        }
+                      },
+                      "effects": [
+                        {
+                          "objects": {
+                            "chooser": "controller",
+                            "controller": "you",
+                            "count": 1,
+                            "types": [
+                              "Land"
+                            ],
+                            "zone": "hand"
+                          },
+                          "op": "put_onto_battlefield"
+                        }
+                      ],
+                      "op": "may",
+                      "prompt": "Put a land card from your hand onto the battlefield?"
+                    }
+                  ]
+                }
+              ],
+              "label": "Continue the Pilgrimage — Sacrifice a creature. If you do, draw a card, then you may put a creature card and/or a land card from your hand onto the battlefield."
+            },
+            {
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "target": "returned"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "label": "Find Another Way — Return one or two target permanent cards from your graveyard to your hand."
+            }
+          ],
+          "op": "choose_mode"
+        }
+      ],
+      "targets": [
+        {
+          "count": 2,
+          "id": "returned",
+          "kind": "card_in_graveyard",
+          "min_count": 1,
+          "mode": 1,
+          "selector": {
+            "any_types": [
+              "Artifact",
+              "Creature",
+              "Enchantment",
+              "Land",
+              "Planeswalker",
+              "Battle"
+            ],
+            "controller": "you",
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
