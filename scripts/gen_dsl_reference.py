@@ -266,6 +266,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "must_block": ("Board", "Creatures block this turn if able.", None),
     "cant_attack_player": ("Board", "Creatures (a player's, or named `objects`) can't attack a player (or only their walkers of a subtype) until a duration ends.",
                            '"That player can\'t attack you"'),
+    "attack_tax": ("Board", "Until your next turn (or this turn), creatures can't attack you unless their controller pays a mana cost for each (the timed form of the static).",
+                   "Pricing an attack rather than forbidding it"),
     "goad": ("Board", "Goad creatures until your next turn, or for the rest of the game.", "Goad"),
     "redirect_attack": ("Board", "Reselect what an attacking creature attacks; nothing is declared.",
                         "Reselecting an attack — `redirect_attack`"),

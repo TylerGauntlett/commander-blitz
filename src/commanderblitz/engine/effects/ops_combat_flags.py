@@ -17,6 +17,7 @@ from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
     ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
+    ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
     UNBLOCKABLE_DURATIONS,
@@ -32,6 +33,7 @@ from ..temp_effects import (
     require_attack_on,
     require_attack_player,
     restrict_attack,
+    tax_attacks,
 )
 from .board_helpers import (
     _offer_blocks_to,
@@ -654,6 +656,45 @@ def op_must_attack_planeswalker(ctx: EffectContext, spec: Mapping[str, Any]):
     for pid in _players(ctx, spec["player"]):
         for walker in walkers:
             require_attack_on(ctx.state, walker, pid)
+    yield from ()
+
+
+@register("attack_tax")
+def op_attack_tax(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until your next turn, creatures can't attack you unless their controller
+    pays {2} for each of those creatures." -- Summon: Yojimbo, chapters II-III.
+
+    The timed twin of the `attack_tax` static. The static is the near miss and
+    misses twice: it is a `static_effect`, read only while its permanent sits on
+    the battlefield, so a Saga sacrificed after chapter IV would end the
+    chapter-III tax a turn early; and it has no clock at all. `cant_attack_player`
+    has the clock and the seat but no price -- a wall where the card prints a
+    toll.
+
+    So it is a row in a timed table, `structs.AttackTax`, which
+    `player_statics.attack_tax` sums with the static taxes as each attacker is
+    declared -- the declare-attackers label, the payability check and the
+    charge all read it through `combat.attack_tax_cost`, as they do Propaganda.
+
+    ``cost``      required, ``{"mana": "{2}"}`` -- the static's own `cost`
+                  mapping, per attacking creature.
+    ``duration``  required, ``until_your_next_turn`` or ``this_turn``.
+
+    The protected seat and the clock are both the resolving controller: "can't
+    attack **you**", "until **your** next turn". An attack on that player's
+    planeswalkers is not taxed (506.2).
+    """
+
+    duration = str(spec["duration"])
+    if duration not in ATTACK_TAX_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown attack_tax duration {duration!r}")
+    tax_attacks(
+        ctx.state,
+        ctx.controller,
+        str((spec.get("cost") or {}).get("mana") or ""),
+        duration,
+        source=ctx.source_oid,
+    )
     yield from ()
 
 

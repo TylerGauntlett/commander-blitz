@@ -1797,6 +1797,26 @@ than `{X}` alone, and the key on any static but `attack_tax`. A source-side X
 (Sphere of Safety's "the number of enchantments you control") is not this key:
 it reads the taxing permanent's board, not the attacker.
 
+**A tax with a clock.** "Until your next turn, creatures can't attack you
+unless their controller pays {2} for each of those creatures" (Summon:
+Yojimbo, chapters II–III) is the `attack_tax` **op**, the static's timed twin:
+
+```jsonc
+{ "op": "attack_tax", "cost": { "mana": "{2}" }, "duration": "until_your_next_turn" }
+```
+
+It writes a `structs.AttackTax` row on `GameState.attack_taxes`, which
+`player_statics.attack_tax` sums with the static taxes, so the price, the
+withheld unpayable declaration and the label all behave as Propaganda's do. The
+row is owned by no permanent: it stands after the Saga that installed it is
+sacrificed, and it ends in the resolving controller's untap step
+(`until_your_next_turn`) or at cleanup (`this_turn`). The protected seat and
+the clock are both the resolving controller; planeswalkers are not taxed
+(506.2), and every creature is priced. Two rows are two taxes and sum. `cost`
+and `duration` are required, and the cost must be a fixed, non-empty mana cost.
+The near misses are the static, which ends when its source leaves and has no
+clock, and the `cant_attack_player` op, which is a wall with no price.
+
 ### Pricing a block rather than forbidding it
 
 ```jsonc

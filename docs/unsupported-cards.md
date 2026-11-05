@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**159 cards** blocked by **144** capabilities.
+**158 cards** blocked by **143** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -149,7 +149,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
-| [timed-attack-tax](#timed-attack-tax) | 1 | 2471 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
@@ -2286,20 +2285,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## timed-attack-tax
-
-Blocks **1** card.
-
-- **(op)** a one-shot effect (usable from a chapter ability) that creates a player-scoped attack tax — creatures can't attack the effect's controller unless their controller pays a mana cost per attacker — lasting until the controller's next turn and independent of the source staying on the battlefield; the timed twin of the attack_tax static, read by player_statics.attack_tax at declare-attackers
-  <br>Why the existing vocabulary won't do: attack_tax exists only as a static_effect, read from battlefield statics while the source is present, with no duration; the cant_attack_player op takes until_your_next_turn but is an absolute prohibition with no price (a lock, strictly stronger than the printed tax); grant_ability (op) only grants triggered/activated abilities and has only until_end_of_turn or permanent durations, so it can't hand the Saga a timed static, and a static on the Saga would also end if the Saga left early
-
-<details><summary>Cards waiting on this</summary>
-
-- **Summon: Yojimbo** (rank 2471) — `summon_yojimbo`
-  - II, III — Until your next turn, creatures can't attack you unless their controller pays {2} for each of those creatures.
 
 </details>
 

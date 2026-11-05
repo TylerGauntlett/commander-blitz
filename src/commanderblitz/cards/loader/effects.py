@@ -33,6 +33,7 @@ from commanderblitz.engine.objects import PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
     ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
+    ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
     CAST_LOCK_DURATIONS,
@@ -3801,6 +3802,29 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown cant_cast_spells_from_zones duration {duration!r} "
                 f"(implemented: {sorted(CAST_LOCK_DURATIONS)})"
+            )
+    if op == "attack_tax":
+        # Both required. Without a price the tax charges nothing and the card
+        # loads as a vanilla chapter; and the two durations are a turn apart at
+        # a table of four, so neither is a safe default.
+        if "cost" not in effect or "duration" not in effect:
+            raise DslError(f"{where}: attack_tax needs 'cost' and 'duration'")
+        cost = effect["cost"]
+        if not isinstance(cost, Mapping) or set(cost) != {"mana"}:
+            raise DslError(
+                f"{where}: attack_tax 'cost' is {{\"mana\": \"{{N}}\"}} -- the mana "
+                f"each attacking creature costs"
+            )
+        try:
+            parsed = ManaCost.parse(str(cost["mana"]))
+        except Exception as exc:
+            raise DslError(f"{where}: attack_tax cost {cost['mana']!r} is not a mana cost") from exc
+        if parsed.x_count or not str(cost["mana"]).strip():
+            raise DslError(f"{where}: attack_tax cost must be a fixed, non-empty mana cost")
+        if str(effect["duration"]) not in ATTACK_TAX_DURATIONS:
+            raise DslError(
+                f"{where}: unknown attack_tax duration {effect['duration']!r} "
+                f"(implemented: {sorted(ATTACK_TAX_DURATIONS)})"
             )
     if op == "cant_cast_spells":
         # Both required: the printed shapes differ in who and for how long

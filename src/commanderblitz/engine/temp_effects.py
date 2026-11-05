@@ -14,6 +14,7 @@ from .characteristics import _matches, printed_creature_types
 from .player_statics import _battlefield_statics, static_life_floor
 from .structs import (
     ATTACK_RESTRICTION_DURATIONS,
+    ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CAST_LOCK_DURATIONS,
     COMBAT_FOG_DURATIONS,
@@ -25,6 +26,7 @@ from .structs import (
     UNBLOCKABLE_DURATIONS,
     AttackMark,
     AttackRestriction,
+    AttackTax,
     BlockProhibition,
     CastLock,
     CombatFog,
@@ -482,6 +484,45 @@ def clear_cast_locks(state: GameState, duration: str, player: int | None = None)
     "until **your** next turn" says and why `_expired` is given that field.
     """
     state.cast_locks = _expired(state.cast_locks, duration, player)
+
+
+def tax_attacks(
+    state: GameState,
+    player: int,
+    mana: str,
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> bool:
+    """Tax every attack on ``player`` by ``mana`` per creature for ``duration``.
+
+    "Until your next turn, creatures can't attack you unless their controller
+    pays {2} for each of those creatures" (Summon: Yojimbo). One rules-relevant
+    thing: it writes the row; `player_statics.attack_tax` reads it back.
+
+    An empty price or a seat already out of the game records nothing and
+    returns False: a tax of nothing taxes nobody, and a departed seat is never
+    attacked. Never deduplicated -- see :class:`structs.AttackTax`.
+    """
+
+    if duration not in ATTACK_TAX_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown attack tax duration {duration!r}")
+    if not mana or not state.is_alive(player):
+        return False
+    state.attack_taxes.append(
+        AttackTax(player=player, mana=mana, duration=duration, source=source)
+    )
+    return True
+
+
+def clear_attack_taxes(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the timed attack taxes of one duration -- their wearing-off.
+
+    The two hooks and two clocks every timed table here uses:
+    `turn._cleanup_step` for ``this_turn``, `turn._untap_step` for the
+    ``until_your_next_turn`` entries of whoever is untapping, and `sba` for a
+    seat that has left.
+    """
+    state.attack_taxes = _expired(state.attack_taxes, duration, player)
 
 
 def clear_life_locks(state: GameState, duration: str, player: int | None = None) -> None:

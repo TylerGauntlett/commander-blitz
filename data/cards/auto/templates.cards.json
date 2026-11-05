@@ -179034,6 +179034,137 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "exile"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "any_of": [
+                  {
+                    "types": [
+                      "Artifact"
+                    ]
+                  },
+                  {
+                    "types": [
+                      "Enchantment"
+                    ]
+                  },
+                  {
+                    "tapped": true,
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                ],
+                "controller": "opponent",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I — Exile target artifact, enchantment, or tapped creature an opponent controls."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "cost": {
+                "mana": "{2}"
+              },
+              "duration": "until_your_next_turn",
+              "op": "attack_tax"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Until your next turn, creatures can't attack you unless their controller pays {2} for each of those creatures."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "cost": {
+                "mana": "{2}"
+              },
+              "duration": "until_your_next_turn",
+              "op": "attack_tax"
+            }
+          ],
+          "kind": "chapter",
+          "text": "II, III — Until your next turn, creatures can't attack you unless their controller pays {2} for each of those creatures."
+        },
+        {
+          "chapter": 4,
+          "effects": [
+            {
+              "amount": {
+                "player_count": {
+                  "cmp": ">=",
+                  "objects": {
+                    "power": {
+                      "op": ">=",
+                      "value": {
+                        "const": 4
+                      }
+                    },
+                    "types": [
+                      "Creature"
+                    ]
+                  },
+                  "player": "each_opponent",
+                  "than": {
+                    "const": 1
+                  }
+                }
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "treasure_token"
+            }
+          ],
+          "kind": "chapter",
+          "text": "IV — Create X Treasure tokens, where X is the number of opponents who control a creature with power 4 or greater."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "final_chapter": 4,
+      "id": "summon_yojimbo",
+      "keywords": [
+        "vigilance"
+      ],
+      "mana_cost": "{3}{W}",
+      "name": "Summon: Yojimbo",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI — Exile target artifact, enchantment, or tapped creature an opponent controls.\nII, III — Until your next turn, creatures can't attack you unless their controller pays {2} for each of those creatures.\nIV — Create X Treasure tokens, where X is the number of opponents who control a creature with power 4 or greater.\nVigilance",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Samurai"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "effects": [

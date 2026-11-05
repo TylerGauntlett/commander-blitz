@@ -269062,12 +269062,12 @@
     },
     "Summon: Yojimbo": {
       "edhrec_rank": 2471,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Yojimbo",
-      "reason": "no template for: I — Exile target artifact, enchantment, or tapped creature an opponent controls",
+      "reason": "",
       "scryfall_id": "cdbc2d28-ea35-47c6-af7e-07924e9d5794",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summoned Dromedary": {

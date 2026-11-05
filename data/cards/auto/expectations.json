@@ -15196,6 +15196,10 @@
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
+  "summon_yojimbo": {
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "summoner_s_sending": {
     "battlefield_count": 33,
     "zone": "battlefield"

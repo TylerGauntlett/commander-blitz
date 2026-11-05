@@ -16,6 +16,7 @@ from .player_statics import colorless_instead_players, retained_mana_by_player
 from .rng import Rng
 from .structs import (
     AttackRestriction,
+    AttackTax,
     BlockProhibition,
     CastLock,
     CombatFog,
@@ -456,6 +457,11 @@ class GameState:
     #: the empty list -- which is what it is in every game that plays none of
     #: these cards, and this one is read on every legality build.
     cast_locks: list[CastLock] = field(default_factory=list)
+    #: "Until your next turn, creatures can't attack you unless their
+    #: controller pays {2} for each of those creatures" -- see
+    #: :class:`structs.AttackTax`. The timed table beside `cast_locks`, on the
+    #: same clock, read by `player_statics.attack_tax` beside the static taxes.
+    attack_taxes: list[AttackTax] = field(default_factory=list)
     #: "You can't sacrifice those creatures this turn" -- see
     #: :class:`structs.SacrificeRestriction`.
     #:
