@@ -35,6 +35,7 @@ from .effects.modes import (
     record_per_turn,
     unspent,
 )
+from .effects.values import evaluate_value
 from .enums import DecisionKind, Zone
 from .events import EventType
 from .primitives import attach, attach_to_player, merge_permanents, shuffle_library
@@ -174,6 +175,23 @@ def push_spell(
     obj.stack_id = item.sid
     state.stack.append(item)
     state.bump_chars()
+    if card.as_cast:
+        # "…as you cast this spell" (601.2): evaluated now, with the costs
+        # paid and the card on the stack, and never again. A creature that
+        # dies or shrinks in response changes the board, not the number.
+        # Bound on the item, so a copy carries it (707.10) and the resolving
+        # `spell_effects` read it with ``{"binding": name}``.
+        cast_ctx = EffectContext(
+            state=state,
+            controller=controller,
+            source_oid=oid,
+            x=x,
+            kicked=kicked,
+            source_name=card.name,
+            source_def_id=card.id,
+        )
+        for name, expr in card.as_cast.items():
+            item.bindings[name] = evaluate_value(cast_ctx, expr)
     announce_targets(state, item)
     return item
 

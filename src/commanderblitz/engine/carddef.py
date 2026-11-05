@@ -1246,6 +1246,11 @@ class CardDef:
     #: :attr:`gift_targets` and for the same reason.
     cost_option_targets: Mapping[int, tuple[TargetSpec, ...]] = field(default_factory=dict)
     spell_effects: tuple[Mapping[str, Any], ...] = ()
+    #: "…as you cast this spell": named value expressions `stack.push_spell`
+    #: evaluates once, as the spell goes on the stack, and writes into the
+    #: stack item's `bindings`, where `spell_effects` read them back with
+    #: ``{"binding": name}``. Empty for every card that prints no such clause.
+    as_cast: Mapping[str, Any] = field(default_factory=dict)
     replacements: tuple[Mapping[str, Any], ...] = ()
     #: Starting loyalty. Kept as a characteristic as well as compiled into a
     #: replacement, because the client shows it on the card in hand where no

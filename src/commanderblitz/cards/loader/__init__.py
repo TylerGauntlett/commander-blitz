@@ -70,6 +70,7 @@ from commanderblitz.engine.mana import (
 )
 from commanderblitz.engine.objects import TIME_COUNTER
 from commanderblitz.engine.sagas import LORE, SAGA
+from commanderblitz.engine.structs import CONVOKED_BINDING
 from commanderblitz.engine.triggers import (
     BATCHED_EVENTS,
     ORDINAL_FILTER_KEYS,
@@ -788,6 +789,72 @@ def _final_chapter(model: CardModel, abilities: tuple[Ability, ...], where: str)
     return declared
 
 
+#: Binding names the engine itself writes onto a spell's stack item, which an
+#: ``as_cast`` value would overwrite or be overwritten by.
+_AS_CAST_RESERVED = frozenset({CONVOKED_BINDING, "distribution", "warped"})
+
+
+def _reads_binding(tree: Any, name: str) -> bool:
+    """Does anything in an effect tree read ``{"binding": name}``?"""
+    if isinstance(tree, Mapping):
+        if tree.get("binding") == name:
+            return True
+        return any(_reads_binding(v, name) for v in tree.values())
+    if isinstance(tree, (list, tuple)):
+        return any(_reads_binding(v, name) for v in tree)
+    return False
+
+
+def _mentions_target(tree: Any) -> bool:
+    if isinstance(tree, Mapping):
+        return "target" in tree or any(_mentions_target(v) for v in tree.values())
+    if isinstance(tree, (list, tuple)):
+        return any(_mentions_target(v) for v in tree)
+    return False
+
+
+def _check_as_cast(model: CardModel, where: str) -> None:
+    """``as_cast`` values: well-formed, read, and askable as the spell is cast.
+
+    Each is evaluated by `stack.push_spell` with no targets in reach (the
+    spell's targets are split into their specs only at resolution), so a value
+    naming a ``target`` is refused rather than reading 0. A name nothing in
+    `spell_effects` reads is a typo or a dropped sentence, and a card with no
+    `spell_effects` has nothing to read it with: a permanent's triggers never
+    see its spell's stack item.
+    """
+    if not model.as_cast:
+        return
+    at = f"{where}.as_cast"
+    if not model.spell_effects:
+        raise DslError(
+            f"{at}: a cast-time value is read back by the spell's own "
+            f"spell_effects, and this card has none"
+        )
+    for name, expr in model.as_cast.items():
+        if not name or name in _AS_CAST_RESERVED:
+            raise DslError(
+                f"{at}: {name!r} is not a usable binding name (reserved: "
+                f"{sorted(_AS_CAST_RESERVED)})"
+            )
+        validate_value(expr, f"{at}.{name}")
+        if isinstance(expr, (bool, int, str)):
+            raise DslError(
+                f"{at}.{name}: a constant is the same at cast and at resolution "
+                f"-- write it where it is read"
+            )
+        if _mentions_target(expr):
+            raise DslError(
+                f"{at}.{name}: a cast-time value cannot read a target -- "
+                f"targets are split into their specs only as the spell resolves"
+            )
+        if not _reads_binding(model.spell_effects, name):
+            raise DslError(
+                f"{at}.{name}: nothing in spell_effects reads "
+                f"{{'binding': {name!r}}}"
+            )
+
+
 def _check_distribution_homes(model: CardModel, where: str) -> None:
     """``distribute_counters`` only where its division can be announced.
 
@@ -1079,6 +1146,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         )
     _check_distribution_homes(model, where)
     _check_division_homes(model, where)
+    _check_as_cast(model, where)
 
     for i, replacement in enumerate(model.replacements):
         if replacement.event == "self_enters_prepared" and model.prepared_face is None:
@@ -2263,6 +2331,7 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
         gift_targets=gift_targets,
         cost_option_targets=cost_option_targets,
         spell_effects=tuple(model.spell_effects),
+        as_cast=dict(model.as_cast),
         replacements=_implied_replacements(model),
         abilities=abilities,
         grantable_abilities=grantable,

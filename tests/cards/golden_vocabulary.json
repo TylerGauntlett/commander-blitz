@@ -840,6 +840,11 @@
     1
    ]
   ],
+  "_AS_CAST_RESERVED": [
+   "convoked",
+   "distribution",
+   "warped"
+  ],
   "_CHOSEN_QUALITY_KEYS": [
    "chosen_type_of",
    "chosen_color_of"

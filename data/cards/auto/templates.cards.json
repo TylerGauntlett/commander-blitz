@@ -103477,6 +103477,68 @@
       ]
     },
     {
+      "as_cast": {
+        "greatest_power": {
+          "extreme_value": {
+            "objects": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            },
+            "of": "power"
+          }
+        }
+      },
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "foretell": "{4}{G}",
+      "id": "lifestream_s_blessing",
+      "mana_cost": "{4}{G}{G}",
+      "name": "Lifestream's Blessing",
+      "oracle_text": "Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life.\nForetell {4}{G} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "binding": "greatest_power"
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "condition": {
+            "cast_from_exile": true
+          },
+          "op": "if",
+          "then": [
+            {
+              "amount": {
+                "times": [
+                  {
+                    "const": 2
+                  },
+                  {
+                    "binding": "greatest_power"
+                  }
+                ]
+              },
+              "op": "gain_life",
+              "player": "you"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "color_identity": [
         "R",
         "U",

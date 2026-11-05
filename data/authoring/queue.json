@@ -157952,12 +157952,12 @@
     },
     "Lifestream's Blessing": {
       "edhrec_rank": 3285,
-      "gate": "template",
+      "gate": null,
       "name": "Lifestream's Blessing",
-      "reason": "no template for: Draw X cards, where X is the greatest power among creatures you controlled as you cast thi",
+      "reason": "",
       "scryfall_id": "48b4101b-3428-4b6b-818a-6097a093e9b5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lifetap": {

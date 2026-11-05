@@ -1257,6 +1257,13 @@ class CardModel(BaseModel):
     color_identity: list[str] | None = None
     targets: list[TargetModel] = Field(default_factory=list)
     spell_effects: list[dict[str, Any]] = Field(default_factory=list)
+    #: "…where X is the greatest power among creatures you controlled **as you
+    #: cast this spell**" (Lifestream's Blessing). Named value expressions
+    #: evaluated once, as the spell is put on the stack (601.2), and bound on
+    #: its stack item under those names, so `spell_effects` read them with
+    #: ``{"binding": name}`` at resolution. A creature that dies or shrinks in
+    #: response no longer changes the number.
+    as_cast: dict[str, Any] = Field(default_factory=dict)
     replacements: list[ReplacementModel] = Field(default_factory=list)
     abilities: list[AbilityModel] = Field(default_factory=list)
     #: Abilities this card grants to *another* permanent, referenced by index

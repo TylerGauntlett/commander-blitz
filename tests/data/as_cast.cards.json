@@ -1,0 +1,51 @@
+{
+  "_comment": "Cards that exist only for the as_cast test (tests/unit/casting/test_as_cast.py). Never part of a deck list; loaded by the test registry fixture alongside data/cards/. `t_as_cast_insight` is Lifestream's Blessing's first sentence on a cheap instant: draw X, where X is the greatest power among creatures you controlled as you cast it. `t_resolution_insight` is the near miss: the same `extreme_value` read at resolution, so a creature that leaves in response changes it.",
+  "cards": [
+    {
+      "id": "t_as_cast_insight",
+      "name": "Test As-Cast Insight",
+      "oracle_text": "Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. You gain twice X life.",
+      "mana_cost": "{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "as_cast": {
+        "greatest_power": {
+          "extreme_value": {
+            "of": "power",
+            "objects": { "types": ["Creature"], "controller": "you" }
+          }
+        }
+      },
+      "spell_effects": [
+        { "op": "draw", "player": "you", "amount": { "binding": "greatest_power" } },
+        {
+          "op": "gain_life",
+          "player": "you",
+          "amount": { "times": [{ "const": 2 }, { "binding": "greatest_power" }] }
+        }
+      ]
+    },
+    {
+      "id": "t_resolution_insight",
+      "name": "Test Resolution Insight",
+      "oracle_text": "Draw X cards, where X is the greatest power among creatures you control.",
+      "mana_cost": "{G}",
+      "types": ["Instant"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "spell_effects": [
+        {
+          "op": "draw",
+          "player": "you",
+          "amount": {
+            "extreme_value": {
+              "of": "power",
+              "objects": { "types": ["Creature"], "controller": "you" }
+            }
+          }
+        }
+      ]
+    }
+  ]
+}

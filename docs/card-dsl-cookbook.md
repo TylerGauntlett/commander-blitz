@@ -7175,6 +7175,37 @@ replaces the loss. Extort's "you gain that much life" is the same read.
 The binding is this op's loss alone: a second `lose_life` with the same `as`
 overwrites it rather than adding to it.
 
+### "As you cast this spell" — a value fixed at cast time
+
+A number the card fixes "as you cast this spell" (601.2) is written once, in the
+card-level `as_cast` map, and read by `spell_effects` like any other binding.
+`stack.push_spell` evaluates each value as the spell goes on the stack — costs
+paid, before anyone can respond — and writes it into the stack item's
+`bindings` under its name.
+
+```jsonc
+// Lifestream's Blessing — "Draw X cards, where X is the greatest power among
+// creatures you controlled as you cast this spell."
+"as_cast": {
+  "greatest_power": { "extreme_value": { "of": "power",
+    "objects": { "types": ["Creature"], "controller": "you" } } }
+},
+"spell_effects": [
+  { "op": "draw", "player": "you", "amount": { "binding": "greatest_power" } }
+]
+```
+
+The near miss is the same `extreme_value` written into the `draw`: that is read
+as the spell resolves (608.2h), so a creature killed or pumped in response
+changes X. `snapshot` is an op, and also runs at resolution.
+
+A copy of the spell carries the bound values (707.10), as it carries `x`. The
+loader refuses a card with no `spell_effects` (a permanent's abilities never see
+its spell's stack item), a name nothing in `spell_effects` reads, a constant, a
+value naming a `target` (targets are split into their specs only at
+resolution), and the names the engine binds on a spell itself: `convoked`,
+`distribution`, `warped`.
+
 ### Extort
 
 Extort (702.101) is this read inside a `may`, and is written by the template

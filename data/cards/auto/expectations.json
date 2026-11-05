@@ -8819,6 +8819,15 @@
   "lifespring_druid": {
     "zone": "battlefield"
   },
+  "lifestream_s_blessing": {
+    "library_size": {
+      "0": 38
+    },
+    "life": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "lightning_angel": {
     "zone": "battlefield"
   },

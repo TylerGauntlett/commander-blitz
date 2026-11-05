@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**161 cards** blocked by **147** capabilities.
+**160 cards** blocked by **146** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -49,7 +49,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [can-block-only](#can-block-only) | 1 | 2673 | static_effect |
 | [cant-be-countered](#cant-be-countered) | 1 | 717 | static_effect |
 | [cards-exiled-trigger](#cards-exiled-trigger) | 1 | 1303 | trigger_event |
-| [cast-time-snapshot](#cast-time-snapshot) | 1 | 3285 | value |
 | [cast-timing-restriction](#cast-timing-restriction) | 1 | 17407 | engine |
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
@@ -855,20 +854,6 @@ Blocks **1** card.
 
 - **Laelia, the Blade Reforged** (rank 1303) — `laelia_the_blade_reforged`
   - Whenever one or more cards are put into exile from your library and/or your graveyard, put a +1/+1 counter on Laelia.
-
-</details>
-
-## cast-time-snapshot
-
-Blocks **1** card.
-
-- **(value)** a value read as the spell is cast and stamped on its stack object, so resolution can use it: here the greatest power among creatures its caster controlled at cast time (e.g. `{"as_cast": {"extreme_value": ...}}` or a cast-time `snapshot` binding readable from spell_effects)
-  <br>Why the existing vocabulary won't do: `extreme_value`/`max` over a creature selector is evaluated at resolution, so a creature that dies or shrinks in response changes X; `snapshot` is an op that runs at resolution, and `power_of`/`power_had` read one object, not the board at cast time. Only `cast_during` and the `cast_from_*` stamps are recorded at cast, and none carries a number
-
-<details><summary>Cards waiting on this</summary>
-
-- **Lifestream's Blessing** (rank 3285) — `lifestream_s_blessing`
-  - Draw X cards, where X is the greatest power among creatures you controlled as you cast this spell. If this spell was cast from exile, you gain twice X life.
 
 </details>
 

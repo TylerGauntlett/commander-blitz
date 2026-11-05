@@ -1098,6 +1098,8 @@ RIDER_KEYS: dict[str, Entry] = {
     "toxic": ("Toxic N: the N, beside `toxic` in `keywords`.", "Toxic N"),
     "annihilator": ("Annihilator N: the N, beside `annihilator` in `keywords`.", "Annihilator N"),
     "morph_counter": ("Megamorph: turns face up with a +1/+1 counter, beside `morph`.", H_MORPH),
+    "as_cast": ("Named values fixed as the spell is cast, read by `spell_effects` as `{\"binding\": name}`.",
+                '"As you cast this spell" — a value fixed at cast time'),
 }
 
 DELAYED_TRIGGER: dict[str, Entry] = {
