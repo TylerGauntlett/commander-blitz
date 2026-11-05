@@ -330,7 +330,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `count` | How many objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_had` | Counters of a kind (or "any", every kind) the permanent that just left had. | [Value expressions](card-dsl.md#value-expressions) |
 | `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | [Value expressions](card-dsl.md#value-expressions) |
-| `counters_put_this_turn` | Counters the player put on permanents this turn, by recipient types and kind. | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
+| `counters_put_this_turn` | Counters the player put on permanents this turn, by recipient types, kind or one recipient (`on`). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_died_this_turn` | Creatures that died this turn (morbid). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `creatures_you_control` | Creatures the player controls. | [Value expressions](card-dsl.md#value-expressions) |
 | `damage_taken_this_turn` | Damage the player was dealt this turn, summed over a plural spec (bloodthirst). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |

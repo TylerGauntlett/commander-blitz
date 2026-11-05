@@ -1647,12 +1647,18 @@ class CountersPut:
     are the recipient's derived card types at the moment of placement, which
     is what "on a creature" asks -- the permanent may have left, or stopped
     being a creature, by the time the question is read.
+
+    ``oid`` is the recipient, for "if a counter was put on Wakka this turn",
+    and ``None`` once that permanent has left the battlefield (400.7): the
+    object that comes back is a new one no counter was put on, while the
+    placement still counts for whoever put it.
     """
 
     put_by: int
     counter: str
     amount: int
     types: frozenset[str]
+    oid: int | None = None
 
 
 @dataclass(frozen=True)

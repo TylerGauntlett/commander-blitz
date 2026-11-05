@@ -308932,12 +308932,12 @@
     },
     "Wakka, Devoted Guardian": {
       "edhrec_rank": 5243,
-      "gate": "template",
+      "gate": null,
       "name": "Wakka, Devoted Guardian",
-      "reason": "no template for: Whenever Wakka deals combat damage to a player, destroy up to one target artifact that pla",
+      "reason": "",
       "scryfall_id": "8e036ebd-1749-4c41-9840-8dc5f69d6c86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Walk the Aeons": {

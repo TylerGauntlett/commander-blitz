@@ -1585,6 +1585,8 @@ Anywhere a number is expected -- the leaf list is
 { "life_gained_this_turn": "you" }              // "if you gained life this turn"; lifelink counts
 { "counters_put_this_turn": { "player": "you",  // "if you put a counter on a creature this turn";
     "types": ["Creature"] } }                   //   who PUT them (122.6a), enters-with counts (122.6)
+{ "counters_put_this_turn": { "player": "all",  // "if a counter was put on Wakka this turn";
+    "on": { "self": true } } }                  //   one recipient, by anybody
 { "loyalty_activations_this_turn": "you" }      // The Chain Veil; "didn't activate" is `==` 0
 { "spells_cast_this_turn": "all" }              // storm
 { "cards_to_graveyard_this_turn": true }        // CARDS, from anywhere; every graveyard, so no spec
@@ -3757,12 +3759,19 @@ Two things about that ledger are load-bearing:
   put a counter on a creature this turn", Lasting Tarfire) takes a required
   `player` (the putter, 122.6a — not the recipient's controller), optional
   `types` (card types the recipient had as the counter arrived, all of them)
-  and optional `counter` (one kind; `"any"`, the default, is every kind). It
+  optional `counter` (one kind; `"any"`, the default, is every kind) and
+  optional `on`, one object reference (`{"self": true}`, `{"binding": …}` or
+  `{"target": …}`) naming the recipient ("if a counter was put on Wakka this
+  turn" is `"player": "all"` with `"on": {"self": true}`); a permanent that
+  left the battlefield and came back is a new object with nothing put on it
+  (400.7). It
   sums the amounts of every COUNTER_PLACED this turn, the counters a permanent
   entered with included (122.6), and keeps them when the counter or the
   permanent has gone since. A `counter_placed` trigger setting a turn flag is
   the near miss: an unprinted ability that misses counters put before the
-  permanent arrived.
+  permanent arrived. `counters_on` is the other: it reads counters present
+  now, so a counter put and removed this turn is missed and one from an
+  earlier turn is counted.
 - **A death can be filtered by what the creature was as it died, and only by
   that.** `modified_creatures_died_this_turn` ("if a modified creature died
   under your control this turn", Intermediate Chirography) counts the deaths

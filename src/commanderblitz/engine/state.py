@@ -897,6 +897,7 @@ class GameState:
                         counter=str(data.get("counter", "")),
                         amount=int(data.get("amount", 0)),
                         types=frozenset(chars(self, int(oid)).types),
+                        oid=int(oid),
                     )
                 )
         elif event.type == EventType.ENTERS_BATTLEFIELD:
@@ -1054,6 +1055,10 @@ class GameState:
                 ledger.players_attacked_by.pop(data.get("oid"), None)
                 ledger.attacks_by_creature.pop(data.get("oid"), None)
                 ledger.taps_by_permanent.pop(data.get("oid"), None)
+                ledger.counters_put[:] = [
+                    replace(put, oid=None) if put.oid == data.get("oid") else put
+                    for put in ledger.counters_put
+                ]
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # Gravestorm's count, and the token is *in* it: the token

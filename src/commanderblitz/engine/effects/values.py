@@ -209,7 +209,8 @@ VALUE_KEYS = frozenset(
         "life_gained_this_turn",
         # "…if you put a counter on a creature this turn" -- Lasting Tarfire.
         # Counters the player put (122.6a), optionally only on permanents of
-        # some types and of one kind, off `TurnLedger.counters_put`.
+        # some types, of one kind, or on one object (`on`, an object reference:
+        # "if a counter was put on Wakka this turn"), off `TurnLedger.counters_put`.
         "counters_put_this_turn",
         # "…if you didn't activate a loyalty ability of a planeswalker this
         # turn" -- The Chain Veil. How many, per activating player; "didn't"
@@ -773,12 +774,17 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         pids = set(_players(ctx, spec["player"]))
         types = set(spec.get("types") or ())
         kind = str(spec.get("counter", ANY_COUNTER_KIND))
+        # "…if a counter was put on Wakka this turn": one recipient, by oid. A
+        # reference that names nobody reads 0, and a permanent that left and
+        # came back is a new object no counter was put on (400.7).
+        on = set(_referenced_oids(ctx, spec["on"])) if "on" in spec else None
         return sum(
             put.amount
             for put in ledger.counters_put
             if put.put_by in pids
             and types <= put.types
             and (kind == ANY_COUNTER_KIND or put.counter == kind)
+            and (on is None or (put.oid is not None and put.oid in on))
         )
     if "cards_discarded_this_turn" in expr:
         pids = _players(ctx, expr["cards_discarded_this_turn"])
@@ -1338,16 +1344,19 @@ def validate_counters_put_this_turn(spec: Any, where: str) -> None:
     silently be somebody. ``types`` is a list of card types the recipient had
     as the counter arrived, all of them; omitted, any permanent. ``counter`` is
     one kind, through the `add_counters` near-miss check, or ``"any"`` (the
-    default) for every kind.
+    default) for every kind. ``on`` is one object reference
+    (`validate_object_ref`) naming the recipient; omitted, any permanent.
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object with a 'player'")
-    unknown = set(spec) - {"player", "types", "counter"}
+    unknown = set(spec) - {"player", "types", "counter", "on"}
     if unknown:
         raise DslError(
-            f"{where}: unsupported keys {sorted(unknown)} (only 'player', 'types' "
-            f"and 'counter' are remembered about a placement)"
+            f"{where}: unsupported keys {sorted(unknown)} (only 'player', 'types', "
+            f"'counter' and 'on' are remembered about a placement)"
         )
+    if "on" in spec:
+        validate_object_ref(spec["on"], f"{where}.on")
     if "player" not in spec:
         raise DslError(f"{where}: needs 'player' -- who put the counters, e.g. 'you'")
     who = spec["player"]

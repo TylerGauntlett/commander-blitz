@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**170 cards** blocked by **153** capabilities.
+**169 cards** blocked by **152** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -59,7 +59,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [copy-for-each-other-target](#copy-for-each-other-target) | 1 | 8216 | op |
 | [copy-this-spell-on-resolution](#copy-this-spell-on-resolution) | 1 | 338 | op |
 | [council-s-dilemma](#council-s-dilemma) | 1 | 15065 | decision |
-| [counter-put-on-object-this-turn](#counter-put-on-object-this-turn) | 1 | 5243 | value |
 | [counter-to-exile](#counter-to-exile) | 1 | 266 | op |
 | [coven](#coven) | 1 | 1129 | value |
 | [crime](#crime) | 1 | 2244 | trigger_event |
@@ -1015,20 +1014,6 @@ Blocks **1** card.
   - Council's dilemma — Starting with you, each player votes for past or present.
   - You mill a card for each past vote, then Fateful Tempest deals damage to each opponent equal to the total mana value of cards milled this way.
   - Exile the top card of your library for each present vote.
-
-</details>
-
-## counter-put-on-object-this-turn
-
-Blocks **1** card.
-
-- **(value)** a value (or condition) counting counters put this turn on one specific object, here the source itself, by any player and of any kind: "if a counter was put on <this permanent> this turn" as an end-step intervening-if. Needs the turn ledger's CountersPut records to carry the recipient object id so a value like {"counters_put_this_turn": {"objects": {"self_only": true}, "player": "any"}} can filter on it
-  <br>Why the existing vocabulary won't do: counters_put_this_turn filters only by who put the counters (put_by), counter kind and the recipient's card types; CountersPut in engine/structs.py records no recipient oid, so it cannot tell a counter on Wakka from one on any other creature. counters_on reads counters currently present, not counters put this turn (a +1/+1 counter later removed, or annihilated by a -1/-1, would be missed, and pre-existing counters would wrongly count). A counter_placed self trigger setting a turn flag read by has_turn_flag would add an unprinted triggered ability that uses the stack
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wakka, Devoted Guardian** (rank 5243) — `wakka_devoted_guardian`
-  - Blitzball Captain — At the beginning of your end step, if a counter was put on Wakka this turn, put a +1/+1 counter on each other creature you control.
 
 </details>
 

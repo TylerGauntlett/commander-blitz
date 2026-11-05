@@ -17576,6 +17576,10 @@
     },
     "zone": "graveyard"
   },
+  "wakka_devoted_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "walking_ballista": {
     "battlefield_count": 33,
     "counters": {
