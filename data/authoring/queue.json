@@ -83672,12 +83672,12 @@
     },
     "Endless Detour": {
       "edhrec_rank": 7354,
-      "gate": "template",
+      "gate": null,
       "name": "Endless Detour",
-      "reason": "no template for: The owner of target spell, nonland permanent, or card in a graveyard puts it on their choi",
+      "reason": "",
       "scryfall_id": "33a37435-bd6c-4330-8138-98a2afa36e54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endless Evil": {

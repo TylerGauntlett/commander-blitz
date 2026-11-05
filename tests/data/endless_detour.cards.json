@@ -1,0 +1,25 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_spell_permanent_or_graveyard_card.py. t_detour is Endless Detour: one target spanning the stack, the battlefield and every graveyard, its 'nonland' narrowing only the permanent half.",
+  "cards": [
+    {
+      "id": "t_detour",
+      "name": "Test Endless Detour",
+      "oracle_text": "The owner of target spell, nonland permanent, or card in a graveyard puts it on their choice of the top or bottom of their library.",
+      "mana_cost": "{G}{W}{U}",
+      "types": ["Instant"],
+      "colors": ["G", "W", "U"],
+      "color_identity": ["G", "W", "U"],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell_permanent_or_graveyard_card",
+          "count": 1,
+          "permanent_selector": {"not_types": ["Land"]}
+        }
+      ],
+      "spell_effects": [
+        {"op": "put_on_top", "objects": {"target": "t1"}, "owner_chooses": true}
+      ]
+    }
+  ]
+}

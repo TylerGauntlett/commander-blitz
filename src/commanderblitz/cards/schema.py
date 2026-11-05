@@ -267,6 +267,15 @@ class TargetModel(BaseModel):
         "card_in_exile",
         "any",
         "spell_or_permanent",
+        #: "The owner of target **spell, nonland permanent, or card in a
+        #: graveyard** puts it…" (Endless Detour). `"spell_or_permanent"` with a
+        #: third half: one instance of the word "target" whose pool spans the
+        #: stack, the battlefield and every graveyard. The spell half reads
+        #: `selector`, the permanent half `permanent_selector` when there is
+        #: one, and the graveyard half `selector` over **every** graveyard
+        #: unless the selector names whose. A selector ``zone`` is refused,
+        #: since the kind already names all three.
+        "spell_permanent_or_graveyard_card",
         #: "Copy target activated or triggered ability **you control**" -- Peter
         #: Parker's Camera, Lithoform Engine, Strionic Resonator.
         #:
@@ -292,7 +301,9 @@ class TargetModel(BaseModel):
     #: is legal, and of the permanents only creatures. `selector` then narrows
     #: the spell half alone. Absent, both halves read `selector`, which is
     #: Sink into Stupor's "spell or nonland permanent an opponent controls".
-    #: Refused on every other kind, with a ``zone`` other than the battlefield,
+    #: The same on a ``"spell_permanent_or_graveyard_card"`` target, whose
+    #: "**nonland** permanent" narrows the battlefield half alone (Endless
+    #: Detour). Refused on every other kind, with a ``zone`` other than the battlefield,
     #: and with a clause naming a sibling target or ``{X}``.
     permanent_selector: dict[str, Any] | None = None
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*

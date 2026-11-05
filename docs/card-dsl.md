@@ -1129,6 +1129,32 @@ reason: a union target that landed on a permanent would otherwise return nothing
 and leave it on the battlefield with the card looking like it worked — the silent
 failure that op's docstring was already written about, one kind further along.
 
+### "Target spell, nonland permanent, or card in a graveyard"
+
+```jsonc
+{ "id": "t1", "kind": "spell_permanent_or_graveyard_card", "count": 1,
+  "permanent_selector": { "not_types": ["Land"] } }
+```
+
+Endless Detour. `spell_or_permanent` with a third half: one spec whose pool is
+the spells on the stack, then the permanents, then the cards in **every**
+graveyard. The spell half reads `selector`, the permanent half
+`permanent_selector` when there is one, and the graveyard half `selector` in the
+graveyard zone — over every graveyard unless the selector names whose
+(`controller`, `owner` or `player`), via `TargetSpec.graveyard_half`. "Nonland"
+narrows only the permanent: a land card in a graveyard is legal, so it belongs in
+`permanent_selector`, not `selector`.
+
+`still_legal` re-checks an object ref against the half for the zone it is in as
+the spell resolves, and a ref in any other zone is no target. A `zone` on the
+selector is refused, since each half supplies its own.
+
+Only two ops can move it, because a `{"target": …}` selector reaches object refs
+alone: `put_on_top` with `objects: {"target": …}` and nothing else (the spell
+half is pulled off the stack uncountered into its owner's library, the owner
+choosing top or bottom under `owner_chooses`), and `return_spell_to_hand`. Any
+other op reading `objects: {"target": …}` of this kind is refused at load time.
+
 ### "As this enters, you may pay …"
 
 ```jsonc

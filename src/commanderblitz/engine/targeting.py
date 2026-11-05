@@ -142,6 +142,25 @@ def candidates(
             if can_be_targeted(state, controller, oid, source_oid=source_oid)
         )
         return pool
+    if spec.kind == "spell_permanent_or_graveyard_card":
+        # "Target spell, nonland permanent, or card in a graveyard" (Endless
+        # Detour): the branch above with a third half, in printed order. Each
+        # half reads the accessor `still_legal` re-checks it against.
+        pool = [
+            TargetRef.stack(item.sid)
+            for item in state.stack
+            if item.is_spell and item.sid != exclude_sid and _spell_matches(ctx, item, spec)
+        ]
+        for half in (
+            {**dict(spec.permanent_half), "zone": "battlefield"},
+            spec.graveyard_half,
+        ):
+            pool.extend(
+                TargetRef.obj(oid)
+                for oid in resolve_pool(ctx, half)
+                if can_be_targeted(state, controller, oid, source_oid=source_oid)
+            )
+        return pool
     if spec.kind == "card_in_exile":
         # Exile is kept per owner, so the selector says whose pile to walk the
         # same way a graveyard spec does; the zone is supplied, because the kind
@@ -826,6 +845,17 @@ def still_legal(
         # An object ref is the permanent half, re-checked against the selector
         # that half was offered from -- `candidates` reads the same accessor.
         return matches(ctx, ref.id, {**dict(spec.permanent_half), "zone": "battlefield"})
+    if spec.kind == "spell_permanent_or_graveyard_card":
+        # Re-checked against the half for the zone the object is in now. An
+        # object keeps its oid across zones (the "object identity" row of
+        # docs/rules-coverage.md), so a creature sacrificed in response is
+        # still offered to the graveyard half here, as a flickered permanent
+        # is to a `permanent` spec.
+        if obj.zone is Zone.BATTLEFIELD:
+            return matches(ctx, ref.id, {**dict(spec.permanent_half), "zone": "battlefield"})
+        if obj.zone is Zone.GRAVEYARD:
+            return matches(ctx, ref.id, spec.graveyard_half)
+        return False
     selector = dict(spec.selector)
     if spec.kind == "any" and "zone" not in selector:
         selector["zone"] = "battlefield"

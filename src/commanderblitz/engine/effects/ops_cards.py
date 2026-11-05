@@ -2920,6 +2920,38 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             source=oid,
             to="library_top" if depth == 1 else "library",
         )
+    # "The owner of target **spell**, nonland permanent, or card in a graveyard
+    # puts it…" (Endless Detour). A spell is a stack ref, which `objects`
+    # (`ctx.target_oids`) never reaches, so a target that landed on the stack
+    # is tucked here: off the stack uncountered, into its owner's library. A
+    # copy of a spell is no card and goes nowhere (706.10).
+    objects = spec.get("objects")
+    if isinstance(objects, Mapping) and set(objects) == {"target"}:
+        for sid in ctx.target_sids(str(objects["target"])):
+            item = ctx.state.stack_item(sid)
+            obj = ctx.state.objects.get(item.oid) if item and item.oid is not None else None
+            if obj is None:
+                continue
+            to_bottom = bottom
+            if owner_chooses:
+                to_bottom = not (
+                    yield from ask_yes_no(ctx, "Put it on top of your library?", obj.owner)
+                )
+            pull_spell_off_stack(
+                ctx.state,
+                sid,
+                Zone.LIBRARY,
+                cause="tuck",
+                by=ctx.source_oid,
+                to_index=None if to_bottom else depth - 1,
+            )
+            if obj.oid in ctx.state.objects and ctx.state.objects[obj.oid].zone is Zone.LIBRARY:
+                moved.append(obj.oid)
+                ctx.state.emit(
+                    EventType.ZONE_CHANGE,
+                    source=obj.oid,
+                    to="library_top" if depth == 1 else "library",
+                )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = moved
 

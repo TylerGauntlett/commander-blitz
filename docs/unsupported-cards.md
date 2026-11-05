@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**161 cards** blocked by **145** capabilities.
+**160 cards** blocked by **144** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -140,7 +140,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
-| [spell-permanent-or-graveyard-card-target](#spell-permanent-or-graveyard-card-target) | 1 | 7354 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
 | [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
@@ -2164,20 +2163,6 @@ Blocks **1** card.
 
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## spell-permanent-or-graveyard-card-target
-
-Blocks **1** card.
-
-- **(selector)** a single target kind whose pool spans three zones at once -- a spell on the stack, a nonland permanent on the battlefield, or a card in any graveyard -- as one instance of the word "target" (one spec, one choice), with legality re-checked per zone on resolution
-  <br>Why the existing vocabulary won't do: TargetModel.kind offers 'spell_or_permanent' (stack + battlefield only, Sink into Stupor) and 'card_in_graveyard' separately; writing two specs would make the spell target twice and require both to be legal, which is a different card. 'any' is battlefield objects plus players. The effect half already exists: put_on_top with owner_chooses: true asks the owner top-or-bottom and moves the object to its owner's library, so only the target kind is missing
-
-<details><summary>Cards waiting on this</summary>
-
-- **Endless Detour** (rank 7354) — `endless_detour`
-  - The owner of target spell, nonland permanent, or card in a graveyard puts it on their choice of the top or bottom of their library.
 
 </details>
 

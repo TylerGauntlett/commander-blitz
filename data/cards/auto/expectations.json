@@ -4637,6 +4637,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "endless_detour": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 41
+    },
+    "zone": "graveyard"
+  },
   "endless_ranks_of_hydra": {
     "battlefield_count": 33,
     "tokens": {

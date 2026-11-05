@@ -54214,6 +54214,47 @@
       ]
     },
     {
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "endless_detour",
+      "mana_cost": "{G}{W}{U}",
+      "name": "Endless Detour",
+      "oracle_text": "The owner of target spell, nonland permanent, or card in a graveyard puts it on their choice of the top or bottom of their library.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "objects": {
+            "target": "t1"
+          },
+          "op": "put_on_top",
+          "owner_chooses": true
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "spell_permanent_or_graveyard_card",
+          "permanent_selector": {
+            "not_types": [
+              "Land"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "active_zones": [

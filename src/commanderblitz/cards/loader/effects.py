@@ -1016,6 +1016,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
             )
+    objects = effect.get("objects")
+    if (
+        isinstance(objects, Mapping)
+        and "target" in objects
+        and isinstance(target_kinds, Mapping)
+        and target_kinds.get(str(objects["target"])) == "spell_permanent_or_graveyard_card"
+        and (op != "put_on_top" or set(objects) != {"target"})
+    ):
+        # A `{"target": …}` selector reaches object refs only, so on any other
+        # op -- or narrowed by another clause -- a target that landed on a
+        # spell would load and do nothing. `put_on_top` tucks the spell half
+        # itself; `return_spell_to_hand` names it by `target`.
+        raise DslError(
+            f"{where}.objects: a 'spell_permanent_or_graveyard_card' target is "
+            f"moved by put_on_top with objects {{'target': ...}} alone, or by "
+            f"return_spell_to_hand -- {op!r} would never reach the spell half"
+        )
     if op == "return_spell_to_hand":
         # "Return target **spell** to its owner's hand." The op reads
         # `ctx.target_sids`, which keeps only refs of kind `"stack"` -- so aimed
@@ -1029,7 +1046,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: return_spell_to_hand references target {tid!r} "
                 f"which the card does not declare"
             )
-        if target_kinds[tid] not in ("spell", "spell_or_permanent"):
+        if target_kinds[tid] not in (
+            "spell",
+            "spell_or_permanent",
+            "spell_permanent_or_graveyard_card",
+        ):
             raise DslError(
                 f"{where}: return_spell_to_hand needs a target of kind 'spell' or "
                 f"'spell_or_permanent', and {tid!r} is {target_kinds[tid]!r} "

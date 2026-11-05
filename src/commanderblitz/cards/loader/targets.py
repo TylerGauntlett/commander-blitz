@@ -441,7 +441,7 @@ def _check_permanent_selector(model: TargetModel, label: str) -> None:
     somewhere the rest of the targeting layer does not look.
     """
     sub = model.permanent_selector or {}
-    if model.kind != "spell_or_permanent":
+    if model.kind not in ("spell_or_permanent", "spell_permanent_or_graveyard_card"):
         # Every other kind has one pool and one selector; a second would be
         # accepted and ignored.
         raise DslError(
@@ -572,6 +572,13 @@ def _compile_target(
         )
     if model.kind == "card_in_exile" and zone not in (None, "exile"):
         raise DslError(f"{label}: a 'card_in_exile' target is in exile, not in {zone!r}")
+    if model.kind == "spell_permanent_or_graveyard_card" and zone is not None:
+        # The kind names its three zones, and each half supplies its own; a
+        # `zone` here would be overwritten in every one of them.
+        raise DslError(
+            f"{label}: a 'spell_permanent_or_graveyard_card' target spans the "
+            f"stack, the battlefield and every graveyard, so it takes no 'zone'"
+        )
     if model.kind == "card_in_graveyard" and zone not in (None, "graveyard"):
         raise DslError(f"{label}: a 'card_in_graveyard' target is in a graveyard, not in {zone!r}")
     if isinstance(model.count, dict):
