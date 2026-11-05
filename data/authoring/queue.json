@@ -13812,12 +13812,12 @@
     },
     "Aron, Benalia's Ruin": {
       "edhrec_rank": 7382,
-      "gate": "template",
+      "gate": null,
       "name": "Aron, Benalia's Ruin",
-      "reason": "no template for: {W}{B}, {T}, Sacrifice another creature: Put a +1/+1 counter on each creature you control",
+      "reason": "",
       "scryfall_id": "861f36b9-9f43-4ace-8e60-4ba671b2655a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Arrest": {
@@ -23062,12 +23062,12 @@
     },
     "Beetleback Chief": {
       "edhrec_rank": 3545,
-      "gate": "template",
+      "gate": null,
       "name": "Beetleback Chief",
-      "reason": "no template for: When this creature enters, create two 1/1 red Goblin creature tokens",
+      "reason": "",
       "scryfall_id": "fe276be5-bc54-4fb7-82af-a2312c76f1d2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Beetleform Mage": {
@@ -26002,12 +26002,12 @@
     },
     "Blade of Selves": {
       "edhrec_rank": 909,
-      "gate": "template",
+      "gate": null,
       "name": "Blade of Selves",
-      "reason": "no template for: Equipped creature has myriad",
+      "reason": "",
       "scryfall_id": "1138ab11-ab70-44df-9691-ddee39c3ae45",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blade of Shared Souls": {
@@ -30832,12 +30832,12 @@
     },
     "Bone Devourer": {
       "edhrec_rank": 10381,
-      "gate": "template",
+      "gate": null,
       "name": "Bone Devourer",
-      "reason": "no template for: This creature enters with a number of +1/+1 counters on it equal to the number of creature",
+      "reason": "",
       "scryfall_id": "5acb9bd4-ed86-400e-9f5d-4c26351242f2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Bone Dragon": {
@@ -40872,12 +40872,12 @@
     },
     "Castle Embereth": {
       "edhrec_rank": 1068,
-      "gate": "template",
+      "gate": null,
       "name": "Castle Embereth",
-      "reason": "no template for: {1}{R}{R}, {T}: Creatures you control get +1/+0 until end of turn",
+      "reason": "",
       "scryfall_id": "516db41b-188b-405e-8665-fa7021c72fd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Castle Garenbrig": {
@@ -45752,12 +45752,12 @@
     },
     "Chittering Witch": {
       "edhrec_rank": 3202,
-      "gate": "template",
+      "gate": null,
       "name": "Chittering Witch",
-      "reason": "no template for: When this creature enters, create a number of 1/1 black Rat creature tokens equal to the n",
+      "reason": "",
       "scryfall_id": "16e8e655-2da1-46c9-b9fb-223dd366698b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chitterspitter": {
@@ -50792,12 +50792,12 @@
     },
     "Commander's Insignia": {
       "edhrec_rank": 8233,
-      "gate": "template",
+      "gate": null,
       "name": "Commander's Insignia",
-      "reason": "no template for: Creatures you control get +1/+1 for each time you've cast your commander from the command ",
+      "reason": "",
       "scryfall_id": "12b2b04b-27d1-4b5d-9bd6-9678f203cf20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commander's Plate": {
@@ -81042,12 +81042,12 @@
     },
     "Eliminate the Competition": {
       "edhrec_rank": 10778,
-      "gate": "template",
+      "gate": null,
       "name": "Eliminate the Competition",
-      "reason": "no template for: As an additional cost to cast this spell, sacrifice X creatures",
+      "reason": "",
       "scryfall_id": "3bf09460-2e54-4434-ab03-95eef77265dc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eliminate the Impossible": {
@@ -109902,12 +109902,12 @@
     },
     "Gix, Yawgmoth Praetor": {
       "edhrec_rank": 2013,
-      "gate": "template",
+      "gate": null,
       "name": "Gix, Yawgmoth Praetor",
-      "reason": "no template for: Whenever a creature deals combat damage to one of your opponents, its controller may pay 1",
+      "reason": "",
       "scryfall_id": "f1de9d89-4cbf-453b-ab6d-88090bd7a204",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gixian Infiltrator": {
@@ -117832,12 +117832,12 @@
     },
     "Grenzo, Havoc Raiser": {
       "edhrec_rank": 1636,
-      "gate": "template",
+      "gate": null,
       "name": "Grenzo, Havoc Raiser",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, choose one —",
+      "reason": "",
       "scryfall_id": "9bc97501-93ed-4235-bfe7-745ac57653da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greta, Sweettooth Scourge": {
@@ -133372,12 +133372,12 @@
     },
     "Idol of Oblivion": {
       "edhrec_rank": 196,
-      "gate": "template",
+      "gate": null,
       "name": "Idol of Oblivion",
-      "reason": "no template for: {T}: Draw a card. Activate only if you created a token this turn",
+      "reason": "",
       "scryfall_id": "0fca2f74-d220-47f1-964a-a4cd6e096fbf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Idol of the Deep King // Sovereign's Macuahuitl": {
@@ -136012,12 +136012,12 @@
     },
     "Infantry Shield": {
       "edhrec_rank": 3375,
-      "gate": "template",
+      "gate": null,
       "name": "Infantry Shield",
-      "reason": "no template for: Equipped creature has menace and mobilize X, where X is its power",
+      "reason": "",
       "scryfall_id": "37332798-462e-49d3-b197-72411ccf67e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Infantry Veteran": {
@@ -140282,12 +140282,12 @@
     },
     "Ironwill Forger": {
       "edhrec_rank": 5676,
-      "gate": "template",
+      "gate": null,
       "name": "Ironwill Forger",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, targe",
+      "reason": "",
       "scryfall_id": "2489dd12-34e8-41d9-a986-3452a03c9413",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ironwright's Cleansing": {
@@ -146992,12 +146992,12 @@
     },
     "Kaya, Geist Hunter": {
       "edhrec_rank": 4479,
-      "gate": "template",
+      "gate": null,
       "name": "Kaya, Geist Hunter",
-      "reason": "no template for: +1: Creatures you control gain deathtouch until end of turn. Put a +1/+1 counter on up to ",
+      "reason": "",
       "scryfall_id": "9135b501-82be-43cb-9aa5-9cf08789c636",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kaya, Ghost Assassin": {
@@ -156242,12 +156242,12 @@
     },
     "Legion Loyalty": {
       "edhrec_rank": 2865,
-      "gate": "template",
+      "gate": null,
       "name": "Legion Loyalty",
-      "reason": "no template for: Creatures you control have myriad",
+      "reason": "",
       "scryfall_id": "928545e5-a9c5-497a-839d-3151f8cafdd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legion Vanguard": {
@@ -156262,12 +156262,12 @@
     },
     "Legion Warboss": {
       "edhrec_rank": 1801,
-      "gate": "template",
+      "gate": null,
       "name": "Legion Warboss",
-      "reason": "no template for: Mentor",
+      "reason": "",
       "scryfall_id": "26ca4014-11fb-4c62-a7c6-ab2880393531",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legion's End": {
@@ -162292,12 +162292,12 @@
     },
     "Loyal Apprentice": {
       "edhrec_rank": 737,
-      "gate": "template",
+      "gate": null,
       "name": "Loyal Apprentice",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, creat",
+      "reason": "",
       "scryfall_id": "072e502a-c340-4f50-9f51-62d50242b17c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Cathar // Unhallowed Cathar": {
@@ -168882,12 +168882,12 @@
     },
     "Mass of Mysteries": {
       "edhrec_rank": 6808,
-      "gate": "template",
+      "gate": null,
       "name": "Mass of Mysteries",
-      "reason": "no template for: At the beginning of combat on your turn, another target Elemental you control gains myriad",
+      "reason": "",
       "scryfall_id": "871decb1-82e7-48f7-84be-96dde2d35770",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Massacre": {
@@ -173932,12 +173932,12 @@
     },
     "Mindblade Render": {
       "edhrec_rank": 5869,
-      "gate": "template",
+      "gate": null,
       "name": "Mindblade Render",
-      "reason": "no template for: Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warr",
+      "reason": "",
       "scryfall_id": "459c5f18-13a3-42c9-b9d7-bf789eefe249",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mindblaze": {
@@ -185212,12 +185212,12 @@
     },
     "Neriv, Crackling Vanguard": {
       "edhrec_rank": 9555,
-      "gate": "template",
+      "gate": null,
       "name": "Neriv, Crackling Vanguard",
-      "reason": "no template for: When Neriv enters, create two 1/1 red Goblin creature tokens",
+      "reason": "",
       "scryfall_id": "ac552ea3-f521-4c42-a846-21a73364e0ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Neriv, Heart of the Storm": {
@@ -191312,12 +191312,12 @@
     },
     "Ogre Battledriver": {
       "edhrec_rank": 3252,
-      "gate": "template",
+      "gate": null,
       "name": "Ogre Battledriver",
-      "reason": "no template for: Whenever another creature you control enters, that creature gets +2/+0 and gains haste unt",
+      "reason": "",
       "scryfall_id": "180f4220-bd76-4a2f-b9e1-414729cd1db2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ogre Berserker": {
@@ -219582,12 +219582,12 @@
     },
     "Release the Dogs": {
       "edhrec_rank": 6420,
-      "gate": "template",
+      "gate": null,
       "name": "Release the Dogs",
-      "reason": "no template for: Create four 1/1 white Dog creature tokens",
+      "reason": "",
       "scryfall_id": "07f10906-4fd5-44e8-99c7-3f9dcc988c48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Release the Gremlins": {
@@ -241912,12 +241912,12 @@
     },
     "Shadow Summoning": {
       "edhrec_rank": 10745,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow Summoning",
-      "reason": "no template for: Create two tapped 1/1 white Spirit creature tokens with flying",
+      "reason": "",
       "scryfall_id": "ec0984b2-bed6-41b1-9087-2cfd16749037",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow Urchin": {
@@ -246422,12 +246422,12 @@
     },
     "Siege-Gang Commander": {
       "edhrec_rank": 1594,
-      "gate": "template",
+      "gate": null,
       "name": "Siege-Gang Commander",
-      "reason": "no template for: When this creature enters, create three 1/1 red Goblin creature tokens",
+      "reason": "",
       "scryfall_id": "7d67e614-03d2-4034-b82f-25962fc378d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Siege-Gang Lieutenant": {
@@ -277592,12 +277592,12 @@
     },
     "Tempt with Vengeance": {
       "edhrec_rank": 2658,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Vengeance",
-      "reason": "no template for: Tempting offer — Create X 1/1 red Elemental creature tokens with haste. Each opponent may ",
+      "reason": "",
       "scryfall_id": "808af8d4-1872-466e-a2d2-e73ecef09ed7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempted by the Oriq": {
@@ -279422,12 +279422,12 @@
     },
     "Thalisse, Reverent Medium": {
       "edhrec_rank": 2629,
-      "gate": "template",
+      "gate": null,
       "name": "Thalisse, Reverent Medium",
-      "reason": "no template for: At the beginning of each end step, create X 1/1 white Spirit creature tokens with flying, ",
+      "reason": "",
       "scryfall_id": "474d6363-ebe1-4a1a-b4e6-7bd53d878527",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thallid": {
@@ -294722,12 +294722,12 @@
     },
     "Twilight Drover": {
       "edhrec_rank": 6594,
-      "gate": "template",
+      "gate": null,
       "name": "Twilight Drover",
-      "reason": "no template for: Whenever a creature token leaves the battlefield, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "ef2bb440-87b7-4d3d-9b37-2f1ebaca4b3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twilight Mire": {
@@ -301112,12 +301112,12 @@
     },
     "Vanguard of the Restless": {
       "edhrec_rank": 11948,
-      "gate": "template",
+      "gate": null,
       "name": "Vanguard of the Restless",
-      "reason": "no template for: Spirits you control get +1/+1 for each time you've cast your commander from the command zo",
+      "reason": "",
       "scryfall_id": "91211c56-b562-4889-8c5c-110c42be62c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Vanguard of the Rose": {
@@ -317692,12 +317692,12 @@
     },
     "Within Range": {
       "edhrec_rank": 4676,
-      "gate": "template",
+      "gate": null,
       "name": "Within Range",
-      "reason": "no template for: When this enchantment enters, create two 1/1 red Warrior creature tokens",
+      "reason": "",
       "scryfall_id": "51188edb-9705-4960-854b-170744f40a88",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Without Weakness": {

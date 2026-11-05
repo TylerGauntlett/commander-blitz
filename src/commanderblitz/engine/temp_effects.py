@@ -40,6 +40,7 @@ from .structs import (
     PlayerProtection,
     SacrificeRestriction,
     TempEffect,
+    TokenMultiplier,
     Unblockable,
 )
 
@@ -374,6 +375,49 @@ def clear_life_floors(state: GameState, duration: str, player: int | None = None
     installs both and says "until end of turn" about both halves.
     """
     state.life_floors = _expired(state.life_floors, duration, player)
+
+
+def multiply_tokens(
+    state: GameState,
+    pid: int,
+    multiplier: int = 2,
+    duration: str = "this_turn",
+    source: int | None = None,
+) -> None:
+    """Multiply every token creation under ``pid`` by ``multiplier`` for ``duration``.
+
+    **Not** deduplicated, unlike `set_life_floor`: two floors of 1 are one
+    prohibition, but two "twice that many" effects are two replacements of each
+    creation, and each applies once (614.5) -- four tokens, not two.
+    """
+
+    state.token_multipliers.append(
+        TokenMultiplier(player=pid, multiplier=multiplier, duration=duration, source=source)
+    )
+
+
+def timed_token_multipliers(state: GameState, pid: int) -> list[Mapping[str, Any]]:
+    """The `TokenMultiplier` records reaching ``pid``, shaped as the statics are.
+
+    One ``{"token_multiplier": n}`` mapping per record, so
+    `primitives._token_creation_plan` applies them in the same single pass as
+    the `replace_token_creation` statics, each once. No `affects_token`: the
+    printed sentence says "tokens", every one. Short-circuits on the empty
+    list, which is what the table is in every game that plays none of these.
+    """
+
+    if not state.token_multipliers:
+        return []
+    return [
+        {"token_multiplier": record.multiplier}
+        for record in state.token_multipliers
+        if record.player == pid
+    ]
+
+
+def clear_token_multipliers(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the token multipliers of one duration -- their wearing-off at cleanup."""
+    state.token_multipliers = _expired(state.token_multipliers, duration, player)
 
 
 def lock_game_outcome(

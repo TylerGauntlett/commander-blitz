@@ -201,12 +201,6 @@ class TestTheLoader:
                 {"event": "creatures_deal_combat_damage", "per_player": True, "or_battle": True}
             )
 
-    def test_defending_on_the_whole_batch_is_refused(self):
-        """The unsplit batch names no one seat, so `defending` would match
-        nothing, ever."""
-        with pytest.raises(DslError, match="defending"):
-            self.compile({"event": "creatures_deal_combat_damage", "defending": "opponent"})
-
     def test_defending_on_a_per_player_firing_is_accepted(self):
         assert self.compile(
             {"event": "creatures_deal_combat_damage", "per_player": True, "defending": "opponent"}

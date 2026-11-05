@@ -254,6 +254,7 @@ def op_grant_playable(ctx: EffectContext, spec: Mapping[str, Any]):
         obj.playable_by = ctx.controller
         obj.playable_turn = ctx.state.turn
         obj.playable_duration = playable_duration_of(spec) or "this_turn"
+        obj.playable_condition = spec.get("playable_condition")
         obj.playable_group = ctx.source_oid if limit else None
         # "…gains **flashback**", rather than a bare permission to cast it: the
         # card is exiled as it resolves, so the grant is worth one cast per card
@@ -697,6 +698,9 @@ def _move_found(
                 obj.playable_by = ctx.controller
                 obj.playable_turn = ctx.state.turn
                 obj.playable_duration = duration
+                # "During any turn you attacked with a commander, you may play
+                # those cards" (Neriv) -- see `objects.PLAYABLE_CONDITIONS`.
+                obj.playable_condition = spec.get("playable_condition")
                 # "Mana of any type can be spent to cast a spell this way"
                 # (Klaw, Master of Sound) -- `grant_playable`'s flag, read by
                 # the same cast path while the permission is live.

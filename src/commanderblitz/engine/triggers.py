@@ -722,13 +722,16 @@ def collect(state: GameState, event: GameEvent) -> None:
         spec = ability.trigger
         if spec is None:
             continue
-        for heard in _per_player_events(spec, event):
+        for heard in _per_player_events(state, obj, spec, event):
             _collect_one(state, obj, ability, heard, doubled, doublers)
     _arm_delayed(state, event)
 
 
-def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
-    """The event as this trigger hears it: whole, or once per damaged seat.
+def _per_player_events(
+    state: GameState, obj: GameObject, spec: TriggerSpec, event: GameEvent
+) -> list[GameEvent]:
+    """The event as this trigger hears it: whole, once per damaged seat, or
+    narrowed to the seats `defending` names.
 
     "Whenever one or more Dragons you control deal combat damage to **an
     opponent**, … destroy target artifact **that opponent** controls" --
@@ -746,9 +749,23 @@ def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
     A copy rather than a second fired event, because a second event would
     fire every unflagged trigger on this event again. The copy is never
     emitted into the log; it is only what `_matches` and `_queue` read.
+
+    Without `per_player`, a `defending` clause narrows the whole batch to the
+    seats it names and hears it **once**: "whenever **your opponents are
+    dealt** combat damage, if any of that damage was dealt by a Warrior"
+    (Mindblade Render). `damaged` keeps only the matching seats, `damagers`
+    only the creatures that hit one of them -- so the `filter` is never
+    satisfied by a Warrior that hit somebody else -- and a batch that hit
+    none of them is not heard at all. One firing per event is one per step:
+    only attacking creatures deal combat damage to players, and they are all
+    the active player's (506.2, 506.4), so a step's player damage is one batch.
     """
-    if not spec.per_player or event.type != EventType.CREATURES_DEALT_COMBAT_DAMAGE:
+    if event.type != EventType.CREATURES_DEALT_COMBAT_DAMAGE:
         return [event]
+    if not spec.per_player:
+        if spec.defending is None:
+            return [event]
+        return _defending_batch(state, spec, obj, event)
     heard: list[GameEvent] = []
     for hit in event.data.get("hits") or []:
         data = dict(event.data)
@@ -762,6 +779,38 @@ def _per_player_events(spec: TriggerSpec, event: GameEvent) -> list[GameEvent]:
         )
         heard.append(replace(event, data=data))
     return heard
+
+
+def _defending_batch(
+    state: GameState, spec: TriggerSpec, obj: GameObject, event: GameEvent
+) -> list[GameEvent]:
+    """The batch narrowed to the seats ``spec.defending`` names, or nothing.
+
+    Each seat is asked the question `_defender_matches` asks of a `per_player`
+    copy, so every clause means the same thing on both readings. No
+    `defender` is bound: the narrowed batch may name several seats.
+    """
+    hits = [
+        hit
+        for hit in event.data.get("hits") or []
+        if _defender_matches(
+            state,
+            spec.defending,
+            obj,
+            replace(event, data={"defender": int(hit["player"])}),
+        )
+    ]
+    if not hits:
+        return []
+    damagers = sorted({int(oid) for hit in hits for oid in hit["damagers"]})
+    data = dict(event.data)
+    data.update(
+        damaged=sorted(int(hit["player"]) for hit in hits),
+        damagers=damagers,
+        damaged_battles=[],
+        hits=hits,
+    )
+    return [replace(event, data=data)]
 
 
 def _collect_one(
@@ -1463,7 +1512,13 @@ def _matches(
         if spec.controller == "opponent" and actor == obj.controller:
             return False
 
-    if spec.defending is not None and not _defender_matches(state, spec.defending, obj, event):
+    # The unsplit combat-damage batch names no one defender; its `defending`
+    # clause was applied seat by seat in `_defending_batch` instead.
+    if (
+        spec.defending is not None
+        and not (spec.event == "creatures_deal_combat_damage" and not spec.per_player)
+        and not _defender_matches(state, spec.defending, obj, event)
+    ):
         return False
 
     # "Whenever one or more **Dragons you control** deal combat damage to a

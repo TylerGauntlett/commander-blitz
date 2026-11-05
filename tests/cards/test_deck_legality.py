@@ -48,6 +48,7 @@ PRECONS = {
     "msc_wakanda_forever",
     "soc_silverquill_influence",
     "soc_witherbloom_pestilence",
+    "tdc_mardu_surge",
 }
 
 #: Every deck a player sees on the shelf.

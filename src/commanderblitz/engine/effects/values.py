@@ -401,8 +401,10 @@ ROLL_PARITIES = ("even", "odd")
 #: misspelling has to be a load error rather than a silent zero.
 #: ``color`` is First Family's "the number of colors among permanents you
 #: control and spells you've cast this turn". ``counter_kind`` is Blitzball
-#: Stadium's "draw a card for each kind of counter on it" (122.1).
-DISTINCT_OF = ("power", "basic_land_type", "card_type", "color", "counter_kind")
+#: Stadium's "draw a card for each kind of counter on it" (122.1). ``name`` is
+#: Neriv, Crackling Vanguard's "the number of differently named tokens you
+#: control": a token's name is the one its definition gives it (111.4).
+DISTINCT_OF = ("power", "basic_land_type", "card_type", "color", "counter_kind", "name")
 
 #: The five colors (105.1). Colorless is not a color (105.2c), so a pool of
 #: artifacts and lands counts none.
@@ -591,6 +593,21 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                 if obj is not None:
                     kinds |= {kind for kind, n in obj.counters.items() if n > 0}
             return len(kinds)
+        if of == "name":
+            # "…the number of **differently named** tokens you control"
+            # (Neriv, Crackling Vanguard). Read off `card_of(...).name`, as
+            # `shares_a_name_with` and `most_sharing_a_name` read it: nothing
+            # in the characteristics layer renames an object, and a token's
+            # name is the one its definition carries -- its subtypes plus
+            # "Token" unless the creating effect names it (111.4), a copy's
+            # the copied card's (707.2). A face-down permanent has no name
+            # (708.2a), so it adds none.
+            named: set[str] = set()
+            for oid in pool:
+                obj = ctx.state.objects.get(oid)
+                if obj is not None and not obj.face_down:
+                    named.add(ctx.state.card_of(obj).name)
+            return len(named)
         found: set[str] = set()
         for oid in pool:
             found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes

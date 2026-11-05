@@ -53,6 +53,7 @@ from .temp_effects import (
     life_floor,
     preventing_permanent_shield,
     preventing_shield,
+    timed_token_multipliers,
 )
 from .triggers import fire
 from .zones import graveyard_hosts, move_object
@@ -1497,6 +1498,12 @@ def _token_creation_plan(
       whether the filter matches (a Treasure-only doubler and a Manufactor); no
       printed doubler filters that way today, and the divergence is recorded in
       ``docs/rules-coverage.md``.
+    - **A timed doubler is one more entry.**  "Until end of turn, … twice that
+      many of those tokens are created instead" (Kaya, Geist Hunter) is a
+      `structs.TokenMultiplier` a resolved ability left on the table, read by
+      `temp_effects.timed_token_multipliers` in the static's shape and applied
+      in the same pass -- with no source to stay on the battlefield, so it
+      outlives the planeswalker that made it (611.2a).
     - **The replacement belongs to the *token's controller*.**  Every printed
       card says "under your control" or "you", so the list is gathered for
       ``controller`` -- the player the token arrives under -- rather than for
@@ -1510,7 +1517,14 @@ def _token_creation_plan(
     """
     if count <= 0:
         return None
-    statics = token_creation_replacements(state, controller)
+    # The timed multipliers a resolved ability left (Kaya, Geist Hunter's -2)
+    # after the statics: one more replacement each, in the same single pass.
+    # Unfiltered multiplication commutes with everything in the list, so their
+    # place in it is unobservable.
+    statics = [
+        *token_creation_replacements(state, controller),
+        *timed_token_multipliers(state, controller),
+    ]
     if not statics:
         return None
     plan: list[tuple[str, int, bool]] = [(def_id, count, False)]

@@ -3997,6 +3997,85 @@
           }
         }
       ]
+    },
+    {
+      "id": "rat_1_1_b",
+      "name": "Rat Token",
+      "oracle_text": "1/1 black Rat creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Rat"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "B"
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "dog_1_1_w",
+      "name": "Dog Token",
+      "oracle_text": "1/1 white Dog creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dog"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "W"
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "is_token": true
+    },
+    {
+      "id": "elemental_1_1_r_haste",
+      "name": "Elemental Token",
+      "oracle_text": "1/1 red Elemental creature token with haste.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elemental"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "R"
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "is_token": true,
+      "keywords": [
+        "haste"
+      ]
+    },
+    {
+      "id": "eldrazi_10_10_c",
+      "name": "Eldrazi Token",
+      "oracle_text": "10/10 colorless Eldrazi creature token.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Eldrazi"
+      ],
+      "power": 10,
+      "toughness": 10,
+      "colors": [],
+      "color_identity": [],
+      "is_token": true
     }
   ]
 }

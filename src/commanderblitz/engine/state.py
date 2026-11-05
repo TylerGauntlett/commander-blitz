@@ -34,6 +34,7 @@ from .structs import (
     PlayerProtection,
     SacrificeRestriction,
     StackItem,
+    TokenMultiplier,
     TriggerInstance,
     TurnLedger,
     Unblockable,
@@ -444,6 +445,11 @@ class GameState:
     #: `outcome_locks`, installed by the same Instant and swept in the same
     #: cleanup step, and read only by `primitives.damage_player`.
     life_floors: list[LifeFloor] = field(default_factory=list)
+    #: "Until end of turn, if one or more tokens would be created under your
+    #: control, twice that many of those tokens are created instead" -- see
+    #: :class:`structs.TokenMultiplier`. Swept in the cleanup step with
+    #: `life_floors`, and read only by `primitives._token_creation_plan`.
+    token_multipliers: list[TokenMultiplier] = field(default_factory=list)
     #: "Until your next turn, you may cast sorcery spells as though they had
     #: flash" -- see :class:`structs.FlashPermission`. Read by
     #: `casting._timing_ok`; empty in every game that plays none of these.

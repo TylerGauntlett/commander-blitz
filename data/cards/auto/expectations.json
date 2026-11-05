@@ -962,6 +962,10 @@
     },
     "zone": "graveyard"
   },
+  "aron_benalia_s_ruin": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "arrogant_vampire": {
     "zone": "battlefield"
   },
@@ -1464,6 +1468,14 @@
     },
     "zone": "graveyard"
   },
+  "beetleback_chief": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "goblin_1_1_r"
+    },
+    "zone": "battlefield"
+  },
   "behemoth_sledge": {
     "zone": "battlefield"
   },
@@ -1627,6 +1639,10 @@
     "zone": "battlefield"
   },
   "blackcleave_goblin": {
+    "zone": "battlefield"
+  },
+  "blade_of_selves": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "blade_of_the_bloodchief": {
@@ -1828,6 +1844,10 @@
     "zone": "battlefield"
   },
   "bonders_enclave": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "bone_devourer": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -2386,6 +2406,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "castle_embereth": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "castle_locthwain": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2677,6 +2701,10 @@
   "chitinous_graspling": {
     "zone": "battlefield"
   },
+  "chittering_witch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "chivalric_alliance": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2959,6 +2987,10 @@
   },
   "commander_s_insight": {
     "zone": "graveyard"
+  },
+  "commander_s_insignia": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "commander_s_plate": {
     "battlefield_count": 33,
@@ -4541,6 +4573,14 @@
   },
   "elfhame_wurm": {
     "zone": "battlefield"
+  },
+  "eliminate_the_competition": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 3
+    },
+    "opponent_battlefield_count": 6,
+    "zone": "graveyard"
   },
   "elite_cat_warrior": {
     "zone": "battlefield"
@@ -6361,6 +6401,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "gix_yawgmoth_praetor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gixian_puppeteer": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6808,6 +6852,13 @@
     "zone": "battlefield"
   },
   "grendel_spawn_of_knull": {
+    "zone": "battlefield"
+  },
+  "grenzo_havoc_raiser": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "grenzo_s_cutthroat": {
@@ -7650,6 +7701,13 @@
     },
     "zone": "battlefield"
   },
+  "idol_of_oblivion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "idyllic_beachfront": {
     "zone": "battlefield"
   },
@@ -7773,6 +7831,10 @@
     ]
   },
   "inexorable_tide": {
+    "zone": "battlefield"
+  },
+  "infantry_shield": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "infernal_grasp": {
@@ -8010,6 +8072,10 @@
     "zone": "battlefield"
   },
   "ironroot_treefolk": {
+    "zone": "battlefield"
+  },
+  "ironwill_forger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "irrigated_farmland": {
@@ -8360,6 +8426,13 @@
     "hand_size": {
       "0": 2
     }
+  },
+  "kaya_geist_hunter": {
+    "counters": {
+      "amount": 3,
+      "kind": "loyalty"
+    },
+    "zone": "battlefield"
   },
   "kaya_the_inexorable": {
     "battlefield_count": 33,
@@ -8917,6 +8990,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "legion_loyalty": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "legion_warboss": {
+    "zone": "battlefield"
+  },
   "legions_to_ashes": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -9280,6 +9360,13 @@
     "zone": "battlefield"
   },
   "loxodon_wayfarer": {
+    "zone": "battlefield"
+  },
+  "loyal_apprentice": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "loyal_drake": {
@@ -9748,6 +9835,10 @@
   "mass_of_ghouls": {
     "zone": "battlefield"
   },
+  "mass_of_mysteries": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mass_polymorph": {
     "battlefield_count": 30,
     "library_size": {
@@ -10021,6 +10112,15 @@
   },
   "mind_s_eye": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "mindblade_render": {
+    "hand_size": {
+      "0": 1
+    },
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "mindless_automaton": {
@@ -10646,6 +10746,14 @@
   "nephalia_seakite": {
     "zone": "battlefield"
   },
+  "neriv_crackling_vanguard": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "goblin_1_1_r"
+    },
+    "zone": "battlefield"
+  },
   "neriv_heart_of_the_storm": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -11020,6 +11128,10 @@
     "hand_size": {
       "0": 1
     },
+    "zone": "battlefield"
+  },
+  "ogre_battledriver": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "ogre_berserker": {
@@ -12551,6 +12663,14 @@
     },
     "zone": "battlefield"
   },
+  "release_the_dogs": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 4,
+      "id": "dog_1_1_w"
+    },
+    "zone": "graveyard"
+  },
   "relentless_advance": {
     "battlefield_count": 33,
     "tokens": {
@@ -13734,6 +13854,17 @@
     },
     "zone": "battlefield"
   },
+  "shadow_summoning": {
+    "battlefield_count": 34,
+    "graveyard_size": {
+      "0": 3
+    },
+    "tokens": {
+      "count": 2,
+      "id": "spirit_1_1_w_flying"
+    },
+    "zone": "graveyard"
+  },
   "shadowblood_ridge": {
     "zone": "battlefield"
   },
@@ -14047,6 +14178,10 @@
     ]
   },
   "sickle_ripper": {
+    "zone": "battlefield"
+  },
+  "siege_gang_commander": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "siege_mastodon": {
@@ -15815,6 +15950,15 @@
   "temple_of_triumph": {
     "zone": "battlefield"
   },
+  "tempt_with_vengeance": {
+    "battlefield_count": 72,
+    "opponent_battlefield_count": 26,
+    "tokens": {
+      "count": 40,
+      "id": "elemental_1_1_r_haste"
+    },
+    "zone": "graveyard"
+  },
   "temur_ascendancy": {
     "battlefield_count": 33,
     "granted": {
@@ -15920,6 +16064,10 @@
     "zone": "battlefield"
   },
   "thalia_heretic_cathar": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "thalisse_reverent_medium": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -16816,6 +16964,10 @@
   "tusked_colossodon": {
     "zone": "battlefield"
   },
+  "twilight_drover": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "twilight_mire": {
     "zone": "battlefield"
   },
@@ -17265,6 +17417,10 @@
   "vandalblast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "vanguard_of_the_restless": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vanguard_seraph": {
     "battlefield_count": 33,
@@ -18373,6 +18529,14 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "within_range": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "warrior_1_1_r"
+    },
+    "zone": "battlefield"
   },
   "wizards_school": {
     "zone": "battlefield"

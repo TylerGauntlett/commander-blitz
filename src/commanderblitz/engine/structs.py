@@ -1103,7 +1103,42 @@ class LifeFloor:
     source: int | None = None
 
 
-LIFE_LOCK_DURATIONS = ("this_turn", "until_your_next_turn")
+#: The durations a `TokenMultiplier` may carry. "Until end of turn" is the only
+#: one printed on a card that installs one.
+TOKEN_MULTIPLIER_DURATIONS = ("this_turn",)
+
+
+@dataclass(frozen=True)
+class TokenMultiplier:
+    """"Until end of turn, if one or more tokens would be created under your
+    control, twice that many of those tokens are created instead." -- Kaya,
+    Geist Hunter's -2.  Rules 611.2a, 614.
+
+    The timed twin of a `replace_token_creation` static with `token_multiplier`,
+    and the difference is who holds it. A static is read off a permanent for as
+    long as that permanent is on the battlefield; this is the continuous effect
+    a *resolved* ability created (611.2a), so it belongs to the table and keeps
+    applying after the planeswalker that made it has died, been exiled or been
+    bounced.
+
+    Read in `primitives._token_creation_plan` beside the statics, as one more
+    replacement of the creation, applied once (614.5) -- so it compounds with a
+    Parallel Lives exactly as a second Parallel Lives would. **Never
+    deduplicated**: two -2s resolved in one turn are two replacement effects, and
+    each doubles the creation once.
+    """
+
+    #: The seat whose tokens are multiplied: "created **under your control**".
+    #: Fixed as the ability resolves, never re-read from the source.
+    player: int
+    multiplier: int = 2
+    duration: str = "this_turn"
+    #: The object whose ability installed it, for the log. Not part of the
+    #: lifetime.
+    source: int | None = None
+
+
+LIFE_LOCK_DURATIONS =("this_turn", "until_your_next_turn")
 
 
 @dataclass(frozen=True)

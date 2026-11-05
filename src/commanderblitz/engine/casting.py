@@ -31,6 +31,7 @@ from .effects.context import EffectContext
 from .effects.selectors import resolve_pool
 from .enums import COLORLESS, ActionKind, Keyword, Step, Zone
 from .mana import SYMBOL_INDEX, ManaCost, max_affordable_x, solve_payment
+from .objects import playable_condition_met
 from .player_statics import (
     cast_lock_min_x,
     free_cast_permission,
@@ -188,6 +189,10 @@ def _cast_actions(state: GameState, pid: int, sorcery_speed: bool) -> list[Actio
     for oid in permitted:
         obj = state.objects[oid]
         if obj.playable_by != pid or not obj.playable_live(state.turn):
+            continue
+        # "During any turn you attacked with a commander, you may play those
+        # cards" (Neriv): live, but shut on this turn.
+        if not playable_condition_met(state, obj):
             continue
         # "…you may cast **a spell** from among those cards", singular out of
         # however many were milled. Counted per granting permanent, so two

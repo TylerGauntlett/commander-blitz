@@ -3825,7 +3825,7 @@ than three because `count` fails them in **opposite** directions:
 
 No selector, however filtered, reaches any of those numbers — `count` counts
 matches, and these count the distinct values those matches hold. `of` is `power`,
-`basic_land_type`, `card_type`, `color` or `counter_kind`, and nothing else: each
+`basic_land_type`, `card_type`, `color`, `counter_kind` or `name`, and nothing else: each
 has a printed card behind it, and a misspelling is a load error rather than a
 silent fall back to powers.
 
@@ -3839,6 +3839,20 @@ card for each kind of counter on it":
 
 Three +1/+1 counters and a shield counter are two kinds. **Not**
 `counters_on {"counter": "any"}`, which sums every counter and would read four.
+
+`name` counts the names among the pool, read off the face `card_of` shows as
+`shares_a_name_with` reads it; a face-down permanent has no name (708.2a) and
+adds none. A token's name is its definition's — its subtypes plus "Token"
+unless the creating effect names it (111.4) — so two Goblin tokens and a Treasure
+are two names. Neriv, Crackling Vanguard's "the number of differently named
+tokens you control":
+
+```jsonc
+{ "distinct": { "of": "name", "objects": { "controller": "you", "is_token": true } } }
+```
+
+**Not** `most_sharing_a_name`, which is the size of the largest group sharing
+one name rather than how many names there are.
 
 `color` counts the five colors (105.1) among the pool's derived colors;
 colorless counts none (105.2c). It alone takes `spells_cast_this_turn`, a player
@@ -4086,6 +4100,7 @@ and [#card-level-costs](card-dsl-reference.md#card-level-costs):
   "mill": 1,                                      // Millikin: off *your* library's top
   "pay_life_x": true,                             // Toxic Deluge: X life, the caster announces it
   "loyalty_x": true,                              // a planeswalker's −X: X loyalty, announced
+  "discard_x": true,                              // Gix: discard X cards, X announced
   "remove_counters": { "counter": "-1/-1", "amount": 1 },
   "put_counters":    { "counter": "page", "amount": 1 },   // Mazemind Tome: onto the source
   "exile_from_graveyard": { "types": ["Creature"] },
@@ -4139,6 +4154,31 @@ test and no attacking test, because the only printed exert cost is on a land.
 `Cost.is_tap_only` excludes it, which is what keeps the payment solver off it —
 a solver that paid an exert silently would keep a land down for a turn nobody
 agreed to. Cashed by `tests/unit/keywords/test_exert_cost.py`.
+
+### `discard_x` — discard X cards, X announced
+
+"{4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's
+library." — Gix, Yawgmoth Praetor.
+
+```jsonc
+"cost": { "mana": "{4}{B}{B}{B}", "discard_x": true },
+"effects": [{ "op": "look_at_top", "player": "target", "amount": { "x": true }, ... }]
+```
+
+The controller announces X as the ability is activated (601.2b, 107.3) and
+discards exactly that many cards, chosen as the cost is paid (601.2h); the
+effects read the number with `{"x": true}` / `"x"`, as they read an `{X}` in a
+mana cost. The ceiling is `costs.discard_x_ceiling`, the cards in hand the cost
+may take: `discard_selector` narrows them ("Discard X land cards") and the source
+is never among them. X = 0 is a legal announcement, so the ability is on offer
+with an empty hand. A target whose filter reads X is offered once per X up to
+that ceiling, each activation carrying the targets legal at that X, the shape
+`loyalty_x` uses.
+
+Not `discard`, which is a number the card fixes. The loader refuses it beside
+`discard` (two numbers for one payment), beside an `{X}` in `mana`, `pay_life_x`
+or `loyalty_x` (an ability announces one X), and anywhere but an activated
+ability's cost.
 
 ### `mill` — a cost, and never an effect
 
@@ -5041,8 +5081,10 @@ Three events carry a defending player and so accept the clause: `attacks`,
 `creatures_attack_player` and `deals_damage_to_player`. The last is the one that
 is not about combat — Curiosity's "whenever enchanted creature deals damage to
 **an opponent**" asks who took the damage, and `controller` there is a question
-about whose *creature* dealt it. `creatures_deal_combat_damage` accepts it only
-with `per_player`, where each firing is about the one seat it hit.
+about whose *creature* dealt it. On `creatures_deal_combat_damage` it asks the
+seat each firing hit with `per_player`; without it, it narrows the one batch to
+the seats it names ("whenever **your opponents are dealt** combat damage") —
+see ["Your opponents are dealt combat damage"](card-dsl-cookbook.md#your-opponents-are-dealt-combat-damage).
 
 `defending: "most_life"` is dethrone's "whenever this creature attacks **the
 player with the most life or tied for most life**" (702.105a), legal on
@@ -6193,6 +6235,7 @@ smaller than the effect-side `value_keys`:
 | `{"max_count_of": …}` / `{"min_count_of": …}` | [one player's count at a time](#counting-one-player-at-a-time) |
 | `{"starting_life_of": "you"}` | [your starting life total](#at-least-7-life-more-than-your-starting-life-total) — `"you"` only |
 | `{"greatest_commander_mana_value": "you"}` | the greatest printed mana value among your commanders, wherever they are (Tangleweave Armor); 0 with none — `"you"` only |
+| `{"commander_casts_this_game": "you"}` | [how many times you have cast your commanders from the command zone this game](card-dsl-cookbook.md#an-anthem-for-each-commander-cast) (903.8's tally, Commander's Insignia) — `"you"` only |
 | `{"extreme_value": {"of": "mana_value", "pick": …, "objects": …}}` | the greatest (or least) printed mana value among the objects a counting filter, or a `union` of them, finds; 0 with none — `"mana_value"` only (Dragon Man, Reformed Robot) |
 | `{"times": [a, b, …]}` / `{"sum": [a, b, …]}` | arithmetic over the leaves above; every term is held to this same list |
 

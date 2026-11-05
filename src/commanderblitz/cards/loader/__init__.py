@@ -3248,12 +3248,15 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             model.trigger.event == "creatures_deal_combat_damage"
             and model.trigger.defending is not None
             and not model.trigger.per_player
+            and model.trigger.or_battle
         ):
-            # The batch names no one seat until it is fanned out, so a
-            # `defending` clause on the whole batch would match nothing, ever.
+            # Unsplit, `defending` narrows the batch to the seats it names
+            # ("whenever your opponents are dealt combat damage") and drops the
+            # battles, so the battle half of the sentence would never fire.
             raise DslError(
-                f"{where}: 'defending' on 'creatures_deal_combat_damage' asks who "
-                f"one firing hit, which only 'per_player' firings know"
+                f"{where}: 'defending' on 'creatures_deal_combat_damage' narrows "
+                f"the batch to the players it names, so it cannot also take "
+                f"'or_battle'"
             )
         if model.trigger.to_zones is not None:
             # "When this creature dies or is put into exile." Only a departure

@@ -224,7 +224,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                                '"Return it to the command zone" — `return_to_command_zone`'),
     # ---- Board -----------------------------------------------------------
     "destroy": ("Board", "Destroy permanents; `no_regeneration` forbids regeneration; `as` records what was destroyed.", None),
-    "exile": ("Board", "Exile objects; `link`/`playable` tie them to the source or a permission.",
+    "exile": ("Board", "Exile objects; `link`/`playable` tie them to the source or a permission; `playable_condition` shuts that permission on some turns.",
               None),
     "sacrifice": ("Board", "A player sacrifices permanents; `snapshot` remembers what they had.",
                   None),
@@ -234,6 +234,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                      'An X/X token — "create an X/X blue Shark creature token"'),
     "add_counters": ("Board", "Put N counters of a kind on permanents or players; `counter: {\"binding\": \"counter\"}` on a `counter_placed` trigger is the kind that placement put.",
                      None),
+    "multiply_token_creation": ("Board", "Until end of turn, tokens created under a player are multiplied (twice that many); outlives its source.",
+                                'Until end of turn, "twice that many of those tokens"'),
     "empower": ("Board", "Empower Jace N: N loyalty on a Jace token you control, creating one first if none.",
                 '`empower` — "Empower Jace N"'),
     "amass": ("Board", "Amass [subtype] N: N +1/+1 counters on an Army creature you control, creating a 0/0 black Army token first if none; it becomes that subtype too.",
@@ -622,7 +624,7 @@ VALUES: dict[str, Entry] = {
     "creatures_you_control": ("Creatures the player controls.", None),
     "damage_taken_this_turn": ("Damage the player was dealt this turn, summed over a plural spec (bloodthirst).", H_LEDGER),
     "most_sharing_a_name": ("The largest group in a pool sharing one name.", "Value expressions"),
-    "distinct": ("Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters).",
+    "distinct": ("Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names).",
                  "Counting different values rather than objects"),
     "extreme_value": ("The greatest/least of a quality in a pool, as one number.", None),
     "greatest_discarded_by_a_player": ("The greatest number of cards one player discarded this way.",
@@ -730,6 +732,9 @@ CONDITIONS: dict[str, Entry] = {
 #: Static-side entries, read before `VALUES`: a leaf in both languages whose
 #: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
+                                  "(903.8's tally); `\"you\"` only.",
+                                  "An anthem for each commander cast"),
     "extreme_value": ("The greatest/least printed mana value among a counting filter's pool, or a `union` of them.",
                       None),
     "greatest_commander_mana_value": (
@@ -1003,6 +1008,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "discard": ("Discard N cards.", None),
     "discard_selector": ("…matching this selector.", None),
     "discard_self": ("Discard this card (cycling).", "Cycling"),
+    "discard_x": ("Discard X cards, X announced and bounded by the hand.",
+                  "`discard_x` — discard X cards, X announced"),
     "exert": ("Exert the source.", "`exert` — the keyword as a cost"),
     "exile_from_graveyard": ("Exile matching cards from your graveyard; `as` names them for the effects.",
                              "Coin of Fate — an exile-from-graveyard cost that names what it exiled"),

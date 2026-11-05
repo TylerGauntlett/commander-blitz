@@ -49,6 +49,7 @@ from .costs import (
     can_pay_mana,
     commander_cost,
     defined_x,
+    discard_x_ceiling,
     mana_sources,
     most_life_for_mana,
     pay,
@@ -897,6 +898,9 @@ class Game:
         if from_command:
             player = state.players[obj.owner]
             player.commander_tax[oid] = player.commander_tax.get(oid, 0) + 1
+            # The tally is a static's input (`commander_casts_this_game`,
+            # Commander's Insignia), and `chars` caches per `char_version`.
+            state.bump_chars()
 
         # Splice (702.47a): "as you cast an Arcane spell, you may reveal this
         # card from your hand and pay its splice cost". Offered here, after the
@@ -1139,6 +1143,17 @@ class Game:
                 ceiling,
                 pid,
                 loyalty_cost=True,
+            )
+        elif ability.cost is not None and ability.cost.discard_x:
+            # "Discard X cards" (Gix, Yawgmoth Praetor): announced now, before
+            # the cost is paid (601.2b), and bounded by the cards the cost may
+            # take -- `costs.pay` discards exactly this many and the stack item
+            # carries it to the effects that read X.
+            x = yield from ask_x(
+                EffectContext(state=state, controller=pid, source_oid=oid),
+                f"Choose X for {card.name}",
+                discard_x_ceiling(state, pid, ability.cost, oid),
+                pid,
             )
         elif ability.cost is not None and ability.cost.mana.x_count:
             # The tapped source cannot help pay for itself, so the ceiling has

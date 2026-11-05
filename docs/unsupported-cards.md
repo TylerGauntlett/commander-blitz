@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**159 cards** blocked by **147** capabilities.
+**157 cards** blocked by **145** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -111,7 +111,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
-| [myriad](#myriad) | 1 | 6808 | keyword |
 | [no-mana-cost](#no-mana-cost) | 1 | 2978 | engine |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
@@ -145,7 +144,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [shares-card-type-with-sacrificed](#shares-card-type-with-sacrificed) | 1 | 291 | selector |
 | [single-target-spell-restriction](#single-target-spell-restriction) | 1 | 1562 | selector |
 | [spells-cast-per-player](#spells-cast-per-player) | 1 | 539 | value |
-| [static-commander-casts-this-game](#static-commander-casts-this-game) | 1 | 11948 | value |
 | [sunburst](#sunburst) | 1 | 3735 | keyword |
 | [target-ability-on-stack](#target-ability-on-stack) | 1 | 75 | selector |
 | [target-opponent-or-planeswalker](#target-opponent-or-planeswalker) | 1 | 7525 | selector |
@@ -1745,20 +1743,6 @@ Blocks **1** card.
 
 </details>
 
-## myriad
-
-Blocks **1** card.
-
-- **(keyword)** the myriad keyword (702.116), grantable with grant_keyword until end of turn: whenever the creature attacks, for each opponent other than the defending player, its controller may create a token copy of it tapped and attacking that player or a planeswalker they control, and those tokens are exiled at end of combat
-  <br>Why the existing vocabulary won't do: myriad is not in the keyword list, so grant_keyword cannot give it. Composing it from grant_ability with a granted attacks trigger (for_each_player + may + copy_permanent with attacking/or_planeswalker, then a this_combat delayed exile) would need a player set of 'each opponent other than the defending player' that no players spec names, and a granted ability is not the keyword (it is not seen by keyword checks or copied as myriad)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Mass of Mysteries** (rank 6808) — `mass_of_mysteries`
-  - At the beginning of combat on your turn, another target Elemental you control gains myriad until end of turn
-
-</details>
-
 ## no-mana-cost
 
 Blocks **1** card.
@@ -2229,20 +2213,6 @@ Blocks **1** card.
 - **Mindbreak Trap** (rank 539) — `mindbreak_trap`
   - If an opponent cast three or more spells this turn, you may pay {0} rather than pay this spell's mana cost.
   - Exile any number of target spells.
-
-</details>
-
-## static-commander-casts-this-game
-
-Blocks **1** card.
-
-- **(value)** the value leaf commander_casts_this_game ({"commander_casts_this_game": "you"}) admitted to static_value_keys, so a continuous buff's power/toughness can read the controller's count of commander casts from the command zone this game (characteristics._static_value and loader.statics._validate_static_value)
-  <br>Why the existing vocabulary won't do: commander_casts_this_game exists only in value_keys (effect amounts, resolved once); static_value_keys has greatest_commander_mana_value and spells_cast_this_turn but no commander-cast tally, and a one-shot pump or add_counters would miss Spirits that enter later and would not grow with later commander casts
-
-<details><summary>Cards waiting on this</summary>
-
-- **Vanguard of the Restless** (rank 11948) — `vanguard_of_the_restless`
-  - Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game.
 
 </details>
 

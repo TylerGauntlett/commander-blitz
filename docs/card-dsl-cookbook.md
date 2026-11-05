@@ -789,6 +789,26 @@ then. The near miss is `spells_cast_this_game`, which counts every spell from
 every zone. A copy of a permanent spell resolves as a token (706.10, via
 `put_copy_on_stack`), so the creature form needs nothing further.
 
+### An anthem for each commander cast
+
+```jsonc
+{ "kind": "static",
+  "effect": "buff",
+  "affects": { "controller": "you", "types": ["Creature"] },
+  "power": { "commander_casts_this_game": "you" },
+  "toughness": { "commander_casts_this_game": "you" } }
+```
+
+"Creatures you control get +1/+1 for each time you've cast your commander from
+the command zone this game." (Commander's Insignia.) The same 903.8 tally as the
+copy count above, read as a static magnitude: `_static_value` sums
+`Player.commander_tax` over the source controller's commanders, so a stolen
+Insignia counts its new controller's casts. The tax write bumps `char_version`,
+so the anthem grows the moment the cast is made and covers creatures that enter
+later. A static takes `"you"` only. The near miss is a `pump` on a cast trigger,
+which wears off and misses later arrivals; `spells_cast_this_turn` counts every
+spell, and only this turn. A step bigger than one is `times` with a `const`.
+
 ### Gravestorm — permanents put into a graveyard from the battlefield
 
 ```jsonc
@@ -934,6 +954,37 @@ The land half ("you may **play lands** … from among the exiled cards") walks
 every seat's exile, as the cast half always did: an opponent's card exiled by
 your effect sits in *their* exile. A land played that way enters under the
 control of the player who played it (110.2).
+
+### "During any turn you attacked with a commander, you may play those cards"
+
+```jsonc
+{ "op": "look_at_top", "player": "you",
+  "amount": { "distinct": { "of": "name", "objects": { "controller": "you", "is_token": true } } },
+  "objects": { "count": "all" }, "destination": "exile",
+  "playable": "while_exiled",
+  "playable_condition": "you_attacked_with_a_commander" }      // Neriv, Crackling Vanguard
+```
+
+`playable_condition` shuts a permission on some turns without ending it. It is
+orthogonal to the duration: `playable` still says when the permission ends,
+and the condition says on which of the turns before then it may be used. The
+values are `PLAYABLE_CONDITIONS` in `engine/objects.py`, listed for workers as
+`playable_conditions` in the packet reference; the loader refuses an unknown
+one, and refuses the key on an effect that grants no permission (`exile` or
+`look_at_top` without `playable`, anything but those two and `grant_playable`).
+
+`you_attacked_with_a_commander` is true on a turn in which the permission's
+holder declared a commander (903.3) as an attacker — anybody's commander, so a
+stolen one counts — read off `TurnLedger.creatures_attacked`. A commander that
+attacked and then died still attacked, so the cards stay open for the rest of
+the turn; a creature put onto the battlefield attacking was never declared and
+opens nothing. `objects.playable_condition_met` is asked where a play is
+**offered** — `casting._cast_actions` and the land half in `legality` — beside
+`playable_live`; every later reader prices or pays a line already offered.
+
+The near misses are both durations alone. `while_exiled` lets the cards be
+played on any turn, a stronger card; `this_turn` opens them only on the turn
+they were exiled and loses them after it, a weaker one.
 
 ### "You may play them without paying their mana costs"
 
@@ -3232,9 +3283,40 @@ per seat. "Each other opponent" is `{"not": {"binding": "defender"}, "except":
 the near miss and burns the opponent the card already hit.
 
 The loader refuses `per_player` on any other event and beside `or_battle` (each
-copy carries one seat and no battles, so the battle half would never fire), and
-refuses `defending` on this event without it, since the unsplit batch names no
-one seat to compare.
+copy carries one seat and no battles, so the battle half would never fire).
+
+#### "Your opponents are dealt combat damage"
+
+```jsonc
+// Mindblade Render -- "Whenever your opponents are dealt combat damage, if any
+//   of that damage was dealt by a Warrior, you draw a card and you lose 1 life."
+{ "kind": "triggered",
+  "trigger": { "event": "creatures_deal_combat_damage", "controller": "any",
+               "defending": "opponent", "filter": { "subtypes": ["Warrior"] } },
+  "effects": [ { "op": "draw", "player": "you", "amount": { "const": 1 } },
+               { "op": "lose_life", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+**`defending` without `per_player` keys the batch on the damaged side and
+fires it once.** `triggers._defending_batch` asks each seat in `hits` the
+question `defending` asks a `per_player` firing, keeps the seats that pass, and
+narrows `damaged` and `damagers` to them; a batch that hit none of them is not
+heard. So the `filter` is asked only of the creatures that dealt damage to one
+of those seats — a Warrior that hit you does not satisfy "any of that damage
+was dealt by a Warrior" — and `{"binding": "damagers"}` names them. No
+`defender` is bound, since the narrowed batch may name several seats.
+
+One firing per batch is one per combat damage step: only attacking creatures
+deal combat damage to players, and all of them are the active player's (506.2,
+506.4). `controller: "any"` is "by anyone": an opponent's Warrior hitting
+another opponent fires it.
+
+The near misses are each a different card. `controller: "you"` misses the
+opponent's Warrior hitting another opponent; no `defending` fires when an
+opponent's Warrior hits you; `per_player` draws twice when Warriors hit two
+opponents. The "if" reads the damage already dealt, so it is a `filter` rather
+than a re-checked `condition`. The loader refuses `defending` beside
+`or_battle` on the unsplit batch, because the narrowed batch carries no battles.
 
 `batched: true` is **not** the repair for any of this, and the loader refuses
 it on every combat-damage event: `_queue` keys the batch off
@@ -7089,6 +7171,10 @@ apply to each.
   not whoever controls the creating effect. `"any"` is Primal Vigor.
 - `token_multiplier` must be **2 or more** (1 replaces the creation with itself,
   0 is a prevention), and it and `create_instead` together are refused.
+- "**Until end of turn**, … twice that many" from a resolved ability is not a
+  static at all but the
+  [`multiply_token_creation`](#until-end-of-turn-twice-that-many-of-those-tokens)
+  op, which outlives its source.
 
 `affects_token`, not `affects`: the token being asked about **does not exist
 yet**, so there is no permanent for a static filter to find and no board state to
@@ -7125,6 +7211,32 @@ already arriving, and a `token_created` trigger fires after the token is on the
 battlefield, so it would add tokens *alongside* rather than instead — a strictly
 stronger card — and a Manufactor written that way would re-trigger on its own
 Treasure forever.
+
+## Until end of turn, "twice that many of those tokens"
+
+```jsonc
+// Kaya, Geist Hunter's −2
+{ "op": "multiply_token_creation", "duration": "this_turn" }
+```
+
+The one-shot, timed form of a `replace_token_creation` doubler, for an ability
+that resolves and leaves no permanent behind to carry a static. It writes a
+`TokenMultiplier` record for each `player` (default `"you"`, the seat the tokens
+must be created *under*), and `primitives.create_token` applies it as one more
+replacement in the same pass as the statics: once per creation (614.5), so it
+compounds with a Parallel Lives (four tokens), and two of them resolved in one
+turn are two effects, never merged.
+
+- **`duration`** is required and is `"this_turn"`; the cleanup step sweeps it.
+- **`token_multiplier`** defaults to 2 and, as on the static, must be 2 or more.
+- `affects_token`, `create_instead` and `amount` are refused: the timed form
+  multiplies every token and substitutes none.
+- **It outlives its source** (611.2a). Nothing reads the planeswalker again, so
+  the doubling keeps applying after Kaya has died or been bounced.
+
+The near miss is `grant_ability` of a `replace_token_creation` static to the
+walker: that would end the moment the walker left, which the printed effect
+does not, and the loader refuses granting a player-wide static anyway.
 
 ## "If a player would lose life, they lose twice that much instead"
 
