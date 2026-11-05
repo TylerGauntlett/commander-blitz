@@ -16642,12 +16642,12 @@
     },
     "Auron, Venerated Guardian": {
       "edhrec_rank": 5456,
-      "gate": "template",
+      "gate": null,
       "name": "Auron, Venerated Guardian",
-      "reason": "no template for: Shooting Star — Whenever Auron attacks, put a +1/+1 counter on it. When you do, exile targ",
+      "reason": "",
       "scryfall_id": "12646217-db83-4b47-8f79-388c925dce77",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aurora Awakener": {
@@ -33902,12 +33902,12 @@
     },
     "Bred for the Hunt": {
       "edhrec_rank": 2659,
-      "gate": "template",
+      "gate": null,
       "name": "Bred for the Hunt",
-      "reason": "no template for: Whenever a creature you control with a +1/+1 counter on it deals combat damage to a player",
+      "reason": "",
       "scryfall_id": "a06fe501-0e25-46ee-8ed8-055f3bf636cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breeches, Brazen Plunderer": {
@@ -45882,12 +45882,12 @@
     },
     "Chocobo Knights": {
       "edhrec_rank": 4403,
-      "gate": "template",
+      "gate": null,
       "name": "Chocobo Knights",
-      "reason": "no template for: Whenever you attack, creatures you control with counters on them gain double strike until ",
+      "reason": "",
       "scryfall_id": "e874e435-7ade-4299-9803-1358c0f07a8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chocobo Racetrack": {
@@ -60242,12 +60242,12 @@
     },
     "Damning Verdict": {
       "edhrec_rank": 1182,
-      "gate": "template",
+      "gate": null,
       "name": "Damning Verdict",
-      "reason": "no template for: Destroy all creatures with no counters on them",
+      "reason": "",
       "scryfall_id": "8d82e20d-09c0-4b16-9b25-4790924aa0b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Damocles Base, Sword of Kang": {

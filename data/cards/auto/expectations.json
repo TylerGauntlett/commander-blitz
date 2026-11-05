@@ -1048,6 +1048,10 @@
   "auntie_s_hovel": {
     "zone": "battlefield"
   },
+  "auron_venerated_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "austere_command": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 4,
@@ -1985,6 +1989,13 @@
   "breath_weapon": {
     "zone": "graveyard"
   },
+  "bred_for_the_hunt": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "breeches_eager_pillager": {
     "zone": "battlefield"
   },
@@ -2636,6 +2647,9 @@
   },
   "chivalric_alliance": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "chocobo_knights": {
     "zone": "battlefield"
   },
   "choked_estuary": {
@@ -3454,6 +3468,11 @@
     "life": {
       "0": 20
     },
+    "zone": "graveyard"
+  },
+  "damning_verdict": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
   "damocles_base_sword_of_kang": {
