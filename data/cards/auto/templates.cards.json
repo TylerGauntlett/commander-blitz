@@ -150122,6 +150122,107 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "by_opponents": true,
+              "duration": "this_turn",
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "unblockable"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you put one or more counters on a creature, until end of turn, that creature can't be blocked by creatures your opponents control.",
+          "trigger": {
+            "controller": "any",
+            "event": "counter_placed",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            },
+            "put_by": "you"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "any_kind": true,
+              "from": {
+                "target": "from"
+              },
+              "objects": {
+                "target": "onto"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "from",
+              "kind": "permanent",
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "onto",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Steal — {1}, {T}: Move a counter from target creature an opponent controls onto target creature you control. Activate only as a sorcery."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "rikku_resourceful_guardian",
+      "mana_cost": "{2}{U}",
+      "name": "Rikku, Resourceful Guardian",
+      "oracle_text": "Whenever you put one or more counters on a creature, until end of turn, that creature can't be blocked by creatures your opponents control.\nSteal — {1}, {T}: Move a counter from target creature an opponent controls onto target creature you control. Activate only as a sorcery.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

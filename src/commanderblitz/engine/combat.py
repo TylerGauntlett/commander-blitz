@@ -955,6 +955,14 @@ def unblockable(state: GameState, oid: int, blocker_oid: int | None = None) -> b
     player's by definition, and "you" would exempt nobody. Two entries on one
     attacker are two restrictions, and a blocker must satisfy both.
 
+    "…can't be blocked by creatures **your opponents** control" (Rikku,
+    Resourceful Guardian) is an entry with ``opponents_only``: a blocker
+    controlled by the granting player (``entry.player``) is exempt, every other
+    player's is refused. Asked without a blocker it is total evasion only when
+    the attacker is the granting player's own, since then every blocker it can
+    meet belongs to an opponent; an opponent's creature so marked can still be
+    blocked by the granting player when it attacks them.
+
     Guarded on the list being non-empty, because this is on the hot path of the
     block mask and the list is empty in most games.
     """
@@ -965,6 +973,12 @@ def unblockable(state: GameState, oid: int, blocker_oid: int | None = None) -> b
     for entry in state.unblockables:
         if oid not in entry.objects:
             continue
+        if entry.opponents_only:
+            if blocker is None:
+                if attacker is None or attacker.controller != entry.player:
+                    continue
+            elif blocker.controller == entry.player:
+                continue
         exempt = entry.except_blockers
         if exempt is None:
             return True

@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**168 cards** blocked by **151** capabilities.
+**167 cards** blocked by **150** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -162,7 +162,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
-| [unblockable-by-your-opponents](#unblockable-by-your-opponents) | 1 | 4064 | op |
 | [x-cost-mana-restriction](#x-cost-mana-restriction) | 1 | 4046 | decision |
 | [x-dependent-spell-targets](#x-dependent-spell-targets) | 1 | 11545 | engine |
 
@@ -2483,20 +2482,6 @@ Blocks **1** card.
 
 - **Suppressor Skyguard** (rank 9126) — `suppressor_skyguard`
   - Whenever a player attacks you, if that player has another opponent who isn't being attacked, prevent all combat damage that would be dealt to you this combat.
-
-</details>
-
-## unblockable-by-your-opponents
-
-Blocks **1** card.
-
-- **(op)** a one-shot 'can't be blocked this turn by creatures controlled by opponents of THIS ABILITY'S controller' restriction on the `unblockable` op -- an exemption keyed on the effect controller (e.g. except_blockers controller relative to the granting player, or a `blockers_controlled_by: opponent_of_you` option), so a creature an opponent controls that you put counters on (wither, -1/-1 counters, Steal moving onto it is impossible but other cards do) can still be blocked by your creatures when it attacks you, yet not by any other player's
-  <br>Why the existing vocabulary won't do: The trigger itself is expressible (`counter_placed` with `put_by: you`, `controller: any`, filter types Creature, subject binding), and the Steal line is `move_counters` with `any_kind`, `amount` 1, `from` a target. But `unblockable` either refuses every blocker or exempts by `except_blockers`, a static filter matched with the ATTACKER as source (`combat.unblockable` -> `matches_static(state, blocker, attacker, ...)`), so its `controller` is relative to the attacking creature's controller, not to Rikku's controller. For a creature you control plain `unblockable` is exact, but for an opponent's creature it would also forbid your own creatures from blocking it, and no static filter can name 'creatures controlled by the player who granted this' among that creature's several opponents
-
-<details><summary>Cards waiting on this</summary>
-
-- **Rikku, Resourceful Guardian** (rank 4064) — `rikku_resourceful_guardian`
-  - Whenever you put one or more counters on a creature, until end of turn, that creature can't be blocked by creatures your opponents control.
 
 </details>
 

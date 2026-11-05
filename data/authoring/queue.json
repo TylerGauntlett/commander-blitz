@@ -223932,12 +223932,12 @@
     },
     "Rikku, Resourceful Guardian": {
       "edhrec_rank": 4064,
-      "gate": "template",
+      "gate": null,
       "name": "Rikku, Resourceful Guardian",
-      "reason": "no template for: Whenever you put one or more counters on a creature, until end of turn, that creature can'",
+      "reason": "",
       "scryfall_id": "b62cd4af-7d7a-4b0b-b2d6-2086281c7b21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riku of Many Paths": {

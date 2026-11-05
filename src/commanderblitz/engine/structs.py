@@ -603,6 +603,14 @@ class Unblockable:
     #: hashed, because a mapping is not hashable and equality is all the
     #: primitive's deduplication asks of it.
     except_blockers: Mapping[str, Any] | None = field(default=None, hash=False)
+    #: "…can't be blocked by creatures **your opponents** control" (Rikku,
+    #: Resourceful Guardian): the restriction refuses only blockers controlled
+    #: by an opponent of :attr:`player`, the granting player. Not expressible as
+    #: an ``except_blockers`` filter, because a static filter's ``controller`` is
+    #: read relative to the *attacker*, and the attacker may be an opponent's
+    #: creature with several opponents of its own. ``False`` refuses every
+    #: controller's creatures.
+    opponents_only: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -613,6 +621,7 @@ class Unblockable:
             "except_blockers": (
                 dict(self.except_blockers) if self.except_blockers is not None else None
             ),
+            "opponents_only": self.opponents_only,
         }
 
 

@@ -817,6 +817,11 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     creature that gains haste afterwards may still block. Absent, every blocker
     is refused -- which is why it may never be dropped from a card that prints
     the exception: the creature would be strictly harder to block than printed.
+
+    ``by_opponents: true`` is "…can't be blocked by creatures your opponents
+    control" (Rikku, Resourceful Guardian): only blockers controlled by an
+    opponent of this effect's controller are refused, so a creature of an
+    opponent's that this marks may still be blocked by you.
     """
 
     duration = str(spec.get("duration", "this_turn"))
@@ -834,6 +839,7 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
         player=ctx.controller,
         source=ctx.source_oid,
         except_blockers=spec.get("except_blockers"),
+        opponents_only=bool(spec.get("by_opponents", False)),
     )
     yield from ()
 

@@ -1941,6 +1941,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                         f"{where}: unblockable 'except_blockers' describes what the "
                         f"blocker is, not whose it is; drop {sorted(refused)}"
                     )
+        # "…by creatures your opponents control": whose blockers, relative to
+        # the granting player. A boolean and only `true` is meaningful; `false`
+        # is the plain op and a non-bool is a typo, refused rather than coerced.
+        if "by_opponents" in effect and effect["by_opponents"] is not True:
+            raise DslError(
+                f"{where}: unblockable 'by_opponents' is `true` or absent, "
+                f"got {effect['by_opponents']!r}"
+            )
     if op == "cant_sacrifice":
         # `objects` is required and there is no wildcard shorthand, for the
         # reason `unblockable`'s is and harder: an absent `objects` read as

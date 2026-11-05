@@ -4388,6 +4388,24 @@ that prints the exception: the plain op refuses every blocker, a strictly better
 card. Two entries on one attacker are two restrictions, and a blocker must clear
 both.
 
+**`by_opponents: true` is "…can't be blocked by creatures your opponents
+control"** (Rikku, Resourceful Guardian, whose trigger marks any creature you
+put counters on, an opponent's included):
+
+```jsonc
+{ "op": "unblockable", "objects": { "binding": "subject" }, "duration": "this_turn",
+  "by_opponents": true }
+```
+
+Only blockers controlled by an opponent of the effect's controller (the entry's
+`player`) are refused; that player's own creatures may still block. On a
+creature you control it is the plain op, but on an opponent's creature the plain
+op would also stop your creatures blocking it when it attacks you. It cannot be
+said with `except_blockers`: that filter's `controller` would be read relative
+to the attacker, and the loader refuses the key. Asked with no blocker,
+`combat.unblockable` calls it total evasion only on the granting player's own
+creature. The loader accepts `true` or absence and nothing else.
+
 It lives on the table (`GameState.unblockables`, a list of
 `structs.Unblockable`) beside `block_prohibitions`, and is read by
 `combat.unblockable` inside `can_block`. The two predicates never consult each

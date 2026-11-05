@@ -12777,6 +12777,10 @@
     },
     "zone": "battlefield"
   },
+  "rikku_resourceful_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "rimewood_falls": {
     "zone": "battlefield"
   },

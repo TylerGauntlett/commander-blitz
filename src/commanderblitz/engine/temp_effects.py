@@ -601,6 +601,7 @@ def make_unblockable(
     player: int | None = None,
     source: int | None = None,
     except_blockers: Mapping[str, Any] | None = None,
+    opponents_only: bool = False,
 ) -> bool:
     """ ""Can't be blocked" for ``duration``, on the creatures named.
 
@@ -624,6 +625,11 @@ def make_unblockable(
     `combat.unblockable` against the blocker as it is when blocks are declared.
     ``None`` refuses every blocker.
 
+    ``opponents_only`` is "…can't be blocked by creatures your opponents
+    control": only blockers controlled by an opponent of ``player`` are refused,
+    so it is refused without a ``player`` -- there would be nobody for the
+    blockers to be opponents of.
+
     Returns whether anything was recorded.  Deduplicated on the whole entry --
     two copies of "can't be blocked" say nothing a single one does not.
     """
@@ -635,12 +641,15 @@ def make_unblockable(
         return False
     if duration == "until_your_next_turn" and player is None:
         return False
+    if opponents_only and player is None:
+        return False
     entry = Unblockable(
         objects=oids,
         duration=duration,
         player=player,
         source=source,
         except_blockers=dict(except_blockers) if except_blockers is not None else None,
+        opponents_only=opponents_only,
     )
     if entry in state.unblockables:
         return False

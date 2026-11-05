@@ -273,7 +273,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                            "Removing a creature from combat — `remove_from_combat`"),
     "cant_block": ("Board", "Creatures can't block this turn.",
                    "The `cant_block` **op** — the same sentence with a clock"),
-    "unblockable": ("Board", "Creatures can't be blocked this turn (optionally except by blockers matching a filter).",
+    "unblockable": ("Board", "Creatures can't be blocked this turn (optionally except by blockers matching a filter, or only by opponents' creatures with `by_opponents`).",
                     "The `unblockable` op — the same wire, read from the attacker's end"),
     "cant_sacrifice": ("Board", "Permanents can't be sacrificed for a duration.",
                        "The `cant_sacrifice` op — a prohibition on a *game action*, not a zone change"),
