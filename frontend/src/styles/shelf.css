@@ -211,26 +211,6 @@
   color: var(--focus);
 }
 
-.shelf__sort {
-  min-height: var(--hit-floor);
-  padding: 0 calc(12px * var(--du));
-  border: 1px solid var(--edge);
-  border-radius: calc(9px * var(--du));
-  background: rgb(8 7 18 / 0.5);
-  color: var(--text-dim);
-  font: inherit;
-  font-size: max(var(--type-floor), calc(16px * var(--du)));
-  white-space: nowrap;
-  /* Sized for the longest order, so cycling does not move its neighbours. */
-  min-width: calc(22ch + 24px * var(--du));
-  text-align: left;
-  cursor: pointer;
-}
-
-.shelf__sortk {
-  color: var(--text-faint);
-}
-
 .shelf__note {
   font-size: max(var(--type-floor), calc(16px * var(--du)));
   color: var(--text-faint);

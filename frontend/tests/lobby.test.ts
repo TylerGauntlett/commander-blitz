@@ -9,8 +9,6 @@
 
 import { describe, expect, it } from "vitest";
 import {
-  archetypeName,
-  archetypeOptions,
   canStart,
   cpuNumber,
   type DeckSource,
@@ -19,7 +17,6 @@ import {
   firstEmpty,
   groupDecks,
   looksLikeCode,
-  nextArchetype,
   normaliseCode,
   openSeats,
   podSize,
@@ -263,17 +260,6 @@ describe("the catalogue filter", () => {
     expect(by("precon")).toEqual([]);
   });
 
-  it("filters by archetype, and any means any", () => {
-    const typed = decks.map((deck) =>
-      deck.id === "edgar" ? { ...deck, archetype: "tribal" } : deck,
-    );
-    const by = (archetype: string) =>
-      visibleDecks(typed, { ...EMPTY_FILTERS, archetype }).map((d) => d.id);
-    expect(by("tribal")).toEqual(["edgar"]);
-    expect(by("voltron")).toEqual([]);
-    expect(by("")).toEqual(["aesi", "edgar", "mine"]);
-  });
-
   it("combines every filter", () => {
     const shown = visibleDecks(decks, {
       ...EMPTY_FILTERS,
@@ -284,78 +270,15 @@ describe("the catalogue filter", () => {
     expect(shown.map((d) => d.id)).toEqual(["edgar"]);
   });
 
-  it("falls back to name when it has no ratings to sort by", () => {
-    const shown = visibleDecks(decks, { ...EMPTY_FILTERS, sort: "speed" });
+  it("orders by name", () => {
+    const shown = visibleDecks([...decks].reverse(), EMPTY_FILTERS);
     expect(shown.map((d) => d.id)).toEqual(["aesi", "edgar", "mine"]);
-  });
-
-  it("sorts by a rating when one is available", () => {
-    const ratings: Record<string, Record<string, number>> = {
-      aesi: { speed: 2, complexity: 3, pilot: 2 },
-      edgar: { speed: 4, complexity: 2, pilot: 2 },
-    };
-    const shown = visibleDecks(decks, { ...EMPTY_FILTERS, sort: "speed" }, (id) => ratings[id]);
-    expect(shown.map((d) => d.id)).toEqual(["edgar", "aesi", "mine"]);
-  });
-
-  it("sorts an unrated deck last rather than first", () => {
-    // An imported deck has no ratings, and calling it the fastest deck in the
-    // catalogue would be the one lie on the screen.
-    const ratings: Record<string, Record<string, number>> = { aesi: { pilot: 4 } };
-    const shown = visibleDecks(decks, { ...EMPTY_FILTERS, sort: "pilot" }, (id) => ratings[id]);
-    expect(shown[shown.length - 1].id).not.toBe("aesi");
-    expect(shown.map((d) => d.id).slice(1)).toEqual(["edgar", "mine"]);
-  });
-
-  it("inverts the pilot sort -- easiest is the lowest number", () => {
-    const ratings: Record<string, Record<string, number>> = {
-      aesi: { pilot: 4 },
-      edgar: { pilot: 1 },
-      mine: { pilot: 2 },
-    };
-    const shown = visibleDecks(decks, { ...EMPTY_FILTERS, sort: "pilot" }, (id) => ratings[id]);
-    expect(shown.map((d) => d.id)).toEqual(["edgar", "mine", "aesi"]);
   });
 
   it("does not mutate the list it was handed", () => {
     const original = decks.map((d) => d.id);
-    visibleDecks(decks, { ...EMPTY_FILTERS, sort: "speed" });
+    visibleDecks(decks, EMPTY_FILTERS);
     expect(decks.map((d) => d.id)).toEqual(original);
-  });
-});
-
-describe("the archetype filter", () => {
-  const decks = [
-    deckSummary({ id: "a", name: "A", archetype: "voltron", color_identity: ["G"] }),
-    deckSummary({ id: "b", name: "B", archetype: "go_wide", color_identity: ["W"] }),
-    deckSummary({ id: "c", name: "C", archetype: "", color_identity: ["W"] }),
-  ];
-
-  it("offers what the other filters leave, in a fixed order", () => {
-    expect(archetypeOptions(decks, EMPTY_FILTERS)).toEqual(["go_wide", "voltron"]);
-    expect(archetypeOptions(decks, { ...EMPTY_FILTERS, colours: ["W"] })).toEqual(["go_wide"]);
-  });
-
-  it("offers nothing when no deck names one, so the control is not drawn", () => {
-    expect(archetypeOptions([decks[2]], EMPTY_FILTERS)).toEqual([]);
-  });
-
-  it("keeps the chosen one on offer, so it can always be cleared", () => {
-    const filters = { ...EMPTY_FILTERS, colours: ["W"], archetype: "voltron" };
-    expect(archetypeOptions(decks, filters)).toEqual(["go_wide", "voltron"]);
-  });
-
-  it("cycles through any and round again", () => {
-    const options = ["go_wide", "voltron"];
-    expect(nextArchetype("", options)).toBe("go_wide");
-    expect(nextArchetype("go_wide", options)).toBe("voltron");
-    expect(nextArchetype("voltron", options)).toBe("");
-  });
-
-  it("names a key the way a player reads it", () => {
-    expect(archetypeName("go_wide")).toBe("Go wide");
-    expect(archetypeName("voltron")).toBe("Voltron");
-    expect(archetypeName("")).toBe("Any");
   });
 });
 
@@ -492,10 +415,9 @@ describe("the coming-soon shells", () => {
     expect(find("nothing like it")).toEqual([]);
   });
 
-  it("hide under a colour or an archetype, which they cannot match", () => {
+  it("hide under a colour, which they cannot match", () => {
     const precons = { ...EMPTY_FILTERS, source: "precon" as const };
     expect(visibleShells(shells, { ...precons, colours: ["G"] })).toEqual([]);
-    expect(visibleShells(shells, { ...precons, archetype: "tribal" })).toEqual([]);
   });
 
   it("leave the favorites without any", () => {

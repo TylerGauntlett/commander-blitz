@@ -533,8 +533,9 @@ the catalogue's order is decided: precons in one run per `release.set_name`, new
 is a labelled region (`role="region"`, `aria-label` its title), so a screen reader can
 jump between sets; the header is type and not a stop, so a pad walking down passes from
 the last deck of one run to the first of the next. A single run under its own segment
-has no header, because the segment already names it. Filters that come and go with the
-decks, like the archetype one, are drawn only when they have something to offer. The
+has no header, because the segment already names it. The filters are one row (search,
+colour, source) and the rack is always by name: a sort and an archetype filter were a
+second row that cost a short screen a row of tiles. The
 star on an import is drawn from `DeckSummary.starred` alone: the press sends the value it
 wants, and `useStarDeck` puts the server's answer into the deck list.
 
@@ -543,7 +544,7 @@ ship yet (`GET /api/precons/upcoming`) is drawn by `ShellTile` in `DeckCatalog.t
 grayed-out commander under a "Coming soon" badge, in its release's run after the playable
 decks (`visibleShells`, then `groupDecks`). It has no role, no tab stop and no handler,
 so ADR 0015 *Every legal action is exactly one control* is untouched: the ring and Tab pass
-over it. A colour or archetype filter hides every shell, since a shell has neither to match.
+over it. A colour filter hides every shell, since a shell has no identity to match.
 Shells are drawn under **Precons** only: **All** is what a player can take today, so it
 puts Favorites and Yours first and the precon runs after them, without shells.
 

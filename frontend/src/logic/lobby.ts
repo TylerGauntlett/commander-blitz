@@ -165,120 +165,47 @@ export function readyTrack(pod: PodView): TrackSegment[] {
 /* The catalogue                                                       */
 /* ------------------------------------------------------------------ */
 
-export type DeckSort = "name" | "speed" | "complexity" | "pilot";
 /** The shelf's segments: every deck, or one `DeckSummary.source` (ADR 0024). */
 export type DeckSource = "all" | DeckSourceKind;
 
+/**
+ * What the shelf filters by: the search box, the colour pips and the source
+ * segments. Nothing else -- a sort and an archetype filter were a second row
+ * of controls that cost a short screen a row of tiles, for an order and a
+ * label nobody chose a deck by.
+ */
 export interface CatalogFilters {
   q: string;
   /** Colour identity, as an AND: three colours means decks that play all three. */
   colours: string[];
   source: DeckSource;
-  /** One `ARCHETYPES` key, or `""` for any. */
-  archetype: string;
-  sort: DeckSort;
 }
 
 export const EMPTY_FILTERS: CatalogFilters = {
   q: "",
   colours: [],
   source: "all",
-  archetype: "",
-  sort: "name",
 };
 
-/**
- * Sorts that read a rating.
- *
- * `pilot` inverts: the axis is "demands on you", so "easiest to pilot" is the
- * *lowest* number, and a deck with no ratings at all sorts to the end rather
- * than pretending to be a 0.
- */
-const RATING_SORTS: Record<string, { key: "speed" | "complexity" | "pilot"; invert: boolean }> =
-  {
-    speed: { key: "speed", invert: false },
-    complexity: { key: "complexity", invert: false },
-    pilot: { key: "pilot", invert: true },
-  };
-
-/** Ratings for one deck, or nothing if this screen has not fetched them. */
-export type RatingLookup = (deckId: string) => Record<string, number> | null | undefined;
-
-/**
- * The catalogue's rack: filter, then sort.
- *
- * `ratingOf` is optional because `GET /api/decks` deliberately does not carry
- * ratings -- the rack draws two dozen tiles and would otherwise pay for two
- * dozen strategy essays. Without it a rating sort falls back to name, which is
- * a real answer rather than an arbitrary order.
- */
-export function visibleDecks(
-  decks: DeckSummary[],
-  filters: CatalogFilters,
-  ratingOf?: RatingLookup,
-): DeckSummary[] {
+/** The catalogue's rack: what the filters leave, by name. */
+export function visibleDecks(decks: DeckSummary[], filters: CatalogFilters): DeckSummary[] {
   const q = filters.q.trim().toLowerCase();
-  const matched = decks.filter((deck) => {
-    if (filters.source !== "all" && deck.source !== filters.source) return false;
-    if (filters.archetype && deck.archetype !== filters.archetype) return false;
-    if (
-      filters.colours.length > 0 &&
-      !filters.colours.every((colour) => deck.color_identity.includes(colour))
-    ) {
-      return false;
-    }
-    if (!q) return true;
-    const haystack = [deck.name, ...deck.commander_names, ...deck.tags, deck.notes]
-      .join(" ")
-      .toLowerCase();
-    return haystack.includes(q);
-  });
-
-  const rating = RATING_SORTS[filters.sort];
-  const byName = (a: DeckSummary, b: DeckSummary) => a.name.localeCompare(b.name);
-  if (!rating || !ratingOf) return matched.sort(byName);
-
-  return matched.sort((a, b) => {
-    const left = ratingOf(a.id)?.[rating.key];
-    const right = ratingOf(b.id)?.[rating.key];
-    // A deck with no ratings sorts to the end rather than to the top: an
-    // imported deck has none, and calling it the fastest deck in the catalogue
-    // would be the one lie on the screen.
-    if (left === undefined && right === undefined) return byName(a, b);
-    if (left === undefined) return 1;
-    if (right === undefined) return -1;
-    const delta = rating.invert ? left - right : right - left;
-    return delta || byName(a, b);
-  });
-}
-
-/**
- * The archetypes the filter can offer: those of the decks every other filter
- * leaves, so a choice never empties the grid by itself, plus the one already
- * chosen, so the control that set it is still there to clear it. Empty means
- * the control has nothing to offer and is not drawn.
- */
-export function archetypeOptions(decks: DeckSummary[], filters: CatalogFilters): string[] {
-  const found = new Set(
-    visibleDecks(decks, { ...filters, archetype: "" })
-      .map((deck) => deck.archetype)
-      .filter(Boolean),
-  );
-  if (filters.archetype) found.add(filters.archetype);
-  return [...found].sort();
-}
-
-/** The archetype after this one, through "any" and round again. */
-export function nextArchetype(current: string, options: string[]): string {
-  const ring = ["", ...options];
-  return ring[(ring.indexOf(current) + 1) % ring.length];
-}
-
-/** `go_wide` reads "Go wide"; `""` reads "Any". */
-export function archetypeName(key: string): string {
-  if (!key) return "Any";
-  const words = key.replace(/_/g, " ");
-  return words.charAt(0).toUpperCase() + words.slice(1);
+  return decks
+    .filter((deck) => {
+      if (filters.source !== "all" && deck.source !== filters.source) return false;
+      if (
+        filters.colours.length > 0 &&
+        !filters.colours.every((colour) => deck.color_identity.includes(colour))
+      ) {
+        return false;
+      }
+      if (!q) return true;
+      const haystack = [deck.name, ...deck.commander_names, ...deck.tags, deck.notes]
+        .join(" ")
+        .toLowerCase();
+      return haystack.includes(q);
+    })
+    .sort((a, b) => a.name.localeCompare(b.name));
 }
 
 /**
@@ -286,10 +213,10 @@ export function archetypeName(key: string): string {
  * that cannot be dealt yet.
  *
  * Only under All and Precons, since a shell is a precon. The search box reads
- * the product and its commanders, which is all a shell knows. A colour or
- * archetype filter hides every shell rather than guessing: a shell has no
- * identity and no archetype to match, and a shelf that kept them under "Green"
- * would be claiming something nobody checked.
+ * the product and its commanders, which is all a shell knows. A colour filter
+ * hides every shell rather than guessing: a shell has no identity to match,
+ * and a shelf that kept them under "Green" would be claiming something nobody
+ * checked.
  */
 export function visibleShells(
   shells: UpcomingPrecon[],
@@ -298,7 +225,7 @@ export function visibleShells(
   // Precons only. Under All the shells would bury every playable deck behind
   // a hundred that cannot be taken, so All is what you can play today.
   if (filters.source !== "precon") return [];
-  if (filters.colours.length > 0 || filters.archetype) return [];
+  if (filters.colours.length > 0) return [];
   const q = filters.q.trim().toLowerCase();
   return shells
     .filter(
@@ -341,7 +268,7 @@ const SOURCE_TITLES: Record<DeckSourceKind, string> = {
  * run always has one, because the product is what it says.
  *
  * Within Yours a starred import sorts above every other. Otherwise each run
- * keeps the order `visibleDecks` gave it, so the sort control still decides.
+ * keeps the order `visibleDecks` gave it.
  *
  * `shells` (from `visibleShells`, so only under Precons) join the run of their
  * own `set_name`, after that release's playable decks, and a release with

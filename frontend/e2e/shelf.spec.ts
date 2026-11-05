@@ -83,15 +83,6 @@ test.describe("the shelf's segments", () => {
     await expect(named.first().getByRole("heading")).toHaveText("Foundations Commander");
     await expect(named.first().getByTestId("deck-fdc_stub_angels")).toBeVisible();
     await expect(named.nth(1).getByTestId("deck-dsc_stub_older")).toBeVisible();
-
-    // The precons name archetypes, so the shelf offers the filter, and a press
-    // narrows the runs to the decks that play that way.
-    const archetype = page.getByTestId("deck-archetype");
-    await expect(archetype).toHaveAttribute("aria-label", "Archetype: Any");
-    await archetype.click();
-    await expect(archetype).toHaveAttribute("aria-label", "Archetype: Punisher");
-    await expect(named.first()).toHaveAttribute("aria-label", "Duskmourn Commander");
-    await expect(page.getByTestId("deck-fdc_stub_angels")).toHaveCount(0);
   });
 
   test("coming-soon shells join their release's run and are not controls", async ({ page }) => {
@@ -151,11 +142,11 @@ test.describe("the shelf's segments", () => {
     await expect(run.getByTestId("deck-fdc_wretched_ranks")).toBeVisible();
   });
 
-  test("the archetype filter is not drawn when no deck names one", async ({ page }) => {
-    // The favorites name none; the shipped precons, which do, are dropped.
-    await stubDeckList(page, []);
+  test("the filters are one row: no sort and no archetype control", async ({ page }) => {
+    // Both were a second row that cost a short screen a row of tiles.
     await browseDecks(page);
     await expect(page.locator(".shelf__body .tile").first()).toBeVisible();
+    await expect(page.getByTestId("deck-sort")).toHaveCount(0);
     await expect(page.getByTestId("deck-archetype")).toHaveCount(0);
   });
 
