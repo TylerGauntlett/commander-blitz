@@ -1,0 +1,18 @@
+{
+  "card_id": "endless_detour",
+  "name": "Endless Detour",
+  "oracle_text": "The owner of target spell, nonland permanent, or card in a graveyard puts it on their choice of the top or bottom of their library.",
+  "blocked_sentences": [
+    "The owner of target spell, nonland permanent, or card in a graveyard puts it on their choice of the top or bottom of their library."
+  ],
+  "needs": [
+    {
+      "capability": "spell_permanent_or_graveyard_card_target",
+      "kind": "selector",
+      "what": "a single target kind whose pool spans three zones at once -- a spell on the stack, a nonland permanent on the battlefield, or a card in any graveyard -- as one instance of the word \"target\" (one spec, one choice), with legality re-checked per zone on resolution",
+      "why_existing_wont_do": "TargetModel.kind offers 'spell_or_permanent' (stack + battlefield only, Sink into Stupor) and 'card_in_graveyard' separately; writing two specs would make the spell target twice and require both to be legal, which is a different card. 'any' is battlefield objects plus players. The effect half already exists: put_on_top with owner_chooses: true asks the owner top-or-bottom and moves the object to its owner's library, so only the target kind is missing"
+    }
+  ],
+  "closest_existing": ["spell_or_permanent", "card_in_graveyard", "put_on_top"],
+  "confidence": "high"
+}
