@@ -19,6 +19,7 @@ from ..zones import (
     exile,
     link_exiled,
     move_object,
+    offer_as_enters_effects,
     offer_aura_host,
     offer_enters_replacement,
     offer_named_host,
@@ -647,6 +648,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # see `zones.offer_riot_choice`.
         yield from offer_riot_choice(ctx.state, oid, controller)
         yield from offer_read_ahead(ctx.state, oid, controller)
+        yield from offer_as_enters_effects(ctx.state, oid, controller)
         # `cause` travels into the enters-the-battlefield event, so an ability
         # that puts permanents down can name itself here and then refuse to
         # trigger on its own output -- see `TriggerSpec.not_cause`.

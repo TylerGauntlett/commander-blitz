@@ -165881,6 +165881,117 @@
         {
           "effects": [
             {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            },
+            {
+              "objects": {
+                "self_only": true,
+                "zone": "graveyard"
+              },
+              "op": "put_on_top"
+            },
+            {
+              "op": "shuffle",
+              "player": {
+                "owner_of": "self"
+              }
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Sin dies, put its counters on target creature you control, then shuffle this card into its owner's library.",
+          "trigger": {
+            "event": "dies",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U"
+      ],
+      "colors": [
+        "G",
+        "U"
+      ],
+      "id": "sin_unending_cataclysm",
+      "keywords": [
+        "flying",
+        "trample"
+      ],
+      "mana_cost": "{5}{G}{U}",
+      "name": "Sin, Unending Cataclysm",
+      "oracle_text": "Flying, trample\nAs Sin enters, remove all counters from any number of artifacts, creatures, and enchantments. Sin enters with X +1/+1 counters on it, where X is twice the number of counters removed this way.\nWhen Sin dies, put its counters on target creature you control, then shuffle this card into its owner's library.",
+      "power": 5,
+      "replacements": [
+        {
+          "amount": {
+            "times": [
+              {
+                "const": 2
+              },
+              {
+                "binding": "removed"
+              }
+            ]
+          },
+          "as_enters": [
+            {
+              "all_kinds": true,
+              "as": "removed",
+              "objects": {
+                "any_types": [
+                  "Artifact",
+                  "Creature",
+                  "Enchantment"
+                ],
+                "controller": "any",
+                "count": "any",
+                "zone": "battlefield"
+              },
+              "op": "remove_counters"
+            }
+          ],
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Leviathan",
+        "Avatar"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },

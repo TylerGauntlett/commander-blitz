@@ -14124,6 +14124,9 @@
   "sin_spira_s_punishment": {
     "zone": "battlefield"
   },
+  "sin_unending_cataclysm": {
+    "zone": "battlefield"
+  },
   "sinister_gnarlbark": {
     "battlefield_count": 33,
     "zone": "battlefield"

@@ -1179,6 +1179,21 @@ class ReplacementModel(BaseModel):
     #: payload that depended on which of two simultaneous triggers his
     #: controller happened to order first.
     amount: int | dict[str, Any] = 1
+    #: `self_enters_with_counters`: effects run **as** the permanent enters,
+    #: before its counters are counted -- Sin, Unending Cataclysm's "As Sin
+    #: enters, remove all counters from any number of artifacts, creatures, and
+    #: enchantments. Sin enters with X +1/+1 counters on it, where X is twice
+    #: the number of counters removed this way." A name an effect here binds
+    #: (``as``) is readable by `amount` with ``{"binding": ...}``, which is how
+    #: "removed this way" reaches the number the permanent enters with.
+    #:
+    #: Part of the replacement (614.1c), not a trigger: nobody receives priority
+    #: between the effects and the arrival, and the permanent is never seen
+    #: without its counters. Run just before the move by
+    #: `zones.offer_as_enters_effects`, on every route that can stop to ask; an
+    #: arrival that cannot (a token) runs none of them and binds nothing. No
+    #: targets: "as this enters" chooses, it does not target.
+    as_enters: list[dict[str, Any]] | None = None
     #: Applied only when this holds, evaluated as the permanent enters with the
     #: entering object as the source -- so `exclude_self` means "other lands you
     #: control" and counts the board the land is arriving on.  The printed

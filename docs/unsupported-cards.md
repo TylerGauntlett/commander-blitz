@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**158 cards** blocked by **143** capabilities.
+**157 cards** blocked by **142** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,7 +39,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
-| [as-enters-effect](#as-enters-effect) | 1 | 5189 | replacement |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -707,20 +706,6 @@ Blocks **1** card.
 
 - **Brazen Borrower // Petty Theft** (rank 2673) — `brazen_borrower_petty_theft`
   - This creature can block only creatures with flying.
-
-</details>
-
-## as-enters-effect
-
-Blocks **1** card.
-
-- **(replacement)** An 'As this enters' replacement that runs a choice-plus-effect while the permanent is entering (choose any number of artifacts, creatures and enchantments; remove all counters of every kind from them), binds the total number of counters removed, and then makes the permanent enter with a computed number of +1/+1 counters (twice that total) -- a self_enters_with_counters replacement whose amount is a value bound by an effect run as part of the same replacement
-  <br>Why the existing vocabulary won't do: self_enters_with_counters / enters_with_additional_counters take a fixed or static amount and cannot run effects or choices first; remove_counters_from_among and remove_counters (any_kind) exist only as resolving ops, so writing this as a self_enters trigger would let Sin enter as a 5/5, use the stack (respondable, wrong timing for 'enters with'), and miss interactions keyed on the counters it enters with
-
-<details><summary>Cards waiting on this</summary>
-
-- **Sin, Unending Cataclysm** (rank 5189) — `sin_unending_cataclysm`
-  - As Sin enters, remove all counters from any number of artifacts, creatures, and enchantments. Sin enters with X +1/+1 counters on it, where X is twice the number of counters removed this way.
 
 </details>
 

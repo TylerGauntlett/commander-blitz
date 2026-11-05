@@ -153,6 +153,33 @@ def _validate_from_had_counters(effect: Mapping[str, Any], op: str, where: str) 
         )
 
 
+def _validate_remove_all_counters(effect: Mapping[str, Any], where: str) -> None:
+    """``all_kinds`` and ``as`` on ``remove_counters``.
+
+    ``all_kinds`` is "remove **all** counters": every kind, every one, so a
+    kind, a number or a per-counter choice beside it would load and be ignored.
+    ``as`` names the total removed; anything but a name is a binding nobody can
+    read back.
+    """
+    if "as" in effect and not (isinstance(effect["as"], str) and effect["as"]):
+        raise DslError(f"{where}: 'as' on remove_counters is a binding name, got {effect['as']!r}")
+    if "all_kinds" not in effect:
+        return
+    if effect["all_kinds"] is not True:
+        raise DslError(f"{where}: 'all_kinds' is true or absent, got {effect['all_kinds']!r}")
+    for key in ("counter", "amount", "any_kind", "up_to"):
+        if key in effect:
+            raise DslError(
+                f"{where}: 'all_kinds' removes every counter of every kind; "
+                f"{key!r} beside it would be ignored"
+            )
+    if not effect.get("objects"):
+        raise DslError(
+            f"{where}: remove_counters with 'all_kinds' needs 'objects' naming the "
+            f"permanents the counters come off"
+        )
+
+
 def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
     """``any_kind`` and ``up_to`` on a counter removal: every refusal is a card
     that would load and quietly remove a different number or kind of counters."""
@@ -3086,6 +3113,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"(use set_flag for a word that never wears off)"
             )
     _validate_any_kind_counters(effect, op, where)
+    if op == "remove_counters":
+        _validate_remove_all_counters(effect, where)
     if "from_had_counters" in effect:
         _validate_from_had_counters(effect, op, where)
     if op == "move_counters":

@@ -26,6 +26,7 @@ from ..zones import (
     end_permissions_until_next_exile,
     link_exiled,
     move_object,
+    offer_as_enters_effects,
     offer_aura_host,
     offer_enters_replacement,
     offer_named_host,
@@ -1156,6 +1157,7 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
             # Wild picks again.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
             yield from offer_read_ahead(ctx.state, oid, obj.controller)
+            yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -1252,6 +1254,7 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             # is -- see `zones.offer_riot_choice`.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
             yield from offer_read_ahead(ctx.state, oid, obj.controller)
+            yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,

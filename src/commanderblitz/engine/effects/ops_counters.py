@@ -348,15 +348,34 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     its own it is exactly that many, or as many as there are (609.3); with
     ``up_to`` it is a ceiling the controller may stop short of, down to none;
     and left out it is "any number". See `counter_removal`.
+
+    With ``all_kinds`` -- Sin, Unending Cataclysm's "remove **all counters**
+    from any number of artifacts, creatures, and enchantments" -- every counter
+    of every kind comes off each object, with nothing left to choose but the
+    objects themselves.
+
+    ``as`` binds the total number actually removed across every object, an int
+    read back with ``{"binding": ...}``: "the number of counters removed this
+    way" survives only there, since the permanents no longer carry them.
     """
-    if spec.get("any_kind"):
+    removed = 0
+    if spec.get("all_kinds"):
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove all counters from")
+        for oid in oids:
+            obj = ctx.state.objects.get(oid)
+            if obj is None:
+                continue
+            for kind, there in list(obj.counters.items()):
+                if there > 0:
+                    removed += remove_counters(ctx.state, oid, kind, there)
+    elif spec.get("any_kind"):
         most = (
             max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
         )
         least = 0 if most is None or spec.get("up_to") else most
         oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
         for oid in oids:
-            yield from remove_counters_one_at_a_time(
+            removed += yield from remove_counters_one_at_a_time(
                 ctx,
                 lambda oid=oid: [oid],
                 most=most,
@@ -364,12 +383,14 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
                 chooser=ctx.controller,
                 purpose="remove_counter",
             )
-        return
-    amount = evaluate_value(ctx, spec.get("amount", 1))
-    kind = str(spec.get("counter", "+1/+1"))
-    oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
-    for oid in oids:
-        remove_counters(ctx.state, oid, kind, amount)
+    else:
+        amount = evaluate_value(ctx, spec.get("amount", 1))
+        kind = str(spec.get("counter", "+1/+1"))
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
+        for oid in oids:
+            removed += remove_counters(ctx.state, oid, kind, amount)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = removed
 
 
 @register("remove_counters_from_among")

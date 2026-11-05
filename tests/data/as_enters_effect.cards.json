@@ -1,0 +1,104 @@
+{
+  "_comment": "Shapes for tests/unit/replacement/test_as_enters_effect.py. t_ae_cataclysm is Sin, Unending Cataclysm's middle line on a printed 0/0: a self_enters_with_counters replacement whose as_enters effects remove all counters from any number of artifacts, creatures and enchantments and bind the total, read by the amount. Alive only if the effects and the counters are part of the arrival. t_ae_relic, t_ae_bear and t_ae_shrine are one of each type that may be chosen; t_ae_vault is a land, which may not. t_ae_watcher reads the entering creature's power from an enters trigger.",
+  "cards": [
+    {
+      "id": "t_ae_cataclysm",
+      "name": "Test Cataclysm",
+      "oracle_text": "As Test Cataclysm enters, remove all counters from any number of artifacts, creatures, and enchantments. Test Cataclysm enters with X +1/+1 counters on it, where X is twice the number of counters removed this way.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Leviathan"],
+      "colors": ["B"],
+      "color_identity": ["B"],
+      "power": 0,
+      "toughness": 0,
+      "replacements": [
+        {
+          "event": "self_enters_with_counters",
+          "counter": "+1/+1",
+          "amount": {"times": [{"const": 2}, {"binding": "removed"}]},
+          "as_enters": [
+            {
+              "op": "remove_counters",
+              "all_kinds": true,
+              "objects": {
+                "zone": "battlefield",
+                "any_types": ["Artifact", "Creature", "Enchantment"],
+                "count": "any"
+              },
+              "as": "removed"
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_ae_relic",
+      "name": "Test Charged Relic",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Artifact"],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_ae_bear",
+      "name": "Test Counted Bear",
+      "oracle_text": "",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Bear"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 2,
+      "toughness": 2
+    },
+    {
+      "id": "t_ae_shrine",
+      "name": "Test Counted Shrine",
+      "oracle_text": "",
+      "mana_cost": "{1}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"]
+    },
+    {
+      "id": "t_ae_vault",
+      "name": "Test Counted Vault",
+      "oracle_text": "",
+      "types": ["Land"],
+      "colors": [],
+      "color_identity": []
+    },
+    {
+      "id": "t_ae_watcher",
+      "name": "Test Cataclysm Watcher",
+      "oracle_text": "Whenever another creature you control enters, you gain life equal to its power.",
+      "mana_cost": "{2}",
+      "types": ["Creature"],
+      "subtypes": ["Human"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "power": 1,
+      "toughness": 1,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, you gain life equal to its power.",
+          "trigger": {
+            "event": "permanent_enters",
+            "controller": "you",
+            "filter": {"types": ["Creature"], "exclude_self": true}
+          },
+          "effects": [
+            {
+              "op": "gain_life",
+              "player": "you",
+              "amount": {"power_of": {"binding": "subject"}}
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

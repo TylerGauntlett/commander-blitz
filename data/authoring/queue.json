@@ -248262,12 +248262,12 @@
     },
     "Sin, Unending Cataclysm": {
       "edhrec_rank": 5189,
-      "gate": "template",
+      "gate": null,
       "name": "Sin, Unending Cataclysm",
-      "reason": "no template for: As Sin enters, remove all counters from any number of artifacts, creatures, and enchantmen",
+      "reason": "",
       "scryfall_id": "8e6e92aa-43bc-4be5-97a5-0817e7c3c9a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sindbad": {

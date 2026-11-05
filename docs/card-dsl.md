@@ -1191,6 +1191,43 @@ An unaffordable price is never offered: 118.4 forbids paying life you do not hav
 so `can_pay` is asked first rather than showing a question whose "yes" cannot be
 honoured.
 
+### "As this enters, do something, and it enters with what that did" — `as_enters`
+
+```jsonc
+// Sin, Unending Cataclysm
+{ "event": "self_enters_with_counters", "counter": "+1/+1",
+  "amount": { "times": [{ "const": 2 }, { "binding": "removed" }] },
+  "as_enters": [
+    { "op": "remove_counters", "all_kinds": true,
+      "objects": { "zone": "battlefield",
+                   "any_types": ["Artifact", "Creature", "Enchantment"],
+                   "count": "any" },
+      "as": "removed" } ] }
+```
+
+"As Sin enters, remove all counters from any number of artifacts, creatures, and
+enchantments. Sin enters with X +1/+1 counters on it, where X is twice the
+number of counters removed this way." `as_enters` is a list of effects run as
+part of the arrival (614.1c), and a name they bind is readable by the same
+replacement's `amount`.
+
+The effects are run by `zones.offer_as_enters_effects`, beside
+`offer_riot_choice` and `offer_read_ahead` and from their call sites, for the
+reason the section above gives: `move_object` cannot stop to ask, and nobody
+receives priority between the effects and the arrival. The bindings wait on
+`obj.as_enters_bindings` for `_enter_battlefield`, which clears them. An arrival
+on a route that cannot stop (a token) runs no effects and reads every name as
+unbound, so 0. The replacement's `condition` gates the effects too. The entering
+permanent is not on the battlefield yet, so a battlefield pool never contains
+it.
+
+The near miss is a `self_enters` trigger running the same effects and then
+`add_counters`: the permanent would arrive at its printed size, other enters
+triggers would read that size, and a printed 0/0 would die before the trigger
+resolved. The loader refuses `as_enters` on any event but
+`self_enters_with_counters`, an empty list, and validates each effect with no
+targets — "as this enters" chooses, it never targets.
+
 ### "Target … chosen at random"
 
 ```jsonc
@@ -3201,6 +3238,29 @@ stun first) — so any mix of kinds is expressible. This is the question the
 it is "any number". The loader refuses `any_kind` beside a named `counter`, on
 any op that does not read it, or without `objects`; `up_to` on a named-kind
 removal or without an `amount`; and an amount below one.
+
+### Removing all counters — `remove_counters` with `all_kinds`
+
+```jsonc
+// Sin, Unending Cataclysm — "remove all counters from any number of
+// artifacts, creatures, and enchantments"
+{ "op": "remove_counters", "all_kinds": true,
+  "objects": { "zone": "battlefield",
+               "any_types": ["Artifact", "Creature", "Enchantment"],
+               "count": "any" },
+  "as": "removed" }
+```
+
+Every counter of every kind comes off each of `objects`; the only choice is the
+objects themselves. The near miss is `remove_counters_from_among`, which takes
+counters one at a time from a pool and so lets the controller strip a permanent
+only partly — "all counters" leaves nothing to split. The loader refuses
+`all_kinds` beside `counter`, `amount`, `any_kind` or `up_to`, and without
+`objects`.
+
+`as` on any `remove_counters` binds the total actually removed across every
+object, an int read back with `{"binding": …}` — "the number of counters
+removed this way".
 
 ### Moving a counter of any kind — `move_counters` with `any_kind`
 

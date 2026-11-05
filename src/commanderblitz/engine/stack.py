@@ -51,6 +51,7 @@ from .targeting import (
 from .triggers import fire
 from .zones import (
     move_object,
+    offer_as_enters_effects,
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
@@ -1239,6 +1240,7 @@ def _place_after_resolution(
         # above decides what is arriving, and riot asks about a creature.
         yield from offer_riot_choice(state, obj.oid, controller)
         yield from offer_read_ahead(state, obj.oid, controller)
+        yield from offer_as_enters_effects(state, obj.oid, controller)
     # A resolving spell's arrival is its own simultaneous event, not part of
     # whichever op last bumped the counter -- a token an ability made while this
     # spell waited is an Angel Giada's "already control" must count.

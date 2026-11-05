@@ -1226,6 +1226,24 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}.replacements[{i}]: 'instead_cost' is read only by "
                 f"'self_enters_replaced', not by {replacement.event!r}"
             )
+        if replacement.as_enters is not None:
+            # "As Sin enters, remove all counters from…" The effects are run by
+            # `zones.offer_as_enters_effects` a moment before the arrival, and
+            # only the counters this replacement puts on read what they bind --
+            # on any other event they would run and change nothing about it.
+            if replacement.event != "self_enters_with_counters":
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'as_enters' is read only by "
+                    f"'self_enters_with_counters', not by {replacement.event!r}"
+                )
+            if not replacement.as_enters:
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'as_enters' is empty -- leave it out"
+                )
+            for j, effect in enumerate(replacement.as_enters):
+                # No targets: the clause chooses as the permanent enters and is
+                # never put on the stack, so there is nothing to target with.
+                _validate_effect(effect, f"{where}.replacements[{i}].as_enters[{j}]", {})
         if replacement.counter is not None:
             # "…enters with a vigilance counter on it", "…enters with a shield
             # counter on it." Checked here for the reason the condition below

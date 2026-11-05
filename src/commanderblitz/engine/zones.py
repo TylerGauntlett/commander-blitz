@@ -21,6 +21,7 @@ from .characteristics import (
     player_protected_from,
     protected_from,
 )
+from .effects import execute
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
 from .effects.selectors import resolve_pool, select_players
@@ -1070,6 +1071,61 @@ def offer_read_ahead(state: GameState, oid: int, controller: int):
     obj.read_ahead_chapter = chosen[0] + 1 if chosen else 1
 
 
+def offer_as_enters_effects(state: GameState, oid: int, controller: int):
+    """"As Sin enters, remove all counters from any number of artifacts,
+    creatures, and enchantments. Sin enters with X +1/+1 counters on it, where
+    X is twice the number of counters removed this way."
+
+    A `self_enters_with_counters` replacement's ``as_enters`` effects, run
+    here, beside `offer_riot_choice` and `offer_read_ahead` and from their call
+    sites, for their reason: `move_object` is not a generator and cannot stop
+    for the choice the effects ask, and making it one would put a suspend
+    point inside every zone change in the engine.
+
+    Running them a moment early is not an approximation. 614.1c applies the
+    replacement **during** the zone change and nobody receives priority in
+    between, so no player can act between the effects and the arrival. A
+    `self_enters` trigger running the same effects is the wider card the gap
+    named: the permanent would arrive at its printed size, every other enters
+    trigger would read that size, and an opponent would hold priority with the
+    counters still where they were.
+
+    The permanent itself is not on the battlefield yet, so a battlefield pool
+    cannot find it -- which is the printed answer, since the object entering is
+    not yet one of the "artifacts, creatures, and enchantments".
+
+    The replacement's ``condition`` is judged first, against the board the
+    permanent is arriving on, and a replacement whose condition fails runs
+    nothing. What the effects bind is left on `obj.as_enters_bindings`, keyed
+    by the replacement's index, for `_enter_battlefield` to evaluate the
+    ``amount`` with.
+    """
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    for index, replacement in enumerate(card.replacements):
+        effects = replacement.get("as_enters")
+        if not effects or replacement.get("event") != "self_enters_with_counters":
+            continue
+        if not evaluate_condition(
+            state, replacement.get("condition"), controller=controller, source=oid
+        ):
+            continue
+        ctx = EffectContext(
+            state=state,
+            controller=controller,
+            source_oid=oid,
+            source_name=card.name,
+            x=obj.cast_x,
+        )
+        yield from execute(ctx, effects)
+        bound = obj.as_enters_bindings if obj.as_enters_bindings is not None else {}
+        bound[index] = dict(ctx.bindings)
+        obj.as_enters_bindings = bound
+
+
 def graveyard_hosts(state: GameState, aura_oid: int, controller: int) -> list[int]:
     """The cards in graveyards an Aura's enchant clause allows it to enchant.
 
@@ -1772,11 +1828,15 @@ def _enter_battlefield(
     # and for `sagas.entered` at the end.
     read_ahead = obj.read_ahead_chapter
     obj.read_ahead_chapter = None
+    # And what `offer_as_enters_effects` bound, per replacement, for the
+    # "enters with X counters" amounts below.
+    as_enters_bound = obj.as_enters_bindings or {}
+    obj.as_enters_bindings = None
     _apply_board_enters_tapped(state, obj)
     # A list rather than the tuple itself: a copy applied below appends the
     # copied face's "enters with" counters to it (614.12).
     replacements = list(card.replacements)
-    for replacement in replacements:
+    for index, replacement in enumerate(replacements):
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
         # rather than by a static, because the answer is only ever asked once
@@ -1925,6 +1985,13 @@ def _enter_battlefield(
                 source_oid=obj.oid,
                 x=obj.cast_x,
             )
+            # "…where X is twice the number of counters removed this way"
+            # (Sin): the names this replacement's ``as_enters`` effects bound a
+            # moment ago. Keyed by index, so only the printed card's own
+            # replacements read them -- a copied face's appended "enters with"
+            # sits past the end of the printed list.
+            if replacement.get("as_enters") and index < len(card.replacements):
+                ctx.bindings.update(as_enters_bound.get(index, {}))
             counters = (replacement.get("modify") or {}).get("counters") or {}
             if counters:
                 for kind, amount in counters.items():

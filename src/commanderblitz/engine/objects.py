@@ -378,6 +378,16 @@ class GameObject:
     #:
     #: Survives `reset_permanent_state` for `riot_choice`'s reason.
     read_ahead_chapter: int | None = None
+    #: What a `self_enters_with_counters` replacement's ``as_enters`` effects
+    #: bound -- Sin, Unending Cataclysm's "the number of counters removed this
+    #: way". Recorded by `zones.offer_as_enters_effects` just before the move,
+    #: keyed by the replacement's index on the card, and read -- and cleared --
+    #: by `_enter_battlefield` as the bindings its ``amount`` is evaluated
+    #: with. ``None`` is "nobody was asked": the effects did not happen, so
+    #: the amount reads every name as unbound.
+    #:
+    #: Survives `reset_permanent_state` for `riot_choice`'s reason.
+    as_enters_bindings: dict[int, dict[str, Any]] | None = None
     #: The host an Aura put onto the battlefield without being cast will enchant
     #: (303.4f): a permanent's oid, or a seat in `enters_attached_to_player`.
     #: Recorded by `zones.offer_aura_host` just before the move and read -- and

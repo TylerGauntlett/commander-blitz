@@ -131,6 +131,11 @@ RECORDING_OPS = frozenset(
         #: way", which nothing on the board still shows once they are gone.
         #: See `ops_counters.op_remove_counters_from_among`.
         "remove_counters_from_among",
+        #: The same plain int, summed over every object: Sin, Unending
+        #: Cataclysm's "twice the number of counters removed this way" after
+        #: "remove **all** counters from any number of...". See
+        #: `ops_counters.op_remove_counters`.
+        "remove_counters",
         #: "…for each creature returned to your hand **this way**" -- The Eagles
         #: Are Coming!. Beside `exile` and `sacrifice`, whose bindings it copies
         #: in both shape and accumulating semantics, and it matters here for a

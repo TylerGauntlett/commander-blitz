@@ -239,7 +239,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
               '`amass` — "Amass Zombies N"'),
     "incubate": ("Board", "Incubate N: create a double-faced Incubator artifact token with N +1/+1 counters on it, which transforms for {2} into a 0/0 Phyrexian artifact creature.",
                  '`incubate` — "Incubate N"'),
-    "remove_counters": ("Board", "Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling.",
+    "remove_counters": ("Board", "Remove N counters of a kind; with `any_kind`, of whichever kinds the controller picks, one at a time, and `up_to` makes N a ceiling; with `all_kinds`, every counter of every kind. `as` binds the total removed.",
                         "Removing counters of any kind — `any_kind`"),
     "remove_counters_from_among": ("Board", "Remove counters of any kinds from among a pool of permanents, one at a time; `as` records how many.",
                                    "Removing counters from among permanents — the `remove_counters_from_among` op"),

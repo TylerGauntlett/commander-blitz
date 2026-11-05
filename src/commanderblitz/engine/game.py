@@ -89,6 +89,7 @@ from .turn import _next_blocker_decision
 from .zones import exile as exile_object
 from .zones import (
     move_object,
+    offer_as_enters_effects,
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
@@ -382,6 +383,7 @@ class Game:
         # what the arriving permanent is and riot asks about a creature.
         yield from offer_riot_choice(state, oid, pid)
         yield from offer_read_ahead(state, oid, pid)
+        yield from offer_as_enters_effects(state, oid, pid)
         # Where the land was played from -- "whenever you play a card **from
         # exile**" (Klaw, Master of Sound). Read before the move, which is the
         # last moment the object still says.
