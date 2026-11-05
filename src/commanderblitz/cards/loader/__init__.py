@@ -3356,7 +3356,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # all -- so the ability would never be offered or tapped, whatever
             # the opponent's lands did.
             mana_options = _ANY_TYPE_OPTIONS if mana_reflects_any_type else _ANY_COLOR_OPTIONS
+            # "…add three mana of that type instead." Incubation Druid. The
+            # board picks the type and `amount` says how many of it: the
+            # narrowed options are one-symbol tuples, and `costs.mana_amount`
+            # scales the chosen one through `mana_produced`, the one place the
+            # offer and the payment both read.
             mana_amount = None
+            if "amount" in reflect_effect:
+                _validate_mana_amount(reflect_effect["amount"], f"{where}.amount")
+                amount = reflect_effect["amount"]
+                mana_amount = dict(amount) if isinstance(amount, Mapping) else amount
         elif (
             colors_of := next(
                 (

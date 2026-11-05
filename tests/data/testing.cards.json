@@ -9209,6 +9209,72 @@
       ]
     },
     {
+      "id": "t_incubator",
+      "name": "Test Incubator",
+      "oracle_text": "{T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "power": 0,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              },
+              "any_type": true,
+              "amount": {
+                "sum": [
+                  {
+                    "const": 1
+                  },
+                  {
+                    "times": [
+                      {
+                        "const": 2
+                      },
+                      {
+                        "min": [
+                          {
+                            "counters_on": {
+                              "counter": "+1/+1",
+                              "objects": {
+                                "self_only": true
+                              }
+                            }
+                          },
+                          {
+                            "const": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_orchard",
       "name": "Test Orchard",
       "oracle_text": "{T}: Add one mana of any color that a land an opponent controls could produce.",

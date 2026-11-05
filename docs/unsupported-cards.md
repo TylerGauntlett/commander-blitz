@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**165 cards** blocked by **148** capabilities.
+**164 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -126,7 +126,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
-| [reflecting-mana-amount](#reflecting-mana-amount) | 1 | 647 | engine |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
@@ -1972,20 +1971,6 @@ Blocks **1** card.
 
 - **Endurance** (rank 1343) — `endurance`
   - When this creature enters, up to one target player puts all the cards from their graveyard on the bottom of their library in a random order.
-
-</details>
-
-## reflecting-mana-amount
-
-Blocks **1** card.
-
-- **(engine)** a reflecting mana ability (`add_mana` with `reflecting` + `any_type`) whose output is scaled by a board-reading `amount`, so N mana of the one reflected type is produced; here amount = {"sum": [{"const": 1}, {"times": [{"const": 2}, {"min": [{"counters_on": {"counter": "+1/+1", "objects": {"self_only": true}}}, {"const": 1}]}]}]} (1, or 3 with a +1/+1 counter)
-  <br>Why the existing vocabulary won't do: The loader's reflecting branch (cards/loader/__init__.py, the `reflect is not None` arm of the mana-ability build) hard-sets mana_amount = None, so an `amount` beside `reflecting` is never read and the ability always taps for exactly one mana; `any_one_color` and `split` honour `amount` but offer all five colours rather than what your lands could produce, and an `if` on counters is not allowed inside a mana ability
-
-<details><summary>Cards waiting on this</summary>
-
-- **Incubation Druid** (rank 647) — `incubation_druid`
-  - {T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead.
 
 </details>
 

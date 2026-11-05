@@ -8423,6 +8423,27 @@ read the word and falls through to the loose any-colour reading, which is
 permanents and falls through the same way. Both refusals stand, so the template
 tier declines the card rather than shipping a better one than is printed.
 
+### "add three mana of that type instead" — a reflected amount
+
+```jsonc
+{"op": "add_mana",
+ "reflecting": {"zone": "battlefield", "controller": "you", "types": ["Land"]},
+ "any_type": true,
+ "amount": {"sum": [{"const": 1}, {"times": [{"const": 2},
+   {"min": [{"counters_on": {"counter": "+1/+1", "objects": {"self_only": true}}},
+            {"const": 1}]}]}]}}
+```
+
+Incubation Druid. The board picks the type and `amount` says how many of it:
+the narrowed options stay one-symbol tuples, and `costs.mana_amount` scales the
+chosen one through `mana_produced`, the helper the solver's offer and the
+payment both read. The amount is the ordinary mana `amount` with its ordinary
+refusals (no `x`, no targets, bindings or loop). "If it has a +1/+1 counter,
+three instead" is a clamp, not a condition — an `if` is refused inside a mana
+ability — so it is spelled `1 + 2 * min(counters, 1)`. `any_one_color` with the
+same amount is the near miss and a better card: it offers all five colours off a
+board of Forests.
+
 ## Imprinted mana — "any of the exiled card's colors"
 
 ```jsonc

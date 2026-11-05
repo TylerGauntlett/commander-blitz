@@ -135592,12 +135592,12 @@
     },
     "Incubation Druid": {
       "edhrec_rank": 647,
-      "gate": "template",
+      "gate": null,
       "name": "Incubation Druid",
-      "reason": "no template for: {T}: Add one mana of any type that a land you control could produce. If this creature has ",
+      "reason": "",
       "scryfall_id": "348d4546-3da5-4f78-82f3-9a79d2f9b0d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Incubation Sac": {

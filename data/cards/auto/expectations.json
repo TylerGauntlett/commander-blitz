@@ -7682,6 +7682,10 @@
   "incremental_blight": {
     "zone": "graveyard"
   },
+  "incubation_druid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "incurable_ogre": {
     "zone": "battlefield"
   },

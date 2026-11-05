@@ -89917,6 +89917,118 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "sum": [
+                  {
+                    "const": 1
+                  },
+                  {
+                    "times": [
+                      {
+                        "const": 2
+                      },
+                      {
+                        "min": [
+                          {
+                            "counters_on": {
+                              "counter": "+1/+1",
+                              "objects": {
+                                "self_only": true
+                              }
+                            }
+                          },
+                          {
+                            "const": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              },
+              "any_type": true,
+              "op": "add_mana",
+              "reflecting": {
+                "controller": "you",
+                "types": [
+                  "Land"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "is_mana_ability": true,
+          "kind": "activated",
+          "text": "{T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead."
+        },
+        {
+          "cost": {
+            "mana": "{3}{G}{G}"
+          },
+          "effects": [
+            {
+              "condition": {
+                "cmp": "==",
+                "left": {
+                  "counters_on": {
+                    "counter": "+1/+1",
+                    "objects": {
+                      "self_only": true
+                    }
+                  }
+                },
+                "right": {
+                  "const": 0
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "amount": {
+                    "const": 3
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ]
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{G}{G}: Adapt 3. (If this creature has no +1/+1 counters on it, put three +1/+1 counters on it.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "incubation_druid",
+      "mana_cost": "{1}{G}",
+      "name": "Incubation Druid",
+      "oracle_text": "{T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead.\n{3}{G}{G}: Adapt 3. (If this creature has no +1/+1 counters on it, put three +1/+1 counters on it.)",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
