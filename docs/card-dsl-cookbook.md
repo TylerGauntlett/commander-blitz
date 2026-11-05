@@ -10974,8 +10974,29 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with nothing left to declare a target in |
 | `mode` out of range | the card does not print that bullet |
 | `up_to` / `"any"` / a computed count on a mode-owned spec | `filter_legal` splits stored refs by position, and a caster-chosen size inside a mode leaves no way to say where the next mode's refs begin |
-| `optional` on a mode-owned spec | declining the target is declining the mode, which 601.2b already says |
-| a variable-size *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size in front of them makes the split ambiguous |
+| `optional` on a mode-owned spec that is not the last target declared — not the last spec of its mode, or a later mode owns a target | a declined target stores no ref, so `filter_legal` would read the next spec's ref into its bucket |
+| a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
+
+### "Up to one target" inside a mode
+
+```jsonc
+"targets": [
+  {"id": "pumped", "kind": "permanent", "mode": 0,
+   "selector": {"zone": "battlefield", "types": ["Creature"]}},
+  {"id": "foe", "kind": "permanent", "mode": 2, "optional": true,
+   "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}}
+]
+```
+
+Summon: Magus Sisters' "Fight! — This creature fights **up to one** target
+creature an opponent controls". `optional: true` on a mode-owned spec is
+"zero or `count`", asked when its mode is chosen: a trigger offers declining as
+the last tuple, and `Game._ask_mode_targets` asks a spell's with a floor of
+zero. Because declaring nothing is a legal declaration, the mode stays on offer
+(601.2b) — and in a `random` mode's pool — with nothing to target, where a fixed
+`count: 1` would strike it and force the target whenever one exists. The loader
+admits it only as **the last target declared**: the last spec of its mode, with
+no later mode owning a target, so a declined one shifts no ref after it.
 
 ## "Target creature phases out"
 

@@ -307,10 +307,23 @@ class TestTheLoaderRefusals:
         with pytest.raises(DslError, match="fixed number"):
             self.compile(card)
 
-    def test_an_optional_mode_owned_target(self):
+    def test_an_optional_mode_owned_target_before_another_modes_target(self):
+        """A declined one stores no ref, so a later mode's ref would be read
+        back into its bucket. See tests/unit/modes/test_optional_mode_target.py."""
         card = self.base()
         card["targets"][0]["optional"] = True
-        with pytest.raises(DslError, match="cannot be 'optional'"):
+        card["targets"].append(
+            {
+                "id": "b",
+                "kind": "card_in_graveyard",
+                "mode": 1,
+                "selector": {"zone": "graveyard", "types": ["Land"]},
+            }
+        )
+        card["spell_effects"][0]["modes"][1]["effects"] = [
+            {"op": "return_to_hand", "objects": {"target": "b"}}
+        ]
+        with pytest.raises(DslError, match="must be the last target declared"):
             self.compile(card)
 
     def test_a_variable_card_level_target_beside_a_mode_owned_one(self):

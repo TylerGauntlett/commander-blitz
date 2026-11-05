@@ -1754,8 +1754,17 @@ class Game:
                 # caster-chosen or computed size on a mode-owned spec, because
                 # `filter_legal` splits the stored refs by position.
                 want = int(target_count(state, pid, spec, oid))
+                # "Up to one target" -- `optional`, declinable whether or not
+                # there is something to point at. The loader puts such a spec
+                # last in every declaration, so storing no ref for it shifts
+                # nothing that `filter_legal` reads after it.
                 chosen = yield from ask_targets(
-                    ctx, f"Target for {card.name}", options, want, want, pid
+                    ctx,
+                    f"Target for {card.name}",
+                    options,
+                    0 if spec.optional else want,
+                    want,
+                    pid,
                 )
                 out.extend(chosen)
         return tuple(out)
