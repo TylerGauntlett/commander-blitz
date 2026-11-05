@@ -1,0 +1,18 @@
+{
+  "card_id": "yuna_s_decision",
+  "name": "Yuna's Decision",
+  "oracle_text": "Choose one —\n• Continue the Pilgrimage — Sacrifice a creature. If you do, draw a card, then you may put a creature card and/or a land card from your hand onto the battlefield.\n• Find Another Way — Return one or two target permanent cards from your graveyard to your hand.",
+  "blocked_sentences": [
+    "• Find Another Way — Return one or two target permanent cards from your graveyard to your hand"
+  ],
+  "needs": [
+    {
+      "capability": "mode_owned_variable_targets",
+      "kind": "engine",
+      "what": "a mode-owned target spec (target `mode: 1` on a sorcery whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: \"card_in_graveyard\", count: 2, min_count: 1, up_to: true` over permanent cards in your graveyard -- declared only when the Find Another Way bullet is chosen, while the other bullet (Continue the Pilgrimage) declares no targets at all",
+      "why_existing_wont_do": "`loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position. A fixed `count: 2` would make the mode illegal with only one permanent card in the graveyard and forbid returning just one. A card-level up_to target with no `mode` would be declared, and would need a legal target, even when the caster picks the targetless sacrifice/draw mode. The first bullet can be expressed: `sacrifice` with `as`, an `if` on the binding existing, `draw`, then two `may` + `put_onto_battlefield` from hand (one Creature, one Land)"
+    }
+  ],
+  "closest_existing": ["choose_mode", "target.mode", "target.up_to", "return_from_graveyard"],
+  "confidence": "high"
+}
