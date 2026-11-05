@@ -138725,6 +138725,77 @@
     {
       "abilities": [
         {
+          "activated_by": "you",
+          "affects_abilities": {
+            "any": true
+          },
+          "amount": {
+            "const": 2
+          },
+          "effect": "ability_cost_reduction",
+          "first_during_your_turn": true,
+          "kind": "static",
+          "targeting": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "text": "The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate."
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.",
+          "trigger": {
+            "controller": "any",
+            "event": "becomes_target",
+            "filter": {
+              "controller": "you",
+              "types": [
+                "Creature"
+              ]
+            },
+            "max_per_turn": 1,
+            "targeted_by": "activated_ability"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "professor_hojo",
+      "mana_cost": "{1}{G}",
+      "name": "Professor Hojo",
+      "oracle_text": "The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.\nWhenever one or more creatures you control become the target of an activated ability, draw a card. This ability triggers only once each turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scientist"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "effects": [
             {
               "amount": {

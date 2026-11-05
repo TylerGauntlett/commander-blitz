@@ -705,6 +705,15 @@ class AbilityModel(BaseModel):
     #: it is read when no target exists yet: a reduction applies generously
     #: there and a tax is left out, both of them being generous to the caster.
     targeting: dict[str, Any] | None = None
+    #: `ability_cost_reduction`: "**The first** activated ability you activate
+    #: **during your turn** that targets a creature you control costs {2} less"
+    #: (Professor Hojo). The discount reaches only the activator's first
+    #: activation this turn, on their own turn, that matches `affects_abilities`
+    #: and `targeting` -- counted over every such activation this turn, before
+    #: this permanent arrived included, because "the first" is a fact about the
+    #: activation and not about the static. Requires `targeting`, read on the
+    #: snapshots in `TurnLedger.targeted_activations`.
+    first_during_your_turn: bool = False
     affects_player: Literal["you", "opponent", "any"] | None = None
     #: ``cast_from_graveyard``: this permission is **flashback** -- Lier's "each
     #: instant and sorcery card in your graveyard has flashback. The flashback

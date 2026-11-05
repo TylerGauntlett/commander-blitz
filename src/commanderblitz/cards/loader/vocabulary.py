@@ -1603,11 +1603,21 @@ STATIC_VALUE_KEYS = (
 #: up the first time somebody taps a Talisman.
 #: The classes of activated ability an `ability_cost_reduction` may name.
 #:
-#: One so far. Each is a question the engine can actually answer about a
-#: compiled `Ability` -- `equip` reads `Ability.is_equip` -- and a class with no
-#: marker behind it would load and match nothing, which is the printed line
-#: silently not happening.
-ABILITY_CLASS_KEYS = frozenset({"equip"})
+#: Each is a question the engine can actually answer about a compiled
+#: `Ability` -- `equip` reads `Ability.is_equip`, `any` is every activated
+#: ability ("the first activated ability you activate", Professor Hojo) -- and
+#: a class with no marker behind it would load and match nothing, which is the
+#: printed line silently not happening.
+ABILITY_CLASS_KEYS = frozenset({"equip", "any"})
+
+#: The `targeting` keys an `ability_cost_reduction` with
+#: `first_during_your_turn` may read. "The **first** activated ability … that
+#: targets a creature you control" asks about earlier activations too, whose
+#: targets may since have changed or left; each is matched against the
+#: snapshot `Game._activate` filed in `TurnLedger.targeted_activations` -- its
+#: controller, card types and subtypes as it was targeted -- so only those can
+#: be asked.
+FIRST_ACTIVATION_TARGETING_KEYS = frozenset({"controller", "types", "subtypes"})
 
 
 MANA_RIDER_OPS = frozenset(

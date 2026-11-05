@@ -1208,6 +1208,22 @@ class Game:
         # cost is paid, because a cost that moves the source resets it.
         if (chosen := state.objects[oid].chosen_type) is not None:
             bindings[ACTIVATION_CHOSEN_TYPE] = chosen
+        # "The first activated ability you activate during your turn **that
+        # targets a creature you control**" (Professor Hojo): what this
+        # activation is aimed at, read now -- a cost may sacrifice the very
+        # creature it targets -- and filed only once the cost is paid, so the
+        # pricing below never sees this activation as its own predecessor.
+        aimed = tuple(
+            (
+                target.controller,
+                frozenset(chars(state, target.oid).types),
+                frozenset(chars(state, target.oid).subtypes),
+            )
+            for ref in action.targets
+            if ref.kind == "object"
+            and (target := state.objects.get(ref.id)) is not None
+            and target.zone is Zone.BATTLEFIELD
+        )
         ok = yield from pay(
             state,
             pid,
@@ -1224,6 +1240,9 @@ class Game:
         )
         if not ok:  # pragma: no cover
             return
+        state.turn_ledger.targeted_activations.setdefault(pid, []).append(
+            (bool(getattr(ability, "is_equip", False)), aimed)
+        )
 
         stack.push_activated_ability(
             state,

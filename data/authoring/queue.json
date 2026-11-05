@@ -208092,12 +208092,12 @@
     },
     "Professor Hojo": {
       "edhrec_rank": 5385,
-      "gate": "template",
+      "gate": null,
       "name": "Professor Hojo",
-      "reason": "no template for: The first activated ability you activate during your turn that targets a creature you cont",
+      "reason": "",
       "scryfall_id": "107ffe2e-47eb-43de-bc9e-c68013b62912",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Professor Hulk": {

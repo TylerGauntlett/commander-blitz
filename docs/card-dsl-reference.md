@@ -523,7 +523,7 @@ Every `effect` a `kind: "static"` ability may name. *Player-wide* ones take `aff
 
 | Name | Player-wide | Grantable | Description | Defined in |
 |---|---|---|---|---|
-| `ability_cost_reduction` |  | yes | Activated abilities of matching permanents cost less. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
+| `ability_cost_reduction` |  | yes | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` |  | yes | The player may activate loyalty abilities any time they could cast an instant. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_mana_on_tap` | yes |  | Whenever a matching permanent is tapped for mana, add extra mana. | [Static abilities](card-dsl.md#static-abilities) |
 | `add_subtype` |  | yes | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
@@ -674,7 +674,7 @@ The static effects a `grant_ability` static may hand to another permanent. Defin
 
 | Name | Description | Defined in |
 |---|---|---|
-| `ability_cost_reduction` | Activated abilities of matching permanents cost less. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
+| `ability_cost_reduction` | Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn. | [A static that discounts another permanent's activated ability](card-dsl.md#a-static-that-discounts-another-permanents-activated-ability) |
 | `activate_loyalty_as_though_instant` | The player may activate loyalty abilities any time they could cast an instant. | [grant_ability as a static, and where the line now runs](card-dsl-cookbook.md#grant_ability-as-a-static-and-where-the-line-now-runs) |
 | `add_subtype` | Matching permanents have an extra subtype. | ["…is the chosen type in addition to its other types"](card-dsl-cookbook.md#is-the-chosen-type-in-addition-to-its-other-types) |
 | `attack_tax` | Matching creatures can't attack unless their controller pays (`x_per_attacker`: {X} read off each attacker). | [Pricing an attack rather than forbidding it](card-dsl.md#pricing-an-attack-rather-than-forbidding-it) |

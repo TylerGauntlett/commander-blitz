@@ -2353,6 +2353,43 @@ the payment. Added to the ability's own `mana_reduction` rather than replacing
 it: two cards may both be talking about one activation, and the printed answer
 is that both apply. Generic only and clamped at zero, like every other reduction.
 
+### "The first activated ability you activate during your turn that targets …"
+
+```jsonc
+// Professor Hojo
+{ "kind": "static", "effect": "ability_cost_reduction",
+  "affects_abilities": { "any": true },
+  "activated_by": "you",
+  "targeting": { "controller": "you", "types": ["Creature"] },
+  "first_during_your_turn": true,
+  "amount": { "const": 2 } }
+```
+
+`affects_abilities: {"any": true}` is every activated ability. The loader
+accepts it only beside `targeting`: a mana ability is priced by the payment
+solver, where this static is never read, and with a `targeting` clause that
+gap is moot because a mana ability has no targets (605.1a).
+
+`first_during_your_turn` limits the discount to one activation: the activator's
+first of their own turn that matches the class and `targeting`. The count is of
+**matching** activations, so an ability aimed at an opponent's creature leaves
+the discount for the next one aimed at yours. A matching ability that costs only
+{G} still is the first, and uses up the turn's discount (the {2} has no effect on
+it, by Hojo's ruling). Every activation of the turn counts, including one made
+before this permanent arrived, because "the first" describes the activation and
+not the static.
+
+`Game._activate` records each activation's object targets, with their controller,
+card types and subtypes as they were targeted, in `TurnLedger.targeted_activations`
+once the cost is paid. Earlier activations are matched against that record, since
+the creature one targeted may have died or changed hands since. So `targeting`
+may read only `controller`, `types` and `subtypes` here, and the loader also
+refuses `affects` and any `activated_by` but `you`.
+
+The near miss is `condition: {"is_your_turn": true}`, which discounts every
+activation of the turn rather than the first. `static_max_per_turn` is metered
+per permanent, and only on graveyard-cast permissions.
+
 ### A delayed trigger scoped to one chosen object
 
 ```jsonc

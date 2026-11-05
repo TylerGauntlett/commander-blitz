@@ -1,6 +1,7 @@
 {
  "loader": {
   "ABILITY_CLASS_KEYS": [
+   "any",
    "equip"
   ],
   "ATTACKING_OPS": [
@@ -100,6 +101,11 @@
    "enters_with",
    "name",
    "remove_supertypes"
+  ],
+  "FIRST_ACTIVATION_TARGETING_KEYS": [
+   "controller",
+   "subtypes",
+   "types"
   ],
   "FREE_CAST_FILTER_KEYS": [
    "any_types",

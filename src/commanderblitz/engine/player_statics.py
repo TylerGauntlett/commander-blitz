@@ -1463,9 +1463,12 @@ def ability_cost_reduction(
     printing the ability could ever discount it. Strong Back is an Aura
     discounting somebody else's Equipment.
 
-    ``affects_abilities`` says which abilities. ``equip`` is the only class so
-    far, and it is the reason `Ability.is_equip` exists -- an equip ability is
-    otherwise indistinguishable from any other that attaches something.
+    ``affects_abilities`` says which abilities. ``equip`` is the reason
+    `Ability.is_equip` exists -- an equip ability is otherwise
+    indistinguishable from any other that attaches something -- and ``any`` is
+    every activated ability (Professor Hojo), which the loader accepts only
+    beside a `targeting` clause, since a mana ability is priced where this
+    function is never asked and has no targets anyway (605.1a).
     ``affects`` says whose permanent prints it, matched as an ordinary static
     filter against the permanent the ability is on.
 
@@ -1484,6 +1487,9 @@ def ability_cost_reduction(
     nothing unaffordable survives to be offered. `pay` is handed the action's
     own targets, so the charge is the number the offer showed.
 
+    ``first_during_your_turn`` limits the discount to the activator's first
+    matching activation of their own turn; see `_first_matching_activation`.
+
     Returns a total, clamped and applied by `costs.ability_mana` -- the one
     function `can_pay` and `pay` both reach, so an ability offered at the
     reduced price is also charged at it.
@@ -1495,6 +1501,10 @@ def ability_cost_reduction(
         if static.get("effect") != "ability_cost_reduction":
             continue
         classes = static.get("affects_abilities") or {}
+        if not classes:
+            # The loader requires a class; an empty one would discount every
+            # activated ability on the table, so a compile bug reads as none.
+            continue
         if classes.get("equip") and not getattr(ability, "is_equip", False):
             continue
         # "abilities **you** activate". The activating player, not the
@@ -1520,8 +1530,74 @@ def ability_cost_reduction(
             )
         ):
             continue
+        if static.get("first_during_your_turn") and not _first_matching_activation(
+            state, pid, source_obj, static
+        ):
+            continue
         total += _static_value(state, static.get("amount"), source_obj)
     return total
+
+
+def _first_matching_activation(
+    state: GameState, pid: int, source_obj: GameObject, static: Mapping[str, Any]
+) -> bool:
+    """Would an activation by ``pid`` now be the first one this static counts?
+
+    "**The first** activated ability you activate **during your turn** that
+    targets a creature you control" -- Professor Hojo. Two questions: is it
+    ``pid``'s turn, and has ``pid`` activated, earlier this turn, an ability of
+    the static's class aimed at something its `targeting` names? The earlier
+    ones are asked of `TurnLedger.targeted_activations`, the snapshot filed as
+    each was activated, because their targets may have died or changed since.
+
+    Every activation counts, including one made before this permanent arrived:
+    "the first" is a fact about the activation, the reading the rulings give
+    Esper Sentinel's "the first noncreature spell". The count is of
+    **matching** activations only -- an ability aimed at an opponent's
+    creature, or at no creature, leaves the discount for the next one that
+    does (Hojo's rulings: the discount goes to "the first activated ability
+    you activate during your turn that targets a creature"). Whether the
+    *current* activation matches is `ability_cost_reduction`'s own
+    `targeting` check; this answers only "first".
+
+    One use per turn whether or not the discount saved anything: an ability
+    costing {G} still is the first (the {2} "will have no effect"), and the
+    next one is not.
+    """
+    if state.active_player != pid:
+        return False
+    aimed = static.get("targeting") or {}
+    equip_only = bool((static.get("affects_abilities") or {}).get("equip"))
+    for is_equip, targets in state.turn_ledger.targeted_activations.get(pid, ()):
+        if equip_only and not is_equip:
+            continue
+        if any(_snapshot_matches(snap, source_obj, aimed) for snap in targets):
+            return False
+    return True
+
+
+def _snapshot_matches(
+    snap: tuple[int, frozenset[str], frozenset[str]],
+    source_obj: GameObject,
+    filt: Mapping[str, Any],
+) -> bool:
+    """A `targeting` filter asked of one snapshotted target.
+
+    The keys `FIRST_ACTIVATION_TARGETING_KEYS` admits, read as `_matches`
+    reads them: ``controller`` defaults to "you" and is relative to the
+    static's source, ``types`` is a conjunction, ``subtypes`` any of.
+    """
+    controller, types, subtypes = snap
+    who = str(filt.get("controller", "you"))
+    if who == "you" and controller != source_obj.controller:
+        return False
+    if who == "opponent" and controller == source_obj.controller:
+        return False
+    if (want := filt.get("types")) and not set(want) <= types:
+        return False
+    if (want := filt.get("subtypes")) and not set(want) & subtypes:
+        return False
+    return True
 
 
 def attack_compelled(state: GameState, oid: int) -> bool:

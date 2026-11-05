@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**160 cards** blocked by **145** capabilities.
+**159 cards** blocked by **144** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -34,7 +34,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [venture](#venture) | 2 | 19644 | engine |
 | [wall-0-3-w-defender-token](#wall-0-3-w-defender-token) | 2 | 4347 | token |
 | [x-maximum](#x-maximum) | 2 | 1665 | engine |
-| [ability-cost-reduction-any-first-each-turn](#ability-cost-reduction-any-first-each-turn) | 1 | 5385 | static_effect |
 | [activate-only-as-an-instant](#activate-only-as-an-instant) | 1 | 725 | engine |
 | [active-player-selector](#active-player-selector) | 1 | 12129 | selector |
 | [add-mana-on-tap-any-color](#add-mana-on-tap-any-color) | 1 | 1052 | static_effect |
@@ -638,20 +637,6 @@ Blocks **2** cards.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## ability-cost-reduction-any-first-each-turn
-
-Blocks **1** card.
-
-- **(static_effect)** an ability_cost_reduction static that reaches ANY activated ability (an 'affects_abilities' class meaning every non-mana activated ability), limited to the first such activation by you each turn during your turn (a per-turn use counter, consumed when a matching activation is paid), combined with the existing 'targeting' clause {controller: you, types: [Creature]}
-  <br>Why the existing vocabulary won't do: ability_cost_reduction requires 'affects_abilities' and ABILITY_CLASS_KEYS holds only 'equip', so it cannot name every activated ability; player_statics.ability_cost_reduction never reads a max_per_turn, and static_max_per_turn is accepted only on graveyard-cast/flashback-style statics, so 'the first ... during your turn' cannot be counted (an is_your_turn condition alone would discount every activation, not the first)
-
-<details><summary>Cards waiting on this</summary>
-
-- **Professor Hojo** (rank 5385) — `professor_hojo`
-  - The first activated ability you activate during your turn that targets a creature you control costs {2} less to activate.
 
 </details>
 

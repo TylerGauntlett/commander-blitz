@@ -11769,6 +11769,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "professor_hojo": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "professor_hulk": {
     "battlefield_count": 33,
     "hand_size": {

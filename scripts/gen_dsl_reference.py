@@ -802,7 +802,7 @@ TRIGGER_EVENT_DESCRIPTIONS: dict[str, Entry] = {
 }
 
 STATICS: dict[str, Entry] = {
-    "ability_cost_reduction": ("Activated abilities of matching permanents cost less.",
+    "ability_cost_reduction": ("Activated abilities of a class (`equip`, or `any` beside `targeting`) cost less; `first_during_your_turn` limits it to your first matching activation of your turn.",
                                "A static that discounts another permanent's activated ability"),
     "activate_loyalty_as_though_instant": ("The player may activate loyalty abilities any time they could cast an instant.",
                                            None),
