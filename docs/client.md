@@ -31,9 +31,11 @@ one control* the consequence for the UI.
 Three input paths funnel into the same call, and the third is load-bearing rather than a
 fallback:
 
-1. **Drag** a hand card onto a lane. `Card`'s drag-end hit-tests the `data-dropzone`
-   under the pointer; `canDropOnLane` in `logic/actionMatch.ts` says yes or no, and a no
-   springs the card back with nothing sent.
+1. **Drag** a hand card onto your board. `Card`'s drag-end hit-tests the `data-dropzone`
+   under the pointer, a lane or the mat around it; `dropPlays` in `logic/actionMatch.ts`
+   says yes anywhere on your own board for a card with a legal play, because which row a
+   permanent is drawn in is the server's to decide. A no springs the card back with
+   nothing sent. `canDropOnLane` only says which lane to light.
 2. **Click** a card, then its target. What is targetable comes from the action's own
    `targets`; a click settles only the half it answers, and `uiStore.narrowTargeting`
    leaves the panel to ask the rest. Hovering or focusing a card the targeting skips
