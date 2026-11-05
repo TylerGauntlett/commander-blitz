@@ -1055,6 +1055,42 @@ being targeted and resolving is dropped like any other target.
 `tests/unit/costs/test_x_in_mana_cost.py` pins the spell-target selector, on shipped
 cards as well as on `x_in_mana_cost`.
 
+### "If that spell is countered this way, exile it instead"
+
+```jsonc
+// Force of Negation — "Counter target noncreature spell. If that spell is
+//   countered this way, exile it instead of putting it into its owner's graveyard."
+{ "targets": [ { "id": "t1", "kind": "spell", "selector": { "not_types": ["Creature"] } } ],
+  "spell_effects": [ { "op": "counter", "target": "t1", "exiles": true } ] }
+
+// Transcendent Dragon — "…counter target spell. If that spell is countered this
+//   way, exile it instead of putting it into its owner's graveyard, then you may
+//   cast it without paying its mana cost."
+"effects": [
+  { "op": "counter", "target": "t1", "exiles": true, "as": "countered" },
+  { "op": "may", "prompt": "Cast the exiled card without paying its mana cost?",
+    "effects": [ { "op": "play_exiled", "objects": { "binding": "countered" } } ] } ]
+```
+
+`exiles: true` on `counter` is a replacement on the counter's own zone change
+(614.1a): a spell this op countered goes to exile, not to its owner's graveyard.
+"Countered this way" is the whole condition, so a spell that can't be countered
+stays on the stack and nothing moves (701.6a), and an ability countered has no
+card to move. The spell's own `StackItem.exiles_instead` (`cast_card`'s and
+`play_exiled`'s `exiles`) exiles it too, whichever says it. A non-boolean is a
+load error.
+
+`as` binds the cards this op countered that reached the zone it sent them to,
+which is the "it" a following `play_exiled` casts (`suspend.cast_for_free`, at
+the resolving controller's hands, whoever owns the card). An uncounterable
+spell, a copy (707.10a) and a commander its owner moved to the command zone
+(903.9a) are not in it, so the "may" offers nothing for them.
+
+The near miss is an `exile` op after the counter. By then the card is in a
+graveyard, has fired whatever watches one, and is a new object (400.7) that no
+selector names as "that spell". Exiling a spell *without* countering it is a
+different action and is not this key.
+
 ### Doing something to a spell that is not countering it
 
 ```jsonc
@@ -1066,7 +1102,8 @@ cards as well as on `x_in_mana_cost`.
 
 Rule 701.5a makes **countering** one specific action, and three things are true
 of it and of nothing else: "this spell can't be countered" stops it, the card
-lands in its owner's graveyard, and it is what "whenever a spell is countered"
+leaves the stack for its owner's graveyard unless a replacement such as
+`exiles` sends it elsewhere, and it is what "whenever a spell is countered"
 watches. Returning a spell to a hand shares none of them, so it is a separate op
 rather than a `destination` key on `counter` — which would be a card that
 declines to answer Carnage Tyrant and sets off the wrong triggers when it does.

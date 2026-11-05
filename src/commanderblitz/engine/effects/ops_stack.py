@@ -466,8 +466,27 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
     ``{"sid": {"binding": "sid"}}`` says it without inventing a target the
     printed card does not have -- which would also let the ward creature's
     controller point it somewhere else.
+
+    ``exiles: true`` is "If that spell is countered this way, exile it instead
+    of putting it into its owner's graveyard" -- Force of Negation, Transcendent
+    Dragon. A replacement on this counter's own zone change (614.1a), so it
+    touches only a spell this op actually countered: one that "can't be
+    countered" stays on the stack and nothing moves (701.6a). It is the
+    countering effect saying it, not the spell -- `StackItem.exiles_instead` is
+    the spell's own rider, set by whoever cast it, and either one exiles. Not
+    an `exile` op after the counter: by then the card is in a graveyard, has
+    fired whatever watches graveyards, and is a new object nothing names
+    (400.7).
+
+    ``as`` binds the cards of the spells this op countered that reached the
+    zone it sent them to -- "it" in "then you may cast it", read by
+    `play_exiled`'s ``objects: {"binding": …}``. An uncounterable spell, an
+    ability, a copy (which ceases to exist, 707.10a) and a commander its owner
+    sent to the command zone (903.9a) are not in it.
     """
     state = ctx.state
+    exiles = bool(spec.get("exiles", False))
+    countered: list[int] = []
     target_id = str(spec.get("target", "t1"))
     if "sid" in spec:
         sids = [evaluate_value(ctx, spec["sid"])]
@@ -528,8 +547,14 @@ def op_counter(ctx: EffectContext, spec: Mapping[str, Any]):
                 # instead" is a replacement on the spell, not a resolution
                 # rider, so a countered one is exiled too (`cast_card`'s
                 # ``exiles``).
-                destination = Zone.EXILE if item.exiles_instead else Zone.GRAVEYARD
-                move_object(state, item.oid, destination, to_player=obj.owner, cause="countered")
+                destination = Zone.EXILE if item.exiles_instead or exiles else Zone.GRAVEYARD
+                moved = move_object(
+                    state, item.oid, destination, to_player=obj.owner, cause="countered"
+                )
+                if moved.zone is destination:
+                    countered.append(moved.oid)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = countered
 
 
 @register("reflexive_trigger")

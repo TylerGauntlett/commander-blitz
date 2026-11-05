@@ -180,7 +180,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_ability` | Stack |  | Copy an activated or triggered ability; `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_spell` | Stack |  | Copy a spell; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
-| `counter` | Stack |  | Counter a spell or ability; `unless_pays` is the tax form. | [Effect ops](card-dsl.md#effect-ops) |
+| `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |

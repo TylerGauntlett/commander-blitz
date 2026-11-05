@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**161 cards** blocked by **148** capabilities.
+**159 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -25,7 +25,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
-| [counter-to-exile](#counter-to-exile) | 2 | 266 | op |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
@@ -472,24 +471,6 @@ Blocks **2** cards.
   - You may choose new targets for target spell or ability.
 - **Misdirection** (rank 1562) — `misdirection`
   - Change the target of target spell with a single target.
-
-</details>
-
-## counter-to-exile
-
-Blocks **2** cards.
-
-- **(op)** an option on the `counter` op -- e.g. `to: "exile"` -- that sends the countered spell to exile instead of its owner's graveyard, applying only to spells this instance actually countered ('countered this way'). Wanted by Force of Negation, Dissipate, Void Shatter, Nullify-style exile counters and Hindering Light's cousins.
-  <br>Why the existing vocabulary won't do: `op_counter` (src/commanderblitz/engine/effects/ops_stack.py) unconditionally calls `move_object(..., Zone.GRAVEYARD, cause="countered")` after pulling the item off the stack; the spec accepts only `target`/`sid` and there is no destination key. Chaining `exile` after `counter` cannot reach it either: once countered the spell is no longer a stack object, and `selector_keys` has no way to name the card that a preceding `counter` in the same effect list just moved -- `snapshot` reads a value off an object, not a zone-change replacement. `replace_leaves_battlefield` and `replace_deaths` are battlefield-only and would not see a stack-to-graveyard move.
-- **(op)** an option on the `counter` op that sends the countered spell's card to exile instead of its owner's graveyard (only if it was actually countered, not when it 'can't be countered'), binds that exiled card under `as`, and then lets the effect's controller optionally cast it right away without paying its mana cost (Hullbreacher-style theft of an opponent's spell: Transcendent Dragon, Kheru Spellsnatcher, Spelljack-style counters)
-  <br>Why the existing vocabulary won't do: `counter` takes only `objects`, `sid` and `target` and always moves the card to the graveyard; its only exile path is the spell's own `exiles_instead` flag set by `cast_card`'s `exiles`, which the countering effect cannot set. Following it with `exile` cannot express 'instead of the graveyard' (the card would hit the graveyard first, firing graveyard triggers and letting the owner's graveyard abilities see it) and has no binding to the countered card or to 'if that spell is countered this way'; `cast_card`/`exile` `playable_free` would then need that binding too
-
-<details><summary>Cards waiting on this</summary>
-
-- **Force of Negation** (rank 266) — `force_of_negation`
-  - If that spell is countered this way, exile it instead of putting it into its owner's graveyard.
-- **Transcendent Dragon** (rank 7248) — `transcendent_dragon`
-  - When this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.
 
 </details>
 
@@ -1237,7 +1218,7 @@ Blocks **1** card.
 Blocks **1** card.
 
 - **(op)** a way to move a *targeted* spell off the stack into exile without countering it -- either an `exile` op that accepts a `kind: "spell"` target (reading its stack refs, pulling the item out of `state.stack` and exiling the underlying card), or a `to: "exile"` destination on `counter`. It must work for a variable-size spec, since Mindbreak Trap exiles *any number of* target spells at once, and it must not be a counter: a spell exiled this way was never countered, which is the entire reason the card beats "this spell can't be countered" and "when this spell is countered" triggers. Wanted by Mindbreak Trap, Nexus of Fate-proof exile removal, Spell Queller's cousins and the whole exile-from-the-stack family.
-  <br>Why the existing vocabulary won't do: `op_exile` (src/commanderblitz/engine/effects/ops_board.py) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/commanderblitz/engine/effects/context.py). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and it hard-codes the destination: after `state.stack = [it for it in state.stack if it.sid != sid]` it calls `move_object(..., Zone.GRAVEYARD, cause="countered")`, and its spec accepts only `target`/`sid` -- no destination key (the same gap force_of_negation.json records as `counter_to_exile`, though that card genuinely counters and this one does not). Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/commanderblitz/engine/effects/selectors.py), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
+  <br>Why the existing vocabulary won't do: `op_exile` (src/commanderblitz/engine/effects/ops_board.py) works entirely in oid space -- it calls `choose_objects` on a selector pool, and `{"target": "t1"}` resolves through `ctx.target_oids`, which keeps only refs of `kind == "object"` (src/commanderblitz/engine/effects/context.py). A spell target produces a `stack` ref carrying a *sid*, so pointing `exile` at the target binds nothing and the card would resolve doing literally nothing. `counter` is the only op that reads `ctx.target_sids`, and its `exiles: true` does send the spell to exile -- but as a counter: it is stopped by "can't be countered" and fires `spell_countered`, which is exactly what this card avoids. Reaching for `{"zone": "stack"}` in the `exile` op's `objects` does return stack oids (src/commanderblitz/engine/effects/selectors.py), but that is "exile every spell on the stack", not "exile any number of *target* spells" -- it announces no targets, so nothing is checked at 601.2c or re-checked at 608.2b, and it would eat Mindbreak Trap itself.
 
 <details><summary>Cards waiting on this</summary>
 

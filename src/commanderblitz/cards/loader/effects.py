@@ -3201,6 +3201,10 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             f"{where}: must_block needs 'objects' naming who has to block "
             f"(the attacker defaults to the ability's own source)"
         )
+    if op == "counter" and "exiles" in effect and not isinstance(effect["exiles"], bool):
+        # "Exile it instead" is a yes or a no; a string "false" read as truthy
+        # would exile a spell the card sends to its owner's graveyard.
+        raise DslError(f"{where}: counter's 'exiles' is true or false")
     if op == "counter" and "sid" in effect:
         # Ward's "counter it": the victim is named by value, not chosen. A
         # malformed expression here would evaluate to 0, match no stack item and
