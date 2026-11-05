@@ -100002,12 +100002,12 @@
     },
     "Force of Negation": {
       "edhrec_rank": 266,
-      "gate": "template",
+      "gate": null,
       "name": "Force of Negation",
-      "reason": "no template for: If it's not your turn, you may exile a blue card from your hand rather than pay this spell",
+      "reason": "",
       "scryfall_id": "cb795f86-3721-4ae5-9893-49d7d9973f86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Force of Rage": {
@@ -244212,12 +244212,12 @@
     },
     "Shiko and Narset, Unified": {
       "edhrec_rank": 8290,
-      "gate": "template",
+      "gate": null,
       "name": "Shiko and Narset, Unified",
-      "reason": "no template for: Flurry — Whenever you cast your second spell each turn, copy that spell if it targets a pe",
+      "reason": "",
       "scryfall_id": "5a42fc7d-52ac-4e95-9e04-8f8fa7f687c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shiko, Paragon of the Way": {
@@ -291182,12 +291182,12 @@
     },
     "Transcendent Dragon": {
       "edhrec_rank": 7248,
-      "gate": "template",
+      "gate": null,
       "name": "Transcendent Dragon",
-      "reason": "no template for: When this creature enters, if you cast it, counter target spell. If that spell is countere",
+      "reason": "",
       "scryfall_id": "3c9a4205-eda8-4858-9d46-2428058c94fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Transcendent Envoy": {
@@ -307772,12 +307772,12 @@
     },
     "Voracious Bibliophile": {
       "edhrec_rank": 7849,
-      "gate": "template",
+      "gate": null,
       "name": "Voracious Bibliophile",
-      "reason": "no template for: Whenever you cast a spell with one or more targets, draw that many cards",
+      "reason": "",
       "scryfall_id": "77d2c30b-3130-4d9d-bd3d-484fe6dc306d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voracious Brood": {

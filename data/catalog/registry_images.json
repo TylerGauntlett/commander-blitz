@@ -5180,6 +5180,10 @@
     "artist": "Aleksi Briclot",
     "scryfall_id": "97b2c000-a4ee-4b7b-b42d-e538de6896df"
   },
+  "force_of_negation": {
+    "artist": "Viacom",
+    "scryfall_id": "cb795f86-3721-4ae5-9893-49d7d9973f86"
+  },
   "force_of_will": {
     "artist": "Rovina Cai",
     "scryfall_id": "7a87f8bc-1b3e-4cb2-9343-5f008e942411"
@@ -12816,6 +12820,10 @@
     "artist": "Josu Hernaiz",
     "scryfall_id": "059164e1-894d-4586-9800-e60d6fbd6eb6"
   },
+  "shiko_and_narset_unified": {
+    "artist": "Chris Rallis",
+    "scryfall_id": "5a42fc7d-52ac-4e95-9e04-8f8fa7f687c8"
+  },
   "shimmer_dragon": {
     "artist": "Lie Setiawan",
     "scryfall_id": "826201fc-f7cb-43b5-988a-6b668d19fc2f"
@@ -15335,6 +15343,10 @@
     "artist": "Heather Hudson",
     "scryfall_id": "212bd0a7-c61a-403d-b898-2042b84b9020"
   },
+  "transcendent_dragon": {
+    "artist": "Diego Gisbert",
+    "scryfall_id": "3c9a4205-eda8-4858-9d46-2428058c94fc"
+  },
   "transcendent_envoy": {
     "artist": "Zezhou Chen",
     "scryfall_id": "363a88de-c9ae-41b8-a8d8-321a1b95a427"
@@ -16278,6 +16290,10 @@
   "volunteer_militia": {
     "artist": "Lin Yan",
     "scryfall_id": "0af243f6-ef28-49d1-afeb-ac03d568ed6a"
+  },
+  "voracious_bibliophile": {
+    "artist": "Camille Alquier",
+    "scryfall_id": "77d2c30b-3130-4d9d-bd3d-484fe6dc306d"
   },
   "vorel_of_the_hull_clade": {
     "artist": "Mike Bierek",

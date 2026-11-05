@@ -65763,6 +65763,50 @@
     },
     {
       "alternative_cost": {
+        "condition": {
+          "is_your_turn": false
+        },
+        "exile_from_hand": {
+          "colors": [
+            "U"
+          ]
+        }
+      },
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "force_of_negation",
+      "mana_cost": "{1}{U}{U}",
+      "name": "Force of Negation",
+      "oracle_text": "If it's not your turn, you may exile a blue card from your hand rather than pay this spell's mana cost.\nCounter target noncreature spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "exiles": true,
+          "op": "counter",
+          "target": "t1"
+        }
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "spell",
+          "selector": {
+            "not_types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
+      "alternative_cost": {
         "exile_from_hand": {
           "colors": [
             "U"
@@ -163174,6 +163218,83 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "targets_of_spell": [
+                    "permanent",
+                    "player"
+                  ]
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "else": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "if",
+              "then": [
+                {
+                  "new_targets": true,
+                  "op": "copy_spell"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Flurry — Whenever you cast your second spell each turn, copy that spell if it targets a permanent or player, and you may choose new targets for the copy. If you don't copy a spell this way, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "spell_cast",
+            "nth": 2
+          }
+        }
+      ],
+      "color_identity": [
+        "R",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "R",
+        "U",
+        "W"
+      ],
+      "id": "shiko_and_narset_unified",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{1}{U}{R}{W}",
+      "name": "Shiko and Narset, Unified",
+      "oracle_text": "Flying, vigilance\nFlurry — Whenever you cast your second spell each turn, copy that spell if it targets a permanent or player, and you may choose new targets for the copy. If you don't copy a spell this way, draw a card.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Spirit",
+        "Dragon"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 4,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "self_only": true
           },
@@ -196983,6 +197104,72 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "as": "countered",
+              "exiles": true,
+              "op": "counter",
+              "target": "t1"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "countered"
+                  },
+                  "op": "play_exiled"
+                }
+              ],
+              "op": "may",
+              "prompt": "Cast the exiled card without paying its mana cost?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "spell",
+              "selector": {}
+            }
+          ],
+          "text": "When this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.",
+          "trigger": {
+            "condition": {
+              "was_cast": true
+            },
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "transcendent_dragon",
+      "keywords": [
+        "flash",
+        "flying"
+      ],
+      "mana_cost": "{4}{U}{U}",
+      "name": "Transcendent Dragon",
+      "oracle_text": "Flash\nFlying\nWhen this creature enters, if you cast it, counter target spell. If that spell is countered this way, exile it instead of putting it into its owner's graveyard, then you may cast it without paying its mana cost.",
+      "power": 4,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_spells": {
             "controller": "you",
             "subtypes": [
@@ -208819,6 +209006,60 @@
         "Soldier"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "binding": "spell_target_count"
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever you cast a spell with one or more targets, draw that many cards.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "spell_target_count"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "you",
+            "event": "spell_cast",
+            "recheck": false
+          }
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "voracious_bibliophile",
+      "keywords": [
+        "flying",
+        "vigilance"
+      ],
+      "mana_cost": "{3}{U}",
+      "name": "Voracious Bibliophile",
+      "oracle_text": "Flying, vigilance\nWhenever you cast a spell with one or more targets, draw that many cards.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Dragon"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

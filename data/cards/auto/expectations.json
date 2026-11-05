@@ -5735,6 +5735,12 @@
   "forbidding_watchtower": {
     "zone": "battlefield"
   },
+  "force_of_negation": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "force_of_will": {
     "hand_size": {
       "0": 1
@@ -13866,6 +13872,16 @@
     },
     "zone": "battlefield"
   },
+  "shiko_and_narset_unified": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "shimmer_dragon": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16596,6 +16612,16 @@
   "tranquil_thicket": {
     "zone": "battlefield"
   },
+  "transcendent_dragon": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "transcendent_envoy": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -17656,6 +17682,16 @@
     "zone": "battlefield"
   },
   "volunteer_militia": {
+    "zone": "battlefield"
+  },
+  "voracious_bibliophile": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "vorinclex_voice_of_hunger": {
