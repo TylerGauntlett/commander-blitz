@@ -7771,6 +7771,15 @@
     },
     "zone": "battlefield"
   },
+  "inspiring_call": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
+  },
   "inspiring_cleric": {
     "life": {
       "0": 44
@@ -9071,6 +9080,10 @@
     },
     "zone": "battlefield"
   },
+  "lord_jyscal_guado": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lord_of_the_accursed": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9221,6 +9234,10 @@
     },
     "zone": "battlefield"
   },
+  "lulu_stern_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lumbering_falls": {
     "zone": "battlefield"
   },
@@ -9309,6 +9326,10 @@
         "haste"
       ]
     },
+    "zone": "battlefield"
+  },
+  "maester_seymour": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "magefire_wings": {
@@ -10757,6 +10778,13 @@
   "nyxborn_seaguard": {
     "zone": "battlefield"
   },
+  "o_aka_traveling_merchant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "oaken_siren": {
     "zone": "battlefield"
   },
@@ -11890,6 +11918,9 @@
   "prosperous_thief": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "protection_magic": {
+    "zone": "graveyard"
   },
   "proteus_staff": {
     "battlefield_count": 33,

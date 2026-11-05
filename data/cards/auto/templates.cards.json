@@ -90989,6 +90989,54 @@
       ]
     },
     {
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "inspiring_call",
+      "mana_cost": "{2}{G}",
+      "name": "Inspiring Call",
+      "oracle_text": "Draw a card for each creature you control with a +1/+1 counter on it. Those creatures gain indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy them.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "count": {
+              "controller": "you",
+              "has_counters": "+1/+1",
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "op": "draw",
+          "player": "you"
+        },
+        {
+          "duration": "until_end_of_turn",
+          "keywords": [
+            "indestructible"
+          ],
+          "objects": {
+            "controller": "you",
+            "count": "all",
+            "has_counters": "+1/+1",
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "op": "grant_keyword"
+        }
+      ],
+      "types": [
+        "Instant"
+      ]
+    },
+    {
       "abilities": [
         {
           "effects": [
@@ -107057,6 +107105,67 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "clue_token"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of each end step, if you put a counter on a creature this turn, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_put_this_turn": {
+                  "player": "you",
+                  "types": [
+                    "Creature"
+                  ]
+                }
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "any",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "lord_jyscal_guado",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{1}{W}",
+      "name": "Lord Jyscal Guado",
+      "oracle_text": "Flying\nAt the beginning of each end step, if you put a counter on a creature this turn, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Spirit",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects": {
             "controller": "you",
             "exclude_self": true,
@@ -109055,6 +109164,92 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "stun",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking_player": "you",
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever an opponent attacks you, choose target creature attacking you. Put a stun counter on that creature.",
+          "trigger": {
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "count": {
+                  "attacking_player": "you",
+                  "binding": "attackers"
+                }
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "controller": "opponent",
+            "defending": "you",
+            "event": "creatures_attack_player"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{U}"
+          },
+          "effects": [
+            {
+              "op": "proliferate"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{U}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "lulu_stern_guardian",
+      "mana_cost": "{2}{U}",
+      "name": "Lulu, Stern Guardian",
+      "oracle_text": "Whenever an opponent attacks you, choose target creature attacking you. Put a stun counter on that creature.\n{3}{U}: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Wizard"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },
@@ -110338,6 +110533,96 @@
         "Legendary"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, put a number of +1/+1 counters equal to Maester Seymour's power on another target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{3}{G}{G}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "counters_on": {
+                  "counter": "any",
+                  "objects": {
+                    "controller": "you",
+                    "count": "all",
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  }
+                }
+              },
+              "op": "monstrosity"
+            }
+          ],
+          "kind": "activated",
+          "text": "{3}{G}{G}: Monstrosity X, where X is the number of counters among creatures you control. (If this creature isn't monstrous, put X +1/+1 counters on it and it becomes monstrous.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "maester_seymour",
+      "mana_cost": "{2}{G}",
+      "name": "Maester Seymour",
+      "oracle_text": "At the beginning of combat on your turn, put a number of +1/+1 counters equal to Maester Seymour's power on another target creature you control.\n{3}{G}{G}: Monstrosity X, where X is the number of counters among creatures you control. (If this creature isn't monstrous, put X +1/+1 counters on it and it becomes monstrous.)",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Elf",
+        "Cleric"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -126289,6 +126574,55 @@
       "abilities": [
         {
           "cost": {
+            "remove_counters_from_among": {
+              "count": 1,
+              "not_types": [
+                "Land"
+              ]
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Remove a counter from a nonland permanent you control: Draw a card."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "id": "o_aka_traveling_merchant",
+      "mana_cost": "{1}{U}",
+      "name": "O'aka, Traveling Merchant",
+      "oracle_text": "{T}, Remove a counter from a nonland permanent you control: Draw a card.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Citizen"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "cost": {
             "tap": true
           },
           "effects": [
@@ -140552,6 +140886,48 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "protection_magic",
+      "mana_cost": "{1}{W}",
+      "name": "Protection Magic",
+      "oracle_text": "Put a shield counter on each of up to three target creatures. (If a creature with a shield counter would be dealt damage or destroyed, remove a shield counter from it instead.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 1
+          },
+          "counter": "shield",
+          "objects": {
+            "target": "t1"
+          },
+          "op": "add_counters"
+        }
+      ],
+      "targets": [
+        {
+          "count": 3,
+          "id": "t1",
+          "kind": "permanent",
+          "selector": {
+            "types": [
+              "Creature"
+            ],
+            "zone": "battlefield"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

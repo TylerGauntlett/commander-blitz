@@ -137722,12 +137722,12 @@
     },
     "Inspiring Call": {
       "edhrec_rank": 270,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Call",
-      "reason": "no template for: Draw a card for each creature you control with a +1/+1 counter on it. Those creatures gain",
+      "reason": "",
       "scryfall_id": "2555ec7b-5cc2-4ffd-9344-6368019feff9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspiring Captain": {
@@ -161212,12 +161212,12 @@
     },
     "Lord Jyscal Guado": {
       "edhrec_rank": 10563,
-      "gate": "template",
+      "gate": null,
       "name": "Lord Jyscal Guado",
-      "reason": "no template for: At the beginning of each end step, if you put a counter on a creature this turn, investiga",
+      "reason": "",
       "scryfall_id": "134ef3cd-01ac-4d60-a277-df7ab7b8f88c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lord Magnus": {
@@ -162702,12 +162702,12 @@
     },
     "Lulu, Stern Guardian": {
       "edhrec_rank": 3698,
-      "gate": "template",
+      "gate": null,
       "name": "Lulu, Stern Guardian",
-      "reason": "no template for: Whenever an opponent attacks you, choose target creature attacking you. Put a stun counter",
+      "reason": "",
       "scryfall_id": "99cb1ba3-e16b-414d-8682-fb3b2f350ea2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lumaret's Favor": {
@@ -164202,12 +164202,12 @@
     },
     "Maester Seymour": {
       "edhrec_rank": 3869,
-      "gate": "template",
+      "gate": null,
       "name": "Maester Seymour",
-      "reason": "no template for: At the beginning of combat on your turn, put a number of +1/+1 counters equal to 's power ",
+      "reason": "",
       "scryfall_id": "5861c54a-6385-46d2-8daa-83fd717d6928",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maestros Ascendancy": {
@@ -189912,12 +189912,12 @@
     },
     "O'aka, Traveling Merchant": {
       "edhrec_rank": 3541,
-      "gate": "template",
+      "gate": null,
       "name": "O'aka, Traveling Merchant",
-      "reason": "no template for: {T}, Remove a counter from a nonland permanent you control: Draw a card",
+      "reason": "",
       "scryfall_id": "9d860089-fb88-4736-b7f4-b605551bedc8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "O-Kagachi, Vengeful Kami": {
@@ -208712,12 +208712,12 @@
     },
     "Protection Magic": {
       "edhrec_rank": 4341,
-      "gate": "template",
+      "gate": null,
       "name": "Protection Magic",
-      "reason": "no template for: Put a shield counter on each of up to three target creatures",
+      "reason": "",
       "scryfall_id": "2d4f9623-fd04-4377-b7cf-fbd896ebe03f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Protection Racket": {
