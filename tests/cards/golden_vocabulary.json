@@ -278,6 +278,7 @@
   ],
   "NOT_A_CAST_TIME_COST": [
    "discard_self",
+   "discard_x",
    "exile_self",
    "exile_self_from_hand",
    "loyalty",
@@ -635,6 +636,7 @@
    "you"
   ],
   "STATIC_VALUE_KEYS": [
+   "commander_casts_this_game",
    "const",
    "count",
    "counters_on",

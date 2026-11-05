@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**164 cards** blocked by **153** capabilities.
+**162 cards** blocked by **151** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -53,7 +53,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [choose-card-type-from-list](#choose-card-type-from-list) | 1 | 611 | op |
 | [chosen-card-type-cost-reduction](#chosen-card-type-cost-reduction) | 1 | 611 | static_effect |
 | [combat-damage-amount-binding](#combat-damage-amount-binding) | 1 | 8933 | value |
-| [commander-casts-this-game](#commander-casts-this-game) | 1 | 8233 | value |
 | [companion](#companion) | 1 | 3861 | engine |
 | [conditional-mana-ability](#conditional-mana-ability) | 1 | 180 | engine |
 | [conditional-play-exiled-with-source](#conditional-play-exiled-with-source) | 1 | 4225 | static_effect |
@@ -65,7 +64,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [crime](#crime) | 1 | 2244 | trigger_event |
 | [dealt-damage-to-player-this-turn](#dealt-damage-to-player-this-turn) | 1 | 15516 | selector |
 | [delirium](#delirium) | 1 | 1799 | value |
-| [discard-x-cost](#discard-x-cost) | 1 | 2013 | cost |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distinct-names-count](#distinct-names-count) | 1 | 9555 | value |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
@@ -919,20 +917,6 @@ Blocks **1** card.
 
 </details>
 
-## commander-casts-this-game
-
-Blocks **1** card.
-
-- **(value)** admit the existing value leaf `commander_casts_this_game` (a player spec, here "you"; the 903.8 tally summed over the player's commanders from Player.commander_tax) into STATIC_VALUE_KEYS, so a `buff` static with affects {controller: you, types: [Creature]} can take power and toughness {"times": [{"const": 1}, {"commander_casts_this_game": "you"}]} or the leaf directly, recomputed continuously as the tally rises
-  <br>Why the existing vocabulary won't do: `commander_casts_this_game` (and `command_zone_casts_of`) exist only in value_keys for one-shot effects; static_value_keys omits them and the loader rejects any static magnitude leaf outside that set. `spells_cast_this_turn` is per-turn and counts every spell; `pump` on a trigger would wear off and miss creatures entering later, so the anthem needs the static form
-
-<details><summary>Cards waiting on this</summary>
-
-- **Commander's Insignia** (rank 8233) — `commander_s_insignia`
-  - Creatures you control get +1/+1 for each time you've cast your commander from the command zone this game.
-
-</details>
-
 ## companion
 
 Blocks **1** card.
@@ -1088,20 +1072,6 @@ Blocks **1** card.
 
 - **Dragon's Rage Channeler** (rank 1799) — `dragon_s_rage_channeler`
   - Delirium — As long as there are four or more card types among cards in your graveyard, this creature gets +2/+2, has flying, and attacks each combat if able.
-
-</details>
-
-## discard-x-cost
-
-Blocks **1** card.
-
-- **(cost)** an activated-ability cost 'Discard X cards' where X is announced on activation (601.2b, bounded by cards in hand), the cards discarded as the cost, and X readable by the ability's effects via {"x": true} -- here the amount of a look_at_top/exile of the targeted opponent's library with playable_free
-  <br>Why the existing vocabulary won't do: Cost.discard is a fixed int (Cost.from_spec does int(spec['discard'])); x_value only defines the {X} of a mana cost and is refused without {X} in mana; pay_life_x is the announced-X analogue but for life only; times multiplies the mana half and is read only by may's pay. Nothing announces an X that sizes a discard cost
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gix, Yawgmoth Praetor** (rank 2013) — `gix_yawgmoth_praetor`
-  - {4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's library. You may play lands and cast spells from among cards exiled this way without paying their mana costs.
 
 </details>
 

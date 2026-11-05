@@ -789,6 +789,26 @@ then. The near miss is `spells_cast_this_game`, which counts every spell from
 every zone. A copy of a permanent spell resolves as a token (706.10, via
 `put_copy_on_stack`), so the creature form needs nothing further.
 
+### An anthem for each commander cast
+
+```jsonc
+{ "kind": "static",
+  "effect": "buff",
+  "affects": { "controller": "you", "types": ["Creature"] },
+  "power": { "commander_casts_this_game": "you" },
+  "toughness": { "commander_casts_this_game": "you" } }
+```
+
+"Creatures you control get +1/+1 for each time you've cast your commander from
+the command zone this game." (Commander's Insignia.) The same 903.8 tally as the
+copy count above, read as a static magnitude: `_static_value` sums
+`Player.commander_tax` over the source controller's commanders, so a stolen
+Insignia counts its new controller's casts. The tax write bumps `char_version`,
+so the anthem grows the moment the cast is made and covers creatures that enter
+later. A static takes `"you"` only. The near miss is a `pump` on a cast trigger,
+which wears off and misses later arrivals; `spells_cast_this_turn` counts every
+spell, and only this turn. A step bigger than one is `times` with a `const`.
+
 ### Gravestorm — permanents put into a graveyard from the battlefield
 
 ```jsonc

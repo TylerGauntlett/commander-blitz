@@ -1268,6 +1268,11 @@ def can_pay(
         return False
     if cost.discard and len(_discard_pool(state, pid, cost, source_oid)) < cost.discard:
         return False
+    if cost.discard_x and x > len(_discard_pool(state, pid, cost, source_oid)):
+        # "Discard X cards" at the announced number. X = 0 is always payable,
+        # the `loyalty_x` floor, which is what lets legality offer the ability
+        # with an empty hand and `game._activate` bound X by `discard_x_ceiling`.
+        return False
     if cost.exile_self:
         # "Exile this artifact" -- the source has to still be on the battlefield
         # to exile, checked for the same reason `discard_self` checks the hand:
@@ -1397,6 +1402,18 @@ def can_pay(
         ):
             return False
     return True
+
+
+def discard_x_ceiling(
+    state: GameState, pid: int, cost: Cost, source_oid: int | None = None
+) -> int:
+    """The most X a ``discard_x`` cost may announce: the cards it may take.
+
+    The one bound `legality._ability_aims` and `game._activate` both use, read
+    off the pool `can_pay` and `pay` read, so the offer, the question and the
+    charge cannot disagree.
+    """
+    return len(_discard_pool(state, pid, cost, source_oid))
 
 
 def _discard_pool(
@@ -1852,6 +1869,13 @@ def pay(
         picked = yield from ask_objects(
             ctx, "Discard", pool, cost.discard, cost.discard, pid, "discard"
         )
+        yield from _discard(state, pid, picked)
+
+    if cost.discard_x and x > 0:
+        # Exactly the announced number, chosen now (601.2h) by the payer --
+        # `game._activate` bounded X by this same pool.
+        pool = _discard_pool(state, pid, cost, source_oid)
+        picked = yield from ask_objects(ctx, f"Discard {x}", pool, x, x, pid, "discard")
         yield from _discard(state, pid, picked)
 
     if cost.discard_self and source_oid is not None:

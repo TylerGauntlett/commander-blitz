@@ -391,6 +391,16 @@ class Cost:
     #: ``loyalty is not None`` -- sees one; `costs.can_pay` and `costs.pay` read
     #: the announced ``x`` for the amount.
     loyalty_x: bool = False
+    #: "{4}{B}{B}{B}, **Discard X cards**: ..." -- Gix, Yawgmoth Praetor. The
+    #: controller announces X as the ability is activated (601.2b, 107.3),
+    #: bounded by the cards in hand the cost may take (`discard_selector`
+    #: narrows them, the source is never among them), and discards exactly
+    #: that many as the cost; the ability's effects read the number back with
+    #: ``{"x": true}``. `costs.can_pay` and `costs.pay` read the announced
+    #: ``x``, the way they read it for ``loyalty_x``. A flag beside ``discard``
+    #: rather than a spelling of it, because ``discard`` is a number the card
+    #: fixes and this one is the player's.
+    discard_x: bool = False
     exile_from_graveyard: Mapping[str, Any] | None = None
     #: How much less **this cost node** costs -- `{"count": filter}`,
     #: `{"total_power": filter}` or a flat `{"amount": N}`, any of them optionally
@@ -456,6 +466,7 @@ class Cost:
                 dict(spec["discard_selector"]) if spec.get("discard_selector") else None
             ),
             discard_self=bool(spec.get("discard_self", False)),
+            discard_x=bool(spec.get("discard_x")),
             pay_life=(
                 dict(spec["pay_life"])
                 if isinstance(spec.get("pay_life"), Mapping)
@@ -534,6 +545,7 @@ class Cost:
             and self.untap_permanents is None
             and self.remove_counters_from_among is None
             and self.discard == 0
+            and not self.discard_x
             and not self.discard_self
             # Without this the payment solver would treat Millikin as a plain
             # tap-for-mana source and take the {C} without ever milling.
@@ -583,6 +595,8 @@ class Cost:
             parts.append(f"Mill {self.mill}")
         if self.discard:
             parts.append(f"Discard {self.discard}")
+        if self.discard_x:
+            parts.append("Discard X")
         if self.discard_self:
             parts.append("Discard this card")
         if self.exile_self:

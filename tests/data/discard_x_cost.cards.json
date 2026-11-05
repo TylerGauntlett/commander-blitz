@@ -1,0 +1,62 @@
+{
+  "_comment": "Cards for tests/unit/costs/test_discard_x_cost.py. `t_dx_engine` is Gix, Yawgmoth Praetor's 'Discard X cards' cost reduced to 'you gain X life', so the X the effect reads is visible on a life total. `t_dx_lands` narrows the cost with `discard_selector` ('Discard X land cards'), so the ceiling is the matching cards and not the hand. `t_dx_aimer` is the shape whose target filter reads X ('with mana value X'), so the announcement has to come before the targets; it costs {4} so that it is never its own aim.",
+  "cards": [
+    {
+      "id": "t_dx_engine",
+      "name": "Test Discard X Engine",
+      "oracle_text": "{1}, Discard X cards: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{1}, Discard X cards: You gain X life.",
+          "cost": {"mana": "{1}", "discard_x": true},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_dx_lands",
+      "name": "Test Discard X Lands",
+      "oracle_text": "Discard X land cards: You gain X life.",
+      "mana_cost": "{2}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Discard X land cards: You gain X life.",
+          "cost": {"discard_x": true, "discard_selector": {"types": ["Land"]}},
+          "effects": [{"op": "gain_life", "player": "you", "amount": {"x": true}}]
+        }
+      ]
+    },
+    {
+      "id": "t_dx_aimer",
+      "name": "Test Discard X Aimer",
+      "oracle_text": "Discard X cards: Destroy target artifact with mana value X.",
+      "mana_cost": "{4}",
+      "types": ["Artifact"],
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "Discard X cards: Destroy target artifact with mana value X.",
+          "cost": {"discard_x": true},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": 1,
+              "selector": {
+                "zone": "battlefield",
+                "types": ["Artifact"],
+                "mana_value": {"op": "=", "value": {"x": true}}
+              }
+            }
+          ],
+          "effects": [{"op": "destroy", "objects": {"target": "t1"}}]
+        }
+      ]
+    }
+  ]
+}

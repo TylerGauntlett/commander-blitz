@@ -1732,6 +1732,22 @@ def _static_value(state: GameState, expr: Any, source: GameObject) -> int:
             ),
             default=0,
         )
+    if "commander_casts_this_game" in expr:
+        # Commander's Insignia: "Creatures you control get +1/+1 for each time
+        # you've cast your commander from the command zone this game." The
+        # effect side's leaf: rule 903.8's tally, `Player.commander_tax`, which
+        # `Game` bumps once per cast from the command zone, summed over
+        # `commanders_of` the source's controller so partners both count and no
+        # other tax entry can. Only a commander's owner may cast it from the
+        # command zone, so the owner's tally is "you've cast". A pipeline input:
+        # no layer writes the tally, and the write bumps `char_version`, so the
+        # anthem grows the moment the cast is made.
+        pids = _static_players(state, source, expr["commander_casts_this_game"])
+        return sum(
+            state.players[pid].commander_tax.get(oid, 0)
+            for pid in pids
+            for oid in state.commanders_of(pid)
+        )
     if "extreme_value" in expr:
         # Dragon Man, Reformed Robot: "power is equal to the greatest mana value
         # among noncreature permanents you control and noncreature cards in your

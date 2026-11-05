@@ -50792,12 +50792,12 @@
     },
     "Commander's Insignia": {
       "edhrec_rank": 8233,
-      "gate": "template",
+      "gate": null,
       "name": "Commander's Insignia",
-      "reason": "no template for: Creatures you control get +1/+1 for each time you've cast your commander from the command ",
+      "reason": "",
       "scryfall_id": "12b2b04b-27d1-4b5d-9bd6-9678f203cf20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Commander's Plate": {
@@ -109902,12 +109902,12 @@
     },
     "Gix, Yawgmoth Praetor": {
       "edhrec_rank": 2013,
-      "gate": "template",
+      "gate": null,
       "name": "Gix, Yawgmoth Praetor",
-      "reason": "no template for: Whenever a creature deals combat damage to one of your opponents, its controller may pay 1",
+      "reason": "",
       "scryfall_id": "f1de9d89-4cbf-453b-ab6d-88090bd7a204",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gixian Infiltrator": {

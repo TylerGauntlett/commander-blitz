@@ -191,6 +191,26 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
                 f"{where}.cost: 'loyalty_x' announces this ability's X, so the "
                 f"cost may not carry a second X in 'mana' or 'pay_life_x'"
             )
+    if model.discard_x:
+        # "Discard X cards". The same three refusals as `loyalty_x`: only an
+        # activated ability announces an X here (`Game._activate`), a fixed
+        # `discard` beside it is a second number for one payment, and a second
+        # announced X would leave one of the two never asked.
+        if not defines_x:
+            raise DslError(
+                f"{where}.cost: 'discard_x' is announced as an activated ability "
+                f"is activated, and this is not one -- nothing else would ask for X"
+            )
+        if model.discard:
+            raise DslError(
+                f"{where}.cost: 'discard_x' is the whole discard (X cards); give it "
+                f"or 'discard', not both (got discard {model.discard!r})"
+            )
+        if "X" in str(model.mana or "").upper() or model.pay_life_x or model.loyalty_x:
+            raise DslError(
+                f"{where}.cost: 'discard_x' announces this ability's X, so the "
+                f"cost may not carry a second X in 'mana', 'pay_life_x' or 'loyalty_x'"
+            )
     if model.put_counters is not None:
         _validate_put_counters(model.put_counters, where, defines_x=defines_x)
     if model.blight < 0:
@@ -247,8 +267,10 @@ def _compile_cost(model, where: str, *, defines_x: bool = False) -> Cost:
             # so it would load clean and do nothing at all.
             raise DslError(f"{where}.cost: 'mana_reduction' needs a 'mana' cost to reduce")
         _validate_cost_reduction(model.mana_reduction, f"{where}.cost.mana_reduction")
-    if model.discard_selector is not None and not model.discard:
-        raise DslError(f"{where}: 'discard_selector' needs a 'discard' count to narrow")
+    if model.discard_selector is not None and not (model.discard or model.discard_x):
+        raise DslError(
+            f"{where}: 'discard_selector' needs a 'discard' count or 'discard_x' to narrow"
+        )
     if model.tap_permanents is not None and "tapped" in model.tap_permanents:
         # The pool forces `tapped: False` -- "untapped" is part of every printed
         # line of this shape, and a cost that could re-tap something already

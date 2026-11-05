@@ -25,6 +25,7 @@ from .costs import (
     ability_purpose,
     can_pay,
     can_pay_mana,
+    discard_x_ceiling,
     land_drops_available,
     mana_added_total,
     mana_amount,
@@ -847,12 +848,16 @@ def _ability_aims(
             # ability's bullet is below, because the alternative -- asking for X
             # afterwards -- would declare the targets before the X they depend
             # on existed.
-            if ability.cost.loyalty_x:
-                # The ceiling of a -X is the loyalty there is to remove (606.4).
-                source_obj = state.objects.get(oid)
-                loyalty = source_obj.counter("loyalty") if source_obj is not None else 0
+            if ability.cost.loyalty_x or ability.cost.discard_x:
+                # The ceiling of a -X is the loyalty there is to remove (606.4),
+                # and of "Discard X cards" the cards the cost may take.
+                if ability.cost.discard_x:
+                    announced_ceiling = discard_x_ceiling(state, pid, ability.cost, oid)
+                else:
+                    source_obj = state.objects.get(oid)
+                    announced_ceiling = source_obj.counter("loyalty") if source_obj is not None else 0
                 out_loyalty: list[tuple] = []
-                for value in range(max(0, loyalty) + 1):
+                for value in range(max(0, announced_ceiling) + 1):
                     tuples = enumerate_target_tuples(
                         state, pid, ability.targets, oid, x=value
                     )
@@ -950,7 +955,11 @@ def _targets_read_x(ability) -> bool:
         return False
     # "-X: Exile target nonland permanent card with mana value X" -- Tamiyo. A
     # loyalty X is announced as surely as a mana one.
-    if not cost.loyalty_x and (not cost.mana.x_count or cost.x_value is not None):
+    if (
+        not cost.loyalty_x
+        and not cost.discard_x
+        and (not cost.mana.x_count or cost.x_value is not None)
+    ):
         return False
     specs = list(ability.targets) + [
         spec for specs in (ability.mode_targets or {}).values() for spec in specs

@@ -21,7 +21,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Player-wide statics](#player-wide-statics) | 45 |
 | [Grantable statics](#grantable-statics) | 41 |
 | [Cost reduction](#cost-reduction) | 6 |
-| [Ability costs](#ability-costs) | 29 |
+| [Ability costs](#ability-costs) | 30 |
 | [Card-level costs](#card-level-costs) | 32 |
 | [Keywords](#keywords) | 44 |
 | [Card types and supertypes](#card-types-and-supertypes) | 12 |
@@ -29,7 +29,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Decision kinds](#decision-kinds) | 11 |
 | [Static filter keys](#static-filter-keys) | 32 |
 | [Static conditions](#static-conditions) | 14 |
-| [Static values](#static-values) | 18 |
+| [Static values](#static-values) | 19 |
 | [Spell filter keys](#spell-filter-keys) | 12 |
 | [Spell cost-reduction filter keys](#spell-cost-reduction-filter-keys) | 4 |
 | [Cost-reduction filter keys](#cost-reduction-filter-keys) | 2 |
@@ -745,6 +745,7 @@ Every field an activated ability's `cost` (or a `may`'s `pay`) may carry -- the 
 | `discard` | Discard N cards. | [Costs](card-dsl.md#costs) |
 | `discard_selector` | …matching this selector. | [Costs](card-dsl.md#costs) |
 | `discard_self` | Discard this card (cycling). | [Cycling](card-dsl-cookbook.md#cycling) |
+| `discard_x` | Discard X cards, X announced and bounded by the hand. | [discard_x — discard X cards, X announced](card-dsl.md#discard_x--discard-x-cards-x-announced) |
 | `exert` | Exert the source. | [exert — the keyword as a cost](card-dsl.md#exert--the-keyword-as-a-cost) |
 | `exile_from_graveyard` | Exile matching cards from your graveyard; `as` names them for the effects. | [Coin of Fate — an exile-from-graveyard cost that names what it exiled](card-dsl.md#coin-of-fate--an-exile-from-graveyard-cost-that-names-what-it-exiled) |
 | `exile_from_hand` | Exile a matching card from your hand (a pitch cost). | [exile_from_hand — the pitch cost, and why it is not a discard](card-dsl.md#exile_from_hand--the-pitch-cost-and-why-it-is-not-a-discard) |
@@ -976,6 +977,7 @@ The subset of the value language a static's magnitude (`power`, `amount`, …) m
 
 | Name | Description | Defined in |
 |---|---|---|
+| `commander_casts_this_game` | Times you have cast your commanders from the command zone this game (903.8's tally); `"you"` only. | [An anthem for each commander cast](card-dsl-cookbook.md#an-anthem-for-each-commander-cast) |
 | `const` | A literal number. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `count` | How many objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |
 | `counters_on` | Counters of a kind (or "any", every kind) on the objects a selector finds. | ["+1/+1 for each charge counter on this artifact"](card-dsl.md#11-for-each-charge-counter-on-this-artifact) |

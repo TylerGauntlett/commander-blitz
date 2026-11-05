@@ -35266,6 +35266,41 @@
       "abilities": [
         {
           "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "buff",
+          "kind": "static",
+          "power": {
+            "commander_casts_this_game": "you"
+          },
+          "text": "Creatures you control get +1/+1 for each time you've cast your commander from the command zone this game.",
+          "toughness": {
+            "commander_casts_this_game": "you"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "commander_s_insignia",
+      "mana_cost": "{2}{W}{W}",
+      "name": "Commander's Insignia",
+      "oracle_text": "Creatures you control get +1/+1 for each time you've cast your commander from the command zone this game.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
             "attached": true
           },
           "effect": "buff",
@@ -73545,6 +73580,114 @@
         "Cleric"
       ],
       "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": {
+                    "controller_of": "subject"
+                  }
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "pay_life": 1
+              },
+              "player": {
+                "controller_of": "subject"
+              },
+              "prompt": "Pay 1 life to draw a card (Gix, Yawgmoth Praetor)?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a creature deals combat damage to one of your opponents, its controller may pay 1 life. If they do, they draw a card.",
+          "trigger": {
+            "condition": {
+              "cmp": "<",
+              "left": {
+                "player_count": {
+                  "except": "you",
+                  "not": {
+                    "binding": "defender"
+                  }
+                }
+              },
+              "right": {
+                "player_count": "each_opponent"
+              }
+            },
+            "controller": "any",
+            "event": "deals_combat_damage_to_player",
+            "recheck": false
+          }
+        },
+        {
+          "cost": {
+            "discard_x": true,
+            "mana": "{4}{B}{B}{B}"
+          },
+          "effects": [
+            {
+              "amount": {
+                "x": true
+              },
+              "destination": "exile",
+              "objects": {
+                "count": "all"
+              },
+              "op": "look_at_top",
+              "playable": "while_exiled",
+              "playable_free": true,
+              "player": {
+                "target": "t1"
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "player",
+              "selector": {
+                "controller": "opponent"
+              }
+            }
+          ],
+          "text": "{4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's library. You may play lands and cast spells from among cards exiled this way without paying their mana costs."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "gix_yawgmoth_praetor",
+      "mana_cost": "{1}{B}{B}",
+      "name": "Gix, Yawgmoth Praetor",
+      "oracle_text": "Whenever a creature deals combat damage to one of your opponents, its controller may pay 1 life. If they do, they draw a card.\n{4}{B}{B}{B}, Discard X cards: Exile the top X cards of target opponent's library. You may play lands and cast spells from among cards exiled this way without paying their mana costs.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Phyrexian",
+        "Praetor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]

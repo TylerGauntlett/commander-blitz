@@ -1,6 +1,25 @@
 {
-  "_comment": "Shapes for tests/unit/commander/test_commander_casts_this_game.py. t_ccc_strike_force is Hatut Zeraze Strike Force's cast trigger on a one-mana body, so the copies can be counted as tokens on the battlefield.",
+  "_comment": "Shapes for tests/unit/commander/test_commander_casts_this_game.py. t_ccc_strike_force is Hatut Zeraze Strike Force's cast trigger on a one-mana body, so the copies can be counted as tokens on the battlefield. t_ccc_insignia is Commander's Insignia, for tests/unit/statics/test_static_commander_casts_this_game.py.",
   "cards": [
+    {
+      "id": "t_ccc_insignia",
+      "name": "Test Commander Cast Insignia",
+      "oracle_text": "Creatures you control get +1/+1 for each time you've cast your commander from the command zone this game.",
+      "mana_cost": "{2}{W}",
+      "types": ["Enchantment"],
+      "colors": ["W"],
+      "color_identity": ["W"],
+      "abilities": [
+        {
+          "kind": "static",
+          "text": "Creatures you control get +1/+1 for each time you've cast your commander from the command zone this game.",
+          "effect": "buff",
+          "affects": {"controller": "you", "types": ["Creature"]},
+          "power": {"commander_casts_this_game": "you"},
+          "toughness": {"commander_casts_this_game": "you"}
+        }
+      ]
+    },
     {
       "id": "t_ccc_strike_force",
       "name": "Test Commander Cast Strike Force",

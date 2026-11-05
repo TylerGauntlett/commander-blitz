@@ -59,6 +59,7 @@ NOT_A_CAST_TIME_COST = frozenset(
         "exile_self",
         "exile_self_from_hand",
         "discard_self",
+        "discard_x",
         "pay_life_x",
         "x_value",
     }
@@ -1569,6 +1570,10 @@ STATIC_DEATHS_KEYS = frozenset({"creatures_died_this_turn"})
 #: noncreature permanents you control and noncreature cards in your graveyard":
 #: the effect side's leaf held to ``of: "mana_value"``, a printed number, over
 #: static counting filters or a `union` of them.
+#: `commander_casts_this_game` is Commander's Insignia's "+1/+1 for each time
+#: you've cast your commander from the command zone this game": the effect
+#: side's 903.8 tally, held to "you". `Player.commander_tax` is written only by
+#: a cast from the command zone, never by a layer, so it is a pipeline input.
 STATIC_VALUE_KEYS = (
     frozenset(
         {
@@ -1581,6 +1586,7 @@ STATIC_VALUE_KEYS = (
             "permanents_entered_this_turn",
             "starting_life_of",
             "greatest_commander_mana_value",
+            "commander_casts_this_game",
             "extreme_value",
         }
     )

@@ -622,7 +622,7 @@ VALUES: dict[str, Entry] = {
     "creatures_you_control": ("Creatures the player controls.", None),
     "damage_taken_this_turn": ("Damage the player was dealt this turn, summed over a plural spec (bloodthirst).", H_LEDGER),
     "most_sharing_a_name": ("The largest group in a pool sharing one name.", "Value expressions"),
-    "distinct": ("Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters).",
+    "distinct": ("Distinct values of a quality among a pool (domain, coven, delirium, colors, kinds of counters, names).",
                  "Counting different values rather than objects"),
     "extreme_value": ("The greatest/least of a quality in a pool, as one number.", None),
     "greatest_discarded_by_a_player": ("The greatest number of cards one player discarded this way.",
@@ -730,6 +730,9 @@ CONDITIONS: dict[str, Entry] = {
 #: Static-side entries, read before `VALUES`: a leaf in both languages whose
 #: static reading is narrower or documented apart is described here.
 STATIC_VALUE_EXTRAS: dict[str, Entry] = {
+    "commander_casts_this_game": ("Times you have cast your commanders from the command zone this game "
+                                  "(903.8's tally); `\"you\"` only.",
+                                  "An anthem for each commander cast"),
     "extreme_value": ("The greatest/least printed mana value among a counting filter's pool, or a `union` of them.",
                       None),
     "greatest_commander_mana_value": (
@@ -1003,6 +1006,8 @@ ABILITY_COSTS: dict[str, Entry] = {
     "discard": ("Discard N cards.", None),
     "discard_selector": ("…matching this selector.", None),
     "discard_self": ("Discard this card (cycling).", "Cycling"),
+    "discard_x": ("Discard X cards, X announced and bounded by the hand.",
+                  "`discard_x` — discard X cards, X announced"),
     "exert": ("Exert the source.", "`exert` — the keyword as a cost"),
     "exile_from_graveyard": ("Exile matching cards from your graveyard; `as` names them for the effects.",
                              "Coin of Fate — an exile-from-graveyard cost that names what it exiled"),

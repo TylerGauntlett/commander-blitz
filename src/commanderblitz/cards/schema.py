@@ -93,6 +93,14 @@ class CostModel(BaseModel):
     discard_selector: dict[str, Any] | None = None
     #: Cycling's "Discard this card": the source discards itself, no choice.
     discard_self: bool = False
+    #: "{4}{B}{B}{B}, **Discard X cards**:" -- Gix, Yawgmoth Praetor. The
+    #: controller announces X as the ability is activated (601.2b, 107.3), no
+    #: more than the cards in hand the cost may take (``discard_selector``
+    #: narrows them), and discards that many as the cost; the effects read X
+    #: back with ``{"x": true}``. Activated abilities only. Not beside
+    #: ``discard`` (two numbers for one payment) and not beside an ``{X}`` in
+    #: ``mana``, ``loyalty_x`` or ``pay_life_x`` (an ability announces one X).
+    discard_x: bool = False
     #: "{1}{W}, {T}, **Exile this artifact**:" -- Phoenix Down. The exile twin
     #: of `discard_self`, and deliberately not `sacrifice`, which puts the
     #: source in the graveyard. The difference is the whole card here: Phoenix

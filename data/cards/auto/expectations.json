@@ -2988,6 +2988,10 @@
   "commander_s_insight": {
     "zone": "graveyard"
   },
+  "commander_s_insignia": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "commander_s_plate": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -6394,6 +6398,10 @@
     "zone": "graveyard"
   },
   "giver_of_runes": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "gix_yawgmoth_praetor": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

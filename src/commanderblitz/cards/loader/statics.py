@@ -567,6 +567,17 @@ def _validate_static_value(value: Any, where: str) -> None:
                 f"{where}.greatest_commander_mana_value: a static can only ask "
                 f"about 'you' (your commanders), got {who!r}"
             )
+    if "commander_casts_this_game" in value:
+        # "For each time you've cast your commander from the command zone this
+        # game" -- Commander's Insignia. "You" only, for
+        # `greatest_commander_mana_value`'s reason: every printed static asks
+        # about its own controller's commanders.
+        who = value["commander_casts_this_game"]
+        if who != "you":
+            raise DslError(
+                f"{where}.commander_casts_this_game: a static can only ask about "
+                f"'you' (your commanders' casts, rule 903.8), got {who!r}"
+            )
     if "extreme_value" in value:
         _validate_static_extreme_value(value["extreme_value"], f"{where}.extreme_value")
     if "permanents_entered_this_turn" in value:
