@@ -12237,6 +12237,14 @@
   "rampaging_hippo": {
     "zone": "battlefield"
   },
+  "rampant_rejuvenator": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "ramunap_excavator": {
     "zone": "battlefield"
   },

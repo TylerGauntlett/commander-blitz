@@ -214942,12 +214942,12 @@
     },
     "Rampant Rejuvenator": {
       "edhrec_rank": 3266,
-      "gate": "template",
+      "gate": null,
       "name": "Rampant Rejuvenator",
-      "reason": "no template for: This creature enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "9ce2aa8e-b0c4-4e22-84eb-94b9e5ca6f76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampart Architect": {
