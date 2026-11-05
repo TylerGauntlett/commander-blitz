@@ -1,0 +1,33 @@
+{
+  "_comment": "Shapes for tests/unit/targets/test_support_x_trigger.py. t_sxt_stadium is Blitzball Stadium's enters line alone: an {X}{U} artifact whose enters trigger puts a +1/+1 counter on each of up to X target creatures.",
+  "cards": [
+    {
+      "id": "t_sxt_stadium",
+      "name": "Test Support Stadium",
+      "oracle_text": "When this artifact enters, support X. (Put a +1/+1 counter on each of up to X target creatures.)",
+      "mana_cost": "{X}{U}",
+      "types": ["Artifact"],
+      "colors": ["U"],
+      "color_identity": ["U"],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "When this artifact enters, support X.",
+          "trigger": {"event": "self_enters", "source": "self"},
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "count": {"x": true},
+              "up_to": true,
+              "selector": {"zone": "battlefield", "types": ["Creature"], "controller": "any"}
+            }
+          ],
+          "effects": [
+            {"op": "add_counters", "counter": "+1/+1", "amount": {"const": 1}, "objects": {"target": "t1"}}
+          ]
+        }
+      ]
+    }
+  ]
+}

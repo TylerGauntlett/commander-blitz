@@ -623,7 +623,7 @@ def _choose_each_target(
     spec = specs[0]
     if spec.one_per_player or spec.total_mana_value is not None:
         return None
-    count = target_count(state, trig.controller, spec, trig.source_oid)
+    count = target_count(state, trig.controller, spec, trig.source_oid, bindings=trig.bindings)
     if count != "any" and (not isinstance(count, int) or count < 2 or spec.optional):
         return None
     single = replace(spec, count=1, optional=False, up_to=False, min_count=0)

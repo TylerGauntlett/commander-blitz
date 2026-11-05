@@ -366,7 +366,12 @@ def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
 
 
 def target_count(
-    state: GameState, controller: int, spec: TargetSpec, source_oid: int | None
+    state: GameState,
+    controller: int,
+    spec: TargetSpec,
+    source_oid: int | None,
+    *,
+    bindings: Mapping[str, Any] | None = None,
 ) -> int | str:
     """How many targets this spec asks for **right now** -- 601.2c's number.
 
@@ -394,10 +399,22 @@ def target_count(
     (`TargetSpec.x_sized`) and the times the additional cost is paid
     (`TargetSpec.additional_sized`), which each cast line substitutes through
     `additional_sized_targets` before it gets here.
+
+    A trigger's ``bindings`` carry the X its permanent was cast with
+    (`triggers` binds ``obj.cast_x``), so "when this artifact enters, support
+    X" (Blitzball Stadium) sizes its targets by the X paid -- the same X the
+    trigger's effects read once it is on the stack.
     """
     if isinstance(spec.count, int) or spec.count == "any":
         return spec.count
-    ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
+    bound = dict(bindings or {})
+    ctx = EffectContext(
+        state=state,
+        controller=controller,
+        source_oid=source_oid,
+        bindings=bound,
+        x=int(bound.get("x", 0) or 0),
+    )
     return max(0, evaluate_value(ctx, spec.count))
 
 
@@ -489,7 +506,7 @@ def _spec_options(
     # four target creatures" defaulted to tapping none would be a different
     # card.
     empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
-    count = target_count(state, controller, spec, source_oid)
+    count = target_count(state, controller, spec, source_oid, bindings=bindings)
     if count == "any" or spec.up_to:
         # "Any number of target creatures", and "up to X target creature
         # cards". A size the caster picks, so every subset up to the ceiling is
@@ -624,7 +641,10 @@ def enumerate_target_tuples(
     if not specs:
         return [()]
     if limit is None:
-        single = len(specs) == 1 and target_count(state, controller, specs[0], source_oid) == 1
+        single = (
+            len(specs) == 1
+            and target_count(state, controller, specs[0], source_oid, bindings=bindings) == 1
+        )
         limit = sys.maxsize if single else MAX_TARGET_OPTIONS
 
     prior: set[str] = set()
