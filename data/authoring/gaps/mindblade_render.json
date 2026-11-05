@@ -1,0 +1,18 @@
+{
+  "card_id": "mindblade_render",
+  "name": "Mindblade Render",
+  "oracle_text": "Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life.",
+  "blocked_sentences": [
+    "Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life."
+  ],
+  "needs": [
+    {
+      "capability": "opponents_dealt_combat_damage",
+      "kind": "trigger_event",
+      "what": "a once-per-combat-damage-step trigger keyed on the DAMAGED side: it fires once when one or more of your opponents are dealt combat damage in a step, by creatures of any controller (an opponent's Warrior hitting another opponent in a pod counts), and its filter (subtypes Warrior) must be satisfied by a creature that dealt combat damage to one of those opponents, not by a creature that hit you",
+      "why_existing_wont_do": "creatures_deal_combat_damage is fired once per DAMAGING seat with no `defender` on the batched form, so `defending: \"opponent\"` matches nothing unless `per_player` is set; `per_player` fires once per damaged opponent (draws two when Warriors hit two opponents, where the card triggers once per step); `controller: \"you\"` drops the opponents'-Warriors-hitting-other-opponents case; and no controller at all fires when an opponent's Warrior hits you. Each is a different card from the printed one"
+    }
+  ],
+  "closest_existing": ["creatures_deal_combat_damage"],
+  "confidence": "high"
+}

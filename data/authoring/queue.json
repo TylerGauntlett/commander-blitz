@@ -156262,12 +156262,12 @@
     },
     "Legion Warboss": {
       "edhrec_rank": 1801,
-      "gate": "template",
+      "gate": null,
       "name": "Legion Warboss",
-      "reason": "no template for: Mentor",
+      "reason": "",
       "scryfall_id": "26ca4014-11fb-4c62-a7c6-ab2880393531",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legion's End": {
@@ -162292,12 +162292,12 @@
     },
     "Loyal Apprentice": {
       "edhrec_rank": 737,
-      "gate": "template",
+      "gate": null,
       "name": "Loyal Apprentice",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, creat",
+      "reason": "",
       "scryfall_id": "072e502a-c340-4f50-9f51-62d50242b17c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Loyal Cathar // Unhallowed Cathar": {

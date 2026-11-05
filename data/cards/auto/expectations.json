@@ -8968,6 +8968,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "legion_warboss": {
+    "zone": "battlefield"
+  },
   "legions_to_ashes": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
@@ -9331,6 +9334,13 @@
     "zone": "battlefield"
   },
   "loxodon_wayfarer": {
+    "zone": "battlefield"
+  },
+  "loyal_apprentice": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "loyal_drake": {

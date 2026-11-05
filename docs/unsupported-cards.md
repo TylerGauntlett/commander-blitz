@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**164 cards** blocked by **153** capabilities.
+**167 cards** blocked by **157** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -39,6 +39,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
+| [attacked-with-commander-play-permission](#attacked-with-commander-play-permission) | 1 | 9555 | engine |
 | [attacking-opponents-of-player](#attacking-opponents-of-player) | 1 | 705 | selector |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
@@ -66,9 +67,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-x-cost](#discard-x-cost) | 1 | 2013 | cost |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
+| [distinct-names-count](#distinct-names-count) | 1 | 9555 | value |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
+| [dog-token](#dog-token) | 1 | 6420 | token |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
 | [eldrazi-10-10-c](#eldrazi-10-10-c) | 1 | 196 | token |
@@ -120,6 +123,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
+| [opponents-dealt-combat-damage](#opponents-dealt-combat-damage) | 1 | 5869 | trigger_event |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [plot](#plot) | 1 | 7506 | op |
@@ -716,6 +720,21 @@ Blocks **1** card.
 
 </details>
 
+## attacked-with-commander-play-permission
+
+Blocks **1** card.
+
+- **(engine)** a playable permission on exiled cards that is open indefinitely but usable only during a turn in which the effect's controller attacked with a commander -- e.g. `playable: "while_exiled"` plus a `playable_condition` reading a per-turn 'you attacked with a commander this turn' fact (a new value/condition such as {"commanders_attacked_this_turn": "you"} > 0)
+  <br>Why the existing vocabulary won't do: playable_durations (this_turn, while_exiled, end_of_your_next_turn, later_turns, ...) carry no condition on the turn the card is played; `attacked_this_turn`/`attackers_this_turn` values do not filter attackers by is_commander, and no exile/look_at_top option gates the permission on a per-turn condition
+
+<details><summary>Cards waiting on this</summary>
+
+- **Neriv, Crackling Vanguard** (rank 9555) — `neriv_crackling_vanguard`
+  - Whenever Neriv attacks, exile a number of cards from the top of your library equal to the number of differently named tokens you control.
+  - During any turn you attacked with a commander, you may play those cards.
+
+</details>
+
 ## attacking-opponents-of-player
 
 Blocks **1** card.
@@ -1104,6 +1123,21 @@ Blocks **1** card.
 
 </details>
 
+## distinct-names-count
+
+Blocks **1** card.
+
+- **(value)** a value counting the distinct names among a selector's matches -- {"distinct": {"of": "name", "objects": {"controller": "you", "is_token": true}}} -- "the number of differently named tokens you control"
+  <br>Why the existing vocabulary won't do: The `distinct` value accepts only of in DISTINCT_OF (power, basic_land_type, card_type, color, counter_kind); `count` counts tokens, not names, and `most_sharing_a_name` measures the largest group sharing one name, not how many names there are
+
+<details><summary>Cards waiting on this</summary>
+
+- **Neriv, Crackling Vanguard** (rank 9555) — `neriv_crackling_vanguard`
+  - Whenever Neriv attacks, exile a number of cards from the top of your library equal to the number of differently named tokens you control.
+  - During any turn you attacked with a commander, you may play those cards.
+
+</details>
+
 ## distribute-counters-spell
 
 Blocks **1** card.
@@ -1144,6 +1178,20 @@ Blocks **1** card.
 
 - **Fury** (rank 2389) — `fury`
   - When this creature enters, it deals 4 damage divided as you choose among any number of target creatures and/or planeswalkers.
+
+</details>
+
+## dog-token
+
+Blocks **1** card.
+
+- **(token)** a 1/1 white Dog creature token (no abilities), e.g. id dog_1_1_w
+  <br>Why the existing vocabulary won't do: create_token with amount 4 expresses the sentence, but token_ids is a closed list with no Dog token; the nearest 1/1 white tokens (cat_1_1_w, soldier_1_1_w, human_1_1_w) have the wrong creature type
+
+<details><summary>Cards waiting on this</summary>
+
+- **Release the Dogs** (rank 6420) — `release_the_dogs`
+  - Create four 1/1 white Dog creature tokens.
 
 </details>
 
@@ -1882,6 +1930,20 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
+
+</details>
+
+## opponents-dealt-combat-damage
+
+Blocks **1** card.
+
+- **(trigger_event)** a once-per-combat-damage-step trigger keyed on the DAMAGED side: it fires once when one or more of your opponents are dealt combat damage in a step, by creatures of any controller (an opponent's Warrior hitting another opponent in a pod counts), and its filter (subtypes Warrior) must be satisfied by a creature that dealt combat damage to one of those opponents, not by a creature that hit you
+  <br>Why the existing vocabulary won't do: creatures_deal_combat_damage is fired once per DAMAGING seat with no `defender` on the batched form, so `defending: "opponent"` matches nothing unless `per_player` is set; `per_player` fires once per damaged opponent (draws two when Warriors hit two opponents, where the card triggers once per step); `controller: "you"` drops the opponents'-Warriors-hitting-other-opponents case; and no controller at all fires when an opponent's Warrior hits you. Each is a different card from the printed one
+
+<details><summary>Cards waiting on this</summary>
+
+- **Mindblade Render** (rank 5869) — `mindblade_render`
+  - Whenever your opponents are dealt combat damage, if any of that damage was dealt by a Warrior, you draw a card and you lose 1 life.
 
 </details>
 

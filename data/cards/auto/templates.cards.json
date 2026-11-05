@@ -105607,6 +105607,105 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "attacking": true,
+                "power": {
+                  "op": "<",
+                  "value": {
+                    "power_of": {
+                      "self": true
+                    }
+                  }
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Mentor",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        },
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "the_token",
+              "op": "create_token",
+              "token": "goblin_1_1_r"
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keyword": "haste",
+              "objects": {
+                "binding": "the_token"
+              },
+              "op": "grant_keyword"
+            },
+            {
+              "duration": "this_turn",
+              "objects": {
+                "binding": "the_token"
+              },
+              "op": "must_attack"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of combat on your turn, create a 1/1 red Goblin creature token. That token gains haste until end of turn and attacks this combat if able.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "legion_warboss",
+      "mana_cost": "{2}{R}",
+      "name": "Legion Warboss",
+      "oracle_text": "Mentor (Whenever this creature attacks, put a +1/+1 counter on target attacking creature with lesser power.)\nAt the beginning of combat on your turn, create a 1/1 red Goblin creature token. That token gains haste until end of turn and attacks this combat if able.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Soldier"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "B",
         "W"
@@ -110545,6 +110644,69 @@
         "Monk"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "as": "lieutenant_thopter",
+              "controller": "you",
+              "op": "create_token",
+              "token": "thopter_1_1_c_flying"
+            },
+            {
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "lieutenant_thopter"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, create a 1/1 colorless Thopter artifact creature token with flying. That token gains haste until end of turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "owner": "you",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "loyal_apprentice",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{1}{R}",
+      "name": "Loyal Apprentice",
+      "oracle_text": "Haste\nLieutenant — At the beginning of combat on your turn, if you control your commander, create a 1/1 colorless Thopter artifact creature token with flying. That token gains haste until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Artificer"
+      ],
+      "toughness": 1,
       "types": [
         "Creature"
       ]
