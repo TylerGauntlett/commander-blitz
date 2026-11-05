@@ -1,0 +1,29 @@
+{
+  "card_id": "baral_and_kari_zev",
+  "name": "Baral and Kari Zev",
+  "oracle_text": "First strike, menace\nWhenever you cast your first instant or sorcery spell each turn, you may cast a spell with lesser mana value that shares a card type with it from your hand without paying its mana cost. If you don't, create First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token. It gains haste until end of turn.",
+  "blocked_sentences": [
+    "Whenever you cast your first instant or sorcery spell each turn, you may cast a spell with lesser mana value that shares a card type with it from your hand without paying its mana cost. If you don't, create First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token. It gains haste until end of turn."
+  ],
+  "needs": [
+    {
+      "capability": "first_mate_ragavan",
+      "kind": "token",
+      "what": "First Mate Ragavan, a legendary 2/1 red Monkey Pirate creature token (named token, supertype Legendary, no abilities)",
+      "why_existing_wont_do": "token_ids has no Ragavan or legendary 2/1 red Monkey Pirate; the only Pirate is pirate_2_2_b_menace, which is a different token"
+    },
+    {
+      "capability": "cast_from_hand_result",
+      "kind": "op",
+      "what": "cast_from_hand needs an `as` binding (or equivalent) recording whether a spell was actually cast, so a following `if` can run the 'If you don't' branch only when the player declined or had nothing to cast",
+      "why_existing_wont_do": "cast_from_hand's option list is exiles/objects/per_owner/player/selector/zones with no `as`; its optionality is internal (ask_objects with minimum 0), so wrapping it in `may` with an `else` would let the player say yes and then pick nothing, skipping both the cast and the token"
+    }
+  ],
+  "closest_existing": [
+    "cast_from_hand",
+    "may",
+    "create_token",
+    "grant_keyword"
+  ],
+  "confidence": "high"
+}

@@ -155,6 +155,7 @@ H_LANDWALK = "Landwalk, and global attack prohibitions"
 H_CANT_CAST_ZONES = '"Can\'t cast spells from anywhere other than their hands"'
 H_CAST_CARD = '"You may cast that card" — a paid cast during resolution'
 H_FLOOR = "Damage can't take you below 1"
+H_COUNTER_TO_EXILE = '"If that spell is countered this way, exile it instead"'
 H_CANT_COUNTER = '"This spell can\'t be countered"'
 H_CHOOSE_PERMANENTS = "`choose_permanents` — marking without acting"
 H_ROLL = "Rolling dice"
@@ -402,7 +403,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                      '"Add {G} for each …"'),
     "extra_land_drop": ("Mana", "A player may play an additional land this turn.", None),
     # ---- Stack -----------------------------------------------------------
-    "counter": ("Stack", "Counter a spell or ability; `unless_pays` is the tax form.", None),
+    "counter": ("Stack", "Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered.",
+                H_COUNTER_TO_EXILE),
     "copy_spell": ("Stack", "Copy a spell; `new_targets` lets the copy be re-aimed.",
                    '"You may choose new targets for the copy"'),
     "grant_plot": ("Stack", "Plot a card: exile it, castable free on a later turn.", "Plot"),
@@ -663,6 +665,9 @@ VALUES: dict[str, Entry] = {
     "keywords_had": ("1 if the departed permanent had a keyword (derived) as it left, else 0.",
                      '"Without flying", asked of a creature that died — `keywords_had`'),
     "power_of": ("An object's power.", None),
+    "targets_of_spell": ("How many of the triggering spell's targets are, as asked, of the listed kinds "
+                         "(`permanent` on the battlefield, `player` in the game); 0 once the spell has left the stack.",
+                         "What the cast spell targets — `spell_target_count` and `targets_of_spell`"),
     "resolutions_this_turn": ("Times this ability has resolved this turn.", None),
     "rolled": ("Dice results under a binding: count, by face, parity or total.", H_ROLL),
     "spells_cast_this_game": ("Spells the player has cast this game, by filter.",

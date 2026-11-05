@@ -1992,12 +1992,12 @@
     },
     "Adaptive Training Post": {
       "edhrec_rank": 8526,
-      "gate": "template",
+      "gate": null,
       "name": "Adaptive Training Post",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, if this artifact has fewer than three charg",
+      "reason": "",
       "scryfall_id": "4796e5e4-515c-4d89-92da-b2d5b5b39557",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Adarkar Sentinel": {
@@ -6122,12 +6122,12 @@
     },
     "Aligned Heart": {
       "edhrec_rank": 5376,
-      "gate": "template",
+      "gate": null,
       "name": "Aligned Heart",
-      "reason": "no template for: Flurry — Whenever you cast your second spell each turn, put a rally counter on this enchan",
+      "reason": "",
       "scryfall_id": "836c9684-06bf-45c8-8706-449def571e66",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aligned Hedron Network": {
@@ -20262,12 +20262,12 @@
     },
     "Baral's Expertise": {
       "edhrec_rank": 3786,
-      "gate": "template",
+      "gate": null,
       "name": "Baral's Expertise",
-      "reason": "no template for: Return up to three target artifacts and/or creatures to their owners' hands",
+      "reason": "",
       "scryfall_id": "0f3bb535-dd33-430d-aace-7cf73d437890",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Baral, Chief of Compliance": {
@@ -81422,12 +81422,12 @@
     },
     "Elsha, Threefold Master": {
       "edhrec_rank": 6609,
-      "gate": "template",
+      "gate": null,
       "name": "Elsha, Threefold Master",
-      "reason": "no template for: Whenever Elsha deals combat damage to a player, create that many 1/1 white Monk creature t",
+      "reason": "",
       "scryfall_id": "eee11606-5902-41d3-aec6-d6a3da01091b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Elspeth Conquers Death": {
@@ -100002,12 +100002,12 @@
     },
     "Force of Negation": {
       "edhrec_rank": 266,
-      "gate": "template",
+      "gate": null,
       "name": "Force of Negation",
-      "reason": "no template for: If it's not your turn, you may exile a blue card from your hand rather than pay this spell",
+      "reason": "",
       "scryfall_id": "cb795f86-3721-4ae5-9893-49d7d9973f86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Force of Rage": {
@@ -112742,12 +112742,12 @@
     },
     "Goblin Electromancer": {
       "edhrec_rank": 650,
-      "gate": "template",
+      "gate": null,
       "name": "Goblin Electromancer",
-      "reason": "no template for: Instant and sorcery spells you cast cost {1} less to cast",
+      "reason": "",
       "scryfall_id": "71808155-db49-4027-a2fc-76f53475ac05",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Goblin Elite Infantry": {
@@ -120732,12 +120732,12 @@
     },
     "Guttersnipe": {
       "edhrec_rank": 402,
-      "gate": "template",
+      "gate": null,
       "name": "Guttersnipe",
-      "reason": "no template for: Whenever you cast an instant or sorcery spell, this creature deals 2 damage to each oppone",
+      "reason": "",
       "scryfall_id": "f6bb1ffc-2251-4655-b8f9-4c8047dd5d5f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Guttural Response": {
@@ -123382,12 +123382,12 @@
     },
     "Haughty Djinn": {
       "edhrec_rank": 2448,
-      "gate": "template",
+      "gate": null,
       "name": "Haughty Djinn",
-      "reason": "no template for: 's power is equal to the number of instant and sorcery cards in your graveyard",
+      "reason": "",
       "scryfall_id": "21228052-e7bf-4e6c-9d88-674caca5b678",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Haunt of the Dead Marshes": {
@@ -183482,12 +183482,12 @@
     },
     "Narset's Reversal": {
       "edhrec_rank": 739,
-      "gate": "template",
+      "gate": null,
       "name": "Narset's Reversal",
-      "reason": "no template for: Copy target instant or sorcery spell, then return it to its owner's hand. You may choose n",
+      "reason": "",
       "scryfall_id": "0355887d-eec7-4b1c-ada1-014ac7fce5c6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Narset, Enlightened Exile": {
@@ -244212,12 +244212,12 @@
     },
     "Shiko and Narset, Unified": {
       "edhrec_rank": 8290,
-      "gate": "template",
+      "gate": null,
       "name": "Shiko and Narset, Unified",
-      "reason": "no template for: Flurry — Whenever you cast your second spell each turn, copy that spell if it targets a pe",
+      "reason": "",
       "scryfall_id": "5a42fc7d-52ac-4e95-9e04-8f8fa7f687c8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shiko, Paragon of the Way": {
@@ -244572,12 +244572,12 @@
     },
     "Shiny Impetus": {
       "edhrec_rank": 1382,
-      "gate": "template",
+      "gate": null,
       "name": "Shiny Impetus",
-      "reason": "no template for: Enchanted creature gets +2/+2 and is goaded",
+      "reason": "",
       "scryfall_id": "71bcf8d7-cc70-4d52-9607-09ed7e08d61b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shipbreaker Kraken": {
@@ -277132,12 +277132,12 @@
     },
     "Tempest Technique": {
       "edhrec_rank": 5601,
-      "gate": "template",
+      "gate": null,
       "name": "Tempest Technique",
-      "reason": "no template for: Storm",
+      "reason": "",
       "scryfall_id": "5d5ee7cc-4854-4b52-ba9b-64d5a401fca1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempest of Light": {
@@ -283572,12 +283572,12 @@
     },
     "Think Twice": {
       "edhrec_rank": 2211,
-      "gate": "template",
+      "gate": null,
       "name": "Think Twice",
-      "reason": "no template for: Flashback {2}{U}",
+      "reason": "",
       "scryfall_id": "85835de4-66ea-4ba1-87ca-6bcec2a8660a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thinking Cap": {
@@ -283592,12 +283592,12 @@
     },
     "Third Path Iconoclast": {
       "edhrec_rank": 1313,
-      "gate": "template",
+      "gate": null,
       "name": "Third Path Iconoclast",
-      "reason": "no template for: Whenever you cast a noncreature spell, create a 1/1 colorless Soldier artifact creature to",
+      "reason": "",
       "scryfall_id": "ad56d60b-985e-470f-935b-036084957d2b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Third Path Savant": {
@@ -287482,12 +287482,12 @@
     },
     "Time Wipe": {
       "edhrec_rank": 1384,
-      "gate": "template",
+      "gate": null,
       "name": "Time Wipe",
-      "reason": "no template for: Return a creature you control to its owner's hand, then destroy all creatures",
+      "reason": "",
       "scryfall_id": "2198907e-a13a-42e4-ad79-ac7efba4e610",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Time and Tide": {
@@ -291182,12 +291182,12 @@
     },
     "Transcendent Dragon": {
       "edhrec_rank": 7248,
-      "gate": "template",
+      "gate": null,
       "name": "Transcendent Dragon",
-      "reason": "no template for: When this creature enters, if you cast it, counter target spell. If that spell is countere",
+      "reason": "",
       "scryfall_id": "3c9a4205-eda8-4858-9d46-2428058c94fc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Transcendent Envoy": {
@@ -302252,12 +302252,12 @@
     },
     "Velomachus Lorehold": {
       "edhrec_rank": 7498,
-      "gate": "template",
+      "gate": null,
       "name": "Velomachus Lorehold",
-      "reason": "no template for: Whenever attacks, look at the top seven cards of your library. You may cast an instant or ",
+      "reason": "",
       "scryfall_id": "04ea9067-ad50-4c43-ae4d-3f66890cd898",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Velukan Dragon": {
@@ -307772,12 +307772,12 @@
     },
     "Voracious Bibliophile": {
       "edhrec_rank": 7849,
-      "gate": "template",
+      "gate": null,
       "name": "Voracious Bibliophile",
-      "reason": "no template for: Whenever you cast a spell with one or more targets, draw that many cards",
+      "reason": "",
       "scryfall_id": "77d2c30b-3130-4d9d-bd3d-484fe6dc306d",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Voracious Brood": {

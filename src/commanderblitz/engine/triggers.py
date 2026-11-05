@@ -1737,6 +1737,15 @@ EVENT_BINDING_KEYS = (
     # else's spell chose. `becomes_target` is the other, and is a per-permanent
     # trigger -- written on Orvar it would only ever see spells aimed at Orvar.
     "spell_targets",
+    # "Whenever you cast a spell **with one or more targets**, draw **that
+    # many** cards" -- Voracious Bibliophile. How many targets the spell was
+    # cast with, every kind and every instance, written by `Game._cast` beside
+    # `spell_targets`. Read with `{"binding": "spell_target_count"}`, both as
+    # the trigger's `condition` (with `recheck: false`: "with one or more
+    # targets" describes the cast, and this is a snapshot of it anyway) and as
+    # the draw's amount, which is the count as cast even if the spell has been
+    # countered in response.
+    "spell_target_count",
     # Persist and undying: what was on the creature before it died, which
     # nothing can read off the object afterwards.
     "had_counters",

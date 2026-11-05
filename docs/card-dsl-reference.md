@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 163 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 68 |
+| [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
@@ -180,7 +180,7 @@ Every `op` an `effects` list may name. Each takes a spec dict; the common fields
 | `extra_land_drop` | Mana |  | A player may play an additional land this turn. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_ability` | Stack |  | Copy an activated or triggered ability; `new_targets` re-aims it. | [Effect ops](card-dsl.md#effect-ops) |
 | `copy_spell` | Stack |  | Copy a spell; `new_targets` lets the copy be re-aimed. | ["You may choose new targets for the copy"](card-dsl-cookbook.md#you-may-choose-new-targets-for-the-copy) |
-| `counter` | Stack |  | Counter a spell or ability; `unless_pays` is the tax form. | [Effect ops](card-dsl.md#effect-ops) |
+| `counter` | Stack | yes | Counter a spell or ability; `exiles` sends a spell it countered to exile instead of its owner's graveyard, `as` binds the cards it countered. | ["If that spell is countered this way, exile it instead"](card-dsl.md#if-that-spell-is-countered-this-way-exile-it-instead) |
 | `grant_plot` | Stack |  | Plot a card: exile it, castable free on a later turn. | [Plot](card-dsl.md#plot) |
 | `grant_rebound` | Stack |  | Give a spell rebound as it resolves. | [Granting rebound to a spell that does not print it](card-dsl.md#granting-rebound-to-a-spell-that-does-not-print-it) |
 | `reflexive_trigger` | Stack |  | "When you do": queue a trigger off the preceding effect. | ["When you do" — reflexive triggered abilities](card-dsl-cookbook.md#when-you-do--reflexive-triggered-abilities) |
@@ -374,6 +374,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `spells_cast_this_turn` | Spells cast this turn (storm). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `starting_life_of` | The life total a player began with. | ["At least 7 life more than your starting life total"](card-dsl.md#at-least-7-life-more-than-your-starting-life-total) |
 | `sum` | a + b + …. | [Value expressions](card-dsl.md#value-expressions) |
+| `targets_of_spell` | How many of the triggering spell's targets are, as asked, of the listed kinds (`permanent` on the battlefield, `player` in the game); 0 once the spell has left the stack. | [What the cast spell targets — spell_target_count and targets_of_spell](card-dsl.md#what-the-cast-spell-targets--spell_target_count-and-targets_of_spell) |
 | `times` | a * b. | [Value expressions](card-dsl.md#value-expressions) |
 | `times_tapped_this_turn` | Times one object has become tapped this turn, counting every tap since the turn began. | [How many times a permanent has become tapped this turn](card-dsl.md#how-many-times-a-permanent-has-become-tapped-this-turn) |
 | `toughness_had` | The toughness the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |

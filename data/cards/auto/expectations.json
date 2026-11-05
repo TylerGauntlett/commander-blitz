@@ -79,6 +79,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "adaptive_training_post": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "adarkar_wastes": {
     "zone": "battlefield"
   },
@@ -303,6 +307,10 @@
     "zone": "battlefield"
   },
   "alicia_masters_skilled_sculptor": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "aligned_heart": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -1290,6 +1298,11 @@
   },
   "bant_panorama": {
     "zone": "battlefield"
+  },
+  "baral_s_expertise": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 5,
+    "zone": "graveyard"
   },
   "barbarian_general": {
     "zone": "battlefield"
@@ -4535,6 +4548,13 @@
   "elite_vanguard": {
     "zone": "battlefield"
   },
+  "elsha_threefold_master": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "elspeth_sun_s_champion": {
     "battlefield_count": 33,
     "hand_size": {
@@ -5715,6 +5735,12 @@
   "forbidding_watchtower": {
     "zone": "battlefield"
   },
+  "force_of_negation": {
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "graveyard"
+  },
   "force_of_will": {
     "hand_size": {
       "0": 1
@@ -6468,6 +6494,13 @@
   "goblin_deathraiders": {
     "zone": "battlefield"
   },
+  "goblin_electromancer": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "goblin_hero": {
     "zone": "battlefield"
   },
@@ -6901,6 +6934,14 @@
   "gutter_skulk": {
     "zone": "battlefield"
   },
+  "guttersnipe": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "battlefield"
+  },
   "gyome_master_chef": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7035,6 +7076,13 @@
   "hatut_zeraze_strike_force": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "haughty_djinn": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
     "zone": "battlefield"
   },
   "haunted_cloak": {
@@ -10516,6 +10564,9 @@
     },
     "zone": "battlefield"
   },
+  "narset_s_reversal": {
+    "zone": "graveyard"
+  },
   "narset_transcendent": {
     "counters": {
       "amount": 6,
@@ -13821,6 +13872,16 @@
     },
     "zone": "battlefield"
   },
+  "shiko_and_narset_unified": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "battlefield"
+  },
   "shimmer_dragon": {
     "battlefield_count": 33,
     "hand_size": {
@@ -13858,6 +13919,13 @@
     "zone": "battlefield"
   },
   "shining_aerosaur": {
+    "zone": "battlefield"
+  },
+  "shiny_impetus": {
+    "target_pt_delta": {
+      "power": 2,
+      "toughness": 2
+    },
     "zone": "battlefield"
   },
   "shipbreaker_kraken": {
@@ -15696,6 +15764,14 @@
   "tempest_drake": {
     "zone": "battlefield"
   },
+  "tempest_technique": {
+    "battlefield_count": 33,
+    "target_pt_delta": {
+      "power": 1,
+      "toughness": 1
+    },
+    "zone": "battlefield"
+  },
   "temple_acolyte": {
     "life": {
       "0": 43
@@ -16048,6 +16124,22 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "think_twice": {
+    "graveyard_size": {
+      "0": 3
+    },
+    "hand_size": {
+      "0": 2
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
+  "third_path_iconoclast": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thirst_for_knowledge": {
     "graveyard_size": {
       "0": 5
@@ -16290,6 +16382,14 @@
   "timber_wolves": {
     "zone": "battlefield"
   },
+  "time_wipe": {
+    "battlefield_count": 30,
+    "hand_size": {
+      "0": 2
+    },
+    "opponent_battlefield_count": 4,
+    "zone": "graveyard"
+  },
   "timeless_lotus": {
     "zone": "battlefield"
   },
@@ -16510,6 +16610,16 @@
     "zone": "battlefield"
   },
   "tranquil_thicket": {
+    "zone": "battlefield"
+  },
+  "transcendent_dragon": {
+    "battlefield_count": 33,
+    "graveyard_size": {
+      "0": 2
+    },
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "transcendent_envoy": {
@@ -17242,6 +17352,18 @@
     },
     "zone": "battlefield"
   },
+  "velomachus_lorehold": {
+    "battlefield_count": 33,
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "flying",
+        "vigilance",
+        "haste"
+      ]
+    },
+    "zone": "battlefield"
+  },
   "venerable_lammasu": {
     "zone": "battlefield"
   },
@@ -17560,6 +17682,16 @@
     "zone": "battlefield"
   },
   "volunteer_militia": {
+    "zone": "battlefield"
+  },
+  "voracious_bibliophile": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "vorinclex_voice_of_hunger": {

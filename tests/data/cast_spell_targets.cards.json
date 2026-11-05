@@ -1,0 +1,213 @@
+{
+  "_comment": "Shapes for tests/unit/triggers/test_cast_spell_targets.py. `t_bibliophile` is Voracious Bibliophile's trigger (the cast-time `spell_target_count` binding), `t_shiko` is Shiko and Narset, Unified's Flurry (the live `targets_of_spell` value). `t_twin_gain` targets two players and `t_pump_bear` one permanent. The other spells come from spell_targets.cards.json and testing.cards.json.",
+  "cards": [
+    {
+      "id": "t_bibliophile",
+      "name": "Test Bibliophile",
+      "oracle_text": "Whenever you cast a spell with one or more targets, draw that many cards.",
+      "mana_cost": "{3}{U}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Dragon"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a spell with one or more targets, draw that many cards.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "condition": {
+              "cmp": ">=",
+              "left": {
+                "binding": "spell_target_count"
+              },
+              "right": {
+                "const": 1
+              }
+            },
+            "recheck": false
+          },
+          "effects": [
+            {
+              "op": "draw",
+              "player": "you",
+              "amount": {
+                "binding": "spell_target_count"
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_shiko",
+      "name": "Test Shiko",
+      "oracle_text": "Whenever you cast your second spell each turn, copy that spell if it targets a permanent or player, and you may choose new targets for the copy. If you don't copy a spell this way, draw a card.",
+      "mana_cost": "{1}{U}{R}{W}",
+      "types": [
+        "Creature"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "subtypes": [
+        "Human",
+        "Spirit",
+        "Dragon"
+      ],
+      "power": 4,
+      "toughness": 4,
+      "colors": [
+        "U",
+        "R",
+        "W"
+      ],
+      "color_identity": [
+        "U",
+        "R",
+        "W"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast your second spell each turn, copy that spell if it targets a permanent or player, and you may choose new targets for the copy. If you don't copy a spell this way, draw a card.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "nth": 2
+          },
+          "effects": [
+            {
+              "op": "if",
+              "condition": {
+                "cmp": ">=",
+                "left": {
+                  "targets_of_spell": [
+                    "permanent",
+                    "player"
+                  ]
+                },
+                "right": {
+                  "const": 1
+                }
+              },
+              "then": [
+                {
+                  "op": "copy_spell",
+                  "new_targets": true
+                }
+              ],
+              "else": [
+                {
+                  "op": "draw",
+                  "player": "you",
+                  "amount": {
+                    "const": 1
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_twin_gain",
+      "name": "Test Twin Gain",
+      "oracle_text": "Target player gains 1 life. Target player gains 1 life.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "player",
+          "count": 1,
+          "selector": {}
+        },
+        {
+          "id": "t2",
+          "kind": "player",
+          "count": 1,
+          "selector": {}
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "gain_life",
+          "player": {
+            "target": "t1"
+          },
+          "amount": {
+            "const": 1
+          }
+        },
+        {
+          "op": "gain_life",
+          "player": {
+            "target": "t2"
+          },
+          "amount": {
+            "const": 1
+          }
+        }
+      ]
+    },
+    {
+      "id": "t_pump_bear",
+      "name": "Test Pump Bear",
+      "oracle_text": "Target Bear gets +1/+1 until end of turn.",
+      "mana_cost": "{U}",
+      "types": [
+        "Instant"
+      ],
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "targets": [
+        {
+          "id": "t1",
+          "kind": "permanent",
+          "count": 1,
+          "selector": {
+            "zone": "battlefield",
+            "subtypes": [
+              "Bear"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "pump",
+          "objects": {
+            "target": "t1"
+          },
+          "power": 1,
+          "toughness": 1
+        }
+      ]
+    }
+  ]
+}

@@ -53,6 +53,11 @@ RECORDING_OPS = frozenset(
         #: single `exclude_binding` spares them all.
         "choose_permanents",
         "copy_permanent",
+        #: The cards of the spells actually **countered** that reached the zone
+        #: the counter sent them to -- Transcendent Dragon's "then you may cast
+        #: it". An uncounterable spell, an ability and a copy are not in it.
+        #: See `ops_stack.op_counter`.
+        "counter",
         "create_token",
         #: The permanents actually **destroyed** -- Avenge's "for each creature
         #: destroyed this way". Not the ones chosen: indestructible,

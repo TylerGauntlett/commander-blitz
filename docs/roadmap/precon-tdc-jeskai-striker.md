@@ -5,7 +5,7 @@ area: decks
 effort: M
 impact: high
 why: a coming-soon tile on the shelf becomes a deck a player can pick
-depends_on: []
+depends_on: [divided-damage-any-target]
 status: proposed
 rank: 22
 ---
@@ -19,6 +19,9 @@ coming-soon shell on the shelf: its row `tdc_jeskai_striker` is in
 `python scripts/sync_precons.py --missing tdc_jeskai_striker` lists the cards the engine
 lacks, and the gap records in `data/authoring/gaps/` name the capability each
 attempted card waits on.
+Magma Opus waits on [divided damage that may hit players](divided-damage-any-target.md),
+a rules subsystem `rules-coverage.md` lists as not implemented, so the deck
+cannot be whole until that item is delivered.
 
 ## The change
 

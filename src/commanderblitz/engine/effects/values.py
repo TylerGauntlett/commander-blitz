@@ -327,6 +327,18 @@ VALUE_KEYS = frozenset(
         # counter or an anthem's grant never reaches -- a creature Broodmoth
         # returned would come back for ever.
         "keywords_had",
+        # "…copy that spell **if it targets a permanent or player**" (Shiko
+        # and Narset, Unified). How many of the triggering spell's targets
+        # are, as this is asked, of the named kinds: `"permanent"` an object
+        # target on the battlefield, `"player"` a player target still in the
+        # game, each counted once per target instance. The spell is the
+        # trigger's `sid` binding -- the one `copy_spell` defaults to -- and
+        # it is read **live** off the stack, so a spell that has left it
+        # targets nothing and reads 0: the "if you don't copy a spell this
+        # way" branch is then the one taken. The `spell_targets` binding is
+        # the near miss, a cast-time list of object targets only, and
+        # `spell_target_count` is the cast-time number of every kind.
+        "targets_of_spell",
         # "…for each basic land type among lands you control" (domain), and
         # "three or more creatures with different powers" (coven). A count of
         # *distinct values* over a pool, which no other leaf can be: `count`
@@ -686,6 +698,8 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         if not isinstance(had, (list, tuple)):
             return 0
         return auras_matching(had, expr["auras_had"], ctx.controller)
+    if "targets_of_spell" in expr:
+        return _targets_of_spell(ctx, expr["targets_of_spell"])
     if "keywords_had" in expr:
         # One keyword, as a bare string: {"keywords_had": "flying"}. A trigger
         # that never fired binds nothing and reads 0, as `counters_had` does.
@@ -1608,6 +1622,34 @@ def validate_starting_life_of(who: Any, where: str) -> None:
         raise DslError(f"{where}: needs a player spec, e.g. 'you'")
 
 
+#: What `targets_of_spell` may name: the kinds of thing a spell's target is.
+TARGETS_OF_SPELL_KINDS = frozenset({"permanent", "player"})
+
+
+def _targets_of_spell(ctx: EffectContext, kinds: Any) -> int:
+    """How many of the triggering spell's targets are, now, of these kinds.
+
+    The spell is the one the trigger's ``sid`` binding names, looked up on the
+    stack as this is asked: gone from the stack, it has no targets and this is
+    0. Each `TargetRef` is one target instance, so a player chosen for two
+    "target" words counts twice (115.3). ``"permanent"`` is an object target on
+    the battlefield -- a creature bounced in response is no longer a permanent
+    the spell targets -- and ``"player"`` a player target still in the game.
+    """
+    sid = ctx.bindings.get("sid")
+    item = ctx.state.stack_item(sid) if isinstance(sid, int) else None
+    if item is None or not item.is_spell:
+        return 0
+    wanted = set(kinds)
+    total = 0
+    for ref in item.targets:
+        if ref.kind == "player":
+            total += "player" in wanted and ctx.state.is_alive(ref.id)
+        elif ref.kind == "object":
+            total += "permanent" in wanted and ref.id in ctx.state.battlefield
+    return int(total)
+
+
 #: What `keywords_had` may name: a keyword the engine implements.
 _KEYWORD_WORDS = frozenset(k.value for k in Keyword)
 
@@ -1675,6 +1717,17 @@ def validate_value(expr: Any, where: str) -> None:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
     if "auras_had" in expr:
         validate_auras_had(expr["auras_had"], f"{where}.auras_had")
+    if "targets_of_spell" in expr:
+        kinds = expr["targets_of_spell"]
+        if (
+            not isinstance(kinds, (list, tuple))
+            or not kinds
+            or not all(isinstance(k, str) and k in TARGETS_OF_SPELL_KINDS for k in kinds)
+        ):
+            raise DslError(
+                f"{where}.targets_of_spell: a non-empty list of "
+                f"{sorted(TARGETS_OF_SPELL_KINDS)}, got {kinds!r}"
+            )
     if "keywords_had" in expr:
         word = expr["keywords_had"]
         if not isinstance(word, str) or word not in _KEYWORD_WORDS:

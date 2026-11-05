@@ -1055,6 +1055,42 @@ being targeted and resolving is dropped like any other target.
 `tests/unit/costs/test_x_in_mana_cost.py` pins the spell-target selector, on shipped
 cards as well as on `x_in_mana_cost`.
 
+### "If that spell is countered this way, exile it instead"
+
+```jsonc
+// Force of Negation — "Counter target noncreature spell. If that spell is
+//   countered this way, exile it instead of putting it into its owner's graveyard."
+{ "targets": [ { "id": "t1", "kind": "spell", "selector": { "not_types": ["Creature"] } } ],
+  "spell_effects": [ { "op": "counter", "target": "t1", "exiles": true } ] }
+
+// Transcendent Dragon — "…counter target spell. If that spell is countered this
+//   way, exile it instead of putting it into its owner's graveyard, then you may
+//   cast it without paying its mana cost."
+"effects": [
+  { "op": "counter", "target": "t1", "exiles": true, "as": "countered" },
+  { "op": "may", "prompt": "Cast the exiled card without paying its mana cost?",
+    "effects": [ { "op": "play_exiled", "objects": { "binding": "countered" } } ] } ]
+```
+
+`exiles: true` on `counter` is a replacement on the counter's own zone change
+(614.1a): a spell this op countered goes to exile, not to its owner's graveyard.
+"Countered this way" is the whole condition, so a spell that can't be countered
+stays on the stack and nothing moves (701.6a), and an ability countered has no
+card to move. The spell's own `StackItem.exiles_instead` (`cast_card`'s and
+`play_exiled`'s `exiles`) exiles it too, whichever says it. A non-boolean is a
+load error.
+
+`as` binds the cards this op countered that reached the zone it sent them to,
+which is the "it" a following `play_exiled` casts (`suspend.cast_for_free`, at
+the resolving controller's hands, whoever owns the card). An uncounterable
+spell, a copy (707.10a) and a commander its owner moved to the command zone
+(903.9a) are not in it, so the "may" offers nothing for them.
+
+The near miss is an `exile` op after the counter. By then the card is in a
+graveyard, has fired whatever watches one, and is a new object (400.7) that no
+selector names as "that spell". Exiling a spell *without* countering it is a
+different action and is not this key.
+
 ### Doing something to a spell that is not countering it
 
 ```jsonc
@@ -1066,7 +1102,8 @@ cards as well as on `x_in_mana_cost`.
 
 Rule 701.5a makes **countering** one specific action, and three things are true
 of it and of nothing else: "this spell can't be countered" stops it, the card
-lands in its owner's graveyard, and it is what "whenever a spell is countered"
+leaves the stack for its owner's graveyard unless a replacement such as
+`exiles` sends it elsewhere, and it is what "whenever a spell is countered"
 watches. Returning a spell to a hand shares none of them, so it is a separate op
 rather than a `destination` key on `counter` — which would be a card that
 declines to answer Carnage Tyrant and sets off the wrong triggers when it does.
@@ -5985,6 +6022,56 @@ It is last-known information and has to be: by the time the trigger resolves the
 object is out of combat and there is nothing left to ask. It is snapshotted where
 `was_creature` already was — the one LKI case a card cannot reach with a
 `snapshot` op of its own, because the object has already gone.
+
+### What the cast spell targets — `spell_target_count` and `targets_of_spell`
+
+A `spell_cast` trigger can ask about the targets of the spell that fired it in
+three ways, which differ in what they count and **when** they look:
+
+| Read | What it is | When |
+|---|---|---|
+| `{"binding": "spell_targets"}` | the spell's **object** targets, a list of oids for a selector | as cast |
+| `{"binding": "spell_target_count"}` | how many targets the spell was cast with: objects, players and spells, once per target instance (115.3) | as cast |
+| `{"targets_of_spell": ["permanent", "player"]}` | how many of the spell's targets are, now, a permanent on the battlefield or a player still in the game | as asked |
+
+"Whenever you cast a spell **with one or more targets**, draw **that many**
+cards" (Voracious Bibliophile) is the binding, twice:
+
+```jsonc
+"trigger": { "event": "spell_cast", "controller": "you",
+             "condition": { "cmp": ">=", "left": { "binding": "spell_target_count" },
+                            "right": { "const": 1 } },
+             "recheck": false },
+"effects": [ { "op": "draw", "player": "you",
+               "amount": { "binding": "spell_target_count" } } ]
+```
+
+"With one or more targets" describes the cast, so the condition is a `recheck:
+false` "while", and a spell with no targets never puts the ability on the
+stack. The number is `Game._cast`'s snapshot, so a spell countered in response
+still draws its count.
+
+"…copy that spell **if it targets a permanent or player** … If you don't copy a
+spell this way, draw a card" (Shiko and Narset, Unified, with `nth: 2`) is
+asked as the ability resolves, so it is the live value inside an `if`:
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": ">=", "left": { "targets_of_spell": ["permanent", "player"] },
+                 "right": { "const": 1 } },
+  "then": [ { "op": "copy_spell", "new_targets": true } ],
+  "else": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+`targets_of_spell` reads the stack item the trigger's `sid` binding names — the
+spell `copy_spell` copies by default — and a spell that has left the stack
+targets nothing and reads 0, so a Flurry spell countered in response draws
+instead. A target that has left the battlefield is no longer a permanent the
+spell targets. It takes a non-empty list of `permanent` and `player`; the
+loader refuses anything else. The near misses are both wrong on one line of
+play: `spell_target_count` would take the copy branch for a countered spell and
+then copy and draw nothing, and `exists` over `spell_targets` never sees a
+player.
 
 ## Static abilities
 
