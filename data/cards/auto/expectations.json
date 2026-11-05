@@ -3785,6 +3785,13 @@
     },
     "zone": "graveyard"
   },
+  "delayed_blast_fireball": {
+    "life": {
+      "0": 40,
+      "1": 38
+    },
+    "zone": "graveyard"
+  },
   "delighted_halfling": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -4648,6 +4655,10 @@
     },
     "zone": "graveyard"
   },
+  "envoy_of_the_ancestors": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "eomer_king_of_rohan": {
     "counters": {
       "amount": 0,
@@ -5080,6 +5091,13 @@
   },
   "fallen_ideal": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "fallen_shinobi": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "fanatic_of_rhonas": {
@@ -7642,6 +7660,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "ingenious_infiltrator": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "ingenious_prodigy": {
     "battlefield_count": 33,
     "hand_size": {
@@ -7662,6 +7687,10 @@
   "ingot_chewer": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "ink_eyes_servant_of_oni": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "inkmoth_nexus": {
@@ -8252,6 +8281,10 @@
     "zone": "battlefield"
   },
   "kelinore_bat": {
+    "zone": "battlefield"
+  },
+  "kellogg_dangerous_mind": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "kemba_s_skyguard": {
@@ -9909,6 +9942,13 @@
     "zone": "battlefield"
   },
   "mist_leopard": {
+    "zone": "battlefield"
+  },
+  "mistblade_shinobi": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "mister_fantastic": {
@@ -11807,6 +11847,10 @@
       "0": 2
     }
   },
+  "prosperous_thief": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "proteus_staff": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12492,6 +12536,20 @@
     },
     "opponent_battlefield_count": 6,
     "zone": "battlefield"
+  },
+  "restoration_magic": {
+    "granted": {
+      "count": 1,
+      "keywords": [
+        "hexproof",
+        "indestructible"
+      ]
+    },
+    "life": {
+      "0": 40,
+      "1": 40
+    },
+    "zone": "graveyard"
   },
   "resupply": {
     "hand_size": {
@@ -13826,6 +13884,13 @@
     "zone": "graveyard"
   },
   "silent_artisan": {
+    "zone": "battlefield"
+  },
+  "silent_blade_oni": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
     "zone": "battlefield"
   },
   "silent_observer": {
@@ -15849,6 +15914,10 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "thousand_faced_shadow": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "thraben_purebloods": {
     "zone": "battlefield"

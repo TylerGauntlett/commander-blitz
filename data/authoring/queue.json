@@ -65662,12 +65662,12 @@
     },
     "Delayed Blast Fireball": {
       "edhrec_rank": 1376,
-      "gate": "template",
+      "gate": null,
       "name": "Delayed Blast Fireball",
-      "reason": "no template for: deals 2 damage to each opponent and each creature they control. If this spell was cast fro",
+      "reason": "",
       "scryfall_id": "9a6468b6-ac2f-4af5-985f-e9cae5eb2251",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Delaying Shield": {
@@ -84942,12 +84942,12 @@
     },
     "Envoy of the Ancestors": {
       "edhrec_rank": 2487,
-      "gate": "template",
+      "gate": null,
       "name": "Envoy of the Ancestors",
-      "reason": "no template for: Outlast {W}",
+      "reason": "",
       "scryfall_id": "fc1dfbfc-90e0-48fa-98f1-39929f823619",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Eon Frolicker": {
@@ -90752,12 +90752,12 @@
     },
     "Fallen Shinobi": {
       "edhrec_rank": 2029,
-      "gate": "template",
+      "gate": null,
       "name": "Fallen Shinobi",
-      "reason": "no template for: Ninjutsu {2}{U}{B}",
+      "reason": "",
       "scryfall_id": "979076a7-313f-4227-a4c3-548e86997e0a",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Faller's Faithful": {
@@ -136722,12 +136722,12 @@
     },
     "Ingenious Infiltrator": {
       "edhrec_rank": 3077,
-      "gate": "template",
+      "gate": null,
       "name": "Ingenious Infiltrator",
-      "reason": "no template for: Ninjutsu {U}{B}",
+      "reason": "",
       "scryfall_id": "a92b3ded-40d9-4e50-a64c-b326e3fd52ed",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ingenious Leonin": {
@@ -136892,12 +136892,12 @@
     },
     "Ink-Eyes, Servant of Oni": {
       "edhrec_rank": 2834,
-      "gate": "template",
+      "gate": null,
       "name": "Ink-Eyes, Servant of Oni",
-      "reason": "no template for: Ninjutsu {3}{B}{B}",
+      "reason": "",
       "scryfall_id": "dccf6188-e038-4eec-af5b-8cc8a35ca00e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ink-Treader Nephilim": {
@@ -147932,12 +147932,12 @@
     },
     "Kellogg, Dangerous Mind": {
       "edhrec_rank": 2544,
-      "gate": "template",
+      "gate": null,
       "name": "Kellogg, Dangerous Mind",
-      "reason": "no template for: Whenever Kellogg attacks, create a Treasure token",
+      "reason": "",
       "scryfall_id": "8912d8ca-bd08-47e0-aa21-bc9e16c954bb",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kelpie Guide": {
@@ -176072,12 +176072,12 @@
     },
     "Mistblade Shinobi": {
       "edhrec_rank": 3212,
-      "gate": "template",
+      "gate": null,
       "name": "Mistblade Shinobi",
-      "reason": "no template for: Ninjutsu {U}",
+      "reason": "",
       "scryfall_id": "19dd36b7-e4fe-4ba9-bfe1-00695dfe1d07",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Mistbreath Elder": {
@@ -208622,12 +208622,12 @@
     },
     "Prosperous Thief": {
       "edhrec_rank": 2481,
-      "gate": "template",
+      "gate": null,
       "name": "Prosperous Thief",
-      "reason": "no template for: Ninjutsu {1}{U}",
+      "reason": "",
       "scryfall_id": "5dea029b-ffc9-49d1-925c-b55a944d3439",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Prossh, Skyraider of Kher": {
@@ -221702,12 +221702,12 @@
     },
     "Restoration Magic": {
       "edhrec_rank": 1184,
-      "gate": "template",
+      "gate": null,
       "name": "Restoration Magic",
-      "reason": "no template for: Tiered",
+      "reason": "",
       "scryfall_id": "494e68e9-ecba-4482-82bc-207ad59144c1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Restoration Seminar": {
@@ -247172,12 +247172,12 @@
     },
     "Silent-Blade Oni": {
       "edhrec_rank": 2807,
-      "gate": "template",
+      "gate": null,
       "name": "Silent-Blade Oni",
-      "reason": "no template for: Ninjutsu {4}{U}{B}",
+      "reason": "",
       "scryfall_id": "7ae71886-9e93-4d1c-b8f7-da7aafa83cf9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Silent-Chant Zubera": {
@@ -284672,12 +284672,12 @@
     },
     "Thousand-Faced Shadow": {
       "edhrec_rank": 2581,
-      "gate": "template",
+      "gate": null,
       "name": "Thousand-Faced Shadow",
-      "reason": "no template for: Ninjutsu {2}{U}{U}",
+      "reason": "",
       "scryfall_id": "00632c03-be00-4722-85b3-2ce31bba5cc6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thousand-Year Elixir": {
