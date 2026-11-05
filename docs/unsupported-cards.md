@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **149** capabilities.
+**161 cards** blocked by **148** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -23,7 +23,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [batched-trigger-objects](#batched-trigger-objects) | 2 | 4348 | trigger_event |
 | [cast-as-though-flash](#cast-as-though-flash) | 2 | 536 | op |
 | [cast-only-during-opponents-turn](#cast-only-during-opponents-turn) | 2 | 3254 | engine |
-| [cast-spell-targets](#cast-spell-targets) | 2 | 7849 | selector, value |
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [counter-to-exile](#counter-to-exile) | 2 | 266 | op |
@@ -437,26 +436,6 @@ Blocks **2** cards.
 - **Delirium** (rank 12129) — `delirium`
   - Cast this spell only during an opponent's turn.
   - Tap target creature that player controls. That creature deals damage equal to its power to the player.
-
-</details>
-
-## cast-spell-targets
-
-Blocks **2** cards.
-
-- **(value)** a condition a spell_cast trigger can ask about the cast spell's PLAYER targets as well as its object targets -- "if it targets a permanent or player" -- e.g. an event binding of the seats the spell targeted (spell_target_players) or a condition key `spell_targets_any: ["permanent", "player"]`, usable in an `if` whose then is copy_spell (new_targets, sid of the triggering spell) and whose else is draw 1
-  <br>Why the existing vocabulary won't do: The spell_cast event binding `spell_targets` (Game._cast) carries only targets of kind "object", deliberately dropping player targets, so `exists` over it answers "targets a permanent" but a spell aimed only at a player (Lightning Bolt to the face, Fact or Fiction-style target-player spells) would wrongly fall into the draw branch instead of being copied. No condition_keys or value_keys entry reads a spell's player targets. The rest of the line (trigger nth: 2 on spell_cast controller you, copy_spell with new_targets, if/else draw) appears expressible once that condition exists; the sid binding naming the triggering spell for copy_spell should also be confirmed.
-- **(selector)** a spell_cast trigger filter key matching a spell that has one or more targets chosen as it was cast (e.g. filter {"has_targets": true}), counting distinct target objects/players across all its target instances
-  <br>Why the existing vocabulary won't do: trigger_filter_keys reads only printed characteristics (types, colors, mana_value, ...) and zone/controller facts; nothing inspects the cast spell's chosen targets. targeted_by on a trigger is the inverse (a permanent becoming the target), and becomes_target fires per targeted object, not once per spell cast
-- **(value)** a value reading the number of targets the triggering spell (bound as the trigger's subject) has, so draw's amount can be 'that many'
-  <br>Why the existing vocabulary won't do: value_keys has count over a selector, x, mana_value_of and spells_cast_this_turn, but no reader of a stack object's chosen targets; the engine's target_count helper in engine/targeting.py computes legal target numbers for a spec, not the targets a cast spell actually chose, and is not exposed to the DSL
-
-<details><summary>Cards waiting on this</summary>
-
-- **Voracious Bibliophile** (rank 7849) — `voracious_bibliophile`
-  - Whenever you cast a spell with one or more targets, draw that many cards.
-- **Shiko and Narset, Unified** (rank 8290) — `shiko_and_narset_unified`
-  - Flurry — Whenever you cast your second spell each turn, copy that spell if it targets a permanent or player, and you may choose new targets for the copy. If you don't copy a spell this way, draw a card.
 
 </details>
 

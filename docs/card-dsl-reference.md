@@ -13,7 +13,7 @@ The vocabulary of the card DSL, one table per family, with the names read off th
 | [Effect ops](#effect-ops) | 163 |
 | [Selectors](#selectors) | 74 |
 | [Player specs](#player-specs) | 9 |
-| [Values](#values) | 68 |
+| [Values](#values) | 69 |
 | [Conditions](#conditions) | 34 |
 | [Trigger events](#trigger-events) | 49 |
 | [Trigger filters](#trigger-filters) | 36 |
@@ -374,6 +374,7 @@ Every head a value expression may have, anywhere a number is expected. Defined u
 | `spells_cast_this_turn` | Spells cast this turn (storm). | [Counting an event rather than the board](card-dsl.md#counting-an-event-rather-than-the-board) |
 | `starting_life_of` | The life total a player began with. | ["At least 7 life more than your starting life total"](card-dsl.md#at-least-7-life-more-than-your-starting-life-total) |
 | `sum` | a + b + …. | [Value expressions](card-dsl.md#value-expressions) |
+| `targets_of_spell` | How many of the triggering spell's targets are, as asked, of the listed kinds (`permanent` on the battlefield, `player` in the game); 0 once the spell has left the stack. | [What the cast spell targets — spell_target_count and targets_of_spell](card-dsl.md#what-the-cast-spell-targets--spell_target_count-and-targets_of_spell) |
 | `times` | a * b. | [Value expressions](card-dsl.md#value-expressions) |
 | `times_tapped_this_turn` | Times one object has become tapped this turn, counting every tap since the turn began. | [How many times a permanent has become tapped this turn](card-dsl.md#how-many-times-a-permanent-has-become-tapped-this-turn) |
 | `toughness_had` | The toughness the dying creature had. | [Value expressions](card-dsl.md#value-expressions) |

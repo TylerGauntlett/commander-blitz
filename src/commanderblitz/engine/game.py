@@ -1071,6 +1071,15 @@ class Game:
             # consumer -- `_bound_oids` cannot tell them apart, since both are
             # `int`. Ordinary selector keys narrow it the rest of the way.
             spell_targets=[ref.id for ref in item.targets if ref.kind == "object"],
+            # "Whenever you cast a spell **with one or more targets**, draw
+            # **that many** cards" (Voracious Bibliophile). Every target the
+            # spell was cast with, of every kind -- objects, players, spells --
+            # counted once per target instance (115.3): a player chosen for two
+            # different "target" words is two targets. A number rather than a
+            # second list, so nothing has to tell seat numbers from oids.
+            # Frozen here, so the count is the cast's even after the spell has
+            # left the stack; `targets_of_spell` is the live question.
+            spell_target_count=len(item.targets),
         )
 
     def _activate(self, pid: int, action: Action) -> Generator[Any, list[int]]:

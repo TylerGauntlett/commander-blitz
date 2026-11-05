@@ -5986,6 +5986,56 @@ object is out of combat and there is nothing left to ask. It is snapshotted wher
 `was_creature` already was — the one LKI case a card cannot reach with a
 `snapshot` op of its own, because the object has already gone.
 
+### What the cast spell targets — `spell_target_count` and `targets_of_spell`
+
+A `spell_cast` trigger can ask about the targets of the spell that fired it in
+three ways, which differ in what they count and **when** they look:
+
+| Read | What it is | When |
+|---|---|---|
+| `{"binding": "spell_targets"}` | the spell's **object** targets, a list of oids for a selector | as cast |
+| `{"binding": "spell_target_count"}` | how many targets the spell was cast with: objects, players and spells, once per target instance (115.3) | as cast |
+| `{"targets_of_spell": ["permanent", "player"]}` | how many of the spell's targets are, now, a permanent on the battlefield or a player still in the game | as asked |
+
+"Whenever you cast a spell **with one or more targets**, draw **that many**
+cards" (Voracious Bibliophile) is the binding, twice:
+
+```jsonc
+"trigger": { "event": "spell_cast", "controller": "you",
+             "condition": { "cmp": ">=", "left": { "binding": "spell_target_count" },
+                            "right": { "const": 1 } },
+             "recheck": false },
+"effects": [ { "op": "draw", "player": "you",
+               "amount": { "binding": "spell_target_count" } } ]
+```
+
+"With one or more targets" describes the cast, so the condition is a `recheck:
+false` "while", and a spell with no targets never puts the ability on the
+stack. The number is `Game._cast`'s snapshot, so a spell countered in response
+still draws its count.
+
+"…copy that spell **if it targets a permanent or player** … If you don't copy a
+spell this way, draw a card" (Shiko and Narset, Unified, with `nth: 2`) is
+asked as the ability resolves, so it is the live value inside an `if`:
+
+```jsonc
+{ "op": "if",
+  "condition": { "cmp": ">=", "left": { "targets_of_spell": ["permanent", "player"] },
+                 "right": { "const": 1 } },
+  "then": [ { "op": "copy_spell", "new_targets": true } ],
+  "else": [ { "op": "draw", "player": "you", "amount": { "const": 1 } } ] }
+```
+
+`targets_of_spell` reads the stack item the trigger's `sid` binding names — the
+spell `copy_spell` copies by default — and a spell that has left the stack
+targets nothing and reads 0, so a Flurry spell countered in response draws
+instead. A target that has left the battlefield is no longer a permanent the
+spell targets. It takes a non-empty list of `permanent` and `player`; the
+loader refuses anything else. The near misses are both wrong on one line of
+play: `spell_target_count` would take the copy branch for a countered spell and
+then copy and draw nothing, and `exists` over `spell_targets` never sees a
+player.
+
 ## Static abilities
 
 Parameters are flattened onto the ability, and the filter may only read **printed**

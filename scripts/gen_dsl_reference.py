@@ -663,6 +663,9 @@ VALUES: dict[str, Entry] = {
     "keywords_had": ("1 if the departed permanent had a keyword (derived) as it left, else 0.",
                      '"Without flying", asked of a creature that died — `keywords_had`'),
     "power_of": ("An object's power.", None),
+    "targets_of_spell": ("How many of the triggering spell's targets are, as asked, of the listed kinds "
+                         "(`permanent` on the battlefield, `player` in the game); 0 once the spell has left the stack.",
+                         "What the cast spell targets — `spell_target_count` and `targets_of_spell`"),
     "resolutions_this_turn": ("Times this ability has resolved this turn.", None),
     "rolled": ("Dice results under a binding: count, by face, parity or total.", H_ROLL),
     "spells_cast_this_game": ("Spells the player has cast this game, by filter.",
