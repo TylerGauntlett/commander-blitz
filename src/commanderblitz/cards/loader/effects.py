@@ -2984,6 +2984,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"(an int or {{\"const\": n}}); the division is announced before "
                 f"anything could be computed"
             )
+    if op == "distribute_moved_counters":
+        # "Move any number of +1/+1 counters from this creature onto other
+        # creatures" (Forgotten Ancient): chosen on resolution among a pool, so
+        # the destinations are a selector. A target here would be 601.2d's
+        # announced division, which is `distribute_counters`; no pool at all
+        # is a "may" that can never move anything.
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping) or not objects:
+            raise DslError(
+                f"{where}: distribute_moved_counters needs 'objects', a selector "
+                f"naming the permanents the counters may go onto"
+            )
+        if "target" in objects or "binding" in objects:
+            raise DslError(
+                f"{where}: distribute_moved_counters chooses its destinations on "
+                f"resolution; a targeted division is distribute_counters (601.2d)"
+            )
+        validate_selector(objects, f"{where}.objects")
+        if not isinstance(effect.get("counter", "+1/+1"), str):
+            raise DslError(f"{where}: distribute_moved_counters' 'counter' is a kind name")
+        for key in ("amount", "from"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: distribute_moved_counters moves any number of this "
+                    f"permanent's own counters; it takes no '{key}'"
+                )
     if op == "double_counters" and not effect.get("objects"):
         # Without `objects` the pool is empty and nothing doubles: a Deepglow
         # Skate that loads clean and does nothing.

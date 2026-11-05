@@ -3113,6 +3113,28 @@ it is put on — a placement, so counter replacements and `counter_placed` see i
 object, which is "a second target". The loader refuses `any_kind` beside a
 `counter` or `all_kinds`, and without a printed `amount`.
 
+### Moving counters off this permanent among others — `distribute_moved_counters`
+
+```jsonc
+// Forgotten Ancient — "At the beginning of your upkeep, you may move any
+// number of +1/+1 counters from this creature onto other creatures."
+{ "op": "distribute_moved_counters", "counter": "+1/+1",
+  "objects": { "types": ["Creature"], "controller": "any", "exclude_self": true } }
+```
+
+An untargeted split chosen on resolution (608.2d): nothing is announced as the
+ability goes on the stack, because 601.2d divides only among targets. The
+controller says how many `counter` counters (default +1/+1) leave this
+permanent — `ask_x`, 0 up to all of them, 0 being the "you may" declined — then
+which permanent from the `objects` pool gets each one (`ask_objects`, purpose
+`distribute`); this permanent is never offered. They come off once, and each
+permanent's share goes on in one placement, so a counter replacement applies
+once per permanent. Nothing is asked with this permanent gone, no counter on
+it or an empty pool. Not `move_counters`, which puts the same amount on every
+destination, and not `distribute_counters`, a division among targets announced
+on activation. The loader refuses it without a selector `objects`, with a
+`target` or `binding` pool, and with `amount` or `from`.
+
 ### Removing counters from among permanents — the `remove_counters_from_among` op
 
 ```jsonc

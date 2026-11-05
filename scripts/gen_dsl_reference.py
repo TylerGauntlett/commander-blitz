@@ -286,6 +286,8 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                         "Doubling the counters on a permanent"),
     "distribute_counters": ("Board", "Distribute N counters among targets as the player chooses.",
                             "Distributing counters among targets"),
+    "distribute_moved_counters": ("Board", "Move any number of this permanent's counters of a kind onto permanents from a pool, chosen on resolution one counter at a time, each share placed once.",
+                                  "Moving counters off this permanent among others — `distribute_moved_counters`"),
     "detain": ("Board", "Detain permanents until your next turn.", None),
     "distribute_control_among_opponents": ("Board", "For each permanent, choose a different opponent; each gains control of theirs.",
                                            "Each opponent gains control of the one chosen for them"),

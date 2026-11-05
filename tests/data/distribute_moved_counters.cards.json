@@ -1,0 +1,28 @@
+{
+  "_comment": "Shapes for tests/unit/counters/test_distribute_moved_counters.py. t_dmc_ancient carries Forgotten Ancient's upkeep trigger on a plain 0/3; the bears and Hardened Scales come from replace_counters.cards.json.",
+  "cards": [
+    {
+      "id": "t_dmc_ancient",
+      "name": "Test Forgotten Ancient",
+      "oracle_text": "At the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures.",
+      "mana_cost": "{3}{G}",
+      "types": ["Creature"],
+      "subtypes": ["Elemental"],
+      "colors": ["G"],
+      "color_identity": ["G"],
+      "power": 0,
+      "toughness": 3,
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures.",
+          "trigger": {"event": "upkeep", "controller": "you"},
+          "effects": [
+            {"op": "distribute_moved_counters", "counter": "+1/+1",
+             "objects": {"types": ["Creature"], "controller": "any", "exclude_self": true}}
+          ]
+        }
+      ]
+    }
+  ]
+}
