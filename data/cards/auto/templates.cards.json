@@ -212946,6 +212946,99 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "op": "create_token",
+              "token": "zombie_2_2_b_decayed"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zombie creature token with decayed.",
+          "trigger": {
+            "condition": {
+              "cmp": "==",
+              "left": {
+                "keywords_had": "decayed"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "creature_dies",
+            "filter": {
+              "controller": "you",
+              "exclude_self": true,
+              "subtypes": [
+                "Zombie"
+              ]
+            }
+          }
+        },
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "op": "draw",
+                  "player": "you"
+                }
+              ],
+              "op": "may",
+              "pay": {
+                "sacrifice": {
+                  "controller": "you",
+                  "count": 1,
+                  "subtypes": [
+                    "Zombie"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "player": "you",
+              "prompt": "Sacrifice a Zombie to draw a card?"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your end step, you may sacrifice a Zombie. If you do, draw a card.",
+          "trigger": {
+            "controller": "you",
+            "event": "end_step"
+          }
+        }
+      ],
+      "color_identity": [
+        "B",
+        "U"
+      ],
+      "colors": [
+        "B",
+        "U"
+      ],
+      "id": "wilhelt_the_rotcleaver",
+      "mana_cost": "{2}{U}{B}",
+      "name": "Wilhelt, the Rotcleaver",
+      "oracle_text": "Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zombie creature token with decayed. (It can't block. When it attacks, sacrifice it at end of combat.)\nAt the beginning of your end step, you may sacrifice a Zombie. If you do, draw a card.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Zombie",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],

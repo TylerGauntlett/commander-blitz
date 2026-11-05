@@ -315642,12 +315642,12 @@
     },
     "Wilhelt, the Rotcleaver": {
       "edhrec_rank": 2687,
-      "gate": "template",
+      "gate": null,
       "name": "Wilhelt, the Rotcleaver",
-      "reason": "no template for: Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zo",
+      "reason": "",
       "scryfall_id": "82471687-46fa-4ccf-a792-180db0a5dd22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Will Kenrith": {

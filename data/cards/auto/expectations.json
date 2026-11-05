@@ -18033,6 +18033,10 @@
   "wildwood_patrol": {
     "zone": "battlefield"
   },
+  "wilhelt_the_rotcleaver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "will_of_the_jeskai": {
     "graveyard_size": {
       "0": 4

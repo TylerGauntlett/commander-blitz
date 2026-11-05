@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**156 cards** blocked by **141** capabilities.
+**155 cards** blocked by **141** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -26,7 +26,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [cast-trigger-x](#cast-trigger-x) | 2 | 1521 | engine, value |
 | [choose-new-targets](#choose-new-targets) | 2 | 75 | op |
 | [escape](#escape) | 2 | 388 | engine, static_effect |
-| [mode-owned-variable-targets](#mode-owned-variable-targets) | 2 | 6294 | engine |
 | [opening-hand-ability](#opening-hand-ability) | 2 | 180 | engine |
 | [prevent-damage-to-controlled-permanents](#prevent-damage-to-controlled-permanents) | 2 | 3254 | op |
 | [put-into-graveyard-from-anywhere](#put-into-graveyard-from-anywhere) | 2 | 902 | trigger_event |
@@ -103,10 +102,11 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [may-pay-named-cost](#may-pay-named-cost) | 1 | 24675 | op |
 | [merfolk-token](#merfolk-token) | 1 | 16445 | token |
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
+| [mode-owned-variable-targets](#mode-owned-variable-targets) | 1 | 6294 | engine |
+| [mode-owned-variable-targets-mid-declaration](#mode-owned-variable-targets-mid-declaration) | 1 | 16968 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
 | [myriad](#myriad) | 1 | 6808 | keyword |
-| [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
@@ -341,11 +341,11 @@ Blocks **4** cards.
 Blocks **3** cards.
 
 - **(op)** copy_permanent's `except_` adding a whole quoted triggered ability to the token's copiable values (707.9b), written once under `grantable_abilities` and referenced by index -- here "When this token leaves the battlefield, return the exiled card to its owner's graveyard" -- where "the exiled card" is linked to the specific card the creating ability exiled (e.g. the token records the exiled oid when created, and a selector such as `exiled_with: "self"` on the token resolves to it), so the card returns to its owner's graveyard when that particular token leaves
-  <br>Why the existing vocabulary won't do: copy_permanent's `except_` becomes `copy_overrides`, which characteristics._compute reads only for power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
-- **(op)** a copy exception on `become_copy` (707.9b) that adds a whole ability to the copiable values -- here the myriad triggered ability (written once, e.g. under `grantable_abilities`, and referenced by index) -- so 'becomes a copy of X until end of turn, except it has myriad' carries the ability as part of the copy effect, survives as a copiable value for the myriad token copies and anything else copying Muddle, and does nothing when no target was chosen
-  <br>Why the existing vocabulary won't do: `become_copy` takes only `copying`, `duration`, `except_name` and `objects`; the engine sets `copying_keywords`/`copying_remove_supertypes` only for the as-enters copy replacement, and myriad is not a keyword in `keywords` but a triggered ability (as shipped on Goldlust Triad / Herald of the Host). Following `become_copy` with a `grant_ability` would grant myriad in layer 6 rather than as a copiable value (wrong for copies of Muddle, and it would need its own guard for the zero-target case) -- an approximation, not the printed card
+  <br>Why the existing vocabulary won't do: copy_permanent's `except_` is checked against COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost) and becomes `copy_overrides`, which characteristics._compute reads only for those characteristics -- `add_subtypes: ["Spirit"]` covers the Spirit half, but nothing adds an ability. The new `except_` keys on become_copy (BECOME_COPY_EXCEPT_KEYS: add_keywords, keep_abilities) do not reach this card: they are become_copy-only (an in-place copy, not a token copy_permanent creates), add_keywords adds keywords rather than a triggered ability, and keep_abilities keeps positions in the copying card's OWN printed abilities -- the quoted leaves-the-battlefield trigger is not one of Hofri's own abilities and would fire for Hofri, not the token. A following `grant_ability` on the `as` binding would be a layer-6 grant rather than a copiable value (a copy of the token would lack it), and the granted trigger has no way to name the card Hofri's trigger exiled: `exiled_with: "self"` on the token would look for cards the token exiled, not cards exiled by Hofri, and an `exile` `link` is held by the exiling source, not by the token it later creates. The first sentence (buff + grant_keyword statics on Spirits you control) and the die/exile/copy steps (creature_dies trigger, exile the dying card, copy_permanent from exile with add_subtypes) are expressible.
+- **(op)** a `become_copy` `except_` key (707.9b) that adds an ability the copying card does NOT itself have -- e.g. `add_abilities: [i]` indexing the card's `grantable_abilities`, appended by `GameState.card_of` the way `copying_own_abilities` is -- so 'becomes a copy of X until end of turn, except it has myriad' writes the myriad triggered ability (as shipped in templates: a self-attacks trigger making tapped-and-attacking token copies exiled at end of combat) into the copiable values, where the myriad tokens and anything copying Muddle see it, and nothing happens when no target was chosen
+  <br>Why the existing vocabulary won't do: `except_` now takes `add_keywords` and `keep_abilities` (BECOME_COPY_EXCEPT_KEYS). Myriad is not in `keywords` -- the pool writes it as a triggered ability -- so `add_keywords` cannot name it. `keep_abilities` only carries positions in the card's OWN printed `abilities` onto the copy; Muddle does not print myriad as its own ability, and writing it into `abilities` to keep it would give the uncopied Muddle myriad permanently. A `grant_ability` after the copy is a layer-6 grant, not a copiable value (the doc names it the near miss), so copies of Muddle would lack myriad
 - **(op)** copy_permanent's `except_` honouring `add_keywords` (707.9b): "create a token that's a copy of that creature, except it has haste" writes haste into the token's copiable values, so the token has haste as part of what it is and any later copy of the token also has haste
-  <br>Why the existing vocabulary won't do: copy_permanent stores `except_` as the token's `copy_overrides`, and characteristics._compute/_base_pt read only power, toughness, add_subtypes, colors, types, add_types, add_supertypes and remove_supertypes from it; `add_keywords` is read only on the enters-as-copy path (zones._enter_battlefield -> obj.copying_keywords, Dack's Duplicate), so writing it on copy_permanent loads but the token would not have haste. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The rest of the card is expressible: `strive: "{2}{R}"` with a `count: "any"` creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a `delay` at end_step exiling the binding (as Stormsplitter).
+  <br>Why the existing vocabulary won't do: copy_permanent's except_ is checked against loader.effects.COPY_EXCEPT_KEYS (colors, types, power, toughness, add_types, add_subtypes, add_supertypes, remove_supertypes, no_mana_cost), so add_keywords on copy_permanent is refused at load, and characteristics._compute never reads keywords from copy_overrides. The new become_copy except_ (add_keywords/keep_abilities, BECOME_COPY_EXCEPT_KEYS) writes obj.copying_keywords, but become_copy turns an existing permanent into a copy; it creates no token, so it cannot say "create a token that's a copy of that creature". The as-enters path (ENTERS_COPY_EXCEPT_KEYS, Dack's Duplicate) is likewise for the card itself entering. The pool's workaround for "that token gains haste" (Helm of the Host, Rionya) is a following grant_keyword with duration permanent, which is a granted effect rather than a copiable value: a copy of a Twinflame token would lose the haste. The fix is probably small: accept add_keywords in COPY_EXCEPT_KEYS and have characteristics._compute add copy_overrides['add_keywords'] to the printed keywords (or set copying_keywords on the token). The rest of the card is expressible: strive "{2}{R}" with a count "any" creature-you-control target (as Call the Coppercoats), copy_permanent with `as`, and a delay at end_step exiling the binding (as Stormsplitter).
 
 <details><summary>Cards waiting on this</summary>
 
@@ -485,24 +485,6 @@ Blocks **2** cards.
   - Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard.
 - **Uro, Titan of Nature's Wrath** (rank 1514) — `uro_titan_of_nature_s_wrath`
   - When Uro enters, sacrifice it unless it escaped.
-
-</details>
-
-## mode-owned-variable-targets
-
-Blocks **2** cards.
-
-- **(engine)** a mode-owned target spec (target `mode`) whose size is caster-chosen -- `count: 2, up_to: true`, zero to two creatures -- declared only when its mode is chosen, beside the other modes' fixed-size mode-owned targets (a player for mode 0, an opponent for mode 2)
-  <br>Why the existing vocabulary won't do: `loader.targets._check_mode_targets` refuses a `variable_size` mode-owned spec because `filter_legal` splits the stored refs by position, and also refuses a card-level variable-size target on a card with any mode-owned one; `Game._ask_mode_targets` asks exactly `want` refs. A fixed `count: 2` would demand two creatures and forbid untapping zero or one, and moving the targets to card level would declare every mode's targets whether or not the mode is chosen. Escalate itself (card-level `escalate` with an `or_more` choose_mode) and the other two modes (`gain_life` on a player target; `sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
-- **(engine)** a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: "any", count: 2, up_to: true` owned by mode 1 -- so "deals 1 damage to each of one or two targets" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets
-  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list
-
-<details><summary>Cards waiting on this</summary>
-
-- **Prismari Charm** (rank 6294) — `prismari_charm`
-  - • Prismari Charm deals 1 damage to each of one or two targets.
-- **Blessed Alliance** (rank 16968) — `blessed_alliance`
-  - • Untap up to two target creatures.
 
 </details>
 
@@ -1630,6 +1612,34 @@ Blocks **1** card.
 
 </details>
 
+## mode-owned-variable-targets
+
+Blocks **1** card.
+
+- **(engine)** a caster-sized mode-owned target (`kind: "any", count: 2, up_to: true, min_count: 1, mode: 1`) on a mode that is NOT the last to own a target, when the top-level choose_mode is "choose one" (`count: 1`, no or_more/up_to): only one mode's specs are ever declared, so a later mode's target (here mode 2's "target nonland permanent") can never follow the variable-size refs in the same declaration
+  <br>Why the existing vocabulary won't do: loader.targets._check_mode_targets / _ends_every_declaration now admit an up_to mode-owned spec, but only when no later mode owns a target -- it ignores the choose_mode's count, so it refuses this card although a choose-one cast declares exactly one mode's specs; a card-level up_to target would be declared under every mode (and is refused beside mode-owned ones), and splitting the bullet into one-target and two-target modes changes the printed mode list
+
+<details><summary>Cards waiting on this</summary>
+
+- **Prismari Charm** (rank 6294) — `prismari_charm`
+  - • Prismari Charm deals 1 damage to each of one or two targets.
+
+</details>
+
+## mode-owned-variable-targets-mid-declaration
+
+Blocks **1** card.
+
+- **(engine)** a caster-sized mode-owned target spec (`mode: 1, count: 2, up_to: true` -- zero to two creatures) that is NOT the last target declared, because a later mode (mode 2, `Target opponent`) owns a fixed-size target of its own; the stored refs must be split per spec by recorded size rather than by position so the opponent ref after a 0-, 1- or 2-creature pick lands in mode 2's bucket
+  <br>Why the existing vocabulary won't do: Caster-sized mode-owned targets now load (Yuna's Decision), but `loader.targets._check_mode_targets` / `_ends_every_declaration` admit one only as the last target declared -- the last spec of its mode with no later mode owning a target -- since `filter_legal` splits the stored refs by position in `CardDef.specs_for_modes` order. Here mode 2 owns a target after it, so the card is refused. Reordering the bullets so the untap mode is last would break 700.2's printed resolution order and the printed mode order; a fixed `count: 2` forbids untapping zero or one creature; a card-level target would be declared whether or not the mode is chosen; and making mode 2's opponent a non-targeting choice drops the targeting. Escalate (card-level `escalate` with an `or_more` choose_mode), mode 0 (`gain_life` on a player target) and mode 2 (`sacrifice` with `chooser` over an attacking creature the targeted opponent controls) are expressible
+
+<details><summary>Cards waiting on this</summary>
+
+- **Blessed Alliance** (rank 16968) — `blessed_alliance`
+  - • Untap up to two target creatures.
+
+</details>
+
 ## modified
 
 Blocks **1** card.
@@ -1670,20 +1680,6 @@ Blocks **1** card.
 
 - **Mass of Mysteries** (rank 6808) — `mass_of_mysteries`
   - At the beginning of combat on your turn, another target Elemental you control gains myriad until end of turn
-
-</details>
-
-## not-keywords-trigger-filter
-
-Blocks **1** card.
-
-- **(selector)** `not_keywords` in a trigger filter (TRIGGER_FILTER_KEYS / triggers.matches_card_filter), answered from the dying creature's last-known keywords, so a `creature_dies` trigger can say "another Zombie you control dies, if it didn't have decayed" -- filter {controller: you, subtypes: [Zombie], exclude_self: true, not_keywords: [decayed]}
-  <br>Why the existing vocabulary won't do: trigger_filter_keys carries `keywords` but not its negation `not_keywords` (validate_trigger_filter refuses it), and matches_card_filter reads the printed card face only, so a creature that was granted decayed would not be seen either. A trigger `condition` has no last-known-keywords value (value_keys has counters_had, power_had, toughness_had but no keywords_had), and an `exists` over the subject reads a creature that has already left the battlefield. Dropping the clause would make every decayed token that dies replace itself forever.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Wilhelt, the Rotcleaver** (rank 2687) — `wilhelt_the_rotcleaver`
-  - Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zombie creature token with decayed
 
 </details>
 

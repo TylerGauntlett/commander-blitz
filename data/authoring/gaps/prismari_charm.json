@@ -9,15 +9,16 @@
     {
       "capability": "mode_owned_variable_targets",
       "kind": "engine",
-      "what": "a mode-owned target spec (target `mode` on a spell whose effect tree is one top-level choose_mode) whose size the caster picks -- `kind: \"any\", count: 2, up_to: true` owned by mode 1 -- so \"deals 1 damage to each of one or two targets\" declares 1 or 2 any-targets only when that bullet is chosen, beside the other modes' fixed targets",
-      "why_existing_wont_do": "loader.targets._check_mode_targets refuses a mode-owned spec that is variable_size (up_to) or optional, because filter_legal slices stored refs by position; a card-level up_to target would be declared for every mode, a nested choose_mode is answered on resolution with no way to declare targets, and splitting the bullet into two modes (one target / two targets) changes the printed mode list"
+      "what": "a caster-sized mode-owned target (`kind: \"any\", count: 2, up_to: true, min_count: 1, mode: 1`) on a mode that is NOT the last to own a target, when the top-level choose_mode is \"choose one\" (`count: 1`, no or_more/up_to): only one mode's specs are ever declared, so a later mode's target (here mode 2's \"target nonland permanent\") can never follow the variable-size refs in the same declaration",
+      "why_existing_wont_do": "loader.targets._check_mode_targets / _ends_every_declaration now admit an up_to mode-owned spec, but only when no later mode owns a target -- it ignores the choose_mode's count, so it refuses this card although a choose-one cast declares exactly one mode's specs; a card-level up_to target would be declared under every mode (and is refused beside mode-owned ones), and splitting the bullet into one-target and two-target modes changes the printed mode list"
     }
   ],
   "closest_existing": [
     "choose_mode",
     "damage",
     "target.mode",
-    "target.up_to"
+    "target.up_to",
+    "target.min_count"
   ],
   "confidence": "high"
 }
