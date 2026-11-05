@@ -1896,3 +1896,50 @@ class TestTheScionsWizardPings:
         game.apply(cast)
         settle_completely(game)
         assert game.state.players[1].life == before - 1
+
+
+class TestTheMarduSurgeTokens:
+    """Four tokens Mardu Surge prints that the pool had only near misses for.
+
+    - Chittering Witch: *"create a 1/1 **black Rat** creature token"* -- the
+      pool's 1/1 black is a Vampire, which Vampire-typal cards would count.
+    - Release the Dogs: *"Create four 1/1 **white Dog** creature tokens"* --
+      `cat_1_1_w` is the right body under the wrong creature type.
+    - Tempt with Vengeance: *"1/1 **red** Elemental creature tokens **with
+      haste**"* -- `elemental_1_1_ur` is blue and red, and has no haste.
+    - Idol of Oblivion: *"Create a **10/10 colorless Eldrazi** creature
+      token"* -- the pool's other Eldrazi are a Spawn with a mana ability and a
+      flying, vigilant Angel.
+    """
+
+    @pytest.mark.parametrize(
+        ("token_id", "size", "colors", "subtypes", "kws"),
+        [
+            ("rat_1_1_b", (1, 1), ["B"], ["Rat"], []),
+            ("dog_1_1_w", (1, 1), ["W"], ["Dog"], []),
+            ("elemental_1_1_r_haste", (1, 1), ["R"], ["Elemental"], ["haste"]),
+            ("eldrazi_10_10_c", (10, 10), [], ["Eldrazi"], []),
+        ],
+    )
+    def test_it_is_exactly_the_printed_token(self, pool, token_id, size, colors, subtypes, kws):
+        token = pool.get(token_id)
+        assert token is not None
+        assert (token.power, token.toughness) == size
+        assert sorted(token.colors) == colors
+        assert list(token.subtypes) == subtypes
+        assert list(token.keywords) == kws
+        assert not token.abilities
+
+    @pytest.mark.parametrize(
+        ("near_miss", "differs"),
+        [
+            ("vampire_1_1_b", lambda t: "Rat" not in t.subtypes),
+            ("cat_1_1_w", lambda t: "Dog" not in t.subtypes),
+            ("elemental_1_1_ur", lambda t: "haste" not in t.keywords and "U" in t.colors),
+            ("eldrazi_spawn_0_1_c", lambda t: (t.power, t.toughness) == (0, 1)),
+        ],
+    )
+    def test_the_near_miss_is_still_a_separate_token(self, pool, near_miss, differs):
+        other = pool.get(near_miss)
+        assert other is not None
+        assert differs(other)
