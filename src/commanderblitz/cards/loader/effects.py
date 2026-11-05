@@ -947,19 +947,29 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             )
 
     # "…to the battlefield **attached to that token**": the effect names the
-    # Aura's host itself, with a following `attach`, so 303.4f's choice is not
-    # asked. Only the two ops that put a card onto the battlefield and are
-    # followed by such an `attach` read it, and only beside the battlefield.
+    # host itself, as a selector, so 303.4f's choice is not asked and the
+    # named host is tested against each Aura's enchant clause instead
+    # (`zones.offer_named_host`). Only the two ops that put a card onto the
+    # battlefield read it, and only beside the battlefield. A boolean is
+    # refused: it would name no host, and an attach written after the arrival
+    # would hang the Aura on something its clause never saw.
     if "host_named" in effect:
-        if op not in HOST_NAMED_OPS or not isinstance(effect["host_named"], bool):
+        named = effect["host_named"]
+        if op not in HOST_NAMED_OPS or not isinstance(named, Mapping):
             raise DslError(
-                f"{where}: 'host_named' is a boolean read by {sorted(HOST_NAMED_OPS)}, "
-                f"not {op!r}"
+                f"{where}: 'host_named' is a selector naming the host, read by "
+                f"{sorted(HOST_NAMED_OPS)}; got {named!r} on {op!r}"
             )
         if op == "return_from_graveyard" and effect.get("destination") != "battlefield":
             raise DslError(
                 f"{where}: 'host_named' needs destination 'battlefield'; an Aura "
                 f"enchants nothing anywhere else"
+            )
+        validate_selector(named, f"{where}.host_named")
+        if "target" in named and str(named["target"]) not in target_kinds:
+            raise DslError(
+                f"{where}.host_named: references target {named['target']!r} "
+                f"which the card does not declare"
             )
 
     # "…put onto the battlefield with this Aura" (Animate Dead): `link` on a

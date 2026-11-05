@@ -21,6 +21,7 @@ from ..zones import (
     move_object,
     offer_aura_host,
     offer_enters_replacement,
+    offer_named_host,
     offer_read_ahead,
     offer_riot_choice,
     record_playable_source,
@@ -41,6 +42,7 @@ from .registry import register
 from .selectors import (
     ZONE_NAMES,
     choose_objects,
+    named_hosts,
     pick_from_pool,
     resolve_pool,
 )
@@ -607,6 +609,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         else None
     )
     counters = spec.get("counters") or {}
+    hosts = named_hosts(ctx, spec)
     arrived: list[int] = []
     for oid in oids:
         obj = ctx.state.objects.get(oid)
@@ -616,10 +619,11 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # 303.4f: an Aura this puts down chooses its host as it enters, and
         # stays where it is when nothing could be enchanted -- before anything
         # else is asked about an arrival that may not happen. ``host_named`` is
-        # the effect naming the host itself with a following `attach`.
-        if not spec.get("host_named") and not (
-            yield from offer_aura_host(ctx.state, oid, controller)
-        ):
+        # the effect naming the host itself, held to the same legality test.
+        if hosts is not None:
+            if not offer_named_host(ctx.state, oid, controller, hosts):
+                continue
+        elif not (yield from offer_aura_host(ctx.state, oid, controller)):
             continue
         obj.controller = controller
         # "If this artifact **would enter**, you may discard a land card

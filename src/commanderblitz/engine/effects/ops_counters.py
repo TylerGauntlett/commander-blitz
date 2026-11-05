@@ -401,9 +401,10 @@ def op_attach(ctx: EffectContext, spec: Mapping[str, Any]):
 
     The Aura half needs no attach at all: an Aura put onto the battlefield by an
     effect that names no host chooses one as it enters (303.4f,
-    `zones.offer_aura_host`). This op is for the effect that *does* name it --
-    "…attached to that token" -- beside ``host_named`` on the arrival, and the
-    host it names is trusted (see `docs/rules-coverage.md`).
+    `zones.offer_aura_host`), and one whose effect names it -- "…attached to
+    that token" -- enters on it through ``host_named`` on the arrival, held to
+    its enchant clause (`zones.offer_named_host`). The host this op names with
+    ``attachment`` is not re-tested against the clause.
 
     ``player`` in place of ``objects`` moves **this Aura onto a player** --
     Archnemesis's "you may attach this Aura to that player". See

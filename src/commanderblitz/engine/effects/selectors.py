@@ -492,6 +492,22 @@ PAID_BY_SELECTOR_KEYS = frozenset(
 ZONE_NAMES = {z.value: z for z in Zone}
 
 
+def named_hosts(ctx: EffectContext, spec: Mapping[str, Any]) -> list[int] | None:
+    """The host an arrival's ``host_named`` selector names -- "…to the
+    battlefield attached to **that creature**" -- or ``None`` when the op names
+    none and an Aura chooses its own (303.4f, `zones.offer_aura_host`).
+
+    Resolved once, before the first card moves, and on the battlefield unless
+    the selector says otherwise: the host is a permanent already there, such
+    as the creature an earlier op returned. An empty list is a host the effect
+    names that is not there, and `zones.offer_named_host` keeps an Aura out.
+    """
+    named = spec.get("host_named")
+    if not isinstance(named, Mapping):
+        return None
+    return resolve_pool(ctx, {"zone": "battlefield", **dict(named)})
+
+
 def resolve_pool(ctx: EffectContext, selector: Mapping[str, Any] | None) -> list[int]:
     """Every object matching ``selector``, before ``count``/``chooser`` narrowing."""
     if selector is None:

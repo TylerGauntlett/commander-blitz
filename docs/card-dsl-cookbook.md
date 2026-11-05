@@ -1287,12 +1287,37 @@ stays in the graveyard, and one looked at off the library is one of "the rest".
 A following `attach` is the near miss. It asks a second question after the
 first, and when nothing is legal the Aura has already left its zone.
 
-`host_named: true`, on `return_from_graveyard` (beside `destination:
+`host_named`, on `return_from_graveyard` (beside `destination:
 "battlefield"`) and `put_onto_battlefield`, is the other case: the effect names
 the host itself — Forum Filibuster's "…to the battlefield **attached to that
-token**", Gift of Immortality's "…attached to that creature" — and a following
-`attach` says which. No 303.4f question is asked. The loader refuses the key on
-any other op or destination, and anything but a boolean.
+token**", Unfinished Business's "…attached to that creature". Its value is a
+selector for the host, resolved once before the first card moves and on the
+battlefield unless it says otherwise; its first match is the host. No 303.4f
+question is asked, but the host is held to the same test a chosen one is
+(`zones.offer_named_host`): an Aura enters attached to it only if its enchant
+clause allows it and protection does not refuse it, and otherwise — or with no
+host there at all — stays in its zone (303.4g). An Equipment always enters,
+attached to the host when `attach` allows it and unattached when not; any
+other card enters unattached. The loader refuses the key on any other op or
+destination, anything but a selector, and a `target` the card does not declare.
+
+    Return target creature card from your graveyard to the battlefield, then
+    return up to two target Aura and/or Equipment cards from your graveyard to
+    the battlefield attached to that creature. (If the Auras can't enchant that
+    creature, they remain in your graveyard.)
+
+```jsonc
+"spell_effects": [
+  { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+    "objects": { "target": "t1", "zone": "graveyard" } },
+  { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
+    "host_named": { "target": "t1", "zone": "battlefield" },
+    "objects": { "target": "t2", "zone": "graveyard" } }
+]
+```
+
+A following `attach` with `attachment` is the near miss: the Aura has already
+entered unattached, and `attach` does not read its enchant clause.
 
 ### An Aura that enchants a card in a graveyard — Animate Dead
 
@@ -1311,7 +1336,7 @@ any other op or destination, and anything but a boolean.
     "trigger": { "event": "self_enters", "source": "self", "condition": { "zone_is": "battlefield" } },
     "effects": [
       { "op": "return_from_graveyard", "destination": "battlefield", "controller": "you",
-        "host_named": true, "link": true,
+        "link": true,
         "objects": { "attached": true, "controller": "any", "types": ["Creature"], "zone": "graveyard" } },
       { "op": "attach", "objects": { "returned_with": "self" } } ] },
   { "kind": "triggered", "trigger": { "event": "leaves_battlefield", "source": "self" },

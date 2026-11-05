@@ -297762,12 +297762,12 @@
     },
     "Unfinished Business": {
       "edhrec_rank": 4043,
-      "gate": "template",
+      "gate": null,
       "name": "Unfinished Business",
-      "reason": "no template for: Return target creature card from your graveyard to the battlefield, then return up to two ",
+      "reason": "",
       "scryfall_id": "76c9b6c1-05de-4c16-8ebf-ea68aa110a69",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Unflinching Courage": {

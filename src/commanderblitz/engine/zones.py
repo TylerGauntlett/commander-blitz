@@ -1121,8 +1121,7 @@ def offer_aura_host(state: GameState, oid: int, controller: int):
     is left on `obj.enters_attached_to` (or `enters_attached_to_player`) for
     `_enter_battlefield`, which attaches the Aura as it enters. The cast path
     never calls this -- the spell's target is the host -- and neither does an
-    effect that names the host itself (``host_named`` on the arrival op, with a
-    following `attach`).
+    effect that names the host itself: that is `offer_named_host`.
     """
     obj = state.objects.get(oid)
     if obj is None:
@@ -1157,24 +1156,83 @@ def offer_aura_host(state: GameState, oid: int, controller: int):
             return False
         obj.enters_attached_to_player = chosen
         return True
-    if spec.kind == "card_in_graveyard":
-        # "Enchant creature card in a graveyard" (Animate Dead): the host is a
-        # card, so protection -- an ability that functions on the battlefield
-        # (113.6) -- does not narrow it.
-        pool = graveyard_hosts(state, oid, controller)
-    else:
-        selector = {**dict(spec.selector), "zone": "battlefield"}
-        pool = [
-            host
-            for host in resolve_pool(ctx, selector)
-            if host != oid and not protected_from(state, host, oid, attaching=True)
-        ]
+    pool = _aura_host_pool(state, oid, controller)
     if not pool:
         return False
     chosen = yield from ask_objects(ctx, f"What will {card.name} enchant?", pool, 1, 1, controller)
     if not chosen:
         return False
     obj.enters_attached_to = chosen[0]
+    return True
+
+
+def _aura_host_pool(state: GameState, oid: int, controller: int) -> list[int]:
+    """Every permanent (or graveyard card) the Aura ``oid`` could enchant as it
+    enters under ``controller``: its enchant clause -- the first target spec --
+    less protection (702.16c). Not targeting, so hexproof, shroud and ward do
+    not narrow it. Empty for an "enchant player" clause, whose host is a seat.
+    """
+    card = state.card_of(state.objects[oid])
+    spec = card.targets[0]
+    if spec.kind == "player":
+        return []
+    if spec.kind == "card_in_graveyard":
+        # "Enchant creature card in a graveyard" (Animate Dead): the host is a
+        # card, so protection -- an ability that functions on the battlefield
+        # (113.6) -- does not narrow it.
+        return graveyard_hosts(state, oid, controller)
+    ctx = EffectContext(
+        state=state, controller=controller, source_oid=oid, source_name=card.name
+    )
+    selector = {**dict(spec.selector), "zone": "battlefield"}
+    return [
+        host
+        for host in resolve_pool(ctx, selector)
+        if host != oid and not protected_from(state, host, oid, attaching=True)
+    ]
+
+
+def offer_named_host(state: GameState, oid: int, controller: int, hosts: list[int]) -> bool:
+    """303.4f's other half: the effect **names** the host -- "return … to the
+    battlefield attached to that creature" (Unfinished Business), "…attached to
+    that token" (Forum Filibuster). Returns whether the card may enter at all.
+
+    ``hosts`` is what the arrival op's ``host_named`` selector resolved to, and
+    its first entry is the host; nothing is asked. An Aura enters attached to it
+    only if it could legally enchant it -- the same clause and protection test
+    `offer_aura_host` builds its choice from, so a named host is held to exactly
+    what a chosen one is. When it couldn't, or there is no host left to name
+    (the creature never arrived), the answer is ``False`` and the Aura stays in
+    the zone it was in (303.4g), which is the printed "(If the Auras can't
+    enchant that creature, they remain in your graveyard.)" An Aura with no
+    enchant clause written -- a Role token -- is held only to protection, by
+    `primitives.attach` as it enters.
+
+    An Equipment always enters, attached to the host if `primitives.attach`
+    allows it and unattached if not (701.3b leaves it where it is; here that is
+    on the battlefield, equipping nothing). Anything else -- the creature an
+    "Aura and/or Equipment" pool may not hold -- enters unattached.
+
+    The answer is left on `obj.enters_attached_to` for `_enter_battlefield`, so
+    the card is attached as it enters, before ENTERS_BATTLEFIELD goes out, as
+    `offer_aura_host`'s answer is.
+    """
+    obj = state.objects.get(oid)
+    if obj is None:
+        return True
+    card = state.card_of(obj)
+    obj.enters_attached_to = None
+    obj.enters_attached_to_player = None
+    host = next((h for h in hosts if h != oid), None)
+    if card.is_aura:
+        if host is None:
+            return False
+        if card.targets and host not in _aura_host_pool(state, oid, controller):
+            return False
+        obj.enters_attached_to = host
+        return True
+    if host is not None and card.is_equipment:
+        obj.enters_attached_to = host
     return True
 
 

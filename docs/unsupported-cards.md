@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**162 cards** blocked by **148** capabilities.
+**161 cards** blocked by **147** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -41,7 +41,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [additional-cost-target](#additional-cost-target) | 1 | 20956 | selector |
 | [adventure-half-in-index](#adventure-half-in-index) | 1 | 2673 | engine |
 | [attached-to-player-selector](#attached-to-player-selector) | 1 | 16177 | selector |
-| [aura-named-host-check](#aura-named-host-check) | 1 | 4043 | engine |
 | [base-power-trigger-filter](#base-power-trigger-filter) | 1 | 8933 | selector |
 | [basic-land-type-mana](#basic-land-type-mana) | 1 | 73 | engine |
 | [becomes-target-of-activated-ability](#becomes-target-of-activated-ability) | 1 | 5385 | trigger_event |
@@ -741,20 +740,6 @@ Blocks **1** card.
 
 - **Witchbane Orb** (rank 16177) — `witchbane_orb`
   - When this artifact enters, destroy all Curses attached to you
-
-</details>
-
-## aura-named-host-check
-
-Blocks **1** card.
-
-- **(engine)** An arrival that names the Aura's host ('return ... to the battlefield attached to that creature') and tests that named host against the Aura's enchant clause (its first target spec, plus protection) before the move, leaving an Aura that can't legally enchant it in the graveyard (303.4g) -- e.g. a value for host_named that is a selector (the host) rather than a boolean, checked by zones.offer_aura_host's legality test instead of offering a choice
-  <br>Why the existing vocabulary won't do: host_named: true on return_from_graveyard plus a following attach (the Forum Filibuster pattern) trusts the named host -- docs/rules-coverage.md says the attach and host_named are never re-tested -- so an 'Enchant land' or 'enchant creature an opponent controls' Aura would enter and stay attached to the returned creature instead of remaining in the graveyard as the printed parenthetical says. Dropping host_named lets offer_aura_host keep illegal Auras in the graveyard, but then the player picks ANY legal host rather than 'that creature', and the following attach would then move it onto the named creature unchecked anyway
-
-<details><summary>Cards waiting on this</summary>
-
-- **Unfinished Business** (rank 4043) — `unfinished_business`
-  - Return target creature card from your graveyard to the battlefield, then return up to two target Aura and/or Equipment cards from your graveyard to the battlefield attached to that creature. (If the Auras can't enchant that creature, they remain in your graveyard.)
 
 </details>
 

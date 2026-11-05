@@ -6769,7 +6769,6 @@
             {
               "controller": "you",
               "destination": "battlefield",
-              "host_named": true,
               "link": true,
               "objects": {
                 "attached": true,
@@ -40450,7 +40449,6 @@
             {
               "controller": "you",
               "destination": "battlefield",
-              "host_named": true,
               "link": true,
               "objects": {
                 "attached": true,
@@ -65324,23 +65322,15 @@
             {
               "controller": "you",
               "destination": "battlefield",
-              "host_named": true,
+              "host_named": {
+                "binding": "inkling",
+                "zone": "battlefield"
+              },
               "objects": {
                 "target": "t1",
                 "zone": "graveyard"
               },
               "op": "return_from_graveyard"
-            },
-            {
-              "attachment": {
-                "target": "t1",
-                "zone": "battlefield"
-              },
-              "objects": {
-                "binding": "inkling",
-                "zone": "battlefield"
-              },
-              "op": "attach"
             }
           ],
           "id": "filibuster_return",
@@ -70585,23 +70575,15 @@
                     {
                       "controller": "you",
                       "destination": "battlefield",
-                      "host_named": true,
+                      "host_named": {
+                        "binding": "subject",
+                        "zone": "battlefield"
+                      },
                       "objects": {
                         "self_only": true,
                         "zone": "graveyard"
                       },
                       "op": "return_from_graveyard"
-                    },
-                    {
-                      "attachment": {
-                        "self_only": true,
-                        "zone": "battlefield"
-                      },
-                      "objects": {
-                        "binding": "subject",
-                        "zone": "battlefield"
-                      },
-                      "op": "attach"
                     }
                   ]
                 }
@@ -196067,6 +196049,74 @@
       ],
       "types": [
         "Instant"
+      ]
+    },
+    {
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "unfinished_business",
+      "mana_cost": "{3}{W}{W}",
+      "name": "Unfinished Business",
+      "oracle_text": "Return target creature card from your graveyard to the battlefield, then return up to two target Aura and/or Equipment cards from your graveyard to the battlefield attached to that creature. (If the Auras can't enchant that creature, they remain in your graveyard.)",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "objects": {
+            "target": "t1",
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        },
+        {
+          "controller": "you",
+          "destination": "battlefield",
+          "host_named": {
+            "target": "t1",
+            "zone": "battlefield"
+          },
+          "objects": {
+            "target": "t2",
+            "zone": "graveyard"
+          },
+          "op": "return_from_graveyard"
+        }
+      ],
+      "targets": [
+        {
+          "count": 1,
+          "id": "t1",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ],
+            "zone": "graveyard"
+          }
+        },
+        {
+          "count": 2,
+          "id": "t2",
+          "kind": "card_in_graveyard",
+          "selector": {
+            "controller": "you",
+            "subtypes": [
+              "Aura",
+              "Equipment"
+            ],
+            "zone": "graveyard"
+          },
+          "up_to": true
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

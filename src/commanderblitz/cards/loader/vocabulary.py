@@ -1637,9 +1637,10 @@ COUNTERS_ON_ARRIVAL_OPS = frozenset(
 
 
 #: The ops that read ``host_named``: "return … to the battlefield **attached to
-#: that token**" (Forum Filibuster, Gift of Immortality), where the effect names
-#: the Aura's host with a following `attach` and 303.4f's choice is not asked.
-#: Every other arrival of an Aura asks it -- `zones.offer_aura_host`.
+#: that token**" (Forum Filibuster, Gift of Immortality, Unfinished Business),
+#: a selector naming the host, which each arriving Aura must be able to enchant
+#: -- `zones.offer_named_host`. Every other arrival of an Aura chooses its host
+#: -- `zones.offer_aura_host`.
 HOST_NAMED_OPS = frozenset({"return_from_graveyard", "put_onto_battlefield"})
 
 #: The one non-string ``counter`` an ``add_counters`` may name: "the same
