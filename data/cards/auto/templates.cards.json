@@ -177563,6 +177563,190 @@
     {
       "abilities": [
         {
+          "chapter": 1,
+          "effects": [
+            {
+              "effects": [
+                {
+                  "as": "valefor_chosen",
+                  "objects": {
+                    "chooser": "owner",
+                    "controller": {
+                      "binding": "each_player"
+                    },
+                    "count": 1,
+                    "extreme": {
+                      "of": "mana_value",
+                      "pick": "greatest"
+                    },
+                    "types": [
+                      "Creature"
+                    ],
+                    "zone": "battlefield"
+                  },
+                  "op": "choose_permanents",
+                  "prompt": "Choose a creature with the greatest mana value"
+                }
+              ],
+              "op": "for_each_player",
+              "players": "each_opponent"
+            },
+            {
+              "objects": {
+                "binding": "valefor_chosen",
+                "controller": "any",
+                "count": "all"
+              },
+              "op": "return_to_hand"
+            }
+          ],
+          "kind": "chapter",
+          "text": "I — Sonic Wings — Each opponent chooses a creature with the greatest mana value among creatures they control. Return those creatures to their owners' hands."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "stun",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV — Tap up to one target creature and put a stun counter on it."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "stun",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV — Tap up to one target creature and put a stun counter on it."
+        },
+        {
+          "chapter": 4,
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "tap"
+            },
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "stun",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "optional": true,
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "II, III, IV — Tap up to one target creature and put a stun counter on it."
+        }
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "colors": [
+        "U"
+      ],
+      "final_chapter": 4,
+      "id": "summon_valefor",
+      "keywords": [
+        "flying"
+      ],
+      "mana_cost": "{4}{U}",
+      "name": "Summon: Valefor",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI — Sonic Wings — Each opponent chooses a creature with the greatest mana value among creatures they control. Return those creatures to their owners' hands.\nII, III, IV — Tap up to one target creature and put a stun counter on it.\nFlying",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Drake"
+      ],
+      "toughness": 4,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "affects_player": "you",
           "effect": "look_at_library_top",
           "kind": "static",
@@ -191511,6 +191695,139 @@
         {
           "effects": [
             {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "any_kind": true,
+                  "from": {
+                    "target": "from"
+                  },
+                  "objects": {
+                    "target": "onto"
+                  },
+                  "op": "move_counters"
+                }
+              ],
+              "op": "may",
+              "prompt": "Move a counter?"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "from",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "onto",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "At the beginning of combat on your turn, you may move a counter from target creature you control onto a second target creature you control.",
+          "trigger": {
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        },
+        {
+          "effects": [
+            {
+              "condition": {
+                "not": {
+                  "has_turn_flag": "tidus_cheered"
+                }
+              },
+              "op": "if",
+              "then": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "op": "draw",
+                      "player": "you"
+                    },
+                    {
+                      "op": "proliferate"
+                    },
+                    {
+                      "flag": "tidus_cheered",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "set_turn_flag"
+                    }
+                  ],
+                  "op": "may",
+                  "prompt": "Draw a card and proliferate?"
+                }
+              ]
+            }
+          ],
+          "kind": "triggered",
+          "text": "Cheer — Whenever one or more creatures you control with counters on them deal combat damage to a player, you may draw a card and proliferate. Do this only once each turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "creatures_deal_combat_damage",
+            "filter": {
+              "has_counters": true
+            },
+            "per_player": true
+          }
+        }
+      ],
+      "color_identity": [
+        "G",
+        "U",
+        "W"
+      ],
+      "colors": [
+        "G",
+        "U",
+        "W"
+      ],
+      "id": "tidus_yuna_s_guardian",
+      "mana_cost": "{G}{W}{U}",
+      "name": "Tidus, Yuna's Guardian",
+      "oracle_text": "At the beginning of combat on your turn, you may move a counter from target creature you control onto a second target creature you control.\nCheer — Whenever one or more creatures you control with counters on them deal combat damage to a player, you may draw a card and proliferate. Do this only once each turn.",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warrior"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "objects": {
                 "controller": "you",
                 "count": "all",
@@ -192653,6 +192970,105 @@
       "mana_cost": "{2}{W}",
       "name": "Tocasia's Welcome",
       "oracle_text": "Whenever one or more creatures you control with mana value 3 or less enter, draw a card. This ability triggers only once each turn.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 2,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              },
+              "up_to": true
+            }
+          ],
+          "text": "When this enchantment enters, support 2",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}"
+          },
+          "effects": [
+            {
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "destination": "hand",
+                  "objects": {
+                    "binding": "subject",
+                    "zone": "graveyard"
+                  },
+                  "op": "return_from_graveyard"
+                }
+              ],
+              "op": "delayed_trigger",
+              "text": "When that creature dies this turn, return that card to its owner's hand.",
+              "trigger": {
+                "controller": "any",
+                "event": "dies",
+                "subject": {
+                  "target": "t1"
+                }
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "any",
+                "has_counters": true,
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}: Choose target creature with a counter on it. When that creature dies this turn, return that card to its owner's hand"
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "together_forever",
+      "mana_cost": "{W}{W}",
+      "name": "Together Forever",
+      "oracle_text": "When this enchantment enters, support 2. (Put a +1/+1 counter on each of up to two target creatures.)\n{1}: Choose target creature with a counter on it. When that creature dies this turn, return that card to its owner's hand.",
       "source": "auto",
       "types": [
         "Enchantment"
@@ -194994,6 +195410,77 @@
       "source": "auto",
       "types": [
         "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "affects": {
+            "controller": "you",
+            "exclude_self": true,
+            "is_token": false,
+            "types": [
+              "Creature"
+            ]
+          },
+          "amount": 1,
+          "counter": "+1/+1",
+          "effect": "enters_with_additional_counters",
+          "kind": "static",
+          "text": "Each other nontoken creature you control enters with an additional +1/+1 counter on it."
+        },
+        {
+          "cost": {
+            "mana": "{1}",
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "count": {
+                  "controller": "you",
+                  "entered_this_turn": true,
+                  "is_token": false,
+                  "types": [
+                    "Creature"
+                  ],
+                  "zone": "battlefield"
+                }
+              },
+              "effects": [
+                {
+                  "op": "proliferate"
+                }
+              ],
+              "op": "repeat"
+            }
+          ],
+          "kind": "activated",
+          "text": "{1}, {T}: Proliferate X times, where X is the number of nontoken creatures you control that entered this turn. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "tromell_seymour_s_butler",
+      "mana_cost": "{2}{G}",
+      "name": "Tromell, Seymour's Butler",
+      "oracle_text": "Each other nontoken creature you control enters with an additional +1/+1 counter on it.\n{1}, {T}: Proliferate X times, where X is the number of nontoken creatures you control that entered this turn. (To proliferate, choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Elf",
+        "Advisor"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
       ]
     },
     {
@@ -215286,6 +215773,95 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "mana_value_of": {
+                  "objects": {
+                    "binding": "whistled",
+                    "controller": "any"
+                  }
+                }
+              },
+              "counter": "+1/+1",
+              "objects": {
+                "target": "t1"
+              },
+              "op": "add_counters"
+            }
+          ],
+          "id": "whistle_counters",
+          "kind": "reflexive",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When you reveal a creature card this way, put X +1/+1 counters on target creature you control, where X is the mana value of that card."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "yuna_s_whistle",
+      "mana_cost": "{1}{G}{G}",
+      "name": "Yuna's Whistle",
+      "oracle_text": "Reveal cards from the top of your library until you reveal a creature card. Put that card into your hand and the rest on the bottom of your library in a random order. When you reveal a creature card this way, put X +1/+1 counters on target creature you control, where X is the mana value of that card.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "as": "whistled",
+          "destination": "hand",
+          "objects": {
+            "types": [
+              "Creature"
+            ]
+          },
+          "op": "reveal_until",
+          "player": "you",
+          "rest_to_bottom": true
+        },
+        {
+          "condition": {
+            "cmp": ">",
+            "left": {
+              "count": {
+                "binding": "whistled",
+                "controller": "any"
+              }
+            },
+            "right": {
+              "const": 0
+            }
+          },
+          "op": "if",
+          "then": [
+            {
+              "ability": "whistle_counters",
+              "op": "reflexive_trigger"
+            }
+          ]
+        }
+      ],
+      "types": [
+        "Instant"
       ]
     },
     {

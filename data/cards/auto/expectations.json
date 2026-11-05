@@ -15119,6 +15119,15 @@
     },
     "zone": "battlefield"
   },
+  "summon_valefor": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "summoning_materia": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16173,6 +16182,13 @@
       "0": 5
     }
   },
+  "tidus_yuna_s_guardian": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "tifa_martial_artist": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16271,6 +16287,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "together_forever": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tolaria_west": {
@@ -16499,6 +16519,10 @@
     "zone": "battlefield"
   },
   "troll_horn_cameo": {
+    "zone": "battlefield"
+  },
+  "tromell_seymour_s_butler": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tromokratis": {
@@ -18306,6 +18330,15 @@
     "battlefield_count": 34,
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
+  },
+  "yuna_s_whistle": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "zack_fair": {
     "counters": {

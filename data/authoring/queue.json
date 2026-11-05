@@ -269052,12 +269052,12 @@
     },
     "Summon: Valefor": {
       "edhrec_rank": 4743,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Valefor",
-      "reason": "no template for: I — Sonic Wings — Each opponent chooses a creature with the greatest mana value among crea",
+      "reason": "",
       "scryfall_id": "c95c1a97-4c9e-4d38-8b12-193f8ff0d556",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Yojimbo": {
@@ -287022,12 +287022,12 @@
     },
     "Tidus, Yuna's Guardian": {
       "edhrec_rank": 3900,
-      "gate": "template",
+      "gate": null,
       "name": "Tidus, Yuna's Guardian",
-      "reason": "no template for: At the beginning of combat on your turn, you may move a counter from target creature you c",
+      "reason": "",
       "scryfall_id": "2cfd4494-346c-4cbc-8072-e267254cefcc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tidy Conclusion": {
@@ -288502,12 +288502,12 @@
     },
     "Together Forever": {
       "edhrec_rank": 2400,
-      "gate": "template",
+      "gate": null,
       "name": "Together Forever",
-      "reason": "no template for: When this enchantment enters, support 2",
+      "reason": "",
       "scryfall_id": "1b19f82a-9724-41b1-934d-a8ec1493587b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Together as One": {
@@ -293262,12 +293262,12 @@
     },
     "Tromell, Seymour's Butler": {
       "edhrec_rank": 4151,
-      "gate": "template",
+      "gate": null,
       "name": "Tromell, Seymour's Butler",
-      "reason": "no template for: Each other nontoken creature you control enters with an additional +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "0ab4ee8a-acf7-46ec-a32a-befe1e0e7d58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tromokratis": {
@@ -321662,12 +321662,12 @@
     },
     "Yuna's Whistle": {
       "edhrec_rank": 8694,
-      "gate": "template",
+      "gate": null,
       "name": "Yuna's Whistle",
-      "reason": "no template for: Reveal cards from the top of your library until you reveal a creature card. Put that card ",
+      "reason": "",
       "scryfall_id": "76c0645f-d44c-4ad3-9e90-9d6187e44eb4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yuna, Grand Summoner": {
