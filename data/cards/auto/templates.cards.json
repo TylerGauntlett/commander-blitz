@@ -69372,6 +69372,79 @@
         {
           "effects": [
             {
+              "dealt": "to",
+              "duration": "this_turn",
+              "effects": [
+                {
+                  "amount": {
+                    "binding": "amount"
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "binding": "shielded"
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "objects": {
+                "target": "t1"
+              },
+              "op": "prevent_damage_permanent"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "When Gatta and Luzzu enters, choose target creature you control. If damage would be dealt to that creature this turn, prevent that damage and put that many +1/+1 counters on it.",
+          "trigger": {
+            "event": "self_enters",
+            "source": "self"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "gatta_and_luzzu",
+      "keywords": [
+        "flash"
+      ],
+      "mana_cost": "{2}{W}",
+      "name": "Gatta and Luzzu",
+      "oracle_text": "Flash\nWhen Gatta and Luzzu enters, choose target creature you control. If damage would be dealt to that creature this turn, prevent that damage and put that many +1/+1 counters on it.",
+      "power": 1,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Soldier"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },

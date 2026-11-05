@@ -851,6 +851,13 @@ class PermanentShield:
     #: (510.2) is stopped, so a burn spell or a fight still lands.
     #: `DamageShield.combat_only`'s permanent twin.
     combat_only: bool = False
+    #: "If damage would be dealt to that creature this turn, prevent that damage
+    #: and put that many +1/+1 counters on it" (Gatta and Luzzu, 615.5): the id
+    #: tying this shield to its "prevented this way" rider, carried as
+    #: ``shield`` on every `DAMAGE_PREVENTED` it fires.  `DamageShield.link`'s
+    #: permanent twin, drawn from the same `GameState.alloc_timestamp`, so a
+    #: linked shield never deduplicates.  ``None`` is a shield with no rider.
+    link: int | None = None
 
     @property
     def stops_damage_to(self) -> bool:
@@ -873,6 +880,7 @@ class PermanentShield:
             "player": self.player,
             "source": self.source,
             "combat_only": self.combat_only,
+            "link": self.link,
         }
 
 
@@ -1578,11 +1586,14 @@ class DelayedTrigger:
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
     #: "If damage is prevented **this way**" (615.5): the `DamageShield.link`
-    #: of the one shield this rider answers.  Set only by the `prevent_damage`
-    #: op's ``effects``, on a ``damage_prevented`` subscription, and compared
-    #: against the event's ``shield`` key -- so a Fog, a Selfless Squire or
-    #: protection preventing the same damage pays nothing, and a second
-    #: Inkshield's tokens come from its own shield only.
+    #: or `PermanentShield.link` of the one shield this rider answers.  Set only
+    #: by the ``effects`` of the `prevent_damage` and `prevent_damage_permanent`
+    #: ops, on a ``damage_prevented`` subscription, and compared against the
+    #: event's ``shield`` key -- so a Fog, a Selfless Squire or protection
+    #: preventing the same damage pays nothing, and a second Inkshield's tokens
+    #: come from its own shield only.  The link alone decides the match, so the
+    #: rider answers its shield on either half of the event (a seat or a
+    #: permanent).
     shield: int | None = None
 
 

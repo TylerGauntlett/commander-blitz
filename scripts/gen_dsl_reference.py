@@ -368,7 +368,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
                               "Fog — combat damage prevented by its source"),
     "redirect_damage": ("Life & damage", "Damage to a player and to permanents matching `permanents` is dealt to `to` instead this turn.",
                         "Damage dealt to the chosen creature instead"),
-    "prevent_damage_permanent": ("Life & damage", "Prevent damage dealt to or by a permanent for a duration; `combat_only` narrows it to combat damage.",
+    "prevent_damage_permanent": ("Life & damage", "Prevent damage dealt to or by a permanent for a duration; `combat_only` narrows it to combat damage, `effects` runs each time it prevents (\"prevented this way\").",
                                  "Preventing all damage to or by a **permanent**, for a while"),
     "exchange_life_total": ("Life & damage", "Exchange a player's life total with the source creature's toughness (701.12), in full or not at all.",
                             "Exchanging a life total with a toughness"),

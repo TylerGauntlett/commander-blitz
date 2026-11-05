@@ -943,11 +943,13 @@ def shield_permanent(
     player: int | None = None,
     source: int | None = None,
     combat_only: bool = False,
+    link: int | None = None,
 ) -> bool:
     """Prevent all damage dealt to and/or by the permanent ``oid`` for ``duration``.
 
     ``combat_only`` narrows it to combat damage ("prevent all combat damage that
-    would be dealt to it this turn").
+    would be dealt to it this turn").  ``link`` ties it to a "prevented this
+    way" rider; see `structs.PermanentShield.link`.
 
     One rules-relevant thing: it writes a `structs.PermanentShield` onto the
     object.  Reading it back is `permanent_shielded`'s job, and the two damage
@@ -971,7 +973,12 @@ def shield_permanent(
     if duration == "until_your_next_turn" and (player is None or not state.is_alive(player)):
         return False
     entry = PermanentShield(
-        dealt=dealt, duration=duration, player=player, source=source, combat_only=combat_only
+        dealt=dealt,
+        duration=duration,
+        player=player,
+        source=source,
+        combat_only=combat_only,
+        link=link,
     )
     if entry in obj.damage_shields:
         return False
@@ -992,12 +999,33 @@ def permanent_shielded(
     battlefield never carries one (`reset_permanent_state` clears the list on
     every zone change), so no zone check is needed here.
     """
+    return preventing_permanent_shield(state, oid, by=by, is_combat=is_combat) is not None
+
+
+def preventing_permanent_shield(
+    state: GameState, oid: int | None, *, by: bool, is_combat: bool = False
+) -> PermanentShield | None:
+    """The shield on ``oid`` that prevents this damage to (or by) it, or ``None``.
+
+    `preventing_shield`'s permanent twin, with its order: a shield carrying a
+    "prevented this way" rider (``link``) before one without, since the rider is
+    the only difference between them (616.1, the order the protected player
+    would pick); then installation order.
+    """
     if oid is None:
-        return False
+        return None
     obj = state.objects.get(oid)
     if obj is None or not obj.damage_shields:
-        return False
-    return any(shield.stops(by=by, is_combat=is_combat) for shield in obj.damage_shields)
+        return None
+    fallback = None
+    for shield in obj.damage_shields:
+        if not shield.stops(by=by, is_combat=is_combat):
+            continue
+        if shield.link is not None:
+            return shield
+        if fallback is None:
+            fallback = shield
+    return fallback
 
 
 def clear_permanent_shields(state: GameState, duration: str, player: int | None = None) -> None:

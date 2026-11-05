@@ -7703,8 +7703,8 @@ afterward"), and never when a Fog, a Squire's shield or protection prevents the
 same damage. When several shields over a seat apply, a linked one prevents first
 (616.1, the order the protected player would pick), so two Inkshields make one
 set of Inklings. The loader refuses an empty list, a `target` inside it (the
-rider resolves with no targets, as a `delay` does), and `effects` on
-`prevent_damage_permanent`, which has no link. The near miss is a
+rider resolves with no targets, as a `delay` does). `prevent_damage_permanent`
+takes the same rider for a permanent (below). The near miss is a
 `delayed_trigger` on `damage_prevented`: it answers every prevention of damage
 to you, whatever prevented it.
 
@@ -7866,6 +7866,31 @@ reads the recipient's `to` shield and the dealer's `by` shield beside the
 beside protection. Prevented damage was never dealt — no mark, no loyalty lost,
 no lifelink, no `DAMAGE_DEALT` — and each instance fires `DAMAGE_PREVENTED` with
 `reason: "permanent_shield"`.
+
+```jsonc
+// Gatta and Luzzu, ETB: "...choose target creature you control. If damage would
+//   be dealt to that creature this turn, prevent that damage and put that many
+//   +1/+1 counters on it."
+{"op": "prevent_damage_permanent", "objects": {"target": "t1"},
+ "dealt": "to", "duration": "this_turn",
+ "effects": [{"op": "add_counters", "objects": {"binding": "shielded"},
+              "counter": "+1/+1", "amount": {"binding": "amount"}}]}
+```
+
+**`effects`** is the 615.5 rider, the `prevent_damage` op's on a permanent.
+Each shielded object gets its own `PermanentShield.link`, the damage primitives
+put it on the `DAMAGE_PREVENTED` that shield fires as `shield`, and the op
+installs beside it a `damage_prevented` delayed ability scoped to that link
+(`DelayedTrigger.shield`, which matches on the link alone, so the permanent half
+of the event answers it). The effects run each time *that* shield prevents
+damage, off the stack, with the prevented amount as `{"binding": "amount"}` and
+the shielded permanent as `{"binding": "shielded"}` — the rider resolves with no
+targets, so "it" cannot be `t1`. A linked shield prevents ahead of an unlinked
+one on the same object (616.1). The loader refuses an empty list, a `target`
+inside it, and a rider on any `duration` but `this_turn`, since the delayed
+ability ends at cleanup. The near miss is the `prevent_damage` static with
+`prevent_all` and `counter`, which is continuous on a printed permanent rather
+than a this-turn effect on a chosen one.
 
 ## Fog — combat damage prevented by its source
 

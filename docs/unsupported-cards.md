@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**164 cards** blocked by **147** capabilities.
+**163 cards** blocked by **146** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -118,7 +118,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [plot](#plot) | 1 | 7506 | op |
 | [prevent-noncombat-damage](#prevent-noncombat-damage) | 1 | 2070 | static_effect |
-| [prevented-this-way-permanent](#prevented-this-way-permanent) | 1 | 5746 | replacement |
 | [prime-number](#prime-number) | 1 | 11527 | value |
 | [primo-the-indivisible](#primo-the-indivisible) | 1 | 11527 | token |
 | [proliferate-binding](#proliferate-binding) | 1 | 957 | op |
@@ -1859,20 +1858,6 @@ Blocks **1** card.
 
 - **Crystal Barricade** (rank 2070) — `crystal_barricade`
   - Prevent all noncombat damage that would be dealt to other creatures you control.
-
-</details>
-
-## prevented-this-way-permanent
-
-Blocks **1** card.
-
-- **(replacement)** a 'prevented this way' rider (615.5) on the one-shot permanent shield: prevent_damage_permanent with dealt 'to', duration this_turn, plus effects run each time that shield prevents damage, with the prevented amount bound (e.g. {"binding": "amount"}) so add_counters can put that many +1/+1 counters on the shielded creature
-  <br>Why the existing vocabulary won't do: prevent_damage_permanent installs the shield but the loader explicitly refuses 'effects' on it (the rider is implemented on the player-only prevent_damage shield); damage_prevented is not an available trigger event, so a delayed_trigger cannot stand in, and the replace_counters/replace_damage statics are continuous on a printed permanent rather than a this-turn effect on a chosen target
-
-<details><summary>Cards waiting on this</summary>
-
-- **Gatta and Luzzu** (rank 5746) — `gatta_and_luzzu`
-  - When Gatta and Luzzu enters, choose target creature you control. If damage would be dealt to that creature this turn, prevent that damage and put that many +1/+1 counters on it.
 
 </details>
 

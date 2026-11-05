@@ -887,7 +887,9 @@ def _delayed_matches(
 
     # The one restriction here that is not read off a hosting permanent, and so
     # the one a delayed ability can still be asked. See `_half_matches`.
-    if not _half_matches(spec.event, event):
+    # A shield-linked rider skips the half check: its link names the one
+    # prevention it answers, and a permanent's shield fires the permanent half.
+    if delayed.shield is None and not _half_matches(spec.event, event):
         return False
     if not _outcome_matches(spec.event, event):
         return False
