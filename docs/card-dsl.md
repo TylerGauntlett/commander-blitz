@@ -3568,9 +3568,20 @@ than three because `count` fails them in **opposite** directions:
 
 No selector, however filtered, reaches any of those numbers — `count` counts
 matches, and these count the distinct values those matches hold. `of` is `power`,
-`basic_land_type`, `card_type` or `color`, and nothing else: each has a printed
-card behind it, and a misspelling is a load error rather than a silent fall back
-to powers.
+`basic_land_type`, `card_type`, `color` or `counter_kind`, and nothing else: each
+has a printed card behind it, and a misspelling is a load error rather than a
+silent fall back to powers.
+
+`counter_kind` counts the kinds of counters (122.1) on the pool, a kind with no
+counters left on the object counting none — Blitzball Stadium's granted "draw a
+card for each kind of counter on it":
+
+```jsonc
+{ "distinct": { "of": "counter_kind", "objects": { "self_only": true } } }
+```
+
+Three +1/+1 counters and a shield counter are two kinds. **Not**
+`counters_on {"counter": "any"}`, which sums every counter and would read four.
 
 `color` counts the five colors (105.1) among the pool's derived colors;
 colorless counts none (105.2c). It alone takes `spells_cast_this_turn`, a player

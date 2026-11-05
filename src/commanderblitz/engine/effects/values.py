@@ -380,8 +380,9 @@ ROLL_PARITIES = ("even", "odd")
 #: A fourth would be vocabulary with nothing printed asking for it, and a
 #: misspelling has to be a load error rather than a silent zero.
 #: ``color`` is First Family's "the number of colors among permanents you
-#: control and spells you've cast this turn".
-DISTINCT_OF = ("power", "basic_land_type", "card_type", "color")
+#: control and spells you've cast this turn". ``counter_kind`` is Blitzball
+#: Stadium's "draw a card for each kind of counter on it" (122.1).
+DISTINCT_OF = ("power", "basic_land_type", "card_type", "color", "counter_kind")
 
 #: The five colors (105.1). Colorless is not a color (105.2c), so a pool of
 #: artifacts and lands counts none.
@@ -559,6 +560,17 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                         if cast_id in registry:
                             colors |= set(registry.get(cast_id).colors)
             return len(colors & COLORS)
+        if of == "counter_kind":
+            # "…for each kind of counter on it" (Blitzball Stadium). Kinds, not
+            # counters: three +1/+1 counters and a shield counter are two. Not
+            # `counters_on {"counter": "any"}`, which sums them and would read
+            # four. A kind with no counters left on the object is not on it.
+            kinds: set[str] = set()
+            for oid in pool:
+                obj = ctx.state.objects.get(oid)
+                if obj is not None:
+                    kinds |= {kind for kind, n in obj.counters.items() if n > 0}
+            return len(kinds)
         found: set[str] = set()
         for oid in pool:
             found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes
