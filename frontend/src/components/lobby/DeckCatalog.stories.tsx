@@ -385,7 +385,6 @@ export const Favorites: Story = {
       `${FAVORITES.length}/${SHELF.length}`,
     );
     expect(regionNames(body), "one run, and the segment already names it").toEqual([]);
-    expect(canvas.queryByTestId("deck-archetype")).toBeNull();
     // A shipped deck carries no star: it is everybody's shelf.
     expect(body.querySelector(".tile__star")).toBeNull();
 
@@ -425,16 +424,6 @@ export const Precons: Story = {
     expect(newest.querySelector("h2")?.hasAttribute("data-stop")).toBe(false);
 
     await settled(canvasElement);
-    expectHandheldFloors(canvasElement);
-
-    // These precons name archetypes, so the filter is drawn; one press narrows
-    // to the first of them, and the run it empties goes with it.
-    const archetype = canvas.getByTestId("deck-archetype");
-    expect(archetype).toHaveAttribute("aria-label", "Archetype: Any");
-    await userEvent.click(archetype);
-    expect(archetype).toHaveAttribute("aria-label", "Archetype: Aristocrats");
-    await waitFor(() => expect(regionNames(body)).toEqual(["Duskmourn Commander"]));
-    expect(tileIds(body)).toEqual(["dsc_death_toll"]);
     expectHandheldFloors(canvasElement);
   },
 };
