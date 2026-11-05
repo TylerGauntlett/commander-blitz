@@ -16,6 +16,7 @@ from .player_statics import colorless_instead_players, retained_mana_by_player
 from .rng import Rng
 from .structs import (
     AttackRestriction,
+    AttackTax,
     BlockProhibition,
     CastLock,
     CombatFog,
@@ -456,6 +457,11 @@ class GameState:
     #: the empty list -- which is what it is in every game that plays none of
     #: these cards, and this one is read on every legality build.
     cast_locks: list[CastLock] = field(default_factory=list)
+    #: "Until your next turn, creatures can't attack you unless their
+    #: controller pays {2} for each of those creatures" -- see
+    #: :class:`structs.AttackTax`. The timed table beside `cast_locks`, on the
+    #: same clock, read by `player_statics.attack_tax` beside the static taxes.
+    attack_taxes: list[AttackTax] = field(default_factory=list)
     #: "You can't sacrifice those creatures this turn" -- see
     #: :class:`structs.SacrificeRestriction`.
     #:
@@ -608,6 +614,22 @@ class GameState:
                 # (Phyrexian Metamorph): on the copied face, so the copy is an
                 # artifact before any layer and to every reader.
                 copied = replace(copied, types=copied.types | obj.copying_add_types)
+            if obj.copying_own_abilities:
+                # "…and it has vigilance **and this ability**" (Kimahri,
+                # Valiant Guardian): the permanent's own printed abilities,
+                # carried onto the copied face (707.9b). Appended, so every
+                # index the copied card prints keeps meaning what it printed,
+                # and renumbered so `Ability.index` agrees with its seat.
+                own = self.registry.get(obj.def_id).abilities
+                kept = [own[i] for i in obj.copying_own_abilities if 0 <= i < len(own)]
+                base = len(copied.abilities)
+                copied = replace(
+                    copied,
+                    abilities=copied.abilities
+                    + tuple(
+                        replace(ability, index=base + k) for k, ability in enumerate(kept)
+                    ),
+                )
             if obj.renamed_to is not None:
                 copied = replace(copied, name=obj.renamed_to)
             return copied
@@ -897,6 +919,7 @@ class GameState:
                         counter=str(data.get("counter", "")),
                         amount=int(data.get("amount", 0)),
                         types=frozenset(chars(self, int(oid)).types),
+                        oid=int(oid),
                     )
                 )
         elif event.type == EventType.ENTERS_BATTLEFIELD:
@@ -1054,6 +1077,10 @@ class GameState:
                 ledger.players_attacked_by.pop(data.get("oid"), None)
                 ledger.attacks_by_creature.pop(data.get("oid"), None)
                 ledger.taps_by_permanent.pop(data.get("oid"), None)
+                ledger.counters_put[:] = [
+                    replace(put, oid=None) if put.oid == data.get("oid") else put
+                    for put in ledger.counters_put
+                ]
             if data.get("to") == Zone.GRAVEYARD.value and obj is not None and not obj.is_token:
                 ledger.cards_to_graveyard += 1
             # Gravestorm's count, and the token is *in* it: the token

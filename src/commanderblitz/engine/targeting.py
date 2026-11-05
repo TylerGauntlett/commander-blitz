@@ -142,6 +142,25 @@ def candidates(
             if can_be_targeted(state, controller, oid, source_oid=source_oid)
         )
         return pool
+    if spec.kind == "spell_permanent_or_graveyard_card":
+        # "Target spell, nonland permanent, or card in a graveyard" (Endless
+        # Detour): the branch above with a third half, in printed order. Each
+        # half reads the accessor `still_legal` re-checks it against.
+        pool = [
+            TargetRef.stack(item.sid)
+            for item in state.stack
+            if item.is_spell and item.sid != exclude_sid and _spell_matches(ctx, item, spec)
+        ]
+        for half in (
+            {**dict(spec.permanent_half), "zone": "battlefield"},
+            spec.graveyard_half,
+        ):
+            pool.extend(
+                TargetRef.obj(oid)
+                for oid in resolve_pool(ctx, half)
+                if can_be_targeted(state, controller, oid, source_oid=source_oid)
+            )
+        return pool
     if spec.kind == "card_in_exile":
         # Exile is kept per owner, so the selector says whose pile to walk the
         # same way a graveyard spec does; the zone is supplied, because the kind
@@ -366,7 +385,12 @@ def _room(limit: int, empty: list[tuple[TargetRef, ...]]) -> int:
 
 
 def target_count(
-    state: GameState, controller: int, spec: TargetSpec, source_oid: int | None
+    state: GameState,
+    controller: int,
+    spec: TargetSpec,
+    source_oid: int | None,
+    *,
+    bindings: Mapping[str, Any] | None = None,
 ) -> int | str:
     """How many targets this spec asks for **right now** -- 601.2c's number.
 
@@ -394,10 +418,22 @@ def target_count(
     (`TargetSpec.x_sized`) and the times the additional cost is paid
     (`TargetSpec.additional_sized`), which each cast line substitutes through
     `additional_sized_targets` before it gets here.
+
+    A trigger's ``bindings`` carry the X its permanent was cast with
+    (`triggers` binds ``obj.cast_x``), so "when this artifact enters, support
+    X" (Blitzball Stadium) sizes its targets by the X paid -- the same X the
+    trigger's effects read once it is on the stack.
     """
     if isinstance(spec.count, int) or spec.count == "any":
         return spec.count
-    ctx = EffectContext(state=state, controller=controller, source_oid=source_oid)
+    bound = dict(bindings or {})
+    ctx = EffectContext(
+        state=state,
+        controller=controller,
+        source_oid=source_oid,
+        bindings=bound,
+        x=int(bound.get("x", 0) or 0),
+    )
     return max(0, evaluate_value(ctx, spec.count))
 
 
@@ -489,7 +525,7 @@ def _spec_options(
     # four target creatures" defaulted to tapping none would be a different
     # card.
     empty: list[tuple[TargetRef, ...]] = [()] if spec.optional else []
-    count = target_count(state, controller, spec, source_oid)
+    count = target_count(state, controller, spec, source_oid, bindings=bindings)
     if count == "any" or spec.up_to:
         # "Any number of target creatures", and "up to X target creature
         # cards". A size the caster picks, so every subset up to the ceiling is
@@ -624,7 +660,10 @@ def enumerate_target_tuples(
     if not specs:
         return [()]
     if limit is None:
-        single = len(specs) == 1 and target_count(state, controller, specs[0], source_oid) == 1
+        single = (
+            len(specs) == 1
+            and target_count(state, controller, specs[0], source_oid, bindings=bindings) == 1
+        )
         limit = sys.maxsize if single else MAX_TARGET_OPTIONS
 
     prior: set[str] = set()
@@ -806,6 +845,17 @@ def still_legal(
         # An object ref is the permanent half, re-checked against the selector
         # that half was offered from -- `candidates` reads the same accessor.
         return matches(ctx, ref.id, {**dict(spec.permanent_half), "zone": "battlefield"})
+    if spec.kind == "spell_permanent_or_graveyard_card":
+        # Re-checked against the half for the zone the object is in now. An
+        # object keeps its oid across zones (the "object identity" row of
+        # docs/rules-coverage.md), so a creature sacrificed in response is
+        # still offered to the graveyard half here, as a flickered permanent
+        # is to a `permanent` spec.
+        if obj.zone is Zone.BATTLEFIELD:
+            return matches(ctx, ref.id, {**dict(spec.permanent_half), "zone": "battlefield"})
+        if obj.zone is Zone.GRAVEYARD:
+            return matches(ctx, ref.id, spec.graveyard_half)
+        return False
     selector = dict(spec.selector)
     if spec.kind == "any" and "zone" not in selector:
         selector["zone"] = "battlefield"

@@ -361,6 +361,14 @@
       "0": 3
     }
   },
+  "altered_ego": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 20,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "always_watching": {
     "battlefield_count": 33,
     "granted": {
@@ -1048,6 +1056,10 @@
   "auntie_s_hovel": {
     "zone": "battlefield"
   },
+  "auron_venerated_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "austere_command": {
     "battlefield_count": 32,
     "opponent_battlefield_count": 4,
@@ -1650,6 +1662,10 @@
   "blistering_barrier": {
     "zone": "battlefield"
   },
+  "blitzball_stadium": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "blood_crypt": {
     "zone": "battlefield"
   },
@@ -1984,6 +2000,13 @@
   },
   "breath_weapon": {
     "zone": "graveyard"
+  },
+  "bred_for_the_hunt": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
   },
   "breeches_eager_pillager": {
     "zone": "battlefield"
@@ -2617,6 +2640,13 @@
   "charity_extractor": {
     "zone": "battlefield"
   },
+  "chasm_skulker": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "chief_of_the_foundry": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -2636,6 +2666,9 @@
   },
   "chivalric_alliance": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "chocobo_knights": {
     "zone": "battlefield"
   },
   "choked_estuary": {
@@ -3454,6 +3487,11 @@
     "life": {
       "0": 20
     },
+    "zone": "graveyard"
+  },
+  "damning_verdict": {
+    "battlefield_count": 30,
+    "opponent_battlefield_count": 4,
     "zone": "graveyard"
   },
   "damocles_base_sword_of_kang": {
@@ -4292,6 +4330,10 @@
   "duskmantle_prowler": {
     "zone": "battlefield"
   },
+  "duskshell_crawler": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "dutiful_servants": {
     "zone": "battlefield"
   },
@@ -4594,6 +4636,13 @@
   "endless_atlas": {
     "battlefield_count": 33,
     "zone": "battlefield"
+  },
+  "endless_detour": {
+    "battlefield_count": 31,
+    "library_size": {
+      "0": 41
+    },
+    "zone": "graveyard"
   },
   "endless_ranks_of_hydra": {
     "battlefield_count": 33,
@@ -5322,6 +5371,12 @@
   "fight_for_the_throne": {
     "zone": "graveyard"
   },
+  "fight_rigging": {
+    "library_size": {
+      "0": 39
+    },
+    "zone": "battlefield"
+  },
   "fighting_drake": {
     "zone": "battlefield"
   },
@@ -5696,6 +5751,13 @@
   "forest_bear": {
     "zone": "battlefield"
   },
+  "forge_of_heroes": {
+    "zone": "battlefield"
+  },
+  "forgotten_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "forgotten_cave": {
     "zone": "battlefield"
   },
@@ -6003,6 +6065,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "gatta_and_luzzu": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "gau_feral_youth": {
     "battlefield_count": 33,
     "hand_size": {
@@ -6055,6 +6121,10 @@
       "id": "elephant_3_3_g"
     },
     "zone": "graveyard"
+  },
+  "generous_patron": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "generous_stray": {
     "hand_size": {
@@ -6586,6 +6656,10 @@
     "zone": "battlefield"
   },
   "grasslands": {
+    "zone": "battlefield"
+  },
+  "grateful_apparition": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "grave_pact": {
@@ -7619,6 +7693,10 @@
   "incremental_blight": {
     "zone": "graveyard"
   },
+  "incubation_druid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "incurable_ogre": {
     "zone": "battlefield"
   },
@@ -7730,6 +7808,15 @@
       "0": 1
     },
     "zone": "battlefield"
+  },
+  "inspiring_call": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "inspiring_cleric": {
     "life": {
@@ -8345,6 +8432,9 @@
   },
   "kilo_apogee_mind": {
     "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "kimahri_valiant_guardian": {
     "zone": "battlefield"
   },
   "kimoyo_beads": {
@@ -9031,6 +9121,10 @@
     },
     "zone": "battlefield"
   },
+  "lord_jyscal_guado": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lord_of_the_accursed": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -9181,6 +9275,10 @@
     },
     "zone": "battlefield"
   },
+  "lulu_stern_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "lumbering_falls": {
     "zone": "battlefield"
   },
@@ -9191,6 +9289,10 @@
     "zone": "battlefield"
   },
   "luminarch_ascension": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "luminous_broodmoth": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -9269,6 +9371,10 @@
         "haste"
       ]
     },
+    "zone": "battlefield"
+  },
+  "maester_seymour": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "magefire_wings": {
@@ -10717,6 +10823,13 @@
   "nyxborn_seaguard": {
     "zone": "battlefield"
   },
+  "o_aka_traveling_merchant": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "oaken_siren": {
     "zone": "battlefield"
   },
@@ -11851,6 +11964,9 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "protection_magic": {
+    "zone": "graveyard"
+  },
   "proteus_staff": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12164,6 +12280,14 @@
     "zone": "battlefield"
   },
   "rampaging_hippo": {
+    "zone": "battlefield"
+  },
+  "rampant_rejuvenator": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 2,
+      "kind": "+1/+1"
+    },
     "zone": "battlefield"
   },
   "ramunap_excavator": {
@@ -12498,6 +12622,10 @@
     },
     "zone": "battlefield"
   },
+  "resourceful_defense": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "resplendent_angel": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -12669,6 +12797,10 @@
       "0": 40,
       "1": 40
     },
+    "zone": "battlefield"
+  },
+  "rikku_resourceful_guardian": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "rimewood_falls": {
@@ -13152,6 +13284,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "scholar_of_new_horizons": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "scholarship_sponsor": {
     "zone": "battlefield"
   },
@@ -13630,6 +13769,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "shelinda_yevon_acolyte": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sheltered_by_ghosts": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
@@ -13979,6 +14122,9 @@
     "zone": "battlefield"
   },
   "sin_spira_s_punishment": {
+    "zone": "battlefield"
+  },
+  "sin_unending_cataclysm": {
     "zone": "battlefield"
   },
   "sinister_gnarlbark": {
@@ -14443,6 +14589,10 @@
     "zone": "battlefield"
   },
   "speed_young_avenger": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "sphere_grid": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },
@@ -15008,6 +15158,15 @@
     },
     "zone": "battlefield"
   },
+  "summon_ixion": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
   "summon_knights_of_round": {
     "battlefield_count": 36,
     "tokens": {
@@ -15021,6 +15180,31 @@
       "amount": 1,
       "kind": "lore"
     },
+    "zone": "battlefield"
+  },
+  "summon_magus_sisters": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
+  "summon_valefor": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "summon_yojimbo": {
+    "opponent_battlefield_count": 5,
+    "zone": "battlefield"
+  },
+  "summoner_s_sending": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "summoning_materia": {
@@ -15070,6 +15254,13 @@
     "zone": "battlefield"
   },
   "sunpetal_grove": {
+    "zone": "battlefield"
+  },
+  "sunscorch_regent": {
+    "battlefield_count": 33,
+    "life": {
+      "0": 40
+    },
     "zone": "battlefield"
   },
   "sunscorched_divide": {
@@ -16070,6 +16261,13 @@
       "0": 5
     }
   },
+  "tidus_yuna_s_guardian": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "tifa_martial_artist": {
     "battlefield_count": 33,
     "hand_size": {
@@ -16168,6 +16366,10 @@
     "library_size": {
       "0": 40
     },
+    "zone": "battlefield"
+  },
+  "together_forever": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tolaria_west": {
@@ -16396,6 +16598,10 @@
     "zone": "battlefield"
   },
   "troll_horn_cameo": {
+    "zone": "battlefield"
+  },
+  "tromell_seymour_s_butler": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "tromokratis": {
@@ -17422,6 +17628,18 @@
     },
     "zone": "graveyard"
   },
+  "wakka_devoted_guardian": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "walking_ballista": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 15,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "walking_corpse": {
     "zone": "battlefield"
   },
@@ -17815,6 +18033,10 @@
   "wildwood_patrol": {
     "zone": "battlefield"
   },
+  "wilhelt_the_rotcleaver": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "will_of_the_jeskai": {
     "graveyard_size": {
       "0": 4
@@ -18203,6 +18425,32 @@
     "battlefield_count": 34,
     "opponent_battlefield_count": 5,
     "zone": "battlefield"
+  },
+  "yuna_grand_summoner": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "yuna_s_decision": {
+    "battlefield_count": 32,
+    "graveyard_size": {
+      "0": 4
+    },
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 39
+    },
+    "zone": "graveyard"
+  },
+  "yuna_s_whistle": {
+    "hand_size": {
+      "0": 1
+    },
+    "library_size": {
+      "0": 40
+    },
+    "zone": "graveyard"
   },
   "zack_fair": {
     "counters": {

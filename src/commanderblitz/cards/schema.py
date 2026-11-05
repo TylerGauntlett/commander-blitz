@@ -267,6 +267,15 @@ class TargetModel(BaseModel):
         "card_in_exile",
         "any",
         "spell_or_permanent",
+        #: "The owner of target **spell, nonland permanent, or card in a
+        #: graveyard** puts it…" (Endless Detour). `"spell_or_permanent"` with a
+        #: third half: one instance of the word "target" whose pool spans the
+        #: stack, the battlefield and every graveyard. The spell half reads
+        #: `selector`, the permanent half `permanent_selector` when there is
+        #: one, and the graveyard half `selector` over **every** graveyard
+        #: unless the selector names whose. A selector ``zone`` is refused,
+        #: since the kind already names all three.
+        "spell_permanent_or_graveyard_card",
         #: "Copy target activated or triggered ability **you control**" -- Peter
         #: Parker's Camera, Lithoform Engine, Strionic Resonator.
         #:
@@ -292,7 +301,9 @@ class TargetModel(BaseModel):
     #: is legal, and of the permanents only creatures. `selector` then narrows
     #: the spell half alone. Absent, both halves read `selector`, which is
     #: Sink into Stupor's "spell or nonland permanent an opponent controls".
-    #: Refused on every other kind, with a ``zone`` other than the battlefield,
+    #: The same on a ``"spell_permanent_or_graveyard_card"`` target, whose
+    #: "**nonland** permanent" narrows the battlefield half alone (Endless
+    #: Detour). Refused on every other kind, with a ``zone`` other than the battlefield,
     #: and with a clause naming a sibling target or ``{X}``.
     permanent_selector: dict[str, Any] | None = None
     #: How many. ``"any"`` is "any number of target …" -- a size the *caster*
@@ -1168,6 +1179,21 @@ class ReplacementModel(BaseModel):
     #: payload that depended on which of two simultaneous triggers his
     #: controller happened to order first.
     amount: int | dict[str, Any] = 1
+    #: `self_enters_with_counters`: effects run **as** the permanent enters,
+    #: before its counters are counted -- Sin, Unending Cataclysm's "As Sin
+    #: enters, remove all counters from any number of artifacts, creatures, and
+    #: enchantments. Sin enters with X +1/+1 counters on it, where X is twice
+    #: the number of counters removed this way." A name an effect here binds
+    #: (``as``) is readable by `amount` with ``{"binding": ...}``, which is how
+    #: "removed this way" reaches the number the permanent enters with.
+    #:
+    #: Part of the replacement (614.1c), not a trigger: nobody receives priority
+    #: between the effects and the arrival, and the permanent is never seen
+    #: without its counters. Run just before the move by
+    #: `zones.offer_as_enters_effects`, on every route that can stop to ask; an
+    #: arrival that cannot (a token) runs none of them and binds nothing. No
+    #: targets: "as this enters" chooses, it does not target.
+    as_enters: list[dict[str, Any]] | None = None
     #: Applied only when this holds, evaluated as the permanent enters with the
     #: entering object as the source -- so `exclude_self` means "other lands you
     #: control" and counts the board the land is arriving on.  The printed

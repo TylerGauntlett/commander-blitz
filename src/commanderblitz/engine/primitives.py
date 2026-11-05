@@ -51,7 +51,7 @@ from .temp_effects import (
     damage_redirect,
     end_source_bound,
     life_floor,
-    permanent_shielded,
+    preventing_permanent_shield,
     preventing_shield,
 )
 from .triggers import fire
@@ -525,7 +525,11 @@ def damage_player(
     # (Gideon of the Trials, Kiora, the Crashing Wave). A shield on the
     # *dealer*, so it is asked here as well as in `damage_permanent`: the
     # creature it was aimed at is exactly the one about to hit this player.
-    if preventable and permanent_shielded(state, source_oid, by=True, is_combat=is_combat):
+    if preventable and (
+        dealer_shield := preventing_permanent_shield(
+            state, source_oid, by=True, is_combat=is_combat
+        )
+    ) is not None:
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -535,6 +539,7 @@ def damage_player(
             amount=amount,
             to="player",
             reason="permanent_shield",
+            **({"shield": dealer_shield.link} if dealer_shield.link is not None else {}),
         )
         return 0
     # "Prevent all combat damage that would be dealt this turn by non-Spider
@@ -855,11 +860,18 @@ def damage_permanent(
     # that would be dealt to him this turn" (Gideon Jura) on the recipient, and
     # "…target permanent would deal" (Gideon of the Trials) on the dealer. Both
     # answer the whole event however big it is, so they sit beside it.
-    if preventable and (
-        permanent_shielded(state, oid, by=False, is_combat=is_combat)
-        or permanent_shielded(state, source_oid, by=True, is_combat=is_combat)
-        or (is_combat and combat_fogged(state, source_oid))
-    ):
+    # Either shield may carry a "prevented this way" rider (615.5); a linked one
+    # prevents first, the order the protected player would pick (616.1).
+    shields = [
+        shield
+        for shield in (
+            preventing_permanent_shield(state, oid, by=False, is_combat=is_combat),
+            preventing_permanent_shield(state, source_oid, by=True, is_combat=is_combat),
+        )
+        if shield is not None
+    ]
+    if preventable and (shields or (is_combat and combat_fogged(state, source_oid))):
+        link = next((shield.link for shield in shields if shield.link is not None), None)
         fire(
             state,
             EventType.DAMAGE_PREVENTED,
@@ -869,6 +881,7 @@ def damage_permanent(
             amount=amount,
             to="permanent",
             reason="permanent_shield",
+            **({"shield": link} if link is not None else {}),
         )
         return 0
     # Absorb (702.63a): "prevent N of that damage", per source and per instance.
@@ -2378,6 +2391,7 @@ def clear_until_eot(state: GameState) -> None:
             obj.copying_keywords = None
             obj.copying_remove_supertypes = None
             obj.copying_add_types = None
+            obj.copying_own_abilities = None
             obj.copying_until_eot = False
         handbacks.extend(
             (oid, temp)

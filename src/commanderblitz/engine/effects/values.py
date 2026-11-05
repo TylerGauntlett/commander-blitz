@@ -57,7 +57,7 @@ from ..characteristics import (
     min_count,
     min_life,
 )
-from ..enums import KEYWORD_COUNTERS
+from ..enums import KEYWORD_COUNTERS, Keyword
 from ..errors import DslError
 from ..objects import ANY_COUNTER_KIND, FINALITY, PLUS_ONE, SHIELD, STUN
 from .context import EffectContext
@@ -209,7 +209,8 @@ VALUE_KEYS = frozenset(
         "life_gained_this_turn",
         # "…if you put a counter on a creature this turn" -- Lasting Tarfire.
         # Counters the player put (122.6a), optionally only on permanents of
-        # some types and of one kind, off `TurnLedger.counters_put`.
+        # some types, of one kind, or on one object (`on`, an object reference:
+        # "if a counter was put on Wakka this turn"), off `TurnLedger.counters_put`.
         "counters_put_this_turn",
         # "…if you didn't activate a loyalty ability of a planeswalker this
         # turn" -- The Chain Veil. How many, per activating player; "didn't"
@@ -319,6 +320,13 @@ VALUE_KEYS = frozenset(
         # before the event fired, and by resolution they are graveyard cards.
         # Answered from the departure event's `had_auras` snapshot (603.10a).
         "auras_had",
+        # "Whenever a creature you control **without flying** dies" (Luminous
+        # Broodmoth). 1 if the departed permanent had the keyword as it left,
+        # else 0, off the departure event's `had_keywords` snapshot (603.10a).
+        # A trigger filter's `keywords` reads the printed face, which a flying
+        # counter or an anthem's grant never reaches -- a creature Broodmoth
+        # returned would come back for ever.
+        "keywords_had",
         # "…for each basic land type among lands you control" (domain), and
         # "three or more creatures with different powers" (coven). A count of
         # *distinct values* over a pool, which no other leaf can be: `count`
@@ -380,8 +388,9 @@ ROLL_PARITIES = ("even", "odd")
 #: A fourth would be vocabulary with nothing printed asking for it, and a
 #: misspelling has to be a load error rather than a silent zero.
 #: ``color`` is First Family's "the number of colors among permanents you
-#: control and spells you've cast this turn".
-DISTINCT_OF = ("power", "basic_land_type", "card_type", "color")
+#: control and spells you've cast this turn". ``counter_kind`` is Blitzball
+#: Stadium's "draw a card for each kind of counter on it" (122.1).
+DISTINCT_OF = ("power", "basic_land_type", "card_type", "color", "counter_kind")
 
 #: The five colors (105.1). Colorless is not a color (105.2c), so a pool of
 #: artifacts and lands counts none.
@@ -559,6 +568,17 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
                         if cast_id in registry:
                             colors |= set(registry.get(cast_id).colors)
             return len(colors & COLORS)
+        if of == "counter_kind":
+            # "…for each kind of counter on it" (Blitzball Stadium). Kinds, not
+            # counters: three +1/+1 counters and a shield counter are two. Not
+            # `counters_on {"counter": "any"}`, which sums them and would read
+            # four. A kind with no counters left on the object is not on it.
+            kinds: set[str] = set()
+            for oid in pool:
+                obj = ctx.state.objects.get(oid)
+                if obj is not None:
+                    kinds |= {kind for kind, n in obj.counters.items() if n > 0}
+            return len(kinds)
         found: set[str] = set()
         for oid in pool:
             found |= BASIC_LAND_TYPES & chars(ctx.state, oid).subtypes
@@ -666,6 +686,13 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         if not isinstance(had, (list, tuple)):
             return 0
         return auras_matching(had, expr["auras_had"], ctx.controller)
+    if "keywords_had" in expr:
+        # One keyword, as a bare string: {"keywords_had": "flying"}. A trigger
+        # that never fired binds nothing and reads 0, as `counters_had` does.
+        had = ctx.bindings.get("had_keywords")
+        if not isinstance(had, (list, tuple, set, frozenset)):
+            return 0
+        return 1 if str(expr["keywords_had"]) in had else 0
     if "cards_drawn_this_turn" in expr:
         pids = _players(ctx, expr["cards_drawn_this_turn"])
         return sum(ctx.state.cards_drawn_this_turn.get(p, 0) for p in pids)
@@ -761,12 +788,17 @@ def evaluate_value(ctx: EffectContext, expr: Any) -> int:
         pids = set(_players(ctx, spec["player"]))
         types = set(spec.get("types") or ())
         kind = str(spec.get("counter", ANY_COUNTER_KIND))
+        # "…if a counter was put on Wakka this turn": one recipient, by oid. A
+        # reference that names nobody reads 0, and a permanent that left and
+        # came back is a new object no counter was put on (400.7).
+        on = set(_referenced_oids(ctx, spec["on"])) if "on" in spec else None
         return sum(
             put.amount
             for put in ledger.counters_put
             if put.put_by in pids
             and types <= put.types
             and (kind == ANY_COUNTER_KIND or put.counter == kind)
+            and (on is None or (put.oid is not None and put.oid in on))
         )
     if "cards_discarded_this_turn" in expr:
         pids = _players(ctx, expr["cards_discarded_this_turn"])
@@ -1326,16 +1358,19 @@ def validate_counters_put_this_turn(spec: Any, where: str) -> None:
     silently be somebody. ``types`` is a list of card types the recipient had
     as the counter arrived, all of them; omitted, any permanent. ``counter`` is
     one kind, through the `add_counters` near-miss check, or ``"any"`` (the
-    default) for every kind.
+    default) for every kind. ``on`` is one object reference
+    (`validate_object_ref`) naming the recipient; omitted, any permanent.
     """
     if not isinstance(spec, Mapping):
         raise DslError(f"{where}: must be an object with a 'player'")
-    unknown = set(spec) - {"player", "types", "counter"}
+    unknown = set(spec) - {"player", "types", "counter", "on"}
     if unknown:
         raise DslError(
-            f"{where}: unsupported keys {sorted(unknown)} (only 'player', 'types' "
-            f"and 'counter' are remembered about a placement)"
+            f"{where}: unsupported keys {sorted(unknown)} (only 'player', 'types', "
+            f"'counter' and 'on' are remembered about a placement)"
         )
+    if "on" in spec:
+        validate_object_ref(spec["on"], f"{where}.on")
     if "player" not in spec:
         raise DslError(f"{where}: needs 'player' -- who put the counters, e.g. 'you'")
     who = spec["player"]
@@ -1573,6 +1608,10 @@ def validate_starting_life_of(who: Any, where: str) -> None:
         raise DslError(f"{where}: needs a player spec, e.g. 'you'")
 
 
+#: What `keywords_had` may name: a keyword the engine implements.
+_KEYWORD_WORDS = frozenset(k.value for k in Keyword)
+
+
 def validate_auras_had(spec: Any, where: str) -> None:
     """``auras_had`` is ``true`` or ``{"controller": ...}``, as `enchanted_by` is.
 
@@ -1636,6 +1675,12 @@ def validate_value(expr: Any, where: str) -> None:
         validate_counters_on(expr["counters_on"], f"{where}.counters_on")
     if "auras_had" in expr:
         validate_auras_had(expr["auras_had"], f"{where}.auras_had")
+    if "keywords_had" in expr:
+        word = expr["keywords_had"]
+        if not isinstance(word, str) or word not in _KEYWORD_WORDS:
+            raise DslError(
+                f"{where}.keywords_had: one implemented keyword, e.g. 'flying', got {word!r}"
+            )
     if "times_tapped_this_turn" in expr:
         validate_object_ref(expr["times_tapped_this_turn"], f"{where}.times_tapped_this_turn")
     if "command_zone_casts_of" in expr:

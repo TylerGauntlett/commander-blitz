@@ -17,6 +17,7 @@ from ..primitives import add_counters, add_energy, add_poison, remove_counters
 from ..structs import (
     ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
+    ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
     UNBLOCKABLE_DURATIONS,
@@ -32,13 +33,14 @@ from ..temp_effects import (
     require_attack_on,
     require_attack_player,
     restrict_attack,
+    tax_attacks,
 )
 from .board_helpers import (
     _offer_blocks_to,
     _players,
 )
-from .context import EffectContext, ask_targets
-from .counter_removal import ask_counter_kind, counters_on
+from .context import EffectContext, ask_targets, ask_x
+from .counter_removal import ask_counter_kind, counters_on, kinds_held
 from .registry import register
 from .selectors import (
     choose_objects,
@@ -323,6 +325,48 @@ def _move_chosen_kinds(ctx: EffectContext, spec: Mapping[str, Any]):
                 add_counters(ctx.state, dest_oid, kind, 1, source=ctx.source_oid)
 
 
+def _move_any_number(ctx: EffectContext, spec: Mapping[str, Any]):
+    """``any_kind`` with ``any_number``: any sub-multiset of the source's counters.
+
+    Resourceful Defense -- "Move **any number of counters** from target
+    permanent you control onto a second target permanent you control." Any
+    number of any kinds (122.1): three of the source's five +1/+1 counters and
+    its one shield counter, or none at all. One `ask_x` per kind the source
+    carries (harmful kinds first, `counter_removal.kinds_held`), 0 up to every
+    counter of that kind -- the question `distribute_moved_counters` asks for
+    its one kind -- so every split is reachable without a distribution
+    decision. Each kind comes off the source and goes on the destination in
+    one placement, so a Hardened Scales adds one per kind moved, not one per
+    counter.
+
+    Not `all_kinds`, which moves every counter, nor `any_kind` with an
+    ``amount``, which moves exactly that many. With either target gone
+    (608.2b) nothing moves and nothing is asked.
+    """
+    if "from" in spec:
+        sources = resolve_pool(ctx, spec["from"])
+    else:
+        sources = [ctx.source_oid] if ctx.source_oid is not None else []
+    sources = [oid for oid in sources if counters_on(ctx, oid) > 0]
+    if not sources:
+        return
+    destinations = yield from choose_objects(ctx, spec.get("objects"), "Move counters to")
+    destinations = [oid for oid in destinations if oid not in sources]
+    if not destinations:
+        return
+    for source_oid in sources:
+        name = ctx.name_of(source_oid)
+        for kind, held in kinds_held(ctx, source_oid).items():
+            moving = yield from ask_x(
+                ctx, f"Move how many {kind} counters from {name}?", held, ctx.controller
+            )
+            moving = remove_counters(ctx.state, source_oid, kind, min(moving, held))
+            if not moving:
+                continue
+            for dest_oid in destinations:
+                add_counters(ctx.state, dest_oid, kind, moving, source=ctx.source_oid)
+
+
 @register("move_counters")
 def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """Take counters off one permanent and put them on another.
@@ -355,6 +399,9 @@ def op_move_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     # quietly smaller than printed.
     if spec.get("all_kinds"):
         yield from _move_every_kind(ctx, spec)
+        return
+    if spec.get("any_kind") and spec.get("any_number"):
+        yield from _move_any_number(ctx, spec)
         return
     if spec.get("any_kind"):
         yield from _move_chosen_kinds(ctx, spec)
@@ -612,6 +659,45 @@ def op_must_attack_planeswalker(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("attack_tax")
+def op_attack_tax(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "Until your next turn, creatures can't attack you unless their controller
+    pays {2} for each of those creatures." -- Summon: Yojimbo, chapters II-III.
+
+    The timed twin of the `attack_tax` static. The static is the near miss and
+    misses twice: it is a `static_effect`, read only while its permanent sits on
+    the battlefield, so a Saga sacrificed after chapter IV would end the
+    chapter-III tax a turn early; and it has no clock at all. `cant_attack_player`
+    has the clock and the seat but no price -- a wall where the card prints a
+    toll.
+
+    So it is a row in a timed table, `structs.AttackTax`, which
+    `player_statics.attack_tax` sums with the static taxes as each attacker is
+    declared -- the declare-attackers label, the payability check and the
+    charge all read it through `combat.attack_tax_cost`, as they do Propaganda.
+
+    ``cost``      required, ``{"mana": "{2}"}`` -- the static's own `cost`
+                  mapping, per attacking creature.
+    ``duration``  required, ``until_your_next_turn`` or ``this_turn``.
+
+    The protected seat and the clock are both the resolving controller: "can't
+    attack **you**", "until **your** next turn". An attack on that player's
+    planeswalkers is not taxed (506.2).
+    """
+
+    duration = str(spec["duration"])
+    if duration not in ATTACK_TAX_DURATIONS:  # pragma: no cover - loader guards
+        raise DslError(f"unknown attack_tax duration {duration!r}")
+    tax_attacks(
+        ctx.state,
+        ctx.controller,
+        str((spec.get("cost") or {}).get("mana") or ""),
+        duration,
+        source=ctx.source_oid,
+    )
+    yield from ()
+
+
 @register("cant_attack_player")
 def op_cant_attack_player(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "You can't attack that player this turn." "They can't attack you this combat."
@@ -817,6 +903,11 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
     creature that gains haste afterwards may still block. Absent, every blocker
     is refused -- which is why it may never be dropped from a card that prints
     the exception: the creature would be strictly harder to block than printed.
+
+    ``by_opponents: true`` is "…can't be blocked by creatures your opponents
+    control" (Rikku, Resourceful Guardian): only blockers controlled by an
+    opponent of this effect's controller are refused, so a creature of an
+    opponent's that this marks may still be blocked by you.
     """
 
     duration = str(spec.get("duration", "this_turn"))
@@ -834,6 +925,7 @@ def op_unblockable(ctx: EffectContext, spec: Mapping[str, Any]):
         player=ctx.controller,
         source=ctx.source_oid,
         except_blockers=spec.get("except_blockers"),
+        opponents_only=bool(spec.get("by_opponents", False)),
     )
     yield from ()
 

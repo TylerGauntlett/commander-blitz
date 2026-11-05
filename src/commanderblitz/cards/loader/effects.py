@@ -33,6 +33,7 @@ from commanderblitz.engine.objects import PLAYABLE_DURATIONS
 from commanderblitz.engine.structs import (
     ATTACK_MARK_DURATIONS,
     ATTACK_RESTRICTION_DURATIONS,
+    ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CANT_SACRIFICE_DURATIONS,
     CAST_LOCK_DURATIONS,
@@ -104,6 +105,13 @@ COPY_EXCEPT_KEYS = frozenset(
 )
 
 
+#: The keys `become_copy`'s ``except_`` (707.9b) reads: ``add_keywords``, as
+#: on an as-enters copy ("and it has vigilance"), and ``keep_abilities``,
+#: positions in the copying card's own printed ``abilities`` the copy keeps
+#: ("and this ability", Kimahri, Valiant Guardian). The name stays on
+#: ``except_name``.
+BECOME_COPY_EXCEPT_KEYS = frozenset({"add_keywords", "keep_abilities"})
+
 #: The recorders whose `as` binding is a **set of seats** rather than of
 #: objects: `may` (the players who said yes) and `draw` (the players who
 #: actually drew). Both write a bare list of player ids.
@@ -145,6 +153,33 @@ def _validate_from_had_counters(effect: Mapping[str, Any], op: str, where: str) 
         )
 
 
+def _validate_remove_all_counters(effect: Mapping[str, Any], where: str) -> None:
+    """``all_kinds`` and ``as`` on ``remove_counters``.
+
+    ``all_kinds`` is "remove **all** counters": every kind, every one, so a
+    kind, a number or a per-counter choice beside it would load and be ignored.
+    ``as`` names the total removed; anything but a name is a binding nobody can
+    read back.
+    """
+    if "as" in effect and not (isinstance(effect["as"], str) and effect["as"]):
+        raise DslError(f"{where}: 'as' on remove_counters is a binding name, got {effect['as']!r}")
+    if "all_kinds" not in effect:
+        return
+    if effect["all_kinds"] is not True:
+        raise DslError(f"{where}: 'all_kinds' is true or absent, got {effect['all_kinds']!r}")
+    for key in ("counter", "amount", "any_kind", "up_to"):
+        if key in effect:
+            raise DslError(
+                f"{where}: 'all_kinds' removes every counter of every kind; "
+                f"{key!r} beside it would be ignored"
+            )
+    if not effect.get("objects"):
+        raise DslError(
+            f"{where}: remove_counters with 'all_kinds' needs 'objects' naming the "
+            f"permanents the counters come off"
+        )
+
+
 def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) -> None:
     """``any_kind`` and ``up_to`` on a counter removal: every refusal is a card
     that would load and quietly remove a different number or kind of counters."""
@@ -157,6 +192,16 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
         if not isinstance(effect["any_kind"], bool):
             raise DslError(f"{where}: 'any_kind' is a boolean, got {effect['any_kind']!r}")
     any_kind = bool(effect.get("any_kind"))
+    if "any_number" in effect:
+        if op != "move_counters":
+            raise DslError(f"{where}: 'any_number' only means anything on move_counters")
+        if effect["any_number"] is not True:
+            raise DslError(f"{where}: 'any_number' is true or absent, got {effect['any_number']!r}")
+        if not any_kind:
+            raise DslError(
+                f"{where}: 'any_number' chooses how many of each kind move; it needs "
+                f"'any_kind' (a named 'counter' takes 'amount')"
+            )
     if op not in COUNTER_REMOVAL_UP_TO_OPS and op not in ANY_KIND_COUNTER_OPS:
         return
     if op == "remove_counters_from_among":
@@ -196,7 +241,15 @@ def _validate_any_kind_counters(effect: Mapping[str, Any], op: str, where: str) 
                 f"{where}: 'any_kind' moves counters one at a time and 'all_kinds' "
                 f"moves every counter; a card means one of them"
             )
-        if "amount" not in effect:
+        if effect.get("any_number"):
+            # "Move **any number of** counters": the controller says how many
+            # of each kind, so a printed number has nowhere to go.
+            if "amount" in effect:
+                raise DslError(
+                    f"{where}: 'any_number' lets the controller choose how many of "
+                    f"each kind move; an 'amount' beside it would be ignored"
+                )
+        elif "amount" not in effect:
             raise DslError(
                 f"{where}: move_counters with 'any_kind' needs the printed 'amount' "
                 f"(\"move a counter\" is {{\"const\": 1}})"
@@ -998,6 +1051,23 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}.{key}: references target {sub['target']!r} which the card does not declare"
             )
+    objects = effect.get("objects")
+    if (
+        isinstance(objects, Mapping)
+        and "target" in objects
+        and isinstance(target_kinds, Mapping)
+        and target_kinds.get(str(objects["target"])) == "spell_permanent_or_graveyard_card"
+        and (op != "put_on_top" or set(objects) != {"target"})
+    ):
+        # A `{"target": …}` selector reaches object refs only, so on any other
+        # op -- or narrowed by another clause -- a target that landed on a
+        # spell would load and do nothing. `put_on_top` tucks the spell half
+        # itself; `return_spell_to_hand` names it by `target`.
+        raise DslError(
+            f"{where}.objects: a 'spell_permanent_or_graveyard_card' target is "
+            f"moved by put_on_top with objects {{'target': ...}} alone, or by "
+            f"return_spell_to_hand -- {op!r} would never reach the spell half"
+        )
     if op == "return_spell_to_hand":
         # "Return target **spell** to its owner's hand." The op reads
         # `ctx.target_sids`, which keeps only refs of kind `"stack"` -- so aimed
@@ -1011,7 +1081,11 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"{where}: return_spell_to_hand references target {tid!r} "
                 f"which the card does not declare"
             )
-        if target_kinds[tid] not in ("spell", "spell_or_permanent"):
+        if target_kinds[tid] not in (
+            "spell",
+            "spell_or_permanent",
+            "spell_permanent_or_graveyard_card",
+        ):
             raise DslError(
                 f"{where}: return_spell_to_hand needs a target of kind 'spell' or "
                 f"'spell_or_permanent', and {tid!r} is {target_kinds[tid]!r} "
@@ -1050,7 +1124,16 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"'grants_flashback' -- an unmetered permission is an engine, "
                 f"not a printed line"
             )
-    if op in ("grant_rebound", "grant_plot"):
+    if op == "spell_enters_with_counters":
+        # The map is the whole effect: without it the spell is promised
+        # nothing and the card reads as printed while doing nothing.
+        counters = effect.get("counters")
+        if not isinstance(counters, Mapping) or not counters:
+            raise DslError(
+                f"{where}: spell_enters_with_counters needs 'counters', a map of "
+                f"counter kind to amount (e.g. {{'+1/+1': 2}})"
+            )
+    if op in ("grant_rebound", "grant_plot", "spell_enters_with_counters"):
         # The same two checks `return_spell_to_hand` makes, for the same reason
         # and with the same failure mode: the op reads one stack object, and a
         # `target` that names a permanent or a player finds no spell, sets
@@ -1941,6 +2024,14 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                         f"{where}: unblockable 'except_blockers' describes what the "
                         f"blocker is, not whose it is; drop {sorted(refused)}"
                     )
+        # "…by creatures your opponents control": whose blockers, relative to
+        # the granting player. A boolean and only `true` is meaningful; `false`
+        # is the plain op and a non-bool is a typo, refused rather than coerced.
+        if "by_opponents" in effect and effect["by_opponents"] is not True:
+            raise DslError(
+                f"{where}: unblockable 'by_opponents' is `true` or absent, "
+                f"got {effect['by_opponents']!r}"
+            )
     if op == "cant_sacrifice":
         # `objects` is required and there is no wildcard shorthand, for the
         # reason `unblockable`'s is and harder: an absent `objects` read as
@@ -2012,23 +2103,28 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"'prevent_damage_permanent' op, and a continuous one the "
                 f"'prevent_damage' static effect or 'protection'"
             )
-    if op == "prevent_damage" and "effects" in effect:
+    if op in ("prevent_damage", "prevent_damage_permanent") and "effects" in effect:
         # "If damage is prevented this way…" (615.5): the rider the op installs
         # as a delayed ability beside its shield. An empty list is a rider that
         # does nothing, and a `target` inside one names nothing when it fires --
-        # the delayed half resolves with no targets of its own, as `delay`'s does.
+        # the delayed half resolves with no targets of its own, as `delay`'s does
+        # (the shielded permanent is `{"binding": "shielded"}` instead).
         if not isinstance(effect["effects"], list) or not effect["effects"]:
             raise DslError(
-                f"{where}: prevent_damage's 'effects' is the non-empty list of "
+                f"{where}: {op}'s 'effects' is the non-empty list of "
                 f"effects run each time this shield prevents damage"
             )
         _refuse_targets_inside_a_delay(effect["effects"], f"{where}.effects")
-    if op == "prevent_damage_permanent" and "effects" in effect:
-        # Accepted, it would be validated and never run: the rider is linked to
-        # the player shield only.
+    if (
+        op == "prevent_damage_permanent"
+        and "effects" in effect
+        and str(effect.get("duration")) != "this_turn"
+    ):
+        # The rider is a delayed ability, which ends at cleanup; on a longer
+        # shield it would stop paying while the shield still prevented.
         raise DslError(
-            f"{where}: a 'prevented this way' rider ('effects') is implemented on "
-            f"the 'prevent_damage' player shield only, not on {op!r}"
+            f"{where}: a 'prevented this way' rider on prevent_damage_permanent "
+            f"needs duration 'this_turn' (got {effect.get('duration')!r})"
         )
     if op in ("prevent_damage", "prevent_damage_permanent") and not isinstance(
         effect.get("combat_only", False), bool
@@ -2378,6 +2474,38 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                     f"exile, so it needs cards being exiled or already there "
                     f"(exile, look_at_top to exile, grant_playable over zone exile)"
                 )
+    if op == "become_copy" and "except_" in effect:
+        # Read only when the copy resolves: a misspelt key or keyword would
+        # arrive as a plain copy, which loses the exception and says nothing.
+        exception = effect["except_"]
+        if not isinstance(exception, Mapping) or not exception:
+            raise DslError(f"{where}.except_: needs a non-empty object -- omit it instead")
+        unknown = set(exception) - BECOME_COPY_EXCEPT_KEYS
+        if unknown:
+            raise DslError(
+                f"{where}.except_: unsupported keys {sorted(unknown)} "
+                f"(implemented: {sorted(BECOME_COPY_EXCEPT_KEYS)}; the name is 'except_name')"
+            )
+        if "add_keywords" in exception:
+            added = exception["add_keywords"]
+            if not isinstance(added, list) or not added:
+                raise DslError(f"{where}.except_.add_keywords: needs a non-empty list of keywords")
+            for k in added:
+                if k not in KNOWN_KEYWORDS:
+                    raise DslError(f"{where}.except_.add_keywords: unknown keyword {k!r}")
+            refuse_numbered_grant(added, f"{where}.except_.add_keywords")
+        if "keep_abilities" in exception:
+            # Range-checked against the card by `_check_grant_targets`.
+            kept = exception["keep_abilities"]
+            if (
+                not isinstance(kept, list)
+                or not kept
+                or not all(isinstance(i, int) and not isinstance(i, bool) for i in kept)
+            ):
+                raise DslError(
+                    f"{where}.except_.keep_abilities: needs a non-empty list of "
+                    f"positions in this card's 'abilities'"
+                )
     if op == "copy_permanent" and (overrides := effect.get("except_") or effect.get("except")):
         # "…except it's a white Zombie Angel with no mana cost." A misspelled
         # key here would be silently dropped, and the token would come back a
@@ -2652,6 +2780,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             to = branch.get("to", "hand")
             if to not in DESTINATIONS:
                 raise DslError(f"{at}.to: unknown destination {to!r}")
+    if "may_destination" in effect and op not in ("reveal_until", "search_library", "search_zones"):
+        # Only the ops that ask it read it; anywhere else the "you may" would
+        # load and never be offered.
+        raise DslError(
+            f"{where}: 'may_destination' is read only by reveal_until, "
+            f"search_library and search_zones"
+        )
+    if "may_destination_if" in effect:
+        # "If an opponent controls more lands than you, you may put that card
+        # onto the battlefield." A gate on the offer, so it means nothing
+        # without the offer it gates.
+        if "may_destination" not in effect:
+            raise DslError(f"{where}: 'may_destination_if' gates a 'may_destination'")
+        validate_condition(effect["may_destination_if"], f"{where}.may_destination_if")
+    if "may_destination" in effect and op in ("search_library", "search_zones"):
+        # "Search your library for a Plains card and reveal it. … you may put
+        # that card onto the battlefield tapped. If you don't …, put it into
+        # your hand." The same shape `reveal_until` validates: one card, a
+        # battlefield offer, and a different fallback.
+        may_destination = effect["may_destination"]
+        if may_destination not in REVEAL_UNTIL_MAY_DESTINATIONS:
+            raise DslError(
+                f"{where}: unknown {op} may_destination {may_destination!r} "
+                f"(implemented: {sorted(REVEAL_UNTIL_MAY_DESTINATIONS)})"
+            )
+        if str(effect.get("destination", "hand")) == may_destination:
+            raise DslError(
+                f"{where}: {op} 'may_destination' needs a 'destination' other "
+                f"than {may_destination!r} -- the fallback if you don't"
+            )
+        if "destination_if" in effect:
+            # Two answers to "where does this card go"; whichever ran would
+            # silently drop the other half of the sentence.
+            raise DslError(
+                f"{where}: {op} takes 'may_destination' or 'destination_if', not both"
+            )
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if count != 1:
+            raise DslError(
+                f"{where}: {op} 'may_destination' asks about one card and takes "
+                f"a 'count' of 1"
+            )
+        if "tapped" in effect and not isinstance(effect["tapped"], bool):
+            raise DslError(f"{where}: {op} 'tapped' is a boolean")
     # Three axes, one op: a creature type (the default), a permanent type or a
     # card type. A near-miss word here would fall through to the creature-type
     # branch and ask the wrong question -- a card printing "choose a permanent
@@ -2948,6 +3122,8 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"(use set_flag for a word that never wears off)"
             )
     _validate_any_kind_counters(effect, op, where)
+    if op == "remove_counters":
+        _validate_remove_all_counters(effect, where)
     if "from_had_counters" in effect:
         _validate_from_had_counters(effect, op, where)
     if op == "move_counters":
@@ -2984,6 +3160,32 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
                 f"(an int or {{\"const\": n}}); the division is announced before "
                 f"anything could be computed"
             )
+    if op == "distribute_moved_counters":
+        # "Move any number of +1/+1 counters from this creature onto other
+        # creatures" (Forgotten Ancient): chosen on resolution among a pool, so
+        # the destinations are a selector. A target here would be 601.2d's
+        # announced division, which is `distribute_counters`; no pool at all
+        # is a "may" that can never move anything.
+        objects = effect.get("objects")
+        if not isinstance(objects, Mapping) or not objects:
+            raise DslError(
+                f"{where}: distribute_moved_counters needs 'objects', a selector "
+                f"naming the permanents the counters may go onto"
+            )
+        if "target" in objects or "binding" in objects:
+            raise DslError(
+                f"{where}: distribute_moved_counters chooses its destinations on "
+                f"resolution; a targeted division is distribute_counters (601.2d)"
+            )
+        validate_selector(objects, f"{where}.objects")
+        if not isinstance(effect.get("counter", "+1/+1"), str):
+            raise DslError(f"{where}: distribute_moved_counters' 'counter' is a kind name")
+        for key in ("amount", "from"):
+            if key in effect:
+                raise DslError(
+                    f"{where}: distribute_moved_counters moves any number of this "
+                    f"permanent's own counters; it takes no '{key}'"
+                )
     if op == "double_counters" and not effect.get("objects"):
         # Without `objects` the pool is empty and nothing doubles: a Deepglow
         # Skate that loads clean and does nothing.
@@ -3638,6 +3840,29 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             raise DslError(
                 f"{where}: unknown cant_cast_spells_from_zones duration {duration!r} "
                 f"(implemented: {sorted(CAST_LOCK_DURATIONS)})"
+            )
+    if op == "attack_tax":
+        # Both required. Without a price the tax charges nothing and the card
+        # loads as a vanilla chapter; and the two durations are a turn apart at
+        # a table of four, so neither is a safe default.
+        if "cost" not in effect or "duration" not in effect:
+            raise DslError(f"{where}: attack_tax needs 'cost' and 'duration'")
+        cost = effect["cost"]
+        if not isinstance(cost, Mapping) or set(cost) != {"mana"}:
+            raise DslError(
+                f"{where}: attack_tax 'cost' is {{\"mana\": \"{{N}}\"}} -- the mana "
+                f"each attacking creature costs"
+            )
+        try:
+            parsed = ManaCost.parse(str(cost["mana"]))
+        except Exception as exc:
+            raise DslError(f"{where}: attack_tax cost {cost['mana']!r} is not a mana cost") from exc
+        if parsed.x_count or not str(cost["mana"]).strip():
+            raise DslError(f"{where}: attack_tax cost must be a fixed, non-empty mana cost")
+        if str(effect["duration"]) not in ATTACK_TAX_DURATIONS:
+            raise DslError(
+                f"{where}: unknown attack_tax duration {effect['duration']!r} "
+                f"(implemented: {sorted(ATTACK_TAX_DURATIONS)})"
             )
     if op == "cant_cast_spells":
         # Both required: the printed shapes differ in who and for how long

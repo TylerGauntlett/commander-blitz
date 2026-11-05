@@ -51,6 +51,7 @@ from .targeting import (
 from .triggers import fire
 from .zones import (
     move_object,
+    offer_as_enters_effects,
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
@@ -254,6 +255,7 @@ def pull_spell_off_stack(
     *,
     cause: str = "",
     by: int | None = None,
+    to_index: int | None = None,
 ) -> StackItem | None:
     """Take a spell off the stack **without countering it**, and move its card.
 
@@ -271,6 +273,8 @@ def pull_spell_off_stack(
     goes* is the only thing that varies between the effects that do this;
     everything above it -- unlinking the object, forgetting the face it was cast
     as, and a copy ceasing to exist -- is the same however far it travels.
+    ``to_index`` is `move_object`'s, for a library: ``None`` is the bottom, 0
+    the top (Endless Detour).
 
     Returns the removed :class:`StackItem`, or ``None`` when that ``sid`` is not
     a spell on the stack any more. That is not an error: targets are re-checked
@@ -300,7 +304,9 @@ def pull_spell_off_stack(
         state.objects.pop(obj.oid, None)
         state.bump_chars()
         return item
-    move_object(state, obj.oid, to_zone, to_player=obj.owner, cause=cause, by=by)
+    move_object(
+        state, obj.oid, to_zone, to_player=obj.owner, to_index=to_index, cause=cause, by=by
+    )
     return item
 
 
@@ -623,7 +629,7 @@ def _choose_each_target(
     spec = specs[0]
     if spec.one_per_player or spec.total_mana_value is not None:
         return None
-    count = target_count(state, trig.controller, spec, trig.source_oid)
+    count = target_count(state, trig.controller, spec, trig.source_oid, bindings=trig.bindings)
     if count != "any" and (not isinstance(count, int) or count < 2 or spec.optional):
         return None
     single = replace(spec, count=1, optional=False, up_to=False, min_count=0)
@@ -1234,6 +1240,7 @@ def _place_after_resolution(
         # above decides what is arriving, and riot asks about a creature.
         yield from offer_riot_choice(state, obj.oid, controller)
         yield from offer_read_ahead(state, obj.oid, controller)
+        yield from offer_as_enters_effects(state, obj.oid, controller)
     # A resolving spell's arrival is its own simultaneous event, not part of
     # whichever op last bumped the counter -- a token an ability made while this
     # spell waited is an Angel Giada's "already control" must count.

@@ -42,6 +42,7 @@ from .temp_effects import (
     clear_attack_marks,
     clear_attack_requirements,
     clear_attack_restrictions,
+    clear_attack_taxes,
     clear_block_prohibitions,
     clear_cast_locks,
     clear_combat_fogs,
@@ -381,6 +382,10 @@ def _untap_step(state: GameState) -> Generator[Any, list[int]]:
     # says. Cleared here, at the top of that turn, so the opponents' last
     # chance to cast out of a graveyard was the turn cycle in between.
     clear_cast_locks(state, "until_your_next_turn", player.pid)
+    # "Until your next turn, creatures can't attack you unless their
+    # controller pays {2} …" (Summon: Yojimbo.) The same clock, keyed to the
+    # protected seat, which is also the seat whose turn this is.
+    clear_attack_taxes(state, "until_your_next_turn", player.pid)
     # "Until your next turn, prevent all damage target permanent would deal."
     # (Gideon of the Trials, Kiora, the Crashing Wave.) The same clock, keyed to
     # the player who installed the shield.
@@ -781,6 +786,7 @@ def _cleanup_step(state: GameState) -> Generator[Any, list[int]]:
     # timed table above it is: a table the cleanup step could not sweep on
     # that word would be the one exception among them.
     clear_cast_locks(state, "this_turn")
+    clear_attack_taxes(state, "this_turn")
     # "**Until end of turn**, you may cast … from any graveyard." Beside the
     # rest and owned by no permanent for their reason, and more literally than
     # most: the Saga chapter that grants it exiles the Saga on the same line, so

@@ -6972,12 +6972,12 @@
     },
     "Altered Ego": {
       "edhrec_rank": 4125,
-      "gate": "template",
+      "gate": null,
       "name": "Altered Ego",
-      "reason": "no template for: This spell can't be countered",
+      "reason": "",
       "scryfall_id": "d51e076a-be33-4b2b-b52f-fe7b5bc56206",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aluren": {
@@ -16642,12 +16642,12 @@
     },
     "Auron, Venerated Guardian": {
       "edhrec_rank": 5456,
-      "gate": "template",
+      "gate": null,
       "name": "Auron, Venerated Guardian",
-      "reason": "no template for: Shooting Star — Whenever Auron attacks, put a +1/+1 counter on it. When you do, exile targ",
+      "reason": "",
       "scryfall_id": "12646217-db83-4b47-8f79-388c925dce77",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Aurora Awakener": {
@@ -27702,12 +27702,12 @@
     },
     "Blitzball Stadium": {
       "edhrec_rank": 6934,
-      "gate": "template",
+      "gate": null,
       "name": "Blitzball Stadium",
-      "reason": "no template for: When this artifact enters, support X",
+      "reason": "",
       "scryfall_id": "771808d9-d0c8-418b-ab6c-1ae6fc07ca20",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Blitzwing, Cruel Tormentor // Blitzwing, Adaptive Assailant": {
@@ -33902,12 +33902,12 @@
     },
     "Bred for the Hunt": {
       "edhrec_rank": 2659,
-      "gate": "template",
+      "gate": null,
       "name": "Bred for the Hunt",
-      "reason": "no template for: Whenever a creature you control with a +1/+1 counter on it deals combat damage to a player",
+      "reason": "",
       "scryfall_id": "a06fe501-0e25-46ee-8ed8-055f3bf636cd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Breeches, Brazen Plunderer": {
@@ -45092,12 +45092,12 @@
     },
     "Chasm Skulker": {
       "edhrec_rank": 708,
-      "gate": "template",
+      "gate": null,
       "name": "Chasm Skulker",
-      "reason": "no template for: Whenever you draw a card, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "886ce333-44d7-458e-a3bb-a58d1d7fc69b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chastise": {
@@ -45882,12 +45882,12 @@
     },
     "Chocobo Knights": {
       "edhrec_rank": 4403,
-      "gate": "template",
+      "gate": null,
       "name": "Chocobo Knights",
-      "reason": "no template for: Whenever you attack, creatures you control with counters on them gain double strike until ",
+      "reason": "",
       "scryfall_id": "e874e435-7ade-4299-9803-1358c0f07a8f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chocobo Racetrack": {
@@ -60242,12 +60242,12 @@
     },
     "Damning Verdict": {
       "edhrec_rank": 1182,
-      "gate": "template",
+      "gate": null,
       "name": "Damning Verdict",
-      "reason": "no template for: Destroy all creatures with no counters on them",
+      "reason": "",
       "scryfall_id": "8d82e20d-09c0-4b16-9b25-4790924aa0b6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Damocles Base, Sword of Kang": {
@@ -77252,12 +77252,12 @@
     },
     "Duskshell Crawler": {
       "edhrec_rank": 1423,
-      "gate": "template",
+      "gate": null,
       "name": "Duskshell Crawler",
-      "reason": "no template for: When this creature enters, put a +1/+1 counter on target creature",
+      "reason": "",
       "scryfall_id": "2ce4ebd2-c3e6-4299-bdb7-8e5eb1834168",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Duskwalker": {
@@ -83672,12 +83672,12 @@
     },
     "Endless Detour": {
       "edhrec_rank": 7354,
-      "gate": "template",
+      "gate": null,
       "name": "Endless Detour",
-      "reason": "no template for: The owner of target spell, nonland permanent, or card in a graveyard puts it on their choi",
+      "reason": "",
       "scryfall_id": "33a37435-bd6c-4330-8138-98a2afa36e54",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Endless Evil": {
@@ -94742,12 +94742,12 @@
     },
     "Fight Rigging": {
       "edhrec_rank": 3799,
-      "gate": "template",
+      "gate": null,
       "name": "Fight Rigging",
-      "reason": "no template for: Hideaway 5",
+      "reason": "",
       "scryfall_id": "ed314c9c-ce86-4782-981f-7956ceca564c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Fight as One": {
@@ -100412,12 +100412,12 @@
     },
     "Forge of Heroes": {
       "edhrec_rank": 2192,
-      "gate": "template",
+      "gate": null,
       "name": "Forge of Heroes",
-      "reason": "no template for: {T}: Choose target commander that entered this turn. Put a +1/+1 counter on it if it's a c",
+      "reason": "",
       "scryfall_id": "7ac60dfc-040e-4cc1-a967-3c915770fc8e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forgeborn Oreads": {
@@ -100492,12 +100492,12 @@
     },
     "Forgotten Ancient": {
       "edhrec_rank": 387,
-      "gate": "template",
+      "gate": null,
       "name": "Forgotten Ancient",
-      "reason": "no template for: Whenever a player casts a spell, you may put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "f8c9d744-8294-4747-ae7e-99be2b6e7479",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forgotten Cave": {
@@ -105902,12 +105902,12 @@
     },
     "Gatta and Luzzu": {
       "edhrec_rank": 5746,
-      "gate": "template",
+      "gate": null,
       "name": "Gatta and Luzzu",
-      "reason": "no template for: When enters, choose target creature you control. If damage would be dealt to that creature",
+      "reason": "",
       "scryfall_id": "4742c222-1f29-4e1a-a545-798d175255ca",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gau, Feral Youth": {
@@ -106672,12 +106672,12 @@
     },
     "Generous Patron": {
       "edhrec_rank": 3396,
-      "gate": "template",
+      "gate": null,
       "name": "Generous Patron",
-      "reason": "no template for: When this creature enters, support 2",
+      "reason": "",
       "scryfall_id": "8f4a43b9-6ee8-4b89-b204-83093fba8de4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Generous Plunderer": {
@@ -116282,12 +116282,12 @@
     },
     "Grateful Apparition": {
       "edhrec_rank": 1836,
-      "gate": "template",
+      "gate": null,
       "name": "Grateful Apparition",
-      "reason": "no template for: Whenever this creature deals combat damage to a player or planeswalker, proliferate",
+      "reason": "",
       "scryfall_id": "755e0d2b-9a5e-4a13-b085-13c33e120de0",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Gratuitous Violence": {
@@ -135592,12 +135592,12 @@
     },
     "Incubation Druid": {
       "edhrec_rank": 647,
-      "gate": "template",
+      "gate": null,
       "name": "Incubation Druid",
-      "reason": "no template for: {T}: Add one mana of any type that a land you control could produce. If this creature has ",
+      "reason": "",
       "scryfall_id": "348d4546-3da5-4f78-82f3-9a79d2f9b0d1",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Incubation Sac": {
@@ -137722,12 +137722,12 @@
     },
     "Inspiring Call": {
       "edhrec_rank": 270,
-      "gate": "template",
+      "gate": null,
       "name": "Inspiring Call",
-      "reason": "no template for: Draw a card for each creature you control with a +1/+1 counter on it. Those creatures gain",
+      "reason": "",
       "scryfall_id": "2555ec7b-5cc2-4ffd-9344-6368019feff9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Inspiring Captain": {
@@ -148872,12 +148872,12 @@
     },
     "Kimahri, Valiant Guardian": {
       "edhrec_rank": 7165,
-      "gate": "template",
+      "gate": null,
       "name": "Kimahri, Valiant Guardian",
-      "reason": "no template for: Ronso Rage — At the beginning of combat on your turn, put a +1/+1 counter on Kimahri and t",
+      "reason": "",
       "scryfall_id": "402780a2-ae0b-448d-a93a-e5ef6f7160d4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Kimoyo Beads": {
@@ -161212,12 +161212,12 @@
     },
     "Lord Jyscal Guado": {
       "edhrec_rank": 10563,
-      "gate": "template",
+      "gate": null,
       "name": "Lord Jyscal Guado",
-      "reason": "no template for: At the beginning of each end step, if you put a counter on a creature this turn, investiga",
+      "reason": "",
       "scryfall_id": "134ef3cd-01ac-4d60-a277-df7ab7b8f88c",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lord Magnus": {
@@ -162702,12 +162702,12 @@
     },
     "Lulu, Stern Guardian": {
       "edhrec_rank": 3698,
-      "gate": "template",
+      "gate": null,
       "name": "Lulu, Stern Guardian",
-      "reason": "no template for: Whenever an opponent attacks you, choose target creature attacking you. Put a stun counter",
+      "reason": "",
       "scryfall_id": "99cb1ba3-e16b-414d-8682-fb3b2f350ea2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Lumaret's Favor": {
@@ -162932,12 +162932,12 @@
     },
     "Luminous Broodmoth": {
       "edhrec_rank": 1163,
-      "gate": "template",
+      "gate": null,
       "name": "Luminous Broodmoth",
-      "reason": "no template for: Whenever a creature you control without flying dies, return it to the battlefield under it",
+      "reason": "",
       "scryfall_id": "e6fc5c0b-0b64-491d-b312-b9b2133225d9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Luminous Guardian": {
@@ -164202,12 +164202,12 @@
     },
     "Maester Seymour": {
       "edhrec_rank": 3869,
-      "gate": "template",
+      "gate": null,
       "name": "Maester Seymour",
-      "reason": "no template for: At the beginning of combat on your turn, put a number of +1/+1 counters equal to 's power ",
+      "reason": "",
       "scryfall_id": "5861c54a-6385-46d2-8daa-83fd717d6928",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Maestros Ascendancy": {
@@ -189912,12 +189912,12 @@
     },
     "O'aka, Traveling Merchant": {
       "edhrec_rank": 3541,
-      "gate": "template",
+      "gate": null,
       "name": "O'aka, Traveling Merchant",
-      "reason": "no template for: {T}, Remove a counter from a nonland permanent you control: Draw a card",
+      "reason": "",
       "scryfall_id": "9d860089-fb88-4736-b7f4-b605551bedc8",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "O-Kagachi, Vengeful Kami": {
@@ -208712,12 +208712,12 @@
     },
     "Protection Magic": {
       "edhrec_rank": 4341,
-      "gate": "template",
+      "gate": null,
       "name": "Protection Magic",
-      "reason": "no template for: Put a shield counter on each of up to three target creatures",
+      "reason": "",
       "scryfall_id": "2d4f9623-fd04-4377-b7cf-fbd896ebe03f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Protection Racket": {
@@ -214942,12 +214942,12 @@
     },
     "Rampant Rejuvenator": {
       "edhrec_rank": 3266,
-      "gate": "template",
+      "gate": null,
       "name": "Rampant Rejuvenator",
-      "reason": "no template for: This creature enters with two +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "9ce2aa8e-b0c4-4e22-84eb-94b9e5ca6f76",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Rampart Architect": {
@@ -221412,12 +221412,12 @@
     },
     "Resourceful Defense": {
       "edhrec_rank": 1628,
-      "gate": "template",
+      "gate": null,
       "name": "Resourceful Defense",
-      "reason": "no template for: Whenever a permanent you control leaves the battlefield, if it had counters on it, put tho",
+      "reason": "",
       "scryfall_id": "78743ab3-0289-4799-b139-a37964532b92",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Resourceful Return": {
@@ -223932,12 +223932,12 @@
     },
     "Rikku, Resourceful Guardian": {
       "edhrec_rank": 4064,
-      "gate": "template",
+      "gate": null,
       "name": "Rikku, Resourceful Guardian",
-      "reason": "no template for: Whenever you put one or more counters on a creature, until end of turn, that creature can'",
+      "reason": "",
       "scryfall_id": "b62cd4af-7d7a-4b0b-b2d6-2086281c7b21",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Riku of Many Paths": {
@@ -235532,12 +235532,12 @@
     },
     "Scholar of New Horizons": {
       "edhrec_rank": 2666,
-      "gate": "template",
+      "gate": null,
       "name": "Scholar of New Horizons",
-      "reason": "no template for: This creature enters with a +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "12407f48-7c54-41ec-934e-0cd5648994ba",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Scholar of Stars": {
@@ -243472,12 +243472,12 @@
     },
     "Shelinda, Yevon Acolyte": {
       "edhrec_rank": 5691,
-      "gate": "template",
+      "gate": null,
       "name": "Shelinda, Yevon Acolyte",
-      "reason": "no template for: Whenever another creature you control enters, put a +1/+1 counter on that creature if its ",
+      "reason": "",
       "scryfall_id": "6f2cec5d-50ea-4d0f-8925-eba06222d015",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shelkin Brownie": {
@@ -248262,12 +248262,12 @@
     },
     "Sin, Unending Cataclysm": {
       "edhrec_rank": 5189,
-      "gate": "template",
+      "gate": null,
       "name": "Sin, Unending Cataclysm",
-      "reason": "no template for: As Sin enters, remove all counters from any number of artifacts, creatures, and enchantmen",
+      "reason": "",
       "scryfall_id": "8e6e92aa-43bc-4be5-97a5-0817e7c3c9a9",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sindbad": {
@@ -258292,12 +258292,12 @@
     },
     "Sphere Grid": {
       "edhrec_rank": 1347,
-      "gate": "template",
+      "gate": null,
       "name": "Sphere Grid",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, put a +1/+1 counter on th",
+      "reason": "",
       "scryfall_id": "064a1fc2-6983-4ebf-a0bc-524bc77682c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphere of Annihilation": {
@@ -268962,12 +268962,12 @@
     },
     "Summon: Ixion": {
       "edhrec_rank": 3740,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Ixion",
-      "reason": "no template for: I — Aerospark — Exile target creature an opponent controls until this Saga leaves the batt",
+      "reason": "",
       "scryfall_id": "92c0bfc2-ba98-48b6-82a4-95a2321c8df4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Knights of Round": {
@@ -269002,12 +269002,12 @@
     },
     "Summon: Magus Sisters": {
       "edhrec_rank": 4973,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Magus Sisters",
-      "reason": "no template for: I, II, III — Choose one at random —",
+      "reason": "",
       "scryfall_id": "76a8cae7-e6ea-45eb-be8d-0e6a29b98aa6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Primal Garuda": {
@@ -269052,22 +269052,22 @@
     },
     "Summon: Valefor": {
       "edhrec_rank": 4743,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Valefor",
-      "reason": "no template for: I — Sonic Wings — Each opponent chooses a creature with the greatest mana value among crea",
+      "reason": "",
       "scryfall_id": "c95c1a97-4c9e-4d38-8b12-193f8ff0d556",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Yojimbo": {
       "edhrec_rank": 2471,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Yojimbo",
-      "reason": "no template for: I — Exile target artifact, enchantment, or tapped creature an opponent controls",
+      "reason": "",
       "scryfall_id": "cdbc2d28-ea35-47c6-af7e-07924e9d5794",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summoned Dromedary": {
@@ -269132,12 +269132,12 @@
     },
     "Summoner's Sending": {
       "edhrec_rank": 9051,
-      "gate": "template",
+      "gate": null,
       "name": "Summoner's Sending",
-      "reason": "no template for: At the beginning of your end step, you may exile target creature card from a graveyard. If",
+      "reason": "",
       "scryfall_id": "8150be1a-4bac-4c67-9165-9d6fc04a69cc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summoning Materia": {
@@ -269992,12 +269992,12 @@
     },
     "Sunscorch Regent": {
       "edhrec_rank": 1671,
-      "gate": "template",
+      "gate": null,
       "name": "Sunscorch Regent",
-      "reason": "no template for: Whenever an opponent casts a spell, put a +1/+1 counter on this creature and you gain 1 li",
+      "reason": "",
       "scryfall_id": "25774e8c-bbc1-4a53-926c-7c01c2ac908f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sunscorched Desert": {
@@ -287022,12 +287022,12 @@
     },
     "Tidus, Yuna's Guardian": {
       "edhrec_rank": 3900,
-      "gate": "template",
+      "gate": null,
       "name": "Tidus, Yuna's Guardian",
-      "reason": "no template for: At the beginning of combat on your turn, you may move a counter from target creature you c",
+      "reason": "",
       "scryfall_id": "2cfd4494-346c-4cbc-8072-e267254cefcc",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tidy Conclusion": {
@@ -288502,12 +288502,12 @@
     },
     "Together Forever": {
       "edhrec_rank": 2400,
-      "gate": "template",
+      "gate": null,
       "name": "Together Forever",
-      "reason": "no template for: When this enchantment enters, support 2",
+      "reason": "",
       "scryfall_id": "1b19f82a-9724-41b1-934d-a8ec1493587b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Together as One": {
@@ -293262,12 +293262,12 @@
     },
     "Tromell, Seymour's Butler": {
       "edhrec_rank": 4151,
-      "gate": "template",
+      "gate": null,
       "name": "Tromell, Seymour's Butler",
-      "reason": "no template for: Each other nontoken creature you control enters with an additional +1/+1 counter on it",
+      "reason": "",
       "scryfall_id": "0ab4ee8a-acf7-46ec-a32a-befe1e0e7d58",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tromokratis": {
@@ -308932,12 +308932,12 @@
     },
     "Wakka, Devoted Guardian": {
       "edhrec_rank": 5243,
-      "gate": "template",
+      "gate": null,
       "name": "Wakka, Devoted Guardian",
-      "reason": "no template for: Whenever Wakka deals combat damage to a player, destroy up to one target artifact that pla",
+      "reason": "",
       "scryfall_id": "8e036ebd-1749-4c41-9840-8dc5f69d6c86",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Walk the Aeons": {
@@ -309032,12 +309032,12 @@
     },
     "Walking Ballista": {
       "edhrec_rank": 439,
-      "gate": "template",
+      "gate": null,
       "name": "Walking Ballista",
-      "reason": "no template for: This creature enters with X +1/+1 counters on it",
+      "reason": "",
       "scryfall_id": "50507ec0-72ff-4110-a73c-b6f256ac2e35",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Walking Bulwark": {
@@ -315642,12 +315642,12 @@
     },
     "Wilhelt, the Rotcleaver": {
       "edhrec_rank": 2687,
-      "gate": "template",
+      "gate": null,
       "name": "Wilhelt, the Rotcleaver",
-      "reason": "no template for: Whenever another Zombie you control dies, if it didn't have decayed, create a 2/2 black Zo",
+      "reason": "",
       "scryfall_id": "82471687-46fa-4ccf-a792-180db0a5dd22",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Will Kenrith": {
@@ -321652,32 +321652,32 @@
     },
     "Yuna's Decision": {
       "edhrec_rank": 7357,
-      "gate": "template",
+      "gate": null,
       "name": "Yuna's Decision",
-      "reason": "no template for: Choose one —",
+      "reason": "",
       "scryfall_id": "5044eedb-f7d9-4b65-aa5b-fb494d00facd",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yuna's Whistle": {
       "edhrec_rank": 8694,
-      "gate": "template",
+      "gate": null,
       "name": "Yuna's Whistle",
-      "reason": "no template for: Reveal cards from the top of your library until you reveal a creature card. Put that card ",
+      "reason": "",
       "scryfall_id": "76c0645f-d44c-4ad3-9e90-9d6187e44eb4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yuna, Grand Summoner": {
       "edhrec_rank": 3706,
-      "gate": "template",
+      "gate": null,
       "name": "Yuna, Grand Summoner",
-      "reason": "no template for: Grand Summon — {T}: Add one mana of any color. When you next cast a creature spell this tu",
+      "reason": "",
       "scryfall_id": "2819652e-c944-4c5d-a098-2d15e232366e",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Yuna, Hope of Spira": {

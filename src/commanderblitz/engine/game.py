@@ -89,6 +89,7 @@ from .turn import _next_blocker_decision
 from .zones import exile as exile_object
 from .zones import (
     move_object,
+    offer_as_enters_effects,
     offer_enters_copy,
     offer_enters_costs,
     offer_enters_replacement,
@@ -382,6 +383,7 @@ class Game:
         # what the arriving permanent is and riot asks about a creature.
         yield from offer_riot_choice(state, oid, pid)
         yield from offer_read_ahead(state, oid, pid)
+        yield from offer_as_enters_effects(state, oid, pid)
         # Where the land was played from -- "whenever you play a card **from
         # exile**" (Klaw, Master of Sound). Read before the move, which is the
         # last moment the object still says.
@@ -1750,12 +1752,28 @@ class Game:
                     (describe_ref(state, ref), ref)
                     for ref in candidates(state, pid, spec, oid)
                 ]
-                # An int by construction: `loader.targets._check_mode_targets` refuses a
-                # caster-chosen or computed size on a mode-owned spec, because
-                # `filter_legal` splits the stored refs by position.
-                want = int(target_count(state, pid, spec, oid))
+                count = target_count(state, pid, spec, oid)
+                if spec.variable_size:
+                    # "Return one or two target permanent cards" (Yuna's
+                    # Decision) -- a size the caster picks, from `min_count`
+                    # through the printed ceiling. `loader.targets._check_mode_targets`
+                    # admits only a printed size (a literal or "any"), and only
+                    # where the spec ends every declaration, so however many
+                    # refs it stores, `filter_legal` hands them all to it.
+                    ceiling = (
+                        len(options) if count == "any" else min(int(count), len(options))
+                    )
+                    floor = 0 if spec.optional else min(spec.min_count, ceiling)
+                else:
+                    # An int by construction: the loader refuses a computed
+                    # size on a mode-owned spec. "Up to one target" --
+                    # `optional` -- is declinable whether or not there is
+                    # something to point at, and the same last-declared rule
+                    # makes storing no ref for it shift nothing.
+                    ceiling = int(count)
+                    floor = 0 if spec.optional else ceiling
                 chosen = yield from ask_targets(
-                    ctx, f"Target for {card.name}", options, want, want, pid
+                    ctx, f"Target for {card.name}", options, floor, ceiling, pid
                 )
                 out.extend(chosen)
         return tuple(out)

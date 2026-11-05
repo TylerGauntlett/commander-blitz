@@ -14,6 +14,7 @@ from .characteristics import _matches, printed_creature_types
 from .player_statics import _battlefield_statics, static_life_floor
 from .structs import (
     ATTACK_RESTRICTION_DURATIONS,
+    ATTACK_TAX_DURATIONS,
     BLOCK_PROHIBITION_DURATIONS,
     CAST_LOCK_DURATIONS,
     COMBAT_FOG_DURATIONS,
@@ -25,6 +26,7 @@ from .structs import (
     UNBLOCKABLE_DURATIONS,
     AttackMark,
     AttackRestriction,
+    AttackTax,
     BlockProhibition,
     CastLock,
     CombatFog,
@@ -484,6 +486,45 @@ def clear_cast_locks(state: GameState, duration: str, player: int | None = None)
     state.cast_locks = _expired(state.cast_locks, duration, player)
 
 
+def tax_attacks(
+    state: GameState,
+    player: int,
+    mana: str,
+    duration: str = "until_your_next_turn",
+    source: int | None = None,
+) -> bool:
+    """Tax every attack on ``player`` by ``mana`` per creature for ``duration``.
+
+    "Until your next turn, creatures can't attack you unless their controller
+    pays {2} for each of those creatures" (Summon: Yojimbo). One rules-relevant
+    thing: it writes the row; `player_statics.attack_tax` reads it back.
+
+    An empty price or a seat already out of the game records nothing and
+    returns False: a tax of nothing taxes nobody, and a departed seat is never
+    attacked. Never deduplicated -- see :class:`structs.AttackTax`.
+    """
+
+    if duration not in ATTACK_TAX_DURATIONS:  # pragma: no cover - loader guards
+        raise ValueError(f"unknown attack tax duration {duration!r}")
+    if not mana or not state.is_alive(player):
+        return False
+    state.attack_taxes.append(
+        AttackTax(player=player, mana=mana, duration=duration, source=source)
+    )
+    return True
+
+
+def clear_attack_taxes(state: GameState, duration: str, player: int | None = None) -> None:
+    """Drop the timed attack taxes of one duration -- their wearing-off.
+
+    The two hooks and two clocks every timed table here uses:
+    `turn._cleanup_step` for ``this_turn``, `turn._untap_step` for the
+    ``until_your_next_turn`` entries of whoever is untapping, and `sba` for a
+    seat that has left.
+    """
+    state.attack_taxes = _expired(state.attack_taxes, duration, player)
+
+
 def clear_life_locks(state: GameState, duration: str, player: int | None = None) -> None:
     """Drop the life locks of one duration -- their wearing-off.
 
@@ -601,6 +642,7 @@ def make_unblockable(
     player: int | None = None,
     source: int | None = None,
     except_blockers: Mapping[str, Any] | None = None,
+    opponents_only: bool = False,
 ) -> bool:
     """ ""Can't be blocked" for ``duration``, on the creatures named.
 
@@ -624,6 +666,11 @@ def make_unblockable(
     `combat.unblockable` against the blocker as it is when blocks are declared.
     ``None`` refuses every blocker.
 
+    ``opponents_only`` is "…can't be blocked by creatures your opponents
+    control": only blockers controlled by an opponent of ``player`` are refused,
+    so it is refused without a ``player`` -- there would be nobody for the
+    blockers to be opponents of.
+
     Returns whether anything was recorded.  Deduplicated on the whole entry --
     two copies of "can't be blocked" say nothing a single one does not.
     """
@@ -635,12 +682,15 @@ def make_unblockable(
         return False
     if duration == "until_your_next_turn" and player is None:
         return False
+    if opponents_only and player is None:
+        return False
     entry = Unblockable(
         objects=oids,
         duration=duration,
         player=player,
         source=source,
         except_blockers=dict(except_blockers) if except_blockers is not None else None,
+        opponents_only=opponents_only,
     )
     if entry in state.unblockables:
         return False
@@ -934,11 +984,13 @@ def shield_permanent(
     player: int | None = None,
     source: int | None = None,
     combat_only: bool = False,
+    link: int | None = None,
 ) -> bool:
     """Prevent all damage dealt to and/or by the permanent ``oid`` for ``duration``.
 
     ``combat_only`` narrows it to combat damage ("prevent all combat damage that
-    would be dealt to it this turn").
+    would be dealt to it this turn").  ``link`` ties it to a "prevented this
+    way" rider; see `structs.PermanentShield.link`.
 
     One rules-relevant thing: it writes a `structs.PermanentShield` onto the
     object.  Reading it back is `permanent_shielded`'s job, and the two damage
@@ -962,7 +1014,12 @@ def shield_permanent(
     if duration == "until_your_next_turn" and (player is None or not state.is_alive(player)):
         return False
     entry = PermanentShield(
-        dealt=dealt, duration=duration, player=player, source=source, combat_only=combat_only
+        dealt=dealt,
+        duration=duration,
+        player=player,
+        source=source,
+        combat_only=combat_only,
+        link=link,
     )
     if entry in obj.damage_shields:
         return False
@@ -983,12 +1040,33 @@ def permanent_shielded(
     battlefield never carries one (`reset_permanent_state` clears the list on
     every zone change), so no zone check is needed here.
     """
+    return preventing_permanent_shield(state, oid, by=by, is_combat=is_combat) is not None
+
+
+def preventing_permanent_shield(
+    state: GameState, oid: int | None, *, by: bool, is_combat: bool = False
+) -> PermanentShield | None:
+    """The shield on ``oid`` that prevents this damage to (or by) it, or ``None``.
+
+    `preventing_shield`'s permanent twin, with its order: a shield carrying a
+    "prevented this way" rider (``link``) before one without, since the rider is
+    the only difference between them (616.1, the order the protected player
+    would pick); then installation order.
+    """
     if oid is None:
-        return False
+        return None
     obj = state.objects.get(oid)
     if obj is None or not obj.damage_shields:
-        return False
-    return any(shield.stops(by=by, is_combat=is_combat) for shield in obj.damage_shields)
+        return None
+    fallback = None
+    for shield in obj.damage_shields:
+        if not shield.stops(by=by, is_combat=is_combat):
+            continue
+        if shield.link is not None:
+            return shield
+        if fallback is None:
+            fallback = shield
+    return fallback
 
 
 def clear_permanent_shields(state: GameState, duration: str, player: int | None = None) -> None:

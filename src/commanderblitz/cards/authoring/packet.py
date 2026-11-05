@@ -1071,7 +1071,10 @@ def reference() -> dict:
             " written without the flag cannot tap off a Wastes. The flag is read"
             " by the LOADER rather than by `op_add_mana`, so until a card using"
             " it ships it is not in `op_options`; it is refused on any `add_mana`"
-            " that has no `reflecting`, because nothing else reads it.",
+            " that has no `reflecting`, because nothing else reads it. An"
+            " `amount` beside `reflecting` scales the one reflected type"
+            " (Incubation Druid's \"three mana of that type instead\" is"
+            " `1 + 2 * min(+1/+1 counters on self, 1)`).",
             "\"Add one mana of any of **the exiled card's colors**\" (Chrome"
             " Mox) is `colors_of` on the `add_mana`, holding a selector over"
             " the CARDS whose printed colours are offered --"

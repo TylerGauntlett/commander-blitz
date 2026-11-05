@@ -21,6 +21,7 @@ from .characteristics import (
     player_protected_from,
     protected_from,
 )
+from .effects import execute
 from .effects.conditions import evaluate_condition
 from .effects.context import EffectContext, ask_mode, ask_objects, ask_player, ask_yes_no
 from .effects.selectors import resolve_pool, select_players
@@ -291,6 +292,12 @@ def move_object(
     if was_on_battlefield:
         _seen = chars(state, oid)
         had_power, had_toughness = _seen.power, _seen.toughness
+        # "Whenever a creature you control **without flying** dies" (Luminous
+        # Broodmoth): the keywords it had as it left (603.10a), derived -- a
+        # flying counter, an anthem's grant and a loss all count. The printed
+        # face is the trap: a creature Broodmoth returned wears a flying
+        # counter, dies with flying, and must not come back again.
+        had_keywords = sorted(_seen.keywords)
         # And for the same reason, into any record a cost made of this
         # permanent: Station reads "the tapped creature's power" at resolution,
         # as the creature last existed on the battlefield if it has gone. See
@@ -302,6 +309,7 @@ def move_object(
                 record["power"], record["toughness"] = had_power, had_toughness
     else:
         had_power = had_toughness = 0
+        had_keywords = []
     # Who sacrificed it, snapshotted with the rest: `reset_permanent_state` puts
     # control back to the owner on the way out, and "whenever **you** sacrifice"
     # is about the player who did it -- a different answer for a stolen
@@ -330,6 +338,7 @@ def move_object(
     # sit in its graveyard holding a haste to cash on a later cast.
     mana_granted_keywords = obj.mana_granted_keywords
     cast_rider = obj.cast_rider
+    cast_enters_with = obj.cast_enters_with
 
     if was_on_battlefield:
         _remember_leaving_dies_replacer(state, obj)
@@ -387,6 +396,7 @@ def move_object(
     if to_zone is Zone.BATTLEFIELD:
         obj.mana_granted_keywords = mana_granted_keywords
         obj.cast_rider = cast_rider
+        obj.cast_enters_with = cast_enters_with
     _add_to_zone(state, obj, to_zone, target_player, to_top=to_top, to_index=to_index)
     state.bump_chars()
 
@@ -474,6 +484,7 @@ def move_object(
             had_power=had_power,
             had_toughness=had_toughness,
             had_auras=had_auras,
+            had_keywords=had_keywords,
             # Where it went, for a trigger's `to_zones`: "when this creature
             # dies **or is put into exile**" (Kaya the Inexorable's ghostform)
             # must not fire on a bounce or a tuck.
@@ -508,6 +519,7 @@ def move_object(
                 had_power=had_power,
                 had_toughness=had_toughness,
                 had_auras=had_auras,
+                had_keywords=had_keywords,
                 # 1/0 for `was_attacking`'s reason.
                 was_modified=1 if was_modified else 0,
             )
@@ -1059,6 +1071,61 @@ def offer_read_ahead(state: GameState, oid: int, controller: int):
         purpose="read_ahead",
     )
     obj.read_ahead_chapter = chosen[0] + 1 if chosen else 1
+
+
+def offer_as_enters_effects(state: GameState, oid: int, controller: int):
+    """"As Sin enters, remove all counters from any number of artifacts,
+    creatures, and enchantments. Sin enters with X +1/+1 counters on it, where
+    X is twice the number of counters removed this way."
+
+    A `self_enters_with_counters` replacement's ``as_enters`` effects, run
+    here, beside `offer_riot_choice` and `offer_read_ahead` and from their call
+    sites, for their reason: `move_object` is not a generator and cannot stop
+    for the choice the effects ask, and making it one would put a suspend
+    point inside every zone change in the engine.
+
+    Running them a moment early is not an approximation. 614.1c applies the
+    replacement **during** the zone change and nobody receives priority in
+    between, so no player can act between the effects and the arrival. A
+    `self_enters` trigger running the same effects is the wider card the gap
+    named: the permanent would arrive at its printed size, every other enters
+    trigger would read that size, and an opponent would hold priority with the
+    counters still where they were.
+
+    The permanent itself is not on the battlefield yet, so a battlefield pool
+    cannot find it -- which is the printed answer, since the object entering is
+    not yet one of the "artifacts, creatures, and enchantments".
+
+    The replacement's ``condition`` is judged first, against the board the
+    permanent is arriving on, and a replacement whose condition fails runs
+    nothing. What the effects bind is left on `obj.as_enters_bindings`, keyed
+    by the replacement's index, for `_enter_battlefield` to evaluate the
+    ``amount`` with.
+    """
+
+    obj = state.objects.get(oid)
+    if obj is None:
+        return
+    card = state.card_of(obj)
+    for index, replacement in enumerate(card.replacements):
+        effects = replacement.get("as_enters")
+        if not effects or replacement.get("event") != "self_enters_with_counters":
+            continue
+        if not evaluate_condition(
+            state, replacement.get("condition"), controller=controller, source=oid
+        ):
+            continue
+        ctx = EffectContext(
+            state=state,
+            controller=controller,
+            source_oid=oid,
+            source_name=card.name,
+            x=obj.cast_x,
+        )
+        yield from execute(ctx, effects)
+        bound = obj.as_enters_bindings if obj.as_enters_bindings is not None else {}
+        bound[index] = dict(ctx.bindings)
+        obj.as_enters_bindings = bound
 
 
 def graveyard_hosts(state: GameState, aura_oid: int, controller: int) -> list[int]:
@@ -1763,11 +1830,15 @@ def _enter_battlefield(
     # and for `sagas.entered` at the end.
     read_ahead = obj.read_ahead_chapter
     obj.read_ahead_chapter = None
+    # And what `offer_as_enters_effects` bound, per replacement, for the
+    # "enters with X counters" amounts below.
+    as_enters_bound = obj.as_enters_bindings or {}
+    obj.as_enters_bindings = None
     _apply_board_enters_tapped(state, obj)
     # A list rather than the tuple itself: a copy applied below appends the
     # copied face's "enters with" counters to it (614.12).
     replacements = list(card.replacements)
-    for replacement in replacements:
+    for index, replacement in enumerate(replacements):
         event = replacement.get("event")
         # "…unless you control a Mountain or a Plains" (614.12). Evaluated here
         # rather than by a static, because the answer is only ever asked once
@@ -1812,6 +1883,7 @@ def _enter_battlefield(
                 # (Phyrexian Metamorph).
                 types_added = exception.get("add_types")
                 obj.copying_add_types = frozenset(types_added) if types_added else None
+                obj.copying_own_abilities = None
                 obj.copying_name = exception.get("name")
                 state.bump_chars()
                 # 614.12: the copied face's own "enters with" -- above all a
@@ -1845,8 +1917,14 @@ def _enter_battlefield(
                         source=obj.oid,
                     ):
                         continue
+                    # "…except it enters with X additional +1/+1 counters on
+                    # it" (Altered Ego): X is the one announced on casting,
+                    # read from `cast_x` as `self_enters_with_counters` reads it.
                     ctx = EffectContext(
-                        state=state, controller=obj.controller, source_oid=obj.oid
+                        state=state,
+                        controller=obj.controller,
+                        source_oid=obj.oid,
+                        x=obj.cast_x,
                     )
                     entering.setdefault(str(entry["counter"]), []).append(
                         evaluate_value(ctx, entry.get("amount", 1))
@@ -1909,6 +1987,13 @@ def _enter_battlefield(
                 source_oid=obj.oid,
                 x=obj.cast_x,
             )
+            # "…where X is twice the number of counters removed this way"
+            # (Sin): the names this replacement's ``as_enters`` effects bound a
+            # moment ago. Keyed by index, so only the printed card's own
+            # replacements read them -- a copied face's appended "enters with"
+            # sits past the end of the printed list.
+            if replacement.get("as_enters") and index < len(card.replacements):
+                ctx.bindings.update(as_enters_bound.get(index, {}))
             counters = (replacement.get("modify") or {}).get("counters") or {}
             if counters:
                 for kind, amount in counters.items():
@@ -1928,6 +2013,14 @@ def _enter_battlefield(
     # see `move_object`'s ``enters_with``. The same placement, for Giada's
     # reason below.
     for kind, amount in (enters_with or {}).items():
+        entering.setdefault(str(kind), []).append(int(amount))
+
+    # Yuna, Grand Summoner: the "enters with" promised to the spell this
+    # permanent was (`spell_enters_with_counters`), on the same placement and
+    # emptied as it is read -- the promise belongs to this arrival.
+    promised = obj.cast_enters_with
+    obj.cast_enters_with = {}
+    for kind, amount in promised.items():
         entering.setdefault(str(kind), []).append(int(amount))
 
     # Giada, Font of Hope and Oath of Gideon: more "enters with" on the same

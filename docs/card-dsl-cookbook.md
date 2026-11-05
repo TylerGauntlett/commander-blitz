@@ -4388,6 +4388,24 @@ that prints the exception: the plain op refuses every blocker, a strictly better
 card. Two entries on one attacker are two restrictions, and a blocker must clear
 both.
 
+**`by_opponents: true` is "…can't be blocked by creatures your opponents
+control"** (Rikku, Resourceful Guardian, whose trigger marks any creature you
+put counters on, an opponent's included):
+
+```jsonc
+{ "op": "unblockable", "objects": { "binding": "subject" }, "duration": "this_turn",
+  "by_opponents": true }
+```
+
+Only blockers controlled by an opponent of the effect's controller (the entry's
+`player`) are refused; that player's own creatures may still block. On a
+creature you control it is the plain op, but on an opponent's creature the plain
+op would also stop your creatures blocking it when it attacks you. It cannot be
+said with `except_blockers`: that filter's `controller` would be read relative
+to the attacker, and the loader refuses the key. Asked with no blocker,
+`combat.unblockable` calls it total evasion only on the granting player's own
+creature. The loader accepts `true` or absence and nothing else.
+
 It lives on the table (`GameState.unblockables`, a list of
 `structs.Unblockable`) beside `block_prohibitions`, and is read by
 `combat.unblockable` inside `can_block`. The two predicates never consult each
@@ -7685,8 +7703,8 @@ afterward"), and never when a Fog, a Squire's shield or protection prevents the
 same damage. When several shields over a seat apply, a linked one prevents first
 (616.1, the order the protected player would pick), so two Inkshields make one
 set of Inklings. The loader refuses an empty list, a `target` inside it (the
-rider resolves with no targets, as a `delay` does), and `effects` on
-`prevent_damage_permanent`, which has no link. The near miss is a
+rider resolves with no targets, as a `delay` does). `prevent_damage_permanent`
+takes the same rider for a permanent (below). The near miss is a
 `delayed_trigger` on `damage_prevented`: it answers every prevention of damage
 to you, whatever prevented it.
 
@@ -7848,6 +7866,31 @@ reads the recipient's `to` shield and the dealer's `by` shield beside the
 beside protection. Prevented damage was never dealt — no mark, no loyalty lost,
 no lifelink, no `DAMAGE_DEALT` — and each instance fires `DAMAGE_PREVENTED` with
 `reason: "permanent_shield"`.
+
+```jsonc
+// Gatta and Luzzu, ETB: "...choose target creature you control. If damage would
+//   be dealt to that creature this turn, prevent that damage and put that many
+//   +1/+1 counters on it."
+{"op": "prevent_damage_permanent", "objects": {"target": "t1"},
+ "dealt": "to", "duration": "this_turn",
+ "effects": [{"op": "add_counters", "objects": {"binding": "shielded"},
+              "counter": "+1/+1", "amount": {"binding": "amount"}}]}
+```
+
+**`effects`** is the 615.5 rider, the `prevent_damage` op's on a permanent.
+Each shielded object gets its own `PermanentShield.link`, the damage primitives
+put it on the `DAMAGE_PREVENTED` that shield fires as `shield`, and the op
+installs beside it a `damage_prevented` delayed ability scoped to that link
+(`DelayedTrigger.shield`, which matches on the link alone, so the permanent half
+of the event answers it). The effects run each time *that* shield prevents
+damage, off the stack, with the prevented amount as `{"binding": "amount"}` and
+the shielded permanent as `{"binding": "shielded"}` — the rider resolves with no
+targets, so "it" cannot be `t1`. A linked shield prevents ahead of an unlinked
+one on the same object (616.1). The loader refuses an empty list, a `target`
+inside it, and a rider on any `duration` but `this_turn`, since the delayed
+ability ends at cleanup. The near miss is the `prevent_damage` static with
+`prevent_all` and `counter`, which is continuous on a printed permanent rather
+than a this-turn effect on a chosen one.
 
 ## Fog — combat damage prevented by its source
 
@@ -8138,10 +8181,30 @@ inside cost payment, so the land could never be tapped to help cast a spell,
 which is the only thing it is played for.
 
 The rider may only use `loader.MANA_RIDER_OPS` — `damage`, `lose_life`,
-`gain_life`, `add_poison`, `add_counters`, `remove_counters`. A mana ability is
-activated inside cost payment, where there is no stack to put a decision on and
-no priority window to answer it in, so an op that yields would hang the solver
-mid-tap. The whitelist makes that a card that will not load instead.
+`gain_life`, `add_poison`, `add_counters`, `remove_counters`, `delayed_trigger`.
+A mana ability is activated inside cost payment, where there is no stack to put a
+decision on and no priority window to answer it in, so an op that yields would
+hang the solver mid-tap. The whitelist makes that a card that will not load
+instead.
+
+`delayed_trigger` asks nothing: it installs a subscription and returns, and the
+delayed half resolves later like any other. Yuna, Grand Summoner's "{T}: Add one
+mana of any color. When you next cast a creature spell this turn, that creature
+enters with two additional +1/+1 counters on it" is the `choose_mode` of five
+`add_mana`s followed by
+
+```jsonc
+{"op": "delayed_trigger", "duration": "once_this_turn",
+ "trigger": {"event": "spell_cast", "controller": "you",
+             "condition": {"exists": {"binding": "subject", "zone": "stack",
+                                      "types": ["Creature"]}}},
+ "effects": [{"op": "spell_enters_with_counters", "counters": {"+1/+1": 2}}]}
+```
+
+The trigger fires on the next creature spell whether or not this mana paid for
+it, which is the card's ruling. A rider's trigger may not carry a `subject` or
+`recipient`: the activation has no target or binding to name one with, so the
+loader refuses it.
 
 ## An activated ability that gets cheaper
 
@@ -8404,6 +8467,27 @@ read the word and falls through to the loose any-colour reading, which is
 *noted*; a qualified noun ("a *basic* land", "a *Gate*") is a different set of
 permanents and falls through the same way. Both refusals stand, so the template
 tier declines the card rather than shipping a better one than is printed.
+
+### "add three mana of that type instead" — a reflected amount
+
+```jsonc
+{"op": "add_mana",
+ "reflecting": {"zone": "battlefield", "controller": "you", "types": ["Land"]},
+ "any_type": true,
+ "amount": {"sum": [{"const": 1}, {"times": [{"const": 2},
+   {"min": [{"counters_on": {"counter": "+1/+1", "objects": {"self_only": true}}},
+            {"const": 1}]}]}]}}
+```
+
+Incubation Druid. The board picks the type and `amount` says how many of it:
+the narrowed options stay one-symbol tuples, and `costs.mana_amount` scales the
+chosen one through `mana_produced`, the helper the solver's offer and the
+payment both read. The amount is the ordinary mana `amount` with its ordinary
+refusals (no `x`, no targets, bindings or loop). "If it has a +1/+1 counter,
+three instead" is a clamp, not a condition — an `if` is refused inside a mana
+ability — so it is spelled `1 + 2 * min(counters, 1)`. `any_one_color` with the
+same amount is the near miss and a better card: it offers all five colours off a
+board of Forests.
 
 ## Imprinted mana — "any of the exiled card's colors"
 
@@ -10909,9 +10993,55 @@ target tuple, so its targets are fixed before `Game._activate` asks which mode.
 | `mode` on an activated (or static) ability's targets | legality fixes an activation's targets before its modes are chosen, so there is no moment left to declare one in |
 | `mode` without a single top-level `choose_mode` | a nested or repeated one is answered on resolution, with nothing left to declare a target in |
 | `mode` out of range | the card does not print that bullet |
-| `up_to` / `"any"` / a computed count on a mode-owned spec | `filter_legal` splits stored refs by position, and a caster-chosen size inside a mode leaves no way to say where the next mode's refs begin |
-| `optional` on a mode-owned spec | declining the target is declining the mode, which 601.2b already says |
-| a variable-size *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size in front of them makes the split ambiguous |
+| a computed count on a mode-owned spec | a spell's is declared before anything it could read exists; a mode-owned size must be printed — a literal `count` (with `up_to` / `min_count`) or `"any"` |
+| `one_per_player` or `total_mana_value` on a caster-sized mode-owned spec | a spell's mode targets are asked one spec at a time by `Game._ask_mode_targets`, with no check between the picks |
+| `optional`, `up_to` or `"any"` on a mode-owned spec that is not the last target declared — not the last spec of its mode, or a later mode owns a target | a declined or caster-sized target stores no fixed number of refs, so `filter_legal` would read the next spec's ref into its bucket |
+| a variable-size or `optional` *card-level* spec on the same card | the mode's refs are stored after it, so a caster-chosen size or a declined target in front of them makes the split ambiguous |
+
+### "Up to one target" inside a mode
+
+```jsonc
+"targets": [
+  {"id": "pumped", "kind": "permanent", "mode": 0,
+   "selector": {"zone": "battlefield", "types": ["Creature"]}},
+  {"id": "foe", "kind": "permanent", "mode": 2, "optional": true,
+   "selector": {"zone": "battlefield", "controller": "opponent", "types": ["Creature"]}}
+]
+```
+
+Summon: Magus Sisters' "Fight! — This creature fights **up to one** target
+creature an opponent controls". `optional: true` on a mode-owned spec is
+"zero or `count`", asked when its mode is chosen: a trigger offers declining as
+the last tuple, and `Game._ask_mode_targets` asks a spell's with a floor of
+zero. Because declaring nothing is a legal declaration, the mode stays on offer
+(601.2b) — and in a `random` mode's pool — with nothing to target, where a fixed
+`count: 1` would strike it and force the target whenever one exists. The loader
+admits it only as **the last target declared**: the last spec of its mode, with
+no later mode owning a target, so a declined one shifts no ref after it.
+
+### "One or two targets" inside a mode
+
+```jsonc
+"targets": [
+  {"id": "t1", "kind": "card_in_graveyard", "mode": 1,
+   "count": 2, "min_count": 1, "up_to": true,
+   "selector": {"zone": "graveyard", "controller": "you",
+                "any_types": ["Artifact", "Creature", "Enchantment", "Land", "Planeswalker", "Battle"]}}
+]
+```
+
+Yuna's Decision's "Find Another Way — Return **one or two** target permanent
+cards from your graveyard to your hand", beside a bullet that targets nothing.
+`up_to` (with `min_count` for a floor) or `"any"` on a mode-owned spec is a size
+the caster picks when its mode is chosen: `Game._ask_mode_targets` asks a
+spell's from the floor through the printed ceiling, and a trigger or activation
+offers every subset largest first through `enumerate_target_tuples`. The mode
+is on offer only while the floor can be met (601.2b), so with one permanent
+card in the graveyard the bullet returns that one, where a fixed `count: 2`
+would strike it; a card-level `up_to` target would instead be declared — and
+need a legal choice — under the targetless bullet too. The same
+**last-target-declared** rule as `optional` applies, for the same positional
+reason.
 
 ## "Target creature phases out"
 
@@ -13541,6 +13671,31 @@ and refuses an `amount` — "that card" is one card. A `reveal_until` to the han
 followed by a `may` `put_onto_battlefield` is the near miss: it bottoms the rest
 before the choice, and the card reaches the battlefield through the hand, a
 second zone change.
+
+The searches take the same key, asked about the card the player chose and
+revealed, before the shuffle:
+
+```jsonc
+// Scholar of New Horizons -- "Search your library for a Plains card and reveal
+// it. If an opponent controls more lands than you, you may put that card onto
+// the battlefield tapped. If you don't put the card onto the battlefield, put it
+// into your hand. Then shuffle."
+{ "op": "search_library", "selector": { "subtypes": ["Plains"] }, "reveal": true,
+  "may_destination": "battlefield", "tapped": true, "destination": "hand",
+  "may_destination_if": { "cmp": ">",
+    "left": { "max_count_of": { "player": "each_opponent",
+      "objects": { "types": ["Land"], "zone": "battlefield" } } },
+    "right": { "lands_you_control": true } } }
+```
+
+`may_destination_if` is a condition gating the offer, on any op that takes
+`may_destination`. It is read as the card is about to move; while it is false
+nothing is asked and the card goes to `destination`, because the "you may"
+never arose. On `search_library` and `search_zones` the loader admits only
+`"battlefield"`, refuses a `destination` equal to it, a `count` other than one
+and a `destination_if` beside it — `destination_if` matches the card's printed
+face and never asks. Wrapping the search in `if` + `may` is the near miss: it
+asks battlefield-or-hand before the card is found.
 
 ## Discover — cascade's walk, N or less, cast or hand
 

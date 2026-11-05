@@ -887,7 +887,9 @@ def _delayed_matches(
 
     # The one restriction here that is not read off a hosting permanent, and so
     # the one a delayed ability can still be asked. See `_half_matches`.
-    if not _half_matches(spec.event, event):
+    # A shield-linked rider skips the half check: its link names the one
+    # prevention it answers, and a permanent's shield fires the permanent half.
+    if delayed.shield is None and not _half_matches(spec.event, event):
         return False
     if not _outcome_matches(spec.event, event):
         return False
@@ -1750,6 +1752,10 @@ EVENT_BINDING_KEYS = (
     # wore, one seat per Aura, snapshotted by `zones._auras_had` before
     # `_detach_all`. Read through the `auras_had` value key.
     "had_auras",
+    # "Whenever a creature you control without flying dies" (Luminous
+    # Broodmoth): the keywords the departed permanent had as it left, derived.
+    # Read through the `keywords_had` value key.
+    "had_keywords",
     # The X paid for the ability whose event this is, written over the `x`
     # `event_bindings` reads off the permanent. Only `cycle` carries it: "When
     # you cycle this card, create an X/X…" (Shark Typhoon) means the X in the

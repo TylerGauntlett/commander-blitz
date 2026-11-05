@@ -1,0 +1,280 @@
+{
+  "_comment": "Test-only cards for tests/unit/modes/test_optional_mode_target.py -- an 'up to one' target owned by one mode of a top-level choose_mode, on a trigger (chosen and at random) and on a spell. Shaped on Summon: Magus Sisters.",
+  "cards": [
+    {
+      "id": "t_sisters",
+      "name": "Test Sisters",
+      "oracle_text": "Whenever you cast a creature spell, choose one —\n• Put three +1/+1 counters on target creature.\n• This creature fights up to one target creature an opponent controls.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, choose one — • Put three +1/+1 counters on target creature. • This creature fights up to one target creature an opponent controls.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "targets": [
+            {
+              "id": "pumped",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ]
+              }
+            },
+            {
+              "id": "foe",
+              "kind": "permanent",
+              "mode": 1,
+              "optional": true,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "Put three +1/+1 counters on target creature.",
+                  "effects": [
+                    {
+                      "op": "add_counters",
+                      "counter": "+1/+1",
+                      "amount": {
+                        "const": 3
+                      },
+                      "objects": {
+                        "target": "pumped"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "This creature fights up to one target creature an opponent controls.",
+                  "effects": [
+                    {
+                      "op": "fight",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "other": {
+                        "target": "foe"
+                      }
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_random_sisters",
+      "name": "Test Random Sisters",
+      "oracle_text": "Whenever you cast a creature spell, choose one at random —\n• Put three +1/+1 counters on target creature.\n• This creature fights up to one target creature an opponent controls.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf"
+      ],
+      "power": 3,
+      "toughness": 3,
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "abilities": [
+        {
+          "kind": "triggered",
+          "text": "Whenever you cast a creature spell, choose one at random — • Put three +1/+1 counters on target creature. • This creature fights up to one target creature an opponent controls.",
+          "trigger": {
+            "event": "spell_cast",
+            "controller": "you",
+            "filter": {
+              "types": [
+                "Creature"
+              ]
+            }
+          },
+          "targets": [
+            {
+              "id": "pumped",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "zone": "battlefield",
+                "types": [
+                  "Creature"
+                ]
+              }
+            },
+            {
+              "id": "foe",
+              "kind": "permanent",
+              "mode": 1,
+              "optional": true,
+              "selector": {
+                "zone": "battlefield",
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ]
+              }
+            }
+          ],
+          "effects": [
+            {
+              "op": "choose_mode",
+              "count": 1,
+              "modes": [
+                {
+                  "label": "Put three +1/+1 counters on target creature.",
+                  "effects": [
+                    {
+                      "op": "add_counters",
+                      "counter": "+1/+1",
+                      "amount": {
+                        "const": 3
+                      },
+                      "objects": {
+                        "target": "pumped"
+                      }
+                    }
+                  ]
+                },
+                {
+                  "label": "This creature fights up to one target creature an opponent controls.",
+                  "effects": [
+                    {
+                      "op": "fight",
+                      "objects": {
+                        "self_only": true
+                      },
+                      "other": {
+                        "target": "foe"
+                      }
+                    }
+                  ]
+                }
+              ],
+              "random": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "id": "t_up_to_one_volley",
+      "name": "Test Volley",
+      "oracle_text": "Choose one —\n• Put three +1/+1 counters on target creature.\n• Test Volley deals 2 damage to up to one target creature an opponent controls.",
+      "mana_cost": "{G}",
+      "types": [
+        "Sorcery"
+      ],
+      "colors": [
+        "G"
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "targets": [
+        {
+          "id": "pumped",
+          "kind": "permanent",
+          "mode": 0,
+          "selector": {
+            "zone": "battlefield",
+            "types": [
+              "Creature"
+            ]
+          }
+        },
+        {
+          "id": "foe",
+          "kind": "permanent",
+          "mode": 1,
+          "optional": true,
+          "selector": {
+            "zone": "battlefield",
+            "controller": "opponent",
+            "types": [
+              "Creature"
+            ]
+          }
+        }
+      ],
+      "spell_effects": [
+        {
+          "op": "choose_mode",
+          "count": 1,
+          "modes": [
+            {
+              "label": "Put three +1/+1 counters on target creature.",
+              "effects": [
+                {
+                  "op": "add_counters",
+                  "counter": "+1/+1",
+                  "amount": {
+                    "const": 3
+                  },
+                  "objects": {
+                    "target": "pumped"
+                  }
+                }
+              ]
+            },
+            {
+              "label": "Test Volley deals 2 damage to up to one target creature an opponent controls.",
+              "effects": [
+                {
+                  "op": "damage",
+                  "amount": {
+                    "const": 2
+                  },
+                  "objects": {
+                    "target": "foe"
+                  }
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    }
+  ]
+}

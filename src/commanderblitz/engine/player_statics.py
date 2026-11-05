@@ -952,6 +952,10 @@ def attack_tax(
     A static carrying ``x_per_attacker`` prices ``{X}`` per creature instead:
     X is read off ``oid`` itself (`attacker_x`), so Nils, Discipline
     Enforcer's three-counter creature pays {3} where a one-counter one pays {1}.
+
+    The timed taxes on `GameState.attack_taxes` (the `attack_tax` op, Summon:
+    Yojimbo) are added to the same sum, so a Propaganda and a Yojimbo chapter
+    together charge {4}.
     """
     obj = state.objects.get(oid)
     if obj is None or not obj.on_battlefield:
@@ -983,6 +987,12 @@ def attack_tax(
                 specs.append({"mana": "{" + str(x) + "}"})
             continue
         specs.append(static.get("cost"))
+    # The timed form (`structs.AttackTax`), installed by a resolving ability
+    # and owned by no permanent. Same seat test; never on a planeswalker,
+    # because the sentence names "you" (506.2); and no creature filter,
+    # because "creatures can't attack you" names every one of them.
+    if not planeswalker:
+        specs.extend({"mana": tax.mana} for tax in state.attack_taxes if tax.player == defender)
     return _summed_mana(specs)
 
 

@@ -1225,9 +1225,30 @@ def _provide_the_target(game: Game, registry, oid: int, ability) -> None:
         kind = spec.selector.get("has_counters")
         if isinstance(kind, str):
             obj.add_counter(kind, 1)
+        # Together Forever's "Choose target creature **with a counter on it**":
+        # `has_counters: true` names no kind, so any one counter will do.
+        elif kind is True:
+            obj.add_counter("+1/+1", 1)
         if match.is_token:
             obj.is_token = True
         game.state.battlefield.append(obj.oid)
+        # Forge of Heroes' "Choose target commander **that entered this
+        # turn**." The question is asked of the turn ledger, not of
+        # `entered_turn`, and a prop put straight onto the battlefield emits no
+        # arrival -- so the ledger is told, only when the spec asks.
+        if spec.selector.get("entered_this_turn"):
+            from commanderblitz.engine.structs import EnteredPermanent
+
+            game.state.turn_ledger.permanents_entered.append(
+                EnteredPermanent(
+                    oid=obj.oid,
+                    controller=obj.controller,
+                    types=frozenset(match.types),
+                    subtypes=frozenset(match.subtypes),
+                    colors=frozenset(match.colors),
+                    is_token=bool(obj.is_token),
+                )
+            )
     game.state.bump_chars()
 
 

@@ -69,6 +69,7 @@ class TargetSpec:
     id: str
     kind: str  # "permanent" | "player" | "spell" | "card_in_graveyard"
     #        | "card_in_exile" | "any" | "spell_or_permanent" | "ability_on_stack"
+    #        | "spell_permanent_or_graveyard_card"
     selector: Mapping[str, Any] = field(default_factory=dict)
     #: A ``"spell_or_permanent"`` spec's selector for its **permanent** half,
     #: when the printed word narrows only that half -- "target spell or
@@ -165,6 +166,22 @@ class TargetSpec:
         if self.permanent_selector is not None:
             return self.permanent_selector
         return self.selector
+
+    @property
+    def graveyard_half(self) -> Mapping[str, Any]:
+        """The selector a ``"spell_permanent_or_graveyard_card"`` spec's
+        graveyard half reads: `selector` in the graveyard zone.
+
+        "Card in **a** graveyard" is every graveyard at the table, and a zone
+        walk with no ``controller`` reads only the caster's
+        (`selectors._zone_owners`), so ``controller: "any"`` is supplied unless
+        the card named whose. Shared by `candidates` and `still_legal`, like
+        `permanent_half`.
+        """
+        half = {**dict(self.selector), "zone": "graveyard"}
+        if not {"controller", "owner", "player"} & set(half):
+            half["controller"] = "any"
+        return half
 
     @property
     def variable_size(self) -> bool:

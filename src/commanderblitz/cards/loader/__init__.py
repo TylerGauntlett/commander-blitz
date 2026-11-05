@@ -250,6 +250,16 @@ def _check_grant_targets(
         for effect in _walk_effect_specs(tree):
             for index in (effect.get("creature_cast_gains") or {}).get("abilities") or ():
                 check(index, f"{effect.get('op')} creature_cast_gains")
+            if effect.get("op") == "become_copy":
+                # "…and it has this ability": a position in this card's own
+                # printed abilities, which `card_of` skips when out of range --
+                # a copy that silently keeps nothing.
+                for pos in (effect.get("except_") or {}).get("keep_abilities") or ():
+                    if not 0 <= int(pos) < len(abilities):
+                        raise DslError(
+                            f"{where}: become_copy except_.keep_abilities names "
+                            f"'abilities[{pos}]' and this card has {len(abilities)}"
+                        )
             if effect.get("op") != "grant_ability":
                 continue
             index = effect.get("ability", effect.get("ability_index"))
@@ -1216,6 +1226,24 @@ def compile_card(model: CardModel, *, source: str = "") -> CardDef:
                 f"{where}.replacements[{i}]: 'instead_cost' is read only by "
                 f"'self_enters_replaced', not by {replacement.event!r}"
             )
+        if replacement.as_enters is not None:
+            # "As Sin enters, remove all counters from…" The effects are run by
+            # `zones.offer_as_enters_effects` a moment before the arrival, and
+            # only the counters this replacement puts on read what they bind --
+            # on any other event they would run and change nothing about it.
+            if replacement.event != "self_enters_with_counters":
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'as_enters' is read only by "
+                    f"'self_enters_with_counters', not by {replacement.event!r}"
+                )
+            if not replacement.as_enters:
+                raise DslError(
+                    f"{where}.replacements[{i}]: 'as_enters' is empty -- leave it out"
+                )
+            for j, effect in enumerate(replacement.as_enters):
+                # No targets: the clause chooses as the permanent enters and is
+                # never put on the stack, so there is nothing to target with.
+                _validate_effect(effect, f"{where}.replacements[{i}].as_enters[{j}]", {})
         if replacement.counter is not None:
             # "…enters with a vigilance counter on it", "…enters with a shield
             # counter on it." Checked here for the reason the condition below
@@ -3356,7 +3384,16 @@ def _compile_printed_ability(model: AbilityModel, index: int, card_where: str) -
             # all -- so the ability would never be offered or tapped, whatever
             # the opponent's lands did.
             mana_options = _ANY_TYPE_OPTIONS if mana_reflects_any_type else _ANY_COLOR_OPTIONS
+            # "…add three mana of that type instead." Incubation Druid. The
+            # board picks the type and `amount` says how many of it: the
+            # narrowed options are one-symbol tuples, and `costs.mana_amount`
+            # scales the chosen one through `mana_produced`, the one place the
+            # offer and the payment both read.
             mana_amount = None
+            if "amount" in reflect_effect:
+                _validate_mana_amount(reflect_effect["amount"], f"{where}.amount")
+                amount = reflect_effect["amount"]
+                mana_amount = dict(amount) if isinstance(amount, Mapping) else amount
         elif (
             colors_of := next(
                 (

@@ -9209,6 +9209,72 @@
       ]
     },
     {
+      "id": "t_incubator",
+      "name": "Test Incubator",
+      "oracle_text": "{T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Elf",
+        "Druid"
+      ],
+      "power": 0,
+      "toughness": 2,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any type that a land you control could produce. If this creature has a +1/+1 counter on it, add three mana of that type instead.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "add_mana",
+              "reflecting": {
+                "zone": "battlefield",
+                "controller": "you",
+                "types": [
+                  "Land"
+                ]
+              },
+              "any_type": true,
+              "amount": {
+                "sum": [
+                  {
+                    "const": 1
+                  },
+                  {
+                    "times": [
+                      {
+                        "const": 2
+                      },
+                      {
+                        "min": [
+                          {
+                            "counters_on": {
+                              "counter": "+1/+1",
+                              "objects": {
+                                "self_only": true
+                              }
+                            }
+                          },
+                          {
+                            "const": 1
+                          }
+                        ]
+                      }
+                    ]
+                  }
+                ]
+              }
+            }
+          ]
+        }
+      ]
+    },
+    {
       "id": "t_orchard",
       "name": "Test Orchard",
       "oracle_text": "{T}: Add one mana of any color that a land an opponent controls could produce.",
@@ -14719,6 +14785,104 @@
               }
             ]
           }
+        }
+      ]
+    },
+    {
+      "id": "t_grand_summoner",
+      "name": "Test Grand Summoner",
+      "oracle_text": "{T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.",
+      "mana_cost": "{2}{G}",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Human",
+        "Cleric"
+      ],
+      "power": 1,
+      "toughness": 5,
+      "abilities": [
+        {
+          "kind": "activated",
+          "text": "{T}: Add one mana of any color. When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.",
+          "is_mana_ability": true,
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "op": "choose_mode",
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{W}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{U}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{B}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{R}"
+                    }
+                  ]
+                },
+                {
+                  "effects": [
+                    {
+                      "op": "add_mana",
+                      "mana": "{G}"
+                    }
+                  ]
+                }
+              ]
+            },
+            {
+              "op": "delayed_trigger",
+              "duration": "once_this_turn",
+              "text": "When you next cast a creature spell this turn, that creature enters with two additional +1/+1 counters on it.",
+              "trigger": {
+                "event": "spell_cast",
+                "controller": "you",
+                "condition": {
+                  "exists": {
+                    "binding": "subject",
+                    "zone": "stack",
+                    "types": [
+                      "Creature"
+                    ]
+                  }
+                }
+              },
+              "effects": [
+                {
+                  "op": "spell_enters_with_counters",
+                  "counters": {
+                    "+1/+1": 2
+                  }
+                }
+              ]
+            }
+          ]
         }
       ]
     }

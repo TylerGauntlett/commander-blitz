@@ -603,6 +603,14 @@ class Unblockable:
     #: hashed, because a mapping is not hashable and equality is all the
     #: primitive's deduplication asks of it.
     except_blockers: Mapping[str, Any] | None = field(default=None, hash=False)
+    #: "…can't be blocked by creatures **your opponents** control" (Rikku,
+    #: Resourceful Guardian): the restriction refuses only blockers controlled
+    #: by an opponent of :attr:`player`, the granting player. Not expressible as
+    #: an ``except_blockers`` filter, because a static filter's ``controller`` is
+    #: read relative to the *attacker*, and the attacker may be an opponent's
+    #: creature with several opponents of its own. ``False`` refuses every
+    #: controller's creatures.
+    opponents_only: bool = False
 
     def to_dict(self) -> dict[str, Any]:
         return {
@@ -613,6 +621,7 @@ class Unblockable:
             "except_blockers": (
                 dict(self.except_blockers) if self.except_blockers is not None else None
             ),
+            "opponents_only": self.opponents_only,
         }
 
 
@@ -842,6 +851,13 @@ class PermanentShield:
     #: (510.2) is stopped, so a burn spell or a fight still lands.
     #: `DamageShield.combat_only`'s permanent twin.
     combat_only: bool = False
+    #: "If damage would be dealt to that creature this turn, prevent that damage
+    #: and put that many +1/+1 counters on it" (Gatta and Luzzu, 615.5): the id
+    #: tying this shield to its "prevented this way" rider, carried as
+    #: ``shield`` on every `DAMAGE_PREVENTED` it fires.  `DamageShield.link`'s
+    #: permanent twin, drawn from the same `GameState.alloc_timestamp`, so a
+    #: linked shield never deduplicates.  ``None`` is a shield with no rider.
+    link: int | None = None
 
     @property
     def stops_damage_to(self) -> bool:
@@ -864,6 +880,7 @@ class PermanentShield:
             "player": self.player,
             "source": self.source,
             "combat_only": self.combat_only,
+            "link": self.link,
         }
 
 
@@ -1221,6 +1238,62 @@ class CastLock:
         }
 
 
+#: The durations an :class:`AttackTax` can carry.  Both, for the reason
+#: :data:`CAST_LOCK_DURATIONS` carries both: the printed sentence says "until
+#: your next turn", and a timed table the cleanup step could not sweep on
+#: ``this_turn`` would be the one exception among them.
+ATTACK_TAX_DURATIONS = ("this_turn", "until_your_next_turn")
+
+
+@dataclass(frozen=True)
+class AttackTax:
+    """"Until your next turn, creatures can't attack you unless their controller
+    pays {2} for each of those creatures." -- Summon: Yojimbo, chapters II-III.
+
+    The **timed** form of the `attack_tax` static (Propaganda), installed by a
+    resolving ability rather than carried by a permanent. The static cannot
+    say it: it is read off `_battlefield_statics` for exactly as long as its
+    source sits there, with no clock, and a Saga that is sacrificed after its
+    last chapter would take the tax with it a turn early. `cant_attack_player`
+    is the other near miss and is a wall with no price -- a lock, strictly
+    stronger than the printed toll.
+
+    Lives on the table (:attr:`GameState.attack_taxes`) beside `cast_locks`,
+    for their reason, and shares their clock: cleared in :attr:`player`'s untap
+    step, keyed by a seat and never by a turn number. :attr:`player` is both
+    the protected seat and the clock, because the printed sentence is one
+    sentence about one player -- "can't attack **you**", "until **your** next
+    turn".
+
+    **Not deduplicated**, unlike the locks beside it. A lock does not stack --
+    two "can't cast" say what one does -- but a tax does: two Propagandas
+    charge {4}, and two of these records are two effects, each asking its own
+    payment (508.1g totals them). `player_statics.attack_tax` sums them with
+    the static ones.
+
+    Planeswalkers are not taxed. The sentence names "you", and attacking a
+    planeswalker is not attacking its controller (506.2) -- Propaganda's
+    reading, which is the static's default too.
+    """
+
+    #: The protected seat, and whose next turn ends this.
+    player: int
+    #: The mana each attacking creature costs, as a mana string ("{2}").
+    mana: str = ""
+    duration: str = "until_your_next_turn"
+    #: What installed it, for the log. Not part of the lifetime: the tax
+    #: stands after the Saga that installed it is gone.
+    source: int | None = None
+
+    def to_dict(self) -> dict[str, Any]:
+        return {
+            "player": self.player,
+            "mana": self.mana,
+            "duration": self.duration,
+            "source": self.source,
+        }
+
+
 #: The durations a :class:`SacrificeRestriction` can carry.  One word, and only
 #: one, is printed: "you can't sacrifice those creatures **this turn**" (Call for
 #: Aid).  A tuple of one for the reason :data:`DAMAGE_SHIELD_DURATIONS` is one --
@@ -1569,11 +1642,14 @@ class DelayedTrigger:
     #: Only read when ``trigger`` is set; see :data:`DELAYED_DURATIONS`.
     duration: str = "this_turn"
     #: "If damage is prevented **this way**" (615.5): the `DamageShield.link`
-    #: of the one shield this rider answers.  Set only by the `prevent_damage`
-    #: op's ``effects``, on a ``damage_prevented`` subscription, and compared
-    #: against the event's ``shield`` key -- so a Fog, a Selfless Squire or
-    #: protection preventing the same damage pays nothing, and a second
-    #: Inkshield's tokens come from its own shield only.
+    #: or `PermanentShield.link` of the one shield this rider answers.  Set only
+    #: by the ``effects`` of the `prevent_damage` and `prevent_damage_permanent`
+    #: ops, on a ``damage_prevented`` subscription, and compared against the
+    #: event's ``shield`` key -- so a Fog, a Selfless Squire or protection
+    #: preventing the same damage pays nothing, and a second Inkshield's tokens
+    #: come from its own shield only.  The link alone decides the match, so the
+    #: rider answers its shield on either half of the event (a seat or a
+    #: permanent).
     shield: int | None = None
 
 
@@ -1647,12 +1723,18 @@ class CountersPut:
     are the recipient's derived card types at the moment of placement, which
     is what "on a creature" asks -- the permanent may have left, or stopped
     being a creature, by the time the question is read.
+
+    ``oid`` is the recipient, for "if a counter was put on Wakka this turn",
+    and ``None`` once that permanent has left the battlefield (400.7): the
+    object that comes back is a new one no counter was put on, while the
+    placement still counts for whoever put it.
     """
 
     put_by: int
     counter: str
     amount: int
     types: frozenset[str]
+    oid: int | None = None
 
 
 @dataclass(frozen=True)

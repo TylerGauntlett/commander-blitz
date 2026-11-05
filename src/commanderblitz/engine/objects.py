@@ -184,6 +184,14 @@ class GameObject:
     #: types". Written, read and cleared beside `copying_keywords`, for its
     #: reasons.
     copying_add_types: frozenset[str] | None = None
+    #: Positions in this permanent's **own** printed ``abilities`` that the copy
+    #: keeps as part of its copiable values (707.9b) -- Kimahri, Valiant
+    #: Guardian's "…except its name is Kimahri, Valiant Guardian and it has
+    #: vigilance **and this ability**". Written by `become_copy` from its
+    #: ``except_.keep_abilities``, read by `GameState.card_of`, which appends
+    #: them after the copied face's abilities so the copied indices never move,
+    #: and cleared beside `copying_keywords`, for its reasons.
+    copying_own_abilities: tuple[int, ...] | None = None
     #: "…**become a legendary Equipment artifact named Everflame, Heroes'
     #: Legacy**" -- The Irencrag. A name written onto the object by a resolving
     #: effect and read by `GameState.card_of`, the one place a permanent's
@@ -294,6 +302,13 @@ class GameObject:
     #: battlefield -- and granted for as long as the permanent lasts rather than
     #: until end of turn. See `structs.CastRider`.
     cast_rider: CastRider | None = None
+    #: "…that creature enters with two additional +1/+1 counters on it" (Yuna,
+    #: Grand Summoner): counters promised to the **spell** by
+    #: `spell_enters_with_counters`, staged and carried like
+    #: `mana_granted_keywords` -- across `reset_permanent_state` only to the
+    #: battlefield -- and added to the arrival's one placement by
+    #: `zones._enter_battlefield`, which empties it.
+    cast_enters_with: dict[str, int] = field(default_factory=dict)
     #: Rebound **granted to a spell that does not print it** -- Ojer Pakpatiq's
     #: "whenever you cast an instant spell from your hand, it gains rebound".
     #: Read beside `card.rebound` in `_place_after_resolution`, exactly as
@@ -370,6 +385,16 @@ class GameObject:
     #:
     #: Survives `reset_permanent_state` for `riot_choice`'s reason.
     read_ahead_chapter: int | None = None
+    #: What a `self_enters_with_counters` replacement's ``as_enters`` effects
+    #: bound -- Sin, Unending Cataclysm's "the number of counters removed this
+    #: way". Recorded by `zones.offer_as_enters_effects` just before the move,
+    #: keyed by the replacement's index on the card, and read -- and cleared --
+    #: by `_enter_battlefield` as the bindings its ``amount`` is evaluated
+    #: with. ``None`` is "nobody was asked": the effects did not happen, so
+    #: the amount reads every name as unbound.
+    #:
+    #: Survives `reset_permanent_state` for `riot_choice`'s reason.
+    as_enters_bindings: dict[int, dict[str, Any]] | None = None
     #: The host an Aura put onto the battlefield without being cast will enchant
     #: (303.4f): a permanent's oid, or a seat in `enters_attached_to_player`.
     #: Recorded by `zones.offer_aura_host` just before the move and read -- and
@@ -1229,6 +1254,7 @@ class GameObject:
         # reset for the one destination that is owed it -- the battlefield.
         self.mana_granted_keywords = set()
         self.cast_rider = None
+        self.cast_enters_with = {}
         self.granted_abilities_permanent = []
         self.animations = []
         self.tapped = False
@@ -1260,6 +1286,7 @@ class GameObject:
         self.copying_keywords = None
         self.copying_remove_supertypes = None
         self.copying_add_types = None
+        self.copying_own_abilities = None
         self.renamed_to = None
         self.lost_all_abilities = False
         self.copying_until_eot = False

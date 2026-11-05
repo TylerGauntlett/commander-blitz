@@ -19,6 +19,7 @@ from ..zones import (
     exile,
     link_exiled,
     move_object,
+    offer_as_enters_effects,
     offer_aura_host,
     offer_enters_replacement,
     offer_named_host,
@@ -131,9 +132,13 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
     legality, combat and the serializer at once without any of them changing.
 
     ``except_name`` is the "except its name is Gogo, Mysterious Mime" clause,
-    which 706.2 allows a copy effect to override. ``duration`` defaults to
-    ``end_of_turn``; ``permanent`` is Clone's shape, and only the timed form is
-    cleared by `clear_until_eot`.
+    which 706.2 allows a copy effect to override. ``except_`` holds the other
+    707.9b exceptions, written into the copiable values rather than granted on
+    top: ``add_keywords`` ("and it has vigilance") and ``keep_abilities``,
+    positions in the copying permanent's own printed ``abilities`` that the
+    copy keeps ("and this ability", Kimahri, Valiant Guardian). ``duration``
+    defaults to ``end_of_turn``; ``permanent`` is Clone's shape, and only the
+    timed form is cleared by `clear_until_eot`.
     """
     objects = spec.get("objects") or {"self_only": True}
     subjects = yield from choose_objects(ctx, objects, "Become a copy", "become_copy")
@@ -150,16 +155,21 @@ def op_become_copy(ctx: EffectContext, spec: Mapping[str, Any]):
         return
     copied = ctx.state.card_of(model)
     until_eot = str(spec.get("duration", "end_of_turn")) != "permanent"
+    # A new copy effect replaces the old one whole, exception and all: only
+    # this effect's own exceptions are written below.
+    exception = spec.get("except_") or {}
+    added = exception.get("add_keywords")
+    kept = tuple(int(i) for i in exception.get("keep_abilities") or ()) or None
     for oid in subjects:
         obj = ctx.state.objects.get(oid)
         if obj is None or not obj.on_battlefield:
             continue
         obj.copying = copied.id
         obj.copying_name = spec.get("except_name")
-        # A new copy effect replaces the old one whole, exception and all.
-        obj.copying_keywords = None
+        obj.copying_keywords = frozenset(added) if added else None
         obj.copying_remove_supertypes = None
         obj.copying_add_types = None
+        obj.copying_own_abilities = kept
         obj.copying_until_eot = until_eot
     ctx.state.bump_chars()
 
@@ -638,6 +648,7 @@ def op_put_onto_battlefield(ctx: EffectContext, spec: Mapping[str, Any]):
         # see `zones.offer_riot_choice`.
         yield from offer_riot_choice(ctx.state, oid, controller)
         yield from offer_read_ahead(ctx.state, oid, controller)
+        yield from offer_as_enters_effects(ctx.state, oid, controller)
         # `cause` travels into the enters-the-battlefield event, so an ability
         # that puts permanents down can name itself here and then refuse to
         # trigger on its own output -- see `TriggerSpec.not_cause`.

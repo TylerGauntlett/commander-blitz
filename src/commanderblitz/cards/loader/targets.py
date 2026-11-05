@@ -361,25 +361,68 @@ def _check_mode_targets(
             raise DslError(
                 f"{label}: mode {spec.mode} does not exist -- the card offers {mode_count}"
             )
-        if spec.variable_size:
+        if spec.variable_size and not isinstance(spec.count, int) and spec.count != "any":
             raise DslError(
-                f"{label}: a mode-owned target must be a fixed number -- "
-                f"`filter_legal` splits the stored refs by position and a "
-                f"caster-chosen size inside a mode leaves no way to say where "
-                f"the next mode's refs begin"
+                f"{label}: a mode-owned target's size must be printed -- a "
+                f"literal 'count' (with 'up_to' and 'min_count' if the caster "
+                f"picks how many) or 'any'; a computed count has no cast-time "
+                f"value to read"
             )
-        if spec.optional:
+        if spec.variable_size and (
+            spec.one_per_player or spec.total_mana_value is not None
+        ):
             raise DslError(
-                f"{label}: a mode-owned target cannot be 'optional' -- "
-                f"declining it is declining the mode, and 601.2b already says "
-                f"a mode with no legal target cannot be chosen"
+                f"{label}: a caster-sized mode-owned target cannot carry "
+                f"'one_per_player' or 'total_mana_value' -- the mode's targets "
+                f"are asked one spec at a time, with no check between the picks"
             )
+        if (spec.optional or spec.variable_size) and not _ends_every_declaration(
+            spec, owned
+        ):
+            # "This creature fights **up to one** target creature an opponent
+            # controls" (Summon: Magus Sisters), "return **one or two** target
+            # permanent cards" (Yuna's Decision): a declined optional stores no
+            # ref and a caster-sized spec stores as many as were picked, and
+            # `filter_legal` splits the stored refs by position, so a spec
+            # declared after either would read nothing back -- or the wrong
+            # thing. Last in every list a cast or trigger can declare, it
+            # swallows only its own refs, as a card-level variable-size spec
+            # at the end of its list does.
+            raise DslError(
+                f"{label}: an 'optional' or variable-size mode-owned target must "
+                f"be the last target declared -- the last spec of its mode, with "
+                f"no later mode owning a target -- or the refs after it land in "
+                f"the wrong bucket"
+            )
+    if any(spec.optional for spec in specs if spec.mode is None):
+        raise DslError(
+            f"{where}: a card-level 'optional' target cannot share a card with a "
+            f"mode-owned one -- the mode's refs are stored after it, and a "
+            f"declined card-level target shifts them into its bucket"
+        )
     if any(spec.variable_size for spec in specs if spec.mode is None):
         raise DslError(
             f"{where}: a card-level variable-size target cannot share a card "
             f"with a mode-owned one -- the mode's refs are stored after it, and "
             f"a caster-chosen size in front of them makes the split ambiguous"
         )
+
+
+def _ends_every_declaration(spec: TargetSpec, owned: list[TargetSpec]) -> bool:
+    """Is ``spec`` the last ref-storing spec of every list it is declared in?
+
+    `CardDef.specs_for_modes` lays a declaration out as the card-level specs,
+    then each chosen mode's specs in ascending mode index. A spec whose stored
+    size is not fixed reads back
+    correctly only when nothing is declared after it, and that holds for every
+    choice of modes exactly when it is the last spec of its own mode and no
+    later mode owns a target.  Declinable (`optional`) and caster-sized
+    (`variable_size`) specs are both of that kind.
+    """
+    assert spec.mode is not None
+    later = [o for o in owned if o.mode is not None and o.mode > spec.mode]
+    own = [o for o in owned if o.mode == spec.mode]
+    return not later and own[-1] is spec
 
 
 def _reads_context(node: Any) -> bool:
@@ -398,7 +441,7 @@ def _check_permanent_selector(model: TargetModel, label: str) -> None:
     somewhere the rest of the targeting layer does not look.
     """
     sub = model.permanent_selector or {}
-    if model.kind != "spell_or_permanent":
+    if model.kind not in ("spell_or_permanent", "spell_permanent_or_graveyard_card"):
         # Every other kind has one pool and one selector; a second would be
         # accepted and ignored.
         raise DslError(
@@ -529,6 +572,13 @@ def _compile_target(
         )
     if model.kind == "card_in_exile" and zone not in (None, "exile"):
         raise DslError(f"{label}: a 'card_in_exile' target is in exile, not in {zone!r}")
+    if model.kind == "spell_permanent_or_graveyard_card" and zone is not None:
+        # The kind names its three zones, and each half supplies its own; a
+        # `zone` here would be overwritten in every one of them.
+        raise DslError(
+            f"{label}: a 'spell_permanent_or_graveyard_card' target spans the "
+            f"stack, the battlefield and every graveyard, so it takes no 'zone'"
+        )
     if model.kind == "card_in_graveyard" and zone not in (None, "graveyard"):
         raise DslError(f"{label}: a 'card_in_graveyard' target is in a graveyard, not in {zone!r}")
     if isinstance(model.count, dict):

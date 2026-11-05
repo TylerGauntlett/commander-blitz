@@ -1102,6 +1102,29 @@
       "is_token": true
     },
     {
+      "id": "squid_1_1_u_islandwalk",
+      "name": "Squid Token",
+      "oracle_text": "1/1 blue Squid creature token with islandwalk.",
+      "types": [
+        "Creature"
+      ],
+      "subtypes": [
+        "Squid"
+      ],
+      "power": 1,
+      "toughness": 1,
+      "colors": [
+        "U"
+      ],
+      "color_identity": [
+        "U"
+      ],
+      "is_token": true,
+      "keywords": [
+        "islandwalk"
+      ]
+    },
+    {
       "id": "food_token",
       "name": "Food",
       "oracle_text": "{2}, {T}, Sacrifice this artifact: You gain 3 life.",

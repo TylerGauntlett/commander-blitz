@@ -28,7 +28,7 @@ from ..zones import exile, move_object
 from .board_helpers import (
     _players,
 )
-from .context import EffectContext, ask_yes_no
+from .context import EffectContext, ask_objects, ask_x, ask_yes_no
 from .counter_removal import remove_counters_one_at_a_time
 from .ops_cards import cast_copy_paying
 from .ops_characteristics import source_bound_seat
@@ -251,6 +251,62 @@ def op_distribute_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     yield from ()
 
 
+@register("distribute_moved_counters")
+def op_distribute_moved_counters(ctx: EffectContext, spec: Mapping[str, Any]):
+    """ "You may move any number of +1/+1 counters from this creature onto
+    other creatures." -- Forgotten Ancient.
+
+    A choice made **while the effect is applied** (608.2d), not a division
+    announced on the stack: nothing is targeted, so 601.2d -- which 603.3d
+    applies to a trigger as it is put on the stack -- has no targets to divide
+    among and nothing to announce. On resolution the controller says how many
+    counters move (`ask_x`, 0 up to every ``counter`` on this permanent; 0 is
+    the "you may" declined), then which of the ``objects`` gets each one, one
+    counter at a time (`ask_objects`, purpose ``distribute``, the question
+    `distribute_counters` asks on activation). A creature never picked gets
+    none, so every split is reachable.
+
+    The counters come off this permanent once and each creature's share goes
+    on in **one** placement, so a Hardened Scales adds one per creature and a
+    "whenever counters are put" trigger fires once per creature -- the reason
+    this is not a repeated one-counter `move_counters`. Not `move_counters`
+    either, which puts the same amount on every destination, and not
+    `distribute_counters`, which only adds and needs targets. With this
+    permanent gone, or no counter on it, nothing is asked.
+    """
+    kind = str(spec.get("counter", "+1/+1"))
+    source_oid = ctx.source_oid
+    source = ctx.state.objects.get(source_oid) if source_oid is not None else None
+    if source is None or not source.on_battlefield:
+        return
+    available = source.counter(kind)
+    pool = [oid for oid in resolve_pool(ctx, spec.get("objects")) if oid != source_oid]
+    if available <= 0 or not pool:
+        return
+    name = ctx.source_name or "this permanent"
+    total = yield from ask_x(
+        ctx, f"Move how many {kind} counters from {name}?", available, ctx.controller
+    )
+    if total <= 0:
+        return
+    shares: dict[int, int] = {}
+    for left in range(total, 0, -1):
+        picked = yield from ask_objects(
+            ctx,
+            f"Move a {kind} counter from {name} onto which creature? ({left} left)",
+            pool,
+            1,
+            1,
+            ctx.controller,
+            "distribute",
+        )
+        oid = picked[0] if picked else pool[0]
+        shares[oid] = shares.get(oid, 0) + 1
+    remove_counters(ctx.state, source_oid, kind, min(total, source.counter(kind)))
+    for oid, share in shares.items():
+        add_counters(ctx.state, oid, kind, share, source=source_oid)
+
+
 @register("double_counters")
 def op_double_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     """ "Double the number of each kind of counter on any number of target
@@ -292,15 +348,34 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
     its own it is exactly that many, or as many as there are (609.3); with
     ``up_to`` it is a ceiling the controller may stop short of, down to none;
     and left out it is "any number". See `counter_removal`.
+
+    With ``all_kinds`` -- Sin, Unending Cataclysm's "remove **all counters**
+    from any number of artifacts, creatures, and enchantments" -- every counter
+    of every kind comes off each object, with nothing left to choose but the
+    objects themselves.
+
+    ``as`` binds the total number actually removed across every object, an int
+    read back with ``{"binding": ...}``: "the number of counters removed this
+    way" survives only there, since the permanents no longer carry them.
     """
-    if spec.get("any_kind"):
+    removed = 0
+    if spec.get("all_kinds"):
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove all counters from")
+        for oid in oids:
+            obj = ctx.state.objects.get(oid)
+            if obj is None:
+                continue
+            for kind, there in list(obj.counters.items()):
+                if there > 0:
+                    removed += remove_counters(ctx.state, oid, kind, there)
+    elif spec.get("any_kind"):
         most = (
             max(0, evaluate_value(ctx, spec["amount"])) if "amount" in spec else None
         )
         least = 0 if most is None or spec.get("up_to") else most
         oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
         for oid in oids:
-            yield from remove_counters_one_at_a_time(
+            removed += yield from remove_counters_one_at_a_time(
                 ctx,
                 lambda oid=oid: [oid],
                 most=most,
@@ -308,12 +383,14 @@ def op_remove_counters(ctx: EffectContext, spec: Mapping[str, Any]):
                 chooser=ctx.controller,
                 purpose="remove_counter",
             )
-        return
-    amount = evaluate_value(ctx, spec.get("amount", 1))
-    kind = str(spec.get("counter", "+1/+1"))
-    oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
-    for oid in oids:
-        remove_counters(ctx.state, oid, kind, amount)
+    else:
+        amount = evaluate_value(ctx, spec.get("amount", 1))
+        kind = str(spec.get("counter", "+1/+1"))
+        oids = yield from choose_objects(ctx, spec.get("objects"), "Remove counters from")
+        for oid in oids:
+            removed += remove_counters(ctx.state, oid, kind, amount)
+    if name := spec.get("as"):
+        ctx.bindings[str(name)] = removed
 
 
 @register("remove_counters_from_among")

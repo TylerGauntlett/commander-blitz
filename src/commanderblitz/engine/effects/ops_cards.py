@@ -26,6 +26,7 @@ from ..zones import (
     end_permissions_until_next_exile,
     link_exiled,
     move_object,
+    offer_as_enters_effects,
     offer_aura_host,
     offer_enters_replacement,
     offer_named_host,
@@ -35,6 +36,7 @@ from ..zones import (
 )
 from . import execute
 from .behold import announce_beheld, behold_count, behold_pool
+from .conditions import evaluate as evaluate_condition_in
 from .context import EffectContext, ask_objects, ask_player, ask_yes_no
 from .registry import register
 from .selectors import (
@@ -438,7 +440,14 @@ def _search(ctx: EffectContext, spec: Mapping[str, Any], zones: tuple[str, ...])
         to_top = spec.get("destination") == "library_top"
         if shuffles and to_top:
             shuffle_library(ctx.state, pid)
-        if picked:
+        if picked and spec.get("may_destination"):
+            # "If an opponent controls more lands than you, you may put that
+            # card onto the battlefield tapped. If you don't …, put it into your
+            # hand. Then shuffle." (Scholar of New Horizons). Asked after the
+            # card is chosen and revealed, so the player decides about the card
+            # they found -- and before the shuffle, which the card prints last.
+            picked = yield from _move_found_may(ctx, picked, pid, destination, spec, "search")
+        elif picked:
             picked = yield from _move_found(ctx, picked, pid, destination, spec, tapped, "search")
         if shuffles and not to_top:
             shuffle_library(ctx.state, pid)
@@ -1148,6 +1157,7 @@ def op_return_to_origin(ctx: EffectContext, spec: Mapping[str, Any]):
             # Wild picks again.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
             yield from offer_read_ahead(ctx.state, oid, obj.controller)
+            yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -1244,6 +1254,7 @@ def op_return_from_graveyard(ctx: EffectContext, spec: Mapping[str, Any]):
             # is -- see `zones.offer_riot_choice`.
             yield from offer_riot_choice(ctx.state, oid, obj.controller)
             yield from offer_read_ahead(ctx.state, oid, obj.controller)
+            yield from offer_as_enters_effects(ctx.state, oid, obj.controller)
         move_object(
             ctx.state,
             oid,
@@ -2742,21 +2753,31 @@ def _move_found_may(
     pid: int,
     fallback: Zone,
     spec: Mapping[str, Any],
+    cause: str = "reveal_until",
 ):
     """ "You may put that card onto the battlefield. If you don't, put it into
-    your hand." `reveal_until`'s ``may_destination``, asked per match.
+    your hand." ``may_destination`` on `reveal_until` and the search ops, asked
+    per card.
 
-    Returns what moved, which is every match: a declined card and one whose
+    Returns what moved, which is every card: a declined card and one whose
     arrival was refused (an Aura with no legal host, 303.4g) both go to the
     fallback, because each is a card that was not put onto the battlefield.
+
+    ``may_destination_if`` is a condition gating the offer -- "**If an opponent
+    controls more lands than you**, you may put that card onto the battlefield
+    tapped" (Scholar of New Horizons). Read as the card is about to move, after
+    it was found; while it is false nothing is asked and the card takes the
+    fallback, because the "you may" never arose.
     """
     controller = ctx.controller if spec.get("controller") == "you" else None
+    gate = spec.get("may_destination_if")
     moved: list[int] = []
     for oid in hits:
         name = ctx.state.card_of(ctx.state.objects[oid]).name
         where = str(spec["may_destination"])
         arrived: list[int] = []
-        if (yield from ask_yes_no(ctx, f"Put {name} onto the {where}?", ctx.controller)):
+        offered = gate is None or evaluate_condition_in(ctx, gate)
+        if offered and (yield from ask_yes_no(ctx, f"Put {name} onto the {where}?", ctx.controller)):
             arrived = yield from _move_found(
                 ctx,
                 [oid],
@@ -2764,11 +2785,11 @@ def _move_found_may(
                 DESTINATIONS[where],
                 {**spec, "destination": where},
                 bool(spec.get("tapped")),
-                "reveal_until",
+                cause,
                 controller=controller,
             )
         if not arrived:
-            arrived = yield from _move_found(ctx, [oid], pid, fallback, spec, False, "reveal_until")
+            arrived = yield from _move_found(ctx, [oid], pid, fallback, spec, False, cause)
         moved.extend(arrived)
     return moved
 
@@ -2902,6 +2923,38 @@ def op_put_on_top(ctx: EffectContext, spec: Mapping[str, Any]):
             source=oid,
             to="library_top" if depth == 1 else "library",
         )
+    # "The owner of target **spell**, nonland permanent, or card in a graveyard
+    # puts it…" (Endless Detour). A spell is a stack ref, which `objects`
+    # (`ctx.target_oids`) never reaches, so a target that landed on the stack
+    # is tucked here: off the stack uncountered, into its owner's library. A
+    # copy of a spell is no card and goes nowhere (706.10).
+    objects = spec.get("objects")
+    if isinstance(objects, Mapping) and set(objects) == {"target"}:
+        for sid in ctx.target_sids(str(objects["target"])):
+            item = ctx.state.stack_item(sid)
+            obj = ctx.state.objects.get(item.oid) if item and item.oid is not None else None
+            if obj is None:
+                continue
+            to_bottom = bottom
+            if owner_chooses:
+                to_bottom = not (
+                    yield from ask_yes_no(ctx, "Put it on top of your library?", obj.owner)
+                )
+            pull_spell_off_stack(
+                ctx.state,
+                sid,
+                Zone.LIBRARY,
+                cause="tuck",
+                by=ctx.source_oid,
+                to_index=None if to_bottom else depth - 1,
+            )
+            if obj.oid in ctx.state.objects and ctx.state.objects[obj.oid].zone is Zone.LIBRARY:
+                moved.append(obj.oid)
+                ctx.state.emit(
+                    EventType.ZONE_CHANGE,
+                    source=obj.oid,
+                    to="library_top" if depth == 1 else "library",
+                )
     if name := spec.get("as"):
         ctx.bindings[str(name)] = moved
 
