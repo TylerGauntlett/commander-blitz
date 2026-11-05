@@ -117832,12 +117832,12 @@
     },
     "Grenzo, Havoc Raiser": {
       "edhrec_rank": 1636,
-      "gate": "template",
+      "gate": null,
       "name": "Grenzo, Havoc Raiser",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, choose one —",
+      "reason": "",
       "scryfall_id": "9bc97501-93ed-4235-bfe7-745ac57653da",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Greta, Sweettooth Scourge": {
@@ -136012,12 +136012,12 @@
     },
     "Infantry Shield": {
       "edhrec_rank": 3375,
-      "gate": "template",
+      "gate": null,
       "name": "Infantry Shield",
-      "reason": "no template for: Equipped creature has menace and mobilize X, where X is its power",
+      "reason": "",
       "scryfall_id": "37332798-462e-49d3-b197-72411ccf67e5",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Infantry Veteran": {
@@ -140282,12 +140282,12 @@
     },
     "Ironwill Forger": {
       "edhrec_rank": 5676,
-      "gate": "template",
+      "gate": null,
       "name": "Ironwill Forger",
-      "reason": "no template for: Lieutenant — At the beginning of combat on your turn, if you control your commander, targe",
+      "reason": "",
       "scryfall_id": "2489dd12-34e8-41d9-a986-3452a03c9413",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ironwright's Cleansing": {
@@ -156242,12 +156242,12 @@
     },
     "Legion Loyalty": {
       "edhrec_rank": 2865,
-      "gate": "template",
+      "gate": null,
       "name": "Legion Loyalty",
-      "reason": "no template for: Creatures you control have myriad",
+      "reason": "",
       "scryfall_id": "928545e5-a9c5-497a-839d-3151f8cafdd3",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Legion Vanguard": {

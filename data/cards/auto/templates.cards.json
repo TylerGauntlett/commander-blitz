@@ -79004,6 +79004,108 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "target": "t1"
+                      },
+                      "op": "goad"
+                    }
+                  ],
+                  "label": "Goad target creature that player controls."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "as": "grenzo_exiled",
+                      "destination": "exile",
+                      "objects": {
+                        "count": "all"
+                      },
+                      "op": "look_at_top",
+                      "player": {
+                        "binding": "event_player"
+                      }
+                    },
+                    {
+                      "any_color": true,
+                      "objects": {
+                        "binding": "grenzo_exiled",
+                        "not_types": [
+                          "Land"
+                        ],
+                        "zone": "exile"
+                      },
+                      "op": "grant_playable",
+                      "playable": "this_turn"
+                    }
+                  ],
+                  "label": "Exile the top card of that player's library. Until end of turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell."
+                }
+              ],
+              "op": "choose_mode"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "controller": {
+                  "binding": "event_player"
+                },
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a creature you control deals combat damage to a player, choose one —\n• Goad target creature that player controls.\n• Exile the top card of that player's library. Until end of turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell.",
+          "trigger": {
+            "controller": "you",
+            "event": "deals_combat_damage_to_player"
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "grenzo_havoc_raiser",
+      "mana_cost": "{R}{R}",
+      "name": "Grenzo, Havoc Raiser",
+      "oracle_text": "Whenever a creature you control deals combat damage to a player, choose one —\n• Goad target creature that player controls.\n• Exile the top card of that player's library. Until end of turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Goblin",
+        "Rogue"
+      ],
+      "supertypes": [
+        "Legendary"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -91359,6 +91461,117 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_keyword",
+          "keywords": [
+            "menace"
+          ],
+          "kind": "static",
+          "text": "Equipped creature has menace and mobilize X, where X is its power"
+        },
+        {
+          "ability": 0,
+          "affects": {
+            "attached": true
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Equipped creature has menace and mobilize X, where X is its power"
+        },
+        {
+          "cost": {
+            "mana": "{2}"
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "equip_target"
+              },
+              "op": "attach"
+            }
+          ],
+          "is_equip": true,
+          "kind": "activated",
+          "sorcery_speed_only": true,
+          "targets": [
+            {
+              "count": 1,
+              "id": "equip_target",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Equip {2}"
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
+                "power_of": {
+                  "self": true
+                }
+              },
+              "as": "mobilized",
+              "attacking": true,
+              "op": "create_token",
+              "tapped": true,
+              "token": "warrior_1_1_r"
+            },
+            {
+              "effects": [
+                {
+                  "objects": {
+                    "binding": "mobilized",
+                    "count": "all"
+                  },
+                  "op": "sacrifice"
+                }
+              ],
+              "op": "delay",
+              "step": "end_step",
+              "text": "Sacrifice them at the beginning of the next end step."
+            }
+          ],
+          "kind": "triggered",
+          "text": "Mobilize X, where X is its power. (Whenever it attacks, create X tapped and attacking 1/1 red Warrior creature tokens. Sacrifice them at the beginning of the next end step.)",
+          "trigger": {
+            "controller": "you",
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "infantry_shield",
+      "mana_cost": "{2}{R}",
+      "name": "Infantry Shield",
+      "oracle_text": "Equipped creature has menace and mobilize X, where X is its power. (Whenever it attacks, create X tapped and attacking 1/1 red Warrior creature tokens. Sacrifice them at the beginning of the next end step.)\nEquip {2}",
+      "source": "auto",
+      "subtypes": [
+        "Equipment"
+      ],
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
       "color_identity": [
         "B"
       ],
@@ -94017,6 +94230,124 @@
         "Treefolk"
       ],
       "toughness": 5,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "ability": 0,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "grant_ability"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "not_supertypes": [
+                  "Legendary"
+                ],
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, target nonlegendary creature you control gains myriad until end of turn.",
+          "trigger": {
+            "condition": {
+              "exists": {
+                "controller": "you",
+                "is_commander": true,
+                "owner": "you",
+                "zone": "battlefield"
+              }
+            },
+            "controller": "you",
+            "event": "begin_combat"
+          }
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Myriad (Whenever it attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "ironwill_forger",
+      "mana_cost": "{3}{W}",
+      "name": "Ironwill Forger",
+      "oracle_text": "Lieutenant — At the beginning of combat on your turn, if you control your commander, target nonlegendary creature you control gains myriad until end of turn. (Whenever it attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Orc",
+        "Artificer"
+      ],
+      "toughness": 3,
       "types": [
         "Creature"
       ]
@@ -105190,6 +105521,89 @@
       "toughness": 2,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "ability": 0,
+          "affects": {
+            "controller": "you",
+            "types": [
+              "Creature"
+            ]
+          },
+          "effect": "grant_ability",
+          "kind": "static",
+          "text": "Creatures you control have myriad."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "grantable_abilities": [
+        {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "effects": [
+                    {
+                      "as": "myriad_token",
+                      "attacking": {
+                        "binding": "each_player"
+                      },
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "copy_permanent",
+                      "or_planeswalker": true,
+                      "tapped": true
+                    },
+                    {
+                      "effects": [
+                        {
+                          "objects": {
+                            "binding": "myriad_token"
+                          },
+                          "op": "exile"
+                        }
+                      ],
+                      "op": "delay",
+                      "step": "end_of_combat",
+                      "text": "Exile the tokens at end of combat."
+                    }
+                  ],
+                  "op": "may"
+                }
+              ],
+              "op": "for_each_player",
+              "players": {
+                "except": "you",
+                "not": {
+                  "binding": "defender"
+                }
+              }
+            }
+          ],
+          "kind": "triggered",
+          "text": "Myriad (Whenever a creature with myriad attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+          "trigger": {
+            "event": "attacks",
+            "source": "self"
+          }
+        }
+      ],
+      "id": "legion_loyalty",
+      "mana_cost": "{6}{W}{W}",
+      "name": "Legion Loyalty",
+      "oracle_text": "Creatures you control have myriad. (Whenever a creature with myriad attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+      "source": "auto",
+      "types": [
+        "Enchantment"
       ]
     },
     {

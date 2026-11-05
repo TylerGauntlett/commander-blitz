@@ -6842,6 +6842,13 @@
   "grendel_spawn_of_knull": {
     "zone": "battlefield"
   },
+  "grenzo_havoc_raiser": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "grenzo_s_cutthroat": {
     "zone": "battlefield"
   },
@@ -7807,6 +7814,10 @@
   "inexorable_tide": {
     "zone": "battlefield"
   },
+  "infantry_shield": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "infernal_grasp": {
     "life": {
       "0": 38,
@@ -8042,6 +8053,10 @@
     "zone": "battlefield"
   },
   "ironroot_treefolk": {
+    "zone": "battlefield"
+  },
+  "ironwill_forger": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "irrigated_farmland": {
@@ -8946,6 +8961,10 @@
     "zone": "battlefield"
   },
   "leech_collector_bloodletting": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
+  "legion_loyalty": {
     "battlefield_count": 33,
     "zone": "battlefield"
   },

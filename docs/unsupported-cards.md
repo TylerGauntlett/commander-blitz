@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **152** capabilities.
+**164 cards** blocked by **153** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -156,6 +156,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [target-player-dealt-combat-damage-by](#target-player-dealt-combat-damage-by) | 1 | 3240 | selector |
 | [targets-only-self](#targets-only-self) | 1 | 8216 | trigger_event |
 | [teammates](#teammates) | 1 | 26785 | selector |
+| [temporary-token-doubling](#temporary-token-doubling) | 1 | 4479 | op |
 | [this-combat-duration](#this-combat-duration) | 1 | 9126 | op |
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
@@ -2389,6 +2390,20 @@ Blocks **1** card.
 
 - **Imperial Mask** (rank 26785) — `imperial_mask`
   - When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.
+
+</details>
+
+## temporary-token-doubling
+
+Blocks **1** card.
+
+- **(op)** a one-shot effect that sets up a player-wide token-creation replacement (token_multiplier 2, affects_player you) lasting until end of turn, independent of its source: it must keep applying after the planeswalker that created it leaves the battlefield (611.2a / 614 effect from a resolved ability)
+  <br>Why the existing vocabulary won't do: replace_token_creation exists only as a static ability, read off a permanent on the battlefield for as long as it stays there; no op in reference creates a timed replacement. grant_ability as an op may grant only triggered or activated abilities (the static form is 'as long as', not 'until end of turn'), and granting a static to Kaya would end the doubling if she left the battlefield, which the printed effect does not
+
+<details><summary>Cards waiting on this</summary>
+
+- **Kaya, Geist Hunter** (rank 4479) — `kaya_geist_hunter`
+  - −2: Until end of turn, if one or more tokens would be created under your control, twice that many of those tokens are created instead.
 
 </details>
 
