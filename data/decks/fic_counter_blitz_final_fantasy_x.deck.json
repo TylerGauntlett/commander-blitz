@@ -1,0 +1,902 @@
+{
+  "id": "fic_counter_blitz_final_fantasy_x",
+  "name": "Counter Blitz (FINAL FANTASY X)",
+  "commanders": [
+    "tidus_yuna_s_guardian"
+  ],
+  "color_identity": [
+    "G",
+    "U",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "FIC",
+    "set_name": "Final Fantasy Commander",
+    "date": "2025-06-13"
+  },
+  "notes": "Final Fantasy Commander precon, card for card (https://mtgjson.com/api/v5/decks/CounterBlitzFinalFantasyX_FIC.json).",
+  "tags": [
+    "Counters",
+    "Proliferate",
+    "Combat damage",
+    "Legends"
+  ],
+  "strategy": "Tidus, Yuna's Guardian moves a counter between your creatures at the start of each combat and, once a turn, draws a card and proliferates when creatures with counters connect. The deck exists to put counters everywhere and keep growing them: Hardened Scales adds one to every placement, Generous Patron, Duskshell Crawler and Together Forever spread +1/+1 counters, and Grateful Apparition, Tromell, Seymour's Butler and Tidus himself proliferate them. Yuna, Grand Summoner makes the next creature enter bigger and turns any countered permanent's death into counters elsewhere, while Forgotten Ancient, Resourceful Defense and Sin, Unending Cataclysm move what the board has already built. Inspiring Call and Bred for the Hunt draw off the counters, Walking Ballista spends them as damage, and Damning Verdict, Farewell and Path to Exile clear everything that has none.",
+  "archetype": "aggro",
+  "printings": {
+    "altered_ego": {
+      "scryfall_id": "fda23b02-c650-4092-a35d-ae330547c425",
+      "artist": "Sansyu",
+      "set_code": "fic",
+      "collector_number": "317"
+    },
+    "an_offer_you_can_t_refuse": {
+      "scryfall_id": "fe1023a2-c096-4c62-8627-e865b348ba02",
+      "artist": "Josu Hernaiz",
+      "set_code": "fic",
+      "collector_number": "267"
+    },
+    "arcane_signet": {
+      "scryfall_id": "9df4b5a2-95bf-4268-9d75-6065176651d1",
+      "artist": "Russell Dongjun Lu",
+      "set_code": "fic",
+      "collector_number": "334"
+    },
+    "ash_barrens": {
+      "scryfall_id": "77df073b-49dc-4743-82a3-d595bc938761",
+      "artist": "Sam Burley",
+      "set_code": "fic",
+      "collector_number": "374"
+    },
+    "auron_venerated_guardian": {
+      "scryfall_id": "cb82d614-13d8-40ec-9213-8e6852d37c9c",
+      "artist": "Colin Boyer",
+      "set_code": "fic",
+      "collector_number": "10"
+    },
+    "bane_of_progress": {
+      "scryfall_id": "5fc6876d-7441-42ac-b9a1-c10a0f6a387a",
+      "artist": "Douzen",
+      "set_code": "fic",
+      "collector_number": "299"
+    },
+    "blitzball_stadium": {
+      "scryfall_id": "771808d9-d0c8-418b-ab6c-1ae6fc07ca20",
+      "artist": "Piotr Dura",
+      "set_code": "fic",
+      "collector_number": "34"
+    },
+    "bred_for_the_hunt": {
+      "scryfall_id": "a06fe501-0e25-46ee-8ed8-055f3bf636cd",
+      "artist": "Susumu Kuroi",
+      "set_code": "fic",
+      "collector_number": "321"
+    },
+    "brushland": {
+      "scryfall_id": "c2bc3f62-1e3a-4ec3-a83b-f6547d7c7b0d",
+      "artist": "Randy Gallegos",
+      "set_code": "fic",
+      "collector_number": "377"
+    },
+    "canopy_vista": {
+      "scryfall_id": "5d33aeaa-df27-4c41-9926-79e9dc6a9c69",
+      "artist": "Salvatorre Zee Yazzie",
+      "set_code": "fic",
+      "collector_number": "378"
+    },
+    "chasm_skulker": {
+      "scryfall_id": "886ce333-44d7-458e-a3bb-a58d1d7fc69b",
+      "artist": "Nottsuo",
+      "set_code": "fic",
+      "collector_number": "262"
+    },
+    "chocobo_knights": {
+      "scryfall_id": "e874e435-7ade-4299-9803-1358c0f07a8f",
+      "artist": "Néstor Ossandón Leal",
+      "set_code": "fic",
+      "collector_number": "12"
+    },
+    "collective_effort": {
+      "scryfall_id": "af2dcc4d-f4bf-49e4-9103-9b4bc9545ae4",
+      "artist": "YASUNARI HIRASAKA",
+      "set_code": "fic",
+      "collector_number": "237"
+    },
+    "command_tower": {
+      "scryfall_id": "605b2218-0eab-4c9d-a5d8-7fab342137a0",
+      "artist": "Jonas De Ro",
+      "set_code": "fic",
+      "collector_number": "486"
+    },
+    "damning_verdict": {
+      "scryfall_id": "8d82e20d-09c0-4b16-9b25-4790924aa0b6",
+      "artist": "Shiren",
+      "set_code": "fic",
+      "collector_number": "239"
+    },
+    "destroy_evil": {
+      "scryfall_id": "694e5322-b7c9-4f38-97ce-0b03a391a453",
+      "artist": "ikeda_cpt",
+      "set_code": "fic",
+      "collector_number": "240"
+    },
+    "duskshell_crawler": {
+      "scryfall_id": "2ce4ebd2-c3e6-4299-bdb7-8e5eb1834168",
+      "artist": "HAISIRO",
+      "set_code": "fic",
+      "collector_number": "301"
+    },
+    "endless_detour": {
+      "scryfall_id": "33a37435-bd6c-4330-8138-98a2afa36e54",
+      "artist": "Yoichi Ito",
+      "set_code": "fic",
+      "collector_number": "324"
+    },
+    "everflowing_chalice": {
+      "scryfall_id": "5d659b0c-dc93-464f-847f-2af075caf145",
+      "artist": "Makoto Shiki",
+      "set_code": "fic",
+      "collector_number": "343"
+    },
+    "evolving_wilds": {
+      "scryfall_id": "351f791c-4bee-4fce-aee4-d0214ca0c945",
+      "artist": "Jeremy Paillotin",
+      "set_code": "fic",
+      "collector_number": "389"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "47c2b572-b54a-444c-8d74-b005e94d751f",
+      "artist": "David Frasheski",
+      "set_code": "fic",
+      "collector_number": "390"
+    },
+    "farewell": {
+      "scryfall_id": "4d8b6418-da30-4c68-b87c-3936eb77620c",
+      "artist": "Yumi Yaoshida",
+      "set_code": "fic",
+      "collector_number": "242"
+    },
+    "farseek": {
+      "scryfall_id": "f9b52ee8-3cde-4082-8a6c-0a82caa3505d",
+      "artist": "Takayuki Futami",
+      "set_code": "fic",
+      "collector_number": "302"
+    },
+    "fathom_mage": {
+      "scryfall_id": "4bb9c7e1-46a6-4acf-8415-221d9c9d9d23",
+      "artist": "Justyna Dura",
+      "set_code": "fic",
+      "collector_number": "325"
+    },
+    "fight_rigging": {
+      "scryfall_id": "ed314c9c-ce86-4782-981f-7956ceca564c",
+      "artist": "YASUNARI HIRASAKA",
+      "set_code": "fic",
+      "collector_number": "303"
+    },
+    "flooded_grove": {
+      "scryfall_id": "7b280a73-9246-4da4-8fc1-a5683edd8aab",
+      "artist": "Aldo Domínguez",
+      "set_code": "fic",
+      "collector_number": "393"
+    },
+    "forest": {
+      "scryfall_id": "be72862d-d71e-4b18-98a6-59019399f631",
+      "artist": "Alayna Danner",
+      "set_code": "fin",
+      "collector_number": "306"
+    },
+    "forge_of_heroes": {
+      "scryfall_id": "7ac60dfc-040e-4cc1-a967-3c915770fc8e",
+      "artist": "Makoto Shiki",
+      "set_code": "fic",
+      "collector_number": "395"
+    },
+    "forgotten_ancient": {
+      "scryfall_id": "de0f3be6-4e5b-4186-af49-fe3dadadcd01",
+      "artist": "Esuthio",
+      "set_code": "fic",
+      "collector_number": "304"
+    },
+    "fortified_village": {
+      "scryfall_id": "1028b210-db71-4bbd-8bd7-59dc4032f426",
+      "artist": "Wei Guan",
+      "set_code": "fic",
+      "collector_number": "396"
+    },
+    "gatta_and_luzzu": {
+      "scryfall_id": "4742c222-1f29-4e1a-a545-798d175255ca",
+      "artist": "Takeuchi Moto",
+      "set_code": "fic",
+      "collector_number": "19"
+    },
+    "generous_patron": {
+      "scryfall_id": "8f4a43b9-6ee8-4b89-b204-83093fba8de4",
+      "artist": "Shiren",
+      "set_code": "fic",
+      "collector_number": "305"
+    },
+    "glacial_fortress": {
+      "scryfall_id": "d75d748f-38c3-4a7f-8211-db62d5314180",
+      "artist": "Wei Guan",
+      "set_code": "fic",
+      "collector_number": "400"
+    },
+    "grateful_apparition": {
+      "scryfall_id": "755e0d2b-9a5e-4a13-b085-13c33e120de0",
+      "artist": "Umiu Geso",
+      "set_code": "fic",
+      "collector_number": "244"
+    },
+    "gyre_sage": {
+      "scryfall_id": "236c4e0d-1a54-4024-85ef-4d73028bfb87",
+      "artist": "Touge369",
+      "set_code": "fic",
+      "collector_number": "306"
+    },
+    "hardened_scales": {
+      "scryfall_id": "1219d294-22b3-45de-91d9-8d80e27c2fd6",
+      "artist": "Takayama Toshiaki",
+      "set_code": "fic",
+      "collector_number": "307"
+    },
+    "hinterland_harbor": {
+      "scryfall_id": "9f89d20d-bb8b-4da8-97c7-1058c1b60325",
+      "artist": "Rytis Sabaliauskas",
+      "set_code": "fic",
+      "collector_number": "403"
+    },
+    "idyllic_beachfront": {
+      "scryfall_id": "afe2ebec-0310-4b2f-ace4-fb293a1e4837",
+      "artist": "David Astruga",
+      "set_code": "fic",
+      "collector_number": "404"
+    },
+    "incubation_druid": {
+      "scryfall_id": "348d4546-3da5-4f78-82f3-9a79d2f9b0d1",
+      "artist": "IWAO",
+      "set_code": "fic",
+      "collector_number": "309"
+    },
+    "inexorable_tide": {
+      "scryfall_id": "a992fad9-1dd1-47fe-b315-a62f7875f3be",
+      "artist": "Takashi Kojo",
+      "set_code": "fic",
+      "collector_number": "265"
+    },
+    "inspiring_call": {
+      "scryfall_id": "be938240-214d-4726-ba2a-aaedc5bbe7ba",
+      "artist": "Francesca Resta",
+      "set_code": "fic",
+      "collector_number": "310"
+    },
+    "island": {
+      "scryfall_id": "b92ec9f6-a56d-40c6-aee2-7d5e1524c985",
+      "artist": "Fariba Khamseh",
+      "set_code": "fin",
+      "collector_number": "297"
+    },
+    "kimahri_valiant_guardian": {
+      "scryfall_id": "42006bd4-f6f0-4638-a50e-46d9d7a54b6e",
+      "artist": "Christian Angel",
+      "set_code": "fic",
+      "collector_number": "85"
+    },
+    "lord_jyscal_guado": {
+      "scryfall_id": "134ef3cd-01ac-4d60-a277-df7ab7b8f88c",
+      "artist": "Takeuchi Moto",
+      "set_code": "fic",
+      "collector_number": "23"
+    },
+    "lulu_stern_guardian": {
+      "scryfall_id": "9c0b1d5d-2b10-4dde-bb95-8cbf780cca97",
+      "artist": "Arou",
+      "set_code": "fic",
+      "collector_number": "38"
+    },
+    "luminous_broodmoth": {
+      "scryfall_id": "e6fc5c0b-0b64-491d-b312-b9b2133225d9",
+      "artist": "Kazto Furuya",
+      "set_code": "fic",
+      "collector_number": "246"
+    },
+    "maester_seymour": {
+      "scryfall_id": "f6a4267b-aa76-4dec-bc72-252236c44968",
+      "artist": "Norikatsu Miyoshi",
+      "set_code": "fic",
+      "collector_number": "68"
+    },
+    "nesting_grounds": {
+      "scryfall_id": "e99933e3-9237-45e8-b067-44367fc21430",
+      "artist": "Craig Elliott",
+      "set_code": "fic",
+      "collector_number": "408"
+    },
+    "o_aka_traveling_merchant": {
+      "scryfall_id": "9d860089-fb88-4736-b7f4-b605551bedc8",
+      "artist": "Fang Xinyu",
+      "set_code": "fic",
+      "collector_number": "39"
+    },
+    "overflowing_basin": {
+      "scryfall_id": "2d0812ef-a3b7-49d0-b1b8-ec0c8891b887",
+      "artist": "Alexandre Honoré",
+      "set_code": "fic",
+      "collector_number": "410"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "4dd83a5d-1908-4141-8449-fac5e77cd6c0",
+      "artist": "Gal Or",
+      "set_code": "fic",
+      "collector_number": "411"
+    },
+    "path_of_discovery": {
+      "scryfall_id": "ad09a5c2-3081-4d5d-9c0f-037e045e9045",
+      "artist": "Salvatorre Zee Yazzie",
+      "set_code": "fic",
+      "collector_number": "312"
+    },
+    "path_to_exile": {
+      "scryfall_id": "bba46570-dca2-4849-966a-0972e6a4c506",
+      "artist": "Yumi Yaoshida",
+      "set_code": "fic",
+      "collector_number": "248"
+    },
+    "plains": {
+      "scryfall_id": "9dd2d666-7c6b-48ce-93dc-c004ebdd1fe9",
+      "artist": "Shahab Alizadeh",
+      "set_code": "fin",
+      "collector_number": "294"
+    },
+    "port_town": {
+      "scryfall_id": "f1ac3b7f-a1db-49df-ba02-fc80cb2f70af",
+      "artist": "Enora Mercier",
+      "set_code": "fic",
+      "collector_number": "412"
+    },
+    "prairie_stream": {
+      "scryfall_id": "ce3a0ad9-6b7a-470c-8e49-4121fea72c89",
+      "artist": "Alayna Danner",
+      "set_code": "fic",
+      "collector_number": "413"
+    },
+    "promise_of_loyalty": {
+      "scryfall_id": "2c6e2b9e-2efb-42f1-9898-77918a7bb1b2",
+      "artist": "KOHEI YAMADA",
+      "set_code": "fic",
+      "collector_number": "249"
+    },
+    "protection_magic": {
+      "scryfall_id": "917e9267-010d-450c-ab98-6f861250c437",
+      "artist": "Mikio Masuda",
+      "set_code": "fic",
+      "collector_number": "24"
+    },
+    "pull_from_tomorrow": {
+      "scryfall_id": "31d56cda-ee00-4037-a2e3-e17286750b0b",
+      "artist": "Areku Nishiki",
+      "set_code": "fic",
+      "collector_number": "269"
+    },
+    "radiant_grove": {
+      "scryfall_id": "977bf5a1-81f2-4c5b-a227-347bf8e19554",
+      "artist": "Fariba Khamseh",
+      "set_code": "fic",
+      "collector_number": "414"
+    },
+    "rampant_rejuvenator": {
+      "scryfall_id": "9ce2aa8e-b0c4-4e22-84eb-94b9e5ca6f76",
+      "artist": "SENNSU",
+      "set_code": "fic",
+      "collector_number": "314"
+    },
+    "resourceful_defense": {
+      "scryfall_id": "fe1d5e11-0c74-4de0-a8be-428af44be684",
+      "artist": "Shiyu",
+      "set_code": "fic",
+      "collector_number": "251"
+    },
+    "rikku_resourceful_guardian": {
+      "scryfall_id": "d377cc5f-f6eb-4ed0-a358-af22245f3550",
+      "artist": "Yoichi Ito",
+      "set_code": "fic",
+      "collector_number": "41"
+    },
+    "scholar_of_new_horizons": {
+      "scryfall_id": "99e1d96f-c326-49b2-9a24-6e3e5465047e",
+      "artist": "Allen Morris",
+      "set_code": "fic",
+      "collector_number": "252"
+    },
+    "seaside_citadel": {
+      "scryfall_id": "a4fa7ef6-4a14-4820-b646-8945ff3b4786",
+      "artist": "Hristo D. Chukov",
+      "set_code": "fic",
+      "collector_number": "420"
+    },
+    "shelinda_yevon_acolyte": {
+      "scryfall_id": "6f2cec5d-50ea-4d0f-8925-eba06222d015",
+      "artist": "Shiren",
+      "set_code": "fic",
+      "collector_number": "94"
+    },
+    "sin_unending_cataclysm": {
+      "scryfall_id": "fc0474b7-3d32-49b4-80c7-822de6cdbfa6",
+      "artist": "Aldo Domínguez",
+      "set_code": "fic",
+      "collector_number": "95"
+    },
+    "skycloud_expanse": {
+      "scryfall_id": "0972c465-0369-4ac2-9912-2898fad1bdba",
+      "artist": "David Frasheski",
+      "set_code": "fic",
+      "collector_number": "423"
+    },
+    "sol_ring": {
+      "scryfall_id": "9a34ac23-e318-4c0b-ab4c-e1eaa0e2547e",
+      "artist": "Grace Zhu",
+      "set_code": "fic",
+      "collector_number": "358"
+    },
+    "sphere_grid": {
+      "scryfall_id": "51188b1d-cb45-40f7-a3c2-5652b0679e02",
+      "artist": "KOHEI YAMADA",
+      "set_code": "fic",
+      "collector_number": "70"
+    },
+    "summon_ixion": {
+      "scryfall_id": "acb35dcb-0bee-4deb-88bf-ffa1f110c67b",
+      "artist": "Ben Wootten",
+      "set_code": "fic",
+      "collector_number": "27"
+    },
+    "summon_magus_sisters": {
+      "scryfall_id": "76a8cae7-e6ea-45eb-be8d-0e6a29b98aa6",
+      "artist": "Rui Maruyama",
+      "set_code": "fic",
+      "collector_number": "71"
+    },
+    "summon_valefor": {
+      "scryfall_id": "e0474d99-48e5-4e60-8cd6-537a10bcfea5",
+      "artist": "SENNSU",
+      "set_code": "fic",
+      "collector_number": "42"
+    },
+    "summon_yojimbo": {
+      "scryfall_id": "cdbc2d28-ea35-47c6-af7e-07924e9d5794",
+      "artist": "Benjamin Ee",
+      "set_code": "fic",
+      "collector_number": "28"
+    },
+    "summoner_s_sending": {
+      "scryfall_id": "8150be1a-4bac-4c67-9165-9d6fc04a69cc",
+      "artist": "Yumi Yaoshida",
+      "set_code": "fic",
+      "collector_number": "29"
+    },
+    "sungrass_prairie": {
+      "scryfall_id": "81e28e36-893f-4b34-aef7-5f2c15dc231c",
+      "artist": "Leon Tukker",
+      "set_code": "fic",
+      "collector_number": "428"
+    },
+    "sunpetal_grove": {
+      "scryfall_id": "5b0275b1-64bc-4c78-ac1a-9bd31399b946",
+      "artist": "Vaigintas Pakenis",
+      "set_code": "fic",
+      "collector_number": "432"
+    },
+    "sunscorch_regent": {
+      "scryfall_id": "25774e8c-bbc1-4a53-926c-7c01c2ac908f",
+      "artist": "Enora Mercier",
+      "set_code": "fic",
+      "collector_number": "255"
+    },
+    "tangled_islet": {
+      "scryfall_id": "defd23e2-9459-45b1-ba18-3661b220fac6",
+      "artist": "Andrew Theophilopoulos",
+      "set_code": "fic",
+      "collector_number": "434"
+    },
+    "temple_of_enlightenment": {
+      "scryfall_id": "fc99e7b0-0f2c-4a2b-938b-abd31b71cd4f",
+      "artist": "Sam Burley",
+      "set_code": "fic",
+      "collector_number": "435"
+    },
+    "temple_of_mystery": {
+      "scryfall_id": "3ede4ff9-b0f6-4075-b7ad-3ec90497d0f6",
+      "artist": "Sam Burley",
+      "set_code": "fic",
+      "collector_number": "436"
+    },
+    "temple_of_plenty": {
+      "scryfall_id": "04dc78e1-50d8-493a-9c1f-9c1d95343fff",
+      "artist": "Racrufi",
+      "set_code": "fic",
+      "collector_number": "437"
+    },
+    "temple_of_the_false_god": {
+      "scryfall_id": "f1cb4775-8e14-4c83-a417-40d1432ac90a",
+      "artist": "Craig Elliott",
+      "set_code": "fic",
+      "collector_number": "438"
+    },
+    "three_visits": {
+      "scryfall_id": "5bcf7495-a8af-4c7f-a27d-be27748f64e0",
+      "artist": "Areku Nishiki",
+      "set_code": "fic",
+      "collector_number": "315"
+    },
+    "tidus_yuna_s_guardian": {
+      "scryfall_id": "2cfd4494-346c-4cbc-8072-e267254cefcc",
+      "artist": "Nijihayashi",
+      "set_code": "fic",
+      "collector_number": "5"
+    },
+    "tireless_tracker": {
+      "scryfall_id": "fd5a8a4c-4d66-48a1-bc3e-caaa2dbb64d4",
+      "artist": "Rui Maruyama",
+      "set_code": "fic",
+      "collector_number": "316"
+    },
+    "together_forever": {
+      "scryfall_id": "834c5cf1-69a7-462c-822e-47a43a86f9a9",
+      "artist": "Yuu Fujiki",
+      "set_code": "fic",
+      "collector_number": "257"
+    },
+    "tromell_seymour_s_butler": {
+      "scryfall_id": "0f4f6de2-1c3d-4f3b-b999-70879f9cbb26",
+      "artist": "Kotetsu Kinoshita",
+      "set_code": "fic",
+      "collector_number": "73"
+    },
+    "vineglimmer_snarl": {
+      "scryfall_id": "353758ce-419f-4f6a-93f4-42a746c4a26d",
+      "artist": "Mauricio Calle",
+      "set_code": "fic",
+      "collector_number": "440"
+    },
+    "wakka_devoted_guardian": {
+      "scryfall_id": "9f7fcef4-99fc-4df2-b0f5-4398f71b2fcf",
+      "artist": "Kieran Yanner",
+      "set_code": "fic",
+      "collector_number": "97"
+    },
+    "walking_ballista": {
+      "scryfall_id": "50507ec0-72ff-4110-a73c-b6f256ac2e35",
+      "artist": "Hokuyuu",
+      "set_code": "fic",
+      "collector_number": "371"
+    },
+    "yuna_grand_summoner": {
+      "scryfall_id": "930da933-4263-40ff-96af-4bd9e797249e",
+      "artist": "Kevin Glint",
+      "set_code": "fic",
+      "collector_number": "8"
+    },
+    "yuna_s_decision": {
+      "scryfall_id": "5044eedb-f7d9-4b65-aa5b-fb494d00facd",
+      "artist": "Yuu Fujiki",
+      "set_code": "fic",
+      "collector_number": "74"
+    },
+    "yuna_s_whistle": {
+      "scryfall_id": "8e591a23-15c3-4a65-a9d2-d1ce0f83552c",
+      "artist": "Norikatsu Miyoshi",
+      "set_code": "fic",
+      "collector_number": "75"
+    }
+  },
+  "cards": [
+    {
+      "id": "altered_ego"
+    },
+    {
+      "id": "an_offer_you_can_t_refuse"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "ash_barrens"
+    },
+    {
+      "id": "auron_venerated_guardian"
+    },
+    {
+      "id": "bane_of_progress"
+    },
+    {
+      "id": "blitzball_stadium"
+    },
+    {
+      "id": "bred_for_the_hunt"
+    },
+    {
+      "id": "brushland"
+    },
+    {
+      "id": "canopy_vista"
+    },
+    {
+      "id": "chasm_skulker"
+    },
+    {
+      "id": "chocobo_knights"
+    },
+    {
+      "id": "collective_effort"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "damning_verdict"
+    },
+    {
+      "id": "destroy_evil"
+    },
+    {
+      "id": "duskshell_crawler"
+    },
+    {
+      "id": "endless_detour"
+    },
+    {
+      "id": "everflowing_chalice"
+    },
+    {
+      "id": "evolving_wilds"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "farewell"
+    },
+    {
+      "id": "farseek"
+    },
+    {
+      "id": "fathom_mage"
+    },
+    {
+      "id": "fight_rigging"
+    },
+    {
+      "id": "flooded_grove"
+    },
+    {
+      "id": "forest",
+      "qty": 3
+    },
+    {
+      "id": "forge_of_heroes"
+    },
+    {
+      "id": "forgotten_ancient"
+    },
+    {
+      "id": "fortified_village"
+    },
+    {
+      "id": "gatta_and_luzzu"
+    },
+    {
+      "id": "generous_patron"
+    },
+    {
+      "id": "glacial_fortress"
+    },
+    {
+      "id": "grateful_apparition"
+    },
+    {
+      "id": "gyre_sage"
+    },
+    {
+      "id": "hardened_scales"
+    },
+    {
+      "id": "hinterland_harbor"
+    },
+    {
+      "id": "idyllic_beachfront"
+    },
+    {
+      "id": "incubation_druid"
+    },
+    {
+      "id": "inexorable_tide"
+    },
+    {
+      "id": "inspiring_call"
+    },
+    {
+      "id": "island",
+      "qty": 3
+    },
+    {
+      "id": "kimahri_valiant_guardian"
+    },
+    {
+      "id": "lord_jyscal_guado"
+    },
+    {
+      "id": "lulu_stern_guardian"
+    },
+    {
+      "id": "luminous_broodmoth"
+    },
+    {
+      "id": "maester_seymour"
+    },
+    {
+      "id": "nesting_grounds"
+    },
+    {
+      "id": "o_aka_traveling_merchant"
+    },
+    {
+      "id": "overflowing_basin"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "path_of_discovery"
+    },
+    {
+      "id": "path_to_exile"
+    },
+    {
+      "id": "plains",
+      "qty": 3
+    },
+    {
+      "id": "port_town"
+    },
+    {
+      "id": "prairie_stream"
+    },
+    {
+      "id": "promise_of_loyalty"
+    },
+    {
+      "id": "protection_magic"
+    },
+    {
+      "id": "pull_from_tomorrow"
+    },
+    {
+      "id": "radiant_grove"
+    },
+    {
+      "id": "rampant_rejuvenator"
+    },
+    {
+      "id": "resourceful_defense"
+    },
+    {
+      "id": "rikku_resourceful_guardian"
+    },
+    {
+      "id": "scholar_of_new_horizons"
+    },
+    {
+      "id": "seaside_citadel"
+    },
+    {
+      "id": "shelinda_yevon_acolyte"
+    },
+    {
+      "id": "sin_unending_cataclysm"
+    },
+    {
+      "id": "skycloud_expanse"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "sphere_grid"
+    },
+    {
+      "id": "summon_ixion"
+    },
+    {
+      "id": "summon_magus_sisters"
+    },
+    {
+      "id": "summon_valefor"
+    },
+    {
+      "id": "summon_yojimbo"
+    },
+    {
+      "id": "summoner_s_sending"
+    },
+    {
+      "id": "sungrass_prairie"
+    },
+    {
+      "id": "sunpetal_grove"
+    },
+    {
+      "id": "sunscorch_regent"
+    },
+    {
+      "id": "tangled_islet"
+    },
+    {
+      "id": "temple_of_enlightenment"
+    },
+    {
+      "id": "temple_of_mystery"
+    },
+    {
+      "id": "temple_of_plenty"
+    },
+    {
+      "id": "temple_of_the_false_god"
+    },
+    {
+      "id": "three_visits"
+    },
+    {
+      "id": "tireless_tracker"
+    },
+    {
+      "id": "together_forever"
+    },
+    {
+      "id": "tromell_seymour_s_butler"
+    },
+    {
+      "id": "vineglimmer_snarl"
+    },
+    {
+      "id": "wakka_devoted_guardian"
+    },
+    {
+      "id": "walking_ballista"
+    },
+    {
+      "id": "yuna_grand_summoner"
+    },
+    {
+      "id": "yuna_s_decision"
+    },
+    {
+      "id": "yuna_s_whistle"
+    }
+  ],
+  "ratings": {
+    "speed": 2,
+    "complexity": 4,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "tidus_yuna_s_guardian",
+      "why": "Moves a counter onto the right attacker each combat, then draws and proliferates once a turn when countered creatures connect."
+    },
+    {
+      "card_id": "hardened_scales",
+      "why": "Every +1/+1 counter placement gets one more, so support, proliferate and Yuna's two extra counters all grow faster."
+    },
+    {
+      "card_id": "yuna_grand_summoner",
+      "why": "Mana that makes the next creature enter with two more counters, and a payoff that turns a dying countered permanent into counters on a survivor."
+    },
+    {
+      "card_id": "damning_verdict",
+      "why": "Destroys every creature with no counters on it, which on this board is mostly the opponents'."
+    }
+  ]
+}
