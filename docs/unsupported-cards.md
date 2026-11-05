@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**166 cards** blocked by **149** capabilities.
+**165 cards** blocked by **148** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -107,7 +107,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [modal-variable-targets](#modal-variable-targets) | 1 | 4339 | engine |
 | [modified](#modified) | 1 | 831 | selector |
 | [more-than-meets-the-eye](#more-than-meets-the-eye) | 1 | 11641 | cost |
-| [move-any-number-of-counters](#move-any-number-of-counters) | 1 | 1628 | decision |
 | [myriad](#myriad) | 1 | 6808 | keyword |
 | [not-keywords-trigger-filter](#not-keywords-trigger-filter) | 1 | 2687 | selector |
 | [noted-mana-type](#noted-mana-type) | 1 | 3604 | op, value |
@@ -1700,20 +1699,6 @@ Blocks **1** card.
 - **Goldbug, Humanity's Ally // Goldbug, Scrappy Scout** (rank 11641) — `goldbug_humanity_s_ally_goldbug_scrappy_scout`
   - More Than Meets the Eye {W}{U} (You may cast this card converted for {W}{U}.)
   - Living metal (During your turn, this Vehicle is also a creature.)
-
-</details>
-
-## move-any-number-of-counters
-
-Blocks **1** card.
-
-- **(decision)** a move_counters mode where the resolving player chooses, per counter kind on the source, how many counters (0 up to the number present) to move from the first target onto the second, so any sub-multiset of the source's counters across all kinds can be moved
-  <br>Why the existing vocabulary won't do: move_counters either moves one named `counter` kind with a fixed `amount` (default all of that kind) or, with `all_kinds`, moves the entire multiset; neither lets the player pick how many of each kind, so `all_kinds` would force moving every counter and a single `counter` kind would drop the others. The may op's `x` chooses one number, not a per-kind split
-
-<details><summary>Cards waiting on this</summary>
-
-- **Resourceful Defense** (rank 1628) — `resourceful_defense`
-  - {4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control.
 
 </details>
 

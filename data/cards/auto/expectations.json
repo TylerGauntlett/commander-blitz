@@ -12604,6 +12604,10 @@
     },
     "zone": "battlefield"
   },
+  "resourceful_defense": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "resplendent_angel": {
     "battlefield_count": 33,
     "zone": "battlefield"

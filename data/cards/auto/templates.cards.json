@@ -148371,6 +148371,102 @@
         {
           "effects": [
             {
+              "all_kinds": true,
+              "from_had_counters": true,
+              "objects": {
+                "target": "t1"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "triggered",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "Whenever a permanent you control leaves the battlefield, if it had counters on it, put those counters on target permanent you control.",
+          "trigger": {
+            "condition": {
+              "cmp": ">",
+              "left": {
+                "counters_had": "any"
+              },
+              "right": {
+                "const": 0
+              }
+            },
+            "controller": "you",
+            "event": "leaves_battlefield"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{4}{W}"
+          },
+          "effects": [
+            {
+              "any_kind": true,
+              "any_number": true,
+              "from": {
+                "target": "from"
+              },
+              "objects": {
+                "target": "onto"
+              },
+              "op": "move_counters"
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "from",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "onto",
+              "kind": "permanent",
+              "selector": {
+                "controller": "you",
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "resourceful_defense",
+      "mana_cost": "{2}{W}",
+      "name": "Resourceful Defense",
+      "oracle_text": "Whenever a permanent you control leaves the battlefield, if it had counters on it, put those counters on target permanent you control.\n{4}{W}: Move any number of counters from target permanent you control onto a second target permanent you control.",
+      "source": "auto",
+      "types": [
+        "Enchantment"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
               "amount": {
                 "const": 1
               },
