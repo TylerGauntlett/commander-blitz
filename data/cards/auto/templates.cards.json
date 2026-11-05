@@ -65661,6 +65661,75 @@
     {
       "abilities": [
         {
+          "effects": [
+            {
+              "effects": [
+                {
+                  "amount": {
+                    "const": 1
+                  },
+                  "counter": "+1/+1",
+                  "objects": {
+                    "self_only": true
+                  },
+                  "op": "add_counters"
+                }
+              ],
+              "op": "may"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever a player casts a spell, you may put a +1/+1 counter on this creature.",
+          "trigger": {
+            "controller": "any",
+            "event": "spell_cast"
+          }
+        },
+        {
+          "effects": [
+            {
+              "counter": "+1/+1",
+              "objects": {
+                "controller": "any",
+                "exclude_self": true,
+                "types": [
+                  "Creature"
+                ]
+              },
+              "op": "distribute_moved_counters"
+            }
+          ],
+          "kind": "triggered",
+          "text": "At the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures.",
+          "trigger": {
+            "controller": "you",
+            "event": "upkeep"
+          }
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "id": "forgotten_ancient",
+      "mana_cost": "{3}{G}",
+      "name": "Forgotten Ancient",
+      "oracle_text": "Whenever a player casts a spell, you may put a +1/+1 counter on this creature.\nAt the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures.",
+      "power": 0,
+      "source": "auto",
+      "subtypes": [
+        "Elemental"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
           "cost": {
             "tap": true
           },

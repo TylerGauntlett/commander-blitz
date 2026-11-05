@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**173 cards** blocked by **156** capabilities.
+**172 cards** blocked by **155** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -68,7 +68,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [delirium](#delirium) | 1 | 1799 | value |
 | [discard-your-hand](#discard-your-hand) | 1 | 725 | cost |
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
-| [distribute-moved-counters](#distribute-moved-counters) | 1 | 387 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
 | [double-x](#double-x) | 1 | 2672 | op |
@@ -1145,20 +1144,6 @@ Blocks **1** card.
 - **Elusive Otter // Grove's Bounty** (rank 6993) — `elusive_otter_grove_s_bounty`
   - Creatures with power less than this creature's power can't block it.
   - Grove's Bounty {X}{G} Sorcery — Adventure: Distribute X +1/+1 counters among any number of target creatures you control.
-
-</details>
-
-## distribute-moved-counters
-
-Blocks **1** card.
-
-- **(op)** a move_counters mode that, at resolution, lets the controller choose how many of the source's +1/+1 counters to move (0 up to the number on it) and divide them as they choose among any number of other creatures (untargeted, any controller), removing them from the source and putting each creature's share on it in a single placement event per creature
-  <br>Why the existing vocabulary won't do: move_counters puts the same `amount` on every chosen destination (and removes that amount once per source), so it cannot split N counters unevenly across several creatures; distribute_counters only adds (removes nothing from the source) and requires a division announced at activation on targets, which a resolving untargeted upkeep trigger never announces. A `may` with `repeat: true` around a one-counter move to one chosen creature reaches the same final split but moves counters one event at a time, so Hardened Scales-style replacements and 'whenever counters are put' triggers apply once per counter instead of once per creature
-
-<details><summary>Cards waiting on this</summary>
-
-- **Forgotten Ancient** (rank 387) — `forgotten_ancient`
-  - At the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto other creatures.
 
 </details>
 

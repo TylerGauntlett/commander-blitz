@@ -100492,12 +100492,12 @@
     },
     "Forgotten Ancient": {
       "edhrec_rank": 387,
-      "gate": "template",
+      "gate": null,
       "name": "Forgotten Ancient",
-      "reason": "no template for: Whenever a player casts a spell, you may put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "f8c9d744-8294-4747-ae7e-99be2b6e7479",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Forgotten Cave": {

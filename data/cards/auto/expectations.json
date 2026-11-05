@@ -5735,6 +5735,10 @@
   "forge_of_heroes": {
     "zone": "battlefield"
   },
+  "forgotten_ancient": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "forgotten_cave": {
     "zone": "battlefield"
   },

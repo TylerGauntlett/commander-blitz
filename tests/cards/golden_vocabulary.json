@@ -929,6 +929,7 @@
   "discover",
   "distribute_control_among_opponents",
   "distribute_counters",
+  "distribute_moved_counters",
   "double_counters",
   "draw",
   "emblem",
