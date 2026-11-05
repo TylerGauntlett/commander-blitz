@@ -130864,6 +130864,68 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "pump",
+              "power": {
+                "const": 2
+              },
+              "toughness": {
+                "const": 0
+              }
+            },
+            {
+              "duration": "until_end_of_turn",
+              "keywords": [
+                "haste"
+              ],
+              "objects": {
+                "binding": "subject"
+              },
+              "op": "grant_keyword"
+            }
+          ],
+          "kind": "triggered",
+          "text": "Whenever another creature you control enters, that creature gets +2/+0 and gains haste until end of turn.",
+          "trigger": {
+            "controller": "you",
+            "event": "permanent_enters",
+            "filter": {
+              "exclude_self": true,
+              "types": [
+                "Creature"
+              ]
+            }
+          }
+        }
+      ],
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "ogre_battledriver",
+      "mana_cost": "{2}{R}{R}",
+      "name": "Ogre Battledriver",
+      "oracle_text": "Whenever another creature you control enters, that creature gets +2/+0 and gains haste until end of turn. (It can attack and {T} this turn.)",
+      "power": 3,
+      "source": "auto",
+      "subtypes": [
+        "Ogre",
+        "Warrior"
+      ],
+      "toughness": 3,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "R"
       ],
@@ -162241,6 +162303,35 @@
       "toughness": 3,
       "types": [
         "Creature"
+      ]
+    },
+    {
+      "color_identity": [
+        "B",
+        "W"
+      ],
+      "colors": [
+        "B",
+        "W"
+      ],
+      "id": "shadow_summoning",
+      "mana_cost": "{W}{B}",
+      "name": "Shadow Summoning",
+      "oracle_text": "Create two tapped 1/1 white Spirit creature tokens with flying.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 2
+          },
+          "controller": "you",
+          "op": "create_token",
+          "tapped": true,
+          "token": "spirit_1_1_w_flying"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

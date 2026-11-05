@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**167 cards** blocked by **157** capabilities.
+**168 cards** blocked by **158** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -76,6 +76,7 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [echo](#echo) | 1 | 961 | keyword |
 | [eldrazi-10-10-c](#eldrazi-10-10-c) | 1 | 196 | token |
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
+| [elemental-1-1-r-haste](#elemental-1-1-r-haste) | 1 | 2658 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -1250,6 +1251,22 @@ Blocks **1** card.
 
 - **Young Pyromancer** (rank 811) — `young_pyromancer`
   - Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.
+
+</details>
+
+## elemental-1-1-r-haste
+
+Blocks **1** card.
+
+- **(token)** a 1/1 red Elemental creature token with haste
+  <br>Why the existing vocabulary won't do: token_ids has elemental_1_1_ur (1/1 blue-red Elemental, no haste) and goblin_1_1_r / warrior_1_1_r (wrong subtype, no haste); none is a 1/1 red Elemental with haste. The tempting-offer structure itself looks expressible with for_each_player over opponents, a may with player set to that opponent creating the tokens under their control, and a count of acceptances driving the caster's extra create_token, so the token is the only blocker
+
+<details><summary>Cards waiting on this</summary>
+
+- **Tempt with Vengeance** (rank 2658) — `tempt_with_vengeance`
+  - Tempting offer — Create X 1/1 red Elemental creature tokens with haste.
+  - Each opponent may create X 1/1 red Elemental creature tokens with haste.
+  - For each opponent who does, create X 1/1 red Elemental creature tokens with haste.
 
 </details>
 

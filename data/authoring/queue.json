@@ -191312,12 +191312,12 @@
     },
     "Ogre Battledriver": {
       "edhrec_rank": 3252,
-      "gate": "template",
+      "gate": null,
       "name": "Ogre Battledriver",
-      "reason": "no template for: Whenever another creature you control enters, that creature gets +2/+0 and gains haste unt",
+      "reason": "",
       "scryfall_id": "180f4220-bd76-4a2f-b9e1-414729cd1db2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Ogre Berserker": {
@@ -241912,12 +241912,12 @@
     },
     "Shadow Summoning": {
       "edhrec_rank": 10745,
-      "gate": "template",
+      "gate": null,
       "name": "Shadow Summoning",
-      "reason": "no template for: Create two tapped 1/1 white Spirit creature tokens with flying",
+      "reason": "",
       "scryfall_id": "ec0984b2-bed6-41b1-9087-2cfd16749037",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shadow Urchin": {
@@ -246422,12 +246422,12 @@
     },
     "Siege-Gang Commander": {
       "edhrec_rank": 1594,
-      "gate": "template",
+      "gate": "behaviour",
       "name": "Siege-Gang Commander",
-      "reason": "no template for: When this creature enters, create three 1/1 red Goblin creature tokens",
+      "reason": "goblin_1_1_r tokens is 0, expected 3; your battlefield is 33, expected 36",
       "scryfall_id": "7d67e614-03d2-4034-b82f-25962fc378d4",
       "source": "",
-      "status": "pending",
+      "status": "failed",
       "wanted": false
     },
     "Siege-Gang Lieutenant": {
