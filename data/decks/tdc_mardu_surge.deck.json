@@ -1,0 +1,848 @@
+{
+  "id": "tdc_mardu_surge",
+  "name": "Mardu Surge",
+  "commanders": [
+    "zurgo_stormrender"
+  ],
+  "color_identity": [
+    "B",
+    "R",
+    "W"
+  ],
+  "source": "precon",
+  "release": {
+    "set_code": "TDC",
+    "set_name": "Tarkir: Dragonstorm Commander",
+    "date": "2025-04-11"
+  },
+  "notes": "Tarkir: Dragonstorm Commander precon, card for card (https://mtgjson.com/api/v5/decks/MarduSurge_TDC.json).",
+  "tags": [
+    "Tokens",
+    "Go wide",
+    "Aristocrats",
+    "Combat damage"
+  ],
+  "strategy": "Zurgo Stormrender mobilizes a hasty Warrior every attack and pays for every creature token that leaves: a card if it was attacking, a point of life from each opponent if it was not. The deck floods the board with tokens that are meant to leave: Hero of Bladehold, Legion Warboss, Siege-Gang Commander, Beetleback Chief and Lingering Souls make bodies, Infantry Shield, Redoubled Stormsinger, Blade of Selves and Legion Loyalty copy attackers that vanish at end of combat or the end step, and Kaya, Geist Hunter doubles a turn's tokens. Viscera Seer, Skullclamp, Morbid Opportunist and Bastion of Remembrance turn the leftovers into cards and drain, Commander's Insignia, Ogre Battledriver and Goldnight Commander make the swarm hit hard, and Neriv, Crackling Vanguard exiles cards to play on any turn a commander attacked. Swords to Plowshares, Abrade and Bitter Triumph pick off blockers, and Hour of Reckoning, which spares tokens, clears everything else.",
+  "archetype": "go_wide",
+  "printings": {
+    "abrade": {
+      "scryfall_id": "4c2a1b4e-858c-47a3-be89-9275e48d5475",
+      "artist": "Jonas De Ro",
+      "set_code": "tdc",
+      "collector_number": "203"
+    },
+    "adeline_resplendent_cathar": {
+      "scryfall_id": "1de30c12-2011-495a-be25-f7a46b23e142",
+      "artist": "Bryan Sola",
+      "set_code": "tdc",
+      "collector_number": "108"
+    },
+    "ainok_strike_leader": {
+      "scryfall_id": "cabd77a6-0913-4522-891d-c8a412a536c2",
+      "artist": "Alexander Mokhov",
+      "set_code": "tdc",
+      "collector_number": "11"
+    },
+    "angel_of_invention": {
+      "scryfall_id": "98c42f02-6eda-4ef7-929f-b3a2ece9f650",
+      "artist": "Volkan Baǵa",
+      "set_code": "tdc",
+      "collector_number": "109"
+    },
+    "arcane_signet": {
+      "scryfall_id": "935644d4-a140-4f24-b8ab-d5e79a682a9b",
+      "artist": "Racrufi",
+      "set_code": "tdc",
+      "collector_number": "105"
+    },
+    "aron_benalia_s_ruin": {
+      "scryfall_id": "721cd840-5f2e-40b7-8b33-ea2d6343d390",
+      "artist": "Mark Winters",
+      "set_code": "tdc",
+      "collector_number": "280"
+    },
+    "bastion_of_remembrance": {
+      "scryfall_id": "9d0c6077-f84c-4e91-87dc-b0ac81d557f8",
+      "artist": "Volkan Baǵa",
+      "set_code": "tdc",
+      "collector_number": "171"
+    },
+    "battlefield_forge": {
+      "scryfall_id": "f09bf0b7-45fa-4315-b393-f3ec0303c0c2",
+      "artist": "Thomas Stoop",
+      "set_code": "tdc",
+      "collector_number": "340"
+    },
+    "beetleback_chief": {
+      "scryfall_id": "2d19a474-b008-4088-8a31-333c0b2d9d65",
+      "artist": "Lorenzo Mastroianni",
+      "set_code": "tdc",
+      "collector_number": "205"
+    },
+    "bitter_triumph": {
+      "scryfall_id": "c5333556-eea2-41ae-833e-007b9d540700",
+      "artist": "Donato Giancola",
+      "set_code": "tdc",
+      "collector_number": "173"
+    },
+    "blade_of_selves": {
+      "scryfall_id": "d0ca6a34-724f-47bb-b12d-c4998ffc3bf7",
+      "artist": "Lie Setiawan",
+      "set_code": "tdc",
+      "collector_number": "313"
+    },
+    "bojuka_bog": {
+      "scryfall_id": "38834333-f9ea-43a8-b00a-17935d59eaea",
+      "artist": "Howard Lyon",
+      "set_code": "tdc",
+      "collector_number": "341"
+    },
+    "bone_devourer": {
+      "scryfall_id": "5acb9bd4-ed86-400e-9f5d-4c26351242f2",
+      "artist": "Diana Franco",
+      "set_code": "tdc",
+      "collector_number": "26"
+    },
+    "canyon_slough": {
+      "scryfall_id": "d66c52dd-2a69-4fe9-9037-f82b3e50ee54",
+      "artist": "Titus Lunter",
+      "set_code": "tdc",
+      "collector_number": "344"
+    },
+    "castle_ardenvale": {
+      "scryfall_id": "65e4de2e-47d2-4967-be31-9df0057a9c74",
+      "artist": "Volkan Baǵa",
+      "set_code": "tdc",
+      "collector_number": "346"
+    },
+    "castle_embereth": {
+      "scryfall_id": "337f2d97-b317-4c10-b151-7acccf38fca8",
+      "artist": "Jaime Jones",
+      "set_code": "tdc",
+      "collector_number": "347"
+    },
+    "caves_of_koilos": {
+      "scryfall_id": "92bef577-f055-4d54-9a75-e9d4a125001c",
+      "artist": "Julian Kok Joon Wen",
+      "set_code": "tdc",
+      "collector_number": "348"
+    },
+    "chittering_witch": {
+      "scryfall_id": "7e361851-346e-4747-bbce-e2dc19e39b31",
+      "artist": "Winona Nelson",
+      "set_code": "tdc",
+      "collector_number": "175"
+    },
+    "clifftop_retreat": {
+      "scryfall_id": "c5e81948-a362-4805-9bdf-ca65488a1a09",
+      "artist": "Christine Choi",
+      "set_code": "tdc",
+      "collector_number": "351"
+    },
+    "command_tower": {
+      "scryfall_id": "5fc770b6-03ac-45c3-a2ca-bd508096384e",
+      "artist": "Marina Ortega Lorente",
+      "set_code": "tdc",
+      "collector_number": "107"
+    },
+    "commander_s_insignia": {
+      "scryfall_id": "8a800591-04a9-40d9-acfe-eebc04e8291b",
+      "artist": "Anastasia Ovchinnikova",
+      "set_code": "tdc",
+      "collector_number": "111"
+    },
+    "deadly_dispute": {
+      "scryfall_id": "b22ef77b-67a3-45d3-9d18-12b7b124cbf4",
+      "artist": "Irina Nordsol",
+      "set_code": "tdc",
+      "collector_number": "177"
+    },
+    "divine_visitation": {
+      "scryfall_id": "3800216f-5b35-4cfa-bcdb-d70e9b368d18",
+      "artist": "Victor Adame Minguez",
+      "set_code": "tdc",
+      "collector_number": "113"
+    },
+    "dragonskull_summit": {
+      "scryfall_id": "243ae383-f77d-4942-ae73-61f991131e03",
+      "artist": "Jon Foster",
+      "set_code": "tdc",
+      "collector_number": "357"
+    },
+    "eliminate_the_competition": {
+      "scryfall_id": "e6e54953-0d6d-4f65-85cb-d26e66a76dce",
+      "artist": "Joseph Meehan",
+      "set_code": "tdc",
+      "collector_number": "179"
+    },
+    "emeria_angel": {
+      "scryfall_id": "2406ab7c-c6be-421a-a92c-048441a01acd",
+      "artist": "Jim Murray",
+      "set_code": "tdc",
+      "collector_number": "114"
+    },
+    "exotic_orchard": {
+      "scryfall_id": "c2ea2395-4518-4683-8eed-59c43fb3328a",
+      "artist": "Steven Belledin",
+      "set_code": "tdc",
+      "collector_number": "360"
+    },
+    "fellwar_stone": {
+      "scryfall_id": "ce55e00c-cd95-48eb-986e-edf5125f3534",
+      "artist": "John Avon",
+      "set_code": "tdc",
+      "collector_number": "318"
+    },
+    "fetid_heath": {
+      "scryfall_id": "16af23b7-db97-4dd0-84c2-c0095f6dbe96",
+      "artist": "Daarken",
+      "set_code": "tdc",
+      "collector_number": "362"
+    },
+    "gix_yawgmoth_praetor": {
+      "scryfall_id": "135c5948-4c95-4f24-b648-eda55ab637c8",
+      "artist": "Anna Podedworna",
+      "set_code": "tdc",
+      "collector_number": "181"
+    },
+    "goldlust_triad": {
+      "scryfall_id": "2876d57a-a17e-4892-9992-321a32562e13",
+      "artist": "Arif Wijaya",
+      "set_code": "tdc",
+      "collector_number": "34"
+    },
+    "goldnight_commander": {
+      "scryfall_id": "854ee15f-bf36-4b80-9717-6e6f02da790e",
+      "artist": "Chris Rahn",
+      "set_code": "tdc",
+      "collector_number": "117"
+    },
+    "grand_crescendo": {
+      "scryfall_id": "c2157a04-f9e8-47b7-bf8d-763d794159f5",
+      "artist": "Raluca Marinescu",
+      "set_code": "tdc",
+      "collector_number": "118"
+    },
+    "grenzo_havoc_raiser": {
+      "scryfall_id": "aba981f9-ebc6-48ac-b768-557f632b82df",
+      "artist": "Svetlin Velinov",
+      "set_code": "tdc",
+      "collector_number": "216"
+    },
+    "hero_of_bladehold": {
+      "scryfall_id": "8ca58965-1dfa-40ac-b6c8-f957167ff066",
+      "artist": "Steven Belledin",
+      "set_code": "tdc",
+      "collector_number": "119"
+    },
+    "hour_of_reckoning": {
+      "scryfall_id": "14d60131-8715-477d-8a67-5f1f99a906a8",
+      "artist": "Joseph Meehan",
+      "set_code": "tdc",
+      "collector_number": "120"
+    },
+    "idol_of_oblivion": {
+      "scryfall_id": "cbc25725-1485-4d98-abe1-906520f868d8",
+      "artist": "Piotr Dura",
+      "set_code": "tdc",
+      "collector_number": "319"
+    },
+    "infantry_shield": {
+      "scryfall_id": "37332798-462e-49d3-b197-72411ccf67e5",
+      "artist": "Xabi Gaztelua",
+      "set_code": "tdc",
+      "collector_number": "35"
+    },
+    "ironwill_forger": {
+      "scryfall_id": "53398f76-7c8a-4009-8f28-9ce586e2c7e4",
+      "artist": "Konstantin Porubov",
+      "set_code": "tdc",
+      "collector_number": "13"
+    },
+    "isolated_chapel": {
+      "scryfall_id": "2358a441-4ef7-469c-bb9c-c6ff4d719658",
+      "artist": "Richard Wright",
+      "set_code": "tdc",
+      "collector_number": "373"
+    },
+    "kaya_geist_hunter": {
+      "scryfall_id": "52faa78e-252e-465b-91b5-6f64d828da81",
+      "artist": "Ryan Pancoast",
+      "set_code": "tdc",
+      "collector_number": "294"
+    },
+    "legion_loyalty": {
+      "scryfall_id": "11681eae-f5bd-4e78-a980-5ab58db0d9f3",
+      "artist": "Michal Ivan",
+      "set_code": "tdc",
+      "collector_number": "122"
+    },
+    "legion_warboss": {
+      "scryfall_id": "3d726dff-2904-4a82-adaa-29c57a5c2aed",
+      "artist": "Alex Konstad",
+      "set_code": "tdc",
+      "collector_number": "220"
+    },
+    "lightning_greaves": {
+      "scryfall_id": "8b59b12c-fde5-4f19-a357-e09f06f490cc",
+      "artist": "Michael Komarck",
+      "set_code": "tdc",
+      "collector_number": "102"
+    },
+    "lingering_souls": {
+      "scryfall_id": "2a00c585-5bbc-4622-bf5b-4ec63b669f4c",
+      "artist": "John Stanko",
+      "set_code": "tdc",
+      "collector_number": "123"
+    },
+    "loyal_apprentice": {
+      "scryfall_id": "d4d469ea-824b-4eff-82e8-2a0b9b4c0e2d",
+      "artist": "Joe Slucher",
+      "set_code": "tdc",
+      "collector_number": "222"
+    },
+    "mindblade_render": {
+      "scryfall_id": "27e43b25-9a9e-4bfc-9589-77d1f53a3c4b",
+      "artist": "Mitchell Malloy",
+      "set_code": "tdc",
+      "collector_number": "187"
+    },
+    "morbid_opportunist": {
+      "scryfall_id": "5f0440bc-807a-4425-8707-e74f468b2ca7",
+      "artist": "Tyler Walpole",
+      "set_code": "tdc",
+      "collector_number": "188"
+    },
+    "mountain": {
+      "scryfall_id": "bfa10a88-12e0-4b79-80bb-6f4620277e20",
+      "artist": "Ralph Horsley",
+      "set_code": "tdm",
+      "collector_number": "283"
+    },
+    "myr_battlesphere": {
+      "scryfall_id": "71e7ef4a-2032-4571-afc6-5207d4b40c3d",
+      "artist": "Franz Vohwinkel",
+      "set_code": "tdc",
+      "collector_number": "322"
+    },
+    "neriv_crackling_vanguard": {
+      "scryfall_id": "ac552ea3-f521-4c42-a846-21a73364e0ca",
+      "artist": "Lucas Graciano",
+      "set_code": "tdc",
+      "collector_number": "6"
+    },
+    "nomad_outpost": {
+      "scryfall_id": "a68fbeaa-941f-4d53-becd-f93ed22b9a54",
+      "artist": "Alayna Danner",
+      "set_code": "tdm",
+      "collector_number": "263"
+    },
+    "ogre_battledriver": {
+      "scryfall_id": "49998b89-61ae-4b10-903b-9eb24ce50d4b",
+      "artist": "Greg Staples",
+      "set_code": "tdc",
+      "collector_number": "227"
+    },
+    "ophiomancer": {
+      "scryfall_id": "7da2511d-f5ae-4c51-a9b2-dffd581243b6",
+      "artist": "John Stanko",
+      "set_code": "tdc",
+      "collector_number": "193"
+    },
+    "path_of_ancestry": {
+      "scryfall_id": "b8504812-fcf5-47d3-977d-1d9a11231fd0",
+      "artist": "Alayna Danner",
+      "set_code": "tdc",
+      "collector_number": "382"
+    },
+    "plains": {
+      "scryfall_id": "12cff32a-a365-43ee-a196-8ce32b3bb9fd",
+      "artist": "John Avon",
+      "set_code": "tdm",
+      "collector_number": "277"
+    },
+    "redoubled_stormsinger": {
+      "scryfall_id": "fcddd8e1-8b8e-43b9-9922-6c3317cc45ae",
+      "artist": "Filipe Pagliuso",
+      "set_code": "tdc",
+      "collector_number": "37"
+    },
+    "release_the_dogs": {
+      "scryfall_id": "7e1df99a-c139-44c9-8881-077dbfd7332f",
+      "artist": "Jason Kang",
+      "set_code": "tdc",
+      "collector_number": "127"
+    },
+    "selfless_spirit": {
+      "scryfall_id": "da85f3fb-e7d6-494a-ad3a-2ef35917f574",
+      "artist": "Seb McKinnon",
+      "set_code": "tdc",
+      "collector_number": "129"
+    },
+    "shadow_summoning": {
+      "scryfall_id": "71398076-a0ff-4bc5-b141-25dfaebe0d53",
+      "artist": "Nereida",
+      "set_code": "tdc",
+      "collector_number": "101"
+    },
+    "shattered_landscape": {
+      "scryfall_id": "f8373e5a-94bb-4aa0-bd09-13a01e0cb02a",
+      "artist": "Erikas Perl",
+      "set_code": "tdc",
+      "collector_number": "390"
+    },
+    "shattered_sanctum": {
+      "scryfall_id": "2c531254-1b12-44d8-a942-e767d516364e",
+      "artist": "Muhammad Firdaus",
+      "set_code": "tdc",
+      "collector_number": "391"
+    },
+    "siege_gang_commander": {
+      "scryfall_id": "a2d3ddb9-ddfb-4ca9-ae77-cf691d385a4a",
+      "artist": "Aaron Miller",
+      "set_code": "tdc",
+      "collector_number": "232"
+    },
+    "skullclamp": {
+      "scryfall_id": "b5bb89dd-9d31-49d9-ba54-4a04798e515e",
+      "artist": "Igor Krstic",
+      "set_code": "tdc",
+      "collector_number": "103"
+    },
+    "smoldering_marsh": {
+      "scryfall_id": "a357b4ad-adb8-4db7-a4dc-2fc3f6b7e2d5",
+      "artist": "Adam Paquette",
+      "set_code": "tdc",
+      "collector_number": "395"
+    },
+    "sol_ring": {
+      "scryfall_id": "7b0ccfd4-f118-4497-9c5a-54cf12000e16",
+      "artist": "Leon Tukker",
+      "set_code": "tdc",
+      "collector_number": "106"
+    },
+    "solemn_simulacrum": {
+      "scryfall_id": "cb1563a1-c8dc-4fcb-b9c8-e7432235d31e",
+      "artist": "Dan Murayama Scott",
+      "set_code": "tdc",
+      "collector_number": "325"
+    },
+    "stroke_of_midnight": {
+      "scryfall_id": "b000f605-177f-459d-a197-fcf54efec2fb",
+      "artist": "Julia Metzger",
+      "set_code": "tdc",
+      "collector_number": "132"
+    },
+    "sun_titan": {
+      "scryfall_id": "c7974707-88bf-474b-b1a9-30733c16b1ef",
+      "artist": "Todd Lockwood",
+      "set_code": "tdc",
+      "collector_number": "133"
+    },
+    "swamp": {
+      "scryfall_id": "f0bfdb9e-318f-4acd-9fbd-41b98a8875d6",
+      "artist": "Alexander Ostrowski",
+      "set_code": "tdm",
+      "collector_number": "281"
+    },
+    "swords_to_plowshares": {
+      "scryfall_id": "f87cf997-14b5-4a2c-a7d1-34b7de6561a2",
+      "artist": "Jesper Ejsing",
+      "set_code": "tdc",
+      "collector_number": "134"
+    },
+    "talisman_of_conviction": {
+      "scryfall_id": "efeafc9d-a953-4915-8342-725836d0f645",
+      "artist": "Lindsey Look",
+      "set_code": "tdc",
+      "collector_number": "329"
+    },
+    "talisman_of_hierarchy": {
+      "scryfall_id": "7a283444-2cb5-4dd2-8d20-e8cb90ac0ffe",
+      "artist": "Lindsey Look",
+      "set_code": "tdc",
+      "collector_number": "331"
+    },
+    "temple_of_silence": {
+      "scryfall_id": "41393bce-01c1-4268-907e-de0fa8a76719",
+      "artist": "Adam Paquette",
+      "set_code": "tdc",
+      "collector_number": "406"
+    },
+    "temple_of_triumph": {
+      "scryfall_id": "56f75be9-7373-4ceb-850d-425ef3be9bfc",
+      "artist": "Piotr Dura",
+      "set_code": "tdc",
+      "collector_number": "407"
+    },
+    "tempt_with_vengeance": {
+      "scryfall_id": "44ffb919-7b7c-4b7f-b616-cff8369409f2",
+      "artist": "Ryan Barger",
+      "set_code": "tdc",
+      "collector_number": "239"
+    },
+    "terramorphic_expanse": {
+      "scryfall_id": "9ff6e014-4811-44df-a7f8-a667a4a01f4f",
+      "artist": "Sam Burley",
+      "set_code": "tdc",
+      "collector_number": "408"
+    },
+    "thalisse_reverent_medium": {
+      "scryfall_id": "f8cd8b55-2927-4e53-be1e-cc33c35f85b7",
+      "artist": "Heonhwa",
+      "set_code": "tdc",
+      "collector_number": "306"
+    },
+    "tocasia_s_welcome": {
+      "scryfall_id": "cf3805a6-7892-454c-a009-1e385543729d",
+      "artist": "Johan Grenier",
+      "set_code": "tdc",
+      "collector_number": "135"
+    },
+    "twilight_drover": {
+      "scryfall_id": "481b1eb5-9fbb-4e27-8d0a-5ca6c34179b6",
+      "artist": "Dave Allsop",
+      "set_code": "tdc",
+      "collector_number": "136"
+    },
+    "vault_of_the_archangel": {
+      "scryfall_id": "8f203f04-bd73-4d88-bb5e-aab63507dbd1",
+      "artist": "John Avon",
+      "set_code": "tdc",
+      "collector_number": "410"
+    },
+    "viscera_seer": {
+      "scryfall_id": "d0f3a502-064e-4700-a730-2e86f985bbc3",
+      "artist": "John Stanko",
+      "set_code": "tdc",
+      "collector_number": "199"
+    },
+    "wayfarers_bauble": {
+      "scryfall_id": "ac1960a1-9141-468c-b96c-6c8e6905084d",
+      "artist": "Tomas Duchek",
+      "set_code": "tdc",
+      "collector_number": "335"
+    },
+    "will_of_the_mardu": {
+      "scryfall_id": "26f6b519-20ff-4255-926d-5caee6c572d8",
+      "artist": "Tuan Duong Chu",
+      "set_code": "tdc",
+      "collector_number": "17"
+    },
+    "windbrisk_heights": {
+      "scryfall_id": "df441bae-3b9c-46a9-8287-870c00d58a64",
+      "artist": "Omar Rayyan",
+      "set_code": "tdc",
+      "collector_number": "411"
+    },
+    "within_range": {
+      "scryfall_id": "51188edb-9705-4960-854b-170744f40a88",
+      "artist": "Hector Ortiz",
+      "set_code": "tdc",
+      "collector_number": "32"
+    },
+    "yahenni_undying_partisan": {
+      "scryfall_id": "396c5d77-f530-42f8-80b5-7cbfd562d1e2",
+      "artist": "Lius Lasahido",
+      "set_code": "tdc",
+      "collector_number": "202"
+    },
+    "zurgo_stormrender": {
+      "scryfall_id": "dc8eb325-75c9-4331-830d-3f7d62d77290",
+      "artist": "Lie Setiawan",
+      "set_code": "tdc",
+      "collector_number": "10"
+    }
+  },
+  "cards": [
+    {
+      "id": "abrade"
+    },
+    {
+      "id": "adeline_resplendent_cathar"
+    },
+    {
+      "id": "ainok_strike_leader"
+    },
+    {
+      "id": "angel_of_invention"
+    },
+    {
+      "id": "arcane_signet"
+    },
+    {
+      "id": "aron_benalia_s_ruin"
+    },
+    {
+      "id": "bastion_of_remembrance"
+    },
+    {
+      "id": "battlefield_forge"
+    },
+    {
+      "id": "beetleback_chief"
+    },
+    {
+      "id": "bitter_triumph"
+    },
+    {
+      "id": "blade_of_selves"
+    },
+    {
+      "id": "bojuka_bog"
+    },
+    {
+      "id": "bone_devourer"
+    },
+    {
+      "id": "canyon_slough"
+    },
+    {
+      "id": "castle_ardenvale"
+    },
+    {
+      "id": "castle_embereth"
+    },
+    {
+      "id": "caves_of_koilos"
+    },
+    {
+      "id": "chittering_witch"
+    },
+    {
+      "id": "clifftop_retreat"
+    },
+    {
+      "id": "command_tower"
+    },
+    {
+      "id": "commander_s_insignia"
+    },
+    {
+      "id": "deadly_dispute"
+    },
+    {
+      "id": "divine_visitation"
+    },
+    {
+      "id": "dragonskull_summit"
+    },
+    {
+      "id": "eliminate_the_competition"
+    },
+    {
+      "id": "emeria_angel"
+    },
+    {
+      "id": "exotic_orchard"
+    },
+    {
+      "id": "fellwar_stone"
+    },
+    {
+      "id": "fetid_heath"
+    },
+    {
+      "id": "gix_yawgmoth_praetor"
+    },
+    {
+      "id": "goldlust_triad"
+    },
+    {
+      "id": "goldnight_commander"
+    },
+    {
+      "id": "grand_crescendo"
+    },
+    {
+      "id": "grenzo_havoc_raiser"
+    },
+    {
+      "id": "hero_of_bladehold"
+    },
+    {
+      "id": "hour_of_reckoning"
+    },
+    {
+      "id": "idol_of_oblivion"
+    },
+    {
+      "id": "infantry_shield"
+    },
+    {
+      "id": "ironwill_forger"
+    },
+    {
+      "id": "isolated_chapel"
+    },
+    {
+      "id": "kaya_geist_hunter"
+    },
+    {
+      "id": "legion_loyalty"
+    },
+    {
+      "id": "legion_warboss"
+    },
+    {
+      "id": "lightning_greaves"
+    },
+    {
+      "id": "lingering_souls"
+    },
+    {
+      "id": "loyal_apprentice"
+    },
+    {
+      "id": "mindblade_render"
+    },
+    {
+      "id": "morbid_opportunist"
+    },
+    {
+      "id": "mountain",
+      "qty": 5
+    },
+    {
+      "id": "myr_battlesphere"
+    },
+    {
+      "id": "neriv_crackling_vanguard"
+    },
+    {
+      "id": "nomad_outpost"
+    },
+    {
+      "id": "ogre_battledriver"
+    },
+    {
+      "id": "ophiomancer"
+    },
+    {
+      "id": "path_of_ancestry"
+    },
+    {
+      "id": "plains",
+      "qty": 5
+    },
+    {
+      "id": "redoubled_stormsinger"
+    },
+    {
+      "id": "release_the_dogs"
+    },
+    {
+      "id": "selfless_spirit"
+    },
+    {
+      "id": "shadow_summoning"
+    },
+    {
+      "id": "shattered_landscape"
+    },
+    {
+      "id": "shattered_sanctum"
+    },
+    {
+      "id": "siege_gang_commander"
+    },
+    {
+      "id": "skullclamp"
+    },
+    {
+      "id": "smoldering_marsh"
+    },
+    {
+      "id": "sol_ring"
+    },
+    {
+      "id": "solemn_simulacrum"
+    },
+    {
+      "id": "stroke_of_midnight"
+    },
+    {
+      "id": "sun_titan"
+    },
+    {
+      "id": "swamp",
+      "qty": 5
+    },
+    {
+      "id": "swords_to_plowshares"
+    },
+    {
+      "id": "talisman_of_conviction"
+    },
+    {
+      "id": "talisman_of_hierarchy"
+    },
+    {
+      "id": "temple_of_silence"
+    },
+    {
+      "id": "temple_of_triumph"
+    },
+    {
+      "id": "tempt_with_vengeance"
+    },
+    {
+      "id": "terramorphic_expanse"
+    },
+    {
+      "id": "thalisse_reverent_medium"
+    },
+    {
+      "id": "tocasia_s_welcome"
+    },
+    {
+      "id": "twilight_drover"
+    },
+    {
+      "id": "vault_of_the_archangel"
+    },
+    {
+      "id": "viscera_seer"
+    },
+    {
+      "id": "wayfarers_bauble"
+    },
+    {
+      "id": "will_of_the_mardu"
+    },
+    {
+      "id": "windbrisk_heights"
+    },
+    {
+      "id": "within_range"
+    },
+    {
+      "id": "yahenni_undying_partisan"
+    }
+  ],
+  "ratings": {
+    "speed": 3,
+    "complexity": 3,
+    "interaction": 2,
+    "resilience": 3,
+    "pilot": 3
+  },
+  "signature": [
+    {
+      "card_id": "zurgo_stormrender",
+      "why": "Mobilizes a Warrior every attack, and every creature token that leaves draws a card or drains each opponent."
+    },
+    {
+      "card_id": "redoubled_stormsinger",
+      "why": "Copies every token that entered this turn, tapped and attacking, so a mobilized Warrior or a fresh Soldier pair arrives twice."
+    },
+    {
+      "card_id": "skullclamp",
+      "why": "Equip a 1/1 token and it dies at once for two cards, and Zurgo drains on top."
+    },
+    {
+      "card_id": "hour_of_reckoning",
+      "why": "Destroys every nontoken creature, which on this board is mostly the opponents'."
+    }
+  ]
+}
