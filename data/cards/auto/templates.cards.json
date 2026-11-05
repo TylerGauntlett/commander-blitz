@@ -31605,6 +31605,89 @@
           "effects": [
             {
               "amount": {
+                "player_count": "each_opponent"
+              },
+              "controller": "you",
+              "op": "create_token",
+              "token": "rat_1_1_b"
+            }
+          ],
+          "kind": "triggered",
+          "text": "When this creature enters, create a number of 1/1 black Rat creature tokens equal to the number of opponents you have.",
+          "trigger": {
+            "event": "self_enters"
+          }
+        },
+        {
+          "cost": {
+            "mana": "{1}{B}",
+            "sacrifice": {
+              "controller": "you",
+              "count": 1,
+              "types": [
+                "Creature"
+              ],
+              "zone": "battlefield"
+            }
+          },
+          "effects": [
+            {
+              "objects": {
+                "target": "t1"
+              },
+              "op": "pump",
+              "power": {
+                "const": -2
+              },
+              "toughness": {
+                "const": -2
+              }
+            }
+          ],
+          "kind": "activated",
+          "targets": [
+            {
+              "count": 1,
+              "id": "t1",
+              "kind": "permanent",
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "{1}{B}, Sacrifice a creature: Target creature gets -2/-2 until end of turn."
+        }
+      ],
+      "color_identity": [
+        "B"
+      ],
+      "colors": [
+        "B"
+      ],
+      "id": "chittering_witch",
+      "mana_cost": "{3}{B}",
+      "name": "Chittering Witch",
+      "oracle_text": "When this creature enters, create a number of 1/1 black Rat creature tokens equal to the number of opponents you have.\n{1}{B}, Sacrifice a creature: Target creature gets -2/-2 until end of turn.",
+      "power": 2,
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Warlock"
+      ],
+      "toughness": 2,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "effects": [
+            {
+              "amount": {
                 "const": 1
               },
               "op": "draw",
@@ -89625,6 +89708,69 @@
       "mana_cost": "{2}",
       "name": "Ichor Wellspring",
       "oracle_text": "When this artifact enters or is put into a graveyard from the battlefield, draw a card.",
+      "source": "auto",
+      "types": [
+        "Artifact"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "condition": {
+            "cmp": ">=",
+            "left": {
+              "permanents_entered_this_turn": {
+                "controller": "you",
+                "is_token": true
+              }
+            },
+            "right": {
+              "const": 1
+            }
+          },
+          "cost": {
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "draw",
+              "player": "you"
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}: Draw a card. Activate only if you created a token this turn."
+        },
+        {
+          "cost": {
+            "mana": "{8}",
+            "sacrifice": {
+              "self_only": true,
+              "zone": "battlefield"
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "amount": {
+                "const": 1
+              },
+              "op": "create_token",
+              "token": "eldrazi_10_10_c"
+            }
+          ],
+          "kind": "activated",
+          "text": "{8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token."
+        }
+      ],
+      "color_identity": [],
+      "colors": [],
+      "id": "idol_of_oblivion",
+      "mana_cost": "{2}",
+      "name": "Idol of Oblivion",
+      "oracle_text": "{T}: Draw a card. Activate only if you created a token this turn.\n{8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token.",
       "source": "auto",
       "types": [
         "Artifact"
@@ -149006,6 +149152,31 @@
     },
     {
       "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "release_the_dogs",
+      "mana_cost": "{3}{W}",
+      "name": "Release the Dogs",
+      "oracle_text": "Create four 1/1 white Dog creature tokens.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "const": 4
+          },
+          "op": "create_token",
+          "token": "dog_1_1_w"
+        }
+      ],
+      "types": [
+        "Sorcery"
+      ]
+    },
+    {
+      "color_identity": [
         "U"
       ],
       "colors": [
@@ -188693,6 +188864,73 @@
       "source": "auto",
       "types": [
         "Land"
+      ]
+    },
+    {
+      "color_identity": [
+        "R"
+      ],
+      "colors": [
+        "R"
+      ],
+      "id": "tempt_with_vengeance",
+      "mana_cost": "{X}{R}",
+      "name": "Tempt with Vengeance",
+      "oracle_text": "Tempting offer — Create X 1/1 red Elemental creature tokens with haste. Each opponent may create X 1/1 red Elemental creature tokens with haste. For each opponent who does, create X 1/1 red Elemental creature tokens with haste.",
+      "source": "auto",
+      "spell_effects": [
+        {
+          "amount": {
+            "x": true
+          },
+          "op": "create_token",
+          "token": "elemental_1_1_r_haste"
+        },
+        {
+          "effects": [
+            {
+              "as": "tempted",
+              "effects": [
+                {
+                  "amount": {
+                    "x": true
+                  },
+                  "controller": {
+                    "binding": "each_player"
+                  },
+                  "op": "create_token",
+                  "token": "elemental_1_1_r_haste"
+                }
+              ],
+              "op": "may",
+              "player": {
+                "binding": "each_player"
+              },
+              "prompt": "Create X 1/1 red Elemental creature tokens with haste?"
+            }
+          ],
+          "op": "for_each_player",
+          "players": "each_opponent"
+        },
+        {
+          "amount": {
+            "times": [
+              {
+                "x": true
+              },
+              {
+                "player_count": {
+                  "binding": "tempted"
+                }
+              }
+            ]
+          },
+          "op": "create_token",
+          "token": "elemental_1_1_r_haste"
+        }
+      ],
+      "types": [
+        "Sorcery"
       ]
     },
     {

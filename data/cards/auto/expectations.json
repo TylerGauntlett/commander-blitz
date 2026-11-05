@@ -2701,6 +2701,10 @@
   "chitinous_graspling": {
     "zone": "battlefield"
   },
+  "chittering_witch": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "chivalric_alliance": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -7689,6 +7693,13 @@
     },
     "zone": "battlefield"
   },
+  "idol_of_oblivion": {
+    "battlefield_count": 33,
+    "hand_size": {
+      "0": 1
+    },
+    "zone": "battlefield"
+  },
   "idyllic_beachfront": {
     "zone": "battlefield"
   },
@@ -12616,6 +12627,14 @@
     },
     "zone": "battlefield"
   },
+  "release_the_dogs": {
+    "battlefield_count": 36,
+    "tokens": {
+      "count": 4,
+      "id": "dog_1_1_w"
+    },
+    "zone": "graveyard"
+  },
   "relentless_advance": {
     "battlefield_count": 33,
     "tokens": {
@@ -15894,6 +15913,15 @@
   },
   "temple_of_triumph": {
     "zone": "battlefield"
+  },
+  "tempt_with_vengeance": {
+    "battlefield_count": 72,
+    "opponent_battlefield_count": 26,
+    "tokens": {
+      "count": 40,
+      "id": "elemental_1_1_r_haste"
+    },
+    "zone": "graveyard"
   },
   "temur_ascendancy": {
     "battlefield_count": 33,

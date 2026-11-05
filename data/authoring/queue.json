@@ -45752,12 +45752,12 @@
     },
     "Chittering Witch": {
       "edhrec_rank": 3202,
-      "gate": "template",
+      "gate": null,
       "name": "Chittering Witch",
-      "reason": "no template for: When this creature enters, create a number of 1/1 black Rat creature tokens equal to the n",
+      "reason": "",
       "scryfall_id": "16e8e655-2da1-46c9-b9fb-223dd366698b",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Chitterspitter": {
@@ -133372,12 +133372,12 @@
     },
     "Idol of Oblivion": {
       "edhrec_rank": 196,
-      "gate": "template",
+      "gate": null,
       "name": "Idol of Oblivion",
-      "reason": "no template for: {T}: Draw a card. Activate only if you created a token this turn",
+      "reason": "",
       "scryfall_id": "0fca2f74-d220-47f1-964a-a4cd6e096fbf",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Idol of the Deep King // Sovereign's Macuahuitl": {
@@ -219582,12 +219582,12 @@
     },
     "Release the Dogs": {
       "edhrec_rank": 6420,
-      "gate": "template",
+      "gate": null,
       "name": "Release the Dogs",
-      "reason": "no template for: Create four 1/1 white Dog creature tokens",
+      "reason": "",
       "scryfall_id": "07f10906-4fd5-44e8-99c7-3f9dcc988c48",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Release the Gremlins": {
@@ -277592,12 +277592,12 @@
     },
     "Tempt with Vengeance": {
       "edhrec_rank": 2658,
-      "gate": "template",
+      "gate": null,
       "name": "Tempt with Vengeance",
-      "reason": "no template for: Tempting offer — Create X 1/1 red Elemental creature tokens with haste. Each opponent may ",
+      "reason": "",
       "scryfall_id": "808af8d4-1872-466e-a2d2-e73ecef09ed7",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Tempted by the Oriq": {

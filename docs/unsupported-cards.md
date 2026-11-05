@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**168 cards** blocked by **158** capabilities.
+**164 cards** blocked by **153** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -71,12 +71,9 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [distribute-counters-spell](#distribute-counters-spell) | 1 | 6993 | op |
 | [divided-damage-any-target](#divided-damage-any-target) | 1 | 5125 | engine |
 | [divided-damage-on-trigger](#divided-damage-on-trigger) | 1 | 2389 | engine |
-| [dog-token](#dog-token) | 1 | 6420 | token |
 | [double-x](#double-x) | 1 | 2672 | op |
 | [echo](#echo) | 1 | 961 | keyword |
-| [eldrazi-10-10-c](#eldrazi-10-10-c) | 1 | 196 | token |
 | [elemental-1-1-r](#elemental-1-1-r) | 1 | 811 | token |
-| [elemental-1-1-r-haste](#elemental-1-1-r-haste) | 1 | 2658 | token |
 | [elemental-x-x-ur-flying-haste](#elemental-x-x-ur-flying-haste) | 1 | 11566 | token |
 | [elf-warrior-1-1-g-token](#elf-warrior-1-1-g-token) | 1 | 3100 | token |
 | [enters-untapped](#enters-untapped) | 1 | 1877 | static_effect |
@@ -136,7 +133,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [punisher-sacrifice](#punisher-sacrifice) | 1 | 291 | op |
 | [raccoon-3-3-g](#raccoon-3-3-g) | 1 | 5861 | token |
 | [random-order-bottom](#random-order-bottom) | 1 | 1343 | op |
-| [rat-token](#rat-token) | 1 | 3202 | token |
 | [remove-all-counters](#remove-all-counters) | 1 | 12132 | op |
 | [remove-subtype](#remove-subtype) | 1 | 8384 | op |
 | [remove-x-counters-cost](#remove-x-counters-cost) | 1 | 5399 | cost |
@@ -166,7 +162,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [timed-cast-lock-spell-filter](#timed-cast-lock-spell-filter) | 1 | 3240 | op |
 | [times-attacked-this-turn](#times-attacked-this-turn) | 1 | 988 | value |
 | [token-zombie-druid-2-2-b](#token-zombie-druid-2-2-b) | 1 | 1802 | token |
-| [tokens-created-this-turn](#tokens-created-this-turn) | 1 | 196 | value |
 | [total-mana-value-selection](#total-mana-value-selection) | 1 | 4244 | op |
 | [unattach-cost](#unattach-cost) | 1 | 17717 | cost |
 | [unattacked-opponent-condition](#unattacked-opponent-condition) | 1 | 9126 | value |
@@ -1182,20 +1177,6 @@ Blocks **1** card.
 
 </details>
 
-## dog-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 white Dog creature token (no abilities), e.g. id dog_1_1_w
-  <br>Why the existing vocabulary won't do: create_token with amount 4 expresses the sentence, but token_ids is a closed list with no Dog token; the nearest 1/1 white tokens (cat_1_1_w, soldier_1_1_w, human_1_1_w) have the wrong creature type
-
-<details><summary>Cards waiting on this</summary>
-
-- **Release the Dogs** (rank 6420) — `release_the_dogs`
-  - Create four 1/1 white Dog creature tokens.
-
-</details>
-
 ## double-x
 
 Blocks **1** card.
@@ -1225,21 +1206,6 @@ Blocks **1** card.
 
 </details>
 
-## eldrazi-10-10-c
-
-Blocks **1** card.
-
-- **(token)** a 10/10 colorless Eldrazi creature token with no abilities
-  <br>Why the existing vocabulary won't do: token_ids holds only eldrazi_spawn_0_1_c (which carries a sacrifice-for-{C} mana ability) and eldrazi_angel_4_4_c_flying_vigilance; overriding power/toughness on either would keep abilities and subtypes the printed token does not have
-
-<details><summary>Cards waiting on this</summary>
-
-- **Idol of Oblivion** (rank 196) — `idol_of_oblivion`
-  - {8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token.
-  - {T}: Draw a card. Activate only if you created a token this turn.
-
-</details>
-
 ## elemental-1-1-r
 
 Blocks **1** card.
@@ -1251,22 +1217,6 @@ Blocks **1** card.
 
 - **Young Pyromancer** (rank 811) — `young_pyromancer`
   - Whenever you cast an instant or sorcery spell, create a 1/1 red Elemental creature token.
-
-</details>
-
-## elemental-1-1-r-haste
-
-Blocks **1** card.
-
-- **(token)** a 1/1 red Elemental creature token with haste
-  <br>Why the existing vocabulary won't do: token_ids has elemental_1_1_ur (1/1 blue-red Elemental, no haste) and goblin_1_1_r / warrior_1_1_r (wrong subtype, no haste); none is a 1/1 red Elemental with haste. The tempting-offer structure itself looks expressible with for_each_player over opponents, a may with player set to that opponent creating the tokens under their control, and a count of acceptances driving the caster's extra create_token, so the token is the only blocker
-
-<details><summary>Cards waiting on this</summary>
-
-- **Tempt with Vengeance** (rank 2658) — `tempt_with_vengeance`
-  - Tempting offer — Create X 1/1 red Elemental creature tokens with haste.
-  - Each opponent may create X 1/1 red Elemental creature tokens with haste.
-  - For each opponent who does, create X 1/1 red Elemental creature tokens with haste.
 
 </details>
 
@@ -2118,20 +2068,6 @@ Blocks **1** card.
 
 </details>
 
-## rat-token
-
-Blocks **1** card.
-
-- **(token)** a 1/1 black Rat creature token (no abilities), e.g. id rat_1_1_b
-  <br>Why the existing vocabulary won't do: token_ids has no Rat token; the only 1/1 black creature token is vampire_1_1_b, which is a Vampire, not a Rat. The rest of the line is expressible: self_enters trigger with create_token whose amount is the opponent count (player_count), and the activated -2/-2 line is a mana+sacrifice cost with a targeted pump.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Chittering Witch** (rank 3202) — `chittering_witch`
-  - When this creature enters, create a number of 1/1 black Rat creature tokens equal to the number of opponents you have.
-
-</details>
-
 ## remove-all-counters
 
 Blocks **1** card.
@@ -2539,21 +2475,6 @@ Blocks **1** card.
 
 - **Teval's Judgment** (rank 1802) — `teval_s_judgment`
   - • Create a 2/2 black Zombie Druid creature token.
-
-</details>
-
-## tokens-created-this-turn
-
-Blocks **1** card.
-
-- **(value)** a per-player turn ledger value counting tokens the player created this turn (e.g. {"tokens_created_this_turn": "you"}), usable as an activated ability's condition compared > 0
-  <br>Why the existing vocabulary won't do: value_keys has permanents_entered_this_turn and counters_put_this_turn but nothing keyed on token creation by a player; permanents_entered_this_turn filtered by is_token/controller counts tokens that entered under your control, which differs from 'you created' (a token you create for an opponent, or one you created that then left or changed control). The token_created trigger event exists but no trigger is printed to set a flag, and inventing one is not allowed
-
-<details><summary>Cards waiting on this</summary>
-
-- **Idol of Oblivion** (rank 196) — `idol_of_oblivion`
-  - {8}, {T}, Sacrifice this artifact: Create a 10/10 colorless Eldrazi creature token.
-  - {T}: Draw a card. Activate only if you created a token this turn.
 
 </details>
 
