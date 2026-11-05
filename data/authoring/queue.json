@@ -279422,12 +279422,12 @@
     },
     "Thalisse, Reverent Medium": {
       "edhrec_rank": 2629,
-      "gate": "template",
+      "gate": null,
       "name": "Thalisse, Reverent Medium",
-      "reason": "no template for: At the beginning of each end step, create X 1/1 white Spirit creature tokens with flying, ",
+      "reason": "",
       "scryfall_id": "474d6363-ebe1-4a1a-b4e6-7bd53d878527",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Thallid": {
@@ -294722,12 +294722,12 @@
     },
     "Twilight Drover": {
       "edhrec_rank": 6594,
-      "gate": "template",
+      "gate": null,
       "name": "Twilight Drover",
-      "reason": "no template for: Whenever a creature token leaves the battlefield, put a +1/+1 counter on this creature",
+      "reason": "",
       "scryfall_id": "ef2bb440-87b7-4d3d-9b37-2f1ebaca4b3f",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Twilight Mire": {
@@ -317692,12 +317692,12 @@
     },
     "Within Range": {
       "edhrec_rank": 4676,
-      "gate": "template",
+      "gate": null,
       "name": "Within Range",
-      "reason": "no template for: When this enchantment enters, create two 1/1 red Warrior creature tokens",
+      "reason": "",
       "scryfall_id": "51188edb-9705-4960-854b-170744f40a88",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Without Weakness": {

@@ -15999,6 +15999,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "thalisse_reverent_medium": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "thancred_waters": {
     "battlefield_count": 33,
     "zone": "battlefield"
@@ -16890,6 +16894,10 @@
     "zone": "battlefield"
   },
   "tusked_colossodon": {
+    "zone": "battlefield"
+  },
+  "twilight_drover": {
+    "battlefield_count": 33,
     "zone": "battlefield"
   },
   "twilight_mire": {
@@ -18449,6 +18457,14 @@
       "0": 38
     },
     "zone": "graveyard"
+  },
+  "within_range": {
+    "battlefield_count": 35,
+    "tokens": {
+      "count": 2,
+      "id": "warrior_1_1_r"
+    },
+    "zone": "battlefield"
   },
   "wizards_school": {
     "zone": "battlefield"
