@@ -2660,6 +2660,52 @@ def _validate_effect(effect: Any, where: str, target_kinds: Mapping[str, str]) -
             to = branch.get("to", "hand")
             if to not in DESTINATIONS:
                 raise DslError(f"{at}.to: unknown destination {to!r}")
+    if "may_destination" in effect and op not in ("reveal_until", "search_library", "search_zones"):
+        # Only the ops that ask it read it; anywhere else the "you may" would
+        # load and never be offered.
+        raise DslError(
+            f"{where}: 'may_destination' is read only by reveal_until, "
+            f"search_library and search_zones"
+        )
+    if "may_destination_if" in effect:
+        # "If an opponent controls more lands than you, you may put that card
+        # onto the battlefield." A gate on the offer, so it means nothing
+        # without the offer it gates.
+        if "may_destination" not in effect:
+            raise DslError(f"{where}: 'may_destination_if' gates a 'may_destination'")
+        validate_condition(effect["may_destination_if"], f"{where}.may_destination_if")
+    if "may_destination" in effect and op in ("search_library", "search_zones"):
+        # "Search your library for a Plains card and reveal it. … you may put
+        # that card onto the battlefield tapped. If you don't …, put it into
+        # your hand." The same shape `reveal_until` validates: one card, a
+        # battlefield offer, and a different fallback.
+        may_destination = effect["may_destination"]
+        if may_destination not in REVEAL_UNTIL_MAY_DESTINATIONS:
+            raise DslError(
+                f"{where}: unknown {op} may_destination {may_destination!r} "
+                f"(implemented: {sorted(REVEAL_UNTIL_MAY_DESTINATIONS)})"
+            )
+        if str(effect.get("destination", "hand")) == may_destination:
+            raise DslError(
+                f"{where}: {op} 'may_destination' needs a 'destination' other "
+                f"than {may_destination!r} -- the fallback if you don't"
+            )
+        if "destination_if" in effect:
+            # Two answers to "where does this card go"; whichever ran would
+            # silently drop the other half of the sentence.
+            raise DslError(
+                f"{where}: {op} takes 'may_destination' or 'destination_if', not both"
+            )
+        count = effect.get("count", 1)
+        if isinstance(count, dict) and "const" in count:
+            count = count["const"]
+        if count != 1:
+            raise DslError(
+                f"{where}: {op} 'may_destination' asks about one card and takes "
+                f"a 'count' of 1"
+            )
+        if "tapped" in effect and not isinstance(effect["tapped"], bool):
+            raise DslError(f"{where}: {op} 'tapped' is a boolean")
     # Three axes, one op: a creature type (the default), a permanent type or a
     # card type. A near-miss word here would fall through to the creature-type
     # branch and ask the wrong question -- a card printing "choose a permanent

@@ -171,7 +171,7 @@ OPS: dict[str, tuple[str, str, str | None]] = {
     "discard": ("Cards", "A player discards N cards, chosen or at random; `as` records them.",
                 "`discard`: `up_to` and `as`"),
     "mill": ("Cards", "Put the top N cards of a library into its graveyard.", None),
-    "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle.",
+    "search_library": ("Cards", "Search a library for cards matching a selector, then shuffle; `may_destination` (gated by `may_destination_if`) offers the found card onto the battlefield.",
                        None),
     "search_zones": ("Cards", "One search over the union of two or more of your own zones.", None),
     "look_at_top": ("Cards", "Look at the top N cards; take some, send the rest somewhere.", None),

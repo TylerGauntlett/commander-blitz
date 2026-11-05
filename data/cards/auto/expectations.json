@@ -13262,6 +13262,13 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "scholar_of_new_horizons": {
+    "counters": {
+      "amount": 1,
+      "kind": "+1/+1"
+    },
+    "zone": "battlefield"
+  },
   "scholarship_sponsor": {
     "zone": "battlefield"
   },

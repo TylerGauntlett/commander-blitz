@@ -3427,6 +3427,13 @@ is: the card is still in the library when the question is put. A branch with no
 fallthrough), and the key is refused on any op but the two searches, where it
 would load and be ignored — the printed line with half its sentence missing.
 
+When the destination is the **player's** choice rather than a property of the
+card — "you may put that card onto the battlefield tapped. If you don't, put it
+into your hand" — the search takes `may_destination` instead, optionally gated
+by `may_destination_if`; see the cookbook's
+[`may_destination`](card-dsl-cookbook.md#you-may-put-that-card-onto-the-battlefield-if-you-dont---may_destination).
+The two are refused together.
+
 ### Narrowing when a spell may be cast
 
 ```jsonc

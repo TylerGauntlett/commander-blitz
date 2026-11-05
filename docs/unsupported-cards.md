@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**167 cards** blocked by **150** capabilities.
+**166 cards** blocked by **149** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -139,7 +139,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [sacrificed-this-turn](#sacrificed-this-turn) | 1 | 4225 | value |
 | [sandbox-graveyard-spell-prop](#sandbox-graveyard-spell-prop) | 1 | 5082 | engine |
 | [search-aura-attached](#search-aura-attached) | 1 | 10579 | op |
-| [search-may-destination](#search-may-destination) | 1 | 2666 | op |
 | [search-opponent-chooses](#search-opponent-chooses) | 1 | 1971 | decision |
 | [search-split-destinations](#search-split-destinations) | 1 | 1971 | op |
 | [self-suspend-on-resolution](#self-suspend-on-resolution) | 1 | 2750 | engine |
@@ -2157,20 +2156,6 @@ Blocks **1** card.
 
 - **Sovereigns of Lost Alara** (rank 10579) — `sovereigns_of_lost_alara`
   - Whenever a creature you control attacks alone, you may search your library for an Aura card that could enchant that creature, put it onto the battlefield attached to that creature, then shuffle.
-
-</details>
-
-## search-may-destination
-
-Blocks **1** card.
-
-- **(op)** search_library support for an optional destination offered per found card after it is chosen and revealed, gated on a game-state condition: a `may_destination: "battlefield"` (with `tapped`) plus `may_destination_if: <condition>` such as `cmp` of the most lands any opponent controls (`max_count_of`) > `lands_you_control`, with `destination: "hand"` as the fallback when the player declines or the condition is false
-  <br>Why the existing vocabulary won't do: search_library's `destination_if` branches only match a selector against the found card's printed face and never ask the player, so they cannot say 'you may' or read a board condition such as 'an opponent controls more lands than you'. `reveal_until` has `may_destination` but reveals from the top rather than searching. Wrapping the search in `if` + `may` makes the player choose battlefield-or-hand before seeing which Plains is found, and searching to hand then moving it with `put_onto_battlefield` sends the card through the hand; both are different cards. The cost half ({T} plus `remove_counters_from_among` with count 1, controller you) and the enters-with-counter line (`replacements` self_enters_with_counters) are expressible today.
-
-<details><summary>Cards waiting on this</summary>
-
-- **Scholar of New Horizons** (rank 2666) — `scholar_of_new_horizons`
-  - {T}, Remove a counter from a permanent you control: Search your library for a Plains card and reveal it. If an opponent controls more lands than you, you may put that card onto the battlefield tapped. If you don't put the card onto the battlefield, put it into your hand. Then shuffle.
 
 </details>
 

@@ -13560,6 +13560,31 @@ followed by a `may` `put_onto_battlefield` is the near miss: it bottoms the rest
 before the choice, and the card reaches the battlefield through the hand, a
 second zone change.
 
+The searches take the same key, asked about the card the player chose and
+revealed, before the shuffle:
+
+```jsonc
+// Scholar of New Horizons -- "Search your library for a Plains card and reveal
+// it. If an opponent controls more lands than you, you may put that card onto
+// the battlefield tapped. If you don't put the card onto the battlefield, put it
+// into your hand. Then shuffle."
+{ "op": "search_library", "selector": { "subtypes": ["Plains"] }, "reveal": true,
+  "may_destination": "battlefield", "tapped": true, "destination": "hand",
+  "may_destination_if": { "cmp": ">",
+    "left": { "max_count_of": { "player": "each_opponent",
+      "objects": { "types": ["Land"], "zone": "battlefield" } } },
+    "right": { "lands_you_control": true } } }
+```
+
+`may_destination_if` is a condition gating the offer, on any op that takes
+`may_destination`. It is read as the card is about to move; while it is false
+nothing is asked and the card goes to `destination`, because the "you may"
+never arose. On `search_library` and `search_zones` the loader admits only
+`"battlefield"`, refuses a `destination` equal to it, a `count` other than one
+and a `destination_if` beside it — `destination_if` matches the card's printed
+face and never asks. Wrapping the search in `if` + `may` is the near miss: it
+asks battlefield-or-hand before the card is found.
+
 ## Discover — cascade's walk, N or less, cast or hand
 
 ```jsonc

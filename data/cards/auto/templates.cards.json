@@ -156040,6 +156040,79 @@
       ]
     },
     {
+      "abilities": [
+        {
+          "cost": {
+            "remove_counters_from_among": {
+              "controller": "you",
+              "count": 1
+            },
+            "tap": true
+          },
+          "effects": [
+            {
+              "destination": "hand",
+              "may_destination": "battlefield",
+              "may_destination_if": {
+                "cmp": ">",
+                "left": {
+                  "max_count_of": {
+                    "objects": {
+                      "types": [
+                        "Land"
+                      ],
+                      "zone": "battlefield"
+                    },
+                    "player": "each_opponent"
+                  }
+                },
+                "right": {
+                  "lands_you_control": true
+                }
+              },
+              "op": "search_library",
+              "reveal": true,
+              "selector": {
+                "subtypes": [
+                  "Plains"
+                ]
+              },
+              "tapped": true
+            }
+          ],
+          "kind": "activated",
+          "text": "{T}, Remove a counter from a permanent you control: Search your library for a Plains card and reveal it. If an opponent controls more lands than you, you may put that card onto the battlefield tapped. If you don't put the card onto the battlefield, put it into your hand. Then shuffle."
+        }
+      ],
+      "color_identity": [
+        "W"
+      ],
+      "colors": [
+        "W"
+      ],
+      "id": "scholar_of_new_horizons",
+      "mana_cost": "{1}{W}",
+      "name": "Scholar of New Horizons",
+      "oracle_text": "This creature enters with a +1/+1 counter on it.\n{T}, Remove a counter from a permanent you control: Search your library for a Plains card and reveal it. If an opponent controls more lands than you, you may put that card onto the battlefield tapped. If you don't put the card onto the battlefield, put it into your hand. Then shuffle.",
+      "power": 1,
+      "replacements": [
+        {
+          "amount": 1,
+          "counter": "+1/+1",
+          "event": "self_enters_with_counters"
+        }
+      ],
+      "source": "auto",
+      "subtypes": [
+        "Human",
+        "Scout"
+      ],
+      "toughness": 1,
+      "types": [
+        "Creature"
+      ]
+    },
+    {
       "color_identity": [
         "W"
       ],
