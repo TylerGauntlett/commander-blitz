@@ -178369,6 +178369,350 @@
           "chapter": 1,
           "effects": [
             {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "target": "pumped"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Combine Powers! — Put three +1/+1 counters on target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "shield",
+                      "objects": {
+                        "target": "shielded"
+                      },
+                      "op": "add_counters"
+                    },
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "op": "gain_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Defense! — Put a shield counter on target creature. You gain 3 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "fight",
+                      "other": {
+                        "target": "foe"
+                      }
+                    }
+                  ],
+                  "label": "Fight! — This creature fights up to one target creature an opponent controls."
+                }
+              ],
+              "op": "choose_mode",
+              "random": true
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "pumped",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "shielded",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "foe",
+              "kind": "permanent",
+              "mode": 2,
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I, II, III — Choose one at random — • Combine Powers! — Put three +1/+1 counters on target creature. • Defense! — Put a shield counter on target creature. You gain 3 life. • Fight! — This creature fights up to one target creature an opponent controls."
+        },
+        {
+          "chapter": 2,
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "target": "pumped"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Combine Powers! — Put three +1/+1 counters on target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "shield",
+                      "objects": {
+                        "target": "shielded"
+                      },
+                      "op": "add_counters"
+                    },
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "op": "gain_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Defense! — Put a shield counter on target creature. You gain 3 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "fight",
+                      "other": {
+                        "target": "foe"
+                      }
+                    }
+                  ],
+                  "label": "Fight! — This creature fights up to one target creature an opponent controls."
+                }
+              ],
+              "op": "choose_mode",
+              "random": true
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "pumped",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "shielded",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "foe",
+              "kind": "permanent",
+              "mode": 2,
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I, II, III — Choose one at random — • Combine Powers! — Put three +1/+1 counters on target creature. • Defense! — Put a shield counter on target creature. You gain 3 life. • Fight! — This creature fights up to one target creature an opponent controls."
+        },
+        {
+          "chapter": 3,
+          "effects": [
+            {
+              "count": 1,
+              "modes": [
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "counter": "+1/+1",
+                      "objects": {
+                        "target": "pumped"
+                      },
+                      "op": "add_counters"
+                    }
+                  ],
+                  "label": "Combine Powers! — Put three +1/+1 counters on target creature."
+                },
+                {
+                  "effects": [
+                    {
+                      "amount": {
+                        "const": 1
+                      },
+                      "counter": "shield",
+                      "objects": {
+                        "target": "shielded"
+                      },
+                      "op": "add_counters"
+                    },
+                    {
+                      "amount": {
+                        "const": 3
+                      },
+                      "op": "gain_life",
+                      "player": "you"
+                    }
+                  ],
+                  "label": "Defense! — Put a shield counter on target creature. You gain 3 life."
+                },
+                {
+                  "effects": [
+                    {
+                      "objects": {
+                        "self_only": true
+                      },
+                      "op": "fight",
+                      "other": {
+                        "target": "foe"
+                      }
+                    }
+                  ],
+                  "label": "Fight! — This creature fights up to one target creature an opponent controls."
+                }
+              ],
+              "op": "choose_mode",
+              "random": true
+            }
+          ],
+          "kind": "chapter",
+          "targets": [
+            {
+              "count": 1,
+              "id": "pumped",
+              "kind": "permanent",
+              "mode": 0,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "shielded",
+              "kind": "permanent",
+              "mode": 1,
+              "selector": {
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            },
+            {
+              "count": 1,
+              "id": "foe",
+              "kind": "permanent",
+              "mode": 2,
+              "optional": true,
+              "selector": {
+                "controller": "opponent",
+                "types": [
+                  "Creature"
+                ],
+                "zone": "battlefield"
+              }
+            }
+          ],
+          "text": "I, II, III — Choose one at random — • Combine Powers! — Put three +1/+1 counters on target creature. • Defense! — Put a shield counter on target creature. You gain 3 life. • Fight! — This creature fights up to one target creature an opponent controls."
+        }
+      ],
+      "color_identity": [
+        "G"
+      ],
+      "colors": [
+        "G"
+      ],
+      "final_chapter": 3,
+      "id": "summon_magus_sisters",
+      "keywords": [
+        "haste"
+      ],
+      "mana_cost": "{4}{G}",
+      "name": "Summon: Magus Sisters",
+      "oracle_text": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II, III — Choose one at random —\n• Combine Powers! — Put three +1/+1 counters on target creature.\n• Defense! — Put a shield counter on target creature. You gain 3 life.\n• Fight! — This creature fights up to one target creature an opponent controls.\nHaste",
+      "power": 5,
+      "source": "auto",
+      "subtypes": [
+        "Saga",
+        "Faerie"
+      ],
+      "toughness": 5,
+      "types": [
+        "Enchantment",
+        "Creature"
+      ]
+    },
+    {
+      "abilities": [
+        {
+          "chapter": 1,
+          "effects": [
+            {
               "effects": [
                 {
                   "as": "valefor_chosen",

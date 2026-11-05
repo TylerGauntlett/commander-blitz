@@ -269002,12 +269002,12 @@
     },
     "Summon: Magus Sisters": {
       "edhrec_rank": 4973,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Magus Sisters",
-      "reason": "no template for: I, II, III — Choose one at random —",
+      "reason": "",
       "scryfall_id": "76a8cae7-e6ea-45eb-be8d-0e6a29b98aa6",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Primal Garuda": {

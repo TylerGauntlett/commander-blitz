@@ -10,7 +10,7 @@ waiting on the same missing mechanic is a build order.
 Clear the top entry with `/extend-dsl <capability>`, then re-run
 `python scripts/author_cards.py --tier templates --retry` to harvest what it unblocks.
 
-**163 cards** blocked by **146** capabilities.
+**162 cards** blocked by **145** capabilities.
 
 | capability | cards | best EDHREC rank | kind |
 |---|---:|---:|---|
@@ -113,7 +113,6 @@ Clear the top entry with `/extend-dsl <capability>`, then re-run
 | [odd-or-even](#odd-or-even) | 1 | 8504 | selector |
 | [omen](#omen) | 1 | 3355 | cost, engine |
 | [opponent-choice-of-payment](#opponent-choice-of-payment) | 1 | 17407 | decision |
-| [optional-mode-target](#optional-mode-target) | 1 | 4973 | engine |
 | [played-or-cast-from-non-hand-this-turn](#played-or-cast-from-non-hand-this-turn) | 1 | 7924 | value |
 | [player-mana-ability-until-end-of-turn](#player-mana-ability-until-end-of-turn) | 1 | 12705 | op |
 | [plot](#plot) | 1 | 7506 | op |
@@ -1788,20 +1787,6 @@ Blocks **1** card.
   - Cast this spell only during combat before blockers are declared.
   - X can't be greater than the number of snow lands you control.
   - Choose X target attacking creatures. For each of those creatures, its controller may pay {1} or {2}. If that player doesn't, destroy that creature at end of combat. If that player pays only {1}, prevent all combat damage that would be dealt to and dealt by that creature this combat.
-
-</details>
-
-## optional-mode-target
-
-Blocks **1** card.
-
-- **(engine)** a target owned by one mode of a top-level choose_mode (here a random one on a Saga chapter ability) that is 'up to one' -- the mode may be chosen, including at random, with zero targets declared, and the controller may decline the target when one exists; then 'This creature fights' with nothing does nothing
-  <br>Why the existing vocabulary won't do: Target specs with 'mode' are refused by _check_mode_targets in cards/loader/targets.py if 'optional' or variable-size ('declining it is declining the mode'). A fixed count:1 mode target changes the card twice: the controller is forced to fight when an opponent has a creature, and with no opposing creature the Fight mode is struck from the random pool (pick_at_random only offers modes with legal targets), skewing the odds toward the other two modes. A card-level (non-mode) optional target cannot share the card with mode-owned targets, and the other two modes' 'target creature' needs mode-owned targets
-
-<details><summary>Cards waiting on this</summary>
-
-- **Summon: Magus Sisters** (rank 4973) — `summon_magus_sisters`
-  - • Fight! — This creature fights up to one target creature an opponent controls
 
 </details>
 

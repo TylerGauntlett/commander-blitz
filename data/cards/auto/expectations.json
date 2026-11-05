@@ -15169,6 +15169,14 @@
     },
     "zone": "battlefield"
   },
+  "summon_magus_sisters": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "zone": "battlefield"
+  },
   "summon_valefor": {
     "battlefield_count": 33,
     "counters": {
