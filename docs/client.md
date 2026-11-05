@@ -69,9 +69,12 @@ Everything lives under `frontend/src`. The rule per folder is the thing to prese
 `--pod-lanes-h`, `--mat-side`, `--pod-seat-h`, `--seat-h`, …) so a transition on one
 re-resolves every declaration that reads it. It also reads the attributes on `<html>`
 that the rest of the stylesheets key on: `data-layout` and `data-compact` for the
-layout, `data-input` for whether a focus ring and button glyphs are drawn. The phone's
+layout, `data-input` for whether a focus ring and button glyphs are drawn. The
 safe-area insets are its `--safe-*` tokens, read from `env()` under `index.html`'s
-`viewport-fit=cover`.
+`viewport-fit=cover`. The phone pads its whole table by them. Every other layout runs
+edge to edge, including under an installed app's status bar (`index.html`'s
+`black-translucent`), and only the top bars that reach the clock's corner keep clear of
+them: the phase track, the pod bar, the shelf bar and the mulligan lamps.
 
 ## State: four kinds
 
