@@ -243472,12 +243472,12 @@
     },
     "Shelinda, Yevon Acolyte": {
       "edhrec_rank": 5691,
-      "gate": "template",
+      "gate": null,
       "name": "Shelinda, Yevon Acolyte",
-      "reason": "no template for: Whenever another creature you control enters, put a +1/+1 counter on that creature if its ",
+      "reason": "",
       "scryfall_id": "6f2cec5d-50ea-4d0f-8925-eba06222d015",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Shelkin Brownie": {
@@ -258292,12 +258292,12 @@
     },
     "Sphere Grid": {
       "edhrec_rank": 1347,
-      "gate": "template",
+      "gate": null,
       "name": "Sphere Grid",
-      "reason": "no template for: Whenever a creature you control deals combat damage to a player, put a +1/+1 counter on th",
+      "reason": "",
       "scryfall_id": "064a1fc2-6983-4ebf-a0bc-524bc77682c2",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Sphere of Annihilation": {
@@ -268962,12 +268962,12 @@
     },
     "Summon: Ixion": {
       "edhrec_rank": 3740,
-      "gate": "template",
+      "gate": null,
       "name": "Summon: Ixion",
-      "reason": "no template for: I — Aerospark — Exile target creature an opponent controls until this Saga leaves the batt",
+      "reason": "",
       "scryfall_id": "92c0bfc2-ba98-48b6-82a4-95a2321c8df4",
-      "source": "",
-      "status": "pending",
+      "source": "agent",
+      "status": "done",
       "wanted": false
     },
     "Summon: Knights of Round": {

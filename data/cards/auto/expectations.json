@@ -13709,6 +13709,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "shelinda_yevon_acolyte": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sheltered_by_ghosts": {
     "battlefield_count": 33,
     "opponent_battlefield_count": 5,
@@ -14525,6 +14529,10 @@
     "battlefield_count": 33,
     "zone": "battlefield"
   },
+  "sphere_grid": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "sphinx_mindbreaker": {
     "library_size": {
       "1": 10
@@ -15085,6 +15093,15 @@
       "count": 2,
       "id": "moogle_1_2_w_lifelink"
     },
+    "zone": "battlefield"
+  },
+  "summon_ixion": {
+    "battlefield_count": 33,
+    "counters": {
+      "amount": 1,
+      "kind": "lore"
+    },
+    "opponent_battlefield_count": 5,
     "zone": "battlefield"
   },
   "summon_knights_of_round": {
