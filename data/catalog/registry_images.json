@@ -9066,6 +9066,10 @@
     "artist": "Lucio Parrillo",
     "scryfall_id": "cd816d37-7a9e-485e-9ed9-20c1c15a26dd"
   },
+  "mass_of_mysteries": {
+    "artist": "Jeff Miracola",
+    "scryfall_id": "871decb1-82e7-48f7-84be-96dde2d35770"
+  },
   "mass_polymorph": {
     "artist": "Christopher Moeller",
     "scryfall_id": "b29db023-28d0-411d-864a-8f1e22ae1f74"
@@ -16054,6 +16058,10 @@
   "vandalblast": {
     "artist": "MSCHF",
     "scryfall_id": "055396fd-8051-4fb4-8beb-a53abeb0ac10"
+  },
+  "vanguard_of_the_restless": {
+    "artist": "N\u00e9stor Ossand\u00f3n Leal",
+    "scryfall_id": "91211c56-b562-4889-8c5c-110c42be62c8"
   },
   "vanguard_seraph": {
     "artist": "Zezhou Chen",

@@ -9835,6 +9835,10 @@
   "mass_of_ghouls": {
     "zone": "battlefield"
   },
+  "mass_of_mysteries": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
+  },
   "mass_polymorph": {
     "battlefield_count": 30,
     "library_size": {
@@ -17413,6 +17417,10 @@
   "vandalblast": {
     "opponent_battlefield_count": 5,
     "zone": "graveyard"
+  },
+  "vanguard_of_the_restless": {
+    "battlefield_count": 33,
+    "zone": "battlefield"
   },
   "vanguard_seraph": {
     "battlefield_count": 33,
